@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "604569513046",
+    "project_id": "socialbook-80193",
+    "storage_bucket": "socialbook-80193.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:604569513046:android:50fe35dedefcd3c00b9ff7",
+        "android_client_info": {
+          "package_name": "io.socialbook.cartoonizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "604569513046-o8958tek5sbkmp7thjqgs4otbv31pvbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "f46fa4d15479c6b3360b46dd698973b50c4b094a"
+          }
+        },
+        {
+          "client_id": "604569513046-hjn40gbssu0qtacpc43nhpk42dva02su.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYXngmO0G7RshkxWtLMPDW3avStoZSrTc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "604569513046-hjn40gbssu0qtacpc43nhpk42dva02su.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "604569513046-o5rthd4hqbjrpmb05gu2j49qc7i97erf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.cartoonizer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

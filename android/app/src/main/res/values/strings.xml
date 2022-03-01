@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Catoonizer</string>
+    <string name="facebook_app_id">801412163654865</string>
+    <string name="facebook_client_token">3f9c73333f39f44676a28c1800614906</string>
+    <string name="fb_login_protocol_scheme">fb801412163654865</string>
+
+</resources>
