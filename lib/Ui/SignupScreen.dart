@@ -895,7 +895,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onTap: () async {
                         var tempData = await platform.invokeMethod("OpenTiktok");
                         // if (Platform.isAndroid) {
-                        CommonExtension().showToast(tempData);
+                        //CommonExtension().showToast(tempData);
                           if(tempData != null) {
                             Navigator.push(
                               context,
