@@ -837,14 +837,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: EdgeInsets.only(
                                         left: 3.w, right: 3.w, bottom: 3.w),
                                     child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        TitleTextWidget(
-                                            ((snapshot.data as List<EffectModel>)[index].display_name.toString() == "null")? (snapshot.data as List<EffectModel>)[index].key : (snapshot.data as List<EffectModel>)[index].display_name,
-                                            ColorConstant.BtnTextColor,
-                                            FontWeight.w600,
-                                            14.sp),
+                                        Expanded(
+                                          child: TitleTextWidget(
+                                              ((snapshot.data as List<EffectModel>)[index].display_name.toString() == "null")? (snapshot.data as List<EffectModel>)[index].key : (snapshot.data as List<EffectModel>)[index].display_name,
+                                              ColorConstant.BtnTextColor,
+                                              FontWeight.w600,
+                                              14.sp,
+                                              align: TextAlign.start),
+                                        ),
                                         Image.asset(
                                           ImagesConstant.ic_next,
                                           height: 14.w,

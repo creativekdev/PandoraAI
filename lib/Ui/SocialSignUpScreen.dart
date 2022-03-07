@@ -322,6 +322,53 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               final Map parsed = json.decode(access_response.body.toString());
                               CommonExtension().showToast(parsed['message']);
                             }
+                          } else if (widget.channel == "apple") {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            List<JsonValueModel> params = [];
+                            params.add(JsonValueModel("email", emailController.text));
+                            params.add(JsonValueModel("apple_id", "${widget.tokenId}"));
+                            params.add(JsonValueModel("Password", passController.text));
+                            params.add(JsonValueModel("type", "cartoonize"));
+                            Map<String, dynamic> lBody = {
+                              "email": emailController.text,
+                              "apple_id": "${widget.tokenId}",
+                              "Password": passController.text,
+                              "type": "cartoonize",
+                              "s": sToken(params)
+                            };
+                            final appleResponse = await post(Uri.parse("https://socialbook.io/api/user/signup/simple"), body: lBody);
+                            setState(() {
+                              isLoading = false;
+                            });
+                            if (appleResponse.statusCode == 200) {
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String cookie = appleResponse.headers.toString();
+                              var str = cookie.split(";");
+                              String id = "";
+                              for (int j = 0; j < str.length; j++) {
+                                if (str[j].contains("sb.connect.sid")) {
+                                  id = str[j];
+                                  j = str.length;
+                                }
+                              }
+                              var finalId = id.split(",");
+                              if (finalId.length > 1) {
+                                for (int j = 0; j < finalId.length; j++) {
+                                  if (finalId[j].contains("sb.connect.sid")) {
+                                    id = finalId[j];
+                                    j = finalId.length;
+                                  }
+                                }
+                              }
+                              prefs.setBool("isLogin", true);
+                              prefs.setString("login_cookie", id.split("=")[1]);
+                              Navigator.pop(context, false);
+                            } else {
+                              final Map parsed = json.decode(appleResponse.body.toString());
+                              CommonExtension().showToast(parsed['message']);
+                            }
                           }
                         }
                       },
