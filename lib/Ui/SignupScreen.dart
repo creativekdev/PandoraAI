@@ -636,17 +636,50 @@ class _SignupScreenState extends State<SignupScreen> {
                         });
                         try {
                           var temp = await signInWithApple();
+                          var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
+                          final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;
                           });
-                          print(temp.additionalUserInfo!.profile);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/SocialSignUpScreen"),
-                              builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: token, tokenId: tokenId, channel: "apple",),
-                            ),
-                          )/*.then((value) => Navigator.pop(context, value))*/;
+                          if (tokenResponse.statusCode == 200) {
+                            final Map parsedAppleResponse = json.decode(tokenResponse.body);
+                            if (parsedAppleResponse['data']['signup'] as bool) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
+                                  builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: "", tokenId: temp.user!.uid, channel: "apple",),
+                                ),
+                              ).then((value) async {
+                                if(!value){Navigator.pop(context, value);}
+                              });
+                            } else {
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              String cookie = tokenResponse.headers.toString();
+                              var str = cookie.split(";");
+                              String id = "";
+                              for (int j = 0; j < str.length; j++) {
+                                if (str[j].contains("sb.connect.sid")) {
+                                  id = str[j];
+                                  j = str.length;
+                                }
+                              }
+                              var finalId = id.split(",");
+                              if (finalId.length > 1) {
+                                for (int j = 0; j < finalId.length; j++) {
+                                  if (finalId[j].contains("sb.connect.sid")) {
+                                    id = finalId[j];
+                                    j = finalId.length;
+                                  }
+                                }
+                              }
+                              prefs.setBool("isLogin", true);
+                              prefs.setString("login_cookie", id.split("=")[1]);
+                              Navigator.pop(context, false);
+                            }
+                          } else {
+                            CommonExtension().showToast("Oops! Something went wrong");
+                          }
                         } finally{
                           if(isLoading)
                             setState(() {
