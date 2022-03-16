@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/sToken.dart';
@@ -230,9 +230,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       },
       child: Scaffold(
         backgroundColor: ColorConstant.BackgroundColor,
-        body: SafeArea(
-          child: Obx(() => LoadingOverlay(
-            isLoading: controller.isLoading.value,
+        body: Obx(() => LoadingOverlay(
+          isLoading: controller.isLoading.value,
+          child: SafeArea(
             child: Column(
               children: [
                 Container(
@@ -917,8 +917,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 ),
               ],
             ),
-          )),
-        ),
+          ),
+        )),
       ),
     );
   }
@@ -974,16 +974,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: (widget.list[itemIndex].effects[index]
                   .endsWith("-transform"))
-                  ? Image.network(
-                "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                  ? CachedNetworkImage(
+                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
                     widget.list[itemIndex].effects[index] +
                     ".webp",
                 fit: BoxFit.fill,
                 height: 20.w,
                 width: 20.w,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
+                placeholder: (context, url) {
                   return Container(
                     height: 20.w,
                     width: 20.w,
@@ -992,7 +990,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                     ),
                   );
                 },
-                errorBuilder: (context, error, stackTrace) {
+                errorWidget: (context, url, error) {
                   return Container(
                     height: 20.w,
                     width: 20.w,
@@ -1002,16 +1000,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   );
                 },
               )
-                  : Image.network(
-                "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                  : CachedNetworkImage(
+                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
                     widget.list[itemIndex].effects[index] +
                     ".jpg",
                 fit: BoxFit.fill,
                 height: 20.w,
                 width: 20.w,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) return child;
+                placeholder: (context, url) {
                   return Container(
                     height: 20.w,
                     width: 20.w,
@@ -1020,7 +1016,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                     ),
                   );
                 },
-                errorBuilder: (context, error, stackTrace) {
+                errorWidget: (context, url, error) {
                   return Container(
                     height: 20.w,
                     width: 20.w,

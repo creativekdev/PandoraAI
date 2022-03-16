@@ -262,9 +262,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                     ?.unfocus();
                                                 controller
                                                     .changeIsLoading(true);
-                                                var sharedPrefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
+                                                var sharedPrefs = await SharedPreferences.getInstance();
                                                 final headers = {
                                                   "Content-type":
                                                       "application/json",
@@ -299,21 +297,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                         body: databody,
                                                         headers: headers);
                                                 print(databody);
-                                                print(updateProfileResponse
-                                                    .statusCode);
-                                                print(
-                                                    updateProfileResponse.body);
-                                                controller
-                                                    .changeIsLoading(false);
-                                                if (updateProfileResponse
-                                                        .statusCode ==
-                                                    200) {
-                                                  CommonExtension().showToast(
-                                                      "Profile update successfully!!");
+                                                controller.changeIsLoading(false);
+                                                if (updateProfileResponse.statusCode == 200) {
+                                                  sharedPrefs.setString("name", nameController.text.toString());
+                                                  sharedPrefs.setString("avatar", controller.imageUrl.value);
+                                                  CommonExtension().showToast("Profile update successfully!!");
                                                   Navigator.pop(context, false);
                                                 } else {
-                                                  CommonExtension().showToast(
-                                                      "Oops something went wrong!!");
+                                                  CommonExtension().showToast("Oops something went wrong!!");
                                                 }
                                               }
                                             },
@@ -376,7 +367,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
                 } on PlatformException catch(error) {
-                  print(error);
                   if(error.code == "camera_access_denied"){
                     showDialog(
                         context: context,

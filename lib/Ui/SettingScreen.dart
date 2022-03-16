@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/SignupModel.dart';
@@ -91,12 +92,20 @@ class _SettingScreenState extends State<SettingScreen> {
                                               child: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(15.w),
-                                                child: Image.network(
-                                                  (snapshot.hasData) ? (snapshot.data as SignupModel).avatar : "",
+                                                child: CachedNetworkImage(
+                                                  imageUrl: (snapshot.hasData) ? (snapshot.data as SignupModel).avatar : "",
                                                   fit: BoxFit.fill,
                                                   width: 15.w,
                                                   height: 15.w,
-                                                  errorBuilder: (context, error, stackTrace) {
+                                                  placeholder: (context, url) {
+                                                    return Image.asset(
+                                                      ImagesConstant.ic_demo1,
+                                                      fit: BoxFit.fill,
+                                                      width: 15.w,
+                                                      height: 15.w,
+                                                    );
+                                                  },
+                                                  errorWidget: (context, url, error) {
                                                     return Image.asset(
                                                       ImagesConstant.ic_demo1,
                                                       fit: BoxFit.fill,
@@ -473,21 +482,44 @@ class _SettingScreenState extends State<SettingScreen> {
     final headers = {
       "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
     };
-    var loginResponse = await get(
-        Uri.parse('https://socialbook.io/api/user/get_login'),
-        headers: headers);
-    // print(loginResponse.body);
-    if (loginResponse.statusCode == 200) {
-      final Map parsed = json.decode(loginResponse.body.toString());
-      final signupResponse = SignupModel.fromJson(parsed);
-      sharedPrefs.setString("email", signupResponse.email);
-      sharedPrefs.setString("name", signupResponse.name);
-      sharedPrefs.setString("avatar", signupResponse.avatar);
-      return signupResponse;
+    if (sharedPrefs.containsKey("email")) {
+
+      String email = sharedPrefs.getString("email") ?? "";
+      String name = sharedPrefs.getString("name") ?? "";
+      String avatar = sharedPrefs.getString("avatar") ?? "";
+
+      get(
+          Uri.parse('https://socialbook.io/api/user/get_login'),
+          headers: headers).then((value) async {
+        if (value.statusCode == 200) {
+          final Map parsed = json.decode(value.body.toString());
+          print(parsed);
+          final signupResponse = SignupModel.fromJson(parsed);
+          sharedPrefs.setString("email", signupResponse.email);
+          sharedPrefs.setString("name", signupResponse.name);
+          sharedPrefs.setString("avatar", signupResponse.avatar);
+        }
+      });
+
+      return SignupModel(email: email, name: name, avatar: avatar);
+
     } else {
-      CommonExtension().showToast(json.decode(loginResponse.body)['message']);
-      return SignupModel(email: "", name: "", avatar: "");
+      var loginResponse = await get(
+          Uri.parse('https://socialbook.io/api/user/get_login'),
+          headers: headers);
+      if (loginResponse.statusCode == 200) {
+        final Map parsed = json.decode(loginResponse.body.toString());
+        final signupResponse = SignupModel.fromJson(parsed);
+        sharedPrefs.setString("email", signupResponse.email);
+        sharedPrefs.setString("name", signupResponse.name);
+        sharedPrefs.setString("avatar", signupResponse.avatar);
+        return signupResponse;
+      } else {
+        CommonExtension().showToast(json.decode(loginResponse.body)['message']);
+        return SignupModel(email: "", name: "", avatar: "");
+      }
     }
+
   }
   _launchURL(String url) async {
     if (await canLaunch(url)) {

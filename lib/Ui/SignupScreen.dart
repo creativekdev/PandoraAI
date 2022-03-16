@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
@@ -164,18 +163,20 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     List<JsonValueModel> params = [];
-    return Stack(
-      children: [
-        Image.asset(
-          ImagesConstant.ic_background,
-          fit: BoxFit.cover,
-          height: 100.h,
-          width: 100.w,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: LoadingOverlay(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        color: ColorConstant.PrimaryColor,
+        padding: EdgeInsets.only(top: 5.h),
+        child: Stack(
+          children: [
+            Image.asset(
+              ImagesConstant.ic_background,
+              fit: BoxFit.cover,
+              height: 100.h,
+              width: 100.w,
+            ),
+            LoadingOverlay(
               isLoading: isLoading,
               child: SingleChildScrollView(
                 child: Column(
@@ -630,68 +631,68 @@ class _SignupScreenState extends State<SignupScreen> {
                     // ),
                     if(Platform.isIOS)
                       GestureDetector(
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        try {
-                          var temp = await signInWithApple();
-                          var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
-                          final tokenResponse = await get(Uri.parse(tempUrl));
+                        onTap: () async {
                           setState(() {
-                            isLoading = false;
+                            isLoading = true;
                           });
-                          if (tokenResponse.statusCode == 200) {
-                            final Map parsedAppleResponse = json.decode(tokenResponse.body);
-                            if (parsedAppleResponse['data']['signup'] as bool) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: "", tokenId: temp.user!.uid, channel: "apple",),
-                                ),
-                              ).then((value) async {
-                                if(!value){Navigator.pop(context, value);}
-                              });
-                            } else {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String cookie = tokenResponse.headers.toString();
-                              var str = cookie.split(";");
-                              String id = "";
-                              for (int j = 0; j < str.length; j++) {
-                                if (str[j].contains("sb.connect.sid")) {
-                                  id = str[j];
-                                  j = str.length;
-                                }
-                              }
-                              var finalId = id.split(",");
-                              if (finalId.length > 1) {
-                                for (int j = 0; j < finalId.length; j++) {
-                                  if (finalId[j].contains("sb.connect.sid")) {
-                                    id = finalId[j];
-                                    j = finalId.length;
-                                  }
-                                }
-                              }
-                              prefs.setBool("isLogin", true);
-                              prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
-                            }
-                          } else {
-                            CommonExtension().showToast("Oops! Something went wrong");
-                          }
-                        } finally{
-                          if(isLoading)
+                          try {
+                            var temp = await signInWithApple();
+                            var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
+                            final tokenResponse = await get(Uri.parse(tempUrl));
                             setState(() {
                               isLoading = false;
                             });
-                        };
+                            if (tokenResponse.statusCode == 200) {
+                              final Map parsedAppleResponse = json.decode(tokenResponse.body);
+                              if (parsedAppleResponse['data']['signup'] as bool) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    settings: RouteSettings(name: "/SocialSignUpScreen"),
+                                    builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: "", tokenId: temp.user!.uid, channel: "apple",),
+                                  ),
+                                ).then((value) async {
+                                  if(!value){Navigator.pop(context, value);}
+                                });
+                              } else {
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                String cookie = tokenResponse.headers.toString();
+                                var str = cookie.split(";");
+                                String id = "";
+                                for (int j = 0; j < str.length; j++) {
+                                  if (str[j].contains("sb.connect.sid")) {
+                                    id = str[j];
+                                    j = str.length;
+                                  }
+                                }
+                                var finalId = id.split(",");
+                                if (finalId.length > 1) {
+                                  for (int j = 0; j < finalId.length; j++) {
+                                    if (finalId[j].contains("sb.connect.sid")) {
+                                      id = finalId[j];
+                                      j = finalId.length;
+                                    }
+                                  }
+                                }
+                                prefs.setBool("isLogin", true);
+                                prefs.setString("login_cookie", id.split("=")[1]);
+                                Navigator.pop(context, false);
+                              }
+                            } else {
+                              CommonExtension().showToast("Oops! Something went wrong");
+                            }
+                          } finally{
+                            if(isLoading)
+                              setState(() {
+                                isLoading = false;
+                              });
+                          };
 
-                      },
-                      child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),),
+                        },
+                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),),
                     if(Platform.isIOS)
                       SizedBox(
-                      height: 1.5.h,
+                        height: 1.5.h,
                       ),
                     GestureDetector(
                       onTap: () async {
@@ -929,71 +930,71 @@ class _SignupScreenState extends State<SignupScreen> {
                         var tempData = await platform.invokeMethod("OpenTiktok");
                         // if (Platform.isAndroid) {
                         //CommonExtension().showToast(tempData);
-                          if(tempData != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(
-                                    name: "/TikTokLoginScreen"),
-                                builder: (context) =>
-                                    TikTokLoginScreen(url: tempData),
-                              ),
-                            ).then((value) async {
-                              try {
-                                if(value['code'] != "null") {
-                                  setState(() {
-                                    isLoading = true;
-                                  });
-                                  final codeResponse = await get(Uri.parse("https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${value['code']}&grant_type=authorization_code"));
+                        if(tempData != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(
+                                  name: "/TikTokLoginScreen"),
+                              builder: (context) =>
+                                  TikTokLoginScreen(url: tempData),
+                            ),
+                          ).then((value) async {
+                            try {
+                              if(value['code'] != "null") {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                final codeResponse = await get(Uri.parse("https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${value['code']}&grant_type=authorization_code"));
 
-                                  print(codeResponse.statusCode);
-                                  print(codeResponse.body);
-                                  if (codeResponse.statusCode == 200) {
-                                    final Map parsed = json.decode(codeResponse.body.toString());
-                                    var tokenBody = jsonEncode(<String, dynamic>{
-                                      "access_token": parsed['data']['access_token'],
-                                      "open_id": parsed['data']['open_id'],
-                                      // "refresh_token": parsed['data']['refresh_token'],
-                                    });
-                                    var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                                    final headers = {
-                                      "cookie": "bst_social_signup=${tempStamp}"
-                                    };
-                                    var urlData = "https://socialbook.io/oauth/tiktok/callback?tokens=" + tokenBody;
-                                    final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    if (tiktokResponse.statusCode == 200) {
-                                      final Map parsed = json.decode(tiktokResponse.body.toString());
-                                      if (parsed["data"]["result"] as bool) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                            builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "tiktok",),
-                                          ),
-                                        ).then((value) async {
-                                          if(!value){Navigator.pop(context, value);}
-                                        });
-                                      }
-                                    } else {
-                                      CommonExtension().showToast("Oops! Something went wrong");
+                                print(codeResponse.statusCode);
+                                print(codeResponse.body);
+                                if (codeResponse.statusCode == 200) {
+                                  final Map parsed = json.decode(codeResponse.body.toString());
+                                  var tokenBody = jsonEncode(<String, dynamic>{
+                                    "access_token": parsed['data']['access_token'],
+                                    "open_id": parsed['data']['open_id'],
+                                    // "refresh_token": parsed['data']['refresh_token'],
+                                  });
+                                  var tempStamp = DateTime.now().millisecondsSinceEpoch;
+                                  final headers = {
+                                    "cookie": "bst_social_signup=${tempStamp}"
+                                  };
+                                  var urlData = "https://socialbook.io/oauth/tiktok/callback?tokens=" + tokenBody;
+                                  final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  if (tiktokResponse.statusCode == 200) {
+                                    final Map parsed = json.decode(tiktokResponse.body.toString());
+                                    if (parsed["data"]["result"] as bool) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          settings: RouteSettings(name: "/SocialSignUpScreen"),
+                                          builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "tiktok",),
+                                        ),
+                                      ).then((value) async {
+                                        if(!value){Navigator.pop(context, value);}
+                                      });
                                     }
                                   } else {
-                                    setState(() {
-                                      isLoading = false;
-                                    });
                                     CommonExtension().showToast("Oops! Something went wrong");
                                   }
                                 } else {
-                                  CommonExtension().showToast("Oops! Unauthorised");
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                  CommonExtension().showToast("Oops! Something went wrong");
                                 }
-                              } catch (error) {
-
+                              } else {
+                                CommonExtension().showToast("Oops! Unauthorised");
                               }
-                            });
-                          }
+                            } catch (error) {
+
+                            }
+                          });
+                        }
                         // }
                         // print("tempData");
                         // print(tempData);
@@ -1025,15 +1026,15 @@ class _SignupScreenState extends State<SignupScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: 1.5.h,
+                      height: 4.h,
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
   _launchURL(String url) async {

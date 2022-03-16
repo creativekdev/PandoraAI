@@ -6,8 +6,6 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/Model/JsonValueModel.dart';
-import 'package:cartoonizer/Model/SignupModel.dart';
-import 'package:cartoonizer/Ui/InstaLoginScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 
@@ -159,18 +157,20 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     List<JsonValueModel> params = [];
-    return Stack(
-      children: [
-        Image.asset(
-          ImagesConstant.ic_background,
-          fit: BoxFit.cover,
-          height: 100.h,
-          width: 100.w,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: LoadingOverlay(
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        color: ColorConstant.PrimaryColor,
+        padding: EdgeInsets.only(top: 5.h),
+        child: Stack(
+          children: [
+            Image.asset(
+              ImagesConstant.ic_background,
+              fit: BoxFit.cover,
+              height: 100.h,
+              width: 100.w,
+            ),
+            LoadingOverlay(
               isLoading: isLoading,
               child: SingleChildScrollView(
                 child: Column(
@@ -206,7 +206,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 GestureDetector(
-                                  onTap: () => {Navigator.pop(context)},
+                                  onTap: () async {
+                                    print("back");
+                                    Navigator.pop(context);
+                                  },
                                   child: Image.asset(
                                     ImagesConstant.ic_back,
                                     height: 10.w,
@@ -411,12 +414,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           };
                           print(body);
                           final response =
-                              await post(url, body: body, headers: headers)
-                                  .whenComplete(() => {
-                                        setState(() {
-                                          isLoading = false;
-                                        }),
-                                      });
+                          await post(url, body: body, headers: headers)
+                              .whenComplete(() => {
+                            setState(() {
+                              isLoading = false;
+                            }),
+                          });
                           print(response.body);
                           if (response.statusCode == 200) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -830,15 +833,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     SizedBox(
-                      height: 1.5.h,
+                      height: 4.h,
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
+            )
+          ],
         ),
-      ],
+      ),
     );
   }
 }
