@@ -18,15 +18,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final Connectivity _connectivity = Connectivity();
+
+  Widget _cachedNetworkImagePlaceholder(BuildContext context, String url) => Container(
+        height: 41.w,
+        width: 41.w,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+  Widget _cachedNetworkImageErrorWidget(BuildContext context, String url, error) => Container(
+        height: 41.w,
+        width: 41.w,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
 
   @override
   void initState() {
     super.initState();
 
     _connectivity.onConnectivityChanged.listen((event) {
-      if(event == ConnectivityResult.mobile || event == ConnectivityResult.wifi/* || event == ConnectivityResult.none*/){
+      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
       }
     });
@@ -48,11 +63,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     future: getConnectionStatus(),
                     builder: (context, snapshot1) {
                       return Center(
-                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool))? StringConstant.empty_msg : StringConstant.no_internet_msg,
+                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
                             ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
                       );
-                    }
-                );
+                    });
               } else {
                 return Column(
                   children: [
@@ -65,11 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 10.w,
                             width: 10.w,
                           ),
-                          TitleTextWidget(
-                              StringConstant.home,
-                              ColorConstant.BtnTextColor,
-                              FontWeight.w600,
-                              14.sp),
+                          TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
                           GestureDetector(
                             onTap: () => {
                               Navigator.push(
@@ -99,17 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(
-                                      name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(
-                                      list: (snapshot.data
-                                      as List<EffectModel>),
-                                      pos: index),
+                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
                                 ))
                           },
                           child: Container(
-                            margin: EdgeInsets.only(
-                                left: 5.w, right: 5.w, bottom: 2.h),
+                            margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
                             child: Card(
                               elevation: 1.h,
                               shadowColor: Color.fromRGBO(0, 0, 0, 0.3),
@@ -126,8 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           children: [
                                             Expanded(
                                               child: Padding(
-                                                padding:
-                                                EdgeInsets.only(right: 1.5.w),
+                                                padding: EdgeInsets.only(right: 1.5.w),
                                                 child: Stack(
                                                   children: [
                                                     ClipRRect(
@@ -135,53 +139,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       borderRadius: BorderRadius.all(Radius.circular(2.w)),
                                                       child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
                                                           ? CachedNetworkImage(
-                                                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + ".webp",
-                                                        fit: BoxFit.fill,
-                                                        height: 41.w,
-                                                        width: 41.w,
-                                                        placeholder: (context, url) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                        errorWidget: (context, url, error) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      )
+                                                              imageUrl:
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + ".webp",
+                                                              fit: BoxFit.fill,
+                                                              height: 41.w,
+                                                              width: 41.w,
+                                                              placeholder: _cachedNetworkImagePlaceholder,
+                                                              errorWidget: _cachedNetworkImageErrorWidget,
+                                                            )
                                                           : CachedNetworkImage(
-                                                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + (snapshot.data as List<EffectModel>)[index].key + ".mobile.jpg",
-                                                        fit: BoxFit.fill,
-                                                        height: 41.w,
-                                                        width: 41.w,
-                                                        placeholder: (context, url) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
+                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                  (snapshot.data as List<EffectModel>)[index].key +
+                                                                  ".mobile.jpg",
+                                                              fit: BoxFit.fill,
+                                                              height: 41.w,
+                                                              width: 41.w,
+                                                              placeholder: _cachedNetworkImagePlaceholder,
+                                                              errorWidget: _cachedNetworkImageErrorWidget,
                                                             ),
-                                                          );
-                                                        },
-                                                        errorWidget: (context, url, error) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -189,67 +164,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                             Expanded(
                                               child: Padding(
-                                                padding:
-                                                EdgeInsets.only(right: 0.w),
+                                                padding: EdgeInsets.only(right: 0.w),
                                                 child: Stack(
                                                   children: [
                                                     ClipRRect(
                                                       borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                                                      clipBehavior: Clip
-                                                          .antiAliasWithSaveLayer,
-                                                      child: (snapshot.data as List<
-                                                          EffectModel>)[
-                                                      index]
-                                                          .key.toString()
-                                                          == "transform"
+                                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                      child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
                                                           ? CachedNetworkImage(
-                                                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + "1.webp",
-                                                        fit: BoxFit.fill,
-                                                        height: 41.w,
-                                                        width: 41.w,
-                                                        placeholder: (context, url) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                        errorWidget: (context, url, error) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      )
+                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                  (snapshot.data as List<EffectModel>)[index].key +
+                                                                  "1.webp",
+                                                              fit: BoxFit.fill,
+                                                              height: 41.w,
+                                                              width: 41.w,
+                                                              placeholder: _cachedNetworkImagePlaceholder,
+                                                              errorWidget: _cachedNetworkImageErrorWidget,
+                                                            )
                                                           : CachedNetworkImage(
-                                                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + (snapshot.data as List<EffectModel>)[index].key + "1.jpg",
-                                                        fit: BoxFit.fill,
-                                                        height: 41.w,
-                                                        width: 41.w,
-                                                        placeholder: (context, url) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
+                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                  (snapshot.data as List<EffectModel>)[index].key +
+                                                                  "1.jpg",
+                                                              fit: BoxFit.fill,
+                                                              height: 41.w,
+                                                              width: 41.w,
+                                                              placeholder: _cachedNetworkImagePlaceholder,
+                                                              errorWidget: _cachedNetworkImageErrorWidget,
                                                             ),
-                                                          );
-                                                        },
-                                                        errorWidget: (context, url, error) {
-                                                          return Container(
-                                                            height: 41.w,
-                                                            width: 41.w,
-                                                            child: Center(
-                                                              child: CircularProgressIndicator(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -257,15 +198,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ],
                                         ),
-                                        if((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
-                                          SizedBox(height: 1.5.w,),
-                                        if((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
+                                        if ((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
+                                          SizedBox(
+                                            height: 1.5.w,
+                                          ),
+                                        if ((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
                                           Row(
                                             children: [
                                               Expanded(
                                                 child: Padding(
-                                                  padding:
-                                                  EdgeInsets.only(right: 1.5.w),
+                                                  padding: EdgeInsets.only(right: 1.5.w),
                                                   child: Stack(
                                                     children: [
                                                       ClipRRect(
@@ -273,53 +215,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         clipBehavior: Clip.antiAliasWithSaveLayer,
                                                         child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
                                                             ? CachedNetworkImage(
-                                                          imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + "2.webp",
-                                                          fit: BoxFit.fill,
-                                                          height: 41.w,
-                                                          width: 41.w,
-                                                          placeholder: (context, url) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                          errorWidget: (context, url, error) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                        )
+                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                    (snapshot.data as List<EffectModel>)[index].key +
+                                                                    "2.webp",
+                                                                fit: BoxFit.fill,
+                                                                height: 41.w,
+                                                                width: 41.w,
+                                                                placeholder: _cachedNetworkImagePlaceholder,
+                                                                errorWidget: _cachedNetworkImageErrorWidget,
+                                                              )
                                                             : CachedNetworkImage(
-                                                          imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + (snapshot.data as List<EffectModel>)[index].key + "2.jpg",
-                                                          fit: BoxFit.fill,
-                                                          height: 41.w,
-                                                          width: 41.w,
-                                                          placeholder: (context, url) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
+                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                    (snapshot.data as List<EffectModel>)[index].key +
+                                                                    "2.jpg",
+                                                                fit: BoxFit.fill,
+                                                                height: 41.w,
+                                                                width: 41.w,
+                                                                placeholder: _cachedNetworkImagePlaceholder,
+                                                                errorWidget: _cachedNetworkImageErrorWidget,
                                                               ),
-                                                            );
-                                                          },
-                                                          errorWidget: (context, url, error) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -327,67 +241,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               Expanded(
                                                 child: Padding(
-                                                  padding:
-                                                  EdgeInsets.only(right: 0.w),
+                                                  padding: EdgeInsets.only(right: 0.w),
                                                   child: Stack(
                                                     children: [
                                                       ClipRRect(
                                                         borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                                                        clipBehavior: Clip
-                                                            .antiAliasWithSaveLayer,
-                                                        child: (snapshot.data as List<
-                                                            EffectModel>)[
-                                                        index]
-                                                            .key.toString()
-                                                            == "transform"
+                                                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                        child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
                                                             ? CachedNetworkImage(
-                                                          imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + "3.webp",
-                                                          fit: BoxFit.fill,
-                                                          height: 41.w,
-                                                          width: 41.w,
-                                                          placeholder: (context, url) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                          errorWidget: (context, url, error) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                        )
+                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                    (snapshot.data as List<EffectModel>)[index].key +
+                                                                    "3.webp",
+                                                                fit: BoxFit.fill,
+                                                                height: 41.w,
+                                                                width: 41.w,
+                                                                placeholder: _cachedNetworkImagePlaceholder,
+                                                                errorWidget: _cachedNetworkImageErrorWidget,
+                                                              )
                                                             : CachedNetworkImage(
-                                                          imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + (snapshot.data as List<EffectModel>)[index].key + "3.jpg",
-                                                          fit: BoxFit.fill,
-                                                          height: 41.w,
-                                                          width: 41.w,
-                                                          placeholder: (context, url) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
+                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                    (snapshot.data as List<EffectModel>)[index].key +
+                                                                    "3.jpg",
+                                                                fit: BoxFit.fill,
+                                                                height: 41.w,
+                                                                width: 41.w,
+                                                                placeholder: _cachedNetworkImagePlaceholder,
+                                                                errorWidget: _cachedNetworkImageErrorWidget,
                                                               ),
-                                                            );
-                                                          },
-                                                          errorWidget: (context, url, error) {
-                                                            return Container(
-                                                              height: 41.w,
-                                                              width: 41.w,
-                                                              child: Center(
-                                                                child: CircularProgressIndicator(),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
                                                       ),
                                                     ],
                                                   ),
@@ -399,14 +279,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 3.w, right: 3.w, bottom: 3.w),
+                                    padding: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 3.w),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
                                           child: TitleTextWidget(
-                                              ((snapshot.data as List<EffectModel>)[index].display_name.toString() == "null")? (snapshot.data as List<EffectModel>)[index].key : (snapshot.data as List<EffectModel>)[index].display_name,
+                                              ((snapshot.data as List<EffectModel>)[index].display_name.toString() == "null")
+                                                  ? (snapshot.data as List<EffectModel>)[index].key
+                                                  : (snapshot.data as List<EffectModel>)[index].display_name,
                                               ColorConstant.BtnTextColor,
                                               FontWeight.w600,
                                               14.sp,
@@ -443,8 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<EffectModel>> fetchCategory() async {
-    var response = await get(
-        Uri.parse('https://socialbook.io/api/tool/cartoonize_config'));
+    var response = await get(Uri.parse('https://socialbook.io/api/tool/cartoonize_config'));
     List<EffectModel> list = [];
     print(response.body);
     if (response.statusCode == 200) {

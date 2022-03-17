@@ -44,13 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var credential;
     try {
-      if(googleAuth?.accessToken != null || googleAuth?.idToken != null){
+      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
           idToken: googleAuth?.idToken,
         );
         return await FirebaseAuth.instance.signInWithCredential(credential);
-      }else{
+      } else {
         return null;
       }
     } catch (error) {
@@ -59,9 +59,15 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     // Once signed in, return the UserCredential
   }
+
   Future<dynamic> signInWithYoutube() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: ['email', 'https://www.googleapis.com/auth/youtube', 'https://www.googleapis.com/auth/yt-analytics.readonly', 'https://www.googleapis.com/auth/youtube.readonly']).signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
+      'email',
+      'https://www.googleapis.com/auth/youtube',
+      'https://www.googleapis.com/auth/yt-analytics.readonly',
+      'https://www.googleapis.com/auth/youtube.readonly'
+    ]).signIn();
 
     // Obtain the auth details from the request
     GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -70,13 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var credential;
     try {
-      if(googleAuth?.accessToken != null || googleAuth?.idToken != null){
+      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
           idToken: googleAuth?.idToken,
         );
         return await FirebaseAuth.instance.signInWithCredential(credential);
-      }else{
+      } else {
         return null;
       }
     } catch (error) {
@@ -85,12 +91,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     // Once signed in, return the UserCredential
   }
+
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
     final LoginResult loginResult = await FacebookAuth.instance.login();
 
     // Create a credential from the access token
-    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
     token = facebookAuthCredential.accessToken;
     tokenId = facebookAuthCredential.idToken;
@@ -402,7 +410,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           // params.add(JsonValueModel("content_type", "image/png"));
                           params.sort();
 
-                          final url = Uri.parse('https://socialbook.io/api/user/login');
+                          final url =
+                              Uri.parse('https://socialbook.io/api/user/login');
                           final headers = {
                             "Content-type": "application/x-www-form-urlencoded"
                           };
@@ -414,30 +423,31 @@ class _LoginScreenState extends State<LoginScreen> {
                           };
                           print(body);
                           final response =
-                          await post(url, body: body, headers: headers)
-                              .whenComplete(() => {
-                            setState(() {
-                              isLoading = false;
-                            }),
-                          });
+                              await post(url, body: body, headers: headers)
+                                  .whenComplete(() => {
+                                        setState(() {
+                                          isLoading = false;
+                                        }),
+                                      });
                           print(response.body);
                           if (response.statusCode == 200) {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             String cookie = response.headers.toString();
                             var str = cookie.split(";");
                             String id = "";
-                            for(int j=0;j<str.length;j++){
-                              if(str[j].contains("sb.connect.sid")){
-                                id=str[j];
-                                j=str.length;
+                            for (int j = 0; j < str.length; j++) {
+                              if (str[j].contains("sb.connect.sid")) {
+                                id = str[j];
+                                j = str.length;
                               }
                             }
                             var finalId = id.split(",");
-                            if(finalId.length>1){
-                              for(int j=0;j<finalId.length;j++){
-                                if(finalId[j].contains("sb.connect.sid")){
-                                  id=finalId[j];
-                                  j=finalId.length;
+                            if (finalId.length > 1) {
+                              for (int j = 0; j < finalId.length; j++) {
+                                if (finalId[j].contains("sb.connect.sid")) {
+                                  id = finalId[j];
+                                  j = finalId.length;
                                 }
                               }
                             }
@@ -445,11 +455,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefs.setString("login_cookie", id.split("=")[1]);
                             Navigator.pop(context, false);
                           } else {
-                            try{
+                            try {
                               CommonExtension().showToast(
                                   json.decode(response.body)['message']);
-                            }catch(e){
-                              CommonExtension().showToast(response.body.toString());
+                            } catch (e) {
+                              CommonExtension()
+                                  .showToast(response.body.toString());
                             }
                           }
                         }
@@ -460,7 +471,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 2.h,
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -491,7 +503,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    if(Platform.isIOS)
+                    if (Platform.isIOS)
                       GestureDetector(
                         onTap: () async {
                           setState(() {
@@ -499,26 +511,40 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                           try {
                             var temp = await signInWithApple();
-                            var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
+                            var tempUrl =
+                                "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
                             final tokenResponse = await get(Uri.parse(tempUrl));
                             setState(() {
                               isLoading = false;
                             });
                             if (tokenResponse.statusCode == 200) {
-                              final Map parsedAppleResponse = json.decode(tokenResponse.body);
-                              if (parsedAppleResponse['data']['signup'] as bool) {
+                              final Map parsedAppleResponse =
+                                  json.decode(tokenResponse.body);
+                              if (parsedAppleResponse['data']['signup']
+                                  as bool) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                    builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: "", tokenId: temp.user!.uid, channel: "apple",),
+                                    settings: RouteSettings(
+                                        name: "/SocialSignUpScreen"),
+                                    builder: (context) => SocialSignUpScreen(
+                                      additionalUserInfo:
+                                          temp.additionalUserInfo!,
+                                      token: "",
+                                      tokenId: temp.user!.uid,
+                                      channel: "apple",
+                                    ),
                                   ),
                                 ).then((value) async {
-                                  if(!value){Navigator.pop(context, value);}
+                                  if (!value) {
+                                    Navigator.pop(context, value);
+                                  }
                                 });
                               } else {
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String cookie = tokenResponse.headers.toString();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                String cookie =
+                                    tokenResponse.headers.toString();
                                 var str = cookie.split(";");
                                 String id = "";
                                 for (int j = 0; j < str.length; j++) {
@@ -537,22 +563,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 }
                                 prefs.setBool("isLogin", true);
-                                prefs.setString("login_cookie", id.split("=")[1]);
+                                prefs.setString(
+                                    "login_cookie", id.split("=")[1]);
                                 Navigator.pop(context, false);
                               }
                             } else {
-                              CommonExtension().showToast("Oops! Something went wrong");
+                              CommonExtension()
+                                  .showToast("Oops! Something went wrong");
                             }
-                          } finally{
-                            if(isLoading)
+                          } finally {
+                            if (isLoading)
                               setState(() {
                                 isLoading = false;
                               });
-                          };
-
+                          }
+                          ;
                         },
-                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),),
-                    if(Platform.isIOS)
+                        child: IconifiedButtonWidget(StringConstant.apple,
+                            ImagesConstant.ic_signup_apple),
+                      ),
+                    if (Platform.isIOS)
                       SizedBox(
                         height: 1.5.h,
                       ),
@@ -568,45 +598,59 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           var tokenBody = jsonEncode(<String, dynamic>{
                             "access_token": token,
-                            "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
+                            "scope":
+                                "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "https://socialbook.io/signup/oauth/google/callback?tokens=" + tokenBody;
+                          var tempUrl =
+                              "https://socialbook.io/signup/oauth/google/callback?tokens=" +
+                                  tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;
                           });
-                          if(tokenResponse.statusCode == 200) {
-                            final Map parsed = json.decode(tokenResponse.body.toString());
+                          if (tokenResponse.statusCode == 200) {
+                            final Map parsed =
+                                json.decode(tokenResponse.body.toString());
                             print(parsed);
-                            if(parsed.containsKey("data")){
+                            if (parsed.containsKey("data")) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: parsed['data']['token'], tokenId: tokenId, channel: "google",),
+                                  settings: RouteSettings(
+                                      name: "/SocialSignUpScreen"),
+                                  builder: (context) => SocialSignUpScreen(
+                                    additionalUserInfo:
+                                        temp.additionalUserInfo!,
+                                    token: parsed['data']['token'],
+                                    tokenId: tokenId,
+                                    channel: "google",
+                                  ),
                                 ),
                               ).then((value) async {
-                                if(!value){Navigator.pop(context, value);}
+                                if (!value) {
+                                  Navigator.pop(context, value);
+                                }
                               });
                             } else {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              SharedPreferences prefs =
+                                  await SharedPreferences.getInstance();
                               String cookie = tokenResponse.headers.toString();
                               var str = cookie.split(";");
                               String id = "";
-                              for(int j=0;j<str.length;j++){
-                                if(str[j].contains("sb.connect.sid")){
-                                  id=str[j];
-                                  j=str.length;
+                              for (int j = 0; j < str.length; j++) {
+                                if (str[j].contains("sb.connect.sid")) {
+                                  id = str[j];
+                                  j = str.length;
                                 }
                               }
                               var finalId = id.split(",");
-                              if(finalId.length>1){
-                                for(int j=0;j<finalId.length;j++){
-                                  if(finalId[j].contains("sb.connect.sid")){
-                                    id=finalId[j];
-                                    j=finalId.length;
+                              if (finalId.length > 1) {
+                                for (int j = 0; j < finalId.length; j++) {
+                                  if (finalId[j].contains("sb.connect.sid")) {
+                                    id = finalId[j];
+                                    j = finalId.length;
                                   }
                                 }
                               }
@@ -615,17 +659,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.pop(context, false);
                             }
                           } else {
-                            CommonExtension().showToast("Oops! Something went wrong");
+                            CommonExtension()
+                                .showToast("Oops! Something went wrong");
                           }
-
                         } finally {
-                          if(isLoading)
+                          if (isLoading)
                             setState(() {
                               isLoading = false;
                             });
-                        };
+                        }
+                        ;
                       },
-                      child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
+                      child: IconifiedButtonWidget(
+                          StringConstant.google, ImagesConstant.ic_google),
                     ),
                     SizedBox(
                       height: 1.5.h,
@@ -814,7 +860,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 builder: (context) => SignupScreen(),
                               ),
                             ).then((value) async {
-                              if(!value){
+                              if (!value) {
                                 Navigator.pop(context, value);
                               }
                             }),

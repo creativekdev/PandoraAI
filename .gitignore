@@ -59,8 +59,7 @@ Thumbs.db
 .buildlog/
 .history
 .svn/
-pubspec.lock
-Podfile.lock
+*.lock
 
 # IntelliJ related
 *.iml
