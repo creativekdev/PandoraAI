@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import 'ChoosePhotoScreen.dart';
+import 'PurchaseScreen.dart';
 import 'SettingScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,7 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     _connectivity.onConnectivityChanged.listen((event) {
-      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
+      if (event == ConnectivityResult.mobile ||
+          event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
       }
     });
@@ -63,8 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     future: getConnectionStatus(),
                     builder: (context, snapshot1) {
                       return Center(
-                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
-                            ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
+                        child: TitleTextWidget(
+                            (snapshot1.hasData && (snapshot1.data as bool))
+                                ? StringConstant.empty_msg
+                                : StringConstant.no_internet_msg,
+                            ColorConstant.BtnTextColor,
+                            FontWeight.w400,
+                            12.sp),
                       );
                     });
               } else {
@@ -109,9 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                                  settings: RouteSettings(name: "/PurchaseScreen"),
+                                  builder: (context) => PurchaseScreen(),
                                 ))
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                            //       builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                            //     ))
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
@@ -137,10 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ClipRRect(
                                                       clipBehavior: Clip.antiAliasWithSaveLayer,
                                                       borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                                                      child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
+                                                      child: (snapshot.data as List<EffectModel>)[index]
+                                                                  .key
+                                                                  .toString() ==
+                                                              "transform"
                                                           ? CachedNetworkImage(
                                                               imageUrl:
-                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + ".webp",
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      ".webp",
                                                               fit: BoxFit.fill,
                                                               height: 41.w,
                                                               width: 41.w,
@@ -148,9 +166,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               errorWidget: _cachedNetworkImageErrorWidget,
                                                             )
                                                           : CachedNetworkImage(
-                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                                  (snapshot.data as List<EffectModel>)[index].key +
-                                                                  ".mobile.jpg",
+                                                              imageUrl:
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      ".mobile.jpg",
                                                               fit: BoxFit.fill,
                                                               height: 41.w,
                                                               width: 41.w,
@@ -170,11 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ClipRRect(
                                                       borderRadius: BorderRadius.all(Radius.circular(2.w)),
                                                       clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                      child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
+                                                      child: (snapshot.data as List<EffectModel>)[index]
+                                                                  .key
+                                                                  .toString() ==
+                                                              "transform"
                                                           ? CachedNetworkImage(
-                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                                  (snapshot.data as List<EffectModel>)[index].key +
-                                                                  "1.webp",
+                                                              imageUrl:
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      "1.webp",
                                                               fit: BoxFit.fill,
                                                               height: 41.w,
                                                               width: 41.w,
@@ -182,9 +205,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               errorWidget: _cachedNetworkImageErrorWidget,
                                                             )
                                                           : CachedNetworkImage(
-                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                                  (snapshot.data as List<EffectModel>)[index].key +
-                                                                  "1.jpg",
+                                                              imageUrl:
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      "1.jpg",
                                                               fit: BoxFit.fill,
                                                               height: 41.w,
                                                               width: 41.w,
@@ -213,11 +237,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ClipRRect(
                                                         borderRadius: BorderRadius.all(Radius.circular(2.w)),
                                                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                        child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
+                                                        child: (snapshot.data as List<EffectModel>)[index]
+                                                                    .key
+                                                                    .toString() ==
+                                                                "transform"
                                                             ? CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "2.webp",
+                                                                imageUrl:
+                                                                    "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                        (snapshot.data as List<EffectModel>)[index]
+                                                                            .key +
+                                                                        "2.webp",
                                                                 fit: BoxFit.fill,
                                                                 height: 41.w,
                                                                 width: 41.w,
@@ -225,9 +254,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 errorWidget: _cachedNetworkImageErrorWidget,
                                                               )
                                                             : CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "2.jpg",
+                                                                imageUrl:
+                                                                    "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                        (snapshot.data as List<EffectModel>)[index]
+                                                                            .key +
+                                                                        "2.jpg",
                                                                 fit: BoxFit.fill,
                                                                 height: 41.w,
                                                                 width: 41.w,
@@ -247,11 +278,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ClipRRect(
                                                         borderRadius: BorderRadius.all(Radius.circular(2.w)),
                                                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                        child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
+                                                        child: (snapshot.data as List<EffectModel>)[index]
+                                                                    .key
+                                                                    .toString() ==
+                                                                "transform"
                                                             ? CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "3.webp",
+                                                                imageUrl:
+                                                                    "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                        (snapshot.data as List<EffectModel>)[index]
+                                                                            .key +
+                                                                        "3.webp",
                                                                 fit: BoxFit.fill,
                                                                 height: 41.w,
                                                                 width: 41.w,
@@ -259,9 +295,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 errorWidget: _cachedNetworkImageErrorWidget,
                                                               )
                                                             : CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "3.jpg",
+                                                                imageUrl:
+                                                                    "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                        (snapshot.data as List<EffectModel>)[index]
+                                                                            .key +
+                                                                        "3.jpg",
                                                                 fit: BoxFit.fill,
                                                                 height: 41.w,
                                                                 width: 41.w,
@@ -285,7 +323,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       children: [
                                         Expanded(
                                           child: TitleTextWidget(
-                                              ((snapshot.data as List<EffectModel>)[index].display_name.toString() == "null")
+                                              ((snapshot.data as List<EffectModel>)[index].display_name.toString() ==
+                                                      "null")
                                                   ? (snapshot.data as List<EffectModel>)[index].key
                                                   : (snapshot.data as List<EffectModel>)[index].display_name,
                                               ColorConstant.BtnTextColor,
