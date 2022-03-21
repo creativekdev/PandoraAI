@@ -1,14 +1,16 @@
-import 'package:cartoonizer/Common/importFile.dart';
-
-import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'package:cartoonizer/Utils/ConsumableStore.dart';
-import 'package:flutter/material.dart';
+
+import 'package:http/http.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
+import 'package:cartoonizer/Utils/ConsumableStore.dart';
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'LoginScreen.dart';
 
 class PurchaseScreen extends StatefulWidget {
@@ -72,29 +74,50 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     });
   }
 
-  Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
+  Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify a purchase before delivering the product.
     // For the purpose of an example, we directly return true.
-    return Future<bool>.value(true);
+
+    Map<String, dynamic> body = {
+      "receipt_data": purchaseDetails.verificationData.serverVerificationData,
+      "purchase_id": purchaseDetails.purchaseID,
+      "product_id": purchaseDetails.productID
+    };
+
+    var sharedPreferences = await SharedPreferences.getInstance();
+    final headers = {"cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
+
+    var response = await post(Uri.parse('${Config.instance.apiHost}/plan/apple_store/buy'), body: body, headers: headers);
+    if (response.statusCode == 200) {
+      return Future<bool>.value(true);
+    } else {
+      return Future<bool>.value(false);
+    }
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
-    // handle invalid purchase here if  _verifyPurchase` failed.
+    // handle invalid purchase here if  _verifyPurchase` failed, just finish it to void can not buy again
+
+    if (purchaseDetails.pendingCompletePurchase) {
+      _inAppPurchase.completePurchase(purchaseDetails);
+    }
   }
 
   void deliverProduct(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify purchase details before delivering the product.
-    // print("///////////////done");
-    // print(purchaseDetails.verificationData.source);
-    // print(purchaseDetails.verificationData.localVerificationData);
-    // print(purchaseDetails.transactionDate);
-
-    await ConsumableStore.save(purchaseDetails.purchaseID!);
-    List<String> consumables = await ConsumableStore.load();
-    setState(() {
-      _purchasePending = false;
-      _consumables = consumables;
-    });
+    if (purchaseDetails.productID == _kConsumableId || purchaseDetails.productID == _kUpgradeId) {
+      await ConsumableStore.save(purchaseDetails.purchaseID!);
+      final List<String> consumables = await ConsumableStore.load();
+      setState(() {
+        _purchasePending = false;
+        _consumables = consumables;
+      });
+    } else {
+      setState(() {
+        _purchases.add(purchaseDetails);
+        _purchasePending = false;
+      });
+    }
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -114,7 +137,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           setState(() {
             _loading = false;
           });
-          print(purchaseDetails);
+          log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
             deliverProduct(purchaseDetails);
@@ -160,7 +183,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     }
 
     ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
-    print("productDetailResponse.error");
     print(productDetailResponse.productDetails);
 
     if (productDetailResponse.error != null) {
@@ -192,8 +214,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     }
 
     List<String> consumables = await ConsumableStore.load();
-    print("productDetailResponse.productDetails[0].title");
-    print(productDetailResponse.productDetails[0].price);
+    // print("productDetailResponse.productDetails[0].price");
+    // print(productDetailResponse.productDetails[0].price);
     setState(() {
       _isAvailable = isAvailable;
       _products = productDetailResponse.productDetails;
@@ -356,16 +378,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   // });
                   late PurchaseParam purchaseParam;
                   if (Platform.isAndroid) {
-                    purchaseParam = GooglePlayPurchaseParam(
-                      productDetails: isYear ? year : month,
-                      applicationUserName: null,
-                    );
+                    purchaseParam = GooglePlayPurchaseParam(productDetails: isYear ? year : month);
                   } else {
-                    purchaseParam = PurchaseParam(
-                      productDetails: isYear ? year : month,
-                      applicationUserName: null,
-                    );
+                    purchaseParam = PurchaseParam(productDetails: isYear ? year : month);
                   }
+
                   try {
                     _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: _kAutoConsume || Platform.isIOS);
                   } catch (error) {
@@ -439,6 +456,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   // setState(() {
                                   //   _loading = true;
                                   // });
+                                  // get all transactions and finish them if testing needed
+                                  var transactions = await SKPaymentQueueWrapper().transactions();
+                                  transactions.forEach((skPaymentTransactionWrapper) {
+                                    SKPaymentQueueWrapper().finishTransaction(skPaymentTransactionWrapper);
+                                  });
                                   _inAppPurchase.restorePurchases();
                                 }
                               },

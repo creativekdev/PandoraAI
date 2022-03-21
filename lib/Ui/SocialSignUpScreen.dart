@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
+import 'package:cartoonizer/config.dart';
 
 import '../Common/Extension.dart';
 import '../Common/sToken.dart';
@@ -289,7 +290,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               "password": passController.text,
                               "channel": widget.channel,
                             };
-                            final access_response = await post(Uri.parse("https://socialbook.io/api/user/signup_with_social_media"), headers: headers, body: lBody);
+                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: lBody);
                             print(access_response.statusCode);
                             print(access_response.body);
                             setState(() {
@@ -338,7 +339,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               "type": "cartoonize",
                               "s": sToken(params)
                             };
-                            final appleResponse = await post(Uri.parse("https://socialbook.io/api/user/signup/simple"), body: lBody);
+                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: lBody);
                             setState(() {
                               isLoading = false;
                             });

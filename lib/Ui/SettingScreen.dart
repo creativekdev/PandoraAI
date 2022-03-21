@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cartoonizer/config.dart';
 
 import 'ChangePasswordScreen.dart';
 import 'EditProfileScreen.dart';
@@ -287,7 +288,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/help/");
+                        _launchURL("${Config.instance.apiHost}p/");
                       },
                       child: ImageTextBarWidget(
                           StringConstant.help, ImagesConstant.ic_help, true),
@@ -297,7 +298,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/terms");
+                        _launchURL("${Config.instance.apiHost}ms");
                       },
                       child: ImageTextBarWidget(StringConstant.term_condition,
                           ImagesConstant.ic_term, true),
@@ -307,7 +308,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/privacy");
+                        _launchURL("${Config.instance.apiHost}vacy");
                       },
                       child: ImageTextBarWidget(StringConstant.privacy_policy1,
                           ImagesConstant.ic_policy, true),
@@ -489,7 +490,7 @@ class _SettingScreenState extends State<SettingScreen> {
       String avatar = sharedPrefs.getString("avatar") ?? "";
 
       get(
-          Uri.parse('https://socialbook.io/api/user/get_login'),
+          Uri.parse('${Config.instance.apiHost}/user/get_login'),
           headers: headers).then((value) async {
         if (value.statusCode == 200) {
           final Map parsed = json.decode(value.body.toString());
@@ -505,7 +506,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
     } else {
       var loginResponse = await get(
-          Uri.parse('https://socialbook.io/api/user/get_login'),
+          Uri.parse('${Config.instance.apiHost}/user/get_login'),
           headers: headers);
       if (loginResponse.statusCode == 200) {
         final Map parsed = json.decode(loginResponse.body.toString());

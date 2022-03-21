@@ -13,6 +13,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:crypto/crypto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:cartoonizer/config.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -411,7 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           params.sort();
 
                           final url =
-                              Uri.parse('https://socialbook.io/api/user/login');
+                              Uri.parse('${Config.instance.apiHost}/user/login');
                           final headers = {
                             "Content-type": "application/x-www-form-urlencoded"
                           };

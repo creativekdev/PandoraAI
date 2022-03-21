@@ -1,8 +1,13 @@
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'dart:developer';
 import 'firebase_options.dart';
 
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Ui/HomeScreen.dart';
+
+import 'config.dart';
+
 void main() async {
+  log(Config.instance.apiHost);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     systemNavigationBarColor: ColorConstant.PrimaryColor,
     statusBarColor: ColorConstant.PrimaryColor,
@@ -11,9 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-      .then((_) =>  runApp(MyApp()));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
