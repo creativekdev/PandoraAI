@@ -19,7 +19,7 @@ class ShareScreen extends StatefulWidget {
   _ShareScreenState createState() => _ShareScreenState();
 }
 class _ShareScreenState extends State<ShareScreen> {
-  static const platform = MethodChannel('io.socialbook/shareVideo');
+  static const platform = MethodChannel('io.socialbook/sharePhoto');
   late VideoPlayerController _videoPlayerController;
 
   @override

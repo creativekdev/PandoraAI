@@ -13,7 +13,7 @@ import TikTokOpenSDK
   ) -> Bool {
       TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
   let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-      let methodChannel = FlutterMethodChannel(name: "io.socialbook/shareVideo",
+      let methodChannel = FlutterMethodChannel(name: "io.socialbook/sharePhoto",
                                                 binaryMessenger: controller.binaryMessenger)
       methodChannel.setMethodCallHandler({
         (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
@@ -53,7 +53,7 @@ import TikTokOpenSDK
           } else if (call.method.elementsEqual("ShareFacebook")) {
               if let dict = call.arguments as? [String:Any]{
                   let videoFilePath = dict["path"] as? String
-                  self.shareFacebbok(videoURLs: URL.init(string: videoFilePath ?? "")!)
+                  self.shareFacebook(videoURLs: URL.init(string: videoFilePath ?? "")!)
               }
               
           } else if (call.method.elementsEqual("AppInstall")) {
@@ -152,14 +152,16 @@ import TikTokOpenSDK
             return false
         }
    
-    func shareFacebbok(videoURLs:URL) {
-        let content: ShareVideoContent = ShareVideoContent()
+    func shareFacebook(videoURLs:URL) {
+        let content: SharePhotoContent = SharePhotoContent()
                 //let videoURLs = Bundle.main.url(forResource: "video", withExtension: "mp4")!
                 createAssetURL(url: videoURLs) { url in
                     DispatchQueue.main.async {
-                        let video = ShareVideo()
-                        video.videoURL = URL(string: url)
-                        content.video = video
+
+                        let photo = SharePhoto(
+                            imageURL: URL(string: url)!, isUserGenerated: true
+                            )
+                        content.photos = [photo]
                         let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
                                // dialog.mode = mode
                         //let shareDialog = ShareDialog()

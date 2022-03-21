@@ -10,12 +10,14 @@ import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import 'LoginScreen.dart';
+
 class PurchaseScreen extends StatefulWidget {
   const PurchaseScreen({Key? key}) : super(key: key);
 
   @override
   _PurchaseScreenState createState() => _PurchaseScreenState();
 }
+
 const bool _kAutoConsume = true;
 const String _kConsumableId = 'io.socialbook.cartoonizer.monthly';
 const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly';
@@ -25,8 +27,8 @@ const List<String> _kProductIds = <String>[
   _kConsumableId,
   _kUpgradeId,
 ];
-class _PurchaseScreenState extends State<PurchaseScreen> {
 
+class _PurchaseScreenState extends State<PurchaseScreen> {
   bool isYear = true;
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
@@ -42,8 +44,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   void initState() {
-    final Stream<List<PurchaseDetails>> purchaseUpdated =
-        _inAppPurchase.purchaseStream;
+    final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
@@ -109,11 +110,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           setState(() {
             _loading = false;
           });
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
+        } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
           setState(() {
             _loading = false;
           });
+          print(purchaseDetails);
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
             deliverProduct(purchaseDetails);
@@ -204,24 +205,21 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   Column _getColumnData() {
-
     if (!_isAvailable) {
       return Column();
     }
 
-    for(int i = 0; i < _purchases.length; i++)
-    {
+    for (int i = 0; i < _purchases.length; i++) {
       if (_purchases[i].pendingCompletePurchase) {
         _inAppPurchase.completePurchase(_purchases[i]);
       }
     }
 
     var year, month;
-    for(int i = 0; i < _products.length; i++)
-    {
-      if(_products[i].id == _kConsumableId){
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].id == _kConsumableId) {
         month = _products[i];
-      }else if(_products[i].id == _kUpgradeId){
+      } else if (_products[i].id == _kUpgradeId) {
         year = _products[i];
       }
     }
@@ -234,26 +232,31 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: GestureDetector(
                 onTap: () => {
-                  setState((){
+                  setState(() {
                     isYear = !isYear;
                   })
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isYear? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
                     child: Row(
                       children: [
-                        Image.asset(isYear? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off, height: 8.w, width: 8.w,),
+                        Image.asset(
+                          isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
+                          height: 8.w,
+                          width: 8.w,
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -267,10 +270,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              TitleTextWidget("50%",
-                                  ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
-                              TitleTextWidget("OFF",
-                                  ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
+                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
+                              TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
                             ],
                           ),
                         ),
@@ -280,31 +281,38 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 2.h,),
+            SizedBox(
+              height: 2.h,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.w),
               child: GestureDetector(
                 onTap: () => {
-                  setState((){
+                  setState(() {
                     isYear = !isYear;
                   })
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !isYear? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: !isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
                     child: Row(
                       children: [
-                        Image.asset(!isYear? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off, height: 8.w, width: 8.w,),
+                        Image.asset(
+                          !isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
+                          height: 8.w,
+                          width: 8.w,
+                        ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -317,10 +325,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              TitleTextWidget("50%",
-                                  ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
-                              TitleTextWidget("OFF",
-                                  ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
+                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
+                              TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
                             ],
                           ),
                         ),
@@ -330,11 +336,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 4.h,),
+            SizedBox(
+              height: 4.h,
+            ),
             GestureDetector(
               onTap: () async {
                 var sharedPrefs = await SharedPreferences.getInstance();
-                if(!(sharedPrefs.getBool("isLogin") ?? false)){
+                if (!(sharedPrefs.getBool("isLogin") ?? false)) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -342,26 +350,25 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       builder: (context) => LoginScreen(),
                     ),
                   ).then((value) => Navigator.pop(context, value));
-                }else{
+                } else {
                   // setState(() {
                   //   _loading = true;
                   // });
                   late PurchaseParam purchaseParam;
                   if (Platform.isAndroid) {
                     purchaseParam = GooglePlayPurchaseParam(
-                      productDetails: isYear? year : month,
-                      applicationUserName: null,);
+                      productDetails: isYear ? year : month,
+                      applicationUserName: null,
+                    );
                   } else {
                     purchaseParam = PurchaseParam(
-                      productDetails: isYear? year : month,
+                      productDetails: isYear ? year : month,
                       applicationUserName: null,
                     );
                   }
-                  try{
-                    _inAppPurchase.buyConsumable(
-                        purchaseParam: purchaseParam,
-                        autoConsume: _kAutoConsume || Platform.isIOS);
-                  }catch(error){
+                  try {
+                    _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: _kAutoConsume || Platform.isIOS);
+                  } catch (error) {
                     print("123" + error.toString());
                   }
                 }
@@ -377,8 +384,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   @override
   void dispose() {
     if (Platform.isIOS) {
-      var iosPlatformAddition = _inAppPurchase
-          .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       iosPlatformAddition.setDelegate(null);
     }
     _subscription.cancel();
@@ -398,120 +404,145 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             fit: BoxFit.fill,
           ),
           SafeArea(
-            child: LoadingOverlay(isLoading: _loading, child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => {Navigator.pop(context)},
-                        child: Image.asset(
-                          ImagesConstant.ic_close,
-                          height: 10.w,
-                          width: 10.w,
-                        ),
-                      ),
-                      Expanded(
-                        child: SizedBox(),
-                      ),
-                      if(_isAvailable)
-                        GestureDetector(
-                          onTap: () async {
-                            var sharedPrefs = await SharedPreferences.getInstance();
-                            if(!(sharedPrefs.getBool("isLogin") ?? false)){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/LoginScreen"),
-                                  builder: (context) => LoginScreen(),
-                                ),
-                              ).then((value) => Navigator.pop(context, value));
-                            }else{
-                              // setState(() {
-                              //   _loading = true;
-                              // });
-                              _inAppPurchase.restorePurchases();
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromRGBO(255, 255, 255, 0.8),
-                              borderRadius: BorderRadius.circular(1.w),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 2.w, vertical: 0.6.h),
-                              child: TitleTextWidget(StringConstant.restore,
-                                  ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
+            child: LoadingOverlay(
+                isLoading: _loading,
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => {Navigator.pop(context)},
+                            child: Image.asset(
+                              ImagesConstant.ic_close,
+                              height: 10.w,
+                              width: 10.w,
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 3.h,),
-                        Image.asset(ImagesConstant.ic_purchase_emoji, width: 50.w, fit: BoxFit.fitWidth,),
-                        SizedBox(height: 1.h,),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
-                          child: Card(
-                            shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3.w),),
-                            elevation: 2.h,
-                            child: Padding(
-                              padding: EdgeInsets.all(5.w),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(ImagesConstant.ic_no_watermark, height: 8.w, width: 8.w,),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                        child: TitleTextWidget(StringConstant.no_watermark1,
-                                            ColorConstant.TextBlack, FontWeight.w400, 12.sp),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 2.h,),
-                                  Row(
-                                    children: [
-                                      Image.asset(ImagesConstant.ic_hd, height: 8.w, width: 8.w,),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                        child: TitleTextWidget(StringConstant.high_resolution,
-                                            ColorConstant.TextBlack, FontWeight.w400, 12.sp),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 2.h,),
-                                  Row(
-                                    children: [
-                                      Image.asset(ImagesConstant.ic_rocket, height: 8.w, width: 8.w,),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                        child: TitleTextWidget(StringConstant.faster_speed,
-                                            ColorConstant.TextBlack, FontWeight.w400, 12.sp),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                          Expanded(
+                            child: SizedBox(),
+                          ),
+                          if (_isAvailable)
+                            GestureDetector(
+                              onTap: () async {
+                                var sharedPrefs = await SharedPreferences.getInstance();
+                                if (!(sharedPrefs.getBool("isLogin") ?? false)) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      settings: RouteSettings(name: "/LoginScreen"),
+                                      builder: (context) => LoginScreen(),
+                                    ),
+                                  ).then((value) => Navigator.pop(context, value));
+                                } else {
+                                  // setState(() {
+                                  //   _loading = true;
+                                  // });
+                                  _inAppPurchase.restorePurchases();
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color.fromRGBO(255, 255, 255, 0.8),
+                                  borderRadius: BorderRadius.circular(1.w),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
+                                  child: TitleTextWidget(StringConstant.restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 2.h,),
-                        _getColumnData(),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            )),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 3.h,
+                            ),
+                            Image.asset(
+                              ImagesConstant.ic_purchase_emoji,
+                              width: 50.w,
+                              fit: BoxFit.fitWidth,
+                            ),
+                            SizedBox(
+                              height: 1.h,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+                              child: Card(
+                                shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(3.w),
+                                ),
+                                elevation: 2.h,
+                                child: Padding(
+                                  padding: EdgeInsets.all(5.w),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            ImagesConstant.ic_no_watermark,
+                                            height: 8.w,
+                                            width: 8.w,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            ImagesConstant.ic_hd,
+                                            height: 8.w,
+                                            width: 8.w,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            ImagesConstant.ic_rocket,
+                                            height: 8.w,
+                                            width: 8.w,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 2.h,
+                            ),
+                            _getColumnData(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
           ),
         ],
       ),
