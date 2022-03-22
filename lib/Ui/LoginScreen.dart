@@ -98,8 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final LoginResult loginResult = await FacebookAuth.instance.login();
 
     // Create a credential from the access token
-    final OAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
     token = facebookAuthCredential.accessToken;
     tokenId = facebookAuthCredential.idToken;
@@ -112,11 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
   /// Generates a cryptographically secure random nonce, to be included in a
   /// credential request.
   String generateNonce([int length = 32]) {
-    final charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
   }
 
   /// Returns the sha256 hash of [input] in hex notation.
@@ -209,8 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                                top: 1.h, left: 5.w, right: 5.w),
+                            margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -225,11 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 10.w,
                                   ),
                                 ),
-                                TitleTextWidget(
-                                    StringConstant.login,
-                                    ColorConstant.White,
-                                    FontWeight.w600,
-                                    14.sp),
+                                TitleTextWidget(StringConstant.login, ColorConstant.White, FontWeight.w600, 14.sp),
                                 SizedBox(
                                   height: 10.w,
                                   width: 10.w,
@@ -240,8 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    TitleTextWidget(StringConstant.welcome,
-                        ColorConstant.TextBlack, FontWeight.w600, 16.sp),
+                    TitleTextWidget(StringConstant.welcome, ColorConstant.TextBlack, FontWeight.w600, 16.sp),
                     Container(
                       width: 20.w,
                       height: 0.3.h,
@@ -259,16 +250,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 3.h,
                     ),
-                    TextInputWidget(
-                        StringConstant.email,
-                        ImagesConstant.ic_email,
-                        ColorConstant.TextBlack,
-                        FontWeight.w400,
-                        12.sp,
-                        TextInputAction.next,
-                        TextInputType.emailAddress,
-                        false,
-                        emailController),
+                    TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp,
+                        TextInputAction.next, TextInputType.emailAddress, false, emailController),
                     SizedBox(
                       height: 1.5.h,
                     ),
@@ -277,8 +260,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 5.w),
                       child: Card(
                         elevation: 0.5.h,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.w)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -340,9 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     })
                                   },
                                   child: Image.asset(
-                                    isShow
-                                        ? ImagesConstant.ic_eye
-                                        : ImagesConstant.ic_eye_close,
+                                    isShow ? ImagesConstant.ic_eye : ImagesConstant.ic_eye_close,
                                     height: 7.w,
                                     width: 7.w,
                                   ),
@@ -366,17 +346,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    settings: RouteSettings(
-                                        name: "/ForgotPasswordScreen"),
-                                    builder: (context) =>
-                                        ForgotPasswordScreen(),
+                                    settings: RouteSettings(name: "/ForgotPasswordScreen"),
+                                    builder: (context) => ForgotPasswordScreen(),
                                   ))
                             },
-                            child: TitleTextWidget(
-                                StringConstant.forgot_password,
-                                ColorConstant.HintColor,
-                                FontWeight.w400,
-                                11.sp),
+                            child: TitleTextWidget(StringConstant.forgot_password, ColorConstant.HintColor, FontWeight.w400, 11.sp),
                           ),
                         ],
                       ),
@@ -387,35 +361,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       onTap: () async {
                         if (emailController.text.trim().isEmpty) {
-                          CommonExtension()
-                              .showToast(StringConstant.email_validation);
+                          CommonExtension().showToast(StringConstant.email_validation);
                         } else if (passController.text.trim().isEmpty) {
-                          CommonExtension()
-                              .showToast(StringConstant.pass_validation);
-                        } else if (!CommonExtension()
-                            .isValidEmail(emailController.text.trim())) {
-                          CommonExtension()
-                              .showToast(StringConstant.email_validation1);
+                          CommonExtension().showToast(StringConstant.pass_validation);
+                        } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
+                          CommonExtension().showToast(StringConstant.email_validation1);
                         } else {
                           FocusManager.instance.primaryFocus?.unfocus();
                           setState(() {
                             isLoading = true;
                           });
-                          params.add(JsonValueModel(
-                              "email", emailController.text.trim()));
-                          params.add(JsonValueModel(
-                              "password", passController.text.trim()));
+                          params.add(JsonValueModel("email", emailController.text.trim()));
+                          params.add(JsonValueModel("password", passController.text.trim()));
 
                           // params.add(JsonValueModel("bucket", "free-socialbook"));
                           // params.add(JsonValueModel("file_name", "ic_puchase_emoji.png"));
                           // params.add(JsonValueModel("content_type", "image/png"));
                           params.sort();
 
-                          final url =
-                              Uri.parse('${Config.instance.apiHost}/user/login');
-                          final headers = {
-                            "Content-type": "application/x-www-form-urlencoded"
-                          };
+                          final url = Uri.parse('${Config.instance.apiHost}/user/login');
+                          final headers = {"Content-type": "application/x-www-form-urlencoded"};
                           Map<String, dynamic> body = {
                             "email": emailController.text.trim(),
                             "password": passController.text.trim(),
@@ -423,17 +388,14 @@ class _LoginScreenState extends State<LoginScreen> {
                             "s": sToken(params)
                           };
                           print(body);
-                          final response =
-                              await post(url, body: body, headers: headers)
-                                  .whenComplete(() => {
-                                        setState(() {
-                                          isLoading = false;
-                                        }),
-                                      });
+                          final response = await post(url, body: body, headers: headers).whenComplete(() => {
+                                setState(() {
+                                  isLoading = false;
+                                }),
+                              });
                           print(response.body);
                           if (response.statusCode == 200) {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
                             String cookie = response.headers.toString();
                             var str = cookie.split(";");
                             String id = "";
@@ -457,11 +419,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.pop(context, false);
                           } else {
                             try {
-                              CommonExtension().showToast(
-                                  json.decode(response.body)['message']);
+                              CommonExtension().showToast(json.decode(response.body)['message']);
                             } catch (e) {
-                              CommonExtension()
-                                  .showToast(response.body.toString());
+                              CommonExtension().showToast(response.body.toString());
                             }
                           }
                         }
@@ -472,8 +432,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 2.h,
                     ),
                     Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+                      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -487,11 +446,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                             width: 3.w,
                           ),
-                          TitleTextWidget(
-                              StringConstant.or,
-                              ColorConstant.PrimaryColor,
-                              FontWeight.w500,
-                              11.sp),
+                          TitleTextWidget(StringConstant.or, ColorConstant.PrimaryColor, FontWeight.w500, 11.sp),
                           SizedBox(
                             width: 3.w,
                           ),
@@ -512,25 +467,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                           try {
                             var temp = await signInWithApple();
-                            var tempUrl =
-                                "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
+                            var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
                             final tokenResponse = await get(Uri.parse(tempUrl));
                             setState(() {
                               isLoading = false;
                             });
                             if (tokenResponse.statusCode == 200) {
-                              final Map parsedAppleResponse =
-                                  json.decode(tokenResponse.body);
-                              if (parsedAppleResponse['data']['signup']
-                                  as bool) {
+                              final Map parsedAppleResponse = json.decode(tokenResponse.body);
+                              if (parsedAppleResponse['data']['signup'] as bool) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    settings: RouteSettings(
-                                        name: "/SocialSignUpScreen"),
+                                    settings: RouteSettings(name: "/SocialSignUpScreen"),
                                     builder: (context) => SocialSignUpScreen(
-                                      additionalUserInfo:
-                                          temp.additionalUserInfo!,
+                                      additionalUserInfo: temp.additionalUserInfo!,
                                       token: "",
                                       tokenId: temp.user!.uid,
                                       channel: "apple",
@@ -542,10 +492,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 });
                               } else {
-                                SharedPreferences prefs =
-                                    await SharedPreferences.getInstance();
-                                String cookie =
-                                    tokenResponse.headers.toString();
+                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                String cookie = tokenResponse.headers.toString();
                                 var str = cookie.split(";");
                                 String id = "";
                                 for (int j = 0; j < str.length; j++) {
@@ -564,13 +512,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   }
                                 }
                                 prefs.setBool("isLogin", true);
-                                prefs.setString(
-                                    "login_cookie", id.split("=")[1]);
+                                prefs.setString("login_cookie", id.split("=")[1]);
                                 Navigator.pop(context, false);
                               }
                             } else {
-                              CommonExtension()
-                                  .showToast("Oops! Something went wrong");
+                              CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } finally {
                             if (isLoading)
@@ -580,8 +526,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           ;
                         },
-                        child: IconifiedButtonWidget(StringConstant.apple,
-                            ImagesConstant.ic_signup_apple),
+                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),
                       ),
                     if (Platform.isIOS)
                       SizedBox(
@@ -599,31 +544,25 @@ class _LoginScreenState extends State<LoginScreen> {
                           }
                           var tokenBody = jsonEncode(<String, dynamic>{
                             "access_token": token,
-                            "scope":
-                                "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
+                            "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl =
-                              "https://socialbook.io/signup/oauth/google/callback?tokens=" +
-                                  tokenBody;
+                          var tempUrl = "https://socialbook.io/signup/oauth/google/callback?tokens=" + tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;
                           });
                           if (tokenResponse.statusCode == 200) {
-                            final Map parsed =
-                                json.decode(tokenResponse.body.toString());
+                            final Map parsed = json.decode(tokenResponse.body.toString());
                             print(parsed);
                             if (parsed.containsKey("data")) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(
-                                      name: "/SocialSignUpScreen"),
+                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
                                   builder: (context) => SocialSignUpScreen(
-                                    additionalUserInfo:
-                                        temp.additionalUserInfo!,
+                                    additionalUserInfo: temp.additionalUserInfo!,
                                     token: parsed['data']['token'],
                                     tokenId: tokenId,
                                     channel: "google",
@@ -635,8 +574,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                               });
                             } else {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
                               String cookie = tokenResponse.headers.toString();
                               var str = cookie.split(";");
                               String id = "";
@@ -660,8 +598,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.pop(context, false);
                             }
                           } else {
-                            CommonExtension()
-                                .showToast("Oops! Something went wrong");
+                            CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } finally {
                           if (isLoading)
@@ -671,8 +608,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                         ;
                       },
-                      child: IconifiedButtonWidget(
-                          StringConstant.google, ImagesConstant.ic_google),
+                      child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
                     ),
                     SizedBox(
                       height: 1.5.h,
@@ -850,8 +786,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TitleTextWidget(StringConstant.no_account,
-                            ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                        TitleTextWidget(StringConstant.no_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                         GestureDetector(
                           onTap: () => {
                             Navigator.push(

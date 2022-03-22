@@ -11,6 +11,8 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:cartoonizer/Utils/ConsumableStore.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/api.dart';
 import 'LoginScreen.dart';
 
 class PurchaseScreen extends StatefulWidget {
@@ -42,6 +44,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   bool _isAvailable = false;
   bool _purchasePending = false;
   bool _loading = true;
+  bool _showPurchasePlan = false;
+  late UserModel _user;
   String? _queryProductError;
 
   @override
@@ -50,13 +54,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
-      // print("done");
       _subscription.cancel();
     }, onError: (error) {
       print("error");
-      // setState(() {
-      //   _loading = false;
-      // });
     }, cancelOnError: true);
     initStoreInfo();
     super.initState();
@@ -106,7 +106,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   void deliverProduct(PurchaseDetails purchaseDetails) async {
     // IMPORTANT!! Always verify purchase details before delivering the product.
     if (purchaseDetails.productID == _kConsumableId || purchaseDetails.productID == _kUpgradeId) {
-      await ConsumableStore.save(purchaseDetails.purchaseID!);
+      await ConsumableStore.save(purchaseDetails.purchaseID ?? "");
       final List<String> consumables = await ConsumableStore.load();
       setState(() {
         _purchasePending = false;
@@ -126,10 +126,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         setState(() {
           _loading = true;
         });
-        // showPendingUI();
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
-          // handleError(purchaseDetails.error!);
           setState(() {
             _loading = false;
           });
@@ -140,6 +138,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
+            // reload user by get login
+            UserModel user = await API.getLogin(true);
+            if (user.subscription.containsKey('id')) {
+              setState(() {
+                _showPurchasePlan = true;
+                _loading = false;
+                _user = user;
+              });
+            }
             deliverProduct(purchaseDetails);
           } else {
             _handleInvalidPurchase(purchaseDetails);
@@ -180,6 +187,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     if (Platform.isIOS) {
       var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
+    }
+
+    UserModel user = await API.getLogin(true);
+    if (user.subscription.containsKey('id')) {
+      setState(() {
+        _showPurchasePlan = true;
+        _user = user;
+      });
     }
 
     ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
@@ -226,7 +241,42 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     });
   }
 
-  Column _getColumnData() {
+  Widget _buildPurchaseButton(year, month) {
+    if (_showPurchasePlan) {
+      return Container();
+    }
+
+    return GestureDetector(
+      onTap: () async {
+        var sharedPrefs = await SharedPreferences.getInstance();
+        if (!(sharedPrefs.getBool("isLogin") ?? false)) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              settings: RouteSettings(name: "/LoginScreen"),
+              builder: (context) => LoginScreen(),
+            ),
+          ).then((value) => Navigator.pop(context, value));
+        } else {
+          late PurchaseParam purchaseParam;
+          if (Platform.isAndroid) {
+            purchaseParam = GooglePlayPurchaseParam(productDetails: isYear ? year : month);
+          } else {
+            purchaseParam = PurchaseParam(productDetails: isYear ? year : month);
+          }
+
+          try {
+            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: _kAutoConsume || Platform.isIOS);
+          } catch (error) {
+            print("123" + error.toString());
+          }
+        }
+      },
+      child: _showPurchasePlan ? null : ButtonWidget(StringConstant.txtContinue),
+    );
+  }
+
+  Column _buildProductList() {
     if (!_isAvailable) {
       return Column();
     }
@@ -244,6 +294,46 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       } else if (_products[i].id == _kUpgradeId) {
         year = _products[i];
       }
+    }
+
+    var currentPlan;
+    if (_showPurchasePlan) {
+      bool isMonthlyPlan = _user.subscription['plan_type'] == 'monthly';
+      currentPlan = isMonthlyPlan ? month : year;
+
+      return Column(children: [
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(235, 232, 255, 1),
+                borderRadius: BorderRadius.circular(2.w),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      ImagesConstant.ic_radio_on,
+                      height: 8.w,
+                      width: 8.w,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack,
+                              FontWeight.w500, 12.sp,
+                              align: TextAlign.start),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ))
+      ]);
     }
 
     return Column(
@@ -361,37 +451,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             SizedBox(
               height: 4.h,
             ),
-            GestureDetector(
-              onTap: () async {
-                var sharedPrefs = await SharedPreferences.getInstance();
-                if (!(sharedPrefs.getBool("isLogin") ?? false)) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/LoginScreen"),
-                      builder: (context) => LoginScreen(),
-                    ),
-                  ).then((value) => Navigator.pop(context, value));
-                } else {
-                  // setState(() {
-                  //   _loading = true;
-                  // });
-                  late PurchaseParam purchaseParam;
-                  if (Platform.isAndroid) {
-                    purchaseParam = GooglePlayPurchaseParam(productDetails: isYear ? year : month);
-                  } else {
-                    purchaseParam = PurchaseParam(productDetails: isYear ? year : month);
-                  }
-
-                  try {
-                    _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: _kAutoConsume || Platform.isIOS);
-                  } catch (error) {
-                    print("123" + error.toString());
-                  }
-                }
-              },
-              child: ButtonWidget(StringConstant.txtContinue),
-            ),
+            _buildPurchaseButton(year, month),
           ],
         )
       ],
@@ -558,7 +618,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                             SizedBox(
                               height: 2.h,
                             ),
-                            _getColumnData(),
+                            _buildProductList(),
                           ],
                         ),
                       ),

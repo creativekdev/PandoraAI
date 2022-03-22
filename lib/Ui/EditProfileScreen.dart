@@ -11,7 +11,8 @@ import 'package:path/path.dart';
 import '../Common/Extension.dart';
 import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
-import '../Model/SignupModel.dart';
+import '../Model/UserModel.dart';
+import 'package:cartoonizer/api.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -21,8 +22,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final EditProfileScreenController controller =
-      Get.put(EditProfileScreenController());
+  final EditProfileScreenController controller = Get.put(EditProfileScreenController());
   var imagePicker;
   final nameController = TextEditingController();
 
@@ -58,8 +58,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     children: [
                       Container(
-                        margin:
-                            EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                        margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -71,11 +70,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 width: 10.w,
                               ),
                             ),
-                            TitleTextWidget(
-                                StringConstant.edit_profile,
-                                ColorConstant.BtnTextColor,
-                                FontWeight.w600,
-                                14.sp),
+                            TitleTextWidget(StringConstant.edit_profile, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
                             SizedBox(
                               height: 10.w,
                               width: 10.w,
@@ -110,87 +105,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             child: Container(
                                               width: 35.w,
                                               height: 35.w,
-                                              margin:
-                                                  EdgeInsets.only(top: 10.h),
+                                              margin: EdgeInsets.only(top: 10.h),
                                               child: Stack(
                                                 children: [
                                                   Card(
                                                     elevation: 2.h,
-                                                    clipBehavior: Clip
-                                                        .antiAliasWithSaveLayer,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50.w)),
+                                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.w)),
                                                     child: Container(
                                                       decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                            color: ColorConstant
-                                                                .White,
-                                                            width: 2.w),
+                                                        border: Border.all(color: ColorConstant.White, width: 2.w),
                                                       ),
                                                       child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50.w),
-                                                        child: (controller
-                                                                .isPhotoSelect
-                                                                .value)
+                                                        borderRadius: BorderRadius.circular(50.w),
+                                                        child: (controller.isPhotoSelect.value)
                                                             ? Obx(
-                                                                () =>
-                                                                    Image.file(
-                                                                  controller
-                                                                          .image
-                                                                          .value
-                                                                      as File,
+                                                                () => Image.file(
+                                                                  controller.image.value as File,
                                                                   width: 40.w,
                                                                   height: 40.w,
-                                                                  fit: BoxFit
-                                                                      .fill,
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                          error,
-                                                                          stackTrace) {
-                                                                    return Image
-                                                                        .asset(
-                                                                      ImagesConstant
-                                                                          .ic_demo1,
-                                                                      fit: BoxFit
-                                                                          .fill,
-                                                                      width:
-                                                                          40.w,
-                                                                      height:
-                                                                          40.w,
+                                                                  fit: BoxFit.fill,
+                                                                  errorBuilder: (context, error, stackTrace) {
+                                                                    return Image.asset(
+                                                                      ImagesConstant.ic_demo1,
+                                                                      fit: BoxFit.fill,
+                                                                      width: 40.w,
+                                                                      height: 40.w,
                                                                     );
                                                                   },
                                                                 ),
                                                               )
                                                             : Image.network(
-                                                                (snapshot
-                                                                        .hasData)
-                                                                    ? (snapshot.data
-                                                                            as SignupModel)
-                                                                        .avatar
-                                                                    : "",
+                                                                (snapshot.hasData) ? (snapshot.data as UserModel).avatar : "",
                                                                 width: 40.w,
                                                                 height: 40.w,
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                errorBuilder:
-                                                                    (context,
-                                                                        error,
-                                                                        stackTrace) {
-                                                                  return Image
-                                                                      .asset(
-                                                                    ImagesConstant
-                                                                        .ic_demo1,
-                                                                    fit: BoxFit
-                                                                        .fill,
+                                                                fit: BoxFit.fill,
+                                                                errorBuilder: (context, error, stackTrace) {
+                                                                  return Image.asset(
+                                                                    ImagesConstant.ic_demo1,
+                                                                    fit: BoxFit.fill,
                                                                     width: 40.w,
-                                                                    height:
-                                                                        40.w,
+                                                                    height: 40.w,
                                                                   );
                                                                 },
                                                               ),
@@ -202,13 +157,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                     right: 2.w,
                                                     child: GestureDetector(
                                                       onTap: () async {
-                                                        showCameraDialog(
-                                                            context);
+                                                        showCameraDialog(context);
                                                       },
                                                       child: SimpleShadow(
                                                         child: Image.asset(
-                                                          ImagesConstant
-                                                              .ic_camera_upload,
+                                                          ImagesConstant.ic_camera_upload,
                                                           height: 10.w,
                                                           width: 10.w,
                                                         ),
@@ -224,78 +177,42 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          TitleTextWidget(
-                                              (snapshot.hasData)
-                                                  ? (snapshot.data
-                                                          as SignupModel)
-                                                      .email
-                                                  : "",
-                                              ColorConstant.LightTextColor,
-                                              FontWeight.w400,
-                                              14.sp),
+                                          TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.LightTextColor,
+                                              FontWeight.w400, 14.sp),
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          SimpleTextInputWidget(
-                                              StringConstant.name_hint,
-                                              ColorConstant.HintColor,
-                                              FontWeight.w400,
-                                              12.sp,
-                                              TextInputAction.done,
-                                              TextInputType.emailAddress,
-                                              false,
-                                              nameController),
+                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.HintColor, FontWeight.w400, 12.sp,
+                                              TextInputAction.done, TextInputType.emailAddress, false, nameController),
                                           SizedBox(
                                             height: 4.h,
                                           ),
                                           GestureDetector(
                                             onTap: () async {
-                                              if (nameController.text
-                                                  .trim()
-                                                  .isEmpty) {
-                                                CommonExtension().showToast(
-                                                    StringConstant
-                                                        .name_validation);
+                                              if (nameController.text.trim().isEmpty) {
+                                                CommonExtension().showToast(StringConstant.name_validation);
                                               } else {
-                                                FocusManager
-                                                    .instance.primaryFocus
-                                                    ?.unfocus();
-                                                controller
-                                                    .changeIsLoading(true);
+                                                FocusManager.instance.primaryFocus?.unfocus();
+                                                controller.changeIsLoading(true);
                                                 var sharedPrefs = await SharedPreferences.getInstance();
                                                 final headers = {
-                                                  "Content-type":
-                                                      "application/json",
-                                                  "cookie":
-                                                      "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
+                                                  "Content-type": "application/json",
+                                                  "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
                                                 };
 
-                                                List<JsonValueModel> params =
-                                                    [];
-                                                params.add(JsonValueModel(
-                                                    "name",
-                                                    nameController.text
-                                                        .toString()));
-                                                params.add(JsonValueModel(
-                                                    "avatar",
-                                                    controller.imageUrl.value));
+                                                List<JsonValueModel> params = [];
+                                                params.add(JsonValueModel("name", nameController.text.toString()));
+                                                params.add(JsonValueModel("avatar", controller.imageUrl.value));
                                                 params.sort();
 
-                                                var databody = jsonEncode(<
-                                                    String, dynamic>{
-                                                  'name': nameController.text
-                                                      .toString(),
-                                                  'avatar':
-                                                      controller.imageUrl.value,
+                                                var databody = jsonEncode(<String, dynamic>{
+                                                  'name': nameController.text.toString(),
+                                                  'avatar': controller.imageUrl.value,
                                                   's': sToken(params),
                                                 });
 
                                                 final updateProfileResponse =
-                                                    await post(
-                                                        Uri.parse(
-                                                            "https://socialbook.io/api/user/update"),
-                                                        body: databody,
-                                                        headers: headers);
+                                                    await post(Uri.parse("https://socialbook.io/api/user/update"), body: databody, headers: headers);
                                                 print(databody);
                                                 controller.changeIsLoading(false);
                                                 if (updateProfileResponse.statusCode == 200) {
@@ -308,8 +225,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 }
                                               }
                                             },
-                                            child: ButtonWidget(
-                                                StringConstant.update_profile),
+                                            child: ButtonWidget(StringConstant.update_profile),
                                           ),
                                           SizedBox(
                                             height: 4.h,
@@ -335,14 +251,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Future<SignupModel> _getData() async {
-    var sharedPrefs = await SharedPreferences.getInstance();
-    controller.updateImageUrl(sharedPrefs.getString("avatar") ?? "");
-    nameController.text = sharedPrefs.getString("name") ?? "";
-    return SignupModel(
-        email: sharedPrefs.getString("email")!,
-        name: sharedPrefs.getString("name")!,
-        avatar: sharedPrefs.getString("avatar")!);
+  Future<UserModel> _getData() async {
+    UserModel user = await API.getLogin(false);
+    controller.updateImageUrl(user.avatar);
+    nameController.text = user.name;
+    return user;
   }
 
   showCameraDialog(BuildContext context) async {
@@ -359,57 +272,50 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.camera;
-                  XFile image = await imagePicker.pickImage(
-                      source: source,
-                      imageQuality: 100,
-                      preferredCameraDevice: CameraDevice.front);
+                  XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
-                } on PlatformException catch(error) {
-                  if(error.code == "camera_access_denied"){
+                } on PlatformException catch (error) {
+                  if (error.code == "camera_access_denied") {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) => CupertinoAlertDialog(
-                          title: Text(
-                            'Camera Permission',
-                            style: TextStyle(
-                                fontSize: 14.sp, fontFamily: 'Poppins'),
-                          ),
-                          content: Text(
-                            'This app needs camera access to take pictures for upload user profile photo',
-                            style: TextStyle(
-                                fontSize: 12.sp, fontFamily: 'Poppins'),
-                          ),
-                          actions: <Widget>[
-                            CupertinoDialogAction(
-                              child: Text(
-                                'Deny',
-                                style: TextStyle(
-                                    fontSize: 12.sp, fontFamily: 'Poppins'),
+                              title: Text(
+                                'Camera Permission',
+                                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
                               ),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                            CupertinoDialogAction(
-                              child: Text(
-                                'Settings',
-                                style: TextStyle(
-                                    fontSize: 12.sp, fontFamily: 'Poppins'),
+                              content: Text(
+                                'This app needs camera access to take pictures for upload user profile photo',
+                                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                               ),
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                try {
-                                  openAppSettings();
-                                } catch (err) {
-                                  print("err");
-                                  print(err);
-                                }
-                              },
-                            ),
-                          ],
-                        ));
+                              actions: <Widget>[
+                                CupertinoDialogAction(
+                                  child: Text(
+                                    'Deny',
+                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                CupertinoDialogAction(
+                                  child: Text(
+                                    'Settings',
+                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    try {
+                                      openAppSettings();
+                                    } catch (err) {
+                                      print("err");
+                                      print(err);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ));
                   }
-                } catch(error) {
+                } catch (error) {
                   print("error");
                   print(error);
                 }
@@ -423,61 +329,51 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.gallery;
-                  XFile image = await imagePicker.pickImage(
-                      source: source,
-                      imageQuality: 100,
-                      preferredCameraDevice: CameraDevice.front);
+                  XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
-                } on PlatformException catch(error) {
+                } on PlatformException catch (error) {
                   print(error);
-                  if(error.code == "photo_access_denied"){
+                  if (error.code == "photo_access_denied") {
                     showDialog(
                         context: context,
                         builder: (BuildContext context) => CupertinoAlertDialog(
-                          title: Text(
-                            'PhotoLibrary Permission',
-                            style: TextStyle(
-                                fontSize: 14.sp, fontFamily: 'Poppins'),
-                          ),
-                          content: Text(
-                            'This app needs photo library access to choose pictures for upload user profile photo',
-                            style: TextStyle(
-                                fontSize: 12.sp, fontFamily: 'Poppins'),
-                          ),
-                          actions: <Widget>[
-                            CupertinoDialogAction(
-                              child: Text(
-                                'Deny',
-                                style: TextStyle(
-                                    fontSize: 12.sp, fontFamily: 'Poppins'),
+                              title: Text(
+                                'PhotoLibrary Permission',
+                                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
                               ),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                            CupertinoDialogAction(
-                              child: Text(
-                                'Settings',
-                                style: TextStyle(
-                                    fontSize: 12.sp, fontFamily: 'Poppins'),
+                              content: Text(
+                                'This app needs photo library access to choose pictures for upload user profile photo',
+                                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                               ),
-                              onPressed: () async {
-                                Navigator.pop(context);
-                                try {
-                                  openAppSettings();
-                                } catch (err) {
-                                  print("err");
-                                  print(err);
-                                }
-                              },
-                            ),
-                          ],
-                        ));
+                              actions: <Widget>[
+                                CupertinoDialogAction(
+                                  child: Text(
+                                    'Deny',
+                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                  ),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                                CupertinoDialogAction(
+                                  child: Text(
+                                    'Settings',
+                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                  ),
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    try {
+                                      openAppSettings();
+                                    } catch (err) {
+                                      print("err");
+                                      print(err);
+                                    }
+                                  },
+                                ),
+                              ],
+                            ));
                   }
-                } catch(error) {
-
-                }
-
+                } catch (error) {}
               }),
         ],
         cancelButton: CupertinoActionSheetAction(
@@ -494,7 +390,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   uploadImage() async {
     controller.changeIsLoading(true);
-    String b_name = "free-socialbook";
+    String b_name = "fast-socialbook";
     String f_name = basename((controller.image.value as File).path);
     String c_type = "image/*";
     List<JsonValueModel> params = [];
@@ -502,19 +398,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     params.add(JsonValueModel("file_name", f_name));
     params.add(JsonValueModel("content_type", c_type));
     params.sort();
-    final url = Uri.parse(
-        'https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
+    final url = Uri.parse('https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
     final response = await get(url);
     final Map parsed = json.decode(response.body.toString());
     try {
-      var res = await put(Uri.parse(parsed['data']),
-          body: (controller.image.value as File).readAsBytesSync());
+      var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
       controller.changeIsLoading(false);
       print(res.body);
       print(res.statusCode);
       if (res.statusCode == 200) {
-        var imageUrl =
-            "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
+        var imageUrl = "https://fast-socialbook.s3.us-west-2.amazonaws.com/$f_name";
         controller.updateImageUrl(imageUrl);
       }
     } catch (e) {

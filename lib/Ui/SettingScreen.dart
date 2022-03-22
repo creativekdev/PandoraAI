@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/SignupModel.dart';
+import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/LoginScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 
 import 'ChangePasswordScreen.dart';
 import 'EditProfileScreen.dart';
@@ -25,6 +26,12 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   late SharedPreferences sharedPrefs;
   bool isLoading = false;
+
+  @override
+  void initState() {
+    API.getLogin(true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +53,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: 10.w,
                     ),
                   ),
-                  TitleTextWidget(StringConstant.setting,
-                      ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                  TitleTextWidget(StringConstant.setting, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
                   SizedBox(
                     height: 10.w,
                     width: 10.w,
@@ -60,17 +66,13 @@ class _SettingScreenState extends State<SettingScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
                       child: FutureBuilder(
                         future: _getPrefs(),
                         builder: (context, snapshot) {
-                          if (((snapshot.data != null
-                                  ? snapshot.data as bool
-                                  : true) ||
-                              isLoading)) {
+                          if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                             return FutureBuilder(
-                              future: _getData(),
+                              future: API.getLogin(false),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return Center(
@@ -91,10 +93,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                             left: 5.w,
                                             child: SimpleShadow(
                                               child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(15.w),
+                                                borderRadius: BorderRadius.circular(15.w),
                                                 child: CachedNetworkImage(
-                                                  imageUrl: (snapshot.hasData) ? (snapshot.data as SignupModel).avatar : "",
+                                                  imageUrl: (snapshot.hasData) ? (snapshot.data as UserModel).avatar : "",
                                                   fit: BoxFit.fill,
                                                   width: 15.w,
                                                   height: 15.w,
@@ -123,23 +124,16 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                       Expanded(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 2.w),
+                                          padding: EdgeInsets.symmetric(horizontal: 2.w),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
-                                              TitleTextWidget(
-                                                  (snapshot.hasData) ? (snapshot.data as SignupModel).email : "",
-                                                  ColorConstant.TextBlack,
-                                                  FontWeight.w500,
-                                                  12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.TextBlack,
+                                                  FontWeight.w500, 12.sp,
                                                   align: TextAlign.start),
-                                              TitleTextWidget(
-                                                  (snapshot.hasData) ? (snapshot.data as SignupModel).name : "",
-                                                  ColorConstant.LightTextColor,
-                                                  FontWeight.w400,
-                                                  12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).name : "",
+                                                  ColorConstant.LightTextColor, FontWeight.w400, 12.sp,
                                                   align: TextAlign.start),
                                             ],
                                           ),
@@ -153,14 +147,10 @@ class _SettingScreenState extends State<SettingScreen> {
                           } else {
                             return GestureDetector(
                               onTap: () => {
-                                Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => LoginScreen(),
-                                            settings: RouteSettings(
-                                                name: "/LoginScreen")))
+                                Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen")))
                                     .then((value) async {
-                                  _getData();
+                                  API.getLogin(true);
                                   if (value != null) {
                                     setState(() {
                                       isLoading = value as bool;
@@ -188,11 +178,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        settings: RouteSettings(
-                                            name: "/EditProfileScreen"),
+                                        settings: RouteSettings(name: "/EditProfileScreen"),
                                         builder: (context) => EditProfileScreen(),
                                       )).then((value) async {
-                                    _getData();
+                                    API.getLogin(true);
                                     if (value != null) {
                                       setState(() {
                                         isLoading = value as bool;
@@ -200,10 +189,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     }
                                   })
                                 },
-                                child: ImageTextBarWidget(
-                                    StringConstant.edit_profile,
-                                    ImagesConstant.ic_edit_profile,
-                                    false),
+                                child: ImageTextBarWidget(StringConstant.edit_profile, ImagesConstant.ic_edit_profile, false),
                               ),
                             ],
                           );
@@ -215,10 +201,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     FutureBuilder(
                       future: _getPrefs(),
                       builder: (context, snapshot) {
-                        if (((snapshot.data != null
-                                ? snapshot.data as bool
-                                : true) ||
-                            isLoading)) {
+                        if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                           return Column(
                             children: [
                               SizedBox(
@@ -229,10 +212,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        settings: RouteSettings(
-                                            name: "/ChangePasswordScreen"),
-                                        builder: (context) =>
-                                            ChangePasswordScreen(),
+                                        settings: RouteSettings(name: "/ChangePasswordScreen"),
+                                        builder: (context) => ChangePasswordScreen(),
                                       )).then((value) async {
                                     _getPrefs();
                                     if (value != null) {
@@ -242,10 +223,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     }
                                   })
                                 },
-                                child: ImageTextBarWidget(
-                                    StringConstant.change_password,
-                                    ImagesConstant.ic_change_password,
-                                    false),
+                                child: ImageTextBarWidget(StringConstant.change_password, ImagesConstant.ic_change_password, false),
                               ),
                             ],
                           );
@@ -259,15 +237,13 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var url = (Platform.isAndroid)? "https://www.google.com/" : "https://apps.apple.com/in/app/lensa-photo-picture-editor/id1436732536";
+                        var url = (Platform.isAndroid)
+                            ? "https://www.google.com/"
+                            : "https://apps.apple.com/in/app/lensa-photo-picture-editor/id1436732536";
                         _launchURL(url);
                       },
-                      child: ImageTextBarWidget(
-                          Platform.isAndroid
-                              ? StringConstant.rate_us1
-                              : StringConstant.rate_us,
-                          ImagesConstant.ic_rate_us,
-                          false),
+                      child:
+                          ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
                     ),
                     SizedBox(
                       height: 2.h,
@@ -275,13 +251,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       onTap: () async {
                         final box = context.findRenderObject() as RenderBox?;
-                        var appLink = (Platform.isAndroid)? "https://www.google.com/" : "https://www.facebook.com/";
-                        await Share.share(appLink,
-                            sharePositionOrigin:
-                                box!.localToGlobal(Offset.zero) & box.size);
+                        var appLink = (Platform.isAndroid) ? "https://www.google.com/" : "https://www.facebook.com/";
+                        await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                       },
-                      child: ImageTextBarWidget(StringConstant.share_app,
-                          ImagesConstant.ic_share_app, false),
+                      child: ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, false),
                     ),
                     SizedBox(
                       height: 2.h,
@@ -290,8 +263,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () async {
                         _launchURL("${Config.instance.apiHost}p/");
                       },
-                      child: ImageTextBarWidget(
-                          StringConstant.help, ImagesConstant.ic_help, true),
+                      child: ImageTextBarWidget(StringConstant.help, ImagesConstant.ic_help, true),
                     ),
                     SizedBox(
                       height: 2.h,
@@ -300,8 +272,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () async {
                         _launchURL("${Config.instance.apiHost}ms");
                       },
-                      child: ImageTextBarWidget(StringConstant.term_condition,
-                          ImagesConstant.ic_term, true),
+                      child: ImageTextBarWidget(StringConstant.term_condition, ImagesConstant.ic_term, true),
                     ),
                     SizedBox(
                       height: 2.h,
@@ -310,16 +281,12 @@ class _SettingScreenState extends State<SettingScreen> {
                       onTap: () async {
                         _launchURL("${Config.instance.apiHost}vacy");
                       },
-                      child: ImageTextBarWidget(StringConstant.privacy_policy1,
-                          ImagesConstant.ic_policy, true),
+                      child: ImageTextBarWidget(StringConstant.privacy_policy1, ImagesConstant.ic_policy, true),
                     ),
                     FutureBuilder(
                       future: _getPrefs(),
                       builder: (context, snapshot) {
-                        if (((snapshot.data != null
-                                ? snapshot.data as bool
-                                : true) ||
-                            isLoading)) {
+                        if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                           return Column(
                             children: [
                               SizedBox(
@@ -329,8 +296,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 onTap: () async {
                                   showAlertDialog(context);
                                 },
-                                child: ImageTextBarWidget(StringConstant.logout,
-                                    ImagesConstant.ic_logout, false),
+                                child: ImageTextBarWidget(StringConstant.logout, ImagesConstant.ic_logout, false),
                               ),
                             ],
                           );
@@ -357,11 +323,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           SizedBox(
                             width: 3.w,
                           ),
-                          TitleTextWidget(
-                              StringConstant.connect_with_us,
-                              ColorConstant.BtnTextColor,
-                              FontWeight.w500,
-                              12.sp),
+                          TitleTextWidget(StringConstant.connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                           SizedBox(
                             width: 3.w,
                           ),
@@ -375,8 +337,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.w, vertical: 2.5.h),
+                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.5.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -451,8 +412,7 @@ class _SettingScreenState extends State<SettingScreen> {
           CupertinoDialogAction(
               child: Text(
                 'Logout',
-                style: TextStyle(
-                    fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
+                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
               ),
               onPressed: () async {
                 var sharedPrefs = await SharedPreferences.getInstance();
@@ -478,50 +438,6 @@ class _SettingScreenState extends State<SettingScreen> {
     return sharedPrefs.getBool("isLogin") ?? false;
   }
 
-  Future<SignupModel> _getData() async {
-    sharedPrefs = await SharedPreferences.getInstance();
-    final headers = {
-      "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
-    };
-    if (sharedPrefs.containsKey("email")) {
-
-      String email = sharedPrefs.getString("email") ?? "";
-      String name = sharedPrefs.getString("name") ?? "";
-      String avatar = sharedPrefs.getString("avatar") ?? "";
-
-      get(
-          Uri.parse('${Config.instance.apiHost}/user/get_login'),
-          headers: headers).then((value) async {
-        if (value.statusCode == 200) {
-          final Map parsed = json.decode(value.body.toString());
-          print(parsed);
-          final signupResponse = SignupModel.fromJson(parsed);
-          sharedPrefs.setString("email", signupResponse.email);
-          sharedPrefs.setString("name", signupResponse.name);
-          sharedPrefs.setString("avatar", signupResponse.avatar);
-        }
-      });
-
-      return SignupModel(email: email, name: name, avatar: avatar);
-
-    } else {
-      var loginResponse = await get(
-          Uri.parse('${Config.instance.apiHost}/user/get_login'),
-          headers: headers);
-      if (loginResponse.statusCode == 200) {
-        final Map parsed = json.decode(loginResponse.body.toString());
-        final signupResponse = SignupModel.fromJson(parsed);
-        sharedPrefs.setString("email", signupResponse.email);
-        sharedPrefs.setString("name", signupResponse.name);
-        sharedPrefs.setString("avatar", signupResponse.avatar);
-        return signupResponse;
-      } else {
-        CommonExtension().showToast(json.decode(loginResponse.body)['message']);
-        return SignupModel(email: "", name: "", avatar: "");
-      }
-    }
-
-  }
   _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
