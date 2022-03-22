@@ -159,7 +159,7 @@ import TikTokOpenSDK
                     DispatchQueue.main.async {
 
                         let photo = SharePhoto(
-                            imageURL: URL(string: url)!, isUserGenerated: true
+                            imageURL: URL(string: url)!, userGenerated: true
                             )
                         content.photos = [photo]
                         let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
