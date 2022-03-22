@@ -143,7 +143,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             if (user.subscription.containsKey('id')) {
               setState(() {
                 _showPurchasePlan = true;
-                _loading = false;
                 _user = user;
               });
             }

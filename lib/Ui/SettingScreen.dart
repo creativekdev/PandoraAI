@@ -261,7 +261,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("${Config.instance.apiHost}p/");
+                        _launchURL("https://socialbook.io/help/");
                       },
                       child: ImageTextBarWidget(StringConstant.help, ImagesConstant.ic_help, true),
                     ),
@@ -270,7 +270,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("${Config.instance.apiHost}ms");
+                        _launchURL("https://socialbook.io/terms");
                       },
                       child: ImageTextBarWidget(StringConstant.term_condition, ImagesConstant.ic_term, true),
                     ),
@@ -279,7 +279,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("${Config.instance.apiHost}vacy");
+                        _launchURL("https://socialbook.io/privacy");
                       },
                       child: ImageTextBarWidget(StringConstant.privacy_policy1, ImagesConstant.ic_policy, true),
                     ),
