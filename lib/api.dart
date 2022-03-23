@@ -7,13 +7,13 @@ import 'package:cartoonizer/config.dart';
 import 'Model/UserModel.dart';
 
 class API {
-  static Future<UserModel> getLogin(bool needLoad) async {
+  static Future<dynamic> getLogin(bool needLoad) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
     var localUser = sharedPreferences.getString('user') ?? "";
 
     if (!isLogin) {
-      return UserModel.fromJson({});
+      return {};
     }
 
     if (needLoad || localUser == '') {
