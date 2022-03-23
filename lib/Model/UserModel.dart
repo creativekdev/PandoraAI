@@ -2,19 +2,24 @@ class UserModel {
   String email = "";
   String name = "";
   String avatar = "";
+  int credit = 0;
   Map<String, dynamic> subscription = {};
 
   UserModel({required this.email, required this.name, required this.avatar});
 
   factory UserModel.fromGetLogin(Map json) {
-    var data = json['data'];
+    var data = json['data'] ?? {};
+    var member = data['member'] ?? {};
+
     UserModel user = UserModel(
-      email: (data['member']['email'] == null) ? "" : data['member']['email'],
-      name: (data['member']['name'] == null) ? "" : data['member']['name'],
-      avatar: (data['member']['avatar'] == null) ? "" : data['member']['avatar'],
+      email: member['email'] ?? "",
+      name: member['name'] ?? "",
+      avatar: member['avatar'] ?? "",
     );
 
-    var user_subscription = data['user_subscription'];
+    user.credit = data['cartoonize_credit'] ?? 0;
+
+    var user_subscription = data['user_subscription'] ?? [];
 
     for (int i = 0; i < user_subscription.length; i++) {
       Map<String, dynamic> item = user_subscription[i];
@@ -27,7 +32,7 @@ class UserModel {
     return user;
   }
 
-  factory UserModel.fromJSON(Map json) {
+  factory UserModel.fromJson(Map json) {
     UserModel user = UserModel(
       email: (json['email'] == null) ? "" : json['email'],
       name: (json['name'] == null) ? "" : json['name'],
@@ -35,8 +40,9 @@ class UserModel {
     );
 
     user.subscription = json['subscription'];
+    user.credit = json['credit'];
     return user;
   }
 
-  Map<String, dynamic> toJson() => {'name': name, 'email': email, 'avatar': avatar, "subscription": subscription};
+  Map<String, dynamic> toJson() => {'name': name, 'email': email, 'avatar': avatar, "credit": credit, "subscription": subscription};
 }

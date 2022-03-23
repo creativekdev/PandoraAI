@@ -18,14 +18,15 @@ class ShareScreen extends StatefulWidget {
   @override
   _ShareScreenState createState() => _ShareScreenState();
 }
+
 class _ShareScreenState extends State<ShareScreen> {
-  static const platform = MethodChannel('io.socialbook/sharePhoto');
+  static const platform = MethodChannel('io.socialbook/cartoonizer');
   late VideoPlayerController _videoPlayerController;
 
   @override
   void initState() {
     super.initState();
-    if(widget.isVideo){
+    if (widget.isVideo) {
       print(widget.image);
       _videoPlayerController = VideoPlayerController.file(File(widget.image))
         ..setLooping(true)
@@ -57,13 +58,9 @@ class _ShareScreenState extends State<ShareScreen> {
                       width: 10.w,
                     ),
                   ),
-                  TitleTextWidget(StringConstant.save_share,
-                      ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                  TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
                   GestureDetector(
-                    onTap: () => {
-                      Navigator.of(context)
-                          .popUntil(ModalRoute.withName("/HomeScreen"))
-                    },
+                    onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
                     child: Image.asset(
                       ImagesConstant.ic_home,
                       height: 10.w,
@@ -79,14 +76,16 @@ class _ShareScreenState extends State<ShareScreen> {
                   children: [
                     Padding(
                       padding: EdgeInsets.all(5.w),
-                      child: (widget.isVideo)? AspectRatio(
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        child: VideoPlayer(_videoPlayerController),
-                      ) : Image.memory(
-                        base64Decode(widget.image),
-                        width: 90.w,
-                        height: 90.w,
-                      ),
+                      child: (widget.isVideo)
+                          ? AspectRatio(
+                              aspectRatio: _videoPlayerController.value.aspectRatio,
+                              child: VideoPlayer(_videoPlayerController),
+                            )
+                          : Image.memory(
+                              base64Decode(widget.image),
+                              width: 90.w,
+                              height: 90.w,
+                            ),
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -103,11 +102,7 @@ class _ShareScreenState extends State<ShareScreen> {
                           SizedBox(
                             width: 3.w,
                           ),
-                          TitleTextWidget(
-                              StringConstant.share_to,
-                              ColorConstant.BtnTextColor,
-                              FontWeight.w500,
-                              12.sp),
+                          TitleTextWidget(StringConstant.share_to, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                           SizedBox(
                             width: 3.w,
                           ),
@@ -121,47 +116,35 @@ class _ShareScreenState extends State<ShareScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 5.w, vertical: 2.5.h),
+                      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
                             onTap: () async {
-                              var isAppInstalled = (Platform.isAndroid)? await platform.invokeMethod("AppInstall", {'path' : "com.facebook.katana"}) : await platform.invokeMethod("AppInstall", {'path' : "fbapi"});
-                              if(!isAppInstalled){
+                              var isAppInstalled = (Platform.isAndroid)
+                                  ? await platform.invokeMethod("AppInstall", {'path': "com.facebook.katana"})
+                                  : await platform.invokeMethod("AppInstall", {'path': "fbapi"});
+                              if (!isAppInstalled) {
                                 CommonExtension().showToast("Facebook is not installed on this device");
                               } else {
                                 File decodedimgfile;
-                                String dir = (await getApplicationDocumentsDirectory())
-                                    .path;
+                                String dir = (await getApplicationDocumentsDirectory()).path;
                                 String fullPath = '$dir/abc.png';
 
                                 if (widget.isVideo) {
                                   decodedimgfile = File(widget.image);
                                   try {
-                                    await platform.invokeMethod('ShareFacebook',
-                                        {'path': decodedimgfile.path});
+                                    await platform.invokeMethod('ShareFacebook', {'path': decodedimgfile.path});
                                   } on PlatformException catch (e) {
                                     print(e.message);
                                   }
                                 } else {
-                                  decodedimgfile =
-                                  await File(fullPath).writeAsBytes(
-                                      base64Decode(widget.image), flush: true);
+                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                                   if (Platform.isIOS) {
-                                    SocialShare.shareFacebookStory(
-                                        decodedimgfile.path,
-                                        "#ffffff",
-                                        "#000000",
-                                        "https://deep-link-url");
+                                    SocialShare.shareFacebookStory(decodedimgfile.path, "#ffffff", "#000000", "https://deep-link-url");
                                   } else {
-                                    SocialShare.shareFacebookStory(
-                                        decodedimgfile.path,
-                                        "#ffffff",
-                                        "#000000",
-                                        "https://deep-link-url",
-                                        appId: "801412163654865");
+                                    SocialShare.shareFacebookStory(decodedimgfile.path, "#ffffff", "#000000", "https://deep-link-url", appId: "801412163654865");
                                   }
                                 }
                               }
@@ -174,9 +157,11 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              var isAppInstalled = (Platform.isAndroid)? await platform.invokeMethod("AppInstall", {'path' : "com.instagram.android"}) : await platform.invokeMethod("AppInstall", {'path' : "Instagram"});
-                              if(!isAppInstalled){
-                              CommonExtension().showToast("Instagram is not installed on this device");
+                              var isAppInstalled = (Platform.isAndroid)
+                                  ? await platform.invokeMethod("AppInstall", {'path': "com.instagram.android"})
+                                  : await platform.invokeMethod("AppInstall", {'path': "Instagram"});
+                              if (!isAppInstalled) {
+                                CommonExtension().showToast("Instagram is not installed on this device");
                               } else {
                                 String dir = (await getApplicationDocumentsDirectory()).path;
                                 String fullPath = '$dir/abc.png';
@@ -184,19 +169,14 @@ class _ShareScreenState extends State<ShareScreen> {
                                 if (widget.isVideo) {
                                   decodedimgfile = File(widget.image);
                                   try {
-                                    await platform.invokeMethod(
-                                        'ShareInsta', {'path': decodedimgfile.path});
+                                    await platform.invokeMethod('ShareInsta', {'path': decodedimgfile.path});
                                   } on PlatformException catch (e) {
                                     print(e.message);
                                   }
                                 } else {
-                                  decodedimgfile = await File(fullPath).writeAsBytes(
-                                      base64Decode(widget.image), flush: true);
-                                  SocialShare.shareInstagramStory(
-                                      decodedimgfile.path,
-                                      backgroundTopColor: "#FFFFFF",
-                                      backgroundBottomColor: "#FFFFFF",
-                                      attributionURL: "https://deep-link-url");
+                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                  SocialShare.shareInstagramStory(decodedimgfile.path,
+                                      backgroundTopColor: "#FFFFFF", backgroundBottomColor: "#FFFFFF", attributionURL: "https://deep-link-url");
                                 }
                               }
                             },
@@ -208,9 +188,11 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              var isAppInstalled = (Platform.isAndroid)? await platform.invokeMethod("AppInstall", {'path' : "com.whatsapp"}) : await platform.invokeMethod("AppInstall", {'path' : "Whatsapp"});
-                              if(!isAppInstalled){
-                              CommonExtension().showToast("Whatsapp is not installed on this device");
+                              var isAppInstalled = (Platform.isAndroid)
+                                  ? await platform.invokeMethod("AppInstall", {'path': "com.whatsapp"})
+                                  : await platform.invokeMethod("AppInstall", {'path': "Whatsapp"});
+                              if (!isAppInstalled) {
+                                CommonExtension().showToast("Whatsapp is not installed on this device");
                               } else {
                                 final FlutterShareMe flutterShareMe = FlutterShareMe();
                                 String dir = (await getApplicationDocumentsDirectory()).path;
@@ -219,12 +201,9 @@ class _ShareScreenState extends State<ShareScreen> {
                                 if (widget.isVideo) {
                                   decodedimgfile = File(widget.image);
                                 } else {
-                                  decodedimgfile = await File(fullPath).writeAsBytes(
-                                      base64Decode(widget.image), flush: true);
+                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                                 }
-                                await flutterShareMe.shareToWhatsApp(
-                                    imagePath: decodedimgfile.path,
-                                    fileType: (widget.isVideo) ? FileType.video : FileType.image);
+                                await flutterShareMe.shareToWhatsApp(imagePath: decodedimgfile.path, fileType: (widget.isVideo) ? FileType.video : FileType.image);
                               }
                             },
                             child: Image.asset(
@@ -235,14 +214,12 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              String dir =
-                                  (await getApplicationDocumentsDirectory())
-                                      .path;
+                              String dir = (await getApplicationDocumentsDirectory()).path;
                               String fullPath = '$dir/abc.png';
                               File decodedimgfile;
-                              if(widget.isVideo){
+                              if (widget.isVideo) {
                                 decodedimgfile = File(widget.image);
-                              }else{
+                              } else {
                                 decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                               }
                               List<String> paths = [decodedimgfile.path];
@@ -266,16 +243,13 @@ class _ShareScreenState extends State<ShareScreen> {
                               String dir = (await getApplicationDocumentsDirectory()).path;
                               String fullPath = '$dir/abc.png';
                               File decodedimgfile;
-                              if(widget.isVideo){
+                              if (widget.isVideo) {
                                 decodedimgfile = File(widget.image);
-                              }else{
+                              } else {
                                 decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                               }
                               List<String> paths = [decodedimgfile.path];
-                              await Share.shareFiles(paths,
-                                  sharePositionOrigin:
-                                      box!.localToGlobal(Offset.zero) &
-                                          box.size);
+                              await Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_more,

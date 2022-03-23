@@ -9,9 +9,14 @@ import 'Model/UserModel.dart';
 class API {
   static Future<UserModel> getLogin(bool needLoad) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
     var localUser = sharedPreferences.getString('user') ?? "";
 
-    if (needLoad) {
+    if (!isLogin) {
+      return UserModel.fromJson({});
+    }
+
+    if (needLoad || localUser == '') {
       final headers = {"cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
       var response = await get(Uri.parse('${Config.instance.apiHost}/user/get_login'), headers: headers);
       if (response.statusCode == 200) {
@@ -20,9 +25,9 @@ class API {
         sharedPreferences.setString("user", jsonEncode(user));
         return user;
       }
-      return UserModel.fromJSON(jsonDecode(localUser));
-    } else {
-      return UserModel.fromJSON(jsonDecode(localUser));
+      return UserModel.fromJson(jsonDecode(localUser));
     }
+
+    return UserModel.fromJson(jsonDecode(localUser));
   }
 }

@@ -32,7 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
-  static const platform = MethodChannel('io.socialbook/shareVideo');
 
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
@@ -163,6 +162,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     List<JsonValueModel> params = [];
+    var prefixPage = ModalRoute.of(context)!.settings.arguments;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -250,8 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 3.h,
                     ),
-                    TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp,
-                        TextInputAction.next, TextInputType.emailAddress, false, emailController),
+                    TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next,
+                        TextInputType.emailAddress, false, emailController),
                     SizedBox(
                       height: 1.5.h,
                     ),
@@ -381,12 +382,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           final url = Uri.parse('${Config.instance.apiHost}/user/login');
                           final headers = {"Content-type": "application/x-www-form-urlencoded"};
-                          Map<String, dynamic> body = {
-                            "email": emailController.text.trim(),
-                            "password": passController.text.trim(),
-                            "type": "cartoonize",
-                            "s": sToken(params)
-                          };
+                          Map<String, dynamic> body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": "cartoonize", "s": sToken(params)};
                           print(body);
                           final response = await post(url, body: body, headers: headers).whenComplete(() => {
                                 setState(() {
@@ -789,27 +785,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         TitleTextWidget(StringConstant.no_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                         GestureDetector(
                           onTap: () => {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(name: "/SignupScreen"),
-                                builder: (context) => SignupScreen(),
-                              ),
-                            ).then((value) async {
-                              if (!value) {
-                                Navigator.pop(context, value);
+                            if (prefixPage == 'signup')
+                              {Navigator.pop(context)}
+                            else
+                              {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    settings: RouteSettings(name: "/SignupScreen"),
+                                    builder: (context) => SignupScreen(),
+                                  ),
+                                )
                               }
-                            }),
                           },
                           child: Text(
                             StringConstant.sign_up,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: ColorConstant.PrimaryColor,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                                fontSize: 12.sp,
-                                decoration: TextDecoration.underline),
+                                color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12.sp, decoration: TextDecoration.underline),
                           ),
                         )
                       ],

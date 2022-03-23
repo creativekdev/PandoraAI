@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/CategoryModel.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
+import 'package:cartoonizer/api.dart';
 import 'package:http/http.dart';
 
 import 'PurchaseScreen.dart';
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    API.getLogin(true);
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
@@ -342,7 +343,6 @@ class _HomeScreenState extends State<HomeScreen> {
       final categoryResponse = CategoryModel.fromJson(parsed);
       list.addAll(categoryResponse.data.face);
     }
-    log(list[0].display_name);
     return list;
   }
 }

@@ -9,7 +9,7 @@ class EffectModel {
     required this.display_name,
   });
   EffectModel.fromJson(Map<String, dynamic> json) {
-    display_name = json['display_name'].toString();
+    display_name = json['key'] == 'animation' ? "Animation" : json['display_name'].toString();
     key = json['key'].toString();
     if (json['effects'] != null) {
       final v = json['effects'];
@@ -19,21 +19,11 @@ class EffectModel {
       });
       effects = arr0;
     }
-    //
-    // final arr0 = <String>[];
-    // json.keys.forEach((element) {
-    //   if(json[element] != null){
-    //     json[element].forEach((v) {
-    //       arr0.add(v.toString());
-    //     });
-    //   }
-    // });
-    // effects = arr0;
   }
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['key'] = key;
-    data['display_name'] = display_name;
+    data['display_name'] = key == 'animation' ? "Animation" : display_name;
     if (effects != null) {
       final v = effects;
       final arr0 = [];

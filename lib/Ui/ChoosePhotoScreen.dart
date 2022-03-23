@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -8,7 +7,9 @@ import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/Model/JsonValueModel.dart';
+import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
+import 'package:cartoonizer/api.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -108,22 +109,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     scrollController = ItemScrollController();
     scrollController1 = ItemScrollController();
     itemPositionsListener.itemPositions.addListener(() {
-      if (itemPos !=
-          ((widget.pos == widget.list.length - 1)
-              ? widget.pos
-              : itemPositionsListener.itemPositions.value.first.index)) {
-        controller.setLastItemIndex1((widget.pos == widget.list.length - 1)
-            ? widget.pos
-            : itemPositionsListener.itemPositions.value.first.index);
+      if (itemPos != ((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index)) {
+        controller.setLastItemIndex1((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index);
         // scrollController1.scrollTo(
         //     index: (widget.pos == widget.list.length - 1)? widget.pos : itemPositionsListener.itemPositions.value.first.index,
         //     duration: Duration(milliseconds: 100),
         //     curve: Curves.easeInOutCubic);
 
         try {
-          itemPos = (widget.pos == widget.list.length - 1)
-              ? widget.pos
-              : itemPositionsListener.itemPositions.value.first.index;
+          itemPos = (widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index;
           // if(scrollController1.hasClients){
           scrollController1.scrollTo(
               index: (widget.pos == widget.list.length - 1)
@@ -140,6 +134,45 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         }
       }
     });
+  }
+
+  FutureBuilder _buildPremiumBuilder() {
+    return FutureBuilder(
+        future: API.getLogin(false),
+        builder: (context, snapshot) {
+          bool visible = false;
+          if (snapshot.data != null) {
+            UserModel user = snapshot.data as UserModel;
+            if (user.email != '' && (user.credit <= 0 && !user.subscription.containsKey('id'))) {
+              visible = true;
+            }
+          }
+          return Visibility(
+              visible: visible,
+              child: Column(children: [
+                SizedBox(
+                  height: 1.5.h,
+                ),
+                TitleTextWidget(StringConstant.no_watermark, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                SizedBox(
+                  height: 1.5.h,
+                ),
+                GestureDetector(
+                  onTap: () => {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: RouteSettings(name: "/PurchaseScreen"),
+                          builder: (context) => PurchaseScreen(),
+                        ))
+                  },
+                  child: RoundedBorderBtnWidget(StringConstant.go_premium),
+                ),
+                SizedBox(
+                  height: 1.5.h,
+                ),
+              ]));
+        });
   }
 
   Future<bool> _willPopCallback(BuildContext context) async {
@@ -194,8 +227,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                     ),
                                   ),
                                   child: Center(
-                                    child: TitleTextWidget(
-                                        StringConstant.exit_editing, ColorConstant.White, FontWeight.w600, 12.sp),
+                                    child: TitleTextWidget(StringConstant.exit_editing, ColorConstant.White, FontWeight.w600, 12.sp),
                                   ),
                                 ),
                               ),
@@ -206,8 +238,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               Navigator.pop(context);
                             },
                             child: Padding(
-                              child: TitleTextWidget(
-                                  StringConstant.cancel, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                              child: TitleTextWidget(StringConstant.cancel, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                               padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
                             ),
                           )
@@ -267,8 +298,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   var source = ImageSource.gallery;
                                   try {
-                                    XFile image = await imagePicker.pickImage(
-                                        source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                                     offlineEffect.clear();
                                     controller.updateImageFile(File(image.path));
                                     controller.changeIsPhotoSelect(true);
@@ -339,8 +369,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   var source = ImageSource.camera;
                                   try {
-                                    XFile image = await imagePicker.pickImage(
-                                        source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                                     offlineEffect.clear();
                                     controller.updateImageFile(File(image.path));
                                     controller.changeIsPhotoSelect(true);
@@ -413,9 +442,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo(
-                                            'https://ai.socialbook.io/resource/' + controller.videoUrl.value, true)
-                                        .then((value) async {
+                                    await GallerySaver.saveVideo('https://ai.socialbook.io/resource/' + controller.videoUrl.value, true).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -425,8 +452,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                       }
                                     });
                                   } else {
-                                    await ImageGallerySaver.saveImage(base64Decode(image),
-                                        quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+                                    await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
                                     CommonExtension().showToast("Image Saved!");
                                   }
                                 },
@@ -448,9 +474,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo(
-                                            'https://ai.socialbook.io/resource/' + controller.videoUrl.value, false)
-                                        .then((value) async {
+                                    await GallerySaver.saveVideo('https://ai.socialbook.io/resource/' + controller.videoUrl.value, false).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -514,8 +538,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                       builder: (context, snapshot) {
                                         return Obx(
                                           () => Visibility(
-                                            visible: (!(snapshot.data != null ? snapshot.data as bool : true) ||
-                                                controller.isLogin.value),
+                                            visible: (!(snapshot.data != null ? snapshot.data as bool : true) || controller.isLogin.value),
                                             child: GestureDetector(
                                               onTap: () => {
                                                 Navigator.push(
@@ -534,32 +557,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                         );
                                       },
                                     ),
-                                    SizedBox(
-                                      height: 1.5.h,
-                                    ),
-                                    TitleTextWidget(
-                                        StringConstant.no_watermark, ColorConstant.HintColor, FontWeight.w400, 12.sp),
-                                    SizedBox(
-                                      height: 1.5.h,
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              settings: RouteSettings(name: "/PurchaseScreen"),
-                                              builder: (context) => PurchaseScreen(),
-                                            ))
-                                      },
-                                      child: RoundedBorderBtnWidget(StringConstant.go_premium),
-                                    ),
-                                    SizedBox(
-                                      height: 1.5.h,
-                                    ),
+                                    _buildPremiumBuilder(),
                                     Visibility(
                                       visible: false /*controller.isRate.value*/,
-                                      child: TitleTextWidget(StringConstant.rate_result, ColorConstant.BtnTextColor,
-                                          FontWeight.w500, 12.sp),
+                                      child: TitleTextWidget(StringConstant.rate_result, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                                     ),
                                     Visibility(
                                       visible: false /*controller.isRate.value*/,
@@ -628,10 +629,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                 onTap: () async {
                                                   var source = ImageSource.gallery;
                                                   try {
-                                                    XFile image = await imagePicker.pickImage(
-                                                        source: source,
-                                                        imageQuality: 100,
-                                                        preferredCameraDevice: CameraDevice.front);
+                                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                                                     offlineEffect.clear();
                                                     controller.updateImageFile(File(image.path));
                                                     controller.changeIsPhotoSelect(true);
@@ -645,28 +643,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                           builder: (BuildContext context) => CupertinoAlertDialog(
                                                                 title: Text(
                                                                   'PhotoLibrary Permission',
-                                                                  style:
-                                                                      TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+                                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
                                                                 ),
                                                                 content: Text(
                                                                   'This app needs photo library access to choose pictures for upload user profile photo',
-                                                                  style:
-                                                                      TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                 ),
                                                                 actions: <Widget>[
                                                                   CupertinoDialogAction(
                                                                     child: Text(
                                                                       'Deny',
-                                                                      style: TextStyle(
-                                                                          fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                     ),
                                                                     onPressed: () => Navigator.of(context).pop(),
                                                                   ),
                                                                   CupertinoDialogAction(
                                                                     child: Text(
                                                                       'Settings',
-                                                                      style: TextStyle(
-                                                                          fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                     ),
                                                                     onPressed: () async {
                                                                       Navigator.pop(context);
@@ -692,10 +686,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                 onTap: () async {
                                                   var source = ImageSource.camera;
                                                   try {
-                                                    XFile image = await imagePicker.pickImage(
-                                                        source: source,
-                                                        imageQuality: 100,
-                                                        preferredCameraDevice: CameraDevice.front);
+                                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
                                                     offlineEffect.clear();
                                                     controller.updateImageFile(File(image.path));
                                                     controller.changeIsPhotoSelect(true);
@@ -709,28 +700,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                           builder: (BuildContext context) => CupertinoAlertDialog(
                                                                 title: Text(
                                                                   'Camera Permission',
-                                                                  style:
-                                                                      TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+                                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
                                                                 ),
                                                                 content: Text(
                                                                   'This app needs camera access to take pictures for upload user profile photo',
-                                                                  style:
-                                                                      TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                 ),
                                                                 actions: <Widget>[
                                                                   CupertinoDialogAction(
                                                                     child: Text(
                                                                       'Deny',
-                                                                      style: TextStyle(
-                                                                          fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                     ),
                                                                     onPressed: () => Navigator.of(context).pop(),
                                                                   ),
                                                                   CupertinoDialogAction(
                                                                     child: Text(
                                                                       'Settings',
-                                                                      style: TextStyle(
-                                                                          fontSize: 12.sp, fontFamily: 'Poppins'),
+                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                                                                     ),
                                                                     onPressed: () async {
                                                                       Navigator.pop(context);
@@ -751,8 +738,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(vertical: 1.h),
-                                                  child: TitleTextWidget(StringConstant.take_selfie,
-                                                      ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                                                  child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                                                 ),
                                               ),
                                             ],
@@ -863,8 +849,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                             SizedBox(
                               width: 1.5.w,
                             ),
-                            TitleTextWidget(
-                                StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
+                            TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                             SizedBox(
                               width: 2.w,
                             ),
@@ -933,11 +918,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     return Card(
       elevation: 0,
       shape: (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex)
-          ? RoundedRectangleBorder(
-              side: new BorderSide(color: ColorConstant.PrimaryColor, width: 0.5.w),
-              borderRadius: BorderRadius.circular(3.w))
-          : RoundedRectangleBorder(
-              side: new BorderSide(color: ColorConstant.White, width: 0.5.w), borderRadius: BorderRadius.circular(3.w)),
+          ? RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.PrimaryColor, width: 0.5.w), borderRadius: BorderRadius.circular(3.w))
+          : RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.White, width: 0.5.w), borderRadius: BorderRadius.circular(3.w)),
       child: Padding(
         padding: EdgeInsets.all(1.w),
         child: GestureDetector(
@@ -946,8 +928,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             controller.setLastItemIndex(itemIndex);
             controller.setLastItemIndex1(itemIndex);
             // if(scrollController1.hasClients) {
-            scrollController1.scrollTo(
-                index: itemIndex, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
+            scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
             // }
             if (controller.image.value != null) {
               controller.changeIsPhotoSelect(true);
@@ -962,9 +943,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: (widget.list[itemIndex].effects[index].endsWith("-transform"))
                     ? CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                            widget.list[itemIndex].effects[index] +
-                            ".webp",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + widget.list[itemIndex].effects[index] + ".webp",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -988,9 +967,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         },
                       )
                     : CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                            widget.list[itemIndex].effects[index] +
-                            ".jpg",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + widget.list[itemIndex].effects[index] + ".jpg",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -1056,28 +1033,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var key = (controller.isChecked.value &&
-            tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
+    var key = (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
         ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
         : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
     if (offlineEffect.containsKey(key)) {
       var data = offlineEffect[key] as OfflineEffectModel;
       if (data.data.toString().startsWith('<')) {
         controller.changeIsLoading(false);
-        CommonExtension().showToast(data.data
-            .toString()
-            .substring(data.data.toString().indexOf('<p>') + 3, data.data.toString().indexOf('</p>')));
+        CommonExtension().showToast(data.data.toString().substring(data.data.toString().indexOf('<p>') + 3, data.data.toString().indexOf('</p>')));
       } else if (data.data.toString() == "") {
         controller.changeIsLoading(false);
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController =
-            VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
-              ..setLooping(true)
-              ..initialize().then((value) async {
-                controller.changeIsLoading(false);
-              });
+        _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+          ..setLooping(true)
+          ..initialize().then((value) async {
+            controller.changeIsLoading(false);
+          });
         _videoPlayerController.play();
 
         urlFinal = data.imageUrl;
@@ -1102,8 +1075,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       params.add(JsonValueModel("file_name", f_name));
       params.add(JsonValueModel("content_type", c_type));
       params.sort();
-      final url = Uri.parse(
-          'https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
+      final url = Uri.parse('https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
       final response = await get(url);
       final Map parsed = json.decode(response.body.toString());
       try {
@@ -1111,26 +1083,19 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         if (res.statusCode == 200) {
           var sharedPrefs = await SharedPreferences.getInstance();
           final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-          final tokenResponse = await get(Uri.parse('https://socialbook.io/api/tool/image/cartoonize/token'),
-              headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
+          final tokenResponse = await get(Uri.parse('https://socialbook.io/api/tool/image/cartoonize/token'), headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
           final Map tokenParsed = json.decode(tokenResponse.body.toString());
           if (tokenResponse.statusCode == 200) {
             if (tokenParsed['data'] == null) {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
-              final headers = {
-                "Content-type": "application/json",
-                "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
-              };
+              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
               List<JsonValueModel> params = [];
               params.add(JsonValueModel("querypics", imageUrl));
               params.add(JsonValueModel("is_data", "0"));
               params.add(JsonValueModel(
                   "algoname",
-                  (controller.isChecked.value &&
-                          tempData.contains(
-                              widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] +
-                          "-original_face"
+                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
+                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
                       : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
               params.add(JsonValueModel("direct", "1"));
               params.sort();
@@ -1139,18 +1104,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               var databody = jsonEncode(<String, dynamic>{
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value &&
-                        tempData.contains(
-                            widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] +
-                        "-original_face"
+                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
+                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
                     : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
                 'direct': 1,
                 's': sToken(params),
               });
 
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize'),
-                  body: databody, headers: headers);
+              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize'), body: databody, headers: headers);
               // print(databody);
               // print(cartoonizeResponse.statusCode);
               // print(cartoonizeResponse.body.toString());
@@ -1159,25 +1120,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                 if (parsed['data'].toString().startsWith('<')) {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(
-                      parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
                 } else if (parsed['data'].toString() == "") {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController =
-                      VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
-                        ..setLooping(true)
-                        ..initialize().then((value) async {
-                          controller.changeIsLoading(false);
-                        });
+                  _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+                    ..setLooping(true)
+                    ..initialize().then((value) async {
+                      controller.changeIsLoading(false);
+                    });
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
@@ -1185,8 +1141,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
@@ -1194,9 +1149,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
                   final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-                  get(
-                      Uri.parse(
-                          'https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
+                  get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
                       headers: headers);
                 }
               } else {
@@ -1206,20 +1159,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             } else {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
               var token = tokenParsed['data'];
-              final headers = {
-                "Content-type": "application/json",
-                "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
-              };
+              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
               List<JsonValueModel> params = [];
               params.add(JsonValueModel("querypics", imageUrl));
               params.add(JsonValueModel("is_data", "0"));
               params.add(JsonValueModel(
                   "algoname",
-                  (controller.isChecked.value &&
-                          tempData.contains(
-                              widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] +
-                          "-original_face"
+                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
+                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
                       : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
               params.add(JsonValueModel("direct", "1"));
               params.add(JsonValueModel("token", token));
@@ -1229,18 +1176,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               var databody = jsonEncode(<String, dynamic>{
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value &&
-                        tempData.contains(
-                            widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] +
-                        "-original_face"
+                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
+                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
                     : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
                 'direct': 1,
                 'token': token,
                 's': sToken(params),
               });
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize/token'),
-                  body: databody, headers: headers);
+              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize/token'), body: databody, headers: headers);
               print(cartoonizeResponse.statusCode);
               print(cartoonizeResponse.body.toString());
               if (cartoonizeResponse.statusCode == 200) {
@@ -1248,25 +1191,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                 if (parsed['data'].toString().startsWith('<')) {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(
-                      parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
                 } else if (parsed['data'].toString() == "") {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController =
-                      VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
-                        ..setLooping(true)
-                        ..initialize().then((value) async {
-                          controller.changeIsLoading(false);
-                        });
+                  _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+                    ..setLooping(true)
+                    ..initialize().then((value) async {
+                      controller.changeIsLoading(false);
+                    });
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
@@ -1274,8 +1212,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
@@ -1283,11 +1220,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
                   final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-                  get(
-                      Uri.parse(
-                          'https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
+                  get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
                       headers: headers);
                 }
+
+                await API.getLogin(true);
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');
@@ -1295,8 +1232,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             }
           } else {
             controller.changeIsLoading(false);
-            showDialogLogin(context, sharedPrefs);
-            CommonExtension().showToast(json.decode(tokenResponse.body)['message']);
+            var responseBody = json.decode(tokenResponse.body);
+            if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
+              bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
+
+              if (!isLogin) {
+                showDialogLogin(context, sharedPrefs);
+              } else {
+                CommonExtension().showToast(StringConstant.DAILY_IP_LIMIT_EXCEEDED);
+              }
+            } else {
+              CommonExtension().showToast(responseBody['message']);
+            }
           }
         }
       } catch (e) {
@@ -1309,10 +1256,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   Future<void> likeDislike(bool like) async {
     controller.changeIsLoading(true);
     var sharedPrefs = await SharedPreferences.getInstance();
-    final headers = {
-      "Content-type": "application/json",
-      "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
-    };
+    final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
     final headers1 = {
       "Content-type": "application/json",
     };
@@ -1329,8 +1273,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       'algo': algoName,
       's': sToken(params),
     });
-    await post(Uri.parse('https://socialbook.io/api/tool/matting/evaluate'),
-            body: databody, headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : headers1)
+    await post(Uri.parse('https://socialbook.io/api/tool/matting/evaluate'), body: databody, headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : headers1)
         .whenComplete(() async {
       controller.changeIsLoading(false);
       controller.changeIsRate(false);
@@ -1357,8 +1300,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           onTap: () async {
             controller.setLastItemIndex1(index);
             // if(scrollController.hasClients) {
-            scrollController.scrollTo(
-                index: index, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
+            scrollController.scrollTo(index: index, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
             // } else {
             //   scrollController.jumpTo(index: index);
             // }
@@ -1409,7 +1351,7 @@ void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        settings: RouteSettings(name: "/SignupScreen"),
+                        settings: RouteSettings(name: "/SignupScreen", arguments:"choose_photo"),
                         builder: (context) => SignupScreen(),
                       ),
                     )

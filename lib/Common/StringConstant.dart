@@ -27,8 +27,7 @@ class StringConstant {
   static const privacy_policy = " Privacy Policy";
   static const agree_text2 = " of the Cartoonizer.";
   static const forgot_your_password = "Forgot Your Password?";
-  static const forgot_password_text =
-      "Enter your registered email below to receive password reset instruction";
+  static const forgot_password_text = "Enter your registered email below to receive password reset instruction";
   static const send = "Send";
   static const home = "Home";
   static const view_all = "View All";
@@ -81,4 +80,5 @@ class StringConstant {
   static const exit_msg1 = "You will lose all your progress.";
   static const exit_editing = "EXIT EDITING";
   static const cancel = "CANCEL";
+  static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
 }

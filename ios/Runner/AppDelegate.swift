@@ -13,7 +13,7 @@ import TikTokOpenSDK
   ) -> Bool {
       TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
   let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-      let methodChannel = FlutterMethodChannel(name: "io.socialbook/sharePhoto",
+      let methodChannel = FlutterMethodChannel(name: "io.socialbook/cartoonizer",
                                                 binaryMessenger: controller.binaryMessenger)
       methodChannel.setMethodCallHandler({
         (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in

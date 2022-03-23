@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'instagram_constant.dart';
+import '../Common/instagram_constant.dart';
 
 class InstagramModel {
   List<String> userFields = ['id', 'username'];
@@ -13,9 +13,7 @@ class InstagramModel {
   String? username;
 
   void getAuthorizationCode(String url) {
-    authorizationCode = url
-        .replaceAll('${InstagramConstant.redirectUri}?code=', '')
-        .replaceAll('#_', '');
+    authorizationCode = url.replaceAll('${InstagramConstant.redirectUri}?code=', '').replaceAll('#_', '');
   }
 
   Future<bool> getTokenAndUserID() async {
@@ -35,8 +33,7 @@ class InstagramModel {
 
   Future<bool> getUserProfile() async {
     final fields = userFields.join(',');
-    final responseNode = await http.get(Uri.parse(
-        'https://graph.instagram.com/$userID?fields=$fields&access_token=$accessToken'));
+    final responseNode = await http.get(Uri.parse('https://graph.instagram.com/$userID?fields=$fields&access_token=$accessToken'));
     print("responseNode.body");
     print(responseNode.body);
     var instaProfile = {

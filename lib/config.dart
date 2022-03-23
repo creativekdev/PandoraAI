@@ -29,7 +29,8 @@ class Config {
     if (kReleaseMode) {
       return ProductionConfig();
     } else {
-      return DevelopmentConfig();
+      return ProductionConfig();
+      // return DevelopmentConfig();
     }
   }
 }

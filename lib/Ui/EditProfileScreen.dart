@@ -13,6 +13,7 @@ import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
 import '../Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/Common/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -177,13 +178,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.LightTextColor,
-                                              FontWeight.w400, 14.sp),
+                                          TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.HintColor, FontWeight.w400, 12.sp,
-                                              TextInputAction.done, TextInputType.emailAddress, false, nameController),
+                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.done,
+                                              TextInputType.emailAddress, false, nameController),
                                           SizedBox(
                                             height: 4.h,
                                           ),
@@ -195,34 +195,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 FocusManager.instance.primaryFocus?.unfocus();
                                                 controller.changeIsLoading(true);
                                                 var sharedPrefs = await SharedPreferences.getInstance();
-                                                final headers = {
-                                                  "Content-type": "application/json",
-                                                  "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"
-                                                };
+                                                final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
 
                                                 List<JsonValueModel> params = [];
-                                                params.add(JsonValueModel("name", nameController.text.toString()));
-                                                params.add(JsonValueModel("avatar", controller.imageUrl.value));
+                                                var name = nameController.text.toString();
+                                                var avatar = controller.imageUrl.value;
+
+                                                params.add(JsonValueModel("name", name));
+                                                params.add(JsonValueModel("avatar", avatar));
                                                 params.sort();
 
-                                                var databody = jsonEncode(<String, dynamic>{
-                                                  'name': nameController.text.toString(),
-                                                  'avatar': controller.imageUrl.value,
+                                                var body = jsonEncode(<String, dynamic>{
+                                                  'name': name,
+                                                  'avatar': avatar,
                                                   's': sToken(params),
                                                 });
 
-                                                final updateProfileResponse =
-                                                    await post(Uri.parse("https://socialbook.io/api/user/update"), body: databody, headers: headers);
-                                                print(databody);
-                                                controller.changeIsLoading(false);
+                                                final updateProfileResponse = await post(Uri.parse("https://socialbook.io/api/user/update"), body: body, headers: headers);
+
+                                                saveUser({
+                                                  'name': name,
+                                                  'avatar': avatar,
+                                                });
+
                                                 if (updateProfileResponse.statusCode == 200) {
-                                                  sharedPrefs.setString("name", nameController.text.toString());
-                                                  sharedPrefs.setString("avatar", controller.imageUrl.value);
                                                   CommonExtension().showToast("Profile update successfully!!");
                                                   Navigator.pop(context, false);
                                                 } else {
                                                   CommonExtension().showToast("Oops something went wrong!!");
                                                 }
+
+                                                controller.changeIsLoading(false);
                                               }
                                             },
                                             child: ButtonWidget(StringConstant.update_profile),

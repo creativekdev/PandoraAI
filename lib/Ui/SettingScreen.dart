@@ -28,12 +28,6 @@ class _SettingScreenState extends State<SettingScreen> {
   bool isLoading = false;
 
   @override
-  void initState() {
-    API.getLogin(true);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,

@@ -8,7 +8,7 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-import 'package:cartoonizer/Utils/ConsumableStore.dart';
+import 'package:cartoonizer/Common/ConsumableStore.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Model/UserModel.dart';

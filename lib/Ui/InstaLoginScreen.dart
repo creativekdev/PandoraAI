@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../Utils/instagram_constant.dart';
-import '../Utils/instagram_model.dart';
+import '../Common/instagram_constant.dart';
+import '../Model/InstagramModel.dart';
 
 class InstaLoginScreen extends StatefulWidget {
   const InstaLoginScreen({Key? key}) : super(key: key);
@@ -13,7 +13,6 @@ class InstaLoginScreen extends StatefulWidget {
 }
 
 class _InstaLoginScreenState extends State<InstaLoginScreen> {
-
   final InstagramModel instagram = InstagramModel();
 
   @override
@@ -26,24 +25,25 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TitleTextWidget(
-            StringConstant.insta_login,
-            ColorConstant.White,
-            FontWeight.w600,
-            14.sp),
+        title: TitleTextWidget(StringConstant.insta_login, ColorConstant.White, FontWeight.w600, 14.sp),
       ),
-      body: SafeArea(child: WebView(
+      body: SafeArea(
+          child: WebView(
         initialUrl: InstagramConstant.instance.url,
         javascriptMode: JavascriptMode.unrestricted,
         gestureNavigationEnabled: true,
         navigationDelegate: (NavigationRequest request) async {
-          if(request.url.startsWith(InstagramConstant.redirectUri)) {
+          if (request.url.startsWith(InstagramConstant.redirectUri)) {
             instagram.getAuthorizationCode(request.url);
             await instagram.getTokenAndUserID().then((isDone) {
               if (isDone) {
                 instagram.getUserProfile().then((isDone) async {
                   print('${instagram.username} logged in!');
-                  Navigator.pop(context, {'token' : instagram.authorizationCode.toString(), 'name' : instagram.username.toString(), 'accessToken' : instagram.accessToken.toString()});
+                  Navigator.pop(context, {
+                    'token': instagram.authorizationCode.toString(),
+                    'name': instagram.username.toString(),
+                    'accessToken': instagram.accessToken.toString()
+                  });
                 });
               }
             });
@@ -55,4 +55,3 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
     );
   }
 }
-

@@ -16,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'InstaLoginScreen.dart';
 import 'SocialSignUpScreen.dart';
 import 'TikTokLoginScreen.dart';
+import 'LoginScreen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
-  static const platform = MethodChannel('io.socialbook/shareVideo');
+  static const platform = MethodChannel('io.socialbook/cartoonizer');
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -46,13 +47,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
     var credential;
     try {
-      if(googleAuth?.accessToken != null || googleAuth?.idToken != null){
+      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
           idToken: googleAuth?.idToken,
         );
         return await FirebaseAuth.instance.signInWithCredential(credential);
-      }else{
+      } else {
         return null;
       }
     } catch (error) {
@@ -60,11 +61,16 @@ class _SignupScreenState extends State<SignupScreen> {
       return null;
     }
     // Once signed in, return the UserCredential
-
   }
+
   Future<dynamic> signInWithYoutube() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: ['email', 'https://www.googleapis.com/auth/youtube', 'https://www.googleapis.com/auth/yt-analytics.readonly', 'https://www.googleapis.com/auth/youtube.readonly']).signIn();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
+      'email',
+      'https://www.googleapis.com/auth/youtube',
+      'https://www.googleapis.com/auth/yt-analytics.readonly',
+      'https://www.googleapis.com/auth/youtube.readonly'
+    ]).signIn();
 
     // Obtain the auth details from the request
     GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -73,13 +79,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
     var credential;
     try {
-      if(googleAuth?.accessToken != null || googleAuth?.idToken != null){
+      if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
           idToken: googleAuth?.idToken,
         );
         return await FirebaseAuth.instance.signInWithCredential(credential);
-      }else{
+      } else {
         return null;
       }
     } catch (error) {
@@ -88,6 +94,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
     // Once signed in, return the UserCredential
   }
+
   Future<UserCredential> signInWithFacebook() async {
     // Trigger the sign-in flow
     final LoginResult loginResult = await FacebookAuth.instance.login();
@@ -106,11 +113,9 @@ class _SignupScreenState extends State<SignupScreen> {
   /// Generates a cryptographically secure random nonce, to be included in a
   /// credential request.
   String generateNonce([int length = 32]) {
-    final charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
-        .join();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
   }
 
   /// Returns the sha256 hash of [input] in hex notation.
@@ -163,6 +168,9 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     List<JsonValueModel> params = [];
+
+    var prefixPage = ModalRoute.of(context)!.settings.arguments;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -206,8 +214,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                                top: 1.h, left: 5.w, right: 5.w),
+                            margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -219,11 +226,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     width: 10.w,
                                   ),
                                 ),
-                                TitleTextWidget(
-                                    StringConstant.sign_up,
-                                    ColorConstant.White,
-                                    FontWeight.w600,
-                                    14.sp),
+                                TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w600, 14.sp),
                                 SizedBox(
                                   height: 10.w,
                                   width: 10.w,
@@ -234,8 +237,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                     ),
-                    TitleTextWidget(StringConstant.welcome1,
-                        ColorConstant.TextBlack, FontWeight.w600, 16.sp),
+                    TitleTextWidget(StringConstant.welcome1, ColorConstant.TextBlack, FontWeight.w600, 16.sp),
                     Container(
                       width: 20.w,
                       height: 0.3.h,
@@ -629,7 +631,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     //     ],
                     //   ),
                     // ),
-                    if(Platform.isIOS)
+                    if (Platform.isIOS)
                       GestureDetector(
                         onTap: () async {
                           setState(() {
@@ -649,10 +651,17 @@ class _SignupScreenState extends State<SignupScreen> {
                                   context,
                                   MaterialPageRoute(
                                     settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                    builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: "", tokenId: temp.user!.uid, channel: "apple",),
+                                    builder: (context) => SocialSignUpScreen(
+                                      additionalUserInfo: temp.additionalUserInfo!,
+                                      token: "",
+                                      tokenId: temp.user!.uid,
+                                      channel: "apple",
+                                    ),
                                   ),
                                 ).then((value) async {
-                                  if(!value){Navigator.pop(context, value);}
+                                  if (!value) {
+                                    Navigator.pop(context, value);
+                                  }
                                 });
                               } else {
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -681,16 +690,17 @@ class _SignupScreenState extends State<SignupScreen> {
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
-                          } finally{
-                            if(isLoading)
+                          } finally {
+                            if (isLoading)
                               setState(() {
                                 isLoading = false;
                               });
-                          };
-
+                          }
+                          ;
                         },
-                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),),
-                    if(Platform.isIOS)
+                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),
+                      ),
+                    if (Platform.isIOS)
                       SizedBox(
                         height: 1.5.h,
                       ),
@@ -715,36 +725,43 @@ class _SignupScreenState extends State<SignupScreen> {
                           setState(() {
                             isLoading = false;
                           });
-                          if(tokenResponse.statusCode == 200) {
+                          if (tokenResponse.statusCode == 200) {
                             final Map parsed = json.decode(tokenResponse.body.toString());
                             print(parsed);
-                            if(parsed.containsKey("data")){
+                            if (parsed.containsKey("data")) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: parsed['data']['token'], tokenId: tokenId, channel: "google",),
+                                  builder: (context) => SocialSignUpScreen(
+                                    additionalUserInfo: temp.additionalUserInfo!,
+                                    token: parsed['data']['token'],
+                                    tokenId: tokenId,
+                                    channel: "google",
+                                  ),
                                 ),
                               ).then((value) async {
-                                if(!value){Navigator.pop(context, value);}
+                                if (!value) {
+                                  Navigator.pop(context, value);
+                                }
                               });
                             } else {
                               SharedPreferences prefs = await SharedPreferences.getInstance();
                               String cookie = tokenResponse.headers.toString();
                               var str = cookie.split(";");
                               String id = "";
-                              for(int j=0;j<str.length;j++){
-                                if(str[j].contains("sb.connect.sid")){
-                                  id=str[j];
-                                  j=str.length;
+                              for (int j = 0; j < str.length; j++) {
+                                if (str[j].contains("sb.connect.sid")) {
+                                  id = str[j];
+                                  j = str.length;
                                 }
                               }
                               var finalId = id.split(",");
-                              if(finalId.length>1){
-                                for(int j=0;j<finalId.length;j++){
-                                  if(finalId[j].contains("sb.connect.sid")){
-                                    id=finalId[j];
-                                    j=finalId.length;
+                              if (finalId.length > 1) {
+                                for (int j = 0; j < finalId.length; j++) {
+                                  if (finalId[j].contains("sb.connect.sid")) {
+                                    id = finalId[j];
+                                    j = finalId.length;
                                   }
                                 }
                               }
@@ -755,13 +772,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
-
                         } finally {
-                          if(isLoading)
+                          if (isLoading)
                             setState(() {
                               isLoading = false;
                             });
-                        };
+                        }
+                        ;
                       },
                       child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
                     ),
@@ -793,36 +810,43 @@ class _SignupScreenState extends State<SignupScreen> {
                           print(tokenBody);
                           print(tokenResponse.body);
                           print(tokenResponse.statusCode);
-                          if(tokenResponse.statusCode == 200) {
+                          if (tokenResponse.statusCode == 200) {
                             final Map parsed = json.decode(tokenResponse.body.toString());
                             print(parsed);
-                            if(parsed.containsKey("data")){
+                            if (parsed.containsKey("data")) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: parsed['data']['token'], tokenId: tokenId, channel: "youtube",),
+                                  builder: (context) => SocialSignUpScreen(
+                                    additionalUserInfo: temp.additionalUserInfo!,
+                                    token: parsed['data']['token'],
+                                    tokenId: tokenId,
+                                    channel: "youtube",
+                                  ),
                                 ),
                               ).then((value) async {
-                                if(!value){Navigator.pop(context, value);}
+                                if (!value) {
+                                  Navigator.pop(context, value);
+                                }
                               });
                             } else {
                               SharedPreferences prefs = await SharedPreferences.getInstance();
                               String cookie = tokenResponse.headers.toString();
                               var str = cookie.split(";");
                               String id = "";
-                              for(int j=0;j<str.length;j++){
-                                if(str[j].contains("sb.connect.sid")){
-                                  id=str[j];
-                                  j=str.length;
+                              for (int j = 0; j < str.length; j++) {
+                                if (str[j].contains("sb.connect.sid")) {
+                                  id = str[j];
+                                  j = str.length;
                                 }
                               }
                               var finalId = id.split(",");
-                              if(finalId.length>1){
-                                for(int j=0;j<finalId.length;j++){
-                                  if(finalId[j].contains("sb.connect.sid")){
-                                    id=finalId[j];
-                                    j=finalId.length;
+                              if (finalId.length > 1) {
+                                for (int j = 0; j < finalId.length; j++) {
+                                  if (finalId[j].contains("sb.connect.sid")) {
+                                    id = finalId[j];
+                                    j = finalId.length;
                                   }
                                 }
                               }
@@ -833,13 +857,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
-
                         } finally {
-                          if(isLoading)
+                          if (isLoading)
                             setState(() {
                               isLoading = false;
                             });
-                        };
+                        }
+                        ;
                       },
                       child: IconifiedButtonWidget(StringConstant.youtube, ImagesConstant.ic_youtube),
                     ),
@@ -886,15 +910,14 @@ class _SignupScreenState extends State<SignupScreen> {
                             builder: (context) => InstaLoginScreen(),
                           ),
                         ).then((value) async {
-                          if(value != null) {
+                          if (value != null) {
                             setState(() {
                               isLoading = true;
                             });
                             var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                            final headers = {
-                              "cookie": "bst_social_signup=${tempStamp}"
-                            };
-                            final access_response = await get(Uri.parse("https://socialbook.io/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
+                            final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+                            final access_response =
+                                await get(Uri.parse("https://socialbook.io/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
                             setState(() {
                               isLoading = false;
                             });
@@ -906,16 +929,22 @@ class _SignupScreenState extends State<SignupScreen> {
                                   context,
                                   MaterialPageRoute(
                                     settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                    builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "instagram",),
+                                    builder: (context) => SocialSignUpScreen(
+                                      additionalUserInfo: null,
+                                      token: parsed["data"]["name"],
+                                      tokenId: tempStamp,
+                                      channel: "instagram",
+                                    ),
                                   ),
                                 ).then((value) async {
-                                  if(!value){Navigator.pop(context, value);}
+                                  if (!value) {
+                                    Navigator.pop(context, value);
+                                  }
                                 });
                               }
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
-
                           }
                           print(value);
                         });
@@ -930,22 +959,21 @@ class _SignupScreenState extends State<SignupScreen> {
                         var tempData = await platform.invokeMethod("OpenTiktok");
                         // if (Platform.isAndroid) {
                         //CommonExtension().showToast(tempData);
-                        if(tempData != null) {
+                        if (tempData != null) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              settings: RouteSettings(
-                                  name: "/TikTokLoginScreen"),
-                              builder: (context) =>
-                                  TikTokLoginScreen(url: tempData),
+                              settings: RouteSettings(name: "/TikTokLoginScreen"),
+                              builder: (context) => TikTokLoginScreen(url: tempData),
                             ),
                           ).then((value) async {
                             try {
-                              if(value['code'] != "null") {
+                              if (value['code'] != "null") {
                                 setState(() {
                                   isLoading = true;
                                 });
-                                final codeResponse = await get(Uri.parse("https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${value['code']}&grant_type=authorization_code"));
+                                final codeResponse = await get(Uri.parse(
+                                    "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${value['code']}&grant_type=authorization_code"));
 
                                 print(codeResponse.statusCode);
                                 print(codeResponse.body);
@@ -957,9 +985,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     // "refresh_token": parsed['data']['refresh_token'],
                                   });
                                   var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                                  final headers = {
-                                    "cookie": "bst_social_signup=${tempStamp}"
-                                  };
+                                  final headers = {"cookie": "bst_social_signup=${tempStamp}"};
                                   var urlData = "https://socialbook.io/oauth/tiktok/callback?tokens=" + tokenBody;
                                   final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
                                   setState(() {
@@ -972,10 +998,17 @@ class _SignupScreenState extends State<SignupScreen> {
                                         context,
                                         MaterialPageRoute(
                                           settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                          builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "tiktok",),
+                                          builder: (context) => SocialSignUpScreen(
+                                            additionalUserInfo: null,
+                                            token: parsed["data"]["name"],
+                                            tokenId: tempStamp,
+                                            channel: "tiktok",
+                                          ),
                                         ),
                                       ).then((value) async {
-                                        if(!value){Navigator.pop(context, value);}
+                                        if (!value) {
+                                          Navigator.pop(context, value);
+                                        }
                                       });
                                     }
                                   } else {
@@ -990,17 +1023,14 @@ class _SignupScreenState extends State<SignupScreen> {
                               } else {
                                 CommonExtension().showToast("Oops! Unauthorised");
                               }
-                            } catch (error) {
-
-                            }
+                            } catch (error) {}
                           });
                         }
                         // }
                         // print("tempData");
                         // print(tempData);
                       },
-                      child: IconifiedButtonWidget(
-                          StringConstant.tiktok, ImagesConstant.ic_tiktok),
+                      child: IconifiedButtonWidget(StringConstant.tiktok, ImagesConstant.ic_tiktok),
                     ),
                     SizedBox(
                       height: 1.5.h,
@@ -1008,19 +1038,27 @@ class _SignupScreenState extends State<SignupScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TitleTextWidget(StringConstant.already_account,
-                            ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                        TitleTextWidget(StringConstant.already_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                         GestureDetector(
-                          onTap: () => {Navigator.pop(context)},
+                          onTap: () => {
+                            if (prefixPage != null)
+                              {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    settings: RouteSettings(name: "/LoginScreen", arguments: "signup"),
+                                    builder: (context) => LoginScreen(),
+                                  ),
+                                )
+                              }
+                            else
+                              {Navigator.pop(context)}
+                          },
                           child: Text(
                             StringConstant.sign_in,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                color: ColorConstant.PrimaryColor,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                                fontSize: 12.sp,
-                                decoration: TextDecoration.underline),
+                                color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12.sp, decoration: TextDecoration.underline),
                           ),
                         )
                       ],
@@ -1037,6 +1075,7 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
+
   _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
