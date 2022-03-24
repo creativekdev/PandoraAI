@@ -8,8 +8,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
-import '../gallery_saver.dart';
-
 class ShareScreen extends StatefulWidget {
   final String image;
   final bool isVideo;
@@ -36,6 +34,11 @@ class _ShareScreenState extends State<ShareScreen> {
         });
       _videoPlayerController.play();
     }
+  }
+
+  void _openShareAction(BuildContext context, List<String> paths) {
+    final box = context.findRenderObject() as RenderBox?;
+    Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: StringConstant.share_title);
   }
 
   @override
@@ -128,23 +131,25 @@ class _ShareScreenState extends State<ShareScreen> {
                               if (!isAppInstalled) {
                                 CommonExtension().showToast("Facebook is not installed on this device");
                               } else {
-                                File decodedimgfile;
+                                File file;
                                 String dir = (await getApplicationDocumentsDirectory()).path;
                                 String fullPath = '$dir/abc.png';
 
                                 if (widget.isVideo) {
-                                  decodedimgfile = File(widget.image);
-                                  try {
-                                    await platform.invokeMethod('ShareFacebook', {'path': decodedimgfile.path});
-                                  } on PlatformException catch (e) {
-                                    print(e.message);
-                                  }
+                                  file = File(widget.image);
+                                  _openShareAction(context, [file.path]);
+
+                                  // try {
+                                  //   await platform.invokeMethod('ShareFacebook', {'path': file.path});
+                                  // } on PlatformException catch (e) {
+                                  //   print(e.message);
+                                  // }
                                 } else {
-                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                                   if (Platform.isIOS) {
-                                    SocialShare.shareFacebookStory(decodedimgfile.path, "#ffffff", "#000000", "https://deep-link-url");
+                                    SocialShare.shareFacebookStory(file.path, "#ffffff", "#000000", "https://deep-link-url");
                                   } else {
-                                    SocialShare.shareFacebookStory(decodedimgfile.path, "#ffffff", "#000000", "https://deep-link-url", appId: "801412163654865");
+                                    SocialShare.shareFacebookStory(file.path, "#ffffff", "#000000", "https://deep-link-url", appId: "801412163654865");
                                   }
                                 }
                               }
@@ -163,19 +168,22 @@ class _ShareScreenState extends State<ShareScreen> {
                               if (!isAppInstalled) {
                                 CommonExtension().showToast("Instagram is not installed on this device");
                               } else {
+                                File file;
                                 String dir = (await getApplicationDocumentsDirectory()).path;
                                 String fullPath = '$dir/abc.png';
-                                File decodedimgfile;
+
                                 if (widget.isVideo) {
-                                  decodedimgfile = File(widget.image);
-                                  try {
-                                    await platform.invokeMethod('ShareInsta', {'path': decodedimgfile.path});
-                                  } on PlatformException catch (e) {
-                                    print(e.message);
-                                  }
+                                  file = File(widget.image);
+                                  _openShareAction(context, [file.path]);
+
+                                  // try {
+                                  //   await platform.invokeMethod('ShareInsta', {'path': file.path});
+                                  // } on PlatformException catch (e) {
+                                  //   print(e.message);
+                                  // }
                                 } else {
-                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                                  SocialShare.shareInstagramStory(decodedimgfile.path,
+                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                  SocialShare.shareInstagramStory(file.path,
                                       backgroundTopColor: "#FFFFFF", backgroundBottomColor: "#FFFFFF", attributionURL: "https://deep-link-url");
                                 }
                               }
@@ -197,13 +205,13 @@ class _ShareScreenState extends State<ShareScreen> {
                                 final FlutterShareMe flutterShareMe = FlutterShareMe();
                                 String dir = (await getApplicationDocumentsDirectory()).path;
                                 String fullPath = '$dir/abc.png';
-                                File decodedimgfile;
+                                File file;
                                 if (widget.isVideo) {
-                                  decodedimgfile = File(widget.image);
+                                  file = File(widget.image);
                                 } else {
-                                  decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                                 }
-                                await flutterShareMe.shareToWhatsApp(imagePath: decodedimgfile.path, fileType: (widget.isVideo) ? FileType.video : FileType.image);
+                                await flutterShareMe.shareToWhatsApp(imagePath: file.path, fileType: (widget.isVideo) ? FileType.video : FileType.image);
                               }
                             },
                             child: Image.asset(
@@ -216,13 +224,13 @@ class _ShareScreenState extends State<ShareScreen> {
                             onTap: () async {
                               String dir = (await getApplicationDocumentsDirectory()).path;
                               String fullPath = '$dir/abc.png';
-                              File decodedimgfile;
+                              File file;
                               if (widget.isVideo) {
-                                decodedimgfile = File(widget.image);
+                                file = File(widget.image);
                               } else {
-                                decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                               }
-                              List<String> paths = [decodedimgfile.path];
+                              List<String> paths = [file.path];
                               final Email email = Email(
                                 body: '',
                                 subject: '',
@@ -239,17 +247,15 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              final box = context.findRenderObject() as RenderBox?;
                               String dir = (await getApplicationDocumentsDirectory()).path;
                               String fullPath = '$dir/abc.png';
-                              File decodedimgfile;
+                              File file;
                               if (widget.isVideo) {
-                                decodedimgfile = File(widget.image);
+                                file = File(widget.image);
                               } else {
-                                decodedimgfile = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+                                file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
                               }
-                              List<String> paths = [decodedimgfile.path];
-                              await Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                              _openShareAction(context, [file.path]);
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_more,

@@ -80,5 +80,6 @@ class StringConstant {
   static const exit_msg1 = "You will lose all your progress.";
   static const exit_editing = "EXIT EDITING";
   static const cancel = "CANCEL";
+  static const share_title = "SocialBook Cartoonizer";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
 }

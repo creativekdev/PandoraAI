@@ -12,6 +12,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:crypto/crypto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cartoonizer/config.dart';
 
 import 'InstaLoginScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -639,7 +640,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           });
                           try {
                             var temp = await signInWithApple();
-                            var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
+                            var tempUrl = "${Config.instance.host}/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
                             final tokenResponse = await get(Uri.parse(tempUrl));
                             setState(() {
                               isLoading = false;
@@ -720,7 +721,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "https://socialbook.io/signup/oauth/google/callback?tokens=" + tokenBody;
+                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;
@@ -802,14 +803,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             "access_type": "offline",
                           });
 
-                          var tempUrl = "https://socialbook.io/signup/oauth/youtube/callback?tokens=" + tokenBody;
-                          final tokenResponse = await get(Uri.parse(tempUrl));
+                          var tempStamp = DateTime.now().millisecondsSinceEpoch;
+                          final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+                          var tempUrl = "${Config.instance.host}/signup/oauth/youtube/callback?tokens=" + tokenBody;
+                          final tokenResponse = await get(Uri.parse(tempUrl), headers: headers);
                           setState(() {
                             isLoading = false;
                           });
-                          print(tokenBody);
-                          print(tokenResponse.body);
-                          print(tokenResponse.statusCode);
                           if (tokenResponse.statusCode == 200) {
                             final Map parsed = json.decode(tokenResponse.body.toString());
                             print(parsed);
@@ -821,7 +821,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   builder: (context) => SocialSignUpScreen(
                                     additionalUserInfo: temp.additionalUserInfo!,
                                     token: parsed['data']['token'],
-                                    tokenId: tokenId,
+                                    tokenId: tempStamp,
                                     channel: "youtube",
                                   ),
                                 ),
@@ -917,7 +917,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             var tempStamp = DateTime.now().millisecondsSinceEpoch;
                             final headers = {"cookie": "bst_social_signup=${tempStamp}"};
                             final access_response =
-                                await get(Uri.parse("https://socialbook.io/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
+                                await get(Uri.parse("${Config.instance.host}/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
                             setState(() {
                               isLoading = false;
                             });
@@ -986,7 +986,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   });
                                   var tempStamp = DateTime.now().millisecondsSinceEpoch;
                                   final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                                  var urlData = "https://socialbook.io/oauth/tiktok/callback?tokens=" + tokenBody;
+                                  var urlData = "${Config.instance.host}/oauth/tiktok/callback?tokens=" + tokenBody;
                                   final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
                                   setState(() {
                                     isLoading = false;

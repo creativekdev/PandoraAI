@@ -6,13 +6,15 @@ abstract class BaseConfig {
 }
 
 class DevelopmentConfig implements BaseConfig {
-  String host = '192.168.31.126';
-  String get apiHost => 'http://$host:8090/api';
+  // real phone
+  // String host = 'http://192.168.31.126:8090';
+  String host = 'http://localhost:8090';
+  String get apiHost => '$host/api';
 }
 
 class ProductionConfig implements BaseConfig {
-  String host = 'socialbook.io';
-  String get apiHost => 'https://$host/api';
+  String host = 'https://socialbook.io';
+  String get apiHost => '$host/api';
 }
 
 class Config {

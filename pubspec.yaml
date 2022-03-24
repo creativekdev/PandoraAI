@@ -30,7 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   sizer: ^2.0.15
   simple_shadow: ^0.3.0
-  dotted_border: ^2.0.0+2
+  dotted_border: ^2.0.0
   image_picker: ^0.8.2
   http: ^0.13.4
   crypto: ^3.0.1
@@ -39,8 +39,6 @@ dependencies:
   shared_preferences: ^2.0.12
   path: ^1.8.0
   path_provider: ^2.0.8
-#  video_player: ^2.2.11
-#  video_thumbnail: ^0.4.3
   image_gallery_saver: ^1.7.1
   share_plus: ^3.0.4
   url_launcher: ^6.0.18

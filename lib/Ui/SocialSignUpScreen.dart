@@ -10,7 +10,6 @@ import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
-
   final additionalUserInfo;
   final token, tokenId, channel;
   const SocialSignUpScreen({Key? key, required this.additionalUserInfo, required this.token, required this.tokenId, required this.channel}) : super(key: key);
@@ -20,7 +19,6 @@ class SocialSignUpScreen extends StatefulWidget {
 }
 
 class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
-
   bool isShow = true;
   bool isLoading = false;
   final emailController = TextEditingController();
@@ -84,8 +82,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(
-                                top: 1.h, left: 5.w, right: 5.w),
+                            margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -97,11 +94,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                                     width: 10.w,
                                   ),
                                 ),
-                                TitleTextWidget(
-                                    StringConstant.sign_up,
-                                    ColorConstant.White,
-                                    FontWeight.w600,
-                                    14.sp),
+                                TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w600, 14.sp),
                                 SizedBox(
                                   height: 10.w,
                                   width: 10.w,
@@ -112,8 +105,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                         ],
                       ),
                     ),
-                    TitleTextWidget(StringConstant.set_password,
-                        ColorConstant.TextBlack, FontWeight.w600, 16.sp),
+                    TitleTextWidget(StringConstant.set_password, ColorConstant.TextBlack, FontWeight.w600, 16.sp),
                     Container(
                       width: 20.w,
                       height: 0.3.h,
@@ -131,16 +123,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                     SizedBox(
                       height: 3.h,
                     ),
-                    TextInputWidget(
-                        StringConstant.email,
-                        ImagesConstant.ic_email,
-                        ColorConstant.TextBlack,
-                        FontWeight.w400,
-                        12.sp,
-                        TextInputAction.next,
-                        TextInputType.emailAddress,
-                        false,
-                        emailController),
+                    TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next,
+                        TextInputType.emailAddress, false, emailController),
                     SizedBox(
                       height: 1.5.h,
                     ),
@@ -149,8 +133,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 5.w),
                       child: Card(
                         elevation: 0.5.h,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.w)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -212,9 +195,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                                     })
                                   },
                                   child: Image.asset(
-                                    isShow
-                                        ? ImagesConstant.ic_eye
-                                        : ImagesConstant.ic_eye_close,
+                                    isShow ? ImagesConstant.ic_eye : ImagesConstant.ic_eye_close,
                                     height: 7.w,
                                     width: 7.w,
                                   ),
@@ -239,19 +220,17 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                           CommonExtension().showToast(StringConstant.email_validation1);
                         } else if (passController.text.trim().isEmpty) {
                           CommonExtension().showToast(StringConstant.pass_validation);
-                        } else{
+                        } else {
                           FocusManager.instance.primaryFocus?.unfocus();
                           setState(() {
                             isLoading = true;
                           });
-                          if (widget.channel == "google" || widget.channel == "youtube") {
+                          if (widget.channel == "google") {
                             Map<String, dynamic> tokenBody = {
-                              "token": widget.token,
+                              "token": widget.token ?? "",
                               "password": passController.text,
                             };
-                            final tokenResponse = await post(Uri.parse(
-                                "https://socialbook.io/password_reset"),
-                                body: tokenBody);
+                            final tokenResponse = await post(Uri.parse("${Config.instance.host}/password_reset"), body: tokenBody);
                             print(tokenResponse.body);
                             setState(() {
                               isLoading = false;
@@ -280,13 +259,10 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
                               Navigator.pop(context, false);
                             }
-                          } else if (widget.channel == "instagram" || widget.channel == "tiktok") {
-                            final headers = {
-                              "cookie": "bst_social_signup=${widget.tokenId}"
-                            };
+                          } else if (widget.channel == "youtube" || widget.channel == "instagram" || widget.channel == "tiktok") {
+                            final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
                             Map<String, dynamic> lBody = {
                               "email": emailController.text,
-                              "name": widget.token,
                               "password": passController.text,
                               "channel": widget.channel,
                             };

@@ -153,15 +153,15 @@ import TikTokOpenSDK
         }
    
     func shareFacebook(videoURLs:URL) {
-        let content: SharePhotoContent = SharePhotoContent()
+        let content: ShareVideoContent = ShareVideoContent()
                 //let videoURLs = Bundle.main.url(forResource: "video", withExtension: "mp4")!
                 createAssetURL(url: videoURLs) { url in
                     DispatchQueue.main.async {
 
-                        let photo = SharePhoto(
-                            imageURL: URL(string: url)!, userGenerated: true
-                            )
-                        content.photos = [photo]
+                        let video = ShareVideo()
+                        video.videoURL = URL(string: url)
+                        content.video = video
+                        
                         let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
                                // dialog.mode = mode
                         //let shareDialog = ShareDialog()

@@ -617,13 +617,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              SimpleShadow(
-                                                child: Image.asset(
-                                                  ImagesConstant.ic_man,
-                                                  height: 35.h,
-                                                  width: 50.w,
-                                                ),
-                                                sigma: 7,
+                                              Image.asset(
+                                                ImagesConstant.ic_man,
+                                                height: 40.h,
+                                                width: 85.w,
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
@@ -1351,7 +1348,7 @@ void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        settings: RouteSettings(name: "/SignupScreen", arguments:"choose_photo"),
+                        settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
                         builder: (context) => SignupScreen(),
                       ),
                     )
