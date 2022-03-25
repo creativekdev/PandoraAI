@@ -8,6 +8,7 @@ import 'config.dart';
 
 void main() async {
   log(Config.instance.apiHost);
+  await GetStorage.init();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     systemNavigationBarColor: ColorConstant.PrimaryColor,
     statusBarColor: ColorConstant.PrimaryColor,

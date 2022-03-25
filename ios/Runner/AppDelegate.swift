@@ -13,12 +13,9 @@ import TikTokOpenSDK
   ) -> Bool {
       TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
   let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
-      let methodChannel = FlutterMethodChannel(name: "io.socialbook/cartoonizer",
-                                                binaryMessenger: controller.binaryMessenger)
-      methodChannel.setMethodCallHandler({
-        (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
-        
-        
+      let methodChannel = FlutterMethodChannel(name: "io.socialbook/cartoonizer", binaryMessenger: controller.binaryMessenger)
+      
+      methodChannel.setMethodCallHandler({ (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
           if (call.method.elementsEqual("ShareInsta")) {
               if let dict = call.arguments as? [String:Any]{
                   let videoFilePath = dict["path"] as? String
@@ -51,11 +48,11 @@ import TikTokOpenSDK
               }
               
           } else if (call.method.elementsEqual("ShareFacebook")) {
-              if let dict = call.arguments as? [String:Any]{
-                  let videoFilePath = dict["path"] as? String
-                  self.shareFacebook(videoURLs: URL.init(string: videoFilePath ?? "")!)
+              if let dict = call.arguments as? [String:Any] {
+                  let fileType = dict["fileType"] as? String
+                  let fileURL = dict["fileURL"] as? String
+                  self.shareFacebook(fileType: fileType ?? "image", fileURL: URL.init(string: fileURL ?? "")!)
               }
-              
           } else if (call.method.elementsEqual("AppInstall")) {
               if let dict = call.arguments as? [String:Any]{
                   let appURLScheme = String.init(format: "%@://", dict["path"] as? String ?? "")
@@ -151,28 +148,39 @@ import TikTokOpenSDK
             }
             return false
         }
-   
-    func shareFacebook(videoURLs:URL) {
-        let content: ShareVideoContent = ShareVideoContent()
-                //let videoURLs = Bundle.main.url(forResource: "video", withExtension: "mp4")!
-                createAssetURL(url: videoURLs) { url in
-                    DispatchQueue.main.async {
 
-                        let video = ShareVideo()
-                        video.videoURL = URL(string: url)
-                        content.video = video
-                        
-                        let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
-                               // dialog.mode = mode
-                        //let shareDialog = ShareDialog()
-                       // shareDialog.shareContent = content
-                        dialog.mode = .native
-    //                    shareDialog.delegate = self
-                        dialog.show()
-                    }
-                  
+
+    func shareFacebook(fileType:String, fileURL:URL) {
+        if(fileType == "image") {
+            let photo = SharePhoto(
+                   image: UIImage(contentsOfFile: fileURL.path)!,
+                   userGenerated: true
+               )
+               let content = SharePhotoContent()
+               content.photos = [photo]
+            
+            let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
+            dialog.mode = .native
+            dialog.show()
+        } else {
+            let video: ShareVideo
+            if #available(iOS 11, *) {
+                guard let videoAsset = fileURL as? PHAsset else {
+                    return
                 }
+                video = ShareVideo(videoAsset: videoAsset)
+            } else {
+                video = ShareVideo(videoURL: fileURL)
             }
+            let content = ShareVideoContent()
+            content.video = video
+            
+            let dialog = ShareDialog(viewController: self.window?.rootViewController, content: content, delegate: self as? SharingDelegate)
+            dialog.mode = .native
+            dialog.show()
+        }
+    }
+
     func createAssetURL(url: URL, completion: @escaping (String) -> Void) {
                 let photoLibrary = PHPhotoLibrary.shared()
                 var videoAssetPlaceholder:PHObjectPlaceholder!
@@ -187,10 +195,12 @@ import TikTokOpenSDK
                             let ext = "mp4"
                             let assetURLStr =
                             "assets-library://asset/asset.\(ext)?id=\(assetID)&ext=\(ext)"
-
                             completion(assetURLStr)
                         }
                 })
             }
+    
+    
+
     
 }

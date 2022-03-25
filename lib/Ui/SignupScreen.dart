@@ -66,12 +66,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<dynamic> signInWithYoutube() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
-      'email',
-      'https://www.googleapis.com/auth/youtube',
-      'https://www.googleapis.com/auth/yt-analytics.readonly',
-      'https://www.googleapis.com/auth/youtube.readonly'
-    ]).signIn();
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: ['https://www.googleapis.com/auth/yt-analytics.readonly', 'https://www.googleapis.com/auth/youtube.readonly']).signIn();
 
     // Obtain the auth details from the request
     GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;

@@ -48,20 +48,20 @@ class DefaultFirebaseOptions {
   // );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAYXngmO0G7RshkxWtLMPDW3avStoZSrTc',
-    appId: '1:604569513046:android:50fe35dedefcd3c00b9ff7',
-    messagingSenderId: '604569513046',
-    projectId: 'socialbook-80193',
-    storageBucket: 'socialbook-80193.appspot.com',
+    apiKey: 'AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io',
+    appId: '1:761058819999:android:752125b532f9a9ea5407aa',
+    messagingSenderId: '761058819999',
+    projectId: 'fair-terminus-266600',
+    storageBucket: 'fair-terminus-266600.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCcIqGLgVY7YyKv4-tp1W0lJ-EPyOg_HeE',
-    appId: '1:604569513046:ios:feefaf1e893c3ab00b9ff7',
-    messagingSenderId: '604569513046',
-    projectId: 'socialbook-80193',
-    storageBucket: 'socialbook-80193.appspot.com',
-    iosClientId: '604569513046-o5rthd4hqbjrpmb05gu2j49qc7i97erf.apps.googleusercontent.com',
+    apiKey: 'AIzaSyB6clMfdKAphkQ5Qu1Hr3JYDFu2N0WEKoY',
+    appId: '1:761058819999:ios:a6e06dc89268600f5407aa',
+    messagingSenderId: '761058819999',
+    projectId: 'fair-terminus-266600',
+    storageBucket: 'fair-terminus-266600.appspot.com',
+    iosClientId: '761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0.apps.googleusercontent.com',
     iosBundleId: 'io.socialbook.cartoonizer',
   );
 }

@@ -7,6 +7,15 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
+
+enum ShareType {
+  facebook,
+  instagram,
+  whatsapp,
+  email,
+  system,
+}
 
 class ShareScreen extends StatefulWidget {
   final String image;
@@ -39,6 +48,49 @@ class _ShareScreenState extends State<ShareScreen> {
   void _openShareAction(BuildContext context, List<String> paths) {
     final box = context.findRenderObject() as RenderBox?;
     Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: StringConstant.share_title);
+  }
+
+  Future<void> onShareButtonTap({required ShareType shareType, BuildContext? context}) async {
+    File file;
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String fullPath = '$dir/${DateTime.now().millisecondsSinceEpoch}.jpeg';
+
+    if (widget.isVideo) {
+      file = File(widget.image);
+    } else {
+      file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
+    }
+
+    final FlutterShareMe flutterShareMe = FlutterShareMe();
+
+    switch (shareType) {
+      case ShareType.facebook:
+        if (widget.isVideo) {
+          _openShareAction(context!, [file.path]);
+        } else {
+          await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+        }
+        break;
+      case ShareType.instagram:
+        await flutterShareMe.shareToInstagram(filePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        break;
+      case ShareType.whatsapp:
+        await flutterShareMe.shareToWhatsApp(msg: StringConstant.share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        break;
+      case ShareType.email:
+        List<String> paths = [file.path];
+        final Email email = Email(
+          body: '',
+          subject: '',
+          recipients: [''],
+          attachmentPaths: paths,
+        );
+        await FlutterEmailSender.send(email);
+        break;
+      case ShareType.system:
+        _openShareAction(context!, [file.path]);
+        break;
+    }
   }
 
   @override
@@ -131,27 +183,7 @@ class _ShareScreenState extends State<ShareScreen> {
                               if (!isAppInstalled) {
                                 CommonExtension().showToast("Facebook is not installed on this device");
                               } else {
-                                File file;
-                                String dir = (await getApplicationDocumentsDirectory()).path;
-                                String fullPath = '$dir/abc.png';
-
-                                if (widget.isVideo) {
-                                  file = File(widget.image);
-                                  _openShareAction(context, [file.path]);
-
-                                  // try {
-                                  //   await platform.invokeMethod('ShareFacebook', {'path': file.path});
-                                  // } on PlatformException catch (e) {
-                                  //   print(e.message);
-                                  // }
-                                } else {
-                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                                  if (Platform.isIOS) {
-                                    SocialShare.shareFacebookStory(file.path, "#ffffff", "#000000", "https://deep-link-url");
-                                  } else {
-                                    SocialShare.shareFacebookStory(file.path, "#ffffff", "#000000", "https://deep-link-url", appId: "801412163654865");
-                                  }
-                                }
+                                onShareButtonTap(shareType: ShareType.facebook, context: context);
                               }
                             },
                             child: Image.asset(
@@ -168,24 +200,7 @@ class _ShareScreenState extends State<ShareScreen> {
                               if (!isAppInstalled) {
                                 CommonExtension().showToast("Instagram is not installed on this device");
                               } else {
-                                File file;
-                                String dir = (await getApplicationDocumentsDirectory()).path;
-                                String fullPath = '$dir/abc.png';
-
-                                if (widget.isVideo) {
-                                  file = File(widget.image);
-                                  _openShareAction(context, [file.path]);
-
-                                  // try {
-                                  //   await platform.invokeMethod('ShareInsta', {'path': file.path});
-                                  // } on PlatformException catch (e) {
-                                  //   print(e.message);
-                                  // }
-                                } else {
-                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                                  SocialShare.shareInstagramStory(file.path,
-                                      backgroundTopColor: "#FFFFFF", backgroundBottomColor: "#FFFFFF", attributionURL: "https://deep-link-url");
-                                }
+                                onShareButtonTap(shareType: ShareType.instagram);
                               }
                             },
                             child: Image.asset(
@@ -202,16 +217,7 @@ class _ShareScreenState extends State<ShareScreen> {
                               if (!isAppInstalled) {
                                 CommonExtension().showToast("Whatsapp is not installed on this device");
                               } else {
-                                final FlutterShareMe flutterShareMe = FlutterShareMe();
-                                String dir = (await getApplicationDocumentsDirectory()).path;
-                                String fullPath = '$dir/abc.png';
-                                File file;
-                                if (widget.isVideo) {
-                                  file = File(widget.image);
-                                } else {
-                                  file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                                }
-                                await flutterShareMe.shareToWhatsApp(imagePath: file.path, fileType: (widget.isVideo) ? FileType.video : FileType.image);
+                                onShareButtonTap(shareType: ShareType.whatsapp);
                               }
                             },
                             child: Image.asset(
@@ -222,22 +228,7 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              String dir = (await getApplicationDocumentsDirectory()).path;
-                              String fullPath = '$dir/abc.png';
-                              File file;
-                              if (widget.isVideo) {
-                                file = File(widget.image);
-                              } else {
-                                file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                              }
-                              List<String> paths = [file.path];
-                              final Email email = Email(
-                                body: '',
-                                subject: '',
-                                recipients: [''],
-                                attachmentPaths: paths,
-                              );
-                              await FlutterEmailSender.send(email);
+                              onShareButtonTap(shareType: ShareType.email);
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_email,
@@ -247,15 +238,7 @@ class _ShareScreenState extends State<ShareScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              String dir = (await getApplicationDocumentsDirectory()).path;
-                              String fullPath = '$dir/abc.png';
-                              File file;
-                              if (widget.isVideo) {
-                                file = File(widget.image);
-                              } else {
-                                file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-                              }
-                              _openShareAction(context, [file.path]);
+                              onShareButtonTap(shareType: ShareType.system, context: context);
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_more,

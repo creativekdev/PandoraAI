@@ -33,6 +33,17 @@ class _LoginScreenState extends State<LoginScreen> {
   var token;
   var tokenId;
 
+  Future<void> goBack() async {
+    final box = GetStorage();
+    String? login_back_page = box.read('login_back_page');
+    if (login_back_page != null) {
+      Navigator.popUntil(context, ModalRoute.withName(login_back_page));
+      box.remove('login_back_page');
+    } else {
+      Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+    }
+  }
+
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -62,12 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<dynamic> signInWithYoutube() async {
     // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn(scopes: [
-      'email',
-      'https://www.googleapis.com/auth/youtube',
-      'https://www.googleapis.com/auth/yt-analytics.readonly',
-      'https://www.googleapis.com/auth/youtube.readonly'
-    ]).signIn();
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn(scopes: ['https://www.googleapis.com/auth/yt-analytics.readonly', 'https://www.googleapis.com/auth/youtube.readonly']).signIn();
 
     // Obtain the auth details from the request
     GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
@@ -412,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
-                            Navigator.pop(context, false);
+                            goBack();
                           } else {
                             try {
                               CommonExtension().showToast(json.decode(response.body)['message']);
@@ -509,7 +516,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                                 prefs.setBool("isLogin", true);
                                 prefs.setString("login_cookie", id.split("=")[1]);
-                                Navigator.pop(context, false);
+                                goBack();
                               }
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
@@ -591,7 +598,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
+                              goBack();
                             }
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");

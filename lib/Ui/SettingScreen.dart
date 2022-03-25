@@ -1,16 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/LoginScreen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'ChangePasswordScreen.dart';
@@ -62,7 +58,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
                       child: FutureBuilder(
-                        future: _getPrefs(),
+                        future: _getIsLogin(),
                         builder: (context, snapshot) {
                           if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                             return FutureBuilder(
@@ -123,11 +119,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
-                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.TextBlack,
-                                                  FontWeight.w500, 12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
                                                   align: TextAlign.start),
-                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).name : "",
-                                                  ColorConstant.LightTextColor, FontWeight.w400, 12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).name : "", ColorConstant.LightTextColor, FontWeight.w400, 12.sp,
                                                   align: TextAlign.start),
                                             ],
                                           ),
@@ -141,15 +135,16 @@ class _SettingScreenState extends State<SettingScreen> {
                           } else {
                             return GestureDetector(
                               onTap: () => {
-                                Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen")))
-                                    .then((value) async {
-                                  API.getLogin(true);
-                                  if (value != null) {
+                                GetStorage().write('login_back_page', '/SettingScreen'),
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
+                                  if (await _getIsLogin()) {
+                                    API.getLogin(true);
                                     setState(() {
-                                      isLoading = value as bool;
+                                      isLoading = true;
                                     });
                                   }
+
+                                  if (value != null) {}
                                 })
                               },
                               child: ButtonWidget(StringConstant.login),
@@ -159,7 +154,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                     FutureBuilder(
-                      future: _getPrefs(),
+                      future: _getIsLogin(),
                       builder: (context, snapshot) {
                         if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                           return Column(
@@ -193,7 +188,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       },
                     ),
                     FutureBuilder(
-                      future: _getPrefs(),
+                      future: _getIsLogin(),
                       builder: (context, snapshot) {
                         if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                           return Column(
@@ -209,7 +204,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         settings: RouteSettings(name: "/ChangePasswordScreen"),
                                         builder: (context) => ChangePasswordScreen(),
                                       )).then((value) async {
-                                    _getPrefs();
+                                    _getIsLogin();
                                     if (value != null) {
                                       setState(() {
                                         isLoading = value as bool;
@@ -231,13 +226,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var url = (Platform.isAndroid)
-                            ? "https://www.google.com/"
-                            : "https://apps.apple.com/in/app/lensa-photo-picture-editor/id1436732536";
+                        var url = (Platform.isAndroid) ? "https://www.google.com/" : "https://apps.apple.com/in/app/lensa-photo-picture-editor/id1436732536";
                         _launchURL(url);
                       },
-                      child:
-                          ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
+                      child: ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
                     ),
                     SizedBox(
                       height: 2.h,
@@ -278,7 +270,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       child: ImageTextBarWidget(StringConstant.privacy_policy1, ImagesConstant.ic_policy, true),
                     ),
                     FutureBuilder(
-                      future: _getPrefs(),
+                      future: _getIsLogin(),
                       builder: (context, snapshot) {
                         if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                           return Column(
@@ -427,7 +419,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Future<bool> _getPrefs() async {
+  Future<bool> _getIsLogin() async {
     sharedPrefs = await SharedPreferences.getInstance();
     return sharedPrefs.getBool("isLogin") ?? false;
   }

@@ -541,6 +541,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                             visible: (!(snapshot.data != null ? snapshot.data as bool : true) || controller.isLogin.value),
                                             child: GestureDetector(
                                               onTap: () => {
+                                                GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -1345,6 +1346,7 @@ void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
                 GestureDetector(
                   onTap: () => {
                     Navigator.pop(context),
+                    GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
                     Navigator.push(
                       context,
                       MaterialPageRoute(

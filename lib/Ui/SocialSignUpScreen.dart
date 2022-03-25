@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'package:cartoonizer/config.dart';
 
@@ -37,6 +36,17 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
       emailController.text = widget.additionalUserInfo.profile!['email'];
     }
     super.initState();
+  }
+
+  Future<void> goBack() async {
+    final box = GetStorage();
+    String? login_back_page = box.read('login_back_page');
+    if (login_back_page != null) {
+      Navigator.popUntil(context, ModalRoute.withName(login_back_page));
+      box.remove('login_back_page');
+    } else {
+      Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+    }
   }
 
   @override
@@ -257,7 +267,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
+                              await goBack();
                             }
                           } else if (widget.channel == "youtube" || widget.channel == "instagram" || widget.channel == "tiktok") {
                             final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
@@ -294,7 +304,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
+                              await goBack();
                             } else {
                               final Map parsed = json.decode(access_response.body.toString());
                               CommonExtension().showToast(parsed['message']);
@@ -341,7 +351,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
+                              await goBack();
                             } else {
                               final Map parsed = json.decode(appleResponse.body.toString());
                               CommonExtension().showToast(parsed['message']);

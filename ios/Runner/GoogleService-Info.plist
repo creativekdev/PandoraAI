@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>604569513046-o5rthd4hqbjrpmb05gu2j49qc7i97erf.apps.googleusercontent.com</string>
+	<string>761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.604569513046-o5rthd4hqbjrpmb05gu2j49qc7i97erf</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>604569513046-o8958tek5sbkmp7thjqgs4otbv31pvbs.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCcIqGLgVY7YyKv4-tp1W0lJ-EPyOg_HeE</string>
+	<string>AIzaSyB6clMfdKAphkQ5Qu1Hr3JYDFu2N0WEKoY</string>
 	<key>GCM_SENDER_ID</key>
-	<string>604569513046</string>
+	<string>761058819999</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>io.socialbook.cartoonizer</string>
 	<key>PROJECT_ID</key>
-	<string>socialbook-80193</string>
+	<string>fair-terminus-266600</string>
 	<key>STORAGE_BUCKET</key>
-	<string>socialbook-80193.appspot.com</string>
+	<string>fair-terminus-266600.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:604569513046:ios:feefaf1e893c3ab00b9ff7</string>
+	<string>1:761058819999:ios:a6e06dc89268600f5407aa</string>
 </dict>
 </plist>
