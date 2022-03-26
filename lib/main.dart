@@ -49,16 +49,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    Timer(
-      Duration(seconds: 3),
-      () => Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          settings: RouteSettings(name: "/HomeScreen"),
-          builder: (context) => HomeScreen(),
-        ),
-      ),
-    );
+    // Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(
+    //       settings: RouteSettings(name: "/HomeScreen"),
+    //       builder: (context) => HomeScreen(),
+    //     ));
     super.initState();
   }
 
@@ -66,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset(ImagesConstant.ic_login_cartoon),
+        child: HomeScreen(),
       ),
     );
   }
