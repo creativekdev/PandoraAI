@@ -13,7 +13,7 @@ class API {
     var localUser = sharedPreferences.getString('user') ?? "";
 
     if (!isLogin) {
-      return {};
+      return UserModel.fromJson({});
     }
 
     if (needLoad || localUser == '') {

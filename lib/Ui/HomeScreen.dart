@@ -65,11 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     future: getConnectionStatus(),
                     builder: (context, snapshot1) {
                       return Center(
-                        child: TitleTextWidget(
-                            (snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
-                            ColorConstant.BtnTextColor,
-                            FontWeight.w400,
-                            12.sp),
+                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
+                            ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
                       );
                     });
               } else {
@@ -111,18 +108,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: (snapshot.data as List<EffectModel>).length,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () => {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       settings: RouteSettings(name: "/PurchaseScreen"),
-                            //       builder: (context) => PurchaseScreen(),
-                            //     ))
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                                  settings: RouteSettings(name: "/PurchaseScreen"),
+                                  builder: (context) => PurchaseScreen(),
                                 ))
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                            //       builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                            //     ))
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
@@ -150,9 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       borderRadius: BorderRadius.all(Radius.circular(2.w)),
                                                       child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
                                                           ? CachedNetworkImage(
-                                                              imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                                  (snapshot.data as List<EffectModel>)[index].key +
-                                                                  ".webp",
+                                                              imageUrl:
+                                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + (snapshot.data as List<EffectModel>)[index].key + ".webp",
                                                               fit: BoxFit.fill,
                                                               height: 41.w,
                                                               width: 41.w,

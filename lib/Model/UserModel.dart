@@ -39,8 +39,8 @@ class UserModel {
       avatar: (json['avatar'] == null) ? "" : json['avatar'],
     );
 
-    user.subscription = json['subscription'];
-    user.credit = json['credit'];
+    user.subscription = json['subscription'] ?? {};
+    user.credit = json['credit'] ?? 0;
     return user;
   }
 
