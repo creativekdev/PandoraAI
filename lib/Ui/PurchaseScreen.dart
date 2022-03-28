@@ -1,15 +1,14 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import 'package:cartoonizer/Common/ConsumableStore.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
@@ -248,7 +247,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     return GestureDetector(
       onTap: () async {
         var sharedPrefs = await SharedPreferences.getInstance();
-        if (!(sharedPrefs.getBool("isLogin") ?? false)) {
+
+        UserModel user = await API.getLogin(true);
+        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
+
+        if (!isLogin || user.email == "") {
+          CommonExtension().showToast(StringConstant.please_login_first);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -322,8 +326,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack,
-                              FontWeight.w500, 12.sp,
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
                               align: TextAlign.start),
                         ],
                       ),
@@ -366,8 +369,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
+                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -422,8 +424,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
+                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
                             ],
                           ),
                         ),

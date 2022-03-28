@@ -81,5 +81,6 @@ class StringConstant {
   static const exit_editing = "EXIT EDITING";
   static const cancel = "CANCEL";
   static const share_title = "SocialBook Cartoonizer";
+  static const please_login_first = "Please login first";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
 }
