@@ -956,71 +956,67 @@ class _SignupScreenState extends State<SignupScreen> {
                         // if (Platform.isAndroid) {
                         //CommonExtension().showToast(tempData);
                         if (tempData != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/TikTokLoginScreen"),
-                              builder: (context) => TikTokLoginScreen(url: tempData),
-                            ),
-                          ).then((value) async {
-                            try {
-                              if (value['code'] != "null") {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                final codeResponse = await get(Uri.parse(
-                                    "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${value['code']}&grant_type=authorization_code"));
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     settings: RouteSettings(name: "/TikTokLoginScreen"),
+                          //     builder: (context) => TikTokLoginScreen(url: tempData),
+                          //   ),
+                          // ).then((value) async {
+                          // });
 
-                                print(codeResponse.statusCode);
-                                print(codeResponse.body);
-                                if (codeResponse.statusCode == 200) {
-                                  final Map parsed = json.decode(codeResponse.body.toString());
-                                  var tokenBody = jsonEncode(<String, dynamic>{
-                                    "access_token": parsed['data']['access_token'],
-                                    "open_id": parsed['data']['open_id'],
-                                    // "refresh_token": parsed['data']['refresh_token'],
-                                  });
-                                  var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                                  final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                                  var urlData = "${Config.instance.host}/oauth/tiktok/callback?tokens=" + tokenBody;
-                                  final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
-                                  setState(() {
-                                    isLoading = false;
-                                  });
-                                  if (tiktokResponse.statusCode == 200) {
-                                    final Map parsed = json.decode(tiktokResponse.body.toString());
-                                    if (parsed["data"]["result"] as bool) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                          builder: (context) => SocialSignUpScreen(
-                                            additionalUserInfo: null,
-                                            token: parsed["data"]["name"],
-                                            tokenId: tempStamp,
-                                            channel: "tiktok",
-                                          ),
-                                        ),
-                                      ).then((value) async {
-                                        if (!value) {
-                                          Navigator.pop(context, value);
-                                        }
-                                      });
+                          try {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            final codeResponse = await get(Uri.parse(
+                                "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${tempData}&grant_type=authorization_code"));
+                            print(codeResponse.statusCode);
+                            print(codeResponse.body);
+                            if (codeResponse.statusCode == 200) {
+                              final Map parsed = json.decode(codeResponse.body.toString());
+                              var tokenBody = jsonEncode(<String, dynamic>{
+                                "access_token": parsed['data']['access_token'],
+                                "open_id": parsed['data']['open_id'],
+                                // "refresh_token": parsed['data']['refresh_token'],
+                              });
+                              var tempStamp = DateTime.now().millisecondsSinceEpoch;
+                              final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+                              var urlData = "${Config.instance.host}/oauth/tiktok/callback?tokens=${tokenBody}&code=${tempData}";
+                              final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
+                              setState(() {
+                                isLoading = false;
+                              });
+                              if (tiktokResponse.statusCode == 200) {
+                                final Map parsed = json.decode(tiktokResponse.body.toString());
+                                if (parsed["data"]["result"] as bool) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      settings: RouteSettings(name: "/SocialSignUpScreen"),
+                                      builder: (context) => SocialSignUpScreen(
+                                        additionalUserInfo: parsed["data"],
+                                        token: parsed["data"]["name"],
+                                        tokenId: tempStamp,
+                                        channel: "tiktok",
+                                      ),
+                                    ),
+                                  ).then((value) async {
+                                    if (!value) {
+                                      Navigator.pop(context, value);
                                     }
-                                  } else {
-                                    CommonExtension().showToast("Oops! Something went wrong");
-                                  }
-                                } else {
-                                  setState(() {
-                                    isLoading = false;
                                   });
-                                  CommonExtension().showToast("Oops! Something went wrong");
                                 }
                               } else {
-                                CommonExtension().showToast("Oops! Unauthorised");
+                                CommonExtension().showToast("Oops! Something went wrong");
                               }
-                            } catch (error) {}
-                          });
+                            } else {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              CommonExtension().showToast("Oops! Something went wrong");
+                            }
+                          } catch (error) {}
                         }
                         // }
                         // print("tempData");

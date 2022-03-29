@@ -32,7 +32,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
 
   @override
   void initState() {
-    if (widget.additionalUserInfo != null) {
+    if (widget.additionalUserInfo != null && widget.channel != 'tiktok') {
       emailController.text = widget.additionalUserInfo.profile!['email'];
     }
     super.initState();
@@ -269,7 +269,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
                               await goBack();
                             }
-                          } else if (widget.channel == "youtube" || widget.channel == "instagram" || widget.channel == "tiktok") {
+                          } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
                             final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
                             Map<String, dynamic> lBody = {
                               "email": emailController.text,
@@ -309,7 +309,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               final Map parsed = json.decode(access_response.body.toString());
                               CommonExtension().showToast(parsed['message']);
                             }
-                          } else if (widget.channel == "apple") {
+                          } else if (widget.channel == "apple" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] == true)) {
                             setState(() {
                               isLoading = true;
                             });
