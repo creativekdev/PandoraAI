@@ -226,7 +226,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var url = (Platform.isAndroid) ? "https://www.google.com/" : "https://apps.apple.com/in/app/lensa-photo-picture-editor/id1436732536";
+                        var url = (Platform.isAndroid) ? "https://www.google.com/" : "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
                         _launchURL(url);
                       },
                       child: ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
@@ -237,7 +237,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       onTap: () async {
                         final box = context.findRenderObject() as RenderBox?;
-                        var appLink = (Platform.isAndroid) ? "https://www.google.com/" : "https://www.facebook.com/";
+                        var appLink = "https://socialbook.io/cartoonize";
                         await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                       },
                       child: ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, false),
