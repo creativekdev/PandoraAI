@@ -8,7 +8,6 @@ import UIKit
 @UIApplicationMain @objc class AppDelegate: FlutterAppDelegate {
   override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
   {
-    TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
     let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
     let methodChannel = FlutterMethodChannel(name: "io.socialbook/cartoonizer", binaryMessenger: controller.binaryMessenger)
     methodChannel.setMethodCallHandler({ (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
@@ -59,8 +58,9 @@ import UIKit
         let scopesSet = NSOrderedSet(array: [scopes])
         let request = TikTokOpenSDKAuthRequest()
         request.permissions = scopesSet
+
         request.send(
-          self.window?.rootViewController ?? UIViewController(),
+          controller,
           completion: { resp -> Void in
             if resp.errCode.rawValue == 0 {
               let responseCode = resp.code
@@ -72,17 +72,13 @@ import UIKit
       }
     })
     GeneratedPluginRegistrant.register(with: self)
+    TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-    guard let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-      let annotation = options[UIApplication.OpenURLOptionsKey.annotation]
-    else { return false }
-    if TikTokOpenSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: sourceApplication, annotation: annotation) {
-      return true
-    }
-    return false
+  override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
+    if TikTokOpenSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: nil, annotation: "") { return true }
+    return super.application(app, open: url, options: options)
   }
 
   override func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
@@ -92,6 +88,12 @@ import UIKit
       return true
     }
     return false
+
+    //    if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
+    //      self.handleDynamicLink(dynamicLink)
+    //      return true
+    //    }
+
   }
 
   override func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
