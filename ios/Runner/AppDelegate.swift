@@ -88,12 +88,6 @@ import UIKit
       return true
     }
     return false
-
-    //    if let dynamicLink = DynamicLinks.dynamicLinks().dynamicLink(fromCustomSchemeURL: url) {
-    //      self.handleDynamicLink(dynamicLink)
-    //      return true
-    //    }
-
   }
 
   override func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
