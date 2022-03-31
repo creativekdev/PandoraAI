@@ -425,6 +425,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             var result = await signInWithApple();
                             if (result) {
                               loginBack(context);
+                            } else {
+                              CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } catch (e) {
                             CommonExtension().showToast("Oops! Something went wrong");
@@ -458,7 +460,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "https://socialbook.io/signup/oauth/google/callback?tokens=" + tokenBody;
+                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;

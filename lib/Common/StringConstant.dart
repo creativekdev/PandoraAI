@@ -82,4 +82,9 @@ class StringConstant {
   static const cancel = "CANCEL";
   static const share_title = "SocialBook Cartoonizer";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
+  static const resend = "Resend";
+  static const resend_tips = "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend.";
+  static const resend_logout = " to change the email.";
+  static const enter_email_code = "Enter 6-digit code";
+  static const code_send_to_email = "Your code was emailed to ";
 }

@@ -1,0 +1,260 @@
+import 'dart:convert';
+
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/utils.dart';
+import 'package:http/http.dart';
+import 'package:cartoonizer/config.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+
+import '../Common/Extension.dart';
+import '../Common/sToken.dart';
+import '../Model/JsonValueModel.dart';
+
+class EmailVerificationScreen extends StatefulWidget {
+  final String? email;
+
+  EmailVerificationScreen(this.email);
+
+  @override
+  _EmailVerificationScreenState createState() => _EmailVerificationScreenState();
+}
+
+class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+  TextEditingController textEditingController = TextEditingController();
+  StreamController<ErrorAnimationType>? errorController;
+
+  bool isLoading = false;
+  bool hasError = false;
+  String currentText = "";
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    errorController = StreamController<ErrorAnimationType>();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    errorController!.close();
+
+    super.dispose();
+  }
+
+  clickLogout() async {
+    var sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.clear();
+    loginBack(context);
+  }
+
+  clickResend() async {
+    setState(() {
+      isLoading = true;
+    });
+    var user = await getUser();
+
+    List<JsonValueModel> params = [];
+    params.add(JsonValueModel("email", widget.email ?? ""));
+
+    Map<String, dynamic> body = {
+      "email": widget.email ?? "",
+      's': sToken(params),
+    };
+
+    try {
+      var url = "${Config.instance.host}/user/${user.id}/activation/send";
+      final response = await post(Uri.parse(url), body: body, headers: {"Content-type": "application/x-www-form-urlencoded"});
+
+      if (response.statusCode == 200) {
+        CommonExtension().showToast("Resend successfully!");
+      } else {
+        var body = jsonDecode(response.body);
+        CommonExtension().showToast(body['message'] ?? "Resend failure.");
+      }
+    } catch (e) {
+      CommonExtension().showToast("Resend failure.");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  callActivate() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    var sharedPreferences = await SharedPreferences.getInstance();
+
+    String ts = DateTime.now().millisecondsSinceEpoch.toString();
+
+    List<JsonValueModel> params = [];
+    params.add(JsonValueModel("code", currentText));
+    params.add(JsonValueModel("ts", ts));
+
+    var body = jsonEncode(<String, dynamic>{
+      "code": currentText,
+      "ts": ts,
+      's': sToken(params),
+    });
+
+    var headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
+    try {
+      var url = "${Config.instance.host}/api/user/activate";
+      final response = await post(Uri.parse(url), body: body, headers: headers);
+
+      if (response.statusCode == 200) {
+        CommonExtension().showToast("Activate successfully!");
+        loginBack(context);
+      } else {
+        var body = jsonDecode(response.body);
+        textEditingController.clear();
+        CommonExtension().showToast(body['message'] ?? "Activate failure.");
+      }
+    } catch (e) {
+      CommonExtension().showToast("Activate failure.");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+            backgroundColor: ColorConstant.BackgroundColor,
+            body: SafeArea(
+                child: LoadingOverlay(
+                    isLoading: isLoading,
+                    child: SingleChildScrollView(
+                      child: Container(
+                        // height:80.h,
+                        width: 100.w,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: MediaQuery.of(context).size.height / 5),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text(
+                                StringConstant.enter_email_code,
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Form(
+                              key: formKey,
+                              child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                  child: PinCodeTextField(
+                                    appContext: context,
+                                    length: 6,
+                                    animationType: AnimationType.fade,
+                                    pinTheme: PinTheme(
+                                        shape: PinCodeFieldShape.box,
+                                        borderRadius: BorderRadius.circular(5),
+                                        fieldHeight: 50,
+                                        fieldWidth: 45,
+                                        inactiveColor: ColorConstant.BtnBorderColor,
+                                        selectedColor: ColorConstant.BtnBorderColor,
+                                        selectedFillColor: Colors.white,
+                                        activeColor: ColorConstant.PrimaryColor,
+                                        activeFillColor: Colors.white,
+                                        inactiveFillColor: Colors.white),
+                                    cursorColor: Colors.black,
+                                    animationDuration: Duration(milliseconds: 300),
+                                    enableActiveFill: true,
+                                    errorAnimationController: errorController,
+                                    controller: textEditingController,
+                                    keyboardType: TextInputType.number,
+                                    boxShadows: [
+                                      BoxShadow(
+                                        offset: Offset(0, 1),
+                                        color: Colors.black12,
+                                        blurRadius: 10,
+                                      )
+                                    ],
+                                    onCompleted: (v) {
+                                      callActivate();
+                                    },
+                                    onChanged: (value) {
+                                      setState(() {
+                                        currentText = value;
+                                      });
+                                    },
+                                    beforeTextPaste: (text) {
+                                      return true;
+                                    },
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8),
+                              child: RichText(
+                                text: TextSpan(
+                                    text: StringConstant.code_send_to_email,
+                                    children: [
+                                      TextSpan(text: "${widget.email}", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                                    ],
+                                    style: TextStyle(color: ColorConstant.HintColor, fontSize: 16)),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 50,
+                            ),
+                            Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      StringConstant.resend_tips,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: ColorConstant.HintColor, fontSize: 16),
+                                    ),
+                                    TextButton(
+                                        onPressed: () => clickResend(),
+                                        child: Text(
+                                          StringConstant.resend,
+                                          style: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.bold, fontSize: 16),
+                                        )),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => clickLogout(),
+                                          child: Text(
+                                            "Click logout",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', decoration: TextDecoration.underline),
+                                          ),
+                                        ),
+                                        Text(
+                                          StringConstant.resend_logout,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(color: ColorConstant.HintColor, fontSize: 16),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )),
+                            SizedBox(
+                              height: 50,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )))));
+  }
+}

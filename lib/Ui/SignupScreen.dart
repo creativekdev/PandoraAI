@@ -35,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
   var token;
   var tokenId;
   static const platform = MethodChannel('io.socialbook/cartoonizer');
+
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -214,6 +215,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             var result = await signInWithApple();
                             if (result) {
                               loginBack(context);
+                            } else {
+                              CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } catch (e) {
                             CommonExtension().showToast("Oops! Something went wrong");
@@ -294,7 +297,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              Navigator.pop(context, false);
+                              loginBack(context);
                             }
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
@@ -396,37 +399,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(
                       height: 1.5.h,
                     ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     try {
-                    //       var temp = await signInWithFacebook();
-                    //       setState(() {
-                    //         isLoading = false;
-                    //       });
-                    //       // Navigator.push(
-                    //       //   context,
-                    //       //   MaterialPageRoute(
-                    //       //     settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //       //     builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: token, tokenId: tokenId, channel: "facebook",),
-                    //       //   ),
-                    //       // )/*.then((value) => Navigator.pop(context, value))*/;
-                    //     } finally {
-                    //       if(isLoading)
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //     };
-                    //
-                    //   },
-                    //   child: IconifiedButtonWidget(
-                    //       StringConstant.facebook, ImagesConstant.ic_facebook),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
                     GestureDetector(
                       onTap: () async {
                         Navigator.push(
@@ -483,18 +455,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     GestureDetector(
                       onTap: () async {
                         var tempData = await platform.invokeMethod("OpenTiktok");
-                        // if (Platform.isAndroid) {
-                        //CommonExtension().showToast(tempData);
                         if (tempData != null) {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     settings: RouteSettings(name: "/TikTokLoginScreen"),
-                          //     builder: (context) => TikTokLoginScreen(url: tempData),
-                          //   ),
-                          // ).then((value) async {
-                          // });
-
                           try {
                             setState(() {
                               isLoading = true;
@@ -548,9 +509,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                           } catch (error) {}
                         }
-                        // }
-                        // print("tempData");
-                        // print(tempData);
                       },
                       child: IconifiedButtonWidget(StringConstant.tiktok, ImagesConstant.ic_tiktok),
                     ),
