@@ -7,8 +7,8 @@ abstract class BaseConfig {
 
 class DevelopmentConfig implements BaseConfig {
   // real phone
-  // String host = 'http://192.168.31.126:8090';
-  String host = 'http://localhost:8090';
+  String host = 'http://192.168.31.126:8090';
+  // String host = 'http://localhost:8090';
   String get apiHost => '$host/api';
 }
 
@@ -31,8 +31,8 @@ class Config {
     if (kReleaseMode) {
       return ProductionConfig();
     } else {
-      return ProductionConfig();
-      // return DevelopmentConfig();
+      // return ProductionConfig();
+      return DevelopmentConfig();
     }
   }
 }

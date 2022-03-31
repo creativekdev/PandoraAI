@@ -309,7 +309,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               final Map parsed = json.decode(access_response.body.toString());
                               CommonExtension().showToast(parsed['message']);
                             }
-                          } else if (widget.channel == "apple" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] == true)) {
+                          } else if (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] == true) {
                             setState(() {
                               isLoading = true;
                             });

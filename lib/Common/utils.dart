@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 
 import 'package:cartoonizer/Model/UserModel.dart';
 
@@ -27,4 +27,15 @@ Future<void> saveUser(Map data) async {
   }
 
   sharedPreferences.setString(_kUser, jsonEncode(user));
+}
+
+Future<void> loginBack(BuildContext context) async {
+  final box = GetStorage();
+  String? login_back_page = box.read('login_back_page');
+  if (login_back_page != null) {
+    Navigator.popUntil(context, ModalRoute.withName(login_back_page));
+    box.remove('login_back_page');
+  } else {
+    Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+  }
 }
