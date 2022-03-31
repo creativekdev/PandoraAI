@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -12,8 +11,6 @@ import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:crypto/crypto.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
@@ -526,176 +523,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 1.5.h,
                     ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     try {
-                    //       var temp = await signInWithYoutube();
-                    //       if (temp == null) {
-                    //         return;
-                    //       }
-                    //       var tokenBody = jsonEncode(<String, dynamic>{
-                    //         "access_token": token,
-                    //         "scope": "https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly",
-                    //         "token_type": "Bearer",
-                    //         "access_type": "offline",
-                    //       });
-                    //
-                    //
-                    //       var tempUrl = "https://socialbook.io/signup/oauth/youtube/callback?tokens=" + tokenBody;
-                    //       final tokenResponse = await get(Uri.parse(tempUrl));
-                    //       setState(() {
-                    //         isLoading = false;
-                    //       });
-                    //       // print(tokenBody);
-                    //       // print(tokenResponse.body);
-                    //       // print(tokenResponse.statusCode);
-                    //       if(tokenResponse.statusCode == 200) {
-                    //         final Map parsed = json.decode(tokenResponse.body.toString());
-                    //         print(parsed);
-                    //         if(parsed.containsKey("data")){
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //               builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: parsed['data']['token'], tokenId: tokenId, channel: "youtube",),
-                    //             ),
-                    //           ).then((value) async {
-                    //             if(!value){Navigator.pop(context, value);}
-                    //           });
-                    //         } else {
-                    //           SharedPreferences prefs = await SharedPreferences.getInstance();
-                    //           String cookie = tokenResponse.headers.toString();
-                    //           var str = cookie.split(";");
-                    //           String id = "";
-                    //           for(int j=0;j<str.length;j++){
-                    //             if(str[j].contains("sb.connect.sid")){
-                    //               id=str[j];
-                    //               j=str.length;
-                    //             }
-                    //           }
-                    //           var finalId = id.split(",");
-                    //           if(finalId.length>1){
-                    //             for(int j=0;j<finalId.length;j++){
-                    //               if(finalId[j].contains("sb.connect.sid")){
-                    //                 id=finalId[j];
-                    //                 j=finalId.length;
-                    //               }
-                    //             }
-                    //           }
-                    //           prefs.setBool("isLogin", true);
-                    //           prefs.setString("login_cookie", id.split("=")[1]);
-                    //           Navigator.pop(context, false);
-                    //         }
-                    //       } else {
-                    //         CommonExtension().showToast("Oops! Something went wrong");
-                    //       }
-                    //
-                    //     } finally {
-                    //       if(isLoading)
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //     };
-                    //   },
-                    //   child: IconifiedButtonWidget(StringConstant.youtube, ImagesConstant.ic_youtube),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     try {
-                    //       var temp = await signInWithFacebook();
-                    //       setState(() {
-                    //         isLoading = false;
-                    //       });
-                    //       // Navigator.push(
-                    //       //   context,
-                    //       //   MaterialPageRoute(
-                    //       //     settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //       //     builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: token, tokenId: tokenId, channel: "facebook",),
-                    //       //   ),
-                    //       // )/*.then((value) => Navigator.pop(context, value))*/;
-                    //     } finally {
-                    //       if(isLoading)
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //     };
-                    //
-                    //   },
-                    //   child: IconifiedButtonWidget(
-                    //       StringConstant.facebook, ImagesConstant.ic_facebook),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         settings: RouteSettings(name: "/InstaLoginScreen"),
-                    //         builder: (context) => InstaLoginScreen(),
-                    //       ),
-                    //     ).then((value) async {
-                    //       if(value != null) {
-                    //         setState(() {
-                    //           isLoading = true;
-                    //         });
-                    //         var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                    //         final headers = {
-                    //           "cookie": "bst_social_signup=${tempStamp}"
-                    //         };
-                    //         final access_response = await get(Uri.parse("https://socialbook.io/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //         print(access_response.body);
-                    //         if (access_response.statusCode == 200) {
-                    //           final Map parsed = json.decode(access_response.body.toString());
-                    //           if (parsed["data"]["result"] as bool) {
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                 settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //                 builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "instagram",),
-                    //               ),
-                    //             ).then((value) async {
-                    //               if(!value){Navigator.pop(context, value);}
-                    //             });
-                    //           }
-                    //         } else {
-                    //           CommonExtension().showToast("Oops! Something went wrong");
-                    //         }
-                    //
-                    //       }
-                    //       print(value);
-                    //     });
-                    //   },
-                    //   child: IconifiedButtonWidget(StringConstant.instagram, ImagesConstant.ic_instagram),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     var tempData = await platform.invokeMethod("OpenTiktok");
-                    //     print("tempData");
-                    //     print(tempData);
-                    //   },
-                    //   child: IconifiedButtonWidget(
-                    //       StringConstant.tiktok, ImagesConstant.ic_tiktok),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
