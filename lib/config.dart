@@ -6,9 +6,13 @@ abstract class BaseConfig {
 }
 
 class DevelopmentConfig implements BaseConfig {
-  // real phone
-  String host = 'http://192.168.31.126:8090';
+  // localhost
   // String host = 'http://localhost:8090';
+
+  // real phone
+  // String host = 'http://192.168.31.126:8090';
+  String host = 'https://socialbook.io';
+  
   String get apiHost => '$host/api';
 }
 
@@ -31,7 +35,6 @@ class Config {
     if (kReleaseMode) {
       return ProductionConfig();
     } else {
-      // return ProductionConfig();
       return DevelopmentConfig();
     }
   }

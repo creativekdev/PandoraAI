@@ -139,7 +139,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
             // reload user by get login
-            UserModel user = await API.getLogin(true);
+            UserModel user = await API.getLogin(needLoad: true);
             if (user.subscription.containsKey('id')) {
               setState(() {
                 _showPurchasePlan = true;
@@ -188,7 +188,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    UserModel user = await API.getLogin(true);
+    UserModel user = await API.getLogin(needLoad: true);
     if (user.subscription.containsKey('id')) {
       setState(() {
         _showPurchasePlan = true;

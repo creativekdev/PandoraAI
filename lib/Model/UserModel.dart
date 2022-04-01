@@ -4,6 +4,7 @@ class UserModel {
   String name = "";
   String avatar = "";
   String status = "registered";
+  String apple_id = "";
   int credit = 0;
   Map<String, dynamic> subscription = {};
 
@@ -20,6 +21,7 @@ class UserModel {
     );
 
     user.id = data['id'] ?? 0;
+    user.apple_id = data['apple_id'] ?? "";
     user.status = data['status'] ?? "registered";
     user.credit = data['cartoonize_credit'] ?? 0;
 
@@ -44,11 +46,13 @@ class UserModel {
     );
 
     user.id = json['id'] ?? 0;
+    user.apple_id = json['apple_id'] ?? "";
     user.subscription = json['subscription'] ?? {};
     user.status = json['status'] ?? "registered";
     user.credit = json['credit'] ?? 0;
     return user;
   }
 
-  Map<String, dynamic> toJson() => {"id": id, 'name': name, 'email': email, 'avatar': avatar, "credit": credit, "status": status, "subscription": subscription};
+  Map<String, dynamic> toJson() =>
+      {"id": id, 'name': name, 'email': email, 'avatar': avatar, "apple_id": apple_id, "credit": credit, "status": status, "subscription": subscription};
 }

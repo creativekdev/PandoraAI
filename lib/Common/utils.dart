@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'package:cartoonizer/Common/importFile.dart';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/Ui/HomeScreen.dart';
 
 const String _kUser = 'user';
 
@@ -36,6 +37,16 @@ Future<void> loginBack(BuildContext context) async {
     Navigator.popUntil(context, ModalRoute.withName(login_back_page));
     box.remove('login_back_page');
   } else {
-    Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/HomeScreen"),
+          builder: (context) => HomeScreen(),
+        ),
+      );
+    }
   }
 }

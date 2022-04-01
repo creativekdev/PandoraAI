@@ -28,6 +28,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   String currentText = "";
   final formKey = GlobalKey<FormState>();
 
+  Timer _timer = Timer(Duration(milliseconds: 1), () {});
+  int _start = 60;
+
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
@@ -37,8 +40,27 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   void dispose() {
     errorController!.close();
-
+    _timer.cancel();
     super.dispose();
+  }
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          setState(() {
+            _start = 60;
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
   }
 
   clickLogout() async {
@@ -48,9 +70,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   clickResend() async {
+    if (_start != 60) {
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
+    startTimer();
     var user = await getUser();
 
     List<JsonValueModel> params = [];
@@ -220,10 +247,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                       style: TextStyle(color: ColorConstant.HintColor, fontSize: 16),
                                     ),
                                     TextButton(
-                                        onPressed: () => clickResend(),
+                                        onPressed: _start == 60 ? () => clickResend() : null,
                                         child: Text(
-                                          StringConstant.resend,
-                                          style: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.bold, fontSize: 16),
+                                          '${StringConstant.resend}${_start == 60 ? "" : " ${_start}"}',
+                                          style: TextStyle(color: _start == 60 ? ColorConstant.PrimaryColor : ColorConstant.HintColor, fontWeight: FontWeight.bold, fontSize: 16),
                                         )),
                                     SizedBox(
                                       height: 20,

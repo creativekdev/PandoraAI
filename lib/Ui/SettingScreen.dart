@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/LoginScreen.dart';
 import 'package:flutter/cupertino.dart';
@@ -62,7 +63,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         builder: (context, snapshot) {
                           if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
                             return FutureBuilder(
-                              future: API.getLogin(false),
+                              future: API.getLogin(),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
                                   return Center(
@@ -138,7 +139,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 GetStorage().write('login_back_page', '/SettingScreen'),
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
                                   if (await _getIsLogin()) {
-                                    API.getLogin(true);
+                                    API.getLogin(needLoad: true, context: context);
                                     setState(() {
                                       isLoading = true;
                                     });
@@ -170,7 +171,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         settings: RouteSettings(name: "/EditProfileScreen"),
                                         builder: (context) => EditProfileScreen(),
                                       )).then((value) async {
-                                    API.getLogin(true);
+                                    API.getLogin(needLoad: true);
                                     if (value != null) {
                                       setState(() {
                                         isLoading = value as bool;
@@ -191,31 +192,40 @@ class _SettingScreenState extends State<SettingScreen> {
                       future: _getIsLogin(),
                       builder: (context, snapshot) {
                         if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 2.h,
-                              ),
-                              GestureDetector(
-                                onTap: () => {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        settings: RouteSettings(name: "/ChangePasswordScreen"),
-                                        builder: (context) => ChangePasswordScreen(),
-                                      )).then((value) async {
-                                    _getIsLogin();
-                                    if (value != null) {
-                                      setState(() {
-                                        isLoading = value as bool;
-                                      });
-                                    }
-                                  })
-                                },
-                                child: ImageTextBarWidget(StringConstant.change_password, ImagesConstant.ic_change_password, false),
-                              ),
-                            ],
-                          );
+                          return FutureBuilder(
+                              future: API.getLogin(),
+                              builder: (context, snapshot) {
+                                var user = snapshot.hasData ? (snapshot.data as UserModel) : null;
+                                if (user?.apple_id == "") {
+                                  return Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                settings: RouteSettings(name: "/ChangePasswordScreen"),
+                                                builder: (context) => ChangePasswordScreen(),
+                                              )).then((value) async {
+                                            _getIsLogin();
+                                            if (value != null) {
+                                              setState(() {
+                                                isLoading = value as bool;
+                                              });
+                                            }
+                                          })
+                                        },
+                                        child: ImageTextBarWidget(StringConstant.change_password, ImagesConstant.ic_change_password, false),
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return SizedBox();
+                                }
+                              });
                         } else {
                           return SizedBox();
                         }
@@ -237,7 +247,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       onTap: () async {
                         final box = context.findRenderObject() as RenderBox?;
-                        var appLink = "https://socialbook.io/cartoonize";
+                        var appLink = "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
                         await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                       },
                       child: ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, false),

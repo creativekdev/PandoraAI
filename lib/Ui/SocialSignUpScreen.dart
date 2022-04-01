@@ -42,7 +42,6 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -263,7 +262,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
 
-                              UserModel user = await API.getLogin(true);
+                              UserModel user = await API.getLogin(needLoad: true);
                               if (user.status != "activated") {
                                 Navigator.pushReplacement<void, void>(
                                   context,
@@ -311,7 +310,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
 
-                              UserModel user = await API.getLogin(true);
+                              UserModel user = await API.getLogin(needLoad: true);
                               if (user.status != "activated") {
                                 Navigator.pushReplacement(
                                   context,

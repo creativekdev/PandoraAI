@@ -138,7 +138,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   FutureBuilder _buildPremiumBuilder() {
     return FutureBuilder(
-        future: API.getLogin(false),
+        future: API.getLogin(),
         builder: (context, snapshot) {
           bool visible = false;
           if (snapshot.data != null) {
@@ -1222,7 +1222,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       headers: headers);
                 }
 
-                await API.getLogin(true);
+                await API.getLogin(needLoad: true);
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');

@@ -255,7 +255,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<UserModel> _getData() async {
-    UserModel user = await API.getLogin(false);
+    UserModel user = await API.getLogin();
     controller.updateImageUrl(user.avatar);
     nameController.text = user.name;
     return user;
