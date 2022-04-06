@@ -63,13 +63,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access your camera to convert your photo into cartoon.</string>
+	<string>Allow access to camera to convert your photo into cartoon.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access your camera to convert your photo into cartoon.</string>
+	<string>Allow access to camera to convert your photo into cartoon.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access your photo library to convert your photo into cartoon.</string>
+	<string>Allow access to photos to convert your photo into cartoon.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access your photo library to convert your photo into cartoon.</string>
+	<string>Allow access to photos to convert your photo into cartoon.</string>
 	<key>TikTokAppID</key>
 	<string>aw9iospxikqd2qsx</string>
 	<key>UIApplicationSceneManifest</key>
