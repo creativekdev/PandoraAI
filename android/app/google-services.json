@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "761058819999",
+    "project_id": "fair-terminus-266600",
+    "storage_bucket": "fair-terminus-266600.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:752125b532f9a9ea5407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.cartoonizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.cartoonizer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
