@@ -36,7 +36,7 @@ class StringConstant {
   static const choose_photo = "Choose Photo";
   static const take_selfie = "Or take a selfie";
   static const rate_result = "Rate this results";
-  static const signup_text = "Sign Up To Get  1 Image Credit";
+  static const signup_text = "Sign Up To Get 1 Image Credit";
   static const signup_text1 = "Sign up for more uses";
   static const signup_text2 = "We're glad you're enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!";
   static const no_watermark = "(No waterMark, High-res image)";

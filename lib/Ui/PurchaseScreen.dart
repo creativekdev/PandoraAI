@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:http/http.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -188,6 +186,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
+    // get all transactions and finish them if testing needed
+    var transactions = await SKPaymentQueueWrapper().transactions();
+    transactions.forEach((transaction) {
+      SKPaymentQueueWrapper().finishTransaction(transaction);
+    });
+
     UserModel user = await API.getLogin(needLoad: true);
     if (user.subscription.containsKey('id')) {
       setState(() {
@@ -228,8 +232,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     }
 
     List<String> consumables = await ConsumableStore.load();
-    // print("productDetailResponse.productDetails[0].price");
-    // print(productDetailResponse.productDetails[0].price);
     setState(() {
       _isAvailable = isAvailable;
       _products = productDetailResponse.productDetails;
@@ -322,8 +324,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack,
-                              FontWeight.w500, 12.sp,
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
                               align: TextAlign.start),
                         ],
                       ),
@@ -366,8 +367,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
+                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -422,8 +422,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
+                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -515,11 +514,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   // setState(() {
                                   //   _loading = true;
                                   // });
-                                  // get all transactions and finish them if testing needed
-                                  var transactions = await SKPaymentQueueWrapper().transactions();
-                                  transactions.forEach((skPaymentTransactionWrapper) {
-                                    SKPaymentQueueWrapper().finishTransaction(skPaymentTransactionWrapper);
-                                  });
                                   _inAppPurchase.restorePurchases();
                                 }
                               },

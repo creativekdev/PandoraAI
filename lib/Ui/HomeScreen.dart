@@ -69,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     });
               } else {
+                var list = snapshot.data as List<EffectModel>;
+
                 return Column(
                   children: [
                     Container(
@@ -205,11 +207,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                             ),
                                           ],
                                         ),
-                                        if ((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
+                                        if (list[index].key.toString() != "transform")
                                           SizedBox(
                                             height: 1.5.w,
                                           ),
-                                        if ((snapshot.data as List<EffectModel>)[index].key.toString() != "transform")
+                                        if (list[index].key.toString() != "transform")
                                           Row(
                                             children: [
                                               Expanded(
@@ -246,40 +248,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(right: 0.w),
-                                                  child: Stack(
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                                                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                        child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
-                                                            ? CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "3.webp",
-                                                                fit: BoxFit.fill,
-                                                                height: 41.w,
-                                                                width: 41.w,
-                                                                placeholder: _cachedNetworkImagePlaceholder,
-                                                                errorWidget: _cachedNetworkImageErrorWidget,
-                                                              )
-                                                            : CachedNetworkImage(
-                                                                imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                                    (snapshot.data as List<EffectModel>)[index].key +
-                                                                    "3.jpg",
-                                                                fit: BoxFit.fill,
-                                                                height: 41.w,
-                                                                width: 41.w,
-                                                                placeholder: _cachedNetworkImagePlaceholder,
-                                                                errorWidget: _cachedNetworkImageErrorWidget,
-                                                              ),
-                                                      ),
-                                                    ],
+                                              if (list[index].effects.length >= 3)
+                                                Expanded(
+                                                  child: Padding(
+                                                    padding: EdgeInsets.only(right: 0.w),
+                                                    child: Stack(
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius: BorderRadius.all(Radius.circular(2.w)),
+                                                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                          child: (snapshot.data as List<EffectModel>)[index].key.toString() == "transform"
+                                                              ? CachedNetworkImage(
+                                                                  imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      "3.webp",
+                                                                  fit: BoxFit.fill,
+                                                                  height: 41.w,
+                                                                  width: 41.w,
+                                                                  placeholder: _cachedNetworkImagePlaceholder,
+                                                                  errorWidget: _cachedNetworkImageErrorWidget,
+                                                                )
+                                                              : CachedNetworkImage(
+                                                                  imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
+                                                                      (snapshot.data as List<EffectModel>)[index].key +
+                                                                      "3.jpg",
+                                                                  fit: BoxFit.fill,
+                                                                  height: 41.w,
+                                                                  width: 41.w,
+                                                                  placeholder: _cachedNetworkImagePlaceholder,
+                                                                  errorWidget: _cachedNetworkImageErrorWidget,
+                                                                ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
                                             ],
                                           )
                                       ],

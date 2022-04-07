@@ -276,12 +276,13 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             }
                           } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
                             final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
-                            Map<String, dynamic> lBody = {
+                            Map<String, dynamic> body = {
                               "email": emailController.text,
                               "password": passController.text,
                               "channel": widget.channel,
+                              "type": "app_cartoonizer",
                             };
-                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: lBody);
+                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: body);
                             print(access_response.statusCode);
                             print(access_response.body);
                             setState(() {
@@ -333,8 +334,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             params.add(JsonValueModel("email", emailController.text));
                             params.add(JsonValueModel("Password", passController.text));
                             params.add(JsonValueModel("type", "app_cartoonizer"));
-                            Map<String, dynamic> lBody = {"email": emailController.text, "Password": passController.text, "type": "app_cartoonizer", "s": sToken(params)};
-                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: lBody);
+                            Map<String, dynamic> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer", "s": sToken(params)};
+                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: body);
                             setState(() {
                               isLoading = false;
                             });
