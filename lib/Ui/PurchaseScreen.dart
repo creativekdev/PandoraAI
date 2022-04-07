@@ -130,9 +130,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             _loading = false;
           });
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
-          setState(() {
-            _loading = false;
-          });
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
@@ -145,8 +142,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               });
             }
             deliverProduct(purchaseDetails);
+            setState(() {
+              _loading = false;
+            });
           } else {
             _handleInvalidPurchase(purchaseDetails);
+            setState(() {
+              _loading = false;
+            });
             return;
           }
         }
