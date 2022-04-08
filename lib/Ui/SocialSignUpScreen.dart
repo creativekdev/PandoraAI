@@ -280,7 +280,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               "email": emailController.text,
                               "password": passController.text,
                               "channel": widget.channel,
-                              "type": "app_cartoonizer",
+                              "type": APP_TYPE,
                             };
                             final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: body);
                             print(access_response.statusCode);
@@ -333,8 +333,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             List<JsonValueModel> params = [];
                             params.add(JsonValueModel("email", emailController.text));
                             params.add(JsonValueModel("Password", passController.text));
-                            params.add(JsonValueModel("type", "app_cartoonizer"));
-                            Map<String, dynamic> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer", "s": sToken(params)};
+                            params.add(JsonValueModel("type", APP_TYPE));
+                            Map<String, dynamic> body = {"email": emailController.text, "password": passController.text, "type": APP_TYPE, "s": sToken(params)};
                             final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: body);
                             setState(() {
                               isLoading = false;

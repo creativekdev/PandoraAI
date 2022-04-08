@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
@@ -5,6 +6,12 @@ import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/HomeScreen.dart';
 
 const String _kUser = 'user';
+
+String get APP_TYPE {
+  String platform = Platform.isIOS ? 'ios' : 'android';
+  String type = 'app_cartoonizer_${platform}';
+  return type;
+}
 
 Future<UserModel> getUser() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

@@ -249,6 +249,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
+                            "type": APP_TYPE
                           });
                           var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
