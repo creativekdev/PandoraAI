@@ -9,10 +9,13 @@ class DevelopmentConfig implements BaseConfig {
   // localhost
   // String host = 'http://localhost:8090';
 
+  // android emulator
+  // String host = 'http://10.0.2.2:8090';
+
   // real phone
-  String host = 'http://192.168.31.126:8090';
-  // String host = 'https://socialbook.io';
-  
+  // String host = 'http://192.168.31.126:8090';
+  String host = 'https://socialbook.io';
+
   String get apiHost => '$host/api';
 }
 

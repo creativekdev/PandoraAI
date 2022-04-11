@@ -35,7 +35,7 @@ public class TikTokEntryActivity extends Activity implements IApiEventHandler {
         if (resp instanceof Authorization.Response)  {
             Authorization.Response response = (Authorization.Response) resp;
             if(response.errorCode == 0){
-                mResult.success(resp.extras.get("wap_authorize_url").toString());
+                mResult.success(response.authCode);
             }
         }
         finish();

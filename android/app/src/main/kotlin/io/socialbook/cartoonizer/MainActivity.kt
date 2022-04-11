@@ -23,13 +23,14 @@ import java.io.File
 
 class MainActivity : FlutterActivity()/*, IApiEventHandler*/ {
 
-    private val CHANNEL = "io.socialbook/shareVideo"
+    private val CHANNEL = "io.socialbook/cartoonizer"
     lateinit var tiktokOpenApi : TikTokOpenApi
     companion object{
         lateinit var mResult : MethodChannel.Result
     }
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        
         val clientKey = "aw9iospxikqd2qsx"
         val tiktokOpenConfig = TikTokOpenConfig(clientKey)
         TikTokOpenApiFactory.init(tiktokOpenConfig)
