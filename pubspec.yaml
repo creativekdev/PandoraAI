@@ -35,6 +35,7 @@ dependencies:
   crypto: ^3.0.1
   loading_overlay: ^0.3.0
   pin_code_fields: ^7.3.0
+  flutter_native_splash: ^2.1.5
   fluttertoast: ^8.0.8
   shared_preferences: ^2.0.12
   path: ^1.8.0

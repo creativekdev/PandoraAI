@@ -21,9 +21,10 @@
         <package android:name="com.ss.android.ugc.trill" />
     </queries>
     <application
-        android:label="cartoonizer"
+        android:label="Cartoonizer"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -33,7 +34,8 @@
             android:hardwareAccelerated="true"
             android:usesCleartextTraffic="true"
             android:requestLegacyExternalStorage="true"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            >
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
