@@ -10,8 +10,7 @@ void main() async {
   log(Config.instance.apiHost);
   await GetStorage.init();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-    systemNavigationBarColor: ColorConstant.PrimaryColor,
-    statusBarColor: ColorConstant.PrimaryColor,
+    statusBarColor: Colors.transparent,
   ));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,8 +27,8 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           title: 'Cartoonizer',
           theme: ThemeData(
-            accentColor: ColorConstant.PrimaryColor,
-          ),
+              accentColor: Colors.transparent,
+              ),
           home: MyHomePage(title: 'Cartoonizer'),
           debugShowCheckedModeBanner: false,
         );

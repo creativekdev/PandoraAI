@@ -623,7 +623,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               Image.asset(
                                                 ImagesConstant.ic_man,
                                                 height: 40.h,
-                                                width: 85.w,
+                                                width: 70.w,
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
@@ -827,6 +827,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 ],
                               ),
                       ),
+                    ),
+                     SizedBox(
+                      height: 1.h,
                     ),
                     Obx(() => Row(
                           mainAxisAlignment: MainAxisAlignment.end,
