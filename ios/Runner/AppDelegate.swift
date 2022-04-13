@@ -11,37 +11,7 @@ import UIKit
     let controller: FlutterViewController = window?.rootViewController as! FlutterViewController
     let methodChannel = FlutterMethodChannel(name: "io.socialbook/cartoonizer", binaryMessenger: controller.binaryMessenger)
     methodChannel.setMethodCallHandler({ (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
-      if call.method.elementsEqual("ShareInsta") {
-        if let dict = call.arguments as? [String: Any] {
-          let videoFilePath = dict["path"] as? String
-          let videoFileUrl: URL = URL(fileURLWithPath: videoFilePath ?? "")
-          var localId: String?
-          PHPhotoLibrary.shared().performChanges(
-            {
-              let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoFileUrl)
-              localId = request?.placeholderForCreatedAsset?.localIdentifier
-            },
-            completionHandler: { success, error in
-              DispatchQueue.main.async {
-                guard error == nil else {
-                  // handle error
-                  return
-                }
-                guard let localId = localId else {
-                  // highly unlikely that it'llbe nil,
-                  // but you should handle this error just in case
-                  return
-                }
-                let url = URL(string: "instagram://library?LocalIdentifier=\(localId)")!
-                guard UIApplication.shared.canOpenURL(url) else {
-                  // handle this error
-                  return
-                }
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-              }
-            })
-        }
-      } else if call.method.elementsEqual("ShareFacebook") {
+      if call.method.elementsEqual("ShareFacebook") {
         if let dict = call.arguments as? [String: Any] {
           let fileType = dict["fileType"] as? String
           let fileURL = dict["fileURL"] as? String

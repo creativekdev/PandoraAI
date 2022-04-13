@@ -109,18 +109,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemCount: (snapshot.data as List<EffectModel>).length,
                         itemBuilder: (context, index) => GestureDetector(
                           onTap: () => {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       settings: RouteSettings(name: "/PurchaseScreen"),
-                            //       builder: (context) => PurchaseScreen(),
-                            //     ))
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                                  settings: RouteSettings(name: "/PurchaseScreen"),
+                                  builder: (context) => PurchaseScreen(),
                                 ))
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                            //       builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                            //     ))
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),

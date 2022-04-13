@@ -187,13 +187,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     if (Platform.isIOS) {
       var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
-    }
 
-    // get all transactions and finish them if testing needed
-    var transactions = await SKPaymentQueueWrapper().transactions();
-    transactions.forEach((transaction) {
-      SKPaymentQueueWrapper().finishTransaction(transaction);
-    });
+      // get all transactions and finish them if testing needed
+      var transactions = await SKPaymentQueueWrapper().transactions();
+      transactions.forEach((transaction) {
+        SKPaymentQueueWrapper().finishTransaction(transaction);
+      });
+    }
 
     UserModel user = await API.getLogin(needLoad: true);
     if (user.subscription.containsKey('id')) {

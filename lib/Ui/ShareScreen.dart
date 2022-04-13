@@ -68,7 +68,13 @@ class _ShareScreenState extends State<ShareScreen> {
         if (widget.isVideo) {
           _openShareAction(context!, [file.path]);
         } else {
-          await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+          if (Platform.isAndroid) {
+            _openShareAction(context!, [file.path]);
+            // await flutterShareMe.shareToFacebook(msg: "AAAAAAAAAAAAAAAA");
+            // await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+          } else {
+            await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+          }
         }
         break;
       case ShareType.instagram:
