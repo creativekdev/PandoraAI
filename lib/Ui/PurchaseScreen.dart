@@ -94,7 +94,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
-    // handle invalid purchase here if  _verifyPurchase` failed, just finish it to void can not buy again
+    // handle invalid purchase here if _verifyPurchase failed, just finish it to void can not buy again
 
     if (purchaseDetails.pendingCompletePurchase) {
       _inAppPurchase.completePurchase(purchaseDetails);
@@ -370,7 +370,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? year.description : year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -425,7 +426,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? month.description : month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                             ],
                           ),
                         ),

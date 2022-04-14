@@ -7,7 +7,8 @@ import 'package:cartoonizer/Ui/HomeScreen.dart';
 import 'config.dart';
 
 void main() async {
-  log(Config.instance.apiHost);
+  log("CONFIG: {apiHost: ${Config.instance.apiHost}, ANDROID_CHANNEL: ${ANDROID_CHANNEL}}");
+
   await GetStorage.init();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     statusBarColor: Colors.transparent,
@@ -26,9 +27,6 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
           title: 'Cartoonizer',
-          theme: ThemeData(
-              accentColor: Colors.transparent,
-              ),
           home: MyHomePage(title: 'Cartoonizer'),
           debugShowCheckedModeBanner: false,
         );

@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 
+// ANDROID_CHANNEL -> 单独发布的时候，需要指定一个 channel
+// flutter run --dart-define=ANDROID_CHANNEL=apk
+const String ANDROID_CHANNEL = String.fromEnvironment('ANDROID_CHANNEL', defaultValue: '');
+
 abstract class BaseConfig {
   String host = '';
   String get apiHost;
@@ -15,7 +19,6 @@ class DevelopmentConfig implements BaseConfig {
   // real phone
   // String host = 'http://192.168.31.126:8090';
   String host = 'https://socialbook.io';
-
   String get apiHost => '$host/api';
 }
 
