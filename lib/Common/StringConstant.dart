@@ -36,7 +36,7 @@ class StringConstant {
   static const choose_photo = "Choose Photo";
   static const take_selfie = "Or take a selfie";
   static const rate_result = "Rate this results";
-  static const signup_text = "Sign Up To Get  1 Image Credit";
+  static const signup_text = "Sign Up To Get 1 Image Credit";
   static const signup_text1 = "Sign up for more uses";
   static const signup_text2 = "We're glad you're enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!";
   static const no_watermark = "(No waterMark, High-res image)";
@@ -83,4 +83,9 @@ class StringConstant {
   static const share_title = "SocialBook Cartoonizer";
   static const please_login_first = "Please login first";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
+  static const resend = "Resend";
+  static const resend_tips = "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend.";
+  static const resend_logout = " to change the email.";
+  static const enter_email_code = "Enter 6-digit code";
+  static const code_send_to_email = "Your code was emailed to ";
 }

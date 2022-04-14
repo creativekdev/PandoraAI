@@ -3,6 +3,13 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 
 class ChoosePhotoScreenController extends GetxController {
+  @override
+  void onInit() async {
+    super.onInit();
+    var sharedPreferences = await SharedPreferences.getInstance();
+    isLogin.value = sharedPreferences.getBool("isLogin") ?? false;
+  }
+
   final isPhotoSelect = false.obs;
   changeIsPhotoSelect(bool value) => isPhotoSelect.value = value;
 

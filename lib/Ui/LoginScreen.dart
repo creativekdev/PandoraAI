@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -8,11 +7,10 @@ import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
-
+import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/Common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:crypto/crypto.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
@@ -112,51 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Once signed in, return the UserCredential
     return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  }
-
-  /// Generates a cryptographically secure random nonce, to be included in a
-  /// credential request.
-  String generateNonce([int length = 32]) {
-    final charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
-  }
-
-  /// Returns the sha256 hash of [input] in hex notation.
-  String sha256ofString(String input) {
-    final bytes = utf8.encode(input);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
-  }
-
-  Future<UserCredential> signInWithApple() async {
-    // To prevent replay attacks with the credential returned from Apple, we
-    // include a nonce in the credential request. When signing in with
-    // Firebase, the nonce in the id token returned by Apple, is expected to
-    // match the sha256 hash of `rawNonce`.
-    final rawNonce = generateNonce();
-    final nonce = sha256ofString(rawNonce);
-
-    // Request credential for the currently signed in Apple account.
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
-
-    // Create an `OAuthCredential` from the credential returned by Apple.
-    final oauthCredential = OAuthProvider("apple.com").credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
-    token = oauthCredential.idToken;
-    tokenId = oauthCredential.idToken;
-    print(oauthCredential.idToken);
-    // Sign in the user with Firebase. If the nonce we generated earlier does
-    // not match the nonce in `appleCredential.identityToken`, sign in will fail.
-    return await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   }
 
   @override
@@ -469,65 +422,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             isLoading = true;
                           });
                           try {
-                            var temp = await signInWithApple();
-                            var tempUrl = "https://socialbook.io/signup/oauth/apple/callback?apple_id=${temp.user!.uid}";
-                            final tokenResponse = await get(Uri.parse(tempUrl));
-                            setState(() {
-                              isLoading = false;
-                            });
-                            if (tokenResponse.statusCode == 200) {
-                              final Map parsedAppleResponse = json.decode(tokenResponse.body);
-                              if (parsedAppleResponse['data']['signup'] as bool) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                    builder: (context) => SocialSignUpScreen(
-                                      additionalUserInfo: temp.additionalUserInfo!,
-                                      token: "",
-                                      tokenId: temp.user!.uid,
-                                      channel: "apple",
-                                    ),
-                                  ),
-                                ).then((value) async {
-                                  if (!value) {
-                                    Navigator.pop(context, value);
-                                  }
-                                });
-                              } else {
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
-                                String cookie = tokenResponse.headers.toString();
-                                var str = cookie.split(";");
-                                String id = "";
-                                for (int j = 0; j < str.length; j++) {
-                                  if (str[j].contains("sb.connect.sid")) {
-                                    id = str[j];
-                                    j = str.length;
-                                  }
-                                }
-                                var finalId = id.split(",");
-                                if (finalId.length > 1) {
-                                  for (int j = 0; j < finalId.length; j++) {
-                                    if (finalId[j].contains("sb.connect.sid")) {
-                                      id = finalId[j];
-                                      j = finalId.length;
-                                    }
-                                  }
-                                }
-                                prefs.setBool("isLogin", true);
-                                prefs.setString("login_cookie", id.split("=")[1]);
-                                goBack();
-                              }
+                            var result = await signInWithApple();
+                            if (result) {
+                              loginBack(context);
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
+                          } catch (e) {
+                            CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
-                            if (isLoading)
+                            if (isLoading) {
                               setState(() {
                                 isLoading = false;
                               });
+                            }
                           }
-                          ;
                         },
                         child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),
                       ),
@@ -551,7 +460,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "https://socialbook.io/signup/oauth/google/callback?tokens=" + tokenBody;
+                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
                           final tokenResponse = await get(Uri.parse(tempUrl));
                           setState(() {
                             isLoading = false;
@@ -616,176 +525,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 1.5.h,
                     ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     try {
-                    //       var temp = await signInWithYoutube();
-                    //       if (temp == null) {
-                    //         return;
-                    //       }
-                    //       var tokenBody = jsonEncode(<String, dynamic>{
-                    //         "access_token": token,
-                    //         "scope": "https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly",
-                    //         "token_type": "Bearer",
-                    //         "access_type": "offline",
-                    //       });
-                    //
-                    //
-                    //       var tempUrl = "https://socialbook.io/signup/oauth/youtube/callback?tokens=" + tokenBody;
-                    //       final tokenResponse = await get(Uri.parse(tempUrl));
-                    //       setState(() {
-                    //         isLoading = false;
-                    //       });
-                    //       // print(tokenBody);
-                    //       // print(tokenResponse.body);
-                    //       // print(tokenResponse.statusCode);
-                    //       if(tokenResponse.statusCode == 200) {
-                    //         final Map parsed = json.decode(tokenResponse.body.toString());
-                    //         print(parsed);
-                    //         if(parsed.containsKey("data")){
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //               builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: parsed['data']['token'], tokenId: tokenId, channel: "youtube",),
-                    //             ),
-                    //           ).then((value) async {
-                    //             if(!value){Navigator.pop(context, value);}
-                    //           });
-                    //         } else {
-                    //           SharedPreferences prefs = await SharedPreferences.getInstance();
-                    //           String cookie = tokenResponse.headers.toString();
-                    //           var str = cookie.split(";");
-                    //           String id = "";
-                    //           for(int j=0;j<str.length;j++){
-                    //             if(str[j].contains("sb.connect.sid")){
-                    //               id=str[j];
-                    //               j=str.length;
-                    //             }
-                    //           }
-                    //           var finalId = id.split(",");
-                    //           if(finalId.length>1){
-                    //             for(int j=0;j<finalId.length;j++){
-                    //               if(finalId[j].contains("sb.connect.sid")){
-                    //                 id=finalId[j];
-                    //                 j=finalId.length;
-                    //               }
-                    //             }
-                    //           }
-                    //           prefs.setBool("isLogin", true);
-                    //           prefs.setString("login_cookie", id.split("=")[1]);
-                    //           Navigator.pop(context, false);
-                    //         }
-                    //       } else {
-                    //         CommonExtension().showToast("Oops! Something went wrong");
-                    //       }
-                    //
-                    //     } finally {
-                    //       if(isLoading)
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //     };
-                    //   },
-                    //   child: IconifiedButtonWidget(StringConstant.youtube, ImagesConstant.ic_youtube),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     try {
-                    //       var temp = await signInWithFacebook();
-                    //       setState(() {
-                    //         isLoading = false;
-                    //       });
-                    //       // Navigator.push(
-                    //       //   context,
-                    //       //   MaterialPageRoute(
-                    //       //     settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //       //     builder: (context) => SocialSignUpScreen(additionalUserInfo: temp.additionalUserInfo!, token: token, tokenId: tokenId, channel: "facebook",),
-                    //       //   ),
-                    //       // )/*.then((value) => Navigator.pop(context, value))*/;
-                    //     } finally {
-                    //       if(isLoading)
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //     };
-                    //
-                    //   },
-                    //   child: IconifiedButtonWidget(
-                    //       StringConstant.facebook, ImagesConstant.ic_facebook),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         settings: RouteSettings(name: "/InstaLoginScreen"),
-                    //         builder: (context) => InstaLoginScreen(),
-                    //       ),
-                    //     ).then((value) async {
-                    //       if(value != null) {
-                    //         setState(() {
-                    //           isLoading = true;
-                    //         });
-                    //         var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                    //         final headers = {
-                    //           "cookie": "bst_social_signup=${tempStamp}"
-                    //         };
-                    //         final access_response = await get(Uri.parse("https://socialbook.io/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
-                    //         setState(() {
-                    //           isLoading = false;
-                    //         });
-                    //         print(access_response.body);
-                    //         if (access_response.statusCode == 200) {
-                    //           final Map parsed = json.decode(access_response.body.toString());
-                    //           if (parsed["data"]["result"] as bool) {
-                    //             Navigator.push(
-                    //               context,
-                    //               MaterialPageRoute(
-                    //                 settings: RouteSettings(name: "/SocialSignUpScreen"),
-                    //                 builder: (context) => SocialSignUpScreen(additionalUserInfo: null, token: parsed["data"]["name"], tokenId: tempStamp, channel: "instagram",),
-                    //               ),
-                    //             ).then((value) async {
-                    //               if(!value){Navigator.pop(context, value);}
-                    //             });
-                    //           }
-                    //         } else {
-                    //           CommonExtension().showToast("Oops! Something went wrong");
-                    //         }
-                    //
-                    //       }
-                    //       print(value);
-                    //     });
-                    //   },
-                    //   child: IconifiedButtonWidget(StringConstant.instagram, ImagesConstant.ic_instagram),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () async {
-                    //     var tempData = await platform.invokeMethod("OpenTiktok");
-                    //     print("tempData");
-                    //     print(tempData);
-                    //   },
-                    //   child: IconifiedButtonWidget(
-                    //       StringConstant.tiktok, ImagesConstant.ic_tiktok),
-                    // ),
-                    // SizedBox(
-                    //   height: 1.5.h,
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

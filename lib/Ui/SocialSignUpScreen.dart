@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/api.dart';
 import 'package:http/http.dart';
 import 'package:cartoonizer/config.dart';
 
 import '../Common/Extension.dart';
 import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
+import './EmailVerificationScreen.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
   final additionalUserInfo;
@@ -32,21 +36,10 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
 
   @override
   void initState() {
-    if (widget.additionalUserInfo != null) {
+    if (widget.additionalUserInfo != null && widget.channel != 'tiktok') {
       emailController.text = widget.additionalUserInfo.profile!['email'];
     }
     super.initState();
-  }
-
-  Future<void> goBack() async {
-    final box = GetStorage();
-    String? login_back_page = box.read('login_back_page');
-    if (login_back_page != null) {
-      Navigator.popUntil(context, ModalRoute.withName(login_back_page));
-      box.remove('login_back_page');
-    } else {
-      Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
-    }
   }
 
   @override
@@ -265,18 +258,31 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                                   }
                                 }
                               }
+
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              await goBack();
+
+                              UserModel user = await API.getLogin(needLoad: true);
+                              if (user.status != "activated") {
+                                Navigator.pushReplacement<void, void>(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
+                                  ),
+                                );
+                              } else {
+                                await loginBack(context);
+                              }
                             }
-                          } else if (widget.channel == "youtube" || widget.channel == "instagram" || widget.channel == "tiktok") {
+                          } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
                             final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
-                            Map<String, dynamic> lBody = {
+                            Map<String, dynamic> body = {
                               "email": emailController.text,
                               "password": passController.text,
                               "channel": widget.channel,
+                              "type": "app_cartoonizer",
                             };
-                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: lBody);
+                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: body);
                             print(access_response.statusCode);
                             print(access_response.body);
                             setState(() {
@@ -304,28 +310,32 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              await goBack();
+
+                              UserModel user = await API.getLogin(needLoad: true);
+                              if (user.status != "activated") {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
+                                  ),
+                                );
+                              }
+
+                              // await loginBack(context);
                             } else {
                               final Map parsed = json.decode(access_response.body.toString());
                               CommonExtension().showToast(parsed['message']);
                             }
-                          } else if (widget.channel == "apple") {
+                          } else if (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] == true) {
                             setState(() {
                               isLoading = true;
                             });
                             List<JsonValueModel> params = [];
                             params.add(JsonValueModel("email", emailController.text));
-                            params.add(JsonValueModel("apple_id", "${widget.tokenId}"));
                             params.add(JsonValueModel("Password", passController.text));
-                            params.add(JsonValueModel("type", "cartoonize"));
-                            Map<String, dynamic> lBody = {
-                              "email": emailController.text,
-                              "apple_id": "${widget.tokenId}",
-                              "Password": passController.text,
-                              "type": "cartoonize",
-                              "s": sToken(params)
-                            };
-                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: lBody);
+                            params.add(JsonValueModel("type", "app_cartoonizer"));
+                            Map<String, dynamic> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer", "s": sToken(params)};
+                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: body);
                             setState(() {
                               isLoading = false;
                             });
@@ -351,7 +361,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              await goBack();
+                              await loginBack(context);
                             } else {
                               final Map parsed = json.decode(appleResponse.body.toString());
                               CommonExtension().showToast(parsed['message']);

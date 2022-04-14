@@ -95,7 +95,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
-    // handle invalid purchase here if  _verifyPurchase` failed, just finish it to void can not buy again
+    // handle invalid purchase here if _verifyPurchase failed, just finish it to void can not buy again
 
     if (purchaseDetails.pendingCompletePurchase) {
       _inAppPurchase.completePurchase(purchaseDetails);
@@ -131,14 +131,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             _loading = false;
           });
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
-          setState(() {
-            _loading = false;
-          });
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
           if (valid) {
             // reload user by get login
-            UserModel user = await API.getLogin(true);
+            UserModel user = await API.getLogin(needLoad: true);
             if (user.subscription.containsKey('id')) {
               setState(() {
                 _showPurchasePlan = true;
@@ -146,8 +143,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               });
             }
             deliverProduct(purchaseDetails);
+            setState(() {
+              _loading = false;
+            });
           } else {
             _handleInvalidPurchase(purchaseDetails);
+            setState(() {
+              _loading = false;
+            });
             return;
           }
         }
@@ -185,9 +188,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     if (Platform.isIOS) {
       var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
+
+      // get all transactions and finish them if testing needed
+      var transactions = await SKPaymentQueueWrapper().transactions();
+      transactions.forEach((transaction) {
+        SKPaymentQueueWrapper().finishTransaction(transaction);
+      });
     }
 
-    UserModel user = await API.getLogin(true);
+    UserModel user = await API.getLogin(needLoad: true);
     if (user.subscription.containsKey('id')) {
       setState(() {
         _showPurchasePlan = true;
@@ -227,8 +236,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     }
 
     List<String> consumables = await ConsumableStore.load();
-    // print("productDetailResponse.productDetails[0].price");
-    // print(productDetailResponse.productDetails[0].price);
     setState(() {
       _isAvailable = isAvailable;
       _products = productDetailResponse.productDetails;
@@ -369,7 +376,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? year.description : year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -424,7 +432,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? month.description : month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -516,11 +525,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   // setState(() {
                                   //   _loading = true;
                                   // });
-                                  // get all transactions and finish them if testing needed
-                                  var transactions = await SKPaymentQueueWrapper().transactions();
-                                  transactions.forEach((skPaymentTransactionWrapper) {
-                                    SKPaymentQueueWrapper().finishTransaction(skPaymentTransactionWrapper);
-                                  });
                                   _inAppPurchase.restorePurchases();
                                 }
                               },

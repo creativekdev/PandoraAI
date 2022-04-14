@@ -10,6 +10,7 @@ import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -136,9 +137,34 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     });
   }
 
-  FutureBuilder _buildPremiumBuilder() {
+  Obx _buildSignupBlock(BuildContext context) {
+    return Obx(
+      () => Visibility(
+        visible: !controller.isLogin.value,
+        child: GestureDetector(
+          onTap: () => {
+            GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: "/SignupScreen"),
+                builder: (context) => SignupScreen(),
+              ),
+            ).then((value) async {
+              var user = await API.getLogin(needLoad: true);
+              bool isLogin = (user != null) ? user.email != '' : false;
+              controller.changeIsLogin(isLogin);
+            })
+          },
+          child: RoundedBorderBtnWidget(StringConstant.signup_text),
+        ),
+      ),
+    );
+  }
+
+  FutureBuilder _buildPremiumBlock() {
     return FutureBuilder(
-        future: API.getLogin(false),
+        future: API.getLogin(),
         builder: (context, snapshot) {
           bool visible = false;
           if (snapshot.data != null) {
@@ -164,7 +190,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         MaterialPageRoute(
                           settings: RouteSettings(name: "/PurchaseScreen"),
                           builder: (context) => PurchaseScreen(),
-                        ))
+                        )).then((value) => {setState(() {})})
                   },
                   child: RoundedBorderBtnWidget(StringConstant.go_premium),
                 ),
@@ -533,32 +559,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               height: 100.w,
                                             ),
                                     ),
-                                    FutureBuilder(
-                                      future: _getPrefs(),
-                                      builder: (context, snapshot) {
-                                        return Obx(
-                                          () => Visibility(
-                                            visible: (!(snapshot.data != null ? snapshot.data as bool : true) || controller.isLogin.value),
-                                            child: GestureDetector(
-                                              onTap: () => {
-                                                GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    settings: RouteSettings(name: "/SignupScreen"),
-                                                    builder: (context) => SignupScreen(),
-                                                  ),
-                                                ).then((value) async {
-                                                  controller.changeIsLogin((value != null) ? value as bool : true);
-                                                })
-                                              },
-                                              child: RoundedBorderBtnWidget(StringConstant.signup_text),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    _buildPremiumBuilder(),
+                                    _buildSignupBlock(context),
+                                    _buildPremiumBlock(),
                                     Visibility(
                                       visible: false /*controller.isRate.value*/,
                                       child: TitleTextWidget(StringConstant.rate_result, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
@@ -621,7 +623,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               Image.asset(
                                                 ImagesConstant.ic_man,
                                                 height: 40.h,
-                                                width: 85.w,
+                                                width: 70.w,
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
@@ -825,6 +827,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 ],
                               ),
                       ),
+                    ),
+                     SizedBox(
+                      height: 1.h,
                     ),
                     Obx(() => Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -1081,7 +1086,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         if (res.statusCode == 200) {
           var sharedPrefs = await SharedPreferences.getInstance();
           final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-          final tokenResponse = await get(Uri.parse('https://socialbook.io/api/tool/image/cartoonize/token'), headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
+          final tokenResponse = await get(Uri.parse("${Config.instance.apiHost}/tool/image/cartoonize/token"), headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
           final Map tokenParsed = json.decode(tokenResponse.body.toString());
           if (tokenResponse.statusCode == 200) {
             if (tokenParsed['data'] == null) {
@@ -1221,8 +1226,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
                       headers: headers);
                 }
-
-                await API.getLogin(true);
+                await API.getLogin(needLoad: true);
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');
@@ -1276,11 +1280,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       controller.changeIsLoading(false);
       controller.changeIsRate(false);
     });
-  }
-
-  Future<bool> _getPrefs() async {
-    var sharedPrefs = await SharedPreferences.getInstance();
-    return sharedPrefs.getBool("isLogin") ?? false;
   }
 
   Widget _buildSeparator() {

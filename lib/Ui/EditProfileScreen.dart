@@ -13,6 +13,7 @@ import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
 import '../Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Common/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -211,7 +212,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                   's': sToken(params),
                                                 });
 
-                                                final updateProfileResponse = await post(Uri.parse("https://socialbook.io/api/user/update"), body: body, headers: headers);
+                                                final updateProfileResponse = await post(Uri.parse("${Config.instance.apiHost}/user/update"), body: body, headers: headers);
 
                                                 saveUser({
                                                   'name': name,
@@ -255,7 +256,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<UserModel> _getData() async {
-    UserModel user = await API.getLogin(false);
+    UserModel user = await API.getLogin();
     controller.updateImageUrl(user.avatar);
     nameController.text = user.name;
     return user;

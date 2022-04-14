@@ -7,11 +7,11 @@ import 'package:cartoonizer/Ui/HomeScreen.dart';
 import 'config.dart';
 
 void main() async {
-  log(Config.instance.apiHost);
+  log("CONFIG: {apiHost: ${Config.instance.apiHost}, ANDROID_CHANNEL: ${ANDROID_CHANNEL}}");
+
   await GetStorage.init();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-    systemNavigationBarColor: ColorConstant.PrimaryColor,
-    statusBarColor: ColorConstant.PrimaryColor,
+    statusBarColor: Colors.transparent,
   ));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -27,9 +27,6 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
           title: 'Cartoonizer',
-          theme: ThemeData(
-            accentColor: ColorConstant.PrimaryColor,
-          ),
           home: MyHomePage(title: 'Cartoonizer'),
           debugShowCheckedModeBanner: false,
         );
