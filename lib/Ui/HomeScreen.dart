@@ -8,6 +8,7 @@ import 'package:cartoonizer/api.dart';
 import 'package:http/http.dart';
 
 import 'PurchaseScreen.dart';
+import 'StripeSubscriptionScreen.dart';
 import 'ChoosePhotoScreen.dart';
 import 'SettingScreen.dart';
 
@@ -112,8 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  settings: RouteSettings(name: "/PurchaseScreen"),
-                                  builder: (context) => PurchaseScreen(),
+                                  settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                                  builder: (context) => StripeSubscriptionScreen(),
                                 ))
                             // Navigator.push(
                             //     context,

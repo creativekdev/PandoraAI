@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'firebase_options.dart';
-
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Ui/HomeScreen.dart';
 
@@ -17,6 +17,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+// init stripe
+  Stripe.publishableKey = Config.instance.stripePublishableKey;
+  Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
+  Stripe.urlScheme = 'flutterstripe';
+  await Stripe.instance.applySettings();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 

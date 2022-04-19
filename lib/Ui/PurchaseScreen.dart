@@ -24,8 +24,6 @@ class PurchaseScreen extends StatefulWidget {
 const bool _kAutoConsume = true;
 const String _kConsumableId = 'io.socialbook.cartoonizer.monthly';
 const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly';
-// const String _kConsumableId = 'android.test.purchased';
-// const String _kUpgradeId = 'android.test.purchased';
 const List<String> _kProductIds = <String>[
   _kConsumableId,
   _kUpgradeId,
@@ -255,7 +253,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       onTap: () async {
         var sharedPrefs = await SharedPreferences.getInstance();
 
-        UserModel user = await API.getLogin(true);
+        UserModel user = await API.getLogin(needLoad: true);
         bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
 
         if (!isLogin || user.email == "") {

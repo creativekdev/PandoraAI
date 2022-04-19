@@ -48,7 +48,9 @@ class StringConstant {
   static const high_resolution = "High resolution images";
   static const faster_speed = "Faster Speed";
   static const txtContinue = "Continue";
+  static const paymentBtn = "Place your order";
   static const setting = "Setting";
+  static const payment = "Payment";
   static const edit_profile = "Edit Profile";
   static const change_password = "Change Password";
   static const rate_us = "Rate us on the app store";
@@ -88,4 +90,5 @@ class StringConstant {
   static const resend_logout = " to change the email.";
   static const enter_email_code = "Enter 6-digit code";
   static const code_send_to_email = "Your code was emailed to ";
+  static const add_new_card = "+ Add new card";
 }

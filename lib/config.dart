@@ -7,6 +7,7 @@ const String ANDROID_CHANNEL = String.fromEnvironment('ANDROID_CHANNEL', default
 abstract class BaseConfig {
   String host = '';
   String get apiHost;
+  String stripePublishableKey = '';
 }
 
 class DevelopmentConfig implements BaseConfig {
@@ -14,17 +15,19 @@ class DevelopmentConfig implements BaseConfig {
   // String host = 'http://localhost:8090';
 
   // android emulator
-  // String host = 'http://10.0.2.2:8090';
+  String host = 'http://10.0.2.2:8090';
 
   // real phone
   // String host = 'http://192.168.31.126:8090';
-  String host = 'https://socialbook.io';
+  // String host = 'https://socialbook.io';
   String get apiHost => '$host/api';
+  String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
 }
 
 class ProductionConfig implements BaseConfig {
   String host = 'https://socialbook.io';
   String get apiHost => '$host/api';
+  String stripePublishableKey = 'pk_live_Rhji9hzPepvF00Mfh7GpWyeE';
 }
 
 class Config {

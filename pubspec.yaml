@@ -43,7 +43,6 @@ dependencies:
   image_gallery_saver: ^1.7.1
   share_plus: ^3.0.4
   url_launcher: ^6.0.18
-  modal_bottom_sheet: ^2.0.0
   flutter_share_me:
     git: https://github.com/OpenFlutter/flutter_share_me
   get: ^4.6.1
@@ -62,6 +61,8 @@ dependencies:
   connectivity_plus: ^2.2.1
   permission_handler: ^9.1.0
   cached_network_image: ^3.2.0
+  flutter_stripe: ^2.4.0
+  flutter_credit_card:
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
@@ -49,4 +50,15 @@ Future<void> loginBack(BuildContext context) async {
       );
     }
   }
+}
+
+void showToast(String text) {
+  Fluttertoast.showToast(
+      msg: text,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 3,
+      backgroundColor: ColorConstant.BtnTextColor,
+      textColor: ColorConstant.White,
+      fontSize: 16.0);
 }

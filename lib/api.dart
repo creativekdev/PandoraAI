@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Ui/EmailVerificationScreen.dart';
 import 'package:cartoonizer/config.dart';
-
+import 'package:cartoonizer/Common/utils.dart';
 import 'Model/UserModel.dart';
 
 class API {
@@ -33,12 +33,23 @@ class API {
                 builder: (context) => EmailVerificationScreen(user.email),
               ));
         }
-
         return user;
       }
       return UserModel.fromJson(jsonDecode(localUser));
     }
-
     return UserModel.fromJson(jsonDecode(localUser));
+  }
+
+  static Future<bool> buyPlan(body) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
+    var response = await post(Uri.parse('${Config.instance.apiHost}/plan/buy'), body: body, headers: headers);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      showToast(jsonDecode(response.body)['code']);
+      return false;
+    }
   }
 }
