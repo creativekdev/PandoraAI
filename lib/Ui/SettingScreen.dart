@@ -5,6 +5,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/LoginScreen.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -236,7 +237,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var url = (Platform.isAndroid) ? "https://www.google.com/" : "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
+                        var url = Config.getStoreLink();
                         _launchURL(url);
                       },
                       child: ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
@@ -247,7 +248,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       onTap: () async {
                         final box = context.findRenderObject() as RenderBox?;
-                        var appLink = "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
+                        var appLink = Config.getStoreLink();
                         await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                       },
                       child: ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, false),

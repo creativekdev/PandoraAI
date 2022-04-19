@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 // ANDROID_CHANNEL -> 单独发布的时候，需要指定一个 channel
 // flutter run --dart-define=ANDROID_CHANNEL=apk
 const String ANDROID_CHANNEL = String.fromEnvironment('ANDROID_CHANNEL', defaultValue: '');
+const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460';
+const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.socialbook.cartoonizer';
 
 abstract class BaseConfig {
   String host = '';
@@ -15,11 +18,11 @@ class DevelopmentConfig implements BaseConfig {
   // String host = 'http://localhost:8090';
 
   // android emulator
-  String host = 'http://10.0.2.2:8090';
+  // String host = 'http://10.0.2.2:8090';
 
   // real phone
   // String host = 'http://192.168.31.126:8090';
-  // String host = 'https://socialbook.io';
+  String host = 'https://socialbook.io';
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
 }
@@ -45,6 +48,14 @@ class Config {
       return ProductionConfig();
     } else {
       return DevelopmentConfig();
+    }
+  }
+
+  static String getStoreLink() {
+    if (Platform.isIOS) {
+      return IOS_LINK;
+    } else {
+      return ANDROID_LINK;
     }
   }
 }
