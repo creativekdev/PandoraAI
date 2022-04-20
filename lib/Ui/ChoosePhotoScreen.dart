@@ -41,55 +41,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var image = "";
   var videoPath = "";
   var imagePicker;
-  List<String> tempData = [
-    'standard1',
-    'standard2',
-    'standard3',
-    '3dcartoon1',
-    '3dcartoon2',
-    '3dcartoon3',
-    'disney1',
-    'disney2',
-    'disney3',
-    'caricature1',
-    'caricature2',
-    'caricature3',
-    'kpop1',
-    'kpop2',
-    'kpop3',
-    'arcane',
-    'simpson',
-    'southpark',
-    'rickandmorty',
-    'baby',
-    'villian',
-    'glasses',
-    'beauty_beard',
-    'beautycartoon1',
-    'beautycartoon2',
-    'beautycartoon3',
-    'fantacyart1',
-    'fantacyart2',
-    'fantacyart3',
-    'naturalart1',
-    'naturalart2',
-    'naturalart3',
-    'royalty1',
-    'royalty2',
-    'royalty3',
-    'old1',
-    'old2',
-    'old3',
-    'young1',
-    'young2',
-    'young3',
-    'man1',
-    'man2',
-    'man3',
-    'woman1',
-    'woman2',
-    'woman3'
-  ];
+
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
   var scrollController;
@@ -932,6 +884,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
+    var effectItem = widget.list[itemIndex].effects[index];
+
     return Card(
       elevation: 0,
       shape: (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex)
@@ -958,9 +912,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(3.w),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: (widget.list[itemIndex].effects[index].endsWith("-transform"))
+                child: (effectItem["key"].endsWith("-transform"))
                     ? CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + widget.list[itemIndex].effects[index] + ".webp",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + effectItem["key"] + ".webp",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -984,7 +938,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         },
                       )
                     : CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + widget.list[itemIndex].effects[index] + ".jpg",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + effectItem["key"] + ".jpg",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -1009,7 +963,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       ),
               ),
               Visibility(
-                visible: (widget.list[itemIndex].effects[index].endsWith("-transform")),
+                visible: (effectItem["key"].endsWith("-transform")),
                 child: Positioned(
                   right: 1.5.w,
                   top: 0.4.h,
@@ -1020,7 +974,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ),
                 ),
               ),
-              if (controller.isChecked.value && tempData.contains(widget.list[itemIndex].effects[index]))
+              if (controller.isChecked.value && isSupportOriginalFace(effectItem))
                 Positioned(
                   bottom: 0.4.h,
                   left: 1.5.w,
@@ -1050,9 +1004,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var key = (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-        ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-        : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+    var selectedEffect = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+
+    var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
     if (offlineEffect.containsKey(key)) {
       var data = offlineEffect[key] as OfflineEffectModel;
       if (data.data.toString().startsWith('<')) {
@@ -1071,14 +1025,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         _videoPlayerController.play();
 
         urlFinal = data.imageUrl;
-        algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+        algoName = selectedEffect["key"];
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(true);
       } else {
         controller.changeIsLoading(false);
         image = data.data;
         urlFinal = data.imageUrl;
-        algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+        algoName = selectedEffect["key"];
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(false);
       }
@@ -1108,9 +1062,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                    : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
+                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
                 'direct': 1,
               };
               final cartoonizeResponse = await API.post("${Config.instance.aiHost}/api/image/cartoonize", body: dataBody);
@@ -1136,7 +1088,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
@@ -1144,10 +1096,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  var params = {"algoname": widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]};
+                  var params = {"algoname": selectedEffect["key"]};
                   API.get("/api/log/cartoonize", params: params);
                 }
               } else {
@@ -1162,9 +1114,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                    : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
+                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
                 'direct': 1,
                 'token': token,
               };
@@ -1192,7 +1142,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
@@ -1200,10 +1150,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  var params = {"algoname": widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]};
+                  var params = {"algoname": selectedEffect["key"]};
                   API.get("/api/log/cartoonize", params: params);
                 }
               } else {
@@ -1279,6 +1229,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 12.sp),
           ),
         ));
+  }
+
+  bool isSupportOriginalFace(dynamic effect) {
+    return effect["original_face"] != null && effect["original_face"] == true;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
