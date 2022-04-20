@@ -92,14 +92,14 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   void _submitPayment(dynamic card) async {
     showPendingUI();
     try {
-      var body = jsonEncode({
+      var body = {
         "plan_id": widget.planId,
         "category": "creator",
         "new_card": {},
         "customerId": card["customer_id"],
         "payment_method": "creditcard",
         "fundingSource": card["card_id"] != null ? card["card_id"] : "",
-      });
+      };
 
       var result = await API.buyPlan(body);
       if (result == true) {
