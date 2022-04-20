@@ -9,7 +9,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../Common/Extension.dart';
-import '../Model/JsonValueModel.dart';
 import '../Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/Common/utils.dart';
@@ -193,14 +192,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               } else {
                                                 FocusManager.instance.primaryFocus?.unfocus();
                                                 controller.changeIsLoading(true);
-                                                var sharedPrefs = await SharedPreferences.getInstance();
-                                                List<JsonValueModel> params = [];
                                                 var name = nameController.text.toString();
                                                 var avatar = controller.imageUrl.value;
-
-                                                params.add(JsonValueModel("name", name));
-                                                params.add(JsonValueModel("avatar", avatar));
-                                                params.sort();
 
                                                 var body = {
                                                   'name': name,

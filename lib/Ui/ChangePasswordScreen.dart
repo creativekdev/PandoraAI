@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:cartoonizer/api.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -91,10 +90,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             setState(() {
                               isLoading = true;
                             });
-                            List<JsonValueModel> params = [];
-                            params.add(JsonValueModel("old_password", oPassController.text.trim()));
-                            params.add(JsonValueModel("new_password", passController.text.trim()));
-                            params.sort();
                             var sharedPreferences = await SharedPreferences.getInstance();
 
                             var body = {

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';
@@ -53,13 +52,6 @@ Future<bool> signInWithApple() async {
   // not match the nonce in `appleCredential.identityToken`, sign in will fail.
   var appleInfo = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   var appleUser = appleInfo.user;
-
-  List<JsonValueModel> params = [];
-  params.add(JsonValueModel("apple_id", appleUser?.uid ?? ""));
-  params.add(JsonValueModel("email", appleUser?.email ?? ""));
-  params.add(JsonValueModel("name", appleUser?.displayName ?? ""));
-  params.add(JsonValueModel("type", "app_cartoonizer"));
-  params.sort();
 
   var body = {
     "apple_id": appleInfo.user?.uid ?? "",

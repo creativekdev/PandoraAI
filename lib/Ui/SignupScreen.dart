@@ -5,13 +5,11 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Common/auth.dart';
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'InstaLoginScreen.dart';
@@ -118,7 +116,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<JsonValueModel> params = [];
 
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
 
