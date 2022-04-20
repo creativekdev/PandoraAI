@@ -1,10 +1,7 @@
-import 'dart:convert';
-import 'package:http/http.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 import 'LoginScreen.dart';

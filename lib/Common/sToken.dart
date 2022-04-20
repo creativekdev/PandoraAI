@@ -9,7 +9,7 @@ String sToken(Map<String, dynamic> params) {
 
   var str = "x";
   for (var i = 0; i < keys.length; i++) {
-    str += keys[i] + params[keys[i]];
+    str += keys[i] + params[keys[i]].toString();
   }
   var content = new Utf8Encoder().convert('socialbook');
   var md5 = crypto.md5;

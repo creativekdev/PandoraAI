@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
@@ -1200,9 +1201,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-                  get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
-                      headers: headers);
+                  var params = {"algoname": widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]};
+                  API.get("https://socialbook.io/api/log/cartoonize", params: params);
                 }
                 await API.getLogin(needLoad: true);
               } else {
@@ -1228,7 +1228,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         }
       } catch (e) {
         controller.changeIsLoading(false);
-        throw ('Error while uploading image');
+        showToast("Error while uploading image");
       }
     }
   }

@@ -411,7 +411,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             var tempStamp = DateTime.now().millisecondsSinceEpoch;
                             final headers = {"cookie": "bst_social_signup=${tempStamp}"};
                             final access_response = await API.get("/signup/oauth/instagram_v2/callback", params: {"access_token": value['accessToken']}, headers: headers);
-
                             setState(() {
                               isLoading = false;
                             });

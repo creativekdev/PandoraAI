@@ -108,8 +108,8 @@ class API {
     }
 
     if (needLoad || localUser == '') {
-      final headers = {"cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
-      var response = await http.get(Uri.parse('${Config.instance.apiHost}/user/get_login'), headers: headers);
+      var response = await get('/api/user/get_login');
+
       if (response.statusCode == 200) {
         Map data = jsonDecode(response.body.toString());
         UserModel user = UserModel.fromGetLogin(data);
@@ -132,14 +132,13 @@ class API {
 
   // buy plan with stripe
   static Future<bool> buyPlan(body) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
-    var response = await http.post(Uri.parse('${Config.instance.apiHost}/plan/buy'), body: body, headers: headers);
+    var response = await post("/api/plan/buy", body: body);
 
     if (response.statusCode == 200) {
       return true;
     } else {
-      showToast(jsonDecode(response.body)['code']);
+      var body = jsonDecode(response.body);
+      showToast(body["message"] ?? body["code"]);
       return false;
     }
   }
