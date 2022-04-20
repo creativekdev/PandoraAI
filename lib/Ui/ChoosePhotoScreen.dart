@@ -10,7 +10,6 @@ import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -20,6 +19,7 @@ import 'package:path/path.dart';
 import '../Model/OfflineEffectModel.dart';
 import '../gallery_saver.dart';
 import 'PurchaseScreen.dart';
+import 'StripeSubscriptionScreen.dart';
 import 'ShareScreen.dart';
 import 'package:video_player/video_player.dart';
 
@@ -185,12 +185,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 ),
                 GestureDetector(
                   onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: "/PurchaseScreen"),
-                          builder: (context) => PurchaseScreen(),
-                        )).then((value) => {setState(() {})})
+                    if (Platform.isIOS)
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/PurchaseScreen"),
+                              builder: (context) => PurchaseScreen(),
+                            )).then((value) => {setState(() {})})
+                      }
+                    else
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                              builder: (context) => StripeSubscriptionScreen(),
+                            )).then((value) => {setState(() {})})
+                      }
                   },
                   child: RoundedBorderBtnWidget(StringConstant.go_premium),
                 ),
@@ -828,7 +840,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               ),
                       ),
                     ),
-                     SizedBox(
+                    SizedBox(
                       height: 1.h,
                     ),
                     Obx(() => Row(
@@ -1073,51 +1085,33 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       String b_name = "free-socialbook";
       String f_name = basename((controller.image.value as File).path);
       String c_type = "image/*";
-      List<JsonValueModel> params = [];
-      params.add(JsonValueModel("bucket", b_name));
-      params.add(JsonValueModel("file_name", f_name));
-      params.add(JsonValueModel("content_type", c_type));
-      params.sort();
-      final url = Uri.parse('https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
-      final response = await get(url);
+      final params = {
+        "bucket": b_name,
+        "file_name": f_name,
+        "content_type": c_type,
+      };
+      final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
       final Map parsed = json.decode(response.body.toString());
+
       try {
         var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
         if (res.statusCode == 200) {
           var sharedPrefs = await SharedPreferences.getInstance();
-          final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-          final tokenResponse = await get(Uri.parse("${Config.instance.apiHost}/tool/image/cartoonize/token"), headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
+          final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
           final Map tokenParsed = json.decode(tokenResponse.body.toString());
           if (tokenResponse.statusCode == 200) {
             if (tokenParsed['data'] == null) {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
-              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-              List<JsonValueModel> params = [];
-              params.add(JsonValueModel("querypics", imageUrl));
-              params.add(JsonValueModel("is_data", "0"));
-              params.add(JsonValueModel(
-                  "algoname",
-                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                      : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
-              params.add(JsonValueModel("direct", "1"));
-              params.sort();
               List<String> imageArray = ["$imageUrl"];
-
-              var databody = jsonEncode(<String, dynamic>{
+              var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
                 'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
                     ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
                     : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
                 'direct': 1,
-                's': sToken(params),
-              });
-
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize'), body: databody, headers: headers);
-              // print(databody);
-              // print(cartoonizeResponse.statusCode);
-              // print(cartoonizeResponse.body.toString());
+              };
+              final cartoonizeResponse = await API.post("https://ai.socialbook.io/api/image/cartoonize", body: dataBody);
               if (cartoonizeResponse.statusCode == 200) {
                 final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
@@ -1162,21 +1156,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             } else {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
               var token = tokenParsed['data'];
-              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-              List<JsonValueModel> params = [];
-              params.add(JsonValueModel("querypics", imageUrl));
-              params.add(JsonValueModel("is_data", "0"));
-              params.add(JsonValueModel(
-                  "algoname",
-                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                      : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
-              params.add(JsonValueModel("direct", "1"));
-              params.add(JsonValueModel("token", token));
-              params.sort();
               List<String> imageArray = ["$imageUrl"];
 
-              var databody = jsonEncode(<String, dynamic>{
+              var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
                 'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
@@ -1184,14 +1166,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                     : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
                 'direct': 1,
                 'token': token,
-                's': sToken(params),
-              });
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize/token'), body: databody, headers: headers);
+              };
+              final cartoonizeResponse = await API.post("https://ai.socialbook.io/api/image/cartoonize/token", body: dataBody);
               print(cartoonizeResponse.statusCode);
               print(cartoonizeResponse.body.toString());
               if (cartoonizeResponse.statusCode == 200) {
                 final Map parsed = json.decode(cartoonizeResponse.body.toString());
-
                 if (parsed['data'].toString().startsWith('<')) {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
@@ -1257,26 +1237,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   Future<void> likeDislike(bool like) async {
     controller.changeIsLoading(true);
-    var sharedPrefs = await SharedPreferences.getInstance();
-    final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-    final headers1 = {
-      "Content-type": "application/json",
-    };
-    List<JsonValueModel> params = [];
-    params.add(JsonValueModel("type", "cartoonize"));
-    params.add(JsonValueModel("like", "1"));
-    params.add(JsonValueModel("url", urlFinal));
-    params.add(JsonValueModel("algo", algoName));
-    params.sort();
-    var databody = jsonEncode(<String, dynamic>{
+    var databody = {
       'type': "cartoonize",
       'like': like ? 1 : -1,
       'url': urlFinal,
       'algo': algoName,
-      's': sToken(params),
-    });
-    await post(Uri.parse('https://socialbook.io/api/tool/matting/evaluate'), body: databody, headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : headers1)
-        .whenComplete(() async {
+    };
+
+    await API.post("/api/tool/matting/evaluate", body: databody).whenComplete(() async {
       controller.changeIsLoading(false);
       controller.changeIsRate(false);
     });

@@ -9,6 +9,7 @@ import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 
 /// Returns the sha256 hash of [input] in hex notation.
 String sha256ofString(String input) {
@@ -63,16 +64,15 @@ Future<bool> signInWithApple() async {
   params.add(JsonValueModel("type", "app_cartoonizer"));
   params.sort();
 
-  Map<String, dynamic> body = {
-    "apple_id": appleInfo.user?.uid,
-    "email": appleInfo.user?.email,
+  var body = {
+    "apple_id": appleInfo.user?.uid ?? "",
+    "email": appleInfo.user?.email ?? "",
     "name": appleInfo.user?.displayName ?? "",
     "type": "app_cartoonizer",
-    's': sToken(params),
   };
 
   var tempUrl = "${Config.instance.host}/signup/oauth/apple/callback";
-  final tokenResponse = await post(Uri.parse(tempUrl), body: body, headers: {"Content-type": "application/x-www-form-urlencoded"});
+  final tokenResponse = await API.post("/signup/oauth/apple/callback", body: body);
 
   if (tokenResponse.statusCode == 200) {
     final Map parsedAppleResponse = json.decode(tokenResponse.body);

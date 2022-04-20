@@ -75,16 +75,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     // IMPORTANT!! Always verify a purchase before delivering the product.
     // For the purpose of an example, we directly return true.
 
-    Map<String, dynamic> body = {
-      "receipt_data": purchaseDetails.verificationData.serverVerificationData,
-      "purchase_id": purchaseDetails.purchaseID,
-      "product_id": purchaseDetails.productID
-    };
+    var body = {"receipt_data": purchaseDetails.verificationData.serverVerificationData, "purchase_id": purchaseDetails.purchaseID ?? "", "product_id": purchaseDetails.productID};
+    var response = await API.post("/api/plan/apple_store/buy", body: body);
 
-    var sharedPreferences = await SharedPreferences.getInstance();
-    final headers = {"cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
-
-    var response = await post(Uri.parse('${Config.instance.apiHost}/plan/apple_store/buy'), body: body, headers: headers);
     if (response.statusCode == 200) {
       return Future<bool>.value(true);
     } else {
@@ -621,6 +614,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                               height: 2.h,
                             ),
                             _buildProductList(),
+                            SizedBox(
+                              height: 2.h,
+                            ),
                           ],
                         ),
                       ),

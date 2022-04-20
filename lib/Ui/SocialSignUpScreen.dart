@@ -4,12 +4,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:http/http.dart';
-import 'package:cartoonizer/config.dart';
 
 import '../Common/Extension.dart';
-import '../Common/sToken.dart';
-import '../Model/JsonValueModel.dart';
 import './EmailVerificationScreen.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
@@ -229,11 +225,11 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             isLoading = true;
                           });
                           if (widget.channel == "google") {
-                            Map<String, dynamic> tokenBody = {
+                            Map<String, String> tokenBody = {
                               "token": widget.token ?? "",
                               "password": passController.text,
                             };
-                            final tokenResponse = await post(Uri.parse("${Config.instance.host}/password_reset"), body: tokenBody);
+                            final tokenResponse = await API.post("/password_reset", body: tokenBody);
                             print(tokenResponse.body);
                             setState(() {
                               isLoading = false;
@@ -276,13 +272,14 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             }
                           } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
                             final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
-                            Map<String, dynamic> body = {
+                            Map<String, String> body = {
                               "email": emailController.text,
                               "password": passController.text,
-                              "channel": widget.channel,
+                              "channel": widget.channel ?? "",
                               "type": "app_cartoonizer",
                             };
-                            final access_response = await post(Uri.parse("${Config.instance.apiHost}/user/signup_with_social_media"), headers: headers, body: body);
+                            final access_response = await API.post("/api/user/signup_with_social_media", headers: headers, body: body);
+
                             print(access_response.statusCode);
                             print(access_response.body);
                             setState(() {
@@ -330,12 +327,9 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             setState(() {
                               isLoading = true;
                             });
-                            List<JsonValueModel> params = [];
-                            params.add(JsonValueModel("email", emailController.text));
-                            params.add(JsonValueModel("Password", passController.text));
-                            params.add(JsonValueModel("type", "app_cartoonizer"));
-                            Map<String, dynamic> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer", "s": sToken(params)};
-                            final appleResponse = await post(Uri.parse("${Config.instance.apiHost}/user/signup/simple"), body: body);
+                            Map<String, String> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer"};
+                            final appleResponse = await API.post("/api/user/signup/simple", body: body);
+
                             setState(() {
                               isLoading = false;
                             });

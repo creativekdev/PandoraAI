@@ -12,6 +12,7 @@ import 'package:cartoonizer/Common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -332,19 +333,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          params.add(JsonValueModel("email", emailController.text.trim()));
-                          params.add(JsonValueModel("password", passController.text.trim()));
-
-                          // params.add(JsonValueModel("bucket", "free-socialbook"));
-                          // params.add(JsonValueModel("file_name", "ic_puchase_emoji.png"));
-                          // params.add(JsonValueModel("content_type", "image/png"));
-                          params.sort();
-
-                          final url = Uri.parse('${Config.instance.apiHost}/user/login');
-                          final headers = {"Content-type": "application/x-www-form-urlencoded"};
-                          Map<String, dynamic> body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": "cartoonize", "s": sToken(params)};
+                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": "app_cartoonizer"};
                           print(body);
-                          final response = await post(url, body: body, headers: headers).whenComplete(() => {
+                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {
                                 setState(() {
                                   isLoading = false;
                                 }),
@@ -460,8 +451,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
-                          final tokenResponse = await get(Uri.parse(tempUrl));
+                          final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
                           setState(() {
                             isLoading = false;
                           });

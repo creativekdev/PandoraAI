@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart' as material;
 
@@ -80,21 +78,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     setState(() {
       _purchasePending = false;
     });
-  }
-
-  Future<Map<String, dynamic>> createStripeToken() async {
-    final url = Uri.parse('https://api.stripe.com/v1/tokens');
-    final headers = {"Authorization": "Bearer ${Config.instance.stripePublishableKey}"};
-    final response = await post(url,
-        body: {
-          'card[number]': "4242424242424242",
-          'card[exp_month]': '4',
-          'card[exp_year]': '2025',
-          'card[cvc]': '314',
-        },
-        headers: headers);
-    Map<String, dynamic> data = jsonDecode(response.body);
-    return data;
   }
 
   void _handleStripePayment() async {

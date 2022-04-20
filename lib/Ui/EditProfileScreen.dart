@@ -9,11 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../Common/Extension.dart';
-import '../Common/sToken.dart';
 import '../Model/JsonValueModel.dart';
 import '../Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Common/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -196,8 +194,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 FocusManager.instance.primaryFocus?.unfocus();
                                                 controller.changeIsLoading(true);
                                                 var sharedPrefs = await SharedPreferences.getInstance();
-                                                final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-
                                                 List<JsonValueModel> params = [];
                                                 var name = nameController.text.toString();
                                                 var avatar = controller.imageUrl.value;
@@ -206,13 +202,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                 params.add(JsonValueModel("avatar", avatar));
                                                 params.sort();
 
-                                                var body = jsonEncode(<String, dynamic>{
+                                                var body = {
                                                   'name': name,
                                                   'avatar': avatar,
-                                                  's': sToken(params),
-                                                });
+                                                };
 
-                                                final updateProfileResponse = await post(Uri.parse("${Config.instance.apiHost}/user/update"), body: body, headers: headers);
+                                                final updateProfileResponse = await API.post("/api/user/update", body: body);
 
                                                 saveUser({
                                                   'name': name,
@@ -394,16 +389,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   uploadImage() async {
     controller.changeIsLoading(true);
-    String b_name = "fast-socialbook";
     String f_name = basename((controller.image.value as File).path);
-    String c_type = "image/*";
-    List<JsonValueModel> params = [];
-    params.add(JsonValueModel("bucket", b_name));
-    params.add(JsonValueModel("file_name", f_name));
-    params.add(JsonValueModel("content_type", c_type));
-    params.sort();
-    final url = Uri.parse('https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
-    final response = await get(url);
+
+    final params = {
+      'bucket': "fast-socialbook",
+      'file_name': f_name,
+      'content_type': "image/*",
+    };
+
+    final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
     final Map parsed = json.decode(response.body.toString());
     try {
       var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());

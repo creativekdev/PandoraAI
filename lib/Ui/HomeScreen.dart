@@ -335,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<EffectModel>> fetchCategory() async {
-    var response = await get(Uri.parse('https://socialbook.io/api/tool/cartoonize_config'));
+    var response = await API.get("/api/tool/cartoonize_config");
     List<EffectModel> list = [];
     if (response.statusCode == 200) {
       final Map<String, dynamic> parsed = json.decode(response.body.toString());

@@ -12,6 +12,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 
 import 'InstaLoginScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -250,8 +251,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             "token_type": "Bearer",
                             "access_type": "offline",
                           });
-                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
-                          final tokenResponse = await get(Uri.parse(tempUrl));
+                          final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
                           setState(() {
                             isLoading = false;
                           });
@@ -334,8 +334,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
                           var tempStamp = DateTime.now().millisecondsSinceEpoch;
                           final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                          var tempUrl = "${Config.instance.host}/signup/oauth/youtube/callback?tokens=" + tokenBody;
-                          final tokenResponse = await get(Uri.parse(tempUrl), headers: headers);
+                          final tokenResponse = await API.get("/signup/oauth/youtube/callback", params: {"tokens": tokenBody}, headers: headers);
                           setState(() {
                             isLoading = false;
                           });
@@ -414,8 +413,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             });
                             var tempStamp = DateTime.now().millisecondsSinceEpoch;
                             final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                            final access_response =
-                                await get(Uri.parse("${Config.instance.host}/signup/oauth/instagram_v2/callback?access_token=" + value['accessToken']), headers: headers);
+                            final access_response = await API.get("/signup/oauth/instagram_v2/callback", params: {"access_token": value['accessToken']}, headers: headers);
+
                             setState(() {
                               isLoading = false;
                             });
@@ -473,8 +472,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               });
                               var tempStamp = DateTime.now().millisecondsSinceEpoch;
                               final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                              var urlData = "${Config.instance.host}/oauth/tiktok/callback?tokens=${tokenBody}&code=${tempData}";
-                              final tiktokResponse = await get(Uri.parse(urlData), headers: headers);
+                              final tiktokResponse = await API.get("/oauth/tiktok/callback", headers: headers, params: {"tokens": tokenBody, "code": tempData});
                               setState(() {
                                 isLoading = false;
                               });

@@ -63,7 +63,8 @@ dependencies:
   cached_network_image: ^3.2.0
   flutter_stripe: ^2.4.0
   flutter_credit_card:
-
+  package_info_plus:
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

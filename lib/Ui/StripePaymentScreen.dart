@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -367,6 +366,9 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                             height: 2.h,
                           ),
                           _buildPurchaseButton(),
+                          SizedBox(
+                            height: 2.h,
+                          ),
                         ],
                       ),
                     ),
