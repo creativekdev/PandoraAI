@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-
-import 'package:http/http.dart';
 import 'package:crypto/crypto.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';

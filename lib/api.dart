@@ -51,7 +51,7 @@ class API {
 
     // add ts and signature
     params["ts"] = DateTime.now().millisecondsSinceEpoch.toString();
-    params["s"] = sTokenByMap(params);
+    params["s"] = sToken(params);
 
     if (url.startsWith("http") == false) {
       url = "${Config.instance.host}" + url;
@@ -89,7 +89,7 @@ class API {
 
     // add ts and signature
     body["ts"] = DateTime.now().millisecondsSinceEpoch.toString();
-    body["s"] = sTokenByMap(body);
+    body["s"] = sToken(body);
 
     if (url.startsWith("http") == false) {
       url = "${Config.instance.host}" + url;
