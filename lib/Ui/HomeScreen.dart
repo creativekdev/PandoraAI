@@ -5,7 +5,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/CategoryModel.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:http/http.dart';
 
 import 'PurchaseScreen.dart';
 import 'StripeSubscriptionScreen.dart';

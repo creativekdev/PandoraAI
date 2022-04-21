@@ -1,7 +1,7 @@
 class EffectModel {
   late String key;
   late String display_name = "";
-  late List<dynamic> effects;
+  late Map<String, dynamic> effects;
 
   EffectModel({
     required this.key,

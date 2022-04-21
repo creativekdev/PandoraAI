@@ -869,10 +869,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildCarouselItem(BuildContext context, int itemIndex) {
+    var effects = widget.list[itemIndex].effects;
+    var keys = effects.keys.toList();
+
     return Padding(
       padding: EdgeInsets.all(1.w),
       child: ListView.builder(
-        itemCount: widget.list[itemIndex].effects.length,
+        itemCount: keys.length,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -884,7 +887,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
-    var effectItem = widget.list[itemIndex].effects[index];
+    var effects = widget.list[itemIndex].effects;
+    var keys = effects.keys.toList();
+    var effectItem = effects[keys[index]];
 
     return Card(
       elevation: 0,
@@ -1004,7 +1009,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var selectedEffect = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+    var effects = widget.list[controller.lastItemIndex.value].effects;
+    var keys = effects.keys.toList();
+    var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
 
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
     if (offlineEffect.containsKey(key)) {
