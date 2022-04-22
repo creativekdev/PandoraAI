@@ -5,6 +5,8 @@ class ImagesConstant{
   static const ic_background = "assets/images/ic_background.png";
   static const ic_round_top = "assets/images/ic_round_top.png";
   static const ic_back = "assets/images/ic_back.png";
+  static const ic_add = "assets/images/ic_add.png";
+  static const ic_success = "assets/images/ic_success.png";
   static const ic_email = "assets/images/ic_email.png";
   static const ic_password = "assets/images/ic_password.png";
   static const ic_eye = "assets/images/ic_eye.png";

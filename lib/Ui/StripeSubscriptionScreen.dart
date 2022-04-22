@@ -79,7 +79,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   void _handleStripePayment() async {
     var subscription = isYear ? subscriptions["yearly"] : subscriptions["monthly"];
-    final result = await Navigator.push(
+
+    await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/StripePaymentScreen"),
@@ -87,8 +88,11 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
       ),
     );
 
-    if (result != null && result as bool == true) {
+    var paymentResult = GetStorage().read('payment_result');
+
+    if (paymentResult != null && paymentResult as bool == true) {
       initStoreInfo();
+      GetStorage().remove("payment_result");
     }
   }
 
@@ -310,8 +314,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                             onTap: () => {Navigator.pop(context)},
                             child: Image.asset(
                               ImagesConstant.ic_close,
-                              height: 10.w,
-                              width: 10.w,
+                              height: 40,
+                              width: 40,
                             ),
                           ),
                           Expanded(

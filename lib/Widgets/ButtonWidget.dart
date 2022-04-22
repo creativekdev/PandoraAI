@@ -3,7 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 Widget ButtonWidget(String btnText) {
   return Container(
     width: double.maxFinite,
-    height: 7.h,
+    height: 8.h,
     padding: EdgeInsets.symmetric(horizontal: 5.w),
     child: Card(
       elevation: 2.h,
@@ -11,15 +11,14 @@ Widget ButtonWidget(String btnText) {
       shadowColor: ColorConstant.ShadowColor,
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.w),
-            gradient: RadialGradient(
-              colors: [ColorConstant.RadialColor1, ColorConstant.RadialColor2],
-              radius: 1.w,
-            ),
+          borderRadius: BorderRadius.circular(10.w),
+          gradient: RadialGradient(
+            colors: [ColorConstant.RadialColor1, ColorConstant.RadialColor2],
+            radius: 1.w,
+          ),
         ),
         child: Center(
-          child: TitleTextWidget(
-              btnText, ColorConstant.White, FontWeight.w600, 13.sp),
+          child: TitleTextWidget(btnText, ColorConstant.White, FontWeight.w600, 13.sp),
         ),
       ),
     ),

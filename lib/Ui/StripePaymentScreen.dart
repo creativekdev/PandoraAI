@@ -4,11 +4,11 @@ import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api.dart';
-import 'LoginScreen.dart';
+import 'StripeAddNewCardScreen.dart';
 
 class StripePaymentScreen extends StatefulWidget {
   final String planId;
@@ -22,7 +22,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool _purchasePending = false;
-  bool _showNewCard = false;
   dynamic _selectedCard = null;
   dynamic _user = null;
 
@@ -72,6 +71,45 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     setState(() {
       _purchasePending = false;
     });
+  }
+
+  Map getCreditCardConfigByBrand(String brand) {
+    var config = {};
+
+    switch (brand) {
+      case "Visa":
+        config = {
+          "backgroundColor": [Color.fromRGBO(90, 117, 245, 1), Color.fromRGBO(20, 52, 203, 1)],
+          "icon": "assets/images/visa.png",
+        };
+        break;
+      case "MasterCard":
+        config = {
+          "backgroundColor": [Color.fromRGBO(247, 158, 27, 1), Color.fromRGBO(235, 0, 27, 1)],
+          "icon": "assets/images/mastercard.png",
+        };
+        break;
+      case "American Express":
+        config = {
+          "backgroundColor": [Color.fromRGBO(50, 197, 255, 1), Color.fromRGBO(39, 120, 255, 1)],
+          "icon": "assets/images/american_express.png",
+        };
+        break;
+      case "Discover":
+        config = {
+          "backgroundColor": [Color.fromRGBO(245, 144, 20, 1), Color.fromRGBO(255, 96, 0, 1)],
+          "icon": "assets/images/discover.png",
+        };
+        break;
+      default:
+        config = {
+          "backgroundColor": [Color.fromRGBO(127, 147, 178, 1), Color.fromRGBO(181, 194, 215, 1)],
+          "icon": null,
+        };
+        break;
+    }
+
+    return config;
   }
 
   Future<Map<String, dynamic>> createStripeToken(dynamic card) async {
@@ -139,87 +177,16 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   }
 
   void _handlePaymentSuccess() async {
+    GetStorage().write('payment_result', true);
     Navigator.pop(context, true);
-  }
-
-  void _handleStripePayment() async {
-    if (_selectedCard != null) {
-      _submitPayment(_selectedCard);
-      return;
-    }
-
-    if (_showNewCard && formKey.currentState!.validate()) {
-      var date = expiryDate.split('/');
-
-      var newCard = {
-        "number": cardNumber,
-        "exp_month": date[0],
-        "exp_year": date[1],
-        "cvc": cvvCode,
-      };
-      _submitPaymentWithNewCard(newCard);
-      return;
-    }
-  }
-
-  Widget _buildNewCardField() {
-    if (!_showNewCard) return Container();
-
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-        child: CreditCardForm(
-            formKey: formKey, // Required
-            cardNumber: cardNumber,
-            expiryDate: expiryDate,
-            cardHolderName: cardHolderName,
-            cvvCode: cvvCode,
-            onCreditCardModelChange: (CreditCardModel data) {
-              setState(() {
-                cardNumber = data.cardNumber;
-                expiryDate = data.expiryDate;
-                cardHolderName = data.cardHolderName;
-                cvvCode = data.cvvCode;
-              });
-            }, // Required
-            themeColor: ColorConstant.PrimaryColor,
-            obscureCvv: true,
-            obscureNumber: false,
-            isHolderNameVisible: false,
-            isCardNumberVisible: true,
-            isExpiryDateVisible: true,
-            cardNumberDecoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
-              ),
-              labelText: 'Card Number',
-              hintText: 'XXXX XXXX XXXX XXXX',
-              filled: true,
-              fillColor: ColorConstant.White,
-              floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
-            ),
-            expiryDateDecoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
-              ),
-              labelText: 'Expired Date',
-              hintText: 'XX/XX',
-              filled: true,
-              fillColor: ColorConstant.White,
-              floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
-            ),
-            cvvCodeDecoration: const InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
-              ),
-              border: OutlineInputBorder(),
-              labelText: 'CVV',
-              hintText: 'XXX',
-              filled: true,
-              fillColor: ColorConstant.White,
-              floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
-            )));
+    Get.dialog(
+      CommonDialog(
+        image: ImagesConstant.ic_success,
+        content: StringConstant.payment_successfully,
+        isCancel: false,
+        confirmContent: "OK",
+      ),
+    );
   }
 
   void onCreditCardModelChange(CreditCardModel? creditCardModel) {
@@ -232,68 +199,68 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     });
   }
 
-  Widget _buildPurchaseButton() {
-    return GestureDetector(
-      onTap: () async {
-        var sharedPrefs = await SharedPreferences.getInstance();
-
-        UserModel user = await API.getLogin(needLoad: true);
-        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
-        if (!isLogin || user.email == "") {
-          CommonExtension().showToast(StringConstant.please_login_first);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              settings: RouteSettings(name: "/LoginScreen"),
-              builder: (context) => LoginScreen(),
-            ),
-          ).then((value) => Navigator.pop(context, value));
-        } else {
-          _handleStripePayment();
-        }
-      },
-      child: ButtonWidget(StringConstant.paymentBtn),
-    );
-  }
-
   Widget _buildCreditCard(creditCard) {
     bool isSelected = _selectedCard != null && creditCard['id'] == _selectedCard['id'];
+    Map cardConfig = getCreditCardConfigByBrand(creditCard['brand']);
+    String date = "${creditCard['expire_month'].toString().padLeft(2, '0')}/${creditCard['expire_year'].toString().substring(2)}";
+    String cardNumber = "∗∗∗∗ ∗∗∗∗ ∗∗∗∗ ${creditCard['last4']}";
 
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: GestureDetector(
-          onTap: () => {
+          onTap: () {
             setState(() {
-              _showNewCard = false;
               _selectedCard = creditCard;
-            })
+            });
+
+            Get.dialog(
+              CommonDialog(
+                title: cardNumber,
+                height: 180,
+                content: "Are you sure you want to pay with \n this card?",
+                confirmCallback: () {
+                  _submitPayment(creditCard);
+                },
+              ),
+            );
           },
           child: Container(
             decoration: BoxDecoration(
-              color: isSelected ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
-              borderRadius: BorderRadius.circular(2.w),
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: cardConfig["backgroundColor"],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-              child: Row(
-                children: [
-                  Image.asset(
-                    isSelected ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                    height: 8.w,
-                    width: 8.w,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TitleTextWidget(creditCard["name"], ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Visibility(
+                        visible: cardConfig["icon"] != null,
+                        child: Card(
+                          color: Color.fromRGBO(255, 255, 255, 0.88),
+                          child: Image.asset(
+                            cardConfig["icon"],
+                            width: 56,
+                            height: 32,
+                            fit: BoxFit.contain,
+                          ),
+                        )),
+                    TitleTextWidget(cardNumber, ColorConstant.White, FontWeight.w500, 16.sp, align: TextAlign.center),
+                  ],
+                ),
+                SizedBox(height: 14),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TitleTextWidget(date, ColorConstant.White, FontWeight.w500, 12.sp, align: TextAlign.center),
+                  ],
+                )
+              ]),
             ),
           ),
         ));
@@ -311,14 +278,14 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorConstant.BackgroundColor,
+        backgroundColor: ColorConstant.White,
         body: SafeArea(
           child: LoadingOverlay(
               isLoading: _purchasePending,
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                    margin: EdgeInsets.all(15),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -326,14 +293,26 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                           onTap: () => {Navigator.pop(context)},
                           child: Image.asset(
                             ImagesConstant.ic_back_dark,
-                            height: 10.w,
-                            width: 10.w,
+                            height: 38,
+                            width: 38,
                           ),
                         ),
                         TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                        SizedBox(
-                          height: 10.w,
-                          width: 10.w,
+                        GestureDetector(
+                          onTap: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                settings: RouteSettings(name: "/StripeAddNewCardScreen"),
+                                builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
+                              ),
+                            );
+                          },
+                          child: Image.asset(
+                            ImagesConstant.ic_add,
+                            height: 38,
+                            width: 38,
+                          ),
                         ),
                       ],
                     ),
@@ -342,30 +321,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 2.h,
-                          ),
                           _buildCardList(),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          GestureDetector(
-                            onTap: () => {
-                              setState(() {
-                                _showNewCard = true;
-                                _selectedCard = null;
-                              })
-                            },
-                            child: TitleTextWidget(StringConstant.add_new_card, ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
-                          ),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          _buildNewCardField(),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          _buildPurchaseButton(),
                           SizedBox(
                             height: 2.h,
                           ),

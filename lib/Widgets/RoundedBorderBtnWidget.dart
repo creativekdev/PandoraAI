@@ -14,8 +14,7 @@ Widget RoundedBorderBtnWidget(String btnText) {
         ),
       ),
       child: Center(
-        child: TitleTextWidget(
-            btnText, ColorConstant.PrimaryColor, FontWeight.w600, 13.sp),
+        child: TitleTextWidget(btnText, ColorConstant.PrimaryColor, FontWeight.w600, 13.sp),
       ),
     ),
   );

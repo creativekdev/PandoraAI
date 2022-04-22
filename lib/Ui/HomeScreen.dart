@@ -116,11 +116,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             //       builder: (context) => StripeSubscriptionScreen(),
                             //     ))
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
-                                ))
+                              context,
+                              MaterialPageRoute(
+                                settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                                builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                              ),
+                            )
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),

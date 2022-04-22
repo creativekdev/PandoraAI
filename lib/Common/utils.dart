@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
@@ -52,13 +53,22 @@ Future<void> loginBack(BuildContext context) async {
   }
 }
 
-void showToast(String text) {
+showToast(String text) {
   Fluttertoast.showToast(
-      msg: text,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 3,
-      backgroundColor: ColorConstant.BtnTextColor,
-      textColor: ColorConstant.White,
-      fontSize: 16.0);
+    msg: text,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 3,
+    backgroundColor: ColorConstant.BtnTextColor,
+    textColor: ColorConstant.White,
+    fontSize: 16.0,
+  );
+}
+
+launchURL(String url) async {
+  if (await canLaunch(url)) {
+    await launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
 }

@@ -142,4 +142,25 @@ class API {
       return false;
     }
   }
+
+  // check latest version
+  static Future<Map> checkLatestVersion() async {
+    var data = {};
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    try {
+      var response = await get("/api/check_app_version");
+      var body = jsonDecode(response.body);
+      data = body["data"] ?? {};
+      int availableBuild = data['available_build'] ?? 0;
+
+      if (availableBuild > int.parse(packageInfo.buildNumber)) {
+        data["need_update"] = true;
+      }
+
+      return data;
+    } catch (e) {
+      return {"need_update": false};
+    }
+  }
 }
