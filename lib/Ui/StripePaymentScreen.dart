@@ -150,32 +150,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     }
   }
 
-  void _submitPaymentWithNewCard(dynamic newCard) async {
-    showPendingUI();
-    try {
-      // step 1: create stripe token if using new card
-      var tokenData = await createStripeToken(newCard);
-
-      // step 2: create stripe subscription, call buy plan api
-      var body = {
-        "plan_id": widget.planId,
-        "category": "creator",
-        "new_card": {"exp_year": newCard["exp_year"], "cvc": newCard["cvc"], "exp_month": newCard["exp_month"], "number": newCard["number"]},
-        "payment_method": "creditcard",
-        "fundingSource": "",
-        "stripeToken": tokenData['id']
-      };
-      var result = await API.buyPlan(body);
-      if (result) {
-        _handlePaymentSuccess();
-      }
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      hidePendingUI();
-    }
-  }
-
   void _handlePaymentSuccess() async {
     GetStorage().write('payment_result', true);
     Navigator.pop(context, true);

@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Get.dialog(
         CommonDialog(
           barrierDismissible: false,
+          dismissAfterConfirm: false,
           image: ImagesConstant.ic_success,
           content: StringConstant.new_version_available,
           isCancel: false,

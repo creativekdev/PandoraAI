@@ -13,6 +13,7 @@ class CommonDialog extends StatefulWidget {
   final Color? confirmColor;
   final Color? cancelColor;
   final bool barrierDismissible;
+  final bool dismissAfterConfirm;
   final Function? confirmCallback;
   final Function? dismissCallback;
 
@@ -30,6 +31,7 @@ class CommonDialog extends StatefulWidget {
     this.confirmColor,
     this.cancelColor,
     this.barrierDismissible = true,
+    this.dismissAfterConfirm = true,
     this.confirmCallback,
     this.dismissCallback,
     this.image,
@@ -44,8 +46,9 @@ class CommonDialog extends StatefulWidget {
 
 class _CommonDialogState extends State<CommonDialog> {
   _confirmDialog() {
-    _dismissDialog();
-
+    if (widget.dismissAfterConfirm) {
+      _dismissDialog();
+    }
     if (widget.confirmCallback != null) {
       widget.confirmCallback!();
     }
