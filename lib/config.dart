@@ -20,16 +20,16 @@ class DevelopmentConfig implements BaseConfig {
   // String aiHost = 'http://localhost:3000';
 
   // android emulator
-  String host = 'http://10.0.2.2:8090';
-  String aiHost = 'http://10.0.2.2:3000';
+  // String host = 'http://10.0.2.2:8090';
+  // String aiHost = 'http://10.0.2.2:3000';
 
   // real phone
   // String host = 'http://192.168.31.126:8090';
   // String aiHost = 'http://192.168.31.126:3000';
 
   // io
-  // String host = 'https://socialbook.io';
-  // String aiHost = 'https://ai.socialbook.io';
+  String host = 'https://socialbook.io';
+  String aiHost = 'https://ai.socialbook.io';
 
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
