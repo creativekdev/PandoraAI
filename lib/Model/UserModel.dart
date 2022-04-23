@@ -7,6 +7,7 @@ class UserModel {
   String apple_id = "";
   int credit = 0;
   Map<String, dynamic> subscription = {};
+  List<dynamic> creditcards = [];
 
   UserModel({required this.email, required this.name, required this.avatar});
 
@@ -24,13 +25,14 @@ class UserModel {
     user.apple_id = data['apple_id'] ?? "";
     user.status = data['status'] ?? "registered";
     user.credit = data['cartoonize_credit'] ?? 0;
+    user.creditcards = data['creditcards'] ?? [];
 
     var user_subscription = data['user_subscription'] ?? [];
 
     for (int i = 0; i < user_subscription.length; i++) {
       Map<String, dynamic> item = user_subscription[i];
 
-      if (item['plan_category'] == 'creator' && item['status'] == 'success') {
+      if (item['plan_category'] == 'creator' && (item['status'] == 'success' || item['status'] == 'pending')) {
         user.subscription = item;
       }
     }
@@ -50,9 +52,20 @@ class UserModel {
     user.subscription = json['subscription'] ?? {};
     user.status = json['status'] ?? "registered";
     user.credit = json['credit'] ?? 0;
+    user.creditcards = json['creditcards'] ?? [];
+
     return user;
   }
 
-  Map<String, dynamic> toJson() =>
-      {"id": id, 'name': name, 'email': email, 'avatar': avatar, "apple_id": apple_id, "credit": credit, "status": status, "subscription": subscription};
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        'name': name,
+        'email': email,
+        'avatar': avatar,
+        "apple_id": apple_id,
+        "credit": credit,
+        "creditcards": creditcards,
+        "status": status,
+        "subscription": subscription
+      };
 }

@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/sToken.dart';
+import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
 import 'package:cartoonizer/api.dart';
@@ -17,11 +17,13 @@ import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:video_player/video_player.dart';
+
 import '../Model/OfflineEffectModel.dart';
 import '../gallery_saver.dart';
 import 'PurchaseScreen.dart';
 import 'ShareScreen.dart';
-import 'package:video_player/video_player.dart';
+import 'StripeSubscriptionScreen.dart';
 
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
@@ -39,55 +41,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var image = "";
   var videoPath = "";
   var imagePicker;
-  List<String> tempData = [
-    'standard1',
-    'standard2',
-    'standard3',
-    '3dcartoon1',
-    '3dcartoon2',
-    '3dcartoon3',
-    'disney1',
-    'disney2',
-    'disney3',
-    'caricature1',
-    'caricature2',
-    'caricature3',
-    'kpop1',
-    'kpop2',
-    'kpop3',
-    'arcane',
-    'simpson',
-    'southpark',
-    'rickandmorty',
-    'baby',
-    'villian',
-    'glasses',
-    'beauty_beard',
-    'beautycartoon1',
-    'beautycartoon2',
-    'beautycartoon3',
-    'fantacyart1',
-    'fantacyart2',
-    'fantacyart3',
-    'naturalart1',
-    'naturalart2',
-    'naturalart3',
-    'royalty1',
-    'royalty2',
-    'royalty3',
-    'old1',
-    'old2',
-    'old3',
-    'young1',
-    'young2',
-    'young3',
-    'man1',
-    'man2',
-    'man3',
-    'woman1',
-    'woman2',
-    'woman3'
-  ];
+
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
   var scrollController;
@@ -185,12 +139,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 ),
                 GestureDetector(
                   onTap: () => {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: "/PurchaseScreen"),
-                          builder: (context) => PurchaseScreen(),
-                        )).then((value) => {setState(() {})})
+                    if (Platform.isIOS)
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/PurchaseScreen"),
+                              builder: (context) => PurchaseScreen(),
+                            )).then((value) => {setState(() {})})
+                      }
+                    else
+                      {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                              builder: (context) => StripeSubscriptionScreen(),
+                            )).then((value) => {setState(() {})})
+                      }
                   },
                   child: RoundedBorderBtnWidget(StringConstant.go_premium),
                 ),
@@ -468,7 +434,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('https://ai.socialbook.io/resource/' + controller.videoUrl.value, true).then((value) async {
+                                    await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, true).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -500,7 +466,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 onTap: () async {
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('https://ai.socialbook.io/resource/' + controller.videoUrl.value, false).then((value) async {
+                                    await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, false).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -623,7 +589,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               Image.asset(
                                                 ImagesConstant.ic_man,
                                                 height: 40.h,
-                                                width: 85.w,
+                                                width: 70.w,
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
@@ -828,6 +794,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               ),
                       ),
                     ),
+                    SizedBox(
+                      height: 1.h,
+                    ),
                     Obx(() => Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -900,10 +869,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildCarouselItem(BuildContext context, int itemIndex) {
+    var effects = widget.list[itemIndex].effects;
+    var keys = effects.keys.toList();
+
     return Padding(
       padding: EdgeInsets.all(1.w),
       child: ListView.builder(
-        itemCount: widget.list[itemIndex].effects.length,
+        itemCount: keys.length,
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -915,6 +887,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
+    var effects = widget.list[itemIndex].effects;
+    var keys = effects.keys.toList();
+    var effectItem = effects[keys[index]];
+
     return Card(
       elevation: 0,
       shape: (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex)
@@ -941,9 +917,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(3.w),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: (widget.list[itemIndex].effects[index].endsWith("-transform"))
+                child: (effectItem["key"].endsWith("-transform"))
                     ? CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + widget.list[itemIndex].effects[index] + ".webp",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + effectItem["key"] + ".webp",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -967,7 +943,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         },
                       )
                     : CachedNetworkImage(
-                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + widget.list[itemIndex].effects[index] + ".jpg",
+                        imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + effectItem["key"] + ".jpg",
                         fit: BoxFit.fill,
                         height: 20.w,
                         width: 20.w,
@@ -992,7 +968,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       ),
               ),
               Visibility(
-                visible: (widget.list[itemIndex].effects[index].endsWith("-transform")),
+                visible: (effectItem["key"].endsWith("-transform")),
                 child: Positioned(
                   right: 1.5.w,
                   top: 0.4.h,
@@ -1003,7 +979,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ),
                 ),
               ),
-              if (controller.isChecked.value && tempData.contains(widget.list[itemIndex].effects[index]))
+              if (controller.isChecked.value && isSupportOriginalFace(effectItem))
                 Positioned(
                   bottom: 0.4.h,
                   left: 1.5.w,
@@ -1033,9 +1009,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var key = (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-        ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-        : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+    var effects = widget.list[controller.lastItemIndex.value].effects;
+    var keys = effects.keys.toList();
+    var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+
+    var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
     if (offlineEffect.containsKey(key)) {
       var data = offlineEffect[key] as OfflineEffectModel;
       if (data.data.toString().startsWith('<')) {
@@ -1046,7 +1024,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1054,14 +1032,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         _videoPlayerController.play();
 
         urlFinal = data.imageUrl;
-        algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+        algoName = selectedEffect["key"];
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(true);
       } else {
         controller.changeIsLoading(false);
         image = data.data;
         urlFinal = data.imageUrl;
-        algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+        algoName = selectedEffect["key"];
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(false);
       }
@@ -1070,51 +1048,31 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       String b_name = "free-socialbook";
       String f_name = basename((controller.image.value as File).path);
       String c_type = "image/*";
-      List<JsonValueModel> params = [];
-      params.add(JsonValueModel("bucket", b_name));
-      params.add(JsonValueModel("file_name", f_name));
-      params.add(JsonValueModel("content_type", c_type));
-      params.sort();
-      final url = Uri.parse('https://socialbook.io/api/file/presigned_url?bucket=$b_name&file_name=$f_name&content_type=$c_type&s=${sToken(params)}');
-      final response = await get(url);
+      final params = {
+        "bucket": b_name,
+        "file_name": f_name,
+        "content_type": c_type,
+      };
+      final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
       final Map parsed = json.decode(response.body.toString());
+
       try {
         var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
         if (res.statusCode == 200) {
           var sharedPrefs = await SharedPreferences.getInstance();
-          final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-          final tokenResponse = await get(Uri.parse("${Config.instance.apiHost}/tool/image/cartoonize/token"), headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : null);
+          final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
           final Map tokenParsed = json.decode(tokenResponse.body.toString());
           if (tokenResponse.statusCode == 200) {
             if (tokenParsed['data'] == null) {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
-              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-              List<JsonValueModel> params = [];
-              params.add(JsonValueModel("querypics", imageUrl));
-              params.add(JsonValueModel("is_data", "0"));
-              params.add(JsonValueModel(
-                  "algoname",
-                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                      : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
-              params.add(JsonValueModel("direct", "1"));
-              params.sort();
               List<String> imageArray = ["$imageUrl"];
-
-              var databody = jsonEncode(<String, dynamic>{
+              var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                    : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
+                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
                 'direct': 1,
-                's': sToken(params),
-              });
-
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize'), body: databody, headers: headers);
-              // print(databody);
-              // print(cartoonizeResponse.statusCode);
-              // print(cartoonizeResponse.body.toString());
+              };
+              final cartoonizeResponse = await API.post("${Config.instance.aiHost}/api/image/cartoonize", body: dataBody);
               if (cartoonizeResponse.statusCode == 200) {
                 final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
@@ -1129,7 +1087,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1137,7 +1095,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
@@ -1145,12 +1103,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-                  get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
-                      headers: headers);
+                  var params = {"algoname": selectedEffect["key"]};
+                  API.get("/api/log/cartoonize", params: params);
                 }
               } else {
                 controller.changeIsLoading(false);
@@ -1159,36 +1116,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             } else {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
               var token = tokenParsed['data'];
-              final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-              List<JsonValueModel> params = [];
-              params.add(JsonValueModel("querypics", imageUrl));
-              params.add(JsonValueModel("is_data", "0"));
-              params.add(JsonValueModel(
-                  "algoname",
-                  (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                      ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                      : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]));
-              params.add(JsonValueModel("direct", "1"));
-              params.add(JsonValueModel("token", token));
-              params.sort();
               List<String> imageArray = ["$imageUrl"];
 
-              var databody = jsonEncode(<String, dynamic>{
+              var dataBody = {
                 'querypics': imageArray,
                 'is_data': 0,
-                'algoname': (controller.isChecked.value && tempData.contains(widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]))
-                    ? widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value] + "-original_face"
-                    : widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value],
+                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
                 'direct': 1,
                 'token': token,
-                's': sToken(params),
-              });
-              final cartoonizeResponse = await post(Uri.parse('https://ai.socialbook.io/api/image/cartoonize/token'), body: databody, headers: headers);
+              };
+              final cartoonizeResponse = await API.post("${Config.instance.aiHost}/api/image/cartoonize/token", body: dataBody);
               print(cartoonizeResponse.statusCode);
               print(cartoonizeResponse.body.toString());
               if (cartoonizeResponse.statusCode == 200) {
                 final Map parsed = json.decode(cartoonizeResponse.body.toString());
-
                 if (parsed['data'].toString().startsWith('<')) {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
@@ -1200,7 +1141,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('https://ai.socialbook.io/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1208,7 +1149,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   _videoPlayerController.play();
 
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 } else {
@@ -1216,19 +1157,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
-                  algoName = widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value];
+                  algoName = selectedEffect["key"];
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  final headers = {"cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-                  get(Uri.parse('https://socialbook.io/api/log/cartoonize?algoname=${widget.list[controller.lastItemIndex.value].effects[controller.lastSelectedIndex.value]}'),
-                      headers: headers);
+                  var params = {"algoname": selectedEffect["key"]};
+                  API.get("/api/log/cartoonize", params: params);
                 }
-                await API.getLogin(needLoad: true);
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');
               }
             }
+            await API.getLogin(needLoad: true);
           } else {
             controller.changeIsLoading(false);
             var responseBody = json.decode(tokenResponse.body);
@@ -1247,33 +1187,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         }
       } catch (e) {
         controller.changeIsLoading(false);
-        throw ('Error while uploading image');
+        showToast("Error while uploading image");
       }
     }
   }
 
   Future<void> likeDislike(bool like) async {
     controller.changeIsLoading(true);
-    var sharedPrefs = await SharedPreferences.getInstance();
-    final headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPrefs.getString("login_cookie")}"};
-    final headers1 = {
-      "Content-type": "application/json",
-    };
-    List<JsonValueModel> params = [];
-    params.add(JsonValueModel("type", "cartoonize"));
-    params.add(JsonValueModel("like", "1"));
-    params.add(JsonValueModel("url", urlFinal));
-    params.add(JsonValueModel("algo", algoName));
-    params.sort();
-    var databody = jsonEncode(<String, dynamic>{
+    var databody = {
       'type': "cartoonize",
       'like': like ? 1 : -1,
       'url': urlFinal,
       'algo': algoName,
-      's': sToken(params),
-    });
-    await post(Uri.parse('https://socialbook.io/api/tool/matting/evaluate'), body: databody, headers: (sharedPrefs.getBool("isLogin") ?? false) ? headers : headers1)
-        .whenComplete(() async {
+    };
+
+    await API.post("/api/tool/matting/evaluate", body: databody).whenComplete(() async {
       controller.changeIsLoading(false);
       controller.changeIsRate(false);
     });
@@ -1309,55 +1237,65 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           ),
         ));
   }
-}
 
-void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        child: Padding(
-          padding: EdgeInsets.all(2.h),
-          child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  ImagesConstant.ic_signup_cartoon,
-                  width: 60.w,
-                  height: 20.h,
-                  fit: BoxFit.contain,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                TitleTextWidget(StringConstant.signup_text1, ColorConstant.TextBlack, FontWeight.w600, 14.sp),
-                SizedBox(
-                  height: 1.h,
-                ),
-                TitleTextWidget(StringConstant.signup_text2, ColorConstant.HintColor, FontWeight.w400, 10.sp),
-                SizedBox(
-                  height: 2.h,
-                ),
-                GestureDetector(
-                  onTap: () => {
-                    Navigator.pop(context),
-                    GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
-                        builder: (context) => SignupScreen(),
-                      ),
-                    )
-                  },
-                  child: RoundedBorderBtnWidget(StringConstant.sign_up),
-                ),
-              ],
+  bool isSupportOriginalFace(dynamic effect) {
+    return effect["original_face"] != null && effect["original_face"] == true;
+  }
+
+  void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Padding(
+            padding: EdgeInsets.all(2.h),
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    ImagesConstant.ic_signup_cartoon,
+                    width: 60.w,
+                    height: 20.h,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  TitleTextWidget(StringConstant.signup_text1, ColorConstant.TextBlack, FontWeight.w600, 14.sp),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  TitleTextWidget(StringConstant.signup_text2, ColorConstant.HintColor, FontWeight.w400, 10.sp),
+                  SizedBox(
+                    height: 2.h,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+                      Navigator.pop(context);
+                      GetStorage().write('login_back_page', '/ChoosePhotoScreen');
+                      await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
+                            builder: (context) => SignupScreen(),
+                          ));
+
+                      bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
+                      if (isLogin) {
+                        controller.changeIsLogin(isLogin);
+                        API.getLogin(needLoad: true);
+                      }
+                    },
+                    child: RoundedBorderBtnWidget(StringConstant.sign_up),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
+  }
 }

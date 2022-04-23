@@ -5,9 +5,9 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/CategoryModel.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:http/http.dart';
 
 import 'PurchaseScreen.dart';
+import 'StripeSubscriptionScreen.dart';
 import 'ChoosePhotoScreen.dart';
 import 'SettingScreen.dart';
 
@@ -112,15 +112,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             // Navigator.push(
                             //     context,
                             //     MaterialPageRoute(
-                            //       settings: RouteSettings(name: "/PurchaseScreen"),
-                            //       builder: (context) => PurchaseScreen(),
+                            //       settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                            //       builder: (context) => StripeSubscriptionScreen(),
                             //     ))
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                                  builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
-                                ))
+                              context,
+                              MaterialPageRoute(
+                                settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                                builder: (context) => ChoosePhotoScreen(list: (snapshot.data as List<EffectModel>), pos: index),
+                              ),
+                            )
                           },
                           child: Container(
                             margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
@@ -334,7 +335,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<EffectModel>> fetchCategory() async {
-    var response = await get(Uri.parse('https://socialbook.io/api/tool/cartoonize_config'));
+    var response = await API.get("/api/tool/cartoonize_config");
     List<EffectModel> list = [];
     if (response.statusCode == 200) {
       final Map<String, dynamic> parsed = json.decode(response.body.toString());

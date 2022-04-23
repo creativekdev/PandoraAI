@@ -48,7 +48,10 @@ class StringConstant {
   static const high_resolution = "High resolution images";
   static const faster_speed = "Faster Speed";
   static const txtContinue = "Continue";
+  static const paymentBtn = "Place your order";
   static const setting = "Setting";
+  static const payment = "Payment";
+  static const payment_successfully = "Payment successfully";
   static const edit_profile = "Edit Profile";
   static const change_password = "Change Password";
   static const rate_us = "Rate us on the app store";
@@ -63,6 +66,7 @@ class StringConstant {
   static const current_pass = "Current Password";
   static const new_pass = "New Password";
   static const confirm_pass = "Confirm Password";
+  static const update_now = "Update now";
   static const update_pass = "Update Password";
   static const update_profile = "Update Your Profile";
   static const full_name = "Full Name";
@@ -79,12 +83,17 @@ class StringConstant {
   static const exit_msg = "Exit editing?";
   static const exit_msg1 = "You will lose all your progress.";
   static const exit_editing = "EXIT EDITING";
-  static const cancel = "CANCEL";
+  static const cancel = "Cancel";
+  static const confirm = "Confirm";
+  static const pay = "Pay";
   static const share_title = "SocialBook Cartoonizer";
+  static const please_login_first = "Please login first";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
   static const resend = "Resend";
   static const resend_tips = "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend.";
   static const resend_logout = " to change the email.";
   static const enter_email_code = "Enter 6-digit code";
   static const code_send_to_email = "Your code was emailed to ";
+  static const add_new_card = "Add new card";
+  static const new_version_available = "New version available";
 }

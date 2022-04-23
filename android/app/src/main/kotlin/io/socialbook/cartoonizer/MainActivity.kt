@@ -1,35 +1,29 @@
 package io.socialbook.cartoonizer
 
-import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
-import androidx.core.content.FileProvider
 import com.bytedance.sdk.open.tiktok.TikTokOpenApiFactory
 import com.bytedance.sdk.open.tiktok.TikTokOpenConfig
 import com.bytedance.sdk.open.tiktok.api.TikTokOpenApi
 import com.bytedance.sdk.open.tiktok.authorize.model.Authorization
-import com.bytedance.sdk.open.tiktok.common.handler.IApiEventHandler
-import com.bytedance.sdk.open.tiktok.common.model.BaseReq
-import com.bytedance.sdk.open.tiktok.common.model.BaseResp
-import io.flutter.Log
-import io.flutter.embedding.android.FlutterActivity
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
+import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import java.io.File
 
-class MainActivity : FlutterActivity()/*, IApiEventHandler*/ {
+class MainActivity : FlutterFragmentActivity() {
 
-    private val CHANNEL = "io.socialbook/shareVideo"
+    private val CHANNEL = "io.socialbook/cartoonizer"
     lateinit var tiktokOpenApi : TikTokOpenApi
     companion object{
         lateinit var mResult : MethodChannel.Result
     }
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        
         val clientKey = "aw9iospxikqd2qsx"
         val tiktokOpenConfig = TikTokOpenConfig(clientKey)
         TikTokOpenApiFactory.init(tiktokOpenConfig)
@@ -38,38 +32,17 @@ class MainActivity : FlutterActivity()/*, IApiEventHandler*/ {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             mResult = result
             when (call.method) {
-                "ShareInsta" -> {
-                    val filePath = Uri.parse(call.argument("path"))
-                    val uri = FileProvider.getUriForFile(context, "io.socialbook.cartoonizer.com.shekarmudaliyar.social_share", File(filePath.path))
-                    val feedIntent = Intent(Intent.ACTION_SEND)
-                    feedIntent.type = "video/*"
-                    feedIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                    feedIntent.setPackage("com.instagram.android")
-
-                    val storiesIntent = Intent("com.instagram.share.ADD_TO_STORY")
-                    storiesIntent.setDataAndType(uri, "mp4")
-                    storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    storiesIntent.setPackage("com.instagram.android")
-
-                    activity.grantUriPermission("com.instagram.android", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                    val chooserIntent: Intent = Intent.createChooser(feedIntent, "share video")
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf<Intent>(storiesIntent))
-                    startActivity(chooserIntent)
-                }
-
                 "ShareFacebook" -> {
-                    val filePath = Uri.parse(call.argument("path"))
-                    val uri = FileProvider.getUriForFile(context, "io.socialbook.cartoonizer.com.shekarmudaliyar.social_share", File(filePath.path))
-                    val feedIntent = Intent(Intent.ACTION_SEND)
-                    feedIntent.type = "video/*"
-                    feedIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                    feedIntent.setPackage("com.facebook.katana")
+                    val fileURL = Uri.parse(call.argument("fileURL"))
+                    // val fileType = Uri.parse(call.argument("fileType"))
 
-                    activity.grantUriPermission("com.facebook.katana", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    // share facebook photo
+                    val sharePhoto = SharePhoto.Builder().setImageUrl(fileURL).build();
+                    val content = SharePhotoContent.Builder().addPhoto(sharePhoto).build();
+                    val shareDialog = ShareDialog(this@MainActivity);
 
-                    val chooserIntent: Intent = Intent.createChooser(feedIntent, "share video")
-                    startActivity(chooserIntent)
+                    shareDialog.show(content);
+                    result.success(true);
                 }
 
                 "AppInstall" -> {
@@ -92,7 +65,6 @@ class MainActivity : FlutterActivity()/*, IApiEventHandler*/ {
     }
 
     private fun appInstalledOrNot(uri: String): Boolean {
-        Log.e("TAG","appInstalledOrNot")
         val pm: PackageManager = packageManager
         try {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES)

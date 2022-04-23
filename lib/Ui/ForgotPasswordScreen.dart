@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart';
+import 'package:cartoonizer/api.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -85,9 +85,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         setState(() {
                           isLoading = true;
                         });
-                        final headers = {"Content-type": "application/x-www-form-urlencoded"};
-                        Map<String, dynamic> body = {"email": emailController.text.trim()};
-                        final response = await post(Uri.parse("https://socialbook.io/password_retrieve"), body: body, headers: headers);
+                        var body = {"email": emailController.text.trim()};
+                        final response = await API.post("/password_retrieve", body: body);
                         setState(() {
                           isLoading = false;
                         });

@@ -2,13 +2,10 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
-import 'package:http/http.dart';
-import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../Common/Extension.dart';
-import '../Common/sToken.dart';
-import '../Model/JsonValueModel.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
@@ -80,18 +77,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     startTimer();
     var user = await getUser();
 
-    List<JsonValueModel> params = [];
-    params.add(JsonValueModel("email", widget.email ?? ""));
-
-    Map<String, dynamic> body = {
+    Map<String, String> body = {
       "email": widget.email ?? "",
-      's': sToken(params),
     };
 
     try {
-      var url = "${Config.instance.host}/user/${user.id}/activation/send";
-      final response = await post(Uri.parse(url), body: body, headers: {"Content-type": "application/x-www-form-urlencoded"});
-
+      final response = await API.post("/user/${user.id}/activation/send", body: body);
       if (response.statusCode == 200) {
         CommonExtension().showToast("Resend successfully!");
       } else {
@@ -112,24 +103,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       isLoading = true;
     });
 
-    var sharedPreferences = await SharedPreferences.getInstance();
-
-    String ts = DateTime.now().millisecondsSinceEpoch.toString();
-
-    List<JsonValueModel> params = [];
-    params.add(JsonValueModel("code", currentText));
-    params.add(JsonValueModel("ts", ts));
-
-    var body = jsonEncode(<String, dynamic>{
+    var body = {
       "code": currentText,
-      "ts": ts,
-      's': sToken(params),
-    });
+    };
 
-    var headers = {"Content-type": "application/json", "cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
     try {
-      var url = "${Config.instance.host}/api/user/activate";
-      final response = await post(Uri.parse(url), body: body, headers: headers);
+      final response = await API.post("/api/user/activate", body: body);
 
       if (response.statusCode == 200) {
         CommonExtension().showToast("Activate successfully!");

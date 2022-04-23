@@ -3,15 +3,12 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/sToken.dart';
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/api.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -121,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<JsonValueModel> params = [];
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
@@ -332,19 +328,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          params.add(JsonValueModel("email", emailController.text.trim()));
-                          params.add(JsonValueModel("password", passController.text.trim()));
-
-                          // params.add(JsonValueModel("bucket", "free-socialbook"));
-                          // params.add(JsonValueModel("file_name", "ic_puchase_emoji.png"));
-                          // params.add(JsonValueModel("content_type", "image/png"));
-                          params.sort();
-
-                          final url = Uri.parse('${Config.instance.apiHost}/user/login');
-                          final headers = {"Content-type": "application/x-www-form-urlencoded"};
-                          Map<String, dynamic> body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": "cartoonize", "s": sToken(params)};
+                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": APP_TYPE};
                           print(body);
-                          final response = await post(url, body: body, headers: headers).whenComplete(() => {
+                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {
                                 setState(() {
                                   isLoading = false;
                                 }),
@@ -461,8 +447,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "access_type": "offline",
                             "type": APP_TYPE
                           });
-                          var tempUrl = "${Config.instance.host}/signup/oauth/google/callback?tokens=" + tokenBody;
-                          final tokenResponse = await get(Uri.parse(tempUrl));
+                          final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
                           setState(() {
                             isLoading = false;
                           });

@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "761058819999-6lqlps3agecvv8a4gks9eg3uf4fol78f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "23262efacf6c8fe7a58c38133d601ce4368ab5e3"
+          }
+        },
+        {
+          "client_id": "761058819999-it784a4rrt8pu1d2drkd4jac0vuf9m2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "4663e9e135bcf78cd998cd7eb0feade31b5f99b5"
+          }
+        },
+        {
           "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -31,10 +47,11 @@
               "client_type": 3
             },
             {
-              "client_id": "761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0.apps.googleusercontent.com",
+              "client_id": "761058819999-jfnuq5esusufkm9naikrfk7bbg4qiapb.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.cartoonizer"
+                "bundle_id": "io.socialbook.cartoonizer",
+                "app_store_id": "1604123460"
               }
             }
           ]

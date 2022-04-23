@@ -6,6 +6,14 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+def keyProperties = new Properties()
+def keyPropertiesFile = rootProject.file('key.properties')
+if (keyPropertiesFile.exists()) {
+    keyPropertiesFile.withReader('UTF-8') { reader ->
+        keyProperties.load(reader)
+    }
+}
+
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
@@ -22,6 +30,7 @@ if (flutterVersionName == null) {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
@@ -54,11 +63,32 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+       debug {
+           storeFile file(keyProperties['storeFile'] ? file(keyProperties['storeFile']) : null)
+           storePassword keyProperties['storePassword']
+           keyAlias keyProperties['keyAlias']
+           keyPassword keyProperties['keyPassword']
+       }
+        release {
+           keyAlias keyProperties['keyAlias']
+           keyPassword keyProperties['keyPassword']
+            storeFile keyProperties['storeFile'] ? file(keyProperties['storeFile']) : null
+            storePassword keyProperties['storePassword']
+       }
+   }
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+        profile {
+            signingConfig signingConfigs.release
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -68,6 +98,10 @@ flutter {
 }
 
 dependencies {
+    // implementation platform('com.google.firebase:firebase-bom:29.2.1')
+    // implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.facebook.android:facebook-share:latest.release'
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:2.0.1'
 

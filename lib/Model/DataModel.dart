@@ -9,7 +9,7 @@ class DataModel {
   DataModel.fromJson(Map<String, dynamic> json) {
     final arr0 = <EffectModel>[];
     json.keys.forEach((element) {
-      if(json[element] != null){
+      if (json[element] != null) {
         json[element].forEach((v) {
           arr0.add(EffectModel.fromJson(v));
         });

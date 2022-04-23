@@ -8,6 +8,7 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 import 'package:cartoonizer/Common/ConsumableStore.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/api.dart';
@@ -23,8 +24,6 @@ class PurchaseScreen extends StatefulWidget {
 const bool _kAutoConsume = true;
 const String _kConsumableId = 'io.socialbook.cartoonizer.monthly';
 const String _kUpgradeId = 'io.socialbook.cartoonizer.yearly';
-// const String _kConsumableId = 'android.test.purchased';
-// const String _kUpgradeId = 'android.test.purchased';
 const List<String> _kProductIds = <String>[
   _kConsumableId,
   _kUpgradeId,
@@ -76,16 +75,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     // IMPORTANT!! Always verify a purchase before delivering the product.
     // For the purpose of an example, we directly return true.
 
-    Map<String, dynamic> body = {
-      "receipt_data": purchaseDetails.verificationData.serverVerificationData,
-      "purchase_id": purchaseDetails.purchaseID,
-      "product_id": purchaseDetails.productID
-    };
+    var body = {"receipt_data": purchaseDetails.verificationData.serverVerificationData, "purchase_id": purchaseDetails.purchaseID ?? "", "product_id": purchaseDetails.productID};
+    var response = await API.post("/api/plan/apple_store/buy", body: body);
 
-    var sharedPreferences = await SharedPreferences.getInstance();
-    final headers = {"cookie": "sb.connect.sid=${sharedPreferences.getString("login_cookie")}"};
-
-    var response = await post(Uri.parse('${Config.instance.apiHost}/plan/apple_store/buy'), body: body, headers: headers);
     if (response.statusCode == 200) {
       return Future<bool>.value(true);
     } else {
@@ -94,7 +86,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   }
 
   void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {
-    // handle invalid purchase here if  _verifyPurchase` failed, just finish it to void can not buy again
+    // handle invalid purchase here if _verifyPurchase failed, just finish it to void can not buy again
 
     if (purchaseDetails.pendingCompletePurchase) {
       _inAppPurchase.completePurchase(purchaseDetails);
@@ -187,13 +179,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     if (Platform.isIOS) {
       var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
-    }
 
-    // get all transactions and finish them if testing needed
-    var transactions = await SKPaymentQueueWrapper().transactions();
-    transactions.forEach((transaction) {
-      SKPaymentQueueWrapper().finishTransaction(transaction);
-    });
+      // get all transactions and finish them if testing needed
+      var transactions = await SKPaymentQueueWrapper().transactions();
+      transactions.forEach((transaction) {
+        SKPaymentQueueWrapper().finishTransaction(transaction);
+      });
+    }
 
     UserModel user = await API.getLogin(needLoad: true);
     if (user.subscription.containsKey('id')) {
@@ -253,7 +245,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     return GestureDetector(
       onTap: () async {
         var sharedPrefs = await SharedPreferences.getInstance();
-        if (!(sharedPrefs.getBool("isLogin") ?? false)) {
+
+        UserModel user = await API.getLogin(needLoad: true);
+        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
+
+        if (!isLogin || user.email == "") {
+          CommonExtension().showToast(StringConstant.please_login_first);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -370,7 +367,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? year.description : year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
                           ),
@@ -425,7 +423,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${Platform.isAndroid ? month.description : month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                  align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -615,6 +614,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                               height: 2.h,
                             ),
                             _buildProductList(),
+                            SizedBox(
+                              height: 2.h,
+                            ),
                           ],
                         ),
                       ),

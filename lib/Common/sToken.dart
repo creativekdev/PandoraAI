@@ -1,13 +1,15 @@
 import 'dart:convert';
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:cartoonizer/Model/JsonValueModel.dart';
 import 'package:crypto/crypto.dart';
 
-String sToken(List<JsonValueModel> params){
-  params.sort();
+
+String sToken(Map<String, dynamic> params) {
+  var keys = params.keys.toList();
+  keys.sort();
+
   var str = "x";
-  for(var i = 0; i < params.length; i++){
-    str += params[i].key + params[i].value;
+  for (var i = 0; i < keys.length; i++) {
+    str += keys[i] + params[keys[i]].toString();
   }
   var content = new Utf8Encoder().convert('socialbook');
   var md5 = crypto.md5;

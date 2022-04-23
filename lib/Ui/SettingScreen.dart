@@ -5,9 +5,9 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/LoginScreen.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'ChangePasswordScreen.dart';
@@ -236,8 +236,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        var url = (Platform.isAndroid) ? "https://www.google.com/" : "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
-                        _launchURL(url);
+                        var url = Config.getStoreLink();
+                        launchURL(url);
                       },
                       child: ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false),
                     ),
@@ -247,7 +247,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     GestureDetector(
                       onTap: () async {
                         final box = context.findRenderObject() as RenderBox?;
-                        var appLink = "https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460";
+                        var appLink = Config.getStoreLink();
                         await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                       },
                       child: ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, false),
@@ -257,7 +257,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/help/");
+                        launchURL("https://socialbook.io/help/");
                       },
                       child: ImageTextBarWidget(StringConstant.help, ImagesConstant.ic_help, true),
                     ),
@@ -266,7 +266,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/terms");
+                        launchURL("https://socialbook.io/terms");
                       },
                       child: ImageTextBarWidget(StringConstant.term_condition, ImagesConstant.ic_term, true),
                     ),
@@ -275,7 +275,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
-                        _launchURL("https://socialbook.io/privacy");
+                        launchURL("https://socialbook.io/privacy");
                       },
                       child: ImageTextBarWidget(StringConstant.privacy_policy1, ImagesConstant.ic_policy, true),
                     ),
@@ -339,7 +339,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         children: [
                           GestureDetector(
                             onTap: () async {
-                              _launchURL("https://www.facebook.com/SocialBook.io");
+                              launchURL("https://www.facebook.com/SocialBook.io");
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_facebook,
@@ -349,7 +349,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              _launchURL("https://www.instagram.com/socialbook.io/");
+                              launchURL("https://www.instagram.com/socialbook.io/");
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_instagram,
@@ -359,7 +359,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              _launchURL("https://twitter.com/SocialBookdotio");
+                              launchURL("https://twitter.com/SocialBookdotio");
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_twitter,
@@ -369,7 +369,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                           GestureDetector(
                             onTap: () async {
-                              _launchURL("https://tiktok.com/@socialbook.io");
+                              launchURL("https://tiktok.com/@socialbook.io");
                             },
                             child: Image.asset(
                               ImagesConstant.ic_share_tiktok,
@@ -434,11 +434,4 @@ class _SettingScreenState extends State<SettingScreen> {
     return sharedPrefs.getBool("isLogin") ?? false;
   }
 
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 }
