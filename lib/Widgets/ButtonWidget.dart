@@ -3,7 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 Widget ButtonWidget(String btnText) {
   return Container(
     width: double.maxFinite,
-    height: 8.h,
+    height: 55,
     padding: EdgeInsets.symmetric(horizontal: 5.w),
     child: Card(
       elevation: 2.h,

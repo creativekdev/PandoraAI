@@ -63,4 +63,5 @@ class ImagesConstant{
   static const ic_share_tiktok = "assets/images/ic_share_tiktok.png";
   static const ic_share_twitter = "assets/images/ic_share_twitter.png";
   static const ic_camera_upload = "assets/images/ic_camera_upload.png";
+  static const ic_update_image = "assets/images/update_image.png";
 }

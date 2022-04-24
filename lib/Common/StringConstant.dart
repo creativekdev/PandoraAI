@@ -95,5 +95,6 @@ class StringConstant {
   static const enter_email_code = "Enter 6-digit code";
   static const code_send_to_email = "Your code was emailed to ";
   static const add_new_card = "Add new card";
-  static const new_version_available = "New version available";
+  static const new_update_dialog_title = "New Update Required";
+  static const new_update_dialog_content = "A required update is available, the App will not be working until this update is applied.";
 }

@@ -113,9 +113,9 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
     Get.dialog(
       CommonDialog(
         image: ImagesConstant.ic_success,
-        content: StringConstant.payment_successfully,
+        description: StringConstant.payment_successfully,
         isCancel: false,
-        confirmContent: "OK",
+        confirmText: "OK",
       ),
     );
   }

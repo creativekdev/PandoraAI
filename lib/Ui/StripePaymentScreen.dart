@@ -156,9 +156,9 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     Get.dialog(
       CommonDialog(
         image: ImagesConstant.ic_success,
-        content: StringConstant.payment_successfully,
+        description: StringConstant.payment_successfully,
         isCancel: false,
-        confirmContent: "OK",
+        confirmText: "OK",
       ),
     );
   }
@@ -191,7 +191,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
               CommonDialog(
                 title: cardNumber,
                 height: 180,
-                content: "Are you sure you want to pay with \n this card?",
+                description: "Are you sure you want to pay with \n this card?",
                 confirmCallback: () {
                   _submitPayment(creditCard);
                 },
