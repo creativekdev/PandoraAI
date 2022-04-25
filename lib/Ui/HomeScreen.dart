@@ -6,7 +6,6 @@ import 'package:cartoonizer/Model/CategoryModel.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
 
-import 'PurchaseScreen.dart';
 import 'StripeSubscriptionScreen.dart';
 import 'ChoosePhotoScreen.dart';
 import 'SettingScreen.dart';

@@ -10,6 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cartoonizer/api.dart';
 
+import 'PurchaseScreen.dart';
+import 'StripeSubscriptionScreen.dart';
 import 'ChangePasswordScreen.dart';
 import 'EditProfileScreen.dart';
 
@@ -231,6 +233,51 @@ class _SettingScreenState extends State<SettingScreen> {
                         }
                       },
                     ),
+                    FutureBuilder(
+                      future: _getIsLogin(),
+                      builder: (context, snapshot) {
+                        if (((snapshot.data != null ? snapshot.data as bool : true) || isLoading)) {
+                          return FutureBuilder(
+                              future: API.getLogin(),
+                              builder: (context, snapshot) {
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 2.h,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => {
+                                        if (Platform.isIOS)
+                                          {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                settings: RouteSettings(name: "/PurchaseScreen"),
+                                                builder: (context) => PurchaseScreen(),
+                                              ),
+                                            ),
+                                          }
+                                        else
+                                          {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                                                builder: (context) => StripeSubscriptionScreen(),
+                                              ),
+                                            ),
+                                          }
+                                      },
+                                      child: ImageTextBarWidget(StringConstant.premium, ImagesConstant.ic_premium, false),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          return SizedBox();
+                        }
+                      },
+                    ),
                     SizedBox(
                       height: 2.h,
                     ),
@@ -433,5 +480,4 @@ class _SettingScreenState extends State<SettingScreen> {
     sharedPrefs = await SharedPreferences.getInstance();
     return sharedPrefs.getBool("isLogin") ?? false;
   }
-
 }

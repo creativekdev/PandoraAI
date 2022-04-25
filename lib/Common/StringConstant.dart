@@ -39,12 +39,12 @@ class StringConstant {
   static const signup_text = "Sign Up To Get 1 Image Credit";
   static const signup_text1 = "Sign up for more uses";
   static const signup_text2 = "We're glad you're enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!";
-  static const no_watermark = "(No waterMark, High-res image)";
+  static const no_watermark = "(No watermark, High-res image)";
   static const go_premium = "Go Premium";
   static const save_share = "Save & Share";
   static const share_to = "Share to";
   static const restore = "RESTORE";
-  static const no_watermark1 = "No waterMark";
+  static const no_watermark1 = "No watermark";
   static const high_resolution = "High resolution images";
   static const faster_speed = "Faster Speed";
   static const txtContinue = "Continue";
@@ -54,6 +54,7 @@ class StringConstant {
   static const payment_successfully = "Payment successfully";
   static const edit_profile = "Edit Profile";
   static const change_password = "Change Password";
+  static const premium = "Premium";
   static const rate_us = "Rate us on the app store";
   static const rate_us1 = "Rate us on the play store";
   static const share_app = "Share App";

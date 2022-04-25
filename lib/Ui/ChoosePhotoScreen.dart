@@ -108,6 +108,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               var user = await API.getLogin(needLoad: true);
               bool isLogin = (user != null) ? user.email != '' : false;
               controller.changeIsLogin(isLogin);
+              setState(() {});
             })
           },
           child: RoundedBorderBtnWidget(StringConstant.signup_text),
@@ -1284,8 +1285,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                       bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
                       if (isLogin) {
+                        await API.getLogin(needLoad: true);
                         controller.changeIsLogin(isLogin);
-                        API.getLogin(needLoad: true);
+                        setState(() {});
                       }
                     },
                     child: RoundedBorderBtnWidget(StringConstant.sign_up),

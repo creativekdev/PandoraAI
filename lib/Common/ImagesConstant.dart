@@ -54,6 +54,7 @@ class ImagesConstant{
   static const ic_right_arrow = "assets/images/ic_right_arrow.png";
   static const ic_edit_profile = "assets/images/ic_edit_profile.png";
   static const ic_change_password = "assets/images/ic_change_password.png";
+  static const ic_premium = "assets/images/ic_premium.png";
   static const ic_rate_us = "assets/images/ic_rate_us.png";
   static const ic_share_app = "assets/images/ic_share_app.png";
   static const ic_help = "assets/images/ic_help.png";
