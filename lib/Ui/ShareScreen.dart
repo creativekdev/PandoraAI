@@ -120,14 +120,15 @@ class _ShareScreenState extends State<ShareScreen> {
                     ),
                   ),
                   TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                  GestureDetector(
-                    onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
-                    child: Image.asset(
-                      ImagesConstant.ic_home,
-                      height: 10.w,
-                      width: 10.w,
-                    ),
-                  ),
+                  SizedBox(width: 10.w, height: 10.w)
+                  //   GestureDetector(
+                  //     onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
+                  //     child: Image.asset(
+                  //       ImagesConstant.ic_home,
+                  //       height: 10.w,
+                  //       width: 10.w,
+                  //     ),
+                  //   ),
                 ],
               ),
             ),
