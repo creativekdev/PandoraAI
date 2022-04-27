@@ -95,7 +95,9 @@ class StringConstant {
   static const resend_logout = " to change the email.";
   static const enter_email_code = "Enter 6-digit code";
   static const code_send_to_email = "Your code was emailed to ";
-  static const add_new_card = "Add new card";
+  static const pay_with_new_card = "Pay with new card";
   static const new_update_dialog_title = "New Update Required";
   static const new_update_dialog_content = "A required update is available, the App will not be working until this update is applied.";
+  static const zip_code = "Zip Code";
+  static const zip_code_validation_message = "Invalid zip code";
 }

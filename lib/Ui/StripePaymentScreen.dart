@@ -47,6 +47,11 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     UserModel user = await API.getLogin(needLoad: false);
     // find default card
     var creditcards = user.creditcards;
+
+    if (creditcards.length == 0) {
+      gotoAddNewCard();
+    }
+
     var selectedCard = null;
     for (var card in creditcards) {
       if (card['is_default']) {
@@ -174,7 +179,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   }
 
   Widget _buildCreditCard(creditCard) {
-    bool isSelected = _selectedCard != null && creditCard['id'] == _selectedCard['id'];
     Map cardConfig = getCreditCardConfigByBrand(creditCard['brand']);
     String date = "${creditCard['expire_month'].toString().padLeft(2, '0')}/${creditCard['expire_year'].toString().substring(2)}";
     String cardNumber = "∗∗∗∗ ∗∗∗∗ ∗∗∗∗ ${creditCard['last4']}";
@@ -240,12 +244,59 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
         ));
   }
 
+  Widget _buildNewCreditCard() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: GestureDetector(
+          onTap: () {
+            gotoAddNewCard();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: ColorConstant.PrimaryColor, width: 2),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      ImagesConstant.ic_add,
+                      width: 38,
+                      height: 38,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 4.w),
+                    TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.PrimaryColor, FontWeight.w500, 14.sp, align: TextAlign.center),
+                  ],
+                ),
+              ]),
+            ),
+          ),
+        ));
+  }
+
   Widget _buildCardList() {
     if (_user == null) return Container();
 
     var creditcards = _user.creditcards;
+    var cardList = List.generate(creditcards.length, (index) => _buildCreditCard(creditcards[index]));
+    cardList.add(_buildNewCreditCard());
     return Column(
-      children: List.generate(creditcards.length, (index) => _buildCreditCard(creditcards[index])),
+      children: cardList,
+    );
+  }
+
+  void gotoAddNewCard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(name: "/StripeAddNewCardScreen"),
+        builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
+      ),
     );
   }
 
@@ -272,22 +323,20 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                           ),
                         ),
                         TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                        GestureDetector(
-                          onTap: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(name: "/StripeAddNewCardScreen"),
-                                builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
-                              ),
-                            );
-                          },
-                          child: Image.asset(
-                            ImagesConstant.ic_add,
-                            height: 38,
-                            width: 38,
-                          ),
-                        ),
+                        SizedBox(
+                          height: 38,
+                          width: 38,
+                        )
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     gotoAddNewCard();
+                        //   },
+                        //   child: Image.asset(
+                        //     ImagesConstant.ic_add,
+                        //     height: 38,
+                        //     width: 38,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

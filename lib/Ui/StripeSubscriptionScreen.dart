@@ -103,10 +103,15 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
     return GestureDetector(
       onTap: () async {
+        if (_purchasePending) return;
+
+        showPendingUI();
         var sharedPrefs = await SharedPreferences.getInstance();
 
         UserModel user = await API.getLogin(needLoad: true);
         bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
+
+        hidePendingUI();
 
         if (!isLogin || user.email == "") {
           CommonExtension().showToast(StringConstant.please_login_first);
