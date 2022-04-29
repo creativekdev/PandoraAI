@@ -70,6 +70,8 @@
 	<string>Allow access to photos to convert your photo into cartoon.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to photos to convert your photo into cartoon.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Your data will be used to provide you a better and personalized product enhancements.</string>
 	<key>TikTokAppID</key>
 	<string>aw9iospxikqd2qsx</string>
 	<key>UIApplicationSceneManifest</key>

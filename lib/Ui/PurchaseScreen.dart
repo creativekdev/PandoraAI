@@ -108,6 +108,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         _purchasePending = false;
       });
     }
+
+    FirebaseAnalytics.instance.logPurchase(
+      items: [AnalyticsEventItem(itemName: purchaseDetails.productID, price: isYear ? 39.99 : 3.99, currency: "USD", quantity: 1)],
+    );
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -244,6 +248,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
+        FirebaseAnalytics.instance.logEvent(name: EventConstant.click_purchase);
+
         var sharedPrefs = await SharedPreferences.getInstance();
 
         UserModel user = await API.getLogin(needLoad: true);

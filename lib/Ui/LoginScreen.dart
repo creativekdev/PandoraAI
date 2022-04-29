@@ -335,6 +335,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   isLoading = false;
                                 }),
                               });
+
+                          FirebaseAnalytics.instance.logLogin(loginMethod: "email");
+
                           print(response.body);
                           if (response.statusCode == 200) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -404,6 +407,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (Platform.isIOS)
                       GestureDetector(
                         onTap: () async {
+                          FirebaseAnalytics.instance.logLogin(loginMethod: "apple");
+
                           setState(() {
                             isLoading = true;
                           });
@@ -432,6 +437,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     GestureDetector(
                       onTap: () async {
+                        FirebaseAnalytics.instance.logLogin(loginMethod: "google");
+
                         setState(() {
                           isLoading = true;
                         });
@@ -517,6 +524,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TitleTextWidget(StringConstant.no_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                         GestureDetector(
                           onTap: () => {
+                            FirebaseAnalytics.instance.logEvent(name: EventConstant.click_signup, parameters: {"screen": "login"}),
                             if (prefixPage == 'signup')
                               {Navigator.pop(context)}
                             else

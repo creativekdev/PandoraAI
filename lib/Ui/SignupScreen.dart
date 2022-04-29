@@ -115,7 +115,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
@@ -205,6 +204,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     if (Platform.isIOS)
                       GestureDetector(
                         onTap: () async {
+                          FirebaseAnalytics.instance.logSignUp(signUpMethod: "apple");
+
                           setState(() {
                             isLoading = true;
                           });
@@ -233,6 +234,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                     GestureDetector(
                       onTap: () async {
+                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "google");
                         setState(() {
                           isLoading = true;
                         });
@@ -314,6 +316,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "youtube");
+
                         setState(() {
                           isLoading = true;
                         });
@@ -397,6 +401,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "instagram");
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -449,6 +454,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "tiktok");
                         var tempData = await platform.invokeMethod("OpenTiktok");
                         if (tempData != null) {
                           try {
@@ -515,6 +521,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         TitleTextWidget(StringConstant.already_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
                         GestureDetector(
                           onTap: () => {
+                            FirebaseAnalytics.instance.logEvent(name: EventConstant.click_login, parameters: {"screen": "signup"}),
                             if (prefixPage != null)
                               {
                                 Navigator.push(

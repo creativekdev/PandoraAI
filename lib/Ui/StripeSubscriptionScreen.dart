@@ -93,6 +93,18 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     if (paymentResult != null && paymentResult as bool == true) {
       initStoreInfo();
       GetStorage().remove("payment_result");
+
+      FirebaseAnalytics.instance.logPurchase(
+        items: [
+          AnalyticsEventItem(
+            itemId: subscription["plan_id"],
+            itemName: subscription["id"],
+            price: subscription["price"],
+            currency: "USD",
+            quantity: 1,
+          )
+        ],
+      );
     }
   }
 
@@ -104,7 +116,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     return GestureDetector(
       onTap: () async {
         if (_purchasePending) return;
-
+        FirebaseAnalytics.instance.logEvent(name: EventConstant.click_purchase);
         showPendingUI();
         var sharedPrefs = await SharedPreferences.getInstance();
 

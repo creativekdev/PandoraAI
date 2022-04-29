@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -11,6 +10,7 @@ import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/config.dart';
+// import 'package:cartoonizer/appsflyer.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
@@ -433,6 +433,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               visible: controller.isPhotoDone.value,
                               child: GestureDetector(
                                 onTap: () async {
+                                  var effects = widget.list[controller.lastItemIndex.value].effects;
+                                  var keys = effects.keys.toList();
+                                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.download, parameters: {"style": selectedEffect["key"]});
+
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
                                     await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, true).then((value) async {
@@ -465,6 +470,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               visible: controller.isPhotoDone.value,
                               child: GestureDetector(
                                 onTap: () async {
+                                  var effects = widget.list[controller.lastItemIndex.value].effects;
+                                  var keys = effects.keys.toList();
+                                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.click_share, parameters: {"style": selectedEffect["key"]});
+                                  
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
                                     await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, false).then((value) async {
@@ -476,6 +486,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                             MaterialPageRoute(
                                               settings: RouteSettings(name: "/ShareScreen"),
                                               builder: (context) => ShareScreen(
+                                                style: selectedEffect["key"],
                                                 image: (controller.isVideo.value) ? videoPath : image,
                                                 isVideo: controller.isVideo.value,
                                               ),
@@ -490,6 +501,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                         MaterialPageRoute(
                                           settings: RouteSettings(name: "/ShareScreen"),
                                           builder: (context) => ShareScreen(
+                                            style: selectedEffect["key"],
                                             image: (controller.isVideo.value) ? videoPath : image,
                                             isVideo: controller.isVideo.value,
                                           ),
@@ -594,6 +606,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
+                                                  // Appsflyer.logEvent(AppsflyerEvent.click_choose_photo);
+                                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.choose_photo);
                                                   var source = ImageSource.gallery;
                                                   try {
                                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -651,6 +665,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               SizedBox(height: 1.h),
                                               GestureDetector(
                                                 onTap: () async {
+                                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.take_selfie);
+
                                                   var source = ImageSource.camera;
                                                   try {
                                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -1014,7 +1030,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
     var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
 
+    FirebaseAnalytics.instance.logEvent(name: EventConstant.cartoon, parameters: {
+      "style": selectedEffect["key"],
+    });
+
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
+
     if (offlineEffect.containsKey(key)) {
       var data = offlineEffect[key] as OfflineEffectModel;
       if (data.data.toString().startsWith('<')) {

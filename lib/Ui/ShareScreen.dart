@@ -18,9 +18,10 @@ enum ShareType {
 }
 
 class ShareScreen extends StatefulWidget {
+  final String style;
   final String image;
   final bool isVideo;
-  const ShareScreen({Key? key, required this.image, required this.isVideo}) : super(key: key);
+  const ShareScreen({Key? key, required this.style, required this.image, required this.isVideo}) : super(key: key);
 
   @override
   _ShareScreenState createState() => _ShareScreenState();
@@ -62,6 +63,11 @@ class _ShareScreenState extends State<ShareScreen> {
     }
 
     final FlutterShareMe flutterShareMe = FlutterShareMe();
+
+    FirebaseAnalytics.instance.logEvent(name: EventConstant.share, parameters: {
+      "style": widget.style,
+      "method": shareType.name,
+    });
 
     switch (shareType) {
       case ShareType.facebook:

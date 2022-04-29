@@ -138,6 +138,12 @@ class _SettingScreenState extends State<SettingScreen> {
                           } else {
                             return GestureDetector(
                               onTap: () => {
+                                FirebaseAnalytics.instance.logEvent(
+                                  name: EventConstant.click_login,
+                                  parameters: {
+                                    "screen": "setting",
+                                  },
+                                ),
                                 GetStorage().write('login_back_page', '/SettingScreen'),
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
                                   if (await _getIsLogin()) {
@@ -146,7 +152,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                       isLoading = true;
                                     });
                                   }
-
                                   if (value != null) {}
                                 })
                               },

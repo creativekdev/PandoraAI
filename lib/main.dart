@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'dart:developer';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'firebase_options.dart';
 
 import 'package:cartoonizer/Common/dialog.dart';
@@ -10,10 +13,8 @@ import 'package:cartoonizer/api.dart';
 import 'config.dart';
 
 void main() async {
+  // print the current configuration
   log("CONFIG: {apiHost: ${Config.instance.apiHost}, ANDROID_CHANNEL: ${ANDROID_CHANNEL}}");
-
-  // init get storage
-  await GetStorage.init();
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
     statusBarColor: Colors.transparent,
@@ -21,10 +22,27 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Show tracking authorization dialog and ask for permission
+  await AppTrackingTransparency.requestTrackingAuthorization();
+
+  // init get storage
+  await GetStorage.init();
+
   // init firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // init appsflyer
+  // Appsflyer.instance;
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  // init firebase analytics
+  await FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
+
+  // log app open
+  FirebaseAnalytics.instance.logAppOpen();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
