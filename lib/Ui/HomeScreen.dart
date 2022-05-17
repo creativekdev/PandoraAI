@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/CategoryModel.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
 
@@ -338,8 +337,15 @@ class _HomeScreenState extends State<HomeScreen> {
     List<EffectModel> list = [];
     if (response.statusCode == 200) {
       final Map<String, dynamic> parsed = json.decode(response.body.toString());
-      final categoryResponse = CategoryModel.fromJson(parsed);
-      list.addAll(categoryResponse.data.face);
+      var data = parsed["data"] ?? {};
+
+      data.keys.forEach((style) {
+        if (data[style] != null) {
+          data[style].forEach((effect) {
+            list.add(EffectModel.fromJson(effect, style));
+          });
+        }
+      });
     }
     return list;
   }

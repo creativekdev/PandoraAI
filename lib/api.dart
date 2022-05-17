@@ -103,15 +103,11 @@ class API {
     bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
     var localUser = sharedPreferences.getString('user') ?? "";
 
-    if (!isLogin) {
-      return UserModel.fromJson({});
-    }
-
     if (needLoad || localUser == '') {
       var response = await get('/api/user/get_login');
+      Map data = jsonDecode(response.body.toString());
 
-      if (response.statusCode == 200) {
-        Map data = jsonDecode(response.body.toString());
+      if (response.statusCode == 200 && data['login'] == true) {
         UserModel user = UserModel.fromGetLogin(data);
         sharedPreferences.setString("user", jsonEncode(user));
 
@@ -124,8 +120,11 @@ class API {
               ));
         }
         return user;
+      } else {
+        UserModel user = UserModel.fromUnlogin(data);
+        sharedPreferences.setString("user", jsonEncode(user));
+        return user;
       }
-      return UserModel.fromJson(jsonDecode(localUser));
     }
     return UserModel.fromJson(jsonDecode(localUser));
   }

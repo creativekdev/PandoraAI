@@ -9,7 +9,6 @@ import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/SignupScreen.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/config.dart';
 // import 'package:cartoonizer/appsflyer.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
@@ -41,6 +40,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var image = "";
   var videoPath = "";
   var imagePicker;
+  late UserModel _user;
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
@@ -58,6 +58,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   @override
   void initState() {
     super.initState();
+    initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
     imagePicker = new ImagePicker();
@@ -66,14 +67,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     itemPositionsListener.itemPositions.addListener(() {
       if (itemPos != ((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index)) {
         controller.setLastItemIndex1((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index);
-        // scrollController1.scrollTo(
-        //     index: (widget.pos == widget.list.length - 1)? widget.pos : itemPositionsListener.itemPositions.value.first.index,
-        //     duration: Duration(milliseconds: 100),
-        //     curve: Curves.easeInOutCubic);
-
         try {
           itemPos = (widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index;
-          // if(scrollController1.hasClients){
           scrollController1.scrollTo(
               index: (widget.pos == widget.list.length - 1)
                   ? widget.pos
@@ -82,13 +77,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       : 0,
               duration: Duration(milliseconds: 100),
               curve: Curves.easeInOutCubic);
-          // }
         } catch (error) {
           print("error");
           print(error);
         }
       }
     });
+  }
+
+  Future<void> initStoreInfo() async {
+    _user = await API.getLogin();
   }
 
   Obx _buildSignupBlock(BuildContext context) {
@@ -433,14 +431,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               visible: controller.isPhotoDone.value,
                               child: GestureDetector(
                                 onTap: () async {
-                                  var effects = widget.list[controller.lastItemIndex.value].effects;
+                                  var category = widget.list[controller.lastItemIndex.value];
+                                  var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
                                   FirebaseAnalytics.instance.logEvent(name: EventConstant.download, parameters: {"style": selectedEffect["key"]});
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, true).then((value) async {
+                                    await GallerySaver.saveVideo('${_getAiHostByStyle(category.style)}/resource/' + controller.videoUrl.value, true).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -470,14 +469,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               visible: controller.isPhotoDone.value,
                               child: GestureDetector(
                                 onTap: () async {
-                                  var effects = widget.list[controller.lastItemIndex.value].effects;
+                                  var category = widget.list[controller.lastItemIndex.value];
+                                  var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
                                   FirebaseAnalytics.instance.logEvent(name: EventConstant.click_share, parameters: {"style": selectedEffect["key"]});
-                                  
+
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${Config.instance.aiHost}/resource/' + controller.videoUrl.value, false).then((value) async {
+                                    await GallerySaver.saveVideo('${_getAiHostByStyle(category.style)}/resource/' + controller.videoUrl.value, false).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -920,9 +920,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             controller.setLastSelectedIndex(index);
             controller.setLastItemIndex(itemIndex);
             controller.setLastItemIndex1(itemIndex);
-            // if(scrollController1.hasClients) {
             scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
-            // }
             if (controller.image.value != null) {
               controller.changeIsPhotoSelect(true);
               controller.changeIsLoading(true);
@@ -1026,9 +1024,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var effects = widget.list[controller.lastItemIndex.value].effects;
+    var category = widget.list[controller.lastItemIndex.value];
+    var effects = category.effects;
     var keys = effects.keys.toList();
     var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+
+    String aiHost = _getAiHostByStyle(category.style);
 
     FirebaseAnalytics.instance.logEvent(name: EventConstant.cartoon, parameters: {
       "style": selectedEffect["key"],
@@ -1046,7 +1047,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1094,7 +1095,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
                 'direct': 1,
               };
-              final cartoonizeResponse = await API.post("${Config.instance.aiHost}/api/image/cartoonize", body: dataBody);
+              final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
               if (cartoonizeResponse.statusCode == 200) {
                 final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
@@ -1109,7 +1110,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1147,7 +1148,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 'direct': 1,
                 'token': token,
               };
-              final cartoonizeResponse = await API.post("${Config.instance.aiHost}/api/image/cartoonize/token", body: dataBody);
+              final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
               print(cartoonizeResponse.statusCode);
               print(cartoonizeResponse.body.toString());
               if (cartoonizeResponse.statusCode == 200) {
@@ -1163,7 +1164,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 } else if (parsed['data'].toString().endsWith(".mp4")) {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${Config.instance.aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1243,11 +1244,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     return Obx(() => GestureDetector(
           onTap: () async {
             controller.setLastItemIndex1(index);
-            // if(scrollController.hasClients) {
             scrollController.scrollTo(index: index, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
-            // } else {
-            //   scrollController.jumpTo(index: index);
-            // }
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 2.w),
@@ -1262,6 +1259,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   bool isSupportOriginalFace(dynamic effect) {
     return effect["original_face"] != null && effect["original_face"] == true;
+  }
+
+  String _getAiHostByStyle(String style) {
+    var host = style == 'face' ? 'face_cartoonize' : 'body_cartoonize';
+    return _user.ai_servers[host];
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
