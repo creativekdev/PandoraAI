@@ -41,13 +41,13 @@ dependencies:
   path: ^1.8.0
   path_provider: ^2.0.8
   image_gallery_saver: ^1.7.1
-  share_plus: ^3.0.4
+  share_plus: ^4.0.0
   url_launcher: ^6.0.18
   flutter_share_me:
     git: https://github.com/OpenFlutter/flutter_share_me
-  get: ^4.6.1
+  get: ^4.6.3
   get_storage: ^2.0.3
-  scrollable_positioned_list: ^0.2.3
+  scrollable_positioned_list: ^0.3.2
   flutter_email_sender: ^5.0.2
   in_app_purchase: ^2.0.1
   firebase_core: ^1.12.0
@@ -60,7 +60,7 @@ dependencies:
   webview_flutter: ^3.0.0
   connectivity_plus: ^2.2.1
   permission_handler: ^9.1.0
-  cached_network_image: ^3.2.0
+  cached_network_image: ^3.2.1
   flutter_credit_card:
   package_info_plus:
   # appsflyer_sdk: ^6.5.2
