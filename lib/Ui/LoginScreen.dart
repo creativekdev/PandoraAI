@@ -201,8 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         height: 3.h,
                       ),
-                      TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress,
-                          false, emailController),
+                      TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next,
+                          TextInputType.emailAddress, false, emailController),
                       SizedBox(
                         height: 1.5.h,
                       ),
@@ -324,11 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": APP_TYPE};
                             print(body);
-                            final response = await API.post("/api/user/login", body: body).whenComplete(() => {
-                                  setState(() {
-                                    isLoading = false;
-                                  }),
-                                });
+                            final response = await API.post("/api/user/login", body: body).whenComplete(() => {});
 
                             FirebaseAnalytics.instance.logLogin(loginMethod: "email");
 
@@ -355,7 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              goBack();
+                              await loginBack(context);
                             } else {
                               try {
                                 CommonExtension().showToast(json.decode(response.body)['message']);
@@ -363,6 +359,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 CommonExtension().showToast(response.body.toString());
                               }
                             }
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
                         },
                         child: ButtonWidget(StringConstant.sign_in),
@@ -409,7 +408,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             try {
                               var result = await signInWithApple();
                               if (result) {
-                                loginBack(context);
+                                await loginBack(context);
                               } else {
                                 CommonExtension().showToast("Oops! Something went wrong");
                               }
@@ -449,9 +448,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               "type": APP_TYPE
                             });
                             final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
-                            setState(() {
-                              isLoading = false;
-                            });
                             if (tokenResponse.statusCode == 200) {
                               final Map parsed = json.decode(tokenResponse.body.toString());
                               print(parsed);
@@ -494,18 +490,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                                 prefs.setBool("isLogin", true);
                                 prefs.setString("login_cookie", id.split("=")[1]);
-                                goBack();
+
+                                await loginBack(context);
                               }
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } finally {
-                            if (isLoading)
-                              setState(() {
-                                isLoading = false;
-                              });
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
-                          ;
                         },
                         child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
                       ),
@@ -535,8 +530,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               StringConstant.sign_up,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
+                              style:
+                                  TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                             ),
                           )
                         ],

@@ -27,6 +27,7 @@ class API {
 
   // get request
   static Future<http.Response> get(String url, {Map<String, String>? headers, Map<String, dynamic>? params}) async {
+    print("API------> GET: $url");
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
@@ -62,6 +63,7 @@ class API {
 
   // post request
   static Future<http.Response> post(String url, {Map<String, String>? headers, Map<String, dynamic>? body}) async {
+    print("API------> POST: $url");
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
@@ -112,12 +114,12 @@ class API {
         sharedPreferences.setString("user", jsonEncode(user));
 
         if (context != null && user.status != 'activated') {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                settings: RouteSettings(name: "/EmailVerificationScreen"),
-                builder: (context) => EmailVerificationScreen(user.email),
-              ));
+          // remove all route and push email verification screen
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) => EmailVerificationScreen(user.email)),
+            ModalRoute.withName('/EmailVerificationScreen'),
+          );
         }
         return user;
       } else {

@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
-Widget RoundedBorderBtnWidget(String btnText) {
+Widget RoundedBorderBtnWidget(String btnText, {Color color = ColorConstant.PrimaryColor}) {
   return Container(
     width: double.maxFinite,
     height: 50,
@@ -9,11 +9,11 @@ Widget RoundedBorderBtnWidget(String btnText) {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
         border: Border.all(
-          color: ColorConstant.PrimaryColor,
+          color: color,
         ),
       ),
       child: Center(
-        child: TitleTextWidget(btnText, ColorConstant.PrimaryColor, FontWeight.w500, 16),
+        child: TitleTextWidget(btnText, color, FontWeight.w500, 16),
       ),
     ),
   );

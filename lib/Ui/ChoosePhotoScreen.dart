@@ -99,14 +99,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                settings: RouteSettings(name: "/SignupScreen"),
+                settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
                 builder: (context) => SignupScreen(),
               ),
             ).then((value) async {
-              var user = await API.getLogin(needLoad: true);
-              bool isLogin = (user != null) ? user.email != '' : false;
-              controller.changeIsLogin(isLogin);
-              setState(() {});
+              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+              bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
+              if (isLogin) {
+                await API.getLogin(needLoad: false, context: context);
+                controller.changeIsLogin(isLogin);
+                setState(() {});
+              }
             })
           },
           child: RoundedBorderBtnWidget(StringConstant.signup_text),
@@ -1194,7 +1197,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 CommonExtension().showToast('Error while processing image');
               }
             }
-            await API.getLogin(needLoad: true);
+            await API.getLogin(needLoad: true, context: context);
           } else {
             controller.changeIsLoading(false);
             var responseBody = json.decode(tokenResponse.body);
@@ -1294,6 +1297,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                     height: 1.h,
                   ),
                   TitleTextWidget(StringConstant.signup_text2, ColorConstant.TextBlack, FontWeight.w400, 14, maxLines: 3),
+                  SizedBox(
+                    height: 2.h,
+                  ),
                   GestureDetector(
                     onTap: () async {
                       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -1308,12 +1314,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                       bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
                       if (isLogin) {
-                        await API.getLogin(needLoad: true);
+                        await API.getLogin(needLoad: false, context: context);
                         controller.changeIsLogin(isLogin);
                         setState(() {});
                       }
                     },
-                    child: RoundedBorderBtnWidget(StringConstant.sign_up),
+                    child: RoundedBorderBtnWidget(StringConstant.sign_up, color: ColorConstant.TextBlack),
                   ),
                 ],
               ),

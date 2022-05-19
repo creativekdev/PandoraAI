@@ -210,7 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               try {
                                 var result = await signInWithApple();
                                 if (result) {
-                                  loginBack(context);
+                                  await loginBack(context);
                                 } else {
                                   CommonExtension().showToast("Oops! Something went wrong");
                                 }
@@ -249,12 +249,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 "type": APP_TYPE
                               });
                               final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
-                              setState(() {
-                                isLoading = false;
-                              });
                               if (tokenResponse.statusCode == 200) {
                                 final Map parsed = json.decode(tokenResponse.body.toString());
-                                print(parsed);
+                                // print(parsed);
                                 if (parsed.containsKey("data")) {
                                   Navigator.push(
                                     context,
@@ -294,7 +291,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                   }
                                   prefs.setBool("isLogin", true);
                                   prefs.setString("login_cookie", id.split("=")[1]);
-                                  loginBack(context);
+                                  await loginBack(context);
                                 }
                               } else {
                                 CommonExtension().showToast("Oops! Something went wrong");
@@ -379,7 +376,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   }
                                   prefs.setBool("isLogin", true);
                                   prefs.setString("login_cookie", id.split("=")[1]);
-                                  Navigator.pop(context, false);
+                                  
+                                  await loginBack(context);
                                 }
                               } else {
                                 CommonExtension().showToast("Oops! Something went wrong");

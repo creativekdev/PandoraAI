@@ -7,6 +7,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
 import 'package:cartoonizer/Ui/HomeScreen.dart';
 
+import 'package:cartoonizer/api.dart';
+
 const String _kUser = 'user';
 
 String get APP_TYPE {
@@ -39,7 +41,12 @@ Future<void> saveUser(Map data) async {
   sharedPreferences.setString(_kUser, jsonEncode(user));
 }
 
-Future<void> loginBack(BuildContext context) async {
+Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
+  if (!isLogout) {
+    var user = await API.getLogin(needLoad: true, context: context) as UserModel;
+    if (user.status != 'activated') return;
+  }
+
   final box = GetStorage();
   String? login_back_page = box.read('login_back_page');
   if (login_back_page != null) {

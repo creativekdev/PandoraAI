@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:cartoonizer/Ui/HomeScreen.dart';
 
 import '../Common/Extension.dart';
 
@@ -63,7 +64,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   clickLogout() async {
     var sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.clear();
-    loginBack(context);
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      ModalRoute.withName('/HomeScreen'),
+    );
   }
 
   clickResend() async {
@@ -229,7 +235,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                         onPressed: _start == 60 ? () => clickResend() : null,
                                         child: Text(
                                           '${StringConstant.resend}${_start == 60 ? "" : " ${_start}"}',
-                                          style: TextStyle(color: _start == 60 ? ColorConstant.PrimaryColor : ColorConstant.BtnTextColor, fontWeight: FontWeight.bold, fontSize: 16),
+                                          style:
+                                              TextStyle(color: _start == 60 ? ColorConstant.PrimaryColor : ColorConstant.BtnTextColor, fontWeight: FontWeight.bold, fontSize: 16),
                                         )),
                                     SizedBox(
                                       height: 20,
