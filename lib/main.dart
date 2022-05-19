@@ -16,8 +16,9 @@ void main() async {
   // print the current configuration
   log("CONFIG: {apiHost: ${Config.instance.apiHost}, ANDROID_CHANNEL: ${ANDROID_CHANNEL}}");
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
     statusBarColor: Colors.transparent,
+    systemNavigationBarColor: ColorConstant.BackgroundColor,
   ));
 
   WidgetsFlutterBinding.ensureInitialized();

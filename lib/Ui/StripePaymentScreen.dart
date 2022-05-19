@@ -270,7 +270,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                       fit: BoxFit.contain,
                     ),
                     SizedBox(width: 4.w),
-                    TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.PrimaryColor, FontWeight.w500, 14.sp, align: TextAlign.center),
+                    TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.TextBlack, FontWeight.w500, 14.sp, align: TextAlign.center),
                   ],
                 ),
               ]),
@@ -303,29 +303,29 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorConstant.White,
+        backgroundColor: ColorConstant.BackgroundColor,
         body: SafeArea(
           child: LoadingOverlay(
               isLoading: _purchasePending,
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.all(15),
+                    margin: EdgeConstants.TopBarEdgeInsets,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () => {Navigator.pop(context)},
                           child: Image.asset(
-                            ImagesConstant.ic_back_dark,
-                            height: 38,
-                            width: 38,
+                            ImagesConstant.ic_back,
+                            height: 30,
+                            width: 30,
                           ),
                         ),
-                        TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                        TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
                         SizedBox(
-                          height: 38,
-                          width: 38,
+                          height: 30,
+                          width: 30,
                         )
                         // GestureDetector(
                         //   onTap: () async {

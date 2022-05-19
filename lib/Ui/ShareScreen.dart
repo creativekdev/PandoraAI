@@ -113,20 +113,16 @@ class _ShareScreenState extends State<ShareScreen> {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+              margin: EdgeConstants.TopBarEdgeInsets,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () => {Navigator.pop(context)},
-                    child: Image.asset(
-                      ImagesConstant.ic_back_dark,
-                      height: 10.w,
-                      width: 10.w,
-                    ),
+                    child: Image.asset(ImagesConstant.ic_back, height: 30, width: 30),
                   ),
-                  TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                  SizedBox(width: 10.w, height: 10.w)
+                  TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
+                  SizedBox(width: 30, height: 30)
                   //   GestureDetector(
                   //     onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
                   //     child: Image.asset(

@@ -57,22 +57,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                        margin: EdgeConstants.TopBarEdgeInsets,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                               onTap: () => {Navigator.pop(context)},
                               child: Image.asset(
-                                ImagesConstant.ic_back_dark,
-                                height: 10.w,
-                                width: 10.w,
+                                ImagesConstant.ic_back,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
-                            TitleTextWidget(StringConstant.edit_profile, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                            TitleTextWidget(StringConstant.edit_profile, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
                             SizedBox(
-                              height: 10.w,
-                              width: 10.w,
+                              height: 30,
+                              width: 30,
                             ),
                           ],
                         ),
@@ -180,7 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.done,
+                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done,
                                               TextInputType.emailAddress, false, nameController),
                                           SizedBox(
                                             height: 4.h,

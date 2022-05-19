@@ -153,7 +153,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
             padding: EdgeInsets.symmetric(horizontal: 5.w),
             child: Container(
               decoration: BoxDecoration(
-                color: Color.fromRGBO(235, 232, 255, 1),
+                color: ColorConstant.CardColor,
                 borderRadius: BorderRadius.circular(2.w),
               ),
               child: Padding(
@@ -162,8 +162,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                   children: [
                     Image.asset(
                       ImagesConstant.ic_radio_on,
-                      height: 8.w,
-                      width: 8.w,
+                      height: 26,
+                      width: 26,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
@@ -171,7 +171,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TitleTextWidget(
-                              "${currentSubscription["title"]} : ${currentSubscription["price"]}/${currentSubscription["unit"]}", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                              "${currentSubscription["title"]} : ${currentSubscription["price"]}/${currentSubscription["unit"]}", ColorConstant.White, FontWeight.w500, 14,
                               align: TextAlign.start),
                         ],
                       ),
@@ -200,7 +200,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: ColorConstant.CardColor,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
@@ -209,15 +209,15 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                       children: [
                         Image.asset(
                           isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 8.w,
-                          width: 8.w,
+                          height: 26,
+                          width: 26,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${yearly["title"]} ${yearly["price"]} / ${yearly["unit"]}", ColorConstant.TextBlack, FontWeight.w500, 12.sp, align: TextAlign.start),
+                              TitleTextWidget("${yearly["title"]} ${yearly["price"]} / ${yearly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -230,7 +230,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
+                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 14),
                               TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
                             ],
                           ),
@@ -254,7 +254,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: ColorConstant.CardColor,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
@@ -263,15 +263,15 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                       children: [
                         Image.asset(
                           !isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 8.w,
-                          width: 8.w,
+                          height: 26,
+                          width: 26,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${monthly["title"]} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                              TitleTextWidget("${monthly["title"]} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14,
                                   align: TextAlign.start),
                             ],
                           ),
@@ -285,7 +285,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
+                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 14),
                               TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
                             ],
                           ),
@@ -331,8 +331,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                             onTap: () => {Navigator.pop(context)},
                             child: Image.asset(
                               ImagesConstant.ic_close,
-                              height: 40,
-                              width: 40,
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                           Expanded(
@@ -350,7 +350,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                             ),
                             Image.asset(
                               ImagesConstant.ic_purchase_emoji,
-                              width: 50.w,
+                              width: 40.w,
                               fit: BoxFit.fitWidth,
                             ),
                             SizedBox(
@@ -359,6 +359,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
                               child: material.Card(
+                                color: ColorConstant.CardColor,
                                 shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(3.w),
@@ -372,12 +373,12 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                         children: [
                                           Image.asset(
                                             ImagesConstant.ic_no_watermark,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -388,12 +389,12 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                         children: [
                                           Image.asset(
                                             ImagesConstant.ic_hd,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -404,12 +405,12 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                         children: [
                                           Image.asset(
                                             ImagesConstant.ic_rocket,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),

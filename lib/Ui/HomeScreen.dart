@@ -72,15 +72,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                      margin: EdgeConstants.TopBarEdgeInsets,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            height: 10.w,
-                            width: 10.w,
+                            height: 30,
+                            width: 30,
                           ),
-                          TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                          TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, 18),
                           GestureDetector(
                             onTap: () => {
                               Navigator.push(
@@ -92,16 +92,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Image.asset(
                               ImagesConstant.ic_user_round,
-                              height: 10.w,
-                              width: 10.w,
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 0.5.h,
-                    ),
+                    // SizedBox(
+                    //   height: 5.h,
+                    // ),
                     Expanded(
                       child: ListView.builder(
                         itemCount: (snapshot.data as List<EffectModel>).length,
@@ -122,8 +122,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           },
                           child: Container(
-                            margin: EdgeInsets.only(left: 5.w, right: 5.w, bottom: 2.h),
+                            margin: EdgeInsets.only(left: 5.w, right: 5.w, top: 2.h),
                             child: Card(
+                              color: ColorConstant.CardColor,
                               elevation: 1.h,
                               shadowColor: Color.fromRGBO(0, 0, 0, 0.3),
                               shape: RoundedRectangleBorder(
@@ -299,13 +300,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   : (snapshot.data as List<EffectModel>)[index].display_name,
                                               ColorConstant.BtnTextColor,
                                               FontWeight.w600,
-                                              14.sp,
+                                              17,
                                               align: TextAlign.start),
                                         ),
                                         Image.asset(
                                           ImagesConstant.ic_next,
-                                          height: 14.w,
-                                          width: 14.w,
+                                          height: 50,
+                                          width: 50,
                                         ),
                                       ],
                                     ),

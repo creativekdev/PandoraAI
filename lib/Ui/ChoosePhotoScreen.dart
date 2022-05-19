@@ -132,9 +132,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 SizedBox(
                   height: 1.5.h,
                 ),
-                TitleTextWidget(StringConstant.no_watermark, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                TitleTextWidget(StringConstant.no_watermark, ColorConstant.HintColor, FontWeight.w400, 14),
                 SizedBox(
-                  height: 1.5.h,
+                  height: 2.h,
                 ),
                 GestureDetector(
                   onTap: () => {
@@ -157,10 +157,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                             )).then((value) => {setState(() {})})
                       }
                   },
-                  child: RoundedBorderBtnWidget(StringConstant.go_premium),
+                  child: ButtonWidget(StringConstant.go_premium),
                 ),
                 SizedBox(
-                  height: 1.5.h,
+                  height: 2.h,
                 ),
               ]));
         });
@@ -189,11 +189,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       padding: EdgeInsets.all(2.w),
                       child: Column(
                         children: [
-                          TitleTextWidget(StringConstant.exit_msg, ColorConstant.BtnTextColor, FontWeight.w600, 16.sp),
+                          TitleTextWidget(StringConstant.exit_msg, ColorConstant.TextBlack, FontWeight.w600, 18),
                           SizedBox(
-                            height: 0.3.h,
+                            height: 1.h,
                           ),
-                          TitleTextWidget(StringConstant.exit_msg1, ColorConstant.HintColor, FontWeight.w400, 10.sp),
+                          TitleTextWidget(StringConstant.exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
                           SizedBox(
                             height: 1.h,
                           ),
@@ -218,7 +218,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                     ),
                                   ),
                                   child: Center(
-                                    child: TitleTextWidget(StringConstant.exit_editing, ColorConstant.White, FontWeight.w600, 12.sp),
+                                    child: TitleTextWidget(StringConstant.exit_editing, ColorConstant.White, FontWeight.w600, 16),
                                   ),
                                 ),
                               ),
@@ -229,7 +229,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               Navigator.pop(context);
                             },
                             child: Padding(
-                              child: TitleTextWidget(StringConstant.cancel, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                              child: TitleTextWidget(StringConstant.cancel, ColorConstant.HintColor, FontWeight.w400, 16),
                               padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
                             ),
                           )
@@ -263,7 +263,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                 child: Column(
                   children: [
                     Container(
-                      margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                      margin: EdgeConstants.TopBarEdgeInsets,
                       child: Row(
                         children: [
                           GestureDetector(
@@ -271,9 +271,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               Navigator.maybePop(context);
                             },
                             child: Image.asset(
-                              ImagesConstant.ic_back_dark,
-                              height: 10.w,
-                              width: 10.w,
+                              ImagesConstant.ic_back,
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                           Expanded(
@@ -341,14 +341,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_gallery,
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 2.w,
+                            width: 3.w,
                           ),
                           Obx(
                             () => Visibility(
@@ -412,8 +412,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_camera,
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ),
                             ),
@@ -422,7 +422,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                             () => Visibility(
                               visible: controller.isPhotoDone.value,
                               child: SizedBox(
-                                width: 2.w,
+                                width: 3.w,
                               ),
                             ),
                           ),
@@ -455,14 +455,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_download,
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 2.w,
+                            width: 3.w,
                           ),
                           Obx(
                             () => Visibility(
@@ -510,8 +510,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_share,
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ),
                             ),
@@ -534,10 +534,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                             )
                                           : Image.memory(
                                               base64Decode(image),
-                                              width: 100.w,
-                                              height: 100.w,
+                                              width: 88.w,
+                                              height: 88.w,
                                             ),
                                     ),
+                                    SizedBox(height: 1.h),
                                     _buildSignupBlock(context),
                                     _buildPremiumBlock(),
                                     Visibility(
@@ -721,7 +722,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(vertical: 1.h),
-                                                  child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                                                  child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.White, FontWeight.w400, 14),
                                                 ),
                                               ),
                                             ],
@@ -739,6 +740,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                   child: Container(
                                                     width: 90.w,
                                                     child: Card(
+                                                      color: ColorConstant.CardColor,
                                                       clipBehavior: Clip.antiAliasWithSaveLayer,
                                                       elevation: 1.h,
                                                       shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
@@ -750,7 +752,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                       child: Padding(
                                                         padding: EdgeInsets.all(5.w),
                                                         child: DottedBorder(
-                                                          color: Color.fromRGBO(0, 0, 0, 1),
+                                                          color: ColorConstant.White,
                                                           strokeWidth: 0.1.h,
                                                           radius: Radius.circular(1.w),
                                                           borderType: BorderType.RRect,
@@ -828,14 +830,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               },
                               child: Image.asset(
                                 controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                                width: 6.w,
-                                height: 6.w,
+                                width: 20,
+                                height: 20,
                               ),
                             ),
                             SizedBox(
                               width: 1.5.w,
                             ),
-                            TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
+                            TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
                             SizedBox(
                               width: 2.w,
                             ),
@@ -910,9 +912,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     return Card(
       elevation: 0,
+      color: ColorConstant.BackgroundColor,
       shape: (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex)
-          ? RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.PrimaryColor, width: 0.5.w), borderRadius: BorderRadius.circular(3.w))
-          : RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.White, width: 0.5.w), borderRadius: BorderRadius.circular(3.w)),
+          ? RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.BlueColor, width: 0.5.w), borderRadius: BorderRadius.circular(3.w))
+          : RoundedRectangleBorder(side: new BorderSide(color: ColorConstant.BackgroundColor, width: 0.5.w), borderRadius: BorderRadius.circular(3.w)),
       child: Padding(
         padding: EdgeInsets.all(1.w),
         child: GestureDetector(
@@ -1232,11 +1235,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   Widget _buildSeparator() {
     return VerticalDivider(
-      color: Color.fromRGBO(0, 0, 0, 0.1),
+      color: ColorConstant.HintColor,
       width: 1.w,
       indent: 3.h,
       endIndent: 3.h,
-      thickness: 0.8.w,
+      thickness: 0.4.w,
     );
   }
 
@@ -1247,12 +1250,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             scrollController.scrollTo(index: index, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 6),
             child: TitleTextWidget(
                 (widget.list[index].display_name != "null") ? widget.list[index].display_name : widget.list[index].key,
-                (index == controller.lastItemIndex1.value) ? ColorConstant.TextBlack : ColorConstant.LightTextColor,
+                (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : ColorConstant.White,
                 (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
-                12.sp),
+                14),
           ),
         ));
   }
@@ -1286,14 +1289,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   SizedBox(
                     height: 1.h,
                   ),
-                  TitleTextWidget(StringConstant.signup_text1, ColorConstant.TextBlack, FontWeight.w600, 14.sp),
+                  TitleTextWidget(StringConstant.signup_text1, ColorConstant.TextBlack, FontWeight.w600, 18),
                   SizedBox(
                     height: 1.h,
                   ),
-                  TitleTextWidget(StringConstant.signup_text2, ColorConstant.HintColor, FontWeight.w400, 10.sp),
-                  SizedBox(
-                    height: 2.h,
-                  ),
+                  TitleTextWidget(StringConstant.signup_text2, ColorConstant.TextBlack, FontWeight.w400, 14, maxLines: 3),
                   GestureDetector(
                     onTap: () async {
                       SharedPreferences sharedPreferences = await SharedPreferences.getInstance();

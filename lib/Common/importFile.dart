@@ -22,6 +22,6 @@ export 'package:cartoonizer/Widgets/SimpleTextInputWidget.dart';
 export 'package:cartoonizer/Widgets/RoundedBorderBtnWidget.dart';
 export 'package:cartoonizer/Widgets/ImageTextBarWidget.dart';
 export 'package:cartoonizer/Common/StringConstant.dart';
-export 'package:cartoonizer/Common/ColorConstant.dart';
+export 'package:cartoonizer/Common/ThemeConstant.dart';
 export 'package:cartoonizer/Common/ImagesConstant.dart';
 export 'package:cartoonizer/Common/EventConstant.dart';

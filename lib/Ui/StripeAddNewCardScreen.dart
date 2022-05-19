@@ -162,67 +162,112 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                   zipCode = data.zipCode;
                 });
               }, // Required
-              themeColor: ColorConstant.PrimaryColor,
+              themeColor: ColorConstant.White,
+              textColor: ColorConstant.White,
               obscureCvv: true,
               obscureNumber: false,
               isZipCodeVisible: true,
               isCardNumberVisible: true,
               isExpiryDateVisible: true,
               cardNumberDecoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 labelText: 'Card Number',
                 hintText: 'XXXX XXXX XXXX XXXX',
-                filled: true,
-                fillColor: ColorConstant.White,
-                floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
+                hintStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                labelStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
               expiryDateDecoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 labelText: 'Expired Date',
                 hintText: 'XX/XX',
-                filled: true,
-                fillColor: ColorConstant.White,
-                floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
+                hintStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                labelStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
               cvvCodeDecoration: const InputDecoration(
-                border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
+                ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 labelText: 'CVV',
                 hintText: 'XXX',
-                filled: true,
-                fillColor: ColorConstant.White,
-                floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
+                hintStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                labelStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
               zipCodeDecoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  borderSide: BorderSide(color: ColorConstant.PrimaryColor, width: 2.0),
+                  borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
                 labelText: StringConstant.zip_code,
                 hintText: 'XXXX',
-                filled: true,
-                fillColor: ColorConstant.White,
-                floatingLabelStyle: TextStyle(color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500),
+                hintStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                labelStyle: TextStyle(
+                  color: ColorConstant.White,
+                  fontWeight: FontWeight.w400,
+                ),
+                floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
             )
           ],
@@ -271,23 +316,23 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorConstant.White,
+        backgroundColor: ColorConstant.BackgroundColor,
         body: SafeArea(
           child: LoadingOverlay(
               isLoading: _purchasePending,
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.all(15),
+                    margin: EdgeConstants.TopBarEdgeInsets,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () => {Navigator.pop(context)},
                           child: Image.asset(
-                            ImagesConstant.ic_back_dark,
-                            height: 38,
-                            width: 38,
+                            ImagesConstant.ic_back,
+                            height: 30,
+                            width: 30,
                           ),
                         ),
                       ],
@@ -300,7 +345,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                           SizedBox(
                               // height: 5.h,
                               ),
-                          TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 18.sp),
+                          TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 24),
                           SizedBox(
                             height: 2.h,
                           ),

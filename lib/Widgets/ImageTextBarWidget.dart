@@ -8,8 +8,8 @@ Widget ImageTextBarWidget(String text, String image, bool isShowArrow) {
         children: [
           Image.asset(
             image,
-            height: 12.w,
-            width: 12.w,
+            height: 40,
+            width: 40,
           ),
           SizedBox(
             width: 3.w,
@@ -18,7 +18,7 @@ Widget ImageTextBarWidget(String text, String image, bool isShowArrow) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TitleTextWidget(text, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                TitleTextWidget(text, Colors.white, FontWeight.w400, 16),
               ],
             ),
           ),

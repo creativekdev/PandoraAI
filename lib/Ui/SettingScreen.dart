@@ -34,22 +34,22 @@ class _SettingScreenState extends State<SettingScreen> {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+              margin: EdgeConstants.TopBarEdgeInsets,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () => {Navigator.pop(context)},
                     child: Image.asset(
-                      ImagesConstant.ic_back_dark,
-                      height: 10.w,
-                      width: 10.w,
+                      ImagesConstant.ic_back,
+                      height: 30,
+                      width: 30,
                     ),
                   ),
-                  TitleTextWidget(StringConstant.setting, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                  TitleTextWidget(StringConstant.setting, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
                   SizedBox(
-                    height: 10.w,
-                    width: 10.w,
+                    height: 30,
+                    width: 30,
                   ),
                 ],
               ),
@@ -122,9 +122,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
-                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", Colors.white, FontWeight.w500, 12.sp,
                                                   align: TextAlign.start),
-                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).name : "", ColorConstant.LightTextColor, FontWeight.w400, 12.sp,
+                                              TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).name : "", Colors.white, FontWeight.w400, 12.sp,
                                                   align: TextAlign.start),
                                             ],
                                           ),
@@ -147,10 +147,8 @@ class _SettingScreenState extends State<SettingScreen> {
                                 GetStorage().write('login_back_page', '/SettingScreen'),
                                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
                                   if (await _getIsLogin()) {
-                                    API.getLogin(needLoad: true, context: context);
-                                    setState(() {
-                                      isLoading = true;
-                                    });
+                                    await API.getLogin(needLoad: true, context: context);
+                                    setState(() {});
                                   }
                                   if (value != null) {}
                                 })
