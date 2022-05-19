@@ -8,6 +8,12 @@ const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id
 const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.socialbook.cartoonizer';
 const String IOS_APP_ID = '1604123460';
 
+class AppLovinConfig {
+  static const String APPLOVIN_KEY = 'D9GdODAvyVCfkF8g5ZM0Ub5OTeh2TGPvpl6UvlBRuCgXuasSdG7bDo_-sr8R9vUU_Vx5KUhzhmJ74e5nIhISw6';
+  static String get INTERSTITIAL_AD_ID => Platform.isIOS ? "9620a0ef622da195" : "46442c2be0bc5d94";
+  static String get MERC_AD_ID => Platform.isIOS ? "15e7efce98556126" : "905f6f3f1520fcd2";
+}
+
 abstract class BaseConfig {
   late String host;
   late String aiHost;

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'firebase_options.dart';
+import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -45,6 +46,11 @@ void main() async {
   // log app open
   FirebaseAnalytics.instance.logAppOpen();
 
+  // init applovin
+  // FlutterApplovinMax.initSDK();
+  FlutterApplovinMax.initInterstitialAd(AppLovinConfig.INTERSTITIAL_AD_ID);
+
+  // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 
@@ -71,11 +77,20 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     _checkAppVersion();
+    //2.页面初始化的时候，添加一个状态的监听者
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    //3. 页面销毁时，移出监听者
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   Future<void> _checkAppVersion() async {
@@ -116,6 +131,32 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       );
+    }
+  }
+
+  //监听程序进入前后台的状态改变的方法
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
+      case AppLifecycleState.resumed:
+        print("didChangeAppLifecycleState-------> 应用进入前台======");
+        break;
+      //应用状态处于闲置状态，并且没有用户的输入事件，
+      // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
+      case AppLifecycleState.inactive:
+        print("didChangeAppLifecycleState-------> 应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
+        break;
+      //当前页面即将退出
+      case AppLifecycleState.detached:
+        print("didChangeAppLifecycleState-------> 当前页面即将退出======");
+        break;
+      // 应用程序处于不可见状态
+      case AppLifecycleState.paused:
+        print("didChangeAppLifecycleState-------> 应用处于不可见状态 后台======");
+        break;
     }
   }
 

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
+import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
@@ -1023,6 +1024,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     );
   }
 
+  Future<void> _showInterstitialVideo() async {
+    var isInterstitialVideoAvailable = await FlutterApplovinMax.isInterstitialLoaded((listener) => null);
+    if (isInterstitialVideoAvailable as bool) {
+      FlutterApplovinMax.showInterstitialVideo((listener) => null);
+    }
+  }
+
   Future<void> getCartoon(BuildContext context) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -1074,6 +1082,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       }
     } else {
       controller.changeIsRate(true);
+
+      _showInterstitialVideo();
+
       String b_name = "free-socialbook";
       String f_name = basename((controller.image.value as File).path);
       String c_type = "image/*";
