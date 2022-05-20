@@ -43,9 +43,6 @@ void main() async {
   // init appsflyer
   Appsflyer.instance;
 
-  // log app open
-  Events.logSystemEvent(Events.open_app);
-
   // init applovin
   // FlutterApplovinMax.initSDK();
   FlutterApplovinMax.initInterstitialAd(AppLovinConfig.INTERSTITIAL_AD_ID);
@@ -82,6 +79,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     _checkAppVersion();
+
+    // log app open
+    logSystemEvent(Events.open_app);
+
     //2.页面初始化的时候，添加一个状态的监听者
     WidgetsBinding.instance.addObserver(this);
   }

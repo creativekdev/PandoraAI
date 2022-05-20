@@ -59,6 +59,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   @override
   void initState() {
     super.initState();
+
+    logEvent(Events.upload_page_loading);
+
     initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
@@ -96,6 +99,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         visible: !controller.isLogin.value,
         child: GestureDetector(
           onTap: () => {
+            logEvent(Events.result_signup_get_credit),
             GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
             Navigator.push(
               context,
@@ -272,6 +276,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         children: [
                           GestureDetector(
                             onTap: () async {
+                              logEvent(Events.result_back);
                               Navigator.maybePop(context);
                             },
                             child: Image.asset(
@@ -291,6 +296,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               maintainSize: true,
                               child: GestureDetector(
                                 onTap: () async {
+                                  logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": "result"});
                                   var source = ImageSource.gallery;
                                   try {
                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -362,6 +368,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               maintainSize: true,
                               child: GestureDetector(
                                 onTap: () async {
+                                  logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": "result"});
                                   var source = ImageSource.camera;
                                   try {
                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -439,7 +446,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                   var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  FirebaseAnalytics.instance.logEvent(name: Events.result_download, parameters: {"style": selectedEffect["key"]});
+                                  logEvent(Events.result_download, eventValues: {"effect": selectedEffect["key"]});
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
@@ -477,7 +484,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                   var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  FirebaseAnalytics.instance.logEvent(name: Events.result_share, parameters: {"style": selectedEffect["key"]});
+                                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect["key"]});
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
@@ -611,7 +618,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
-                                                  FirebaseAnalytics.instance.logEvent(name: Events.choose_home_cartoon_type);
+                                                  logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": "center"});
                                                   var source = ImageSource.gallery;
                                                   try {
                                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -669,8 +676,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               SizedBox(height: 1.h),
                                               GestureDetector(
                                                 onTap: () async {
-                                                  // FirebaseAnalytics.instance.logEvent(name: Events.tak);
-
+                                                  logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": "center"});
                                                   var source = ImageSource.camera;
                                                   try {
                                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -1044,10 +1050,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     String aiHost = _getAiHostByStyle(category.style);
 
-    FirebaseAnalytics.instance.logEvent(name: Events.photo_cartoon_result, parameters: {
-      "style": selectedEffect["key"],
-    });
-
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
 
     if (offlineEffect.containsKey(key)) {
@@ -1101,6 +1103,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           var sharedPrefs = await SharedPreferences.getInstance();
           final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
           final Map tokenParsed = json.decode(tokenResponse.body.toString());
+
+          int resultSuccess = 0;
+
           if (tokenResponse.statusCode == 200) {
             if (tokenParsed['data'] == null) {
               var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
@@ -1148,6 +1153,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   var params = {"algoname": selectedEffect["key"]};
                   API.get("/api/log/cartoonize", params: params);
                 }
+                resultSuccess = 1;
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');
@@ -1202,6 +1208,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   var params = {"algoname": selectedEffect["key"]};
                   API.get("/api/log/cartoonize", params: params);
                 }
+                resultSuccess = 1;
               } else {
                 controller.changeIsLoading(false);
                 CommonExtension().showToast('Error while processing image');
@@ -1223,6 +1230,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               CommonExtension().showToast(responseBody['message']);
             }
           }
+
+          logEvent(Events.photo_cartoon_result, eventValues: {
+            "success": resultSuccess,
+            "effect": selectedEffect["key"],
+            "category": category.key,
+            "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
+          });
         }
       } catch (e) {
         controller.changeIsLoading(false);

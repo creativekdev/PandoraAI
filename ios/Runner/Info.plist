@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Cartoonizer</string>
+	<string>ProfilePicMaker</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -45,7 +45,7 @@
 	<key>FacebookClientToken</key>
 	<string>f43d04dd22a9134960f973c1bd5af735</string>
 	<key>FacebookDisplayName</key>
-	<string>Cartoonizer</string>
+	<string>ProfilePicMaker</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>whatsapp</string>

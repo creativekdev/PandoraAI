@@ -42,6 +42,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   @override
   void initState() {
+    logEvent(Events.premium_page_loading);
+
     initStoreInfo();
     super.initState();
   }
@@ -94,16 +96,9 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
       initStoreInfo();
       GetStorage().remove("payment_result");
 
-      FirebaseAnalytics.instance.logPurchase(
-        items: [
-          AnalyticsEventItem(
-            itemId: subscription["plan_id"],
-            itemName: subscription["id"],
-            price: subscription["price"],
-            currency: "USD",
-            quantity: 1,
-          )
-        ],
+      logEvent(
+        Events.paid_success,
+        eventValues: {"plan_id": subscription["plan_id"], "product_id": subscription["id"], "price": subscription["price"].toString(), "currency": "USD", "quantity": 1},
       );
     }
   }
@@ -271,8 +266,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${monthly["title"]} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14,
-                                  align: TextAlign.start),
+                              TitleTextWidget("${monthly["title"]} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
                             ],
                           ),
                         ),

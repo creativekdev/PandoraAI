@@ -28,6 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
   var token;
   var tokenId;
 
+  @override
+  void initState() {
+    logEvent(Events.login_page_loading);
+    super.initState();
+  }
+
   Future<void> goBack() async {
     final box = GetStorage();
     String? login_back_page = box.read('login_back_page');
@@ -327,8 +333,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           print(body);
                           final response = await API.post("/api/user/login", body: body).whenComplete(() => {});
 
-                          FirebaseAnalytics.instance.logLogin(loginMethod: "email");
-
                           print(response.body);
                           if (response.statusCode == 200) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -353,6 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
+                            logSystemEvent(Events.login, eventValues: {"method": "email"});
                           } else {
                             try {
                               CommonExtension().showToast(json.decode(response.body)['message']);
@@ -401,15 +406,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (Platform.isIOS)
                       GestureDetector(
                         onTap: () async {
-                          FirebaseAnalytics.instance.logLogin(loginMethod: "apple");
-
                           setState(() {
                             isLoading = true;
                           });
                           try {
                             var result = await signInWithApple();
+
                             if (result) {
                               await loginBack(context);
+                              logSystemEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
@@ -431,8 +436,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     GestureDetector(
                       onTap: () async {
-                        FirebaseAnalytics.instance.logLogin(loginMethod: "google");
-
                         setState(() {
                           isLoading = true;
                         });
@@ -491,8 +494,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-
                               await loginBack(context);
+                              logSystemEvent(Events.login, eventValues: {"method": "google"});
                             }
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
@@ -514,7 +517,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         TitleTextWidget(StringConstant.no_account, ColorConstant.White, FontWeight.w400, 12),
                         GestureDetector(
                           onTap: () => {
-                            FirebaseAnalytics.instance.logEvent(name: Events.signup, parameters: {"screen": "login"}),
                             if (prefixPage == 'signup')
                               {Navigator.pop(context)}
                             else

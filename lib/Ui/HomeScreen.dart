@@ -42,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.homepage_loading);
+    
     API.getLogin(needLoad: true, context: context);
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
@@ -319,6 +321,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onEffectCategoryTap(List<EffectModel> list, int index) {
+    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style});
+
     Navigator.push(
       context,
       MaterialPageRoute(

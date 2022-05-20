@@ -23,6 +23,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  @override
+  void initState() {
+    logEvent(Events.signup_page_loading);
+    super.initState();
+  }
+
   bool isShow = true;
   bool isShow1 = true;
   final emailController = TextEditingController();
@@ -197,7 +203,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (Platform.isIOS)
                     GestureDetector(
                       onTap: () async {
-                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "apple");
                         setState(() {
                           isLoading = true;
                         });
@@ -205,6 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           var result = await signInWithApple();
                           if (result) {
                             await loginBack(context);
+                            logSystemEvent(Events.signup, eventValues: {"method": "apple"});
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
@@ -226,7 +232,6 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   GestureDetector(
                     onTap: () async {
-                      FirebaseAnalytics.instance.logSignUp(signUpMethod: "google");
                       setState(() {
                         isLoading = true;
                       });
@@ -286,6 +291,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
+                            logSystemEvent(Events.login, eventValues: {"method": "google"});
                           }
                         } else {
                           CommonExtension().showToast("Oops! Something went wrong");
@@ -370,8 +376,8 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
-
                             await loginBack(context);
+                            logSystemEvent(Events.login, eventValues: {"method": "youtube"});
                           }
                         } else {
                           CommonExtension().showToast("Oops! Something went wrong");
@@ -536,7 +542,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   SizedBox(
                     height: 2.h,
                   ),
-                  Container(color: ColorConstant.BackgroundColor, height: 6.h,),
+                  Container(
+                    color: ColorConstant.BackgroundColor,
+                    height: 6.h,
+                  ),
                 ],
               ),
             ),

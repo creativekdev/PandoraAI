@@ -64,9 +64,9 @@ class _ShareScreenState extends State<ShareScreen> {
 
     final FlutterShareMe flutterShareMe = FlutterShareMe();
 
-    FirebaseAnalytics.instance.logEvent(name: Events.result_share, parameters: {
-      "style": widget.style,
-      "method": shareType.name,
+    logEvent(Events.result_share, eventValues: {
+      "effect": widget.style,
+      "channel": shareType.name,
     });
 
     switch (shareType) {

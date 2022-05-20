@@ -27,6 +27,12 @@ class _SettingScreenState extends State<SettingScreen> {
   bool isLoading = false;
 
   @override
+  void initState() {
+    logEvent(Events.profile_page_loading);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
@@ -289,6 +295,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
+                          logEvent(Events.rate_us);
                           var url = Config.getStoreLink();
                           launchURL(url);
                         },
@@ -299,6 +306,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
+                          logEvent(Events.share_app);
                           final box = context.findRenderObject() as RenderBox?;
                           var appLink = Config.getStoreLink();
                           await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
@@ -310,6 +318,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
+                          logEvent(Events.open_help_center);
                           launchURL("https://socialbook.io/help/");
                         },
                         child: ImageTextBarWidget(StringConstant.help, ImagesConstant.ic_help, true),
@@ -319,6 +328,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
+                          logEvent(Events.open_terms);
                           launchURL("https://socialbook.io/terms");
                         },
                         child: ImageTextBarWidget(StringConstant.term_condition, ImagesConstant.ic_term, true),
@@ -328,6 +338,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
+                          logEvent(Events.open_privacy);
                           launchURL("https://socialbook.io/privacy");
                         },
                         child: ImageTextBarWidget(StringConstant.privacy_policy1, ImagesConstant.ic_policy, true),
@@ -392,6 +403,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           children: [
                             GestureDetector(
                               onTap: () async {
+                                logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
                                 launchURL("https://www.facebook.com/SocialBook.io");
                               },
                               child: Image.asset(
@@ -402,6 +414,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                             GestureDetector(
                               onTap: () async {
+                                logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
                                 launchURL("https://www.instagram.com/socialbook.io/");
                               },
                               child: Image.asset(
@@ -412,6 +425,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                             GestureDetector(
                               onTap: () async {
+                                logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
                                 launchURL("https://twitter.com/SocialBookdotio");
                               },
                               child: Image.asset(
@@ -422,6 +436,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                             GestureDetector(
                               onTap: () async {
+                                logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
                                 launchURL("https://tiktok.com/@socialbook.io");
                               },
                               child: Image.asset(
@@ -465,6 +480,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
               ),
               onPressed: () async {
+                logEvent(Events.logout);
                 var sharedPrefs = await SharedPreferences.getInstance();
                 sharedPrefs.clear();
                 Navigator.pop(context);

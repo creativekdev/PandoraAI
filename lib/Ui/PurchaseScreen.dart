@@ -47,6 +47,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   void initState() {
+    logEvent(Events.premium_page_loading);
+
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
@@ -109,8 +111,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       });
     }
 
-    FirebaseAnalytics.instance.logPurchase(
-      items: [AnalyticsEventItem(itemName: purchaseDetails.productID, price: isYear ? 39.99 : 3.99, currency: "USD", quantity: 1)],
+    logEvent(
+      Events.paid_success,
+      eventValues: {"product_id": purchaseDetails.productID, "price": (isYear ? 39.99 : 3.99).toString(), "currency": "USD", "quantity": 1},
     );
   }
 
@@ -128,6 +131,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
+
           if (valid) {
             // reload user by get login
             UserModel user = await API.getLogin(needLoad: true);
@@ -248,7 +252,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
-        // FirebaseAnalytics.instance.logEvent(name: Events.click_purchase);
+        logEvent(Events.premium_continue);
 
         var sharedPrefs = await SharedPreferences.getInstance();
 
