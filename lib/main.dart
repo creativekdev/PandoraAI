@@ -24,27 +24,27 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Show tracking authorization dialog and ask for permission
-  await AppTrackingTransparency.requestTrackingAuthorization();
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   // init get storage
   await GetStorage.init();
+
+  // Show tracking authorization dialog and ask for permission
+  await AppTrackingTransparency.requestTrackingAuthorization();
 
   // init firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // init appsflyer
-  // Appsflyer.instance;
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
   // init firebase analytics
   await FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
 
+  // init appsflyer
+  Appsflyer.instance;
+
   // log app open
-  FirebaseAnalytics.instance.logAppOpen();
+  Events.logSystemEvent(Events.open_app);
 
   // init applovin
   // FlutterApplovinMax.initSDK();

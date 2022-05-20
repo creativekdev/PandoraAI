@@ -116,7 +116,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     return GestureDetector(
       onTap: () async {
         if (_purchasePending) return;
-        FirebaseAnalytics.instance.logEvent(name: EventConstant.click_purchase);
+        // FirebaseAnalytics.instance.logEvent(name: Events.click_purchase);
         showPendingUI();
         var sharedPrefs = await SharedPreferences.getInstance();
 

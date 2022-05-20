@@ -1,23 +1,5 @@
-
-const List<String> videoFormats = [
-  '.mp4',
-  '.mov',
-  '.avi',
-  '.wmv',
-  '.3gp',
-  '.3gpp',
-  '.mkv',
-  '.flv'
-];
-const List<String> imageFormats = [
-  '.jpeg',
-  '.png',
-  '.jpg',
-  '.gif',
-  '.webp',
-  '.tif',
-  '.heic'
-];
+const List<String> videoFormats = ['.mp4', '.mov', '.avi', '.wmv', '.3gp', '.3gpp', '.mkv', '.flv'];
+const List<String> imageFormats = ['.jpeg', '.png', '.jpg', '.gif', '.webp', '.tif', '.heic'];
 const http = 'http';
 
 bool isLocalFilePath(String path) {

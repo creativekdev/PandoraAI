@@ -439,7 +439,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                   var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.download, parameters: {"style": selectedEffect["key"]});
+                                  FirebaseAnalytics.instance.logEvent(name: Events.result_download, parameters: {"style": selectedEffect["key"]});
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
@@ -477,7 +477,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                   var effects = category.effects;
                                   var keys = effects.keys.toList();
                                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.click_share, parameters: {"style": selectedEffect["key"]});
+                                  FirebaseAnalytics.instance.logEvent(name: Events.result_share, parameters: {"style": selectedEffect["key"]});
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
@@ -611,8 +611,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               ),
                                               GestureDetector(
                                                 onTap: () async {
-                                                  // Appsflyer.logEvent(AppsflyerEvent.click_choose_photo);
-                                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.choose_photo);
+                                                  FirebaseAnalytics.instance.logEvent(name: Events.choose_home_cartoon_type);
                                                   var source = ImageSource.gallery;
                                                   try {
                                                     XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -670,7 +669,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               SizedBox(height: 1.h),
                                               GestureDetector(
                                                 onTap: () async {
-                                                  FirebaseAnalytics.instance.logEvent(name: EventConstant.take_selfie);
+                                                  // FirebaseAnalytics.instance.logEvent(name: Events.tak);
 
                                                   var source = ImageSource.camera;
                                                   try {
@@ -1045,7 +1044,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     String aiHost = _getAiHostByStyle(category.style);
 
-    FirebaseAnalytics.instance.logEvent(name: EventConstant.cartoon, parameters: {
+    FirebaseAnalytics.instance.logEvent(name: Events.photo_cartoon_result, parameters: {
       "style": selectedEffect["key"],
     });
 

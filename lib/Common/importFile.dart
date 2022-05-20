@@ -24,4 +24,4 @@ export 'package:cartoonizer/Widgets/ImageTextBarWidget.dart';
 export 'package:cartoonizer/Common/StringConstant.dart';
 export 'package:cartoonizer/Common/ThemeConstant.dart';
 export 'package:cartoonizer/Common/ImagesConstant.dart';
-export 'package:cartoonizer/Common/EventConstant.dart';
+export 'package:cartoonizer/Common/events.dart';

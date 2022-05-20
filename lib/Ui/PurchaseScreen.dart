@@ -248,7 +248,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
-        FirebaseAnalytics.instance.logEvent(name: EventConstant.click_purchase);
+        // FirebaseAnalytics.instance.logEvent(name: Events.click_purchase);
 
         var sharedPrefs = await SharedPreferences.getInstance();
 
