@@ -11,7 +11,7 @@ import 'package:cartoonizer/config.dart';
 class Events {
   static String open_app = "open app";
   static String login = "login";
-  static String signup = "signup"; // method, from
+  static String signup = "signup"; // method, signup_through
   static String choose_home_cartoon_type = "choose_home_cartoon_type"; // category, style: face|full_body
   static String upload_photo = "upload_photo"; // method:photo|camera, from:center|result
   static String photo_cartoon_result = "photo_cartoon_result"; // success, category:3d, effect:3d1, original_face
@@ -66,12 +66,6 @@ logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {
   switch (eventName) {
     case "open_app":
       FirebaseAnalytics.instance.logAppOpen();
-      break;
-    case "login":
-      FirebaseAnalytics.instance.logLogin(loginMethod: eventValues?["method"]);
-      break;
-    case "signup":
-      FirebaseAnalytics.instance.logSignUp(signUpMethod: eventValues?["method"]);
       break;
     default:
   }

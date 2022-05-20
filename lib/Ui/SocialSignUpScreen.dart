@@ -258,7 +258,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
 
                               UserModel user = await API.getLogin(needLoad: true);
-                              logSystemEvent(Events.signup, eventValues: {"method": "google"});
+                              logEvent(Events.signup, eventValues: {"method": "google", "signup_through": GetStorage().read('signup_through') ?? ""});
 
                               if (user.status != "activated") {
                                 Navigator.pushReplacement<void, void>(
@@ -311,7 +311,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
 
                               UserModel user = await API.getLogin(needLoad: true);
 
-                              logSystemEvent(Events.signup, eventValues: {"method": widget.channel});
+                              logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                               if (user.status != "activated") {
                                 Navigator.pushReplacement(
                                   context,
@@ -360,7 +360,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
                               await loginBack(context);
 
-                              logSystemEvent(Events.signup, eventValues: {"method": widget.channel});
+                              logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                             } else {
                               final Map parsed = json.decode(appleResponse.body.toString());
                               CommonExtension().showToast(parsed['message']);

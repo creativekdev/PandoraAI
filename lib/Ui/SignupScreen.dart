@@ -210,7 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           var result = await signInWithApple();
                           if (result) {
                             await loginBack(context);
-                            logSystemEvent(Events.signup, eventValues: {"method": "apple"});
+                            logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
@@ -291,7 +291,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
-                            logSystemEvent(Events.login, eventValues: {"method": "google"});
+                            logEvent(Events.login, eventValues: {"method": "google"});
                           }
                         } else {
                           CommonExtension().showToast("Oops! Something went wrong");
@@ -377,7 +377,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
-                            logSystemEvent(Events.login, eventValues: {"method": "youtube"});
+                            logEvent(Events.login, eventValues: {"method": "youtube"});
                           }
                         } else {
                           CommonExtension().showToast("Oops! Something went wrong");
@@ -517,7 +517,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       TitleTextWidget(StringConstant.already_account, ColorConstant.White, FontWeight.w400, 12),
                       GestureDetector(
                         onTap: () => {
-                          FirebaseAnalytics.instance.logEvent(name: Events.login, parameters: {"screen": "signup"}),
                           if (prefixPage != null)
                             {
                               Navigator.push(

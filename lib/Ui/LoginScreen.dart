@@ -357,7 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
-                            logSystemEvent(Events.login, eventValues: {"method": "email"});
+                            logEvent(Events.login, eventValues: {"method": "email"});
                           } else {
                             try {
                               CommonExtension().showToast(json.decode(response.body)['message']);
@@ -414,7 +414,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             if (result) {
                               await loginBack(context);
-                              logSystemEvent(Events.login, eventValues: {"method": "apple"});
+                              logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
@@ -495,7 +495,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
                               await loginBack(context);
-                              logSystemEvent(Events.login, eventValues: {"method": "google"});
+                              logEvent(Events.login, eventValues: {"method": "google"});
                             }
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
@@ -517,6 +517,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TitleTextWidget(StringConstant.no_account, ColorConstant.White, FontWeight.w400, 12),
                         GestureDetector(
                           onTap: () => {
+                            GetStorage().write('signup_through', ''),
                             if (prefixPage == 'signup')
                               {Navigator.pop(context)}
                             else

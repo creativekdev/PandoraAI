@@ -252,7 +252,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
-        logEvent(Events.premium_continue);
+        logEvent(Events.premium_continue, eventValues: {"plan_type": isYear ? "yearly" : "monthly"});
 
         var sharedPrefs = await SharedPreferences.getInstance();
 

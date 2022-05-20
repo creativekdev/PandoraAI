@@ -100,6 +100,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         child: GestureDetector(
           onTap: () => {
             logEvent(Events.result_signup_get_credit),
+            GetStorage().write('signup_through', 'result_signup_get_credit'),
             GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
             Navigator.push(
               context,
