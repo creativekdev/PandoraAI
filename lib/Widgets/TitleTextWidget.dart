@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 Widget TitleTextWidget(String text, Color color, FontWeight fontWeight, double size, {TextAlign align = TextAlign.center, int maxLines = 1}) => Text(
       text,

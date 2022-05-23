@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cartoonizer/api.dart';
 

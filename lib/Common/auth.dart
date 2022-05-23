@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/common/utils.dart';
 import 'package:crypto/crypto.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';

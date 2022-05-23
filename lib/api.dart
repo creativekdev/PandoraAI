@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Ui/EmailVerificationScreen.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Common/sToken.dart';
-import 'Model/UserModel.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/common/sToken.dart';
+import 'models/UserModel.dart';
 
 class API {
   // Stitching parameters

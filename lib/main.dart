@@ -5,10 +5,10 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'firebase_options.dart';
 import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 
-import 'package:cartoonizer/Common/dialog.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'package:cartoonizer/common/dialog.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/views/HomeScreen.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'config.dart';

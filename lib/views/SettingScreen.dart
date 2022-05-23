@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
-import 'package:cartoonizer/Ui/LoginScreen.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/views/LoginScreen.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';

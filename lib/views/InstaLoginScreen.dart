@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../Common/instagram_constant.dart';
-import '../Model/InstagramModel.dart';
+import '../common/instagram_constant.dart';
+import '../models/InstagramModel.dart';
 
 class InstaLoginScreen extends StatefulWidget {
   const InstaLoginScreen({Key? key}) : super(key: key);

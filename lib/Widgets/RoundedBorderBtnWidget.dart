@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 Widget RoundedBorderBtnWidget(String btnText, {Color color = ColorConstant.PrimaryColor}) {
   return Container(

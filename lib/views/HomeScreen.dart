@@ -5,8 +5,8 @@ import 'package:cartoonizer/config.dart';
 import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:flutter_applovin_max/banner.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/EffectModel.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'StripeSubscriptionScreen.dart';

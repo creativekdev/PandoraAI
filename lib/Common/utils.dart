@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/views/HomeScreen.dart';
 
 import 'package:cartoonizer/api.dart';
 

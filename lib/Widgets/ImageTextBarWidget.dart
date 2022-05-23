@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 Widget ImageTextBarWidget(String text, String image, bool isShowArrow) {
   return ListTile(

@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/dialog.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/dialog.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api.dart';
 import 'StripeAddNewCardScreen.dart';

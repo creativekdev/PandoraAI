@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/ThemeConstant.dart';
+import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {

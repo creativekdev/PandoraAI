@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 
 class Events {

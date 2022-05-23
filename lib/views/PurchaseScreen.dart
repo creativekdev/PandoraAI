@@ -6,11 +6,11 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-import 'package:cartoonizer/Common/ConsumableStore.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/common/ConsumableStore.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 import 'LoginScreen.dart';
 

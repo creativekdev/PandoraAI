@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
-export 'package:cartoonizer/Common/StringConstant.dart';
+export 'package:cartoonizer/common/StringConstant.dart';
 
 // Common Dialog
 class CommonDialog extends StatefulWidget {

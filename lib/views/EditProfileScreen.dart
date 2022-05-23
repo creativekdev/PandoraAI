@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
-import '../Common/Extension.dart';
-import '../Model/UserModel.dart';
+import '../common/Extension.dart';
+import '../models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/common/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);

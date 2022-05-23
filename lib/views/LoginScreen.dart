@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Common/auth.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cartoonizer/api.dart';

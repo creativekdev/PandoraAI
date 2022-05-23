@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'package:cartoonizer/views/HomeScreen.dart';
 
-import '../Common/Extension.dart';
+import '../common/Extension.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
