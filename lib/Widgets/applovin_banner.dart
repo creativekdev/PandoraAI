@@ -40,22 +40,23 @@ class BannerMaxView extends StatelessWidget {
     return androidView;
   }
 
-  // Widget _buildIOSBanner(BuildContext context) {
-  //   final UiKitView iosView = UiKitView(
-  //     viewType: '/Banner',
-  //     key: UniqueKey(),
-  //     // creationParams: {'Size': sizes[size], 'UnitId': adUnitId},
-  //     onPlatformViewCreated: (int i) {
-  //       const MethodChannel channel = MethodChannel('AppLovin');
-  //       channel.setMethodCallHandler((MethodCall call) async => FlutterApplovinMax.handleMethod(call, listener));
-  //     },
-  //   );
+  Widget _buildIOSBanner(BuildContext context) {
+    final UiKitView iosView = UiKitView(
+      viewType: 'io.socialbook/applovin_banner_view',
+      key: UniqueKey(),
+      creationParams: {'Size': sizes[size], 'UnitId': adUnitId},
+      creationParamsCodec: const StandardMessageCodec(),
+      onPlatformViewCreated: (int i) {
+        // const MethodChannel channel = MethodChannel('AppLovin');
+        // channel.setMethodCallHandler((MethodCall call) async => FlutterApplovinMax.handleMethod(call, listener));
+      },
+    );
 
-  //   return iosView;
-  // }
+    return iosView;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(width: sizesNum[size]?.width, height: sizesNum[size]?.height, child: _buildAndroidBanner(context));
+    return Container(width: sizesNum[size]?.width, height: sizesNum[size]?.height, child: Platform.isIOS ? _buildIOSBanner(context) : _buildAndroidBanner(context));
   }
 }

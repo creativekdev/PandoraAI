@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMERCAd(int index) {
-    if (index == 2 && Platform.isAndroid) {
+    if (index == 2) {
       return Padding(
         padding: EdgeInsets.only(bottom: 2.h),
         child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),

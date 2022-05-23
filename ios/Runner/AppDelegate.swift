@@ -41,8 +41,14 @@ import UIKit
           })
       }
     })
-    GeneratedPluginRegistrant.register(with: self)
+      
+    GeneratedPluginRegistrant.register(with:  self)
     TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+
+    let registrar = self.registrar(forPlugin: "io.socialbook/applovin_banner_view")!
+    let factory = FLNativeViewFactory(messenger: registrar.messenger())
+    registrar.register(factory, withId: "io.socialbook/applovin_banner_view")
+
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
