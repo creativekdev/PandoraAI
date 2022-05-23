@@ -52,9 +52,9 @@ logAppsflyerEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
   if (user.email != "") {
     defaultValues["user_id"] = user.id.toString();
     defaultValues["user_email"] = user.email;
+    Appsflyer.instance.setCustomerUserId(user.id.toString());
   }
   var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
-
   Appsflyer.instance.logEvent(eventName, values);
 }
 

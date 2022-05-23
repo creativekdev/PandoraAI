@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cartoonizer/common/importFile.dart';
 
 class ChoosePhotoScreenController extends GetxController {

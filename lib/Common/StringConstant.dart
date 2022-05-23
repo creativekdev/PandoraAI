@@ -1,4 +1,5 @@
 class StringConstant {
+  static const app_name = "ProfilePicMaker";
   static const login = "Sign In";
   static const insta_login = "Instagram";
   static const tiktok_login = "TikTok";
@@ -100,4 +101,6 @@ class StringConstant {
   static const new_update_dialog_content = "A required update is available, the App will not be working until this update is applied.";
   static const zip_code = "Zip Code";
   static const zip_code_validation_message = "Invalid zip code";
+  static const welcome_title1 = "Make your own cartoon avatar";
+  static const welcome_title2 = "Turn Photos into Art";
 }

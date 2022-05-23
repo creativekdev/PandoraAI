@@ -8,7 +8,9 @@ import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/helper/shared_pref.dart';
 import 'package:cartoonizer/views/HomeScreen.dart';
+import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'config.dart';
@@ -78,7 +80,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    _checkAppVersion();
+
+    _checkIntroductionPage();
 
     // log app open
     logSystemEvent(Events.open_app);
@@ -135,6 +138,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  _checkIntroductionPage() {
+    SharedPreferencesHelper.getBool(SharedPreferencesHelper.keyHasIntroductionPageShowed).then((value) {
+      if (value) {
+        _checkAppVersion();
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+          ModalRoute.withName('/HomeScreen'),
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
+          ModalRoute.withName('/IntroductionScreen'),
+        );
+      }
+    });
+  }
+
   //监听程序进入前后台的状态改变的方法
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -165,7 +187,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: HomeScreen(),
+        child: Container(
+          color: ColorConstant.BackgroundColor,
+        ),
       ),
     );
   }

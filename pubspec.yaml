@@ -67,7 +67,6 @@ dependencies:
   app_tracking_transparency:
   firebase_analytics: ^9.1.6
   flutter_applovin_max: ^2.1.1
-  page_indicator: ^0.4.1
 
 dev_dependencies:
   flutter_test:
