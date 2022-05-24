@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
@@ -451,7 +452,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${_getAiHostByStyle(category.style)}/resource/' + controller.videoUrl.value, true).then((value) async {
+                                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -489,7 +490,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
                                   if (controller.isVideo.value) {
                                     controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${_getAiHostByStyle(category.style)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
@@ -1049,7 +1050,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
     var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
 
-    String aiHost = _getAiHostByStyle(category.style);
+    String aiHost = _getAiHostByStyle(selectedEffect);
 
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"];
 
@@ -1292,9 +1293,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     return effect["original_face"] != null && effect["original_face"] == true;
   }
 
-  String _getAiHostByStyle(String style) {
-    var host = style == 'face' ? 'face_cartoonize' : 'body_cartoonize';
-    return _user.ai_servers[host];
+  String _getAiHostByStyle(dynamic effect) {
+    var server = effect["server"];
+    return _user.ai_servers[server] ?? Config.instance.aiHost;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
