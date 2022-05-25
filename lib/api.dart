@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -139,7 +140,7 @@ class API {
       return true;
     } else {
       var body = jsonDecode(response.body);
-      showToast(body["message"] ?? body["code"]);
+      CommonExtension().showToast(body["message"] ?? body["code"]);
       return false;
     }
   }

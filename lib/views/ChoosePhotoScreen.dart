@@ -1245,7 +1245,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         }
       } catch (e) {
         controller.changeIsLoading(false);
-        showToast("Error while uploading image");
+        CommonExtension().showToast("Error while uploading image");
       }
     }
   }

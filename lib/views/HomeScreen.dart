@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     logEvent(Events.homepage_loading);
     super.initState();
 
-    initStoreInfo();
+    initStoreInfo(true);
 
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
@@ -55,8 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> initStoreInfo() async {
+  Future<void> initStoreInfo(bool needReload) async {
     _user = await API.getLogin(needLoad: true, context: context);
+    if (needReload) {
+      setState(() {});
+    }
   }
 
   @override
@@ -103,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   builder: (context) => SettingScreen(),
                                 ),
                               );
-                              initStoreInfo();
+                              initStoreInfo(false);
                             },
                             child: Image.asset(
                               ImagesConstant.ic_user_round,
@@ -342,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    initStoreInfo();
+    initStoreInfo(false);
   }
 
   Future<bool> getConnectionStatus() async {

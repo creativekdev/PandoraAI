@@ -67,18 +67,6 @@ Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
   }
 }
 
-showToast(String text) {
-  Fluttertoast.showToast(
-    msg: text,
-    toastLength: Toast.LENGTH_SHORT,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 3,
-    backgroundColor: ColorConstant.BtnTextColor,
-    textColor: ColorConstant.White,
-    fontSize: 16.0,
-  );
-}
-
 launchURL(String url) async {
   if (await canLaunch(url)) {
     await launch(url);
