@@ -366,6 +366,22 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                       Row(
                                         children: [
                                           Image.asset(
+                                            ImagesConstant.ic_no_ads,
+                                            height: 24,
+                                            width: 24,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                                            child: TitleTextWidget(StringConstant.no_ads, ColorConstant.White, FontWeight.w400, 14),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
                                             ImagesConstant.ic_no_watermark,
                                             height: 24,
                                             width: 24,

@@ -1032,6 +1032,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Future<void> _showInterstitialVideo() async {
+    bool showAds = isShowAds(_user);
+    if (showAds == false) return;
+
     var isInterstitialVideoAvailable = await FlutterApplovinMax.isInterstitialLoaded((listener) => null);
     if (isInterstitialVideoAvailable as bool) {
       FlutterApplovinMax.showInterstitialVideo((listener) => null);

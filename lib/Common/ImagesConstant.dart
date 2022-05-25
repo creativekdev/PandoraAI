@@ -47,6 +47,7 @@ class ImagesConstant{
   static const ic_purchase_emoji = "assets/images/ic_purchase_emoji.png";
   static const ic_hd = "assets/images/ic_hd.png";
   static const ic_no_watermark = "assets/images/ic_no_watermark.png";
+  static const ic_no_ads = "assets/images/ic_no_ads.png";
   static const ic_rocket = "assets/images/ic_rocket.png";
   static const ic_radio_off = "assets/images/ic_radio_off.png";
   static const ic_radio_on = "assets/images/ic_radio_on.png";

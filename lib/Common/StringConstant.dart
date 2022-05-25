@@ -48,6 +48,7 @@ class StringConstant {
   static const no_watermark1 = "No watermark";
   static const high_resolution = "High resolution images";
   static const faster_speed = "Faster Speed";
+  static const no_ads = "No Ads";
   static const txtContinue = "Continue";
   static const paymentBtn = "Place your order";
   static const setting = "Setting";

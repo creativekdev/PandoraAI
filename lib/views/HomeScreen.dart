@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/widgets/applovin_banner.dart';
 
@@ -21,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final Connectivity _connectivity = Connectivity();
+  UserModel? _user;
 
   Widget _cachedNetworkImagePlaceholder(BuildContext context, String url) => Container(
         height: 41.w,
@@ -40,15 +43,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    super.initState();
     logEvent(Events.homepage_loading);
-    
-    API.getLogin(needLoad: true, context: context);
+    super.initState();
+
+    initStoreInfo();
+
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
       }
     });
+  }
+
+  Future<void> initStoreInfo() async {
+    _user = await API.getLogin(needLoad: true, context: context);
   }
 
   @override
@@ -87,13 +95,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, 18),
                           GestureDetector(
-                            onTap: () => {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    settings: RouteSettings(name: "/SettingScreen"),
-                                    builder: (context) => SettingScreen(),
-                                  ))
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: RouteSettings(name: "/SettingScreen"),
+                                  builder: (context) => SettingScreen(),
+                                ),
+                              );
+                              initStoreInfo();
                             },
                             child: Image.asset(
                               ImagesConstant.ic_user_round,
@@ -130,7 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMERCAd(int index) {
-    if (index == 2) {
+    var showAds = isShowAds(_user);
+
+    if (showAds && index == 2) {
       return Padding(
         padding: EdgeInsets.only(bottom: 2.h),
         child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
@@ -319,16 +331,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _onEffectCategoryTap(List<EffectModel> list, int index) {
+  _onEffectCategoryTap(List<EffectModel> list, int index) async {
     logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style});
 
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(list: list, pos: index),
       ),
     );
+
+    initStoreInfo();
   }
 
   Future<bool> getConnectionStatus() async {

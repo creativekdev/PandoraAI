@@ -86,3 +86,13 @@ launchURL(String url) async {
     throw 'Could not launch $url';
   }
 }
+
+bool isShowAds(UserModel? user) {
+  if (user == null) return false;
+
+  bool showAds = true;
+  if (user.email != "" && (user.subscription.containsKey('id') || user.credit > 0)) {
+    showAds = false;
+  }
+  return showAds;
+}
