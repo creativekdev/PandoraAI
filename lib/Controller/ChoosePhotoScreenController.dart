@@ -44,4 +44,7 @@ class ChoosePhotoScreenController extends GetxController {
 
   final videoUrl = "".obs;
   updateVideoUrl(String str) => videoUrl.value = str;
+
+  final imageUrl = "".obs;
+  updateImageUrl(String str) => imageUrl.value = str;
 }

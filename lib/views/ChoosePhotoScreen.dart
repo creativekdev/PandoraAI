@@ -297,59 +297,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               maintainAnimation: true,
                               maintainSize: true,
                               child: GestureDetector(
-                                onTap: () async {
-                                  logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": "result"});
-                                  var source = ImageSource.gallery;
-                                  try {
-                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-                                    offlineEffect.clear();
-                                    controller.updateImageFile(File(image.path));
-                                    controller.changeIsPhotoSelect(true);
-                                    controller.changeIsLoading(true);
-                                    controller.changeIsPhotoDone(false);
-                                    getCartoon(context);
-                                  } on PlatformException catch (error) {
-                                    if (error.code == "photo_access_denied") {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) => CupertinoAlertDialog(
-                                                title: Text(
-                                                  'PhotoLibrary Permission',
-                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                                                ),
-                                                content: Text(
-                                                  'This app needs photo library access to choose pictures for upload user profile photo',
-                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                ),
-                                                actions: <Widget>[
-                                                  CupertinoDialogAction(
-                                                    child: Text(
-                                                      'Deny',
-                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                    ),
-                                                    onPressed: () => Navigator.of(context).pop(),
-                                                  ),
-                                                  CupertinoDialogAction(
-                                                    child: Text(
-                                                      'Settings',
-                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                    ),
-                                                    onPressed: () async {
-                                                      Navigator.pop(context);
-                                                      try {
-                                                        openAppSettings();
-                                                      } catch (err) {
-                                                        print("err");
-                                                        print(err);
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
-                                              ));
-                                    }
-                                  } catch (error) {
-                                    CommonExtension().showToast("Try to select valid image");
-                                  }
+                                onTap: () {
+                                  pickImageFromGallery(context, from: "result");
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_gallery,
@@ -370,58 +319,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                               maintainSize: true,
                               child: GestureDetector(
                                 onTap: () async {
-                                  logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": "result"});
-                                  var source = ImageSource.camera;
-                                  try {
-                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-                                    offlineEffect.clear();
-                                    controller.updateImageFile(File(image.path));
-                                    controller.changeIsPhotoSelect(true);
-                                    controller.changeIsLoading(true);
-                                    controller.changeIsPhotoDone(false);
-                                    getCartoon(context);
-                                  } on PlatformException catch (error) {
-                                    if (error.code == "camera_access_denied") {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) => CupertinoAlertDialog(
-                                                title: Text(
-                                                  'Camera Permission',
-                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                                                ),
-                                                content: Text(
-                                                  'This app needs camera access to take pictures for upload user profile photo',
-                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                ),
-                                                actions: <Widget>[
-                                                  CupertinoDialogAction(
-                                                    child: Text(
-                                                      'Deny',
-                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                    ),
-                                                    onPressed: () => Navigator.of(context).pop(),
-                                                  ),
-                                                  CupertinoDialogAction(
-                                                    child: Text(
-                                                      'Settings',
-                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                    ),
-                                                    onPressed: () async {
-                                                      Navigator.pop(context);
-                                                      try {
-                                                        openAppSettings();
-                                                      } catch (err) {
-                                                        print("err");
-                                                        print(err);
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
-                                              ));
-                                    }
-                                  } catch (error) {
-                                    CommonExtension().showToast("Try to select valid image");
-                                  }
+                                  pickImageFromCamera(context, from: "result");
                                 },
                                 child: Image.asset(
                                   ImagesConstant.ic_camera,
@@ -619,117 +517,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                 width: 70.w,
                                               ),
                                               GestureDetector(
-                                                onTap: () async {
-                                                  logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": "center"});
-                                                  var source = ImageSource.gallery;
-                                                  try {
-                                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-                                                    offlineEffect.clear();
-                                                    controller.updateImageFile(File(image.path));
-                                                    controller.changeIsPhotoSelect(true);
-                                                    controller.changeIsLoading(true);
-                                                    controller.changeIsPhotoDone(false);
-                                                    getCartoon(context);
-                                                  } on PlatformException catch (error) {
-                                                    if (error.code == "photo_access_denied") {
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext context) => CupertinoAlertDialog(
-                                                                title: Text(
-                                                                  'PhotoLibrary Permission',
-                                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                                                                ),
-                                                                content: Text(
-                                                                  'This app needs photo library access to choose pictures for upload user profile photo',
-                                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                ),
-                                                                actions: <Widget>[
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                      'Deny',
-                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                    ),
-                                                                    onPressed: () => Navigator.of(context).pop(),
-                                                                  ),
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                      'Settings',
-                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                    ),
-                                                                    onPressed: () async {
-                                                                      Navigator.pop(context);
-                                                                      try {
-                                                                        openAppSettings();
-                                                                      } catch (err) {
-                                                                        print("err");
-                                                                        print(err);
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ));
-                                                    }
-                                                  } catch (error) {
-                                                    CommonExtension().showToast("Try to select valid image");
-                                                  }
+                                                onTap: () {
+                                                  pickImageFromGallery(context, from: "center");
                                                 },
                                                 child: ButtonWidget(StringConstant.choose_photo),
                                               ),
                                               SizedBox(height: 1.h),
                                               GestureDetector(
-                                                onTap: () async {
-                                                  logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": "center"});
-                                                  var source = ImageSource.camera;
-                                                  try {
-                                                    XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-                                                    offlineEffect.clear();
-                                                    controller.updateImageFile(File(image.path));
-                                                    controller.changeIsPhotoSelect(true);
-                                                    controller.changeIsLoading(true);
-                                                    controller.changeIsPhotoDone(false);
-                                                    getCartoon(context);
-                                                  } on PlatformException catch (error) {
-                                                    if (error.code == "camera_access_denied") {
-                                                      showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext context) => CupertinoAlertDialog(
-                                                                title: Text(
-                                                                  'Camera Permission',
-                                                                  style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                                                                ),
-                                                                content: Text(
-                                                                  'This app needs camera access to take pictures for upload user profile photo',
-                                                                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                ),
-                                                                actions: <Widget>[
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                      'Deny',
-                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                    ),
-                                                                    onPressed: () => Navigator.of(context).pop(),
-                                                                  ),
-                                                                  CupertinoDialogAction(
-                                                                    child: Text(
-                                                                      'Settings',
-                                                                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                                                    ),
-                                                                    onPressed: () async {
-                                                                      Navigator.pop(context);
-                                                                      try {
-                                                                        openAppSettings();
-                                                                      } catch (err) {
-                                                                        print("err");
-                                                                        print(err);
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                ],
-                                                              ));
-                                                    }
-                                                  } catch (error) {
-                                                    CommonExtension().showToast("Try to select valid image");
-                                                  }
+                                                onTap: () {
+                                                  pickImageFromCamera(context, from: "center");
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(vertical: 1.h),
@@ -794,6 +590,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                                                           controller.changeIsPhotoSelect(false);
                                                                           controller.changeIsPhotoDone(false);
                                                                           controller.updateImageFile(null);
+                                                                          controller.updateImageUrl("");
                                                                         },
                                                                         child: Image.asset(
                                                                           ImagesConstant.ic_delete,
@@ -1041,6 +838,144 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     }
   }
 
+  Future<void> pickImageFromGallery(BuildContext context, {String from = "center"}) async {
+    logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": from});
+    var source = ImageSource.gallery;
+    try {
+      XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      File compressedImage = await imageCompressAndGetFile(File(image.path));
+
+      offlineEffect.clear();
+      controller.updateImageFile(compressedImage);
+      controller.updateImageUrl("");
+      controller.changeIsPhotoSelect(true);
+      controller.changeIsLoading(true);
+      controller.changeIsPhotoDone(false);
+      getCartoon(context);
+    } on PlatformException catch (error) {
+      if (error.code == "photo_access_denied") {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => CupertinoAlertDialog(
+                  title: Text(
+                    'PhotoLibrary Permission',
+                    style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+                  ),
+                  content: Text(
+                    'This app needs photo library access to choose pictures for upload user profile photo',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                  ),
+                  actions: <Widget>[
+                    CupertinoDialogAction(
+                      child: Text(
+                        'Deny',
+                        style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    CupertinoDialogAction(
+                      child: Text(
+                        'Settings',
+                        style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        try {
+                          openAppSettings();
+                        } catch (err) {
+                          print("err");
+                          print(err);
+                        }
+                      },
+                    ),
+                  ],
+                ));
+      }
+    } catch (error) {
+      CommonExtension().showToast("Try to select valid image");
+    }
+  }
+
+  Future<void> pickImageFromCamera(BuildContext context, {String from = "center"}) async {
+    logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": from});
+    var source = ImageSource.camera;
+    try {
+      XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      File compressedImage = await imageCompressAndGetFile(File(image.path));
+
+      offlineEffect.clear();
+      controller.updateImageFile(compressedImage);
+      controller.updateImageUrl("");
+      controller.changeIsPhotoSelect(true);
+      controller.changeIsLoading(true);
+      controller.changeIsPhotoDone(false);
+      getCartoon(context);
+    } on PlatformException catch (error) {
+      if (error.code == "camera_access_denied") {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => CupertinoAlertDialog(
+                  title: Text(
+                    'Camera Permission',
+                    style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+                  ),
+                  content: Text(
+                    'This app needs camera access to take pictures for upload user profile photo',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                  ),
+                  actions: <Widget>[
+                    CupertinoDialogAction(
+                      child: Text(
+                        'Deny',
+                        style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    CupertinoDialogAction(
+                      child: Text(
+                        'Settings',
+                        style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        try {
+                          openAppSettings();
+                        } catch (err) {
+                          print("err");
+                          print(err);
+                        }
+                      },
+                    ),
+                  ],
+                ));
+      }
+    } catch (error) {
+      CommonExtension().showToast("Try to select valid image");
+    }
+  }
+
+  Future<String> uploadCompressedImage() async {
+    String b_name = "free-socialbook";
+    String f_name = basename((controller.image.value as File).path);
+    String c_type = "image/*";
+    final params = {
+      "bucket": b_name,
+      "file_name": f_name,
+      "content_type": c_type,
+    };
+    final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
+    final Map parsed = json.decode(response.body.toString());
+    var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
+
+    if (res.statusCode == 200) {
+      String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
+      controller.updateImageUrl(imageUrl);
+      return imageUrl;
+    }
+
+    return '';
+  }
+
   Future<void> getCartoon(BuildContext context) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -1088,161 +1023,151 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       }
     } else {
       controller.changeIsRate(true);
-
       _showInterstitialVideo();
 
-      String b_name = "free-socialbook";
-      String f_name = basename((controller.image.value as File).path);
-      String c_type = "image/*";
-      final params = {
-        "bucket": b_name,
-        "file_name": f_name,
-        "content_type": c_type,
-      };
-      final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
-      final Map parsed = json.decode(response.body.toString());
-
       try {
-        var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
-        if (res.statusCode == 200) {
-          var sharedPrefs = await SharedPreferences.getInstance();
-          final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
-          final Map tokenParsed = json.decode(tokenResponse.body.toString());
+        var imageUrl = controller.imageUrl.value;
+        if (imageUrl == "") {
+          imageUrl = await uploadCompressedImage();
+        }
 
-          int resultSuccess = 0;
+        if (imageUrl == "") return;
 
-          if (tokenResponse.statusCode == 200) {
-            if (tokenParsed['data'] == null) {
-              var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
-              List<String> imageArray = ["$imageUrl"];
-              var dataBody = {
-                'querypics': imageArray,
-                'is_data': 0,
-                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
-                'direct': 1,
-              };
-              final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
-              if (cartoonizeResponse.statusCode == 200) {
-                final Map parsed = json.decode(cartoonizeResponse.body.toString());
+        var sharedPrefs = await SharedPreferences.getInstance();
+        final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
+        final Map tokenParsed = json.decode(tokenResponse.body.toString());
 
-                if (parsed['data'].toString().startsWith('<')) {
-                  controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
-                } else if (parsed['data'].toString() == "") {
-                  controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
-                  CommonExtension().showToast(parsed['message']);
-                } else if (parsed['data'].toString().endsWith(".mp4")) {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                    ..setLooping(true)
-                    ..initialize().then((value) async {
-                      controller.changeIsLoading(false);
-                    });
-                  _videoPlayerController.play();
+        int resultSuccess = 0;
 
-                  urlFinal = imageUrl;
-                  algoName = selectedEffect["key"];
-                  controller.changeIsPhotoDone(true);
-                  controller.changeIsVideo(true);
-                } else {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  controller.changeIsLoading(false);
-                  image = parsed['data'];
-                  urlFinal = imageUrl;
-                  algoName = selectedEffect["key"];
-                  controller.changeIsPhotoDone(true);
-                  controller.changeIsVideo(false);
-                  var params = {"algoname": selectedEffect["key"]};
-                  API.get("/api/log/cartoonize", params: params);
-                }
-                resultSuccess = 1;
-              } else {
+        if (tokenResponse.statusCode == 200) {
+          if (tokenParsed['data'] == null) {
+            List<String> imageArray = ["$imageUrl"];
+            var dataBody = {
+              'querypics': imageArray,
+              'is_data': 0,
+              'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
+              'direct': 1,
+            };
+            final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
+            if (cartoonizeResponse.statusCode == 200) {
+              final Map parsed = json.decode(cartoonizeResponse.body.toString());
+
+              if (parsed['data'].toString().startsWith('<')) {
                 controller.changeIsLoading(false);
-                CommonExtension().showToast('Error while processing image');
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+              } else if (parsed['data'].toString() == "") {
+                controller.changeIsLoading(false);
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                CommonExtension().showToast(parsed['message']);
+              } else if (parsed['data'].toString().endsWith(".mp4")) {
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                controller.updateVideoUrl(parsed['data']);
+                _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  ..setLooping(true)
+                  ..initialize().then((value) async {
+                    controller.changeIsLoading(false);
+                  });
+                _videoPlayerController.play();
+
+                urlFinal = imageUrl;
+                algoName = selectedEffect["key"];
+                controller.changeIsPhotoDone(true);
+                controller.changeIsVideo(true);
+              } else {
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                controller.changeIsLoading(false);
+                image = parsed['data'];
+                urlFinal = imageUrl;
+                algoName = selectedEffect["key"];
+                controller.changeIsPhotoDone(true);
+                controller.changeIsVideo(false);
+                var params = {"algoname": selectedEffect["key"]};
+                API.get("/api/log/cartoonize", params: params);
               }
+              resultSuccess = 1;
             } else {
-              var imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
-              var token = tokenParsed['data'];
-              List<String> imageArray = ["$imageUrl"];
-
-              var dataBody = {
-                'querypics': imageArray,
-                'is_data': 0,
-                'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
-                'direct': 1,
-                'token': token,
-              };
-              final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
-              print(cartoonizeResponse.statusCode);
-              print(cartoonizeResponse.body.toString());
-              if (cartoonizeResponse.statusCode == 200) {
-                final Map parsed = json.decode(cartoonizeResponse.body.toString());
-                if (parsed['data'].toString().startsWith('<')) {
-                  controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
-                } else if (parsed['data'].toString() == "") {
-                  controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
-                  CommonExtension().showToast(parsed['message']);
-                } else if (parsed['data'].toString().endsWith(".mp4")) {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                    ..setLooping(true)
-                    ..initialize().then((value) async {
-                      controller.changeIsLoading(false);
-                    });
-                  _videoPlayerController.play();
-
-                  urlFinal = imageUrl;
-                  algoName = selectedEffect["key"];
-                  controller.changeIsPhotoDone(true);
-                  controller.changeIsVideo(true);
-                } else {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  controller.changeIsLoading(false);
-                  image = parsed['data'];
-                  urlFinal = imageUrl;
-                  algoName = selectedEffect["key"];
-                  controller.changeIsPhotoDone(true);
-                  controller.changeIsVideo(false);
-                  var params = {"algoname": selectedEffect["key"]};
-                  API.get("/api/log/cartoonize", params: params);
-                }
-                resultSuccess = 1;
-              } else {
-                controller.changeIsLoading(false);
-                CommonExtension().showToast('Error while processing image');
-              }
+              controller.changeIsLoading(false);
+              CommonExtension().showToast('Error while processing image');
             }
-            await API.getLogin(needLoad: true, context: context);
           } else {
-            controller.changeIsLoading(false);
-            var responseBody = json.decode(tokenResponse.body);
-            if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
-              bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
+            var token = tokenParsed['data'];
+            List<String> imageArray = ["$imageUrl"];
 
-              if (!isLogin) {
-                showDialogLogin(context, sharedPrefs);
+            var dataBody = {
+              'querypics': imageArray,
+              'is_data': 0,
+              'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect["key"] + "-original_face" : selectedEffect["key"],
+              'direct': 1,
+              'token': token,
+            };
+            final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
+            print(cartoonizeResponse.statusCode);
+            print(cartoonizeResponse.body.toString());
+            if (cartoonizeResponse.statusCode == 200) {
+              final Map parsed = json.decode(cartoonizeResponse.body.toString());
+              if (parsed['data'].toString().startsWith('<')) {
+                controller.changeIsLoading(false);
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+              } else if (parsed['data'].toString() == "") {
+                controller.changeIsLoading(false);
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                CommonExtension().showToast(parsed['message']);
+              } else if (parsed['data'].toString().endsWith(".mp4")) {
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                controller.updateVideoUrl(parsed['data']);
+                _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  ..setLooping(true)
+                  ..initialize().then((value) async {
+                    controller.changeIsLoading(false);
+                  });
+                _videoPlayerController.play();
+
+                urlFinal = imageUrl;
+                algoName = selectedEffect["key"];
+                controller.changeIsPhotoDone(true);
+                controller.changeIsVideo(true);
               } else {
-                CommonExtension().showToast(StringConstant.DAILY_IP_LIMIT_EXCEEDED);
+                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                controller.changeIsLoading(false);
+                image = parsed['data'];
+                urlFinal = imageUrl;
+                algoName = selectedEffect["key"];
+                controller.changeIsPhotoDone(true);
+                controller.changeIsVideo(false);
+                var params = {"algoname": selectedEffect["key"]};
+                API.get("/api/log/cartoonize", params: params);
               }
+              resultSuccess = 1;
             } else {
-              CommonExtension().showToast(responseBody['message']);
+              controller.changeIsLoading(false);
+              CommonExtension().showToast('Error while processing image');
             }
           }
+          await API.getLogin(needLoad: true, context: context);
+        } else {
+          controller.changeIsLoading(false);
+          var responseBody = json.decode(tokenResponse.body);
+          if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
+            bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
 
-          logEvent(Events.photo_cartoon_result, eventValues: {
-            "success": resultSuccess,
-            "effect": selectedEffect["key"],
-            "category": category.key,
-            "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
-          });
+            if (!isLogin) {
+              showDialogLogin(context, sharedPrefs);
+            } else {
+              CommonExtension().showToast(StringConstant.DAILY_IP_LIMIT_EXCEEDED);
+            }
+          } else {
+            CommonExtension().showToast(responseBody['message']);
+          }
         }
+
+        logEvent(Events.photo_cartoon_result, eventValues: {
+          "success": resultSuccess,
+          "effect": selectedEffect["key"],
+          "category": category.key,
+          "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
+        });
       } catch (e) {
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");

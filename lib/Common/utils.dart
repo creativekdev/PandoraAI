@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/UserModel.dart';
@@ -83,4 +84,38 @@ bool isShowAds(UserModel? user) {
     showAds = false;
   }
   return showAds;
+}
+
+Future<File> imageCompressAndGetFile(File file) async {
+  UserModel user = await getUser();
+
+  if (file.lengthSync() < 200 * 1024) {
+    return file;
+  }
+
+  var quality = 100;
+  if (file.lengthSync() > 4 * 1024 * 1024) {
+    quality = 50;
+  } else if (file.lengthSync() > 2 * 1024 * 1024) {
+    quality = 60;
+  } else if (file.lengthSync() > 1 * 1024 * 1024) {
+    quality = 70;
+  } else if (file.lengthSync() > 0.5 * 1024 * 1024) {
+    quality = 80;
+  }
+
+  var dir = await getTemporaryDirectory();
+  var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
+
+  var minSize = user.credit > 0 ? 1024 : 512;
+
+  var result = await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path,
+    targetPath,
+    minWidth: minSize,
+    minHeight: minSize,
+    quality: quality,
+  );
+
+  return result!;
 }
