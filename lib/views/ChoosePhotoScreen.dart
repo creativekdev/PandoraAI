@@ -75,13 +75,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         try {
           itemPos = (widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index;
           scrollController1.scrollTo(
-              index: (widget.pos == widget.list.length - 1)
-                  ? widget.pos
-                  : (itemPositionsListener.itemPositions.value.first.index > 0)
-                      ? itemPositionsListener.itemPositions.value.first.index - 1
-                      : 0,
-              duration: Duration(milliseconds: 100),
-              curve: Curves.easeInOutCubic);
+            index: (widget.pos == widget.list.length - 1)
+                ? widget.pos
+                : (itemPositionsListener.itemPositions.value.first.index > 0)
+                    ? itemPositionsListener.itemPositions.value.first.index - 1
+                    : 0,
+            duration: Duration(milliseconds: 10),
+          );
         } catch (error) {
           print("error");
           print(error);
@@ -731,7 +731,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             controller.setLastSelectedIndex(index);
             controller.setLastItemIndex(itemIndex);
             controller.setLastItemIndex1(itemIndex);
-            scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
+            scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
             if (controller.image.value != null) {
               controller.changeIsPhotoSelect(true);
               controller.changeIsLoading(true);
@@ -1204,7 +1204,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     return Obx(() => GestureDetector(
           onTap: () async {
             controller.setLastItemIndex1(index);
-            scrollController.scrollTo(index: index, duration: Duration(milliseconds: 100), curve: Curves.easeInOutCubic);
+            scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 6),
