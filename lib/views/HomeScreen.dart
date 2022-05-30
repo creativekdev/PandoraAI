@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
@@ -24,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final Connectivity _connectivity = Connectivity();
   UserModel? _user;
+  List<EffectModel>? _list = null;
 
   Widget _cachedNetworkImagePlaceholder(BuildContext context, String url) => Container(
         height: 41.w,
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: FutureBuilder(
           future: fetchCategory(),
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting && _list == null) {
               return Center(child: CircularProgressIndicator());
             } else {
               if (snapshot.hasError) {
@@ -354,6 +354,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<EffectModel>> fetchCategory() async {
+    if (_list != null) return _list!;
+
     var response = await API.get("/api/tool/cartoonize_config");
     List<EffectModel> list = [];
     if (response.statusCode == 200) {
@@ -368,6 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     }
+    _list = list;
     return list;
   }
 }
