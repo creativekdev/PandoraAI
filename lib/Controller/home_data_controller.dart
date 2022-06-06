@@ -1,11 +1,11 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
 
 typedef ItemRender = Widget Function();
 
 class HomeDataController extends GetxController {
-  List<EffectModel>? dataList;
+  Map<String, List<EffectModel>>? data = null;
   bool loading = true;
 
   @override
@@ -26,7 +26,7 @@ class HomeDataController extends GetxController {
     API.getHomeConfig().then((value) {
       loading = false;
       if (value != null) {
-        this.dataList = value;
+        this.data = value;
       }
       update();
     });

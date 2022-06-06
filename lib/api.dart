@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/views/EmailVerificationScreen.dart';
-import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/common/sToken.dart';
-import 'models/UserModel.dart';
+import 'Common/importFile.dart';
+import 'Common/sToken.dart';
+
 
 class API {
   // Stitching parameters
@@ -166,14 +167,26 @@ class API {
     }
   }
 
-  static Future<List<EffectModel>?> getHomeConfig() async {
+  static Future<Map<String, List<EffectModel>>?> getHomeConfig() async {
     var response = await API.get("/api/tool/cartoonize_config");
     if (response.statusCode == 200) {
-      List<EffectModel> list = [];
+      Map<String, List<EffectModel>> result ={};
       final Map<String, dynamic> parsed = json.decode(response.body.toString());
-      final categoryResponse = CategoryModel.fromJson(parsed);
-      list.addAll(categoryResponse.data.face);
-      return list;
+      var data = parsed["data"] ?? {};
+
+      data.keys.forEach((style) {
+        List<EffectModel>? list = result[style];
+        if(result[style] == null) {
+          list = [];
+          result[style] = list;
+        }
+        if (data[style] != null) {
+          data[style].forEach((effect) {
+            list!.add(EffectModel.fromJson(effect, style));
+          });
+        }
+      });
+      return result;
     }
     return null;
   }

@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/home_data_controller.dart';
-import 'package:cartoonizer/Model/CategoryModel.dart';
-import 'package:cartoonizer/Model/EffectModel.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
 
@@ -67,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             if (_.loading) {
               return Center(child: CircularProgressIndicator());
             } else {
-              if (_.dataList == null) {
+              if (_.data == null) {
                 return FutureBuilder(
                     future: getConnectionStatus(),
                     builder: (context, snapshot1) {
@@ -83,12 +81,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     });
               } else {
                 tabConfig.clear();
-                tabConfig.add(HomeTabConfig(
-                    item: HomeTabFragment(controller: dataController),
-                    title: 'Facetoon'));
-                tabConfig.add(HomeTabConfig(
-                    item: HomeTabFragment(controller: dataController),
-                    title: 'Effects'));
+                for (var value in _.data!.keys) {
+                  tabConfig.add(
+                    HomeTabConfig(
+                        item: HomeTabFragment(dataList: _.data![value]!),
+                        title: value),
+                  );
+                }
                 tabConfig.add(
                     HomeTabConfig(item: HomeRecentFragment(), title: 'Recent'));
                 _pageController = PageController(initialPage: currentIndex);
@@ -100,21 +99,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   children: [
                     navbar(context),
                     SizedBox(
-                      height: 0.5.h,
+                      height: $(10),
                     ),
                     TabBar(
                       indicatorSize: TabBarIndicatorSize.label,
                       indicator: LineTabIndicator(
-                        space: $(2),
+                        space: $(16),
                         borderSide: BorderSide(
                             width: $(3), color: ColorConstant.PrimaryColor),
                       ),
-                      isScrollable: true,
+                      isScrollable: false,
                       labelColor: ColorConstant.PrimaryColor,
                       labelPadding: EdgeInsets.only(left: $(10), right: $(10)),
                       labelStyle: TextStyle(
                           fontSize: $(14), fontWeight: FontWeight.bold),
-                      unselectedLabelColor: ColorConstant.TextBlack,
+                      unselectedLabelColor: ColorConstant.PrimaryColor,
                       unselectedLabelStyle: TextStyle(
                           fontSize: $(14), fontWeight: FontWeight.w500),
                       controller: _tabController,
@@ -126,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               .intoContainer(padding: EdgeInsets.all($(8))))
                           .toList(),
                     ),
-                    SizedBox(height: $(8)),
+                    SizedBox(height: $(4)),
                     Expanded(
                         child: PageView.builder(
                       onPageChanged: _pageChange,
@@ -179,17 +178,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Future<bool> getConnectionStatus() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     return (connectivityResult != ConnectivityResult.none);
-  }
-
-  Future<List<EffectModel>> fetchCategory() async {
-    var response = await API.get("/api/tool/cartoonize_config");
-    List<EffectModel> list = [];
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> parsed = json.decode(response.body.toString());
-      final categoryResponse = CategoryModel.fromJson(parsed);
-      list.addAll(categoryResponse.data.face);
-    }
-    return list;
   }
 }
 

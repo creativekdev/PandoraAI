@@ -1,8 +1,8 @@
 import 'package:cartoonizer/common/importFile.dart';
 
 import 'package:cartoonizer/helper/shared_pref.dart';
+import 'package:cartoonizer/views/home/HomeScreen.dart';
 import 'package:cartoonizer/views/introduction/welcome_widgets.dart';
-import 'package:cartoonizer/views/HomeScreen.dart';
 
 class IntroductionScreen extends StatelessWidget {
   const IntroductionScreen({Key? key}) : super(key: key);

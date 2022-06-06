@@ -1,23 +1,19 @@
-import 'dart:io';
 import 'dart:developer';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'firebase_options.dart';
-import 'package:flutter_applovin_max/flutter_applovin_max.dart';
+import 'dart:io';
 
-import 'package:cartoonizer/common/dialog.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
-import 'package:cartoonizer/views/HomeScreen.dart';
-import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Ui/home/HomeScreen.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/helper/shared_pref.dart';
+import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:flutter_applovin_max/flutter_applovin_max.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'config.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // print the current configuration
