@@ -4,7 +4,7 @@ import 'firebase_options.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'package:cartoonizer/Ui/home/HomeScreen.dart';
 import 'package:cartoonizer/api.dart';
 
 import 'config.dart';

@@ -8,6 +8,8 @@ import 'package:cartoonizer/Ui/EmailVerificationScreen.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Common/sToken.dart';
+import 'Model/CategoryModel.dart';
+import 'Model/EffectModel.dart';
 import 'Model/UserModel.dart';
 
 class API {
@@ -26,14 +28,19 @@ class API {
   }
 
   // get request
-  static Future<http.Response> get(String url, {Map<String, String>? headers, Map<String, dynamic>? params}) async {
+  static Future<http.Response> get(String url,
+      {Map<String, String>? headers, Map<String, dynamic>? params}) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
+    var cookie =
+        "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
 
     // add custom headers
     if (headers == null || headers.isEmpty) {
-      headers = {"Content-type": "application/x-www-form-urlencoded", "cookie": cookie};
+      headers = {
+        "Content-type": "application/x-www-form-urlencoded",
+        "cookie": cookie
+      };
     } else {
       if (headers["cookie"] == null) {
         headers["cookie"] = cookie;
@@ -42,7 +49,11 @@ class API {
 
     // add custom params
     if (params == null || params.isEmpty) {
-      params = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+      params = {
+        "app_platform": Platform.operatingSystem,
+        "app_version": packageInfo.version,
+        "app_build": packageInfo.buildNumber
+      };
     } else {
       params["app_platform"] = Platform.operatingSystem;
       params["app_version"] = packageInfo.version;
@@ -61,10 +72,12 @@ class API {
   }
 
   // post request
-  static Future<http.Response> post(String url, {Map<String, String>? headers, Map<String, dynamic>? body}) async {
+  static Future<http.Response> post(String url,
+      {Map<String, String>? headers, Map<String, dynamic>? body}) async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
+    var cookie =
+        "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
 
     // add custom headers
     if (headers == null || headers.isEmpty) {
@@ -80,7 +93,11 @@ class API {
 
     // add custom params
     if (body == null || body.isEmpty) {
-      body = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+      body = {
+        "app_platform": Platform.operatingSystem,
+        "app_version": packageInfo.version,
+        "app_build": packageInfo.buildNumber
+      };
     } else {
       body["app_platform"] = Platform.operatingSystem;
       body["app_version"] = packageInfo.version;
@@ -94,11 +111,13 @@ class API {
     if (url.startsWith("http") == false) {
       url = "${Config.instance.host}" + url;
     }
-    return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
+    return await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(body));
   }
 
   // get login
-  static Future<dynamic> getLogin({bool needLoad = false, BuildContext? context}) async {
+  static Future<dynamic> getLogin(
+      {bool needLoad = false, BuildContext? context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
     var localUser = sharedPreferences.getString('user') ?? "";
@@ -162,5 +181,17 @@ class API {
     } catch (e) {
       return {"need_update": false};
     }
+  }
+
+  static Future<List<EffectModel>?> getHomeConfig() async {
+    var response = await API.get("/api/tool/cartoonize_config");
+    if (response.statusCode == 200) {
+      List<EffectModel> list = [];
+      final Map<String, dynamic> parsed = json.decode(response.body.toString());
+      final categoryResponse = CategoryModel.fromJson(parsed);
+      list.addAll(categoryResponse.data.face);
+      return list;
+    }
+    return null;
   }
 }

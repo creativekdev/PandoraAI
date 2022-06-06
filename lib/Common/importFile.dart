@@ -22,3 +22,5 @@ export 'package:in_app_purchase/in_app_purchase.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:connectivity_plus/connectivity_plus.dart';
 export 'package:permission_handler/permission_handler.dart';
+export 'package:cartoonizer/utils/screen_util.dart';
+export 'package:cartoonizer/Widgets/widget_extensions.dart';

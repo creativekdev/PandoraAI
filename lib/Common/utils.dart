@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Model/UserModel.dart';
-import 'package:cartoonizer/Ui/HomeScreen.dart';
+import 'package:cartoonizer/Ui/home/HomeScreen.dart';
 
 const String _kUser = 'user';
 
