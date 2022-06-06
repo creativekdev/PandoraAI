@@ -47,6 +47,7 @@ class ImagesConstant{
   static const ic_purchase_emoji = "assets/images/ic_purchase_emoji.png";
   static const ic_hd = "assets/images/ic_hd.png";
   static const ic_no_watermark = "assets/images/ic_no_watermark.png";
+  static const ic_no_ads = "assets/images/ic_no_ads.png";
   static const ic_rocket = "assets/images/ic_rocket.png";
   static const ic_radio_off = "assets/images/ic_radio_off.png";
   static const ic_radio_on = "assets/images/ic_radio_on.png";
@@ -54,6 +55,7 @@ class ImagesConstant{
   static const ic_right_arrow = "assets/images/ic_right_arrow.png";
   static const ic_edit_profile = "assets/images/ic_edit_profile.png";
   static const ic_change_password = "assets/images/ic_change_password.png";
+  static const ic_premium = "assets/images/ic_premium.png";
   static const ic_rate_us = "assets/images/ic_rate_us.png";
   static const ic_share_app = "assets/images/ic_share_app.png";
   static const ic_help = "assets/images/ic_help.png";
@@ -63,4 +65,7 @@ class ImagesConstant{
   static const ic_share_tiktok = "assets/images/ic_share_tiktok.png";
   static const ic_share_twitter = "assets/images/ic_share_twitter.png";
   static const ic_camera_upload = "assets/images/ic_camera_upload.png";
+  static const ic_update_image = "assets/images/update_image.png";
+  static const ic_introduction_bg1 = "assets/images/introduction_bg1.jpg";
+  static const ic_introduction_bg2 = "assets/images/introduction_bg2.jpg";
 }

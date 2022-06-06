@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:cartoonizer/views/HomeScreen.dart';
 
-import '../Common/Extension.dart';
+import '../common/Extension.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
@@ -63,7 +64,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   clickLogout() async {
     var sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.clear();
-    loginBack(context);
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      ModalRoute.withName('/HomeScreen'),
+    );
   }
 
   clickResend() async {
@@ -149,7 +155,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 8.0),
                               child: Text(
                                 StringConstant.enter_email_code,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                                style: TextStyle(color: ColorConstant.BtnTextColor, fontWeight: FontWeight.bold, fontSize: 28),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -207,7 +213,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                 text: TextSpan(
                                     text: StringConstant.code_send_to_email,
                                     children: [
-                                      TextSpan(text: "${widget.email}", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18)),
+                                      TextSpan(text: "${widget.email}", style: TextStyle(color: ColorConstant.BtnTextColor, fontWeight: FontWeight.bold, fontSize: 18)),
                                     ],
                                     style: TextStyle(color: ColorConstant.HintColor, fontSize: 16)),
                                 textAlign: TextAlign.center,
@@ -229,7 +235,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                         onPressed: _start == 60 ? () => clickResend() : null,
                                         child: Text(
                                           '${StringConstant.resend}${_start == 60 ? "" : " ${_start}"}',
-                                          style: TextStyle(color: _start == 60 ? ColorConstant.PrimaryColor : ColorConstant.HintColor, fontWeight: FontWeight.bold, fontSize: 16),
+                                          style:
+                                              TextStyle(color: _start == 60 ? ColorConstant.PrimaryColor : ColorConstant.BtnTextColor, fontWeight: FontWeight.bold, fontSize: 16),
                                         )),
                                     SizedBox(
                                       height: 20,

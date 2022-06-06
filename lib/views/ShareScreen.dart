@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -18,9 +18,10 @@ enum ShareType {
 }
 
 class ShareScreen extends StatefulWidget {
+  final String style;
   final String image;
   final bool isVideo;
-  const ShareScreen({Key? key, required this.image, required this.isVideo}) : super(key: key);
+  const ShareScreen({Key? key, required this.style, required this.image, required this.isVideo}) : super(key: key);
 
   @override
   _ShareScreenState createState() => _ShareScreenState();
@@ -62,6 +63,11 @@ class _ShareScreenState extends State<ShareScreen> {
     }
 
     final FlutterShareMe flutterShareMe = FlutterShareMe();
+
+    logEvent(Events.result_share, eventValues: {
+      "effect": widget.style,
+      "channel": shareType.name,
+    });
 
     switch (shareType) {
       case ShareType.facebook:
@@ -107,27 +113,24 @@ class _ShareScreenState extends State<ShareScreen> {
         child: Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+              margin: EdgeConstants.TopBarEdgeInsets,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
                     onTap: () => {Navigator.pop(context)},
-                    child: Image.asset(
-                      ImagesConstant.ic_back_dark,
-                      height: 10.w,
-                      width: 10.w,
-                    ),
+                    child: Image.asset(ImagesConstant.ic_back, height: 30, width: 30),
                   ),
-                  TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                  GestureDetector(
-                    onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
-                    child: Image.asset(
-                      ImagesConstant.ic_home,
-                      height: 10.w,
-                      width: 10.w,
-                    ),
-                  ),
+                  TitleTextWidget(StringConstant.save_share, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
+                  SizedBox(width: 30, height: 30)
+                  //   GestureDetector(
+                  //     onTap: () => {Navigator.of(context).popUntil(ModalRoute.withName("/HomeScreen"))},
+                  //     child: Image.asset(
+                  //       ImagesConstant.ic_home,
+                  //       height: 10.w,
+                  //       width: 10.w,
+                  //     ),
+                  //   ),
                 ],
               ),
             ),

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 
-import '../Common/Extension.dart';
+import '../common/Extension.dart';
 import './EmailVerificationScreen.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
@@ -40,20 +40,19 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Image.asset(
-          ImagesConstant.ic_background,
-          fit: BoxFit.cover,
-          height: 100.h,
-          width: 100.w,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SafeArea(
-            child: LoadingOverlay(
-              isLoading: isLoading,
-              child: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: ColorConstant.BlueColor,
+      body: LoadingOverlay(
+        isLoading: isLoading,
+        child: SafeArea(
+          // top:false,
+          bottom: false,
+          child: Container(
+            height: 100.h,
+            color: ColorConstant.BackgroundColor,
+            child: SingleChildScrollView(
+              child: Container(
+                color: ColorConstant.BackgroundColor,
                 child: Column(
                   children: [
                     Container(
@@ -81,7 +80,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                            margin: EdgeConstants.TopBarEdgeInsets,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -89,14 +88,14 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                                   onTap: () => {Navigator.pop(context)},
                                   child: Image.asset(
                                     ImagesConstant.ic_back,
-                                    height: 10.w,
-                                    width: 10.w,
+                                    height: 30,
+                                    width: 30,
                                   ),
                                 ),
-                                TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w600, 14.sp),
+                                TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w600, FontSizeConstants.topBarTitle),
                                 SizedBox(
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ],
                             ),
@@ -104,7 +103,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                         ],
                       ),
                     ),
-                    TitleTextWidget(StringConstant.set_password, ColorConstant.TextBlack, FontWeight.w600, 16.sp),
+                    TitleTextWidget(StringConstant.set_password, ColorConstant.White, FontWeight.w600, 20),
                     Container(
                       width: 20.w,
                       height: 0.3.h,
@@ -259,6 +258,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
 
                               UserModel user = await API.getLogin(needLoad: true);
+                              logEvent(Events.signup, eventValues: {"method": "google", "signup_through": GetStorage().read('signup_through') ?? ""});
+
                               if (user.status != "activated") {
                                 Navigator.pushReplacement<void, void>(
                                   context,
@@ -276,7 +277,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               "email": emailController.text,
                               "password": passController.text,
                               "channel": widget.channel ?? "",
-                              "type": "app_cartoonizer",
+                              "type": APP_TYPE,
                             };
                             final access_response = await API.post("/api/user/signup_with_social_media", headers: headers, body: body);
 
@@ -309,6 +310,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setString("login_cookie", id.split("=")[1]);
 
                               UserModel user = await API.getLogin(needLoad: true);
+
+                              logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                               if (user.status != "activated") {
                                 Navigator.pushReplacement(
                                   context,
@@ -327,7 +330,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             setState(() {
                               isLoading = true;
                             });
-                            Map<String, String> body = {"email": emailController.text, "password": passController.text, "type": "app_cartoonizer"};
+                            Map<String, String> body = {"email": emailController.text, "password": passController.text, "type": APP_TYPE};
                             final appleResponse = await API.post("/api/user/signup/simple", body: body);
 
                             setState(() {
@@ -356,6 +359,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
                               await loginBack(context);
+
+                              logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                             } else {
                               final Map parsed = json.decode(appleResponse.body.toString());
                               CommonExtension().showToast(parsed['message']);
@@ -374,7 +379,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

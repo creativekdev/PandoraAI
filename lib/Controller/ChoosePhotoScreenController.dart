@@ -1,6 +1,5 @@
 import 'dart:io';
-
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 class ChoosePhotoScreenController extends GetxController {
   @override
@@ -45,4 +44,7 @@ class ChoosePhotoScreenController extends GetxController {
 
   final videoUrl = "".obs;
   updateVideoUrl(String str) => videoUrl.value = str;
+
+  final imageUrl = "".obs;
+  updateImageUrl(String str) => imageUrl.value = str;
 }

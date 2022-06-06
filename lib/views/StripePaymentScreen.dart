@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/dialog.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/dialog.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api.dart';
 import 'StripeAddNewCardScreen.dart';
@@ -47,6 +47,11 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     UserModel user = await API.getLogin(needLoad: false);
     // find default card
     var creditcards = user.creditcards;
+
+    if (creditcards.length == 0) {
+      gotoAddNewCard();
+    }
+
     var selectedCard = null;
     for (var card in creditcards) {
       if (card['is_default']) {
@@ -156,9 +161,9 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     Get.dialog(
       CommonDialog(
         image: ImagesConstant.ic_success,
-        content: StringConstant.payment_successfully,
+        description: StringConstant.payment_successfully,
         isCancel: false,
-        confirmContent: "OK",
+        confirmText: "OK",
       ),
     );
   }
@@ -174,7 +179,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   }
 
   Widget _buildCreditCard(creditCard) {
-    bool isSelected = _selectedCard != null && creditCard['id'] == _selectedCard['id'];
     Map cardConfig = getCreditCardConfigByBrand(creditCard['brand']);
     String date = "${creditCard['expire_month'].toString().padLeft(2, '0')}/${creditCard['expire_year'].toString().substring(2)}";
     String cardNumber = "∗∗∗∗ ∗∗∗∗ ∗∗∗∗ ${creditCard['last4']}";
@@ -191,7 +195,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
               CommonDialog(
                 title: cardNumber,
                 height: 180,
-                content: "Are you sure you want to pay with \n this card?",
+                description: "Are you sure you want to pay with \n this card?",
                 confirmCallback: () {
                   _submitPayment(creditCard);
                 },
@@ -240,54 +244,99 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
         ));
   }
 
+  Widget _buildNewCreditCard() {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: GestureDetector(
+          onTap: () {
+            gotoAddNewCard();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: ColorConstant.PrimaryColor, width: 2),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      ImagesConstant.ic_add,
+                      width: 38,
+                      height: 38,
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(width: 4.w),
+                    TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.TextBlack, FontWeight.w500, 14.sp, align: TextAlign.center),
+                  ],
+                ),
+              ]),
+            ),
+          ),
+        ));
+  }
+
   Widget _buildCardList() {
     if (_user == null) return Container();
 
     var creditcards = _user.creditcards;
+    var cardList = List.generate(creditcards.length, (index) => _buildCreditCard(creditcards[index]));
+    cardList.add(_buildNewCreditCard());
     return Column(
-      children: List.generate(creditcards.length, (index) => _buildCreditCard(creditcards[index])),
+      children: cardList,
+    );
+  }
+
+  void gotoAddNewCard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(name: "/StripeAddNewCardScreen"),
+        builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: ColorConstant.White,
+        backgroundColor: ColorConstant.BackgroundColor,
         body: SafeArea(
           child: LoadingOverlay(
               isLoading: _purchasePending,
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.all(15),
+                    margin: EdgeConstants.TopBarEdgeInsets,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () => {Navigator.pop(context)},
                           child: Image.asset(
-                            ImagesConstant.ic_back_dark,
-                            height: 38,
-                            width: 38,
+                            ImagesConstant.ic_back,
+                            height: 30,
+                            width: 30,
                           ),
                         ),
-                        TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
-                        GestureDetector(
-                          onTap: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                settings: RouteSettings(name: "/StripeAddNewCardScreen"),
-                                builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
-                              ),
-                            );
-                          },
-                          child: Image.asset(
-                            ImagesConstant.ic_add,
-                            height: 38,
-                            width: 38,
-                          ),
-                        ),
+                        TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
+                        SizedBox(
+                          height: 30,
+                          width: 30,
+                        )
+                        // GestureDetector(
+                        //   onTap: () async {
+                        //     gotoAddNewCard();
+                        //   },
+                        //   child: Image.asset(
+                        //     ImagesConstant.ic_add,
+                        //     height: 38,
+                        //     width: 38,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

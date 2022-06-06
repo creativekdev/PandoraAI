@@ -6,11 +6,11 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-import 'package:cartoonizer/Common/ConsumableStore.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/common/ConsumableStore.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/Model/UserModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
 import 'LoginScreen.dart';
 
@@ -47,6 +47,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   void initState() {
+    logEvent(Events.premium_page_loading);
+
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
@@ -78,7 +80,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     var body = {"receipt_data": purchaseDetails.verificationData.serverVerificationData, "purchase_id": purchaseDetails.purchaseID ?? "", "product_id": purchaseDetails.productID};
     var response = await API.post("/api/plan/apple_store/buy", body: body);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 260) {
       return Future<bool>.value(true);
     } else {
       return Future<bool>.value(false);
@@ -108,6 +110,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         _purchasePending = false;
       });
     }
+
+    logEvent(
+      Events.paid_success,
+      eventValues: {"product_id": purchaseDetails.productID, "price": (isYear ? 39.99 : 3.99).toString(), "currency": "USD", "quantity": 1},
+    );
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -124,6 +131,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
           bool valid = await _verifyPurchase(purchaseDetails);
+
           if (valid) {
             // reload user by get login
             UserModel user = await API.getLogin(needLoad: true);
@@ -244,6 +252,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
+        logEvent(Events.premium_continue, eventValues: {"plan_type": isYear ? "yearly" : "monthly"});
+
         var sharedPrefs = await SharedPreferences.getInstance();
 
         UserModel user = await API.getLogin(needLoad: true);
@@ -316,15 +326,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                   children: [
                     Image.asset(
                       ImagesConstant.ic_radio_on,
-                      height: 8.w,
-                      width: 8.w,
+                      height: 26,
+                      width: 26,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.White, FontWeight.w500, 14,
                               align: TextAlign.start),
                         ],
                       ),
@@ -350,7 +360,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: ColorConstant.CardColor,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
@@ -359,15 +369,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       children: [
                         Image.asset(
                           isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 8.w,
-                          width: 8.w,
+                          height: 26,
+                          width: 26,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${Platform.isAndroid ? year.description : year.title} : ${year.price}/Year", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                              TitleTextWidget("${Platform.isAndroid ? year.description : year.title} : ${year.price}/Year", ColorConstant.White, FontWeight.w500, 12.sp,
                                   align: TextAlign.start),
                               // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
                             ],
@@ -406,7 +416,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !isYear ? Color.fromRGBO(235, 232, 255, 1) : ColorConstant.White,
+                    color: ColorConstant.CardColor,
                     borderRadius: BorderRadius.circular(2.w),
                   ),
                   child: Padding(
@@ -415,15 +425,15 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       children: [
                         Image.asset(
                           !isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 8.w,
-                          width: 8.w,
+                          height: 26,
+                          width: 26,
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 4.w),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${Platform.isAndroid ? month.description : month.title} : ${month.price}/Month", ColorConstant.TextBlack, FontWeight.w500, 12.sp,
+                              TitleTextWidget("${Platform.isAndroid ? month.description : month.title} : ${month.price}/Month", ColorConstant.White, FontWeight.w500, 12.sp,
                                   align: TextAlign.start),
                             ],
                           ),
@@ -493,8 +503,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                             onTap: () => {Navigator.pop(context)},
                             child: Image.asset(
                               ImagesConstant.ic_close,
-                              height: 10.w,
-                              width: 10.w,
+                              height: 30,
+                              width: 30,
                             ),
                           ),
                           Expanded(
@@ -542,7 +552,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                             ),
                             Image.asset(
                               ImagesConstant.ic_purchase_emoji,
-                              width: 50.w,
+                              width: 40.w,
                               fit: BoxFit.fitWidth,
                             ),
                             SizedBox(
@@ -551,6 +561,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
                               child: Card(
+                                color: ColorConstant.CardColor,
                                 shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(3.w),
@@ -563,13 +574,29 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                       Row(
                                         children: [
                                           Image.asset(
-                                            ImagesConstant.ic_no_watermark,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            ImagesConstant.ic_no_ads,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.no_ads, ColorConstant.White, FontWeight.w400, 14),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 2.h,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Image.asset(
+                                            ImagesConstant.ic_no_watermark,
+                                            height: 24,
+                                            width: 24,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
+                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -580,12 +607,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                         children: [
                                           Image.asset(
                                             ImagesConstant.ic_hd,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -596,12 +623,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                         children: [
                                           Image.asset(
                                             ImagesConstant.ic_rocket,
-                                            height: 8.w,
-                                            width: 8.w,
+                                            height: 24,
+                                            width: 24,
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.TextBlack, FontWeight.w400, 12.sp),
+                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),

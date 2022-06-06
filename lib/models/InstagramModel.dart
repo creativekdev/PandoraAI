@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import '../Common/instagram_constant.dart';
+import '../common/instagram_constant.dart';
 
 class InstagramModel {
   List<String> userFields = ['id', 'username'];

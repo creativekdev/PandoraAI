@@ -1,9 +1,9 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 Widget ButtonWidget(String btnText) {
   return Container(
     width: double.maxFinite,
-    height: 8.h,
+    height: 54,
     padding: EdgeInsets.symmetric(horizontal: 5.w),
     child: Card(
       elevation: 2.h,
@@ -18,7 +18,7 @@ Widget ButtonWidget(String btnText) {
           ),
         ),
         child: Center(
-          child: TitleTextWidget(btnText, ColorConstant.White, FontWeight.w600, 13.sp),
+          child: TitleTextWidget(btnText, ColorConstant.White, FontWeight.w600, 16),
         ),
       ),
     ),

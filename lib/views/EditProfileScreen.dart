@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
-import '../Common/Extension.dart';
-import '../Model/UserModel.dart';
+import '../common/Extension.dart';
+import '../models/UserModel.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/common/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -34,6 +34,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
+    logEvent(Events.edit_profile_page_loading);
+
     super.initState();
     imagePicker = new ImagePicker();
   }
@@ -57,22 +59,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Column(
                     children: [
                       Container(
-                        margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                        margin: EdgeConstants.TopBarEdgeInsets,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             GestureDetector(
                               onTap: () => {Navigator.pop(context)},
                               child: Image.asset(
-                                ImagesConstant.ic_back_dark,
-                                height: 10.w,
-                                width: 10.w,
+                                ImagesConstant.ic_back,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
-                            TitleTextWidget(StringConstant.edit_profile, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                            TitleTextWidget(StringConstant.edit_profile, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
                             SizedBox(
-                              height: 10.w,
-                              width: 10.w,
+                              height: 30,
+                              width: 30,
                             ),
                           ],
                         ),
@@ -180,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           SizedBox(
                                             height: 2.h,
                                           ),
-                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.done,
+                                          SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done,
                                               TextInputType.emailAddress, false, nameController),
                                           SizedBox(
                                             height: 4.h,

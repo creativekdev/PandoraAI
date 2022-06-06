@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Common/auth.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cartoonizer/api.dart';
@@ -27,6 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
+
+  @override
+  void initState() {
+    logEvent(Events.login_page_loading);
+    super.initState();
+  }
 
   Future<void> goBack() async {
     final box = GetStorage();
@@ -121,20 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        color: ColorConstant.PrimaryColor,
-        padding: EdgeInsets.only(top: 5.h),
-        child: Stack(
-          children: [
-            Image.asset(
-              ImagesConstant.ic_background,
-              fit: BoxFit.cover,
-              height: 100.h,
-              width: 100.w,
-            ),
-            LoadingOverlay(
-              isLoading: isLoading,
+      backgroundColor: ColorConstant.BlueColor,
+      body: LoadingOverlay(
+        isLoading: isLoading,
+        child: SafeArea(
+          bottom: false,
+          child: Container(
+            color: ColorConstant.BackgroundColor,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 2.h),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -150,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: 14.5.h),
+                            margin: EdgeInsets.only(top: 14.h),
                             child: Center(
                               child: SimpleShadow(
                                 child: Image.asset(
@@ -163,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                            margin: EdgeConstants.TopBarEdgeInsets,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -174,14 +175,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                   child: Image.asset(
                                     ImagesConstant.ic_back,
-                                    height: 10.w,
-                                    width: 10.w,
+                                    height: 30,
+                                    width: 30,
                                   ),
                                 ),
-                                TitleTextWidget(StringConstant.login, ColorConstant.White, FontWeight.w600, 14.sp),
+                                TitleTextWidget(StringConstant.login, ColorConstant.White, FontWeight.w600, FontSizeConstants.topBarTitle),
                                 SizedBox(
-                                  height: 10.w,
-                                  width: 10.w,
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ],
                             ),
@@ -189,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    TitleTextWidget(StringConstant.welcome, ColorConstant.TextBlack, FontWeight.w600, 16.sp),
+                    TitleTextWidget(StringConstant.welcome, ColorConstant.White, FontWeight.w600, 20),
                     Container(
                       width: 20.w,
                       height: 0.3.h,
@@ -307,7 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     builder: (context) => ForgotPasswordScreen(),
                                   ))
                             },
-                            child: TitleTextWidget(StringConstant.forgot_password, ColorConstant.HintColor, FontWeight.w400, 11.sp),
+                            child: TitleTextWidget(StringConstant.forgot_password, ColorConstant.White, FontWeight.w400, 12),
                           ),
                         ],
                       ),
@@ -328,13 +329,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": "app_cartoonizer"};
+                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": APP_TYPE};
                           print(body);
-                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {
-                                setState(() {
-                                  isLoading = false;
-                                }),
-                              });
+                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {});
+
                           print(response.body);
                           if (response.statusCode == 200) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -358,7 +356,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
-                            goBack();
+                            await loginBack(context);
+                            logEvent(Events.login, eventValues: {"method": "email"});
                           } else {
                             try {
                               CommonExtension().showToast(json.decode(response.body)['message']);
@@ -366,6 +365,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               CommonExtension().showToast(response.body.toString());
                             }
                           }
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
                       },
                       child: ButtonWidget(StringConstant.sign_in),
@@ -388,7 +390,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           SizedBox(
                             width: 3.w,
                           ),
-                          TitleTextWidget(StringConstant.or, ColorConstant.PrimaryColor, FontWeight.w500, 11.sp),
+                          TitleTextWidget(StringConstant.or, ColorConstant.PrimaryColor, FontWeight.w500, 12),
                           SizedBox(
                             width: 3.w,
                           ),
@@ -409,8 +411,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                           try {
                             var result = await signInWithApple();
+
                             if (result) {
-                              loginBack(context);
+                              await loginBack(context);
+                              logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
@@ -445,11 +449,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
+                            "type": APP_TYPE
                           });
                           final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
-                          setState(() {
-                            isLoading = false;
-                          });
                           if (tokenResponse.statusCode == 200) {
                             final Map parsed = json.decode(tokenResponse.body.toString());
                             print(parsed);
@@ -492,30 +494,30 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
-                              goBack();
+                              await loginBack(context);
+                              logEvent(Events.login, eventValues: {"method": "google"});
                             }
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } finally {
-                          if (isLoading)
-                            setState(() {
-                              isLoading = false;
-                            });
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
-                        ;
                       },
                       child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
                     ),
                     SizedBox(
-                      height: 1.5.h,
+                      height: 2.h,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TitleTextWidget(StringConstant.no_account, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                        TitleTextWidget(StringConstant.no_account, ColorConstant.White, FontWeight.w400, 12),
                         GestureDetector(
                           onTap: () => {
+                            GetStorage().write('signup_through', ''),
                             if (prefixPage == 'signup')
                               {Navigator.pop(context)}
                             else
@@ -532,20 +534,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             StringConstant.sign_up,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12.sp, decoration: TextDecoration.underline),
+                            style:
+                                TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                           ),
                         )
                       ],
                     ),
                     SizedBox(
-                      height: 4.h,
+                      height: 2.h,
                     ),
                   ],
                 ),
               ),
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );

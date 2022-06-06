@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -34,22 +34,22 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                margin: EdgeConstants.TopBarEdgeInsets,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
                       onTap: () => {Navigator.pop(context)},
                       child: Image.asset(
-                        ImagesConstant.ic_back_dark,
-                        height: 10.w,
-                        width: 10.w,
+                        ImagesConstant.ic_back,
+                        height: 30,
+                        width: 30,
                       ),
                     ),
-                    TitleTextWidget(StringConstant.change_password, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                    TitleTextWidget(StringConstant.change_password, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
                     SizedBox(
-                      height: 10.w,
-                      width: 10.w,
+                      height: 30,
+                      width: 30,
                     ),
                   ],
                 ),
@@ -62,17 +62,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         height: 5.h,
                       ),
                       SimpleTextInputWidget(
-                          StringConstant.current_pass, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
+                          StringConstant.current_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
                       SizedBox(
                         height: 1.4.h,
                       ),
                       SimpleTextInputWidget(
-                          StringConstant.new_pass, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
+                          StringConstant.new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
                       SizedBox(
                         height: 1.4.h,
                       ),
                       SimpleTextInputWidget(
-                          StringConstant.confirm_pass, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
+                          StringConstant.confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
                       SizedBox(
                         height: 5.h,
                       ),

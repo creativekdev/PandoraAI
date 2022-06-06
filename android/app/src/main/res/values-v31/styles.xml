@@ -4,7 +4,7 @@
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowFullscreen">false</item>
-        <item name="android:windowSplashScreenBackground">#000000</item>
+        <item name="android:windowSplashScreenBackground">#161719</item>
         <item name="android:windowSplashScreenBrandingImage">@drawable/branding</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/android12splash</item>
     </style>

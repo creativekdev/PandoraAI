@@ -6,10 +6,11 @@ class UserModel {
   String status = "registered";
   String apple_id = "";
   int credit = 0;
+  Map<String, dynamic> ai_servers = {};
   Map<String, dynamic> subscription = {};
   List<dynamic> creditcards = [];
 
-  UserModel({required this.email, required this.name, required this.avatar});
+  UserModel({this.email = "", this.name = "", this.avatar = ""});
 
   factory UserModel.fromGetLogin(Map json) {
     var data = json['data'] ?? {};
@@ -26,6 +27,7 @@ class UserModel {
     user.status = data['status'] ?? "registered";
     user.credit = data['cartoonize_credit'] ?? 0;
     user.creditcards = data['creditcards'] ?? [];
+    user.ai_servers = json['ai_servers'] ?? {};
 
     var user_subscription = data['user_subscription'] ?? [];
 
@@ -37,6 +39,12 @@ class UserModel {
       }
     }
 
+    return user;
+  }
+
+  factory UserModel.fromUnlogin(Map json) {
+    UserModel user = UserModel();
+    user.ai_servers = json['ai_servers'] ?? {};
     return user;
   }
 
@@ -53,6 +61,7 @@ class UserModel {
     user.status = json['status'] ?? "registered";
     user.credit = json['credit'] ?? 0;
     user.creditcards = json['creditcards'] ?? [];
+    user.ai_servers = json['ai_servers'] ?? {};
 
     return user;
   }
@@ -66,6 +75,7 @@ class UserModel {
         "credit": credit,
         "creditcards": creditcards,
         "status": status,
-        "subscription": subscription
+        "subscription": subscription,
+        "ai_servers": ai_servers
       };
 }

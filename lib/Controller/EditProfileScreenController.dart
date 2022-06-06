@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
 class EditProfileScreenController extends GetxController{
 

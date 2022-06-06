@@ -1,5 +1,5 @@
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cartoonizer/api.dart';
 
@@ -31,16 +31,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                    margin: EdgeConstants.TopBarEdgeInsets,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () => {Navigator.pop(context)},
                           child: Image.asset(
-                            ImagesConstant.ic_back_dark,
-                            height: 10.w,
-                            width: 10.w,
+                            ImagesConstant.ic_back,
+                            height: 30,
+                            width: 30,
                           ),
                         ),
                       ],
@@ -58,7 +58,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
-                    child: TitleTextWidget(StringConstant.forgot_password_text, ColorConstant.HintColor, FontWeight.w400, 12.sp),
+                    child: TitleTextWidget(StringConstant.forgot_password_text, ColorConstant.HintColor, FontWeight.w400, 12.sp, maxLines: 2),
                   ),
                   SizedBox(
                     height: 5.h,
@@ -71,7 +71,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     height: 5.h,
                   ),
                   SimpleTextInputWidget(
-                      StringConstant.email, ColorConstant.HintColor, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, emailController),
+                      StringConstant.email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, emailController),
                   SizedBox(
                     height: 3.h,
                   ),

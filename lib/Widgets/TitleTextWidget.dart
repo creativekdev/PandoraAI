@@ -1,6 +1,6 @@
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/common/importFile.dart';
 
-Widget TitleTextWidget(String text, Color color, FontWeight fontWeight, double size, {TextAlign align = TextAlign.center}) => Text(
+Widget TitleTextWidget(String text, Color color, FontWeight fontWeight, double size, {TextAlign align = TextAlign.center, int maxLines = 1}) => Text(
       text,
       textAlign: align,
       style: TextStyle(
@@ -10,6 +10,6 @@ Widget TitleTextWidget(String text, Color color, FontWeight fontWeight, double s
         fontSize: size,
       ),
       overflow: TextOverflow.fade,
-      maxLines: 1,
-      softWrap: false,
+      maxLines: maxLines,
+      softWrap: true,
     );

@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Common/ColorConstant.dart';
+import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {
@@ -12,7 +12,7 @@ class CommonExtension {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 3,
-        backgroundColor: ColorConstant.BtnTextColor,
+        backgroundColor: ColorConstant.CardColor,
         textColor: ColorConstant.White,
         fontSize: 16.0);
   }

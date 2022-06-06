@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Ui/EmailVerificationScreen.dart';
+import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/Common/sToken.dart';
-import 'Model/CategoryModel.dart';
-import 'Model/EffectModel.dart';
-import 'Model/UserModel.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/common/sToken.dart';
+import 'models/UserModel.dart';
 
 class API {
   // Stitching parameters
@@ -28,19 +27,15 @@ class API {
   }
 
   // get request
-  static Future<http.Response> get(String url,
-      {Map<String, String>? headers, Map<String, dynamic>? params}) async {
+  static Future<http.Response> get(String url, {Map<String, String>? headers, Map<String, dynamic>? params}) async {
+    print("API------> GET: $url");
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var cookie =
-        "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
+    var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
 
     // add custom headers
     if (headers == null || headers.isEmpty) {
-      headers = {
-        "Content-type": "application/x-www-form-urlencoded",
-        "cookie": cookie
-      };
+      headers = {"Content-type": "application/x-www-form-urlencoded", "cookie": cookie};
     } else {
       if (headers["cookie"] == null) {
         headers["cookie"] = cookie;
@@ -49,11 +44,7 @@ class API {
 
     // add custom params
     if (params == null || params.isEmpty) {
-      params = {
-        "app_platform": Platform.operatingSystem,
-        "app_version": packageInfo.version,
-        "app_build": packageInfo.buildNumber
-      };
+      params = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
     } else {
       params["app_platform"] = Platform.operatingSystem;
       params["app_version"] = packageInfo.version;
@@ -72,12 +63,11 @@ class API {
   }
 
   // post request
-  static Future<http.Response> post(String url,
-      {Map<String, String>? headers, Map<String, dynamic>? body}) async {
+  static Future<http.Response> post(String url, {Map<String, String>? headers, Map<String, dynamic>? body}) async {
+    print("API------> POST: $url");
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var cookie =
-        "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
+    var cookie = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
 
     // add custom headers
     if (headers == null || headers.isEmpty) {
@@ -93,11 +83,7 @@ class API {
 
     // add custom params
     if (body == null || body.isEmpty) {
-      body = {
-        "app_platform": Platform.operatingSystem,
-        "app_version": packageInfo.version,
-        "app_build": packageInfo.buildNumber
-      };
+      body = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
     } else {
       body["app_platform"] = Platform.operatingSystem;
       body["app_version"] = packageInfo.version;
@@ -111,40 +97,37 @@ class API {
     if (url.startsWith("http") == false) {
       url = "${Config.instance.host}" + url;
     }
-    return await http.post(Uri.parse(url),
-        headers: headers, body: jsonEncode(body));
+    return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
   }
 
   // get login
-  static Future<dynamic> getLogin(
-      {bool needLoad = false, BuildContext? context}) async {
+  static Future<dynamic> getLogin({bool needLoad = false, BuildContext? context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
     var localUser = sharedPreferences.getString('user') ?? "";
 
-    if (!isLogin) {
-      return UserModel.fromJson({});
-    }
-
     if (needLoad || localUser == '') {
       var response = await get('/api/user/get_login');
+      Map data = jsonDecode(response.body.toString());
 
-      if (response.statusCode == 200) {
-        Map data = jsonDecode(response.body.toString());
+      if (response.statusCode == 200 && data['login'] == true) {
         UserModel user = UserModel.fromGetLogin(data);
         sharedPreferences.setString("user", jsonEncode(user));
 
         if (context != null && user.status != 'activated') {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                settings: RouteSettings(name: "/EmailVerificationScreen"),
-                builder: (context) => EmailVerificationScreen(user.email),
-              ));
+          // remove all route and push email verification screen
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) => EmailVerificationScreen(user.email)),
+            ModalRoute.withName('/EmailVerificationScreen'),
+          );
         }
         return user;
+      } else {
+        UserModel user = UserModel.fromUnlogin(data);
+        sharedPreferences.setString("user", jsonEncode(user));
+        return user;
       }
-      return UserModel.fromJson(jsonDecode(localUser));
     }
     return UserModel.fromJson(jsonDecode(localUser));
   }
@@ -157,7 +140,7 @@ class API {
       return true;
     } else {
       var body = jsonDecode(response.body);
-      showToast(body["message"] ?? body["code"]);
+      CommonExtension().showToast(body["message"] ?? body["code"]);
       return false;
     }
   }
