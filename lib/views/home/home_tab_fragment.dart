@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cartoonizer/Controller/home_data_controller.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/utils/cacheImage/image_cache_manager.dart';
 
 import '../../Common/importFile.dart';
 import '../../Common/utils.dart';
@@ -13,10 +14,12 @@ import 'HomeScreen.dart';
 
 class HomeTabFragment extends StatefulWidget {
   List<EffectModel> dataList;
+  RecentController recentController;
 
   HomeTabFragment({
     Key? key,
     required this.dataList,
+    required this.recentController,
   }) : super(key: key);
 
   @override
@@ -28,12 +31,14 @@ class HomeTabFragment extends StatefulWidget {
 class HomeTabFragmentState extends State<HomeTabFragment>
     with AutomaticKeepAliveClientMixin {
   List<EffectModel> dataList = [];
+  late RecentController recentController;
   UserModel? _user;
 
   @override
   initState() {
     super.initState();
     dataList = widget.dataList;
+    recentController = widget.recentController;
     initStoreInfo(true);
   }
 
@@ -55,17 +60,35 @@ class HomeTabFragmentState extends State<HomeTabFragment>
     super.build(context);
     return ListView.builder(
       itemCount: dataList.length,
-      itemBuilder: (context, index) => _buildEffectCategoryCard(dataList, index)
-          .intoContainer(
-        margin: EdgeInsets.only(left: 5.w, right: 5.w, top: 2.h),
+      itemBuilder: (context, index) =>
+          _buildEffectCategoryCard(context, dataList, index)
+              .intoContainer(
+        margin: EdgeInsets.only(
+            left: $(20),
+            right: $(20),
+            top: index == 0 ? $(16) : $(8),
+            bottom: $(8)),
       )
-          .intoGestureDetector(onTap: () {
+              .intoGestureDetector(onTap: () {
         _onEffectCategoryTap(dataList, index);
       }),
     );
   }
 
-  Widget _buildEffectCategoryCard(List<EffectModel> list, int index) {
+  Widget _imageWidget(BuildContext context, {required String url}) =>
+      CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.fill,
+        height: $(150),
+        width: $(150),
+        placeholder: cachedNetworkImagePlaceholder,
+        errorWidget: cachedNetworkImageErrorWidget,
+        cacheManager: CachedImageCacheManager(),
+      );
+
+  Widget _buildEffectCategoryCard(
+      BuildContext context, List<EffectModel> list, int index) {
+    var data = list[index];
     return Column(
       children: [
         _buildMERCAd(index),
@@ -79,186 +102,62 @@ class HomeTabFragmentState extends State<HomeTabFragment>
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.all(3.w),
+                padding: EdgeInsets.all($(6)),
                 child: Column(
                   children: [
                     Row(
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(right: 1.5.w),
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2.w)),
-                                  child:
-                                      list[index].key.toString() == "transform"
-                                          ? CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                      list[index].key +
-                                                      ".webp",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            )
-                                          : CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                      list[index].key +
-                                                      ".mobile.jpg",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            ),
-                                ),
-                              ],
+                            padding: EdgeInsets.all($(6)),
+                            child: ClipRRect(
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(2.w)),
+                              child: _imageWidget(context,
+                                  url: data.getShownUrl()),
                             ),
                           ),
                         ),
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(right: 0.w),
-                            child: Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2.w)),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child:
-                                      list[index].key.toString() == "transform"
-                                          ? CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                      list[index].key +
-                                                      "1.webp",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            )
-                                          : CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                      list[index].key +
-                                                      "1.jpg",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            ),
-                                ),
-                              ],
+                            padding: EdgeInsets.all($(6)),
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(2.w)),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: _imageWidget(context,
+                                  url: data.getShownUrl(pos: 1)),
                             ),
                           ),
                         ),
                       ],
                     ),
                     if (list[index].key.toString() != "transform")
-                      SizedBox(
-                        height: 1.5.w,
-                      ),
-                    if (list[index].key.toString() != "transform")
                       Row(
                         children: [
                           Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(right: 1.5.w),
-                              child: Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(2.w)),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    child: list[index].key.toString() ==
-                                            "transform"
-                                        ? CachedNetworkImage(
-                                            imageUrl:
-                                                "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                    list[index].key +
-                                                    "2.webp",
-                                            fit: BoxFit.fill,
-                                            height: 41.w,
-                                            width: 41.w,
-                                            placeholder:
-                                                cachedNetworkImagePlaceholder,
-                                            errorWidget:
-                                                cachedNetworkImageErrorWidget,
-                                          )
-                                        : CachedNetworkImage(
-                                            imageUrl:
-                                                "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                    list[index].key +
-                                                    "2.jpg",
-                                            fit: BoxFit.fill,
-                                            height: 41.w,
-                                            width: 41.w,
-                                            placeholder:
-                                                cachedNetworkImagePlaceholder,
-                                            errorWidget:
-                                                cachedNetworkImageErrorWidget,
-                                          ),
-                                  ),
-                                ],
+                              padding: EdgeInsets.all($(6)),
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(2.w)),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: _imageWidget(context,
+                                    url: data.getShownUrl(pos: 2)),
                               ),
                             ),
                           ),
                           if (list[index].effects.length >= 3)
                             Expanded(
                               child: Padding(
-                                padding: EdgeInsets.only(right: 0.w),
-                                child: Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(2.w)),
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      child: list[index].key.toString() ==
-                                              "transform"
-                                          ? CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" +
-                                                      list[index].key +
-                                                      "3.webp",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            )
-                                          : CachedNetworkImage(
-                                              imageUrl:
-                                                  "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" +
-                                                      list[index].key +
-                                                      "3.jpg",
-                                              fit: BoxFit.fill,
-                                              height: 41.w,
-                                              width: 41.w,
-                                              placeholder:
-                                                  cachedNetworkImagePlaceholder,
-                                              errorWidget:
-                                                  cachedNetworkImageErrorWidget,
-                                            ),
-                                    ),
-                                  ],
+                                padding: EdgeInsets.all($(6)),
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(2.w)),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  child: _imageWidget(context,
+                                      url: data.getShownUrl(pos: 3)),
                                 ),
                               ),
                             ),
@@ -308,6 +207,7 @@ class HomeTabFragmentState extends State<HomeTabFragment>
         builder: (context) => ChoosePhotoScreen(list: list, pos: index),
       ),
     );
+    recentController.onEffectUsed(list[index]);
 
     initStoreInfo(false);
   }

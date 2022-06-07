@@ -1,7 +1,6 @@
-import 'dart:convert';
-
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/home_data_controller.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
 
@@ -19,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final Connectivity _connectivity = Connectivity();
   late HomeDataController dataController;
+  late RecentController recentController;
 
   int currentIndex = 0;
   late PageController _pageController;
@@ -28,8 +28,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.homepage_loading);
     API.getLogin(needLoad: true, context: context);
     dataController = Get.put(HomeDataController());
+    recentController = Get.put(RecentController());
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile ||
           event ==
@@ -84,12 +86,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 for (var value in _.data!.keys) {
                   tabConfig.add(
                     HomeTabConfig(
-                        item: HomeTabFragment(dataList: _.data![value]!),
+                        item: HomeTabFragment(
+                          dataList: _.data![value]!,
+                          recentController: recentController,
+                        ),
                         title: value),
                   );
                 }
-                tabConfig.add(
-                    HomeTabConfig(item: HomeRecentFragment(), title: 'Recent'));
+                tabConfig.add(HomeTabConfig(
+                    item: HomeRecentFragment(controller: recentController),
+                    title: 'Recent'));
                 _pageController = PageController(initialPage: currentIndex);
                 _tabController = TabController(
                     length: tabConfig.length,
@@ -98,9 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 return Column(
                   children: [
                     navbar(context),
-                    SizedBox(
-                      height: $(10),
-                    ),
+                    SizedBox(height: $(10)),
                     TabBar(
                       indicatorSize: TabBarIndicatorSize.label,
                       indicator: LineTabIndicator(
@@ -146,16 +150,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget navbar(BuildContext context) => Container(
-        margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+        margin: EdgeInsets.only(top: $(10), left: $(15), right: $(15)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              height: 10.w,
-              width: 10.w,
+              height: $(38),
+              width: $(38),
             ),
             TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor,
-                FontWeight.w600, 14.sp),
+                FontWeight.w600, $(18)),
             GestureDetector(
               onTap: () => {
                 Navigator.push(
@@ -167,9 +171,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               },
               child: Image.asset(
                 ImagesConstant.ic_user_round,
-                height: 10.w,
-                width: 10.w,
-              ),
+                height: $(30),
+                width: $(30),
+              ).intoContainer(padding: EdgeInsets.all($(4))),
             ),
           ],
         ),
@@ -183,8 +187,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
 Widget cachedNetworkImagePlaceholder(BuildContext context, String url) =>
     Container(
-      height: 41.w,
-      width: 41.w,
+      height: $(150),
+      width: $(150),
       child: Center(
         child: CircularProgressIndicator(),
       ),
@@ -192,8 +196,8 @@ Widget cachedNetworkImagePlaceholder(BuildContext context, String url) =>
 
 Widget cachedNetworkImageErrorWidget(BuildContext context, String url, error) =>
     Container(
-      height: 41.w,
-      width: 41.w,
+      height: $(150),
+      width: $(150),
       child: Center(
         child: CircularProgressIndicator(),
       ),
