@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/helper/shared_pref.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+
 ///
 /// Recent effect data manager
 /// @Author: wangyu
@@ -10,11 +11,32 @@ import 'package:cartoonizer/models/EffectModel.dart';
 ///
 class RecentController extends GetxController {
   List<RecentEffectModel> recentList = [];
+  List<EffectModel> originList = [];
+  List<EffectModel> dataList = [];
 
   @override
   void onInit() async {
     super.onInit();
     loadingFromCache();
+  }
+
+  updateOriginData(Map<String, List<EffectModel>> originData) {
+    originList.clear();
+    originData.values.forEach((element) {
+      originList.addAll(element);
+    });
+    refreshDataList();
+  }
+
+  refreshDataList() {
+    dataList.clear();
+    recentList.forEach((element) {
+      var pick = originList.pick((t) => t.key == element.key);
+      if (pick != null) {
+        dataList.add(pick);
+      }
+    });
+    update();
   }
 
   loadingFromCache() async {
@@ -25,7 +47,7 @@ class RecentController extends GetxController {
       recentList = (json as List<dynamic>)
           .map((e) => RecentEffectModel.fromJson(e))
           .toList();
-      update();
+      refreshDataList();
     } catch (e) {}
   }
 
@@ -35,18 +57,17 @@ class RecentController extends GetxController {
   }
 
   onEffectUsed(EffectModel effectModel) {
-    var first = recentList.firstWhereOrNull((element) =>
-        effectModel.key == element.effectModel.key &&
-        effectModel.display_name == element.effectModel.display_name);
-    if (first != null) {
-      first.lastTime = DateTime.now().millisecond;
-      recentList.remove(first);
+    var pick = recentList
+        .pick((element) => effectModel.key == element.key);
+    if (pick != null) {
+      pick.lastTime = DateTime.now().millisecond;
+      recentList.remove(pick);
     } else {
-      first = RecentEffectModel(
-          lastTime: DateTime.now().millisecond, effectModel: effectModel);
+      pick = RecentEffectModel(
+          lastTime: DateTime.now().millisecond, key: effectModel.key);
     }
-    recentList.insert(0, first);
+    recentList.insert(0, pick);
     _saveToCache(recentList);
-    update();
+    refreshDataList();
   }
 }

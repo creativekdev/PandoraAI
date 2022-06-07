@@ -1,16 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
-import 'package:cartoonizer/utils/cacheImage/image_cache_manager.dart';
-
-import '../../Common/importFile.dart';
-import '../../Common/utils.dart';
-import '../../Widgets/applovin_banner.dart';
-import '../../api.dart';
-import '../../config.dart';
-import '../../models/EffectModel.dart';
-import '../../models/UserModel.dart';
-import '../ChoosePhotoScreen.dart';
-import 'HomeScreen.dart';
+import 'package:cartoonizer/Widgets/applovin_banner.dart';
+import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/home/home_effect_card_widget.dart';
 
 class HomeTabFragment extends StatefulWidget {
   List<EffectModel> dataList;
@@ -75,123 +72,13 @@ class HomeTabFragmentState extends State<HomeTabFragment>
     );
   }
 
-  Widget _imageWidget(BuildContext context, {required String url}) =>
-      CachedNetworkImage(
-        imageUrl: url,
-        fit: BoxFit.fill,
-        height: $(150),
-        width: $(150),
-        placeholder: cachedNetworkImagePlaceholder,
-        errorWidget: cachedNetworkImageErrorWidget,
-        cacheManager: CachedImageCacheManager(),
-      );
-
   Widget _buildEffectCategoryCard(
       BuildContext context, List<EffectModel> list, int index) {
     var data = list[index];
     return Column(
       children: [
         _buildMERCAd(index),
-        Card(
-          color: ColorConstant.CardColor,
-          elevation: 1.h,
-          shadowColor: Color.fromRGBO(0, 0, 0, 0.3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4.w),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all($(6)),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.all($(6)),
-                            child: ClipRRect(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2.w)),
-                              child: _imageWidget(context,
-                                  url: data.getShownUrl()),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.all($(6)),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(2.w)),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              child: _imageWidget(context,
-                                  url: data.getShownUrl(pos: 1)),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (list[index].key.toString() != "transform")
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.all($(6)),
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(2.w)),
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                                child: _imageWidget(context,
-                                    url: data.getShownUrl(pos: 2)),
-                              ),
-                            ),
-                          ),
-                          if (list[index].effects.length >= 3)
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.all($(6)),
-                                child: ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(2.w)),
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child: _imageWidget(context,
-                                      url: data.getShownUrl(pos: 3)),
-                                ),
-                              ),
-                            ),
-                        ],
-                      )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 3.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TitleTextWidget(
-                          (list[index].display_name.toString() == "null")
-                              ? list[index].key
-                              : list[index].display_name,
-                          ColorConstant.BtnTextColor,
-                          FontWeight.w600,
-                          17,
-                          align: TextAlign.start),
-                    ),
-                    Image.asset(
-                      ImagesConstant.ic_next,
-                      height: 50,
-                      width: 50,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        )
+        HomeEffectCardWidget(data: data),
       ],
     );
   }

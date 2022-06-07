@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       );
                     });
               } else {
+                recentController.updateOriginData(_.data!);
                 tabConfig.clear();
                 for (var value in _.data!.keys) {
                   tabConfig.add(
@@ -110,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       indicator: LineTabIndicator(
                         space: $(16),
                         borderSide: BorderSide(
-                            width: $(3), color: ColorConstant.PrimaryColor),
+                            width: $(3), color: ColorConstant.BlueColor),
                       ),
                       isScrollable: false,
                       labelColor: ColorConstant.PrimaryColor,
@@ -184,21 +185,3 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return (connectivityResult != ConnectivityResult.none);
   }
 }
-
-Widget cachedNetworkImagePlaceholder(BuildContext context, String url) =>
-    Container(
-      height: $(150),
-      width: $(150),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-
-Widget cachedNetworkImageErrorWidget(BuildContext context, String url, error) =>
-    Container(
-      height: $(150),
-      width: $(150),
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
