@@ -54,13 +54,13 @@ class API {
         "app_platform": Platform.operatingSystem,
         "app_version": packageInfo.version,
         "app_build": packageInfo.buildNumber,
-        'from_app': 1,
+        'from_app': "1",
       };
     } else {
       params["app_platform"] = Platform.operatingSystem;
       params["app_version"] = packageInfo.version;
       params["app_build"] = packageInfo.buildNumber;
-      params['from_app'] = 1;
+      params['from_app'] = "1";
     }
 
     // add ts and signature

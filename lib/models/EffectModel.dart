@@ -45,7 +45,7 @@ class EffectItem {
   late String category;
   late String type;
   late String server;
-  late String originalFace;
+  late bool originalFace;
   late String imageUrl;
   late String created;
   late String modified;
@@ -60,7 +60,7 @@ class EffectItem {
     this.created = '',
     this.imageUrl = '',
     this.modified = '',
-    this.originalFace = '',
+    this.originalFace = false,
     this.server = '',
     this.stickerName = '',
   });
@@ -74,7 +74,7 @@ class EffectItem {
     created = (json['created'] ?? '').toString();
     imageUrl = (json['image_url'] ?? '').toString();
     modified = (json['modified'] ?? '').toString();
-    originalFace = (json['original_face'] ?? '').toString();
+    originalFace = (json['original_face'] ?? false);
     server = (json['server'] ?? '').toString();
     stickerName = (json['sticker_name'] ?? '').toString();
   }

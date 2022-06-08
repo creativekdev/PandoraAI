@@ -895,9 +895,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
     var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
 
-    String aiHost = _getAiHostByStyle(selectedEffect);
+    String aiHost = _getAiHostByStyle(selectedEffect!);
 
-    var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect!.key + "-original_face" : selectedEffect!.key;
+    var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.key + "-original_face" : selectedEffect.key;
 
     if (offlineEffect.containsKey(key)) {
       var data = offlineEffect[key] as OfflineEffectModel;
@@ -1122,12 +1122,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         ));
   }
 
-  bool isSupportOriginalFace(dynamic effect) {
-    return effect["original_face"] != null && effect["original_face"] == true;
+  bool isSupportOriginalFace(EffectItem effect) {
+    return effect.originalFace;
   }
 
-  String _getAiHostByStyle(dynamic effect) {
-    var server = effect["server"];
+  String _getAiHostByStyle(EffectItem effect) {
+    var server = effect.server;
     return _user.ai_servers[server] ?? Config.instance.aiHost;
   }
 
