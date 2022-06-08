@@ -51,10 +51,11 @@ class HomeTabFragmentState extends State<HomeTabFragment>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
     return ListView.builder(
       itemCount: dataList.length,
       itemBuilder: (context, index) =>
-          _buildEffectCategoryCard(context, dataList, index)
+          _buildEffectCategoryCard(context, dataList, index, width)
               .intoContainer(
         margin: EdgeInsets.only(
             left: $(20),
@@ -69,12 +70,19 @@ class HomeTabFragmentState extends State<HomeTabFragment>
   }
 
   Widget _buildEffectCategoryCard(
-      BuildContext context, List<EffectModel> list, int index) {
+    BuildContext context,
+    List<EffectModel> list,
+    int index,
+    double parentWidth,
+  ) {
     var data = list[index];
     return Column(
       children: [
         _buildMERCAd(index),
-        HomeEffectCardWidget(data: data),
+        HomeEffectCardWidget(
+          data: data,
+          parentWidth: parentWidth,
+        ),
       ],
     );
   }

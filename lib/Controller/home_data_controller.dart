@@ -1,11 +1,11 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 
 typedef ItemRender = Widget Function();
 
 class HomeDataController extends GetxController {
-  Map<String, List<EffectModel>>? data = null;
+  EffectMap? data = null;
   bool loading = true;
 
   @override

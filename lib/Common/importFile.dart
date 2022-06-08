@@ -28,4 +28,5 @@ export 'package:cartoonizer/common/events.dart';
 
 export 'package:cartoonizer/utils/screen_util.dart';
 export 'package:cartoonizer/utils/array_util.dart';
+export 'package:cartoonizer/utils/dialog_util.dart';
 export 'package:cartoonizer/Widgets/widget_extensions.dart';

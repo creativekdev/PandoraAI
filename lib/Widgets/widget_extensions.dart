@@ -157,15 +157,21 @@ extension WidgetExtension on Widget {
         offstage: offstage,
         child: this,
       );
+
+  Visibility visibility({Key? key, bool visible = true}) => Visibility(
+        key: key,
+        visible: visible,
+        child: this,
+      );
 }
 
 typedef DelayCallback<T> = T Function();
 
 Future<T> delay<T>(
-    DelayCallback<T> callback, {
-      int milliseconds = 16,
-    }) =>
+  DelayCallback<T> callback, {
+  int milliseconds = 16,
+}) =>
     Future<T>.delayed(
       Duration(milliseconds: milliseconds),
-          () => callback.call(),
+      () => callback.call(),
     );

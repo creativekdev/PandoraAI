@@ -20,11 +20,9 @@ class RecentController extends GetxController {
     loadingFromCache();
   }
 
-  updateOriginData(Map<String, List<EffectModel>> originData) {
+  updateOriginData(List<EffectModel> originData) {
     originList.clear();
-    originData.values.forEach((element) {
-      originList.addAll(element);
-    });
+    originList.addAll(originData);
     refreshDataList();
   }
 
@@ -57,8 +55,7 @@ class RecentController extends GetxController {
   }
 
   onEffectUsed(EffectModel effectModel) {
-    var pick = recentList
-        .pick((element) => effectModel.key == element.key);
+    var pick = recentList.pick((element) => effectModel.key == element.key);
     if (pick != null) {
       pick.lastTime = DateTime.now().millisecond;
       recentList.remove(pick);

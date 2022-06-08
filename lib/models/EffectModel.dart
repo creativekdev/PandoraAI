@@ -1,40 +1,97 @@
 class EffectModel {
   late String key = '';
-  late String style = "";
-  late String display_name = "";
-  late Map<String, dynamic> effects;
+  late String displayName = '';
+  late String style = '';
+  late Map<String, EffectItem> effects;
+  late String defaultEffect;
+  late List<dynamic> thumbnails;
 
   EffectModel({
     required this.key,
-    required this.effects,
-    required this.display_name,
-    required this.style,
-  });
-
-  EffectModel.fromJson(Map<String, dynamic> json, String style) {
-    display_name = json['key'] == 'animation'
-        ? "Animation"
-        : json['display_name'].toString();
-    key = json['key'].toString();
-    effects = json['effects'];
-    this.style = style;
+    required this.defaultEffect,
+    Map<String, EffectItem>? effects,
+    List<dynamic>? thumbnails,
+    this.displayName = '',
+    this.style = '',
+  }) {
+    this.effects = effects ?? {};
+    this.thumbnails = thumbnails ?? [];
   }
 
-  EffectModel.fromCacheJson(Map<String, dynamic> json) {
-    display_name = json['key'] == 'animation'
-        ? "Animation"
-        : json['display_name'].toString();
+  EffectModel.fromJson(Map<String, dynamic> json) {
     key = json['key'].toString();
-    effects = json['effects'];
-    style = json['style'];
+    defaultEffect = (json['default_effect'] ?? '').toString();
+    var effectsMap = (json['effects'] ?? {}) as Map<String, dynamic>;
+    effects = effectsMap
+        .map((key, value) => MapEntry(key, EffectItem.fromJson(value)));
+    thumbnails = json['thumbnails'] ?? [];
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['key'] = key;
-    data['style'] = style;
-    data['display_name'] = key == 'animation' ? "Animation" : display_name;
-    data['effects'] = effects;
+    data['default_effect'] = defaultEffect;
+    data['effects'] =
+        effects.map((key, value) => MapEntry(key, value.toJson()));
+    data['thumbnails'] = thumbnails;
+    return data;
+  }
+}
+
+class EffectItem {
+  late String key;
+  late String algoname;
+  late String stickerName;
+  late String category;
+  late String type;
+  late String server;
+  late String originalFace;
+  late String imageUrl;
+  late String created;
+  late String modified;
+  late String id;
+
+  EffectItem({
+    this.key = '',
+    this.type = '',
+    this.id = '',
+    this.algoname = '',
+    this.category = '',
+    this.created = '',
+    this.imageUrl = '',
+    this.modified = '',
+    this.originalFace = '',
+    this.server = '',
+    this.stickerName = '',
+  });
+
+  EffectItem.fromJson(Map<String, dynamic> json) {
+    key = (json['key'] ?? '').toString();
+    type = (json['type'] ?? '').toString();
+    id = (json['id'] ?? '').toString();
+    algoname = (json['algoname'] ?? '').toString();
+    category = (json['category'] ?? '').toString();
+    created = (json['created'] ?? '').toString();
+    imageUrl = (json['image_url'] ?? '').toString();
+    modified = (json['modified'] ?? '').toString();
+    originalFace = (json['original_face'] ?? '').toString();
+    server = (json['server'] ?? '').toString();
+    stickerName = (json['sticker_name'] ?? '').toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['key'] = key;
+    data['type'] = type;
+    data['id'] = id;
+    data['algoname'] = algoname;
+    data['category'] = category;
+    data['created'] = created;
+    data['image_url'] = imageUrl;
+    data['modified'] = modified;
+    data['original_face'] = originalFace;
+    data['server'] = server;
+    data['sticker_name'] = stickerName;
     return data;
   }
 }
@@ -50,7 +107,7 @@ class RecentEffectModel {
 
   RecentEffectModel.fromJson(Map<String, dynamic> json) {
     lastTime = json['lastTime'] ?? 0;
-    key = json['key']??'';
+    key = json['key'] ?? '';
   }
 
   Map<String, dynamic> toJson() {
@@ -70,4 +127,15 @@ extension EffectModelEx on EffectModel {
         return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? '.mobile'}.jpg';
     }
   }
+
+  int getDefaultPos() {
+    var keys = effects.keys.toList();
+    for (int i = 0; i < keys.length; i++) {
+      if(keys[i] == defaultEffect) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
 }

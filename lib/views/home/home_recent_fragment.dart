@@ -26,6 +26,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
     return GetBuilder<RecentController>(
         init: recentController,
         builder: (_) {
@@ -48,6 +49,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment>
               : ListView.builder(
                   itemCount: _.dataList.length,
                   itemBuilder: (context, index) => HomeEffectCardWidget(
+                    parentWidth: width,
                     data: _.dataList[index],
                   )
                       .intoContainer(

@@ -3,6 +3,7 @@ import 'package:cartoonizer/Controller/home_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 
 import '../SettingScreen.dart';
 import 'home_recent_fragment.dart';
@@ -82,15 +83,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       );
                     });
               } else {
-                recentController.updateOriginData(_.data!);
+                recentController.updateOriginData(_.data!.allEffectList());
                 tabConfig.clear();
-                for (var value in _.data!.keys) {
+                for (var value in _.data!.data.keys) {
                   tabConfig.add(
                     HomeTabConfig(
                         item: HomeTabFragment(
-                          dataList: _.data![value]!,
+                          dataList: _.data!.effectList(value),
                         ),
-                        title: value),
+                        title: _.data!.localeName(value)),
                   );
                 }
                 tabConfig.add(HomeTabConfig(

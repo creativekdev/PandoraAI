@@ -9,9 +9,11 @@ import 'package:cartoonizer/utils/cacheImage/image_cache_manager.dart';
 /// ignore: must_be_immutable
 class HomeEffectCardWidget extends StatelessWidget {
   EffectModel data;
+  double parentWidth;
 
   HomeEffectCardWidget({
     Key? key,
+    required this.parentWidth,
     required this.data,
   }) : super(key: key);
 
@@ -22,86 +24,38 @@ class HomeEffectCardWidget extends StatelessWidget {
       elevation: $(1),
       shadowColor: Color.fromRGBO(0, 0, 0, 0.3),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.w),
+        borderRadius: BorderRadius.circular($(12)),
       ),
       child: Column(
         children: [
+          Wrap(
+            direction: Axis.horizontal,
+            children: data.thumbnails.map((e) {
+              var effect = data.effects[e]!;
+              return ClipRRect(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                borderRadius: BorderRadius.all(Radius.circular($(6))),
+                child: _imageWidget(context,
+                    url: effect.imageUrl.isEmpty
+                        ? data.getShownUrl()
+                        : effect.imageUrl),
+              ).intoContainer(
+                padding: EdgeInsets.all($(6)),
+                width: (parentWidth - $(24)) / 2,
+                height: (parentWidth - $(24)) / 2,
+              );
+            }).toList(),
+          ).intoContainer(
+              alignment: Alignment.centerLeft, padding: EdgeInsets.all($(6))),
           Padding(
-            padding: EdgeInsets.all($(6)),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all($(6)),
-                        child: ClipRRect(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                          child: _imageWidget(context,
-                              url: data.getShownUrl(pos: 1)),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all($(6)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(2.w)),
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: _imageWidget(context,
-                              url: data.getShownUrl(pos: 2)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                // if (data.key != "transform")
-                //   Row(
-                //     children: [
-                //       Expanded(
-                //         child: Padding(
-                //           padding: EdgeInsets.all($(6)),
-                //           child: ClipRRect(
-                //             borderRadius:
-                //                 BorderRadius.all(Radius.circular(2.w)),
-                //             clipBehavior: Clip.antiAliasWithSaveLayer,
-                //             child: _imageWidget(context,
-                //                 url: data.getShownUrl(pos: 2)),
-                //           ),
-                //         ),
-                //       ),
-                //       if (data.effects.length >= 3)
-                //         Expanded(
-                //           child: Padding(
-                //             padding: EdgeInsets.all($(6)),
-                //             child: ClipRRect(
-                //               borderRadius:
-                //                   BorderRadius.all(Radius.circular(2.w)),
-                //               clipBehavior: Clip.antiAliasWithSaveLayer,
-                //               child: _imageWidget(context,
-                //                   url: data.getShownUrl(pos: 3)),
-                //             ),
-                //           ),
-                //         ),
-                //     ],
-                //   )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(24), top: $(12)),
+            padding: EdgeInsets.only(
+                left: $(12), right: $(12), bottom: $(24), top: $(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: TitleTextWidget(
-                      (data.display_name.toString() == "null")
-                          ? data.key
-                          : data.display_name,
-                      ColorConstant.BtnTextColor,
-                      FontWeight.w600,
-                      17,
+                  child: TitleTextWidget(data.displayName,
+                      ColorConstant.BtnTextColor, FontWeight.w600, 17,
                       align: TextAlign.start),
                 ),
                 Image.asset(
