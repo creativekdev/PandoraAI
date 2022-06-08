@@ -160,7 +160,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   //监听程序进入前后台的状态改变的方法
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     switch (state) {
       //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume

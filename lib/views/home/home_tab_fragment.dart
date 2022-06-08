@@ -11,12 +11,10 @@ import 'package:cartoonizer/views/home/home_effect_card_widget.dart';
 
 class HomeTabFragment extends StatefulWidget {
   List<EffectModel> dataList;
-  RecentController recentController;
 
   HomeTabFragment({
     Key? key,
     required this.dataList,
-    required this.recentController,
   }) : super(key: key);
 
   @override
@@ -28,14 +26,12 @@ class HomeTabFragment extends StatefulWidget {
 class HomeTabFragmentState extends State<HomeTabFragment>
     with AutomaticKeepAliveClientMixin {
   List<EffectModel> dataList = [];
-  late RecentController recentController;
   UserModel? _user;
 
   @override
   initState() {
     super.initState();
     dataList = widget.dataList;
-    recentController = widget.recentController;
     initStoreInfo(true);
   }
 
@@ -94,7 +90,6 @@ class HomeTabFragmentState extends State<HomeTabFragment>
         builder: (context) => ChoosePhotoScreen(list: list, pos: index),
       ),
     );
-    recentController.onEffectUsed(list[index]);
 
     initStoreInfo(false);
   }

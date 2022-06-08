@@ -89,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     HomeTabConfig(
                         item: HomeTabFragment(
                           dataList: _.data![value]!,
-                          recentController: recentController,
                         ),
                         title: value),
                   );

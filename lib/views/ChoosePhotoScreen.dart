@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/utils.dart';
@@ -687,6 +688,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         },
                       ),
                     ),
+                    SizedBox(height: Platform.isAndroid? $(12) : 0),
                   ],
                 ),
               ),
@@ -1168,6 +1170,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
+        Get.find<RecentController>().onEffectUsed(category);
       } catch (e) {
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");

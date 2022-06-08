@@ -31,7 +31,8 @@ class HomeRecentFragmentState extends State<HomeRecentFragment>
         builder: (_) {
           return _.dataList.isEmpty
               ? Text(
-                  'you haven\'t used any picture yet, try to use now', //todo 文案还未给到
+                  'No record of your usage found\n'
+                  'Please make your first profile pic to view your history here',
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontWeight: FontWeight.w500,
@@ -74,7 +75,6 @@ class HomeRecentFragmentState extends State<HomeRecentFragment>
         builder: (context) => ChoosePhotoScreen(list: list, pos: index),
       ),
     );
-    recentController.onEffectUsed(list[index]);
   }
 
   @override

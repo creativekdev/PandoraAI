@@ -90,7 +90,7 @@ class HomeEffectCardWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 3.w, right: 3.w, bottom: 3.w),
+            padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(24), top: $(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -106,8 +106,8 @@ class HomeEffectCardWidget extends StatelessWidget {
                 ),
                 Image.asset(
                   ImagesConstant.ic_next,
-                  height: 50,
-                  width: 50,
+                  height: $(32),
+                  width: $(32),
                 ),
               ],
             ),
