@@ -695,6 +695,32 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     );
   }
 
+  Widget _imageWidget(BuildContext context, {required String imageUrl}) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.fill,
+      height: 20.w,
+      width: 20.w,
+      placeholder: (context, url) {
+        return Container(
+          height: 20.w,
+          width: 20.w,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+      errorWidget: (context, url, error) {
+        return Container(
+          height: 20.w,
+          width: 20.w,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
     var effects = widget.list[itemIndex].effects;
     var keys = effects.keys.toList();
@@ -714,57 +740,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(3.w),
+              borderRadius: BorderRadius.circular(2.w),
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: (effectItem!.key.endsWith("-transform"))
-                  ? CachedNetworkImage(
-                      imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + effectItem.key + ".webp",
-                      fit: BoxFit.fill,
-                      height: 20.w,
-                      width: 20.w,
-                      placeholder: (context, url) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + effectItem.key + ".jpg",
-                      fit: BoxFit.fill,
-                      height: 20.w,
-                      width: 20.w,
-                      placeholder: (context, url) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                    ),
+              child: _imageWidget(context, imageUrl: effectItem!.imageUrl),
             ),
             Visibility(
               visible: (effectItem.key.endsWith("-transform")),

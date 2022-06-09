@@ -87,10 +87,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           ),
                           title: _.data!.localeName(value)),
                     );
-                  } else {
+                  } else if (value == 'full_body') {
                     tabConfig.add(
                       HomeTabConfig(
                           item: HomeFullBodyFragment(
+                            dataList: _.data!.effectList(value),
+                          ),
+                          title: _.data!.localeName(value)),
+                    );
+                  } else {
+                    tabConfig.add(
+                      HomeTabConfig(
+                          item: HomeFaceFragment(
                             dataList: _.data!.effectList(value),
                           ),
                           title: _.data!.localeName(value)),
@@ -113,9 +121,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             strokeCap: StrokeCap.butt,
                             borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
                           ),
-                          isScrollable: false,
+                          isScrollable: tabConfig.length < 4,
                           labelColor: ColorConstant.PrimaryColor,
-                          labelPadding: EdgeInsets.only(left: $(10), right: $(10)),
+                          labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
                           labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
                           unselectedLabelColor: ColorConstant.PrimaryColor,
                           unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
