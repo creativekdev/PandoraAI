@@ -33,6 +33,9 @@ extension EffectMapEx on EffectMap {
     Map<String, dynamic> json = data[key];
     json.forEach((key, value) {
       var effect = EffectModel.fromJson(value);
+      effect.effects.values.forEach((element) {
+        element.displayName = localeName(element.key, defaultName: element.category);
+      });
       effect.displayName = effectLocalName(key);
       effect.style = key;
       result.add(effect);
@@ -40,11 +43,19 @@ extension EffectMapEx on EffectMap {
     return result;
   }
 
-  String localeName(String key) {
-    return locale[key] ?? key;
+  String localeName(String key, {String? defaultName}) {
+    String dn = key;
+    if (defaultName != null) {
+      dn = defaultName;
+    }
+    return locale[key] ?? dn;
   }
 
-  String effectLocalName(String key) {
-    return locale['key']?[key] ?? key;
+  String effectLocalName(String key, {String? defaultName}) {
+    String dn = key;
+    if (defaultName != null) {
+      dn = defaultName;
+    }
+    return locale['key']?[key] ?? dn;
   }
 }

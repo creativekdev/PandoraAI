@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/home_effect_card_widget.dart';
+import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';
 
 class HomeRecentFragment extends StatefulWidget {
   RecentController controller;
@@ -48,7 +48,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment>
                   .intoCenter()
               : ListView.builder(
                   itemCount: _.dataList.length,
-                  itemBuilder: (context, index) => HomeEffectCardWidget(
+                  itemBuilder: (context, index) => HomeFaceCardWidget(
                     parentWidth: width,
                     data: _.dataList[index],
                   )

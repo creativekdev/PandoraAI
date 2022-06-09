@@ -50,6 +50,7 @@ class EffectItem {
   late String created;
   late String modified;
   late String id;
+  late String displayName;
 
   EffectItem({
     this.key = '',
@@ -63,6 +64,7 @@ class EffectItem {
     this.originalFace = false,
     this.server = '',
     this.stickerName = '',
+    this.displayName = '',
   });
 
   EffectItem.fromJson(Map<String, dynamic> json) {
@@ -118,13 +120,23 @@ class RecentEffectModel {
   }
 }
 
+extension EffectItemEx on EffectItem {
+  String getShownUrl({int? pos}) {
+    switch (key) {
+      case 'transform':
+        return "https://d35b8pv2lrtup8.cloudfront.net/assets/video/$key${pos ?? ''}.webp";
+      default:
+        return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? ''}.jpg';
+    }
+  }
+}
 extension EffectModelEx on EffectModel {
   String getShownUrl({int? pos}) {
     switch (key) {
       case 'transform':
         return "https://d35b8pv2lrtup8.cloudfront.net/assets/video/$key${pos ?? ''}.webp";
       default:
-        return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? '.mobile'}.jpg';
+        return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? ''}.jpg';
     }
   }
 
