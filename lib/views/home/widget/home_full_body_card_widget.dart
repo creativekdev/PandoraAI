@@ -5,10 +5,10 @@ import 'package:cartoonizer/views/home/home_full_body_fragment.dart';
 import 'home_card_ex.dart';
 
 class HomeFullBodyCardWidget extends StatelessWidget with HomeCardEx {
-  List<EffectItemFragmentData> data;
+  List<EffectItemListData> data;
   double parentWidth;
   double imageSize = 0;
-  Function(EffectItemFragmentData data) onTap;
+  Function(EffectItemListData data) onTap;
 
   HomeFullBodyCardWidget({
     Key? key,
@@ -30,7 +30,7 @@ class HomeFullBodyCardWidget extends StatelessWidget with HomeCardEx {
     );
   }
 
-  Widget buildItem(BuildContext context, {required EffectItemFragmentData data}) {
+  Widget buildItem(BuildContext context, {required EffectItemListData data}) {
     return Column(
       children: [
         ClipRRect(

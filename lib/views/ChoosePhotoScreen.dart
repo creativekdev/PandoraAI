@@ -1068,7 +1068,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        Get.find<RecentController>().onEffectUsed(category);
+        Get.find<RecentController>().onEffectUsed(selectedEffect);
       } catch (e) {
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");

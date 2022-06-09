@@ -23,7 +23,7 @@ class HomeFullBodyFragment extends StatefulWidget {
 
 class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
   List<EffectModel> effectModelList = [];
-  List<List<EffectItemFragmentData>> dataList = [];
+  List<List<EffectItemListData>> dataList = [];
 
   @override
   initState() {
@@ -38,11 +38,11 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   }
 
   buildDataList() {
-    List<EffectItemFragmentData> allItemList = [];
+    List<EffectItemListData> allItemList = [];
     for (var value in effectModelList) {
       var items = value.effects.values.toList();
       for (int i = 0; i < items.length; i++) {
-        allItemList.add(EffectItemFragmentData(
+        allItemList.add(EffectItemListData(
           key: value.key,
           pos: i,
           item: items[i],
@@ -79,7 +79,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
 
   Widget _buildEffectCategoryCard(
     BuildContext context,
-    List<List<EffectItemFragmentData>> list,
+    List<List<EffectItemListData>> list,
     int index,
     double parentWidth,
   ) {
@@ -98,7 +98,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
     );
   }
 
-  _onEffectCategoryTap(EffectItemFragmentData data) async {
+  _onEffectCategoryTap(EffectItemListData data) async {
     EffectModel? effectModel;
     int index = 0;
     for (int i = 0; i < effectModelList.length; i++) {
@@ -141,16 +141,4 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class EffectItemFragmentData {
-  String key;
-  int pos;
-  EffectItem item;
-
-  EffectItemFragmentData({
-    required this.key,
-    required this.pos,
-    required this.item,
-  });
 }

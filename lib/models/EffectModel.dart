@@ -98,6 +98,18 @@ class EffectItem {
   }
 }
 
+class EffectItemListData {
+  String key;
+  int pos;
+  EffectItem item;
+
+  EffectItemListData({
+    required this.key,
+    required this.pos,
+    required this.item,
+  });
+}
+
 class RecentEffectModel {
   late int lastTime;
   late String key;
