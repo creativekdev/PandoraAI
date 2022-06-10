@@ -369,8 +369,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                         CommonExtension().showVideoSavedOkToast(context);
                                         // CommonExtension().showToast("Video Saved!");
                                       } else {
-                                        CommonExtension().showFailedToast(context);
-                                        // CommonExtension().showToast("Oops Failed!");
+                                        // CommonExtension().showFailedToast(context);
+                                        CommonExtension().showToast("Oops Failed!");
                                       }
                                     });
                                   } else {
