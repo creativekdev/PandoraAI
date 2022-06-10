@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/toast/ok_toast.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -50,6 +51,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
+  final RecentController recentController = Get.find();
   var scrollController;
   var scrollController1;
   var itemPos = 0;
@@ -364,14 +366,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                       controller.changeIsLoading(false);
                                       videoPath = value as String;
                                       if (value != "") {
-                                        CommonExtension().showToast("Video Saved!");
+                                        CommonExtension().showVideoSavedOkToast(context);
+                                        // CommonExtension().showToast("Video Saved!");
                                       } else {
-                                        CommonExtension().showToast("Oops Failed!");
+                                        CommonExtension().showFailedToast(context);
+                                        // CommonExtension().showToast("Oops Failed!");
                                       }
                                     });
                                   } else {
                                     await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-                                    CommonExtension().showToast("Image Saved!");
+                                    CommonExtension().showImageSavedOkToast(context);
+                                    // CommonExtension().showToast("Image Saved!");
                                   }
                                 },
                                 child: Image.asset(
@@ -1081,7 +1086,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        Get.find<RecentController>().onEffectUsed(selectedEffect);
+        recentController.onEffectUsed(selectedEffect);
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
