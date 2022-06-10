@@ -42,19 +42,28 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
                   ),
                   textAlign: TextAlign.center,
                 ).intoContainer(alignment: Alignment.center, margin: EdgeInsets.all($(25))).intoCenter()
-              : ListView.builder(
-                  itemCount: _.dataList.length,
-                  itemBuilder: (context, index) => HomeFullBodyCardWidget(
-                    parentWidth: width,
-                    data: _.dataList[index],
-                    onTap: (data) {
-                      _onEffectCategoryTap(_.recentModelList, _.dataList, data);
-                    },
-                  ).intoContainer(
-                    margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
+              : SingleChildScrollView(
+                  child: Column(
+                    children: buildListItems(context, _.recentModelList, _.dataList, width),
                   ),
                 );
         });
+  }
+
+  List<Widget> buildListItems(BuildContext context, List<EffectModel> originList, List<List<EffectItemListData>> dataList, double width) {
+    List<Widget> result = [];
+    for (int i = 0; i < dataList.length; i++) {
+      result.add(HomeFullBodyCardWidget(
+        parentWidth: width,
+        data: dataList[i],
+        onTap: (data) {
+          _onEffectCategoryTap(originList, dataList, data);
+        },
+      ).intoContainer(
+        margin: EdgeInsets.only(left: $(20), right: $(20), top: i == 0 ? $(16) : $(8), bottom: $(8)),
+      ));
+    }
+    return result;
   }
 
   _onEffectCategoryTap(List<EffectModel> originList, List<List<EffectItemListData>> dataList, EffectItemListData data) {

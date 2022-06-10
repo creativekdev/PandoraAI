@@ -131,26 +131,14 @@ class RecentEffectModel {
 }
 
 extension EffectItemEx on EffectItem {
-  String getShownUrl({int? pos}) {
-    switch (key) {
-      case 'transform':
-        return "https://d35b8pv2lrtup8.cloudfront.net/assets/video/$key${pos ?? ''}.webp";
-      default:
-        return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? ''}.jpg';
+  handleApiParams(Map<String, dynamic> params) {
+    if(type == 'sticker') {
+      params['sticker_name'] = stickerName;
     }
   }
 }
 
 extension EffectModelEx on EffectModel {
-  String getShownUrl({int? pos}) {
-    switch (key) {
-      case 'transform':
-        return "https://d35b8pv2lrtup8.cloudfront.net/assets/video/$key${pos ?? ''}.webp";
-      default:
-        return 'https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/$key${pos ?? ''}.jpg';
-    }
-  }
-
   int getDefaultPos() {
     var keys = effects.keys.toList();
     for (int i = 0; i < keys.length; i++) {

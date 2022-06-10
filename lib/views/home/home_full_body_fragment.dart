@@ -64,17 +64,26 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
-    return ListView.builder(
-      itemCount: dataList.length,
-      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
+    return SingleChildScrollView(
+      child: Column(
+        children: buildListItems(context, width),
+      ),
+    );
+  }
+
+  List<Widget> buildListItems(BuildContext context, double width) {
+    List<Widget> result = [];
+    for (int i = 0; i < dataList.length; i++) {
+      result.add(_buildEffectCategoryCard(context, dataList, i, width).intoContainer(
         margin: EdgeInsets.only(
           right: $(15),
           left: $(15),
-          top: index == 0 ? $(16) : $(8),
+          top: i == 0 ? $(16) : $(8),
           bottom: $(8),
         ),
-      ),
-    );
+      ));
+    }
+    return result;
   }
 
   Widget _buildEffectCategoryCard(

@@ -39,7 +39,7 @@ class HomeFaceCardWidget extends StatelessWidget with HomeCardEx {
                   context,
                   width: size,
                   height: size,
-                  url: effect.imageUrl.isEmpty ? data.getShownUrl() : effect.imageUrl,
+                  url: effect.imageUrl,
                 ),
               ).intoContainer(
                 padding: EdgeInsets.all($(6)),

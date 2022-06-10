@@ -948,6 +948,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
               'direct': 1,
             };
+            selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
@@ -1001,6 +1002,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               'direct': 1,
               'token': token,
             };
+            selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
             print(cartoonizeResponse.statusCode);
             print(cartoonizeResponse.body.toString());
@@ -1070,6 +1072,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         });
         Get.find<RecentController>().onEffectUsed(selectedEffect);
       } catch (e) {
+        print(e);
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");
       }

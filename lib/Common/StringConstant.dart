@@ -89,7 +89,7 @@ class StringConstant {
   static const cancel = "Cancel";
   static const confirm = "Confirm";
   static const pay = "Pay";
-  static const share_title = "SocialBook Cartoonizer";
+  static const share_title = app_name;
   static const please_login_first = "Please login first";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
   static const resend = "Resend";

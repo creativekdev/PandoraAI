@@ -20,8 +20,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final Connectivity _connectivity = Connectivity();
-  late HomeDataController dataController;
-  late RecentController recentController;
+  HomeDataController dataController = Get.put(HomeDataController());
+  RecentController recentController = Get.put(RecentController());
 
   int currentIndex = 0;
   late PageController _pageController;
@@ -33,8 +33,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     logEvent(Events.homepage_loading);
     API.getLogin(needLoad: true, context: context);
-    dataController = Get.put(HomeDataController());
-    recentController = Get.put(RecentController());
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});

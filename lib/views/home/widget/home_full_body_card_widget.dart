@@ -40,7 +40,7 @@ class HomeFullBodyCardWidget extends StatelessWidget with HomeCardEx {
             context,
             width: imageSize,
             height: imageSize,
-            url: data.item.imageUrl.isEmpty ? data.item.getShownUrl() : data.item.imageUrl,
+            url: data.item.imageUrl,
           ),
         ),
         Text(

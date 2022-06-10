@@ -70,7 +70,7 @@ class RecentController extends GetxController {
   onEffectUsed(EffectItem effectItem) {
     var pick = recentList.pick((element) => effectItem.key == element.key);
     if (pick != null) {
-      pick.lastTime = DateTime.now().millisecond;
+      pick.lastTime = DateTime.now().microsecondsSinceEpoch;
       recentList.remove(pick);
     } else {
       pick = RecentEffectModel(lastTime: DateTime.now().millisecond, key: effectItem.key);
