@@ -34,9 +34,9 @@ class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
   int? itemPos;
-  Function() onSuccess;
+  RecentController recentController;
 
-  ChoosePhotoScreen({Key? key, required this.list, required this.pos, this.itemPos, required this.onSuccess}) : super(key: key);
+  ChoosePhotoScreen({Key? key, required this.list, required this.pos, this.itemPos, required this.recentController,}) : super(key: key);
 
   @override
   _ChoosePhotoScreenState createState() => _ChoosePhotoScreenState();
@@ -52,7 +52,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
-  final RecentController recentController = RecentController();
+  late RecentController recentController;
   var scrollController;
   var scrollController1;
   var itemPos = 0;
@@ -73,6 +73,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     initStoreInfo();
 
+    recentController = widget.recentController;
     controller.setLastItemIndex(widget.pos);
     if (widget.itemPos != null) {
       controller.setLastSelectedIndex(widget.itemPos!);
@@ -1088,7 +1089,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
         recentController.onEffectUsed(selectedEffect);
-        widget.onSuccess();
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);

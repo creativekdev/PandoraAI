@@ -30,6 +30,7 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   late RecentController recentController;
 
   Widget? adWidget;
+
   @override
   initState() {
     super.initState();
@@ -89,9 +90,11 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(list: list, pos: index,onSuccess: (){
-          recentController.refreshDataList();
-        },),
+        builder: (context) => ChoosePhotoScreen(
+          list: list,
+          pos: index,
+          recentController: recentController,
+        ),
       ),
     );
 
@@ -102,7 +105,7 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
     var showAds = isShowAds(user);
 
     if (showAds && index == 2) {
-      if(adWidget != null) {
+      if (adWidget != null) {
         return adWidget!;
       }
       adWidget = Padding(

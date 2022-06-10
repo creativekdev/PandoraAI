@@ -129,9 +129,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
           list: effectModelList,
           pos: index,
           itemPos: data.pos,
-          onSuccess: () {
-            recentController.refreshDataList();
-          },
+          recentController: recentController,
         ),
       ),
     );
