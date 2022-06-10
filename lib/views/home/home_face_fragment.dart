@@ -25,6 +25,7 @@ class HomeFaceFragment extends StatefulWidget {
 class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
   List<EffectModel> dataList = [];
 
+  Widget? adWidget;
   @override
   initState() {
     super.initState();
@@ -46,27 +47,16 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
-    return SingleChildScrollView(
-      child: Column(
-        children: buildListItems(context, width),
-      ),
+    return ListView.builder(
+      itemCount: dataList.length,
+      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+          .intoContainer(
+        margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
+      )
+          .intoGestureDetector(onTap: () {
+        _onEffectCategoryTap(dataList, index);
+      }),
     );
-  }
-
-  List<Widget> buildListItems(BuildContext context, double width) {
-    List<Widget> result = [];
-    for (int i = 0; i < dataList.length; i++) {
-      result.add(
-        _buildEffectCategoryCard(context, dataList, i, width)
-            .intoContainer(
-          margin: EdgeInsets.only(left: $(20), right: $(20), top: i == 0 ? $(16) : $(8), bottom: $(8)),
-        )
-            .intoGestureDetector(onTap: () {
-          _onEffectCategoryTap(dataList, i);
-        }),
-      );
-    }
-    return result;
   }
 
   Widget _buildEffectCategoryCard(
@@ -105,10 +95,14 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
     var showAds = isShowAds(user);
 
     if (showAds && index == 2) {
-      return Padding(
+      if(adWidget != null) {
+        return adWidget!;
+      }
+      adWidget = Padding(
         padding: EdgeInsets.only(bottom: 2.h),
         child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
       );
+      return adWidget!;
     }
 
     return Container();

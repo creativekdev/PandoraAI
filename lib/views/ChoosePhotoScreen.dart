@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -70,7 +71,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
-    if(widget.itemPos != null) {
+    if (widget.itemPos != null) {
       controller.setLastSelectedIndex(widget.itemPos!);
     } else {
       controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
@@ -695,6 +696,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     );
   }
 
+  Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem}) {
+    if (effectItem.imageUrl.endsWith("mp4")) {
+      return EffectVideoPlayer(url: effectItem.imageUrl);
+    } else {
+      return _imageWidget(context, imageUrl: effectItem.imageUrl);
+    }
+  }
+
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
@@ -721,6 +730,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       },
     );
   }
+
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
     var effects = widget.list[itemIndex].effects;
     var keys = effects.keys.toList();
@@ -742,7 +752,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(2.w),
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: _imageWidget(context, imageUrl: effectItem!.imageUrl),
+              child: _createEffectModelIcon(context, effectItem: effectItem!),
             ),
             Visibility(
               visible: (effectItem.key.endsWith("-transform")),
@@ -803,7 +813,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var source = ImageSource.gallery;
     try {
       XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-      if(image == null) {
+      if (image == null) {
         CommonExtension().showToast("cancelled");
         return;
       }
@@ -830,7 +840,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var source = ImageSource.camera;
     try {
       XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-      if(image == null) {
+      if (image == null) {
         CommonExtension().showToast("cancelled");
         return;
       }

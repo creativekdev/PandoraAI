@@ -2,7 +2,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';
 import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 
 class HomeRecentFragment extends StatefulWidget {
@@ -42,28 +41,19 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
                   ),
                   textAlign: TextAlign.center,
                 ).intoContainer(alignment: Alignment.center, margin: EdgeInsets.all($(25))).intoCenter()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: buildListItems(context, _.recentModelList, _.dataList, width),
+              : ListView.builder(
+                  itemCount: _.dataList.length,
+                  itemBuilder: (context, index) => HomeFullBodyCardWidget(
+                    parentWidth: width,
+                    data: _.dataList[index],
+                    onTap: (data) {
+                      _onEffectCategoryTap(_.recentModelList, _.dataList, data);
+                    },
+                  ).intoContainer(
+                    margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
                   ),
                 );
         });
-  }
-
-  List<Widget> buildListItems(BuildContext context, List<EffectModel> originList, List<List<EffectItemListData>> dataList, double width) {
-    List<Widget> result = [];
-    for (int i = 0; i < dataList.length; i++) {
-      result.add(HomeFullBodyCardWidget(
-        parentWidth: width,
-        data: dataList[i],
-        onTap: (data) {
-          _onEffectCategoryTap(originList, dataList, data);
-        },
-      ).intoContainer(
-        margin: EdgeInsets.only(left: $(20), right: $(20), top: i == 0 ? $(16) : $(8), bottom: $(8)),
-      ));
-    }
-    return result;
   }
 
   _onEffectCategoryTap(List<EffectModel> originList, List<List<EffectItemListData>> dataList, EffectItemListData data) {

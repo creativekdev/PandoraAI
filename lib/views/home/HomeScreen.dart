@@ -4,12 +4,11 @@ import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 
 import '../SettingScreen.dart';
+import 'home_face_fragment.dart';
 import 'home_full_body_fragment.dart';
 import 'home_recent_fragment.dart';
-import 'home_face_fragment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
