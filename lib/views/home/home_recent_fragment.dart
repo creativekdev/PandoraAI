@@ -48,7 +48,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
                     parentWidth: width,
                     data: _.dataList[index],
                     onTap: (data) {
-                      _onEffectCategoryTap(_.recentModelList,_.dataList, data);
+                      _onEffectCategoryTap(_.recentModelList, _.dataList, data);
                     },
                   ).intoContainer(
                     margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
@@ -77,7 +77,11 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(list: originList, pos: index, itemPos: data.pos,),
+        builder: (context) => ChoosePhotoScreen(
+          list: originList,
+          pos: index,
+          itemPos: data.pos,
+        ),
       ),
     );
   }
