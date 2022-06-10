@@ -1067,6 +1067,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         logEvent(Events.photo_cartoon_result, eventValues: {
           "success": resultSuccess,
           "effect": selectedEffect.key,
+          "sticker_name": selectedEffect.stickerName,
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
