@@ -3,9 +3,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/cacheImage/image_cache_manager.dart';
 
 class HomeCardEx {
-
-  Widget imageWidget(BuildContext context, {required String url, required double width, required double height}) =>
-      CachedNetworkImage(
+  Widget imageWidget(BuildContext context, {required String url, required double width, required double height}) => CachedNetworkImage(
         imageUrl: url,
         fit: BoxFit.fill,
         width: width,
@@ -16,11 +14,11 @@ class HomeCardEx {
       );
 
   Widget loadingWidget(BuildContext context) => Container(
-    width: double.maxFinite,
-    height: double.maxFinite,
-    color: ColorConstant.CardColor,
-    child: Center(
-      child: CircularProgressIndicator(),
-    ),
-  );
+        width: double.maxFinite,
+        height: double.maxFinite,
+        color: ColorConstant.CardColor,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
 }

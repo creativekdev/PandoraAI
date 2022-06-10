@@ -36,7 +36,7 @@ class RecentController extends GetxController {
         var items = effectModel.effects.values.toList();
         for (int i = 0; i < items.length; i++) {
           var item = items[i];
-          if(item.key == element.key) {
+          if (item.key == element.key) {
             recentModelList.add(effectModel);
             allItemList.add(EffectItemListData(key: effectModel.key, pos: i, item: item));
           }

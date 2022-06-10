@@ -22,8 +22,7 @@ class EffectModel {
     key = json['key'].toString();
     defaultEffect = (json['default_effect'] ?? '').toString();
     var effectsMap = (json['effects'] ?? {}) as Map<String, dynamic>;
-    effects = effectsMap
-        .map((key, value) => MapEntry(key, EffectItem.fromJson(value)));
+    effects = effectsMap.map((key, value) => MapEntry(key, EffectItem.fromJson(value)));
     thumbnails = json['thumbnails'] ?? [];
   }
 
@@ -31,8 +30,7 @@ class EffectModel {
     final data = <String, dynamic>{};
     data['key'] = key;
     data['default_effect'] = defaultEffect;
-    data['effects'] =
-        effects.map((key, value) => MapEntry(key, value.toJson()));
+    data['effects'] = effects.map((key, value) => MapEntry(key, value.toJson()));
     data['thumbnails'] = thumbnails;
     return data;
   }
@@ -142,6 +140,7 @@ extension EffectItemEx on EffectItem {
     }
   }
 }
+
 extension EffectModelEx on EffectModel {
   String getShownUrl({int? pos}) {
     switch (key) {
@@ -155,11 +154,10 @@ extension EffectModelEx on EffectModel {
   int getDefaultPos() {
     var keys = effects.keys.toList();
     for (int i = 0; i < keys.length; i++) {
-      if(keys[i] == defaultEffect) {
+      if (keys[i] == defaultEffect) {
         return i;
       }
     }
     return 0;
   }
-
 }
