@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/applovin_banner.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
@@ -9,9 +10,11 @@ import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 
 class HomeFullBodyFragment extends StatefulWidget {
   List<EffectModel> dataList;
+  RecentController recentController;
 
   HomeFullBodyFragment({
     Key? key,
+    required this.recentController,
     required this.dataList,
   }) : super(key: key);
 
@@ -25,11 +28,13 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   Widget? adWidget;
+  late RecentController recentController;
 
   @override
   initState() {
     super.initState();
     effectModelList = widget.dataList;
+    recentController = widget.recentController;
     delay(() {
       buildDataList();
       initStoreInfo(context).then((value) {
@@ -120,7 +125,14 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(list: effectModelList, pos: index, itemPos: data.pos),
+        builder: (context) => ChoosePhotoScreen(
+          list: effectModelList,
+          pos: index,
+          itemPos: data.pos,
+          onSuccess: () {
+            recentController.refreshDataList();
+          },
+        ),
       ),
     );
 

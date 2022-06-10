@@ -16,6 +16,8 @@ class ImagesConstant{
   static const ic_youtube = "assets/images/ic_youtube.png";
   static const ic_facebook = "assets/images/ic_facebook.png";
   static const ic_instagram = "assets/images/ic_instagram.png";
+  static const ic_image_saved = "assets/images/ic_image_saved.png";
+  static const ic_image_failed = "assets/images/ic_image_failed.png";
   static const ic_tiktok = "assets/images/ic_tiktok.png";
   static const ic_user = "assets/images/ic_user.png";
   static const ic_back_dark = "assets/images/ic_back_dark.png";

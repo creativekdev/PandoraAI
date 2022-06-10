@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/applovin_banner.dart';
 import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
@@ -10,10 +11,12 @@ import 'home_tab_user_ex.dart';
 
 class HomeFaceFragment extends StatefulWidget {
   List<EffectModel> dataList;
+  RecentController recentController;
 
   HomeFaceFragment({
     Key? key,
     required this.dataList,
+    required this.recentController,
   }) : super(key: key);
 
   @override
@@ -24,11 +27,13 @@ class HomeFaceFragment extends StatefulWidget {
 
 class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
   List<EffectModel> dataList = [];
+  late RecentController recentController;
 
   Widget? adWidget;
   @override
   initState() {
     super.initState();
+    recentController = widget.recentController;
     dataList = widget.dataList;
     delay(() {
       initStoreInfo(context).then((value) {
@@ -84,7 +89,9 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(list: list, pos: index),
+        builder: (context) => ChoosePhotoScreen(list: list, pos: index,onSuccess: (){
+          recentController.refreshDataList();
+        },),
       ),
     );
 

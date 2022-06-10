@@ -23,11 +23,10 @@ class CommonExtension {
         context,
         OkToast(
             text: 'Image Saved',
-            color: Colors.white,
-            icon: Icon(
-              Icons.check,
-              size: $(28),
-              color: Colors.white,
+            color: Color.fromARGB(255, 206, 206, 206),
+            icon: Image.asset(
+              ImagesConstant.ic_image_saved,
+              width: $(36),
             )));
   }
 
@@ -36,11 +35,10 @@ class CommonExtension {
         context,
         OkToast(
             text: 'Video Saved',
-            color: Colors.white,
-            icon: Icon(
-              Icons.check,
-              size: $(28),
-              color: Colors.white,
+            color: Color.fromARGB(255, 206, 206, 206),
+            icon: Image.asset(
+              ImagesConstant.ic_image_saved,
+              width: $(36),
             )));
   }
 
@@ -49,11 +47,10 @@ class CommonExtension {
       context,
       OkToast(
           text: 'Oops Failed',
-          color: Colors.red,
-          icon: Icon(
-            Icons.close,
-            size: $(28),
-            color: Colors.red,
+          color: Color.fromARGB(255, 206, 206, 206),
+          icon: Image.asset(
+            ImagesConstant.ic_image_failed,
+            width: $(36),
           )),
     );
   }

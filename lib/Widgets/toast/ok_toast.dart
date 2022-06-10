@@ -20,11 +20,6 @@ class OkToast extends StatelessWidget {
       children: [
         Container(
           child: icon,
-          padding: EdgeInsets.all($(4)),
-          decoration: BoxDecoration(
-            border: Border.all(color: color, width: 1),
-            borderRadius: BorderRadius.circular($(64)),
-          ),
           margin: EdgeInsets.only(top: $(10), bottom: $(15)),
         ),
         Text(

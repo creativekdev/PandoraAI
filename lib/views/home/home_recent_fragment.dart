@@ -80,6 +80,9 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
           list: originList,
           pos: index,
           itemPos: data.pos,
+          onSuccess: () {
+            recentController.refreshDataList();
+          },
         ),
       ),
     );
