@@ -1,45 +1,39 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/applovin_banner.dart';
-import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/home_effect_card_widget.dart';
+import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';
 
-class HomeTabFragment extends StatefulWidget {
+import 'home_tab_user_ex.dart';
+
+class HomeFaceFragment extends StatefulWidget {
   List<EffectModel> dataList;
 
-  HomeTabFragment({
+  HomeFaceFragment({
     Key? key,
     required this.dataList,
   }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return HomeTabFragmentState();
+    return HomeFaceFragmentState();
   }
 }
 
-class HomeTabFragmentState extends State<HomeTabFragment>
-    with AutomaticKeepAliveClientMixin {
+class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
   List<EffectModel> dataList = [];
-  UserModel? _user;
 
   @override
   initState() {
     super.initState();
     dataList = widget.dataList;
-    initStoreInfo(true);
-  }
-
-  Future<void> initStoreInfo(bool needReload) async {
-    _user = await API.getLogin(needLoad: true, context: context);
-    if (needReload) {
-      setState(() {});
-    }
+    delay(() {
+      initStoreInfo(context).then((value) {
+        setState(() {});
+      });
+    });
   }
 
   changeData(List<EffectModel> dataList) {
@@ -54,16 +48,11 @@ class HomeTabFragmentState extends State<HomeTabFragment>
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
     return ListView.builder(
       itemCount: dataList.length,
-      itemBuilder: (context, index) =>
-          _buildEffectCategoryCard(context, dataList, index, width)
-              .intoContainer(
-        margin: EdgeInsets.only(
-            left: $(20),
-            right: $(20),
-            top: index == 0 ? $(16) : $(8),
-            bottom: $(8)),
+      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+          .intoContainer(
+        margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
       )
-              .intoGestureDetector(onTap: () {
+          .intoGestureDetector(onTap: () {
         _onEffectCategoryTap(dataList, index);
       }),
     );
@@ -79,7 +68,7 @@ class HomeTabFragmentState extends State<HomeTabFragment>
     return Column(
       children: [
         _buildMERCAd(index),
-        HomeEffectCardWidget(
+        HomeFaceCardWidget(
           data: data,
           parentWidth: parentWidth,
         ),
@@ -88,8 +77,7 @@ class HomeTabFragmentState extends State<HomeTabFragment>
   }
 
   _onEffectCategoryTap(List<EffectModel> list, int index) async {
-    logEvent(Events.choose_home_cartoon_type,
-        eventValues: {"category": list[index].key, "style": list[index].style});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style});
 
     await Navigator.push(
       context,
@@ -99,17 +87,16 @@ class HomeTabFragmentState extends State<HomeTabFragment>
       ),
     );
 
-    initStoreInfo(false);
+    initStoreInfo(context);
   }
 
   Widget _buildMERCAd(int index) {
-    var showAds = isShowAds(_user);
+    var showAds = isShowAds(user);
 
     if (showAds && index == 2) {
       return Padding(
         padding: EdgeInsets.only(bottom: 2.h),
-        child: BannerMaxView(
-            (listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
+        child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
       );
     }
 

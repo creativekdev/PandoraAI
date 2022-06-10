@@ -4,10 +4,12 @@ import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 
 import '../SettingScreen.dart';
+import 'home_full_body_fragment.dart';
 import 'home_recent_fragment.dart';
-import 'home_tab_fragment.dart';
+import 'home_face_fragment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,10 +36,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     dataController = Get.put(HomeDataController());
     recentController = Get.put(RecentController());
     _connectivity.onConnectivityChanged.listen((event) {
-      if (event == ConnectivityResult.mobile ||
-          event ==
-              ConnectivityResult
-                  .wifi /* || event == ConnectivityResult.none*/) {
+      if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
       }
     });
@@ -53,8 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void setIndex(int index) {
-    _pageController.animateToPage(index,
-        duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
   }
 
   @override
@@ -73,63 +71,68 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     future: getConnectionStatus(),
                     builder: (context, snapshot1) {
                       return Center(
-                        child: TitleTextWidget(
-                            (snapshot1.hasData && (snapshot1.data as bool))
-                                ? StringConstant.empty_msg
-                                : StringConstant.no_internet_msg,
-                            ColorConstant.BtnTextColor,
-                            FontWeight.w400,
-                            12.sp),
+                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
+                            ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
                       );
                     });
               } else {
                 recentController.updateOriginData(_.data!.allEffectList());
                 tabConfig.clear();
                 for (var value in _.data!.data.keys) {
-                  tabConfig.add(
-                    HomeTabConfig(
-                        item: HomeTabFragment(
-                          dataList: _.data!.effectList(value),
-                        ),
-                        title: _.data!.localeName(value)),
-                  );
+                  if (value == 'face') {
+                    tabConfig.add(
+                      HomeTabConfig(
+                          item: HomeFaceFragment(
+                            dataList: _.data!.effectList(value),
+                          ),
+                          title: _.data!.localeName(value)),
+                    );
+                  } else if (value == 'full_body') {
+                    tabConfig.add(
+                      HomeTabConfig(
+                          item: HomeFullBodyFragment(
+                            dataList: _.data!.effectList(value),
+                          ),
+                          title: _.data!.localeName(value)),
+                    );
+                  } else {
+                    tabConfig.add(
+                      HomeTabConfig(
+                          item: HomeFaceFragment(
+                            dataList: _.data!.effectList(value),
+                          ),
+                          title: _.data!.localeName(value)),
+                    );
+                  }
                 }
-                tabConfig.add(HomeTabConfig(
-                    item: HomeRecentFragment(controller: recentController),
-                    title: 'Recent'));
+                tabConfig.add(HomeTabConfig(item: HomeRecentFragment(controller: recentController), title: 'Recent'));
                 _pageController = PageController(initialPage: currentIndex);
-                _tabController = TabController(
-                    length: tabConfig.length,
-                    vsync: this,
-                    initialIndex: currentIndex);
+                _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
                 return Column(
                   children: [
                     navbar(context),
                     SizedBox(height: $(10)),
-                    TabBar(
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicator: LineTabIndicator(
-                        space: $(16),
-                        borderSide: BorderSide(
-                            width: $(3), color: ColorConstant.BlueColor),
-                      ),
-                      isScrollable: false,
-                      labelColor: ColorConstant.PrimaryColor,
-                      labelPadding: EdgeInsets.only(left: $(10), right: $(10)),
-                      labelStyle: TextStyle(
-                          fontSize: $(14), fontWeight: FontWeight.bold),
-                      unselectedLabelColor: ColorConstant.PrimaryColor,
-                      unselectedLabelStyle: TextStyle(
-                          fontSize: $(14), fontWeight: FontWeight.w500),
-                      controller: _tabController,
-                      onTap: (index) {
-                        setIndex(index);
-                      },
-                      tabs: tabConfig
-                          .map((e) => Text(e.title)
-                              .intoContainer(padding: EdgeInsets.all($(8))))
-                          .toList(),
-                    ),
+                    Theme(
+                        data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                        child: TabBar(
+                          indicatorSize: TabBarIndicatorSize.label,
+                          indicator: LineTabIndicator(
+                            width: $(20),
+                            strokeCap: StrokeCap.butt,
+                            borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                          ),
+                          isScrollable: tabConfig.length < 4,
+                          labelColor: ColorConstant.PrimaryColor,
+                          labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                          labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                          unselectedLabelColor: ColorConstant.PrimaryColor,
+                          unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                          controller: _tabController,
+                          onTap: (index) {
+                            setIndex(index);
+                          },
+                          tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.all($(8)))).toList(),
+                        )),
                     SizedBox(height: $(4)),
                     Expanded(
                         child: PageView.builder(
@@ -159,8 +162,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               height: $(38),
               width: $(38),
             ),
-            TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor,
-                FontWeight.w600, $(18)),
+            TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
             GestureDetector(
               onTap: () => {
                 Navigator.push(

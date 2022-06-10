@@ -31,8 +31,9 @@ import 'StripeSubscriptionScreen.dart';
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
+  int? itemPos;
 
-  ChoosePhotoScreen({Key? key, required this.list, required this.pos}) : super(key: key);
+  ChoosePhotoScreen({Key? key, required this.list, required this.pos, this.itemPos}) : super(key: key);
 
   @override
   _ChoosePhotoScreenState createState() => _ChoosePhotoScreenState();
@@ -43,7 +44,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var urlFinal = "";
   var image = "";
   var videoPath = "";
-  var imagePicker;
+  late ImagePicker imagePicker;
   late UserModel _user;
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
@@ -69,8 +70,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
-    controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
-    imagePicker = new ImagePicker();
+    if(widget.itemPos != null) {
+      controller.setLastSelectedIndex(widget.itemPos!);
+    } else {
+      controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
+    }
+    imagePicker = ImagePicker();
     scrollController = ItemScrollController();
     scrollController1 = ItemScrollController();
     itemPositionsListener.itemPositions.addListener(() {
@@ -690,6 +695,32 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     );
   }
 
+  Widget _imageWidget(BuildContext context, {required String imageUrl}) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      fit: BoxFit.fill,
+      height: 20.w,
+      width: 20.w,
+      placeholder: (context, url) {
+        return Container(
+          height: 20.w,
+          width: 20.w,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+      errorWidget: (context, url, error) {
+        return Container(
+          height: 20.w,
+          width: 20.w,
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
   Widget _buildListItem(BuildContext context, int index, int itemIndex) {
     var effects = widget.list[itemIndex].effects;
     var keys = effects.keys.toList();
@@ -709,57 +740,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(3.w),
+              borderRadius: BorderRadius.circular(2.w),
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: (effectItem!.key.endsWith("-transform"))
-                  ? CachedNetworkImage(
-                      imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/video/" + effectItem.key + ".webp",
-                      fit: BoxFit.fill,
-                      height: 20.w,
-                      width: 20.w,
-                      placeholder: (context, url) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/" + effectItem.key + ".jpg",
-                      fit: BoxFit.fill,
-                      height: 20.w,
-                      width: 20.w,
-                      placeholder: (context, url) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          height: 20.w,
-                          width: 20.w,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      },
-                    ),
+              child: _imageWidget(context, imageUrl: effectItem!.imageUrl),
             ),
             Visibility(
               visible: (effectItem.key.endsWith("-transform")),
@@ -819,7 +802,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": from});
     var source = ImageSource.gallery;
     try {
-      XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      if(image == null) {
+        CommonExtension().showToast("cancelled");
+        return;
+      }
       File compressedImage = await imageCompressAndGetFile(File(image.path));
 
       offlineEffect.clear();
@@ -842,7 +829,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": from});
     var source = ImageSource.camera;
     try {
-      XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+      if(image == null) {
+        CommonExtension().showToast("cancelled");
+        return;
+      }
       File compressedImage = await imageCompressAndGetFile(File(image.path));
 
       offlineEffect.clear();
@@ -872,10 +863,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     };
     final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
     final Map parsed = json.decode(response.body.toString());
-    var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
+    var url = (parsed['data'] ?? '').toString();
+    var res = await put(Uri.parse(url), body: (controller.image.value as File).readAsBytesSync());
 
     if (res.statusCode == 200) {
-      String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
+      // String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
+      var imageUrl = url.split("?")[0];
       controller.updateImageUrl(imageUrl);
       return imageUrl;
     }
@@ -1075,7 +1068,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        Get.find<RecentController>().onEffectUsed(category);
+        Get.find<RecentController>().onEffectUsed(selectedEffect);
       } catch (e) {
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/helper/shared_pref.dart';
@@ -12,7 +13,8 @@ import 'package:cartoonizer/models/EffectModel.dart';
 class RecentController extends GetxController {
   List<RecentEffectModel> recentList = [];
   List<EffectModel> originList = [];
-  List<EffectModel> dataList = [];
+  List<EffectModel> recentModelList = [];
+  List<List<EffectItemListData>> dataList = [];
 
   @override
   void onInit() async {
@@ -27,41 +29,51 @@ class RecentController extends GetxController {
   }
 
   refreshDataList() {
-    dataList.clear();
+    recentModelList.clear();
+    List<EffectItemListData> allItemList = [];
     recentList.forEach((element) {
-      var pick = originList.pick((t) => t.key == element.key);
-      if (pick != null) {
-        dataList.add(pick);
+      originList.forEach((effectModel) {
+        var items = effectModel.effects.values.toList();
+        for (int i = 0; i < items.length; i++) {
+          var item = items[i];
+          if(item.key == element.key) {
+            recentModelList.add(effectModel);
+            allItemList.add(EffectItemListData(key: effectModel.key, pos: i, item: item));
+          }
+        }
+      });
+    });
+    dataList.clear();
+    allItemList.forEach((element) {
+      if (dataList.isNotEmpty && dataList.last.length < 2) {
+        dataList.last.add(element);
+      } else {
+        dataList.add([element]);
       }
     });
     update();
   }
 
   loadingFromCache() async {
-    var string = await SharedPreferencesHelper.getString(
-        SharedPreferencesHelper.keyRecentEffects);
+    var string = await SharedPreferencesHelper.getString(SharedPreferencesHelper.keyRecentEffects);
     try {
       var json = jsonDecode(string);
-      recentList = (json as List<dynamic>)
-          .map((e) => RecentEffectModel.fromJson(e))
-          .toList();
+      recentList = (json as List<dynamic>).map((e) => RecentEffectModel.fromJson(e)).toList();
       refreshDataList();
     } catch (e) {}
   }
 
   _saveToCache(List<RecentEffectModel> recentList) {
-    SharedPreferencesHelper.setString(SharedPreferencesHelper.keyRecentEffects,
-        jsonEncode(recentList.map((e) => e.toJson()).toList()));
+    SharedPreferencesHelper.setString(SharedPreferencesHelper.keyRecentEffects, jsonEncode(recentList.map((e) => e.toJson()).toList()));
   }
 
-  onEffectUsed(EffectModel effectModel) {
-    var pick = recentList.pick((element) => effectModel.key == element.key);
+  onEffectUsed(EffectItem effectItem) {
+    var pick = recentList.pick((element) => effectItem.key == element.key);
     if (pick != null) {
       pick.lastTime = DateTime.now().millisecond;
       recentList.remove(pick);
     } else {
-      pick = RecentEffectModel(
-          lastTime: DateTime.now().millisecond, key: effectModel.key);
+      pick = RecentEffectModel(lastTime: DateTime.now().millisecond, key: effectItem.key);
     }
     recentList.insert(0, pick);
     _saveToCache(recentList);

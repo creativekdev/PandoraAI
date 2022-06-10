@@ -9,12 +9,18 @@ class LineTabIndicator extends Decoration {
     this.borderSide = const BorderSide(width: 2.0, color: Colors.white),
     this.insets = EdgeInsets.zero,
     this.space = 0,
+    this.width,
+    this.strokeCap = StrokeCap.round,
   });
 
   /// The color and weight of the horizontal line drawn below the selected tab.
   final BorderSide borderSide;
 
   final double space;
+
+  final double? width;
+
+  final StrokeCap strokeCap;
 
   /// Locates the selected tab's underline relative to the tab's boundary.
   ///
@@ -52,8 +58,7 @@ class LineTabIndicator extends Decoration {
 }
 
 class _UnderlinePainter extends BoxPainter {
-  _UnderlinePainter(this.decoration, VoidCallback onChanged, this.space)
-      : super(onChanged);
+  _UnderlinePainter(this.decoration, VoidCallback onChanged, this.space) : super(onChanged);
 
   double space;
   final LineTabIndicator decoration;
@@ -64,21 +69,29 @@ class _UnderlinePainter extends BoxPainter {
 
   Rect _indicatorRectFor(Rect rect, TextDirection textDirection) {
     final Rect indicator = insets.resolve(textDirection).deflateRect(rect);
-    return Rect.fromLTWH(
-      indicator.left + space,
-      indicator.bottom - borderSide.width,
-      indicator.width - 2 * space,
-      borderSide.width,
-    );
+    if (decoration.width == null) {
+      return Rect.fromLTWH(
+        indicator.left + space,
+        indicator.bottom - borderSide.width,
+        indicator.width - 2 * space,
+        borderSide.width,
+      );
+    } else {
+      return Rect.fromLTWH(
+        indicator.left + (indicator.width - decoration.width!) / 2,
+        indicator.bottom - borderSide.width,
+        decoration.width!,
+        borderSide.width,
+      );
+    }
   }
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
     final Rect rect = offset & configuration.size!;
     final TextDirection textDirection = configuration.textDirection!;
-    final Rect indicator =
-        _indicatorRectFor(rect, textDirection).deflate(borderSide.width / 2.0);
-    final Paint paint = borderSide.toPaint()..strokeCap = StrokeCap.round;
+    final Rect indicator = _indicatorRectFor(rect, textDirection).deflate(borderSide.width / 2.0);
+    final Paint paint = borderSide.toPaint()..strokeCap = decoration.strokeCap;
     canvas.drawLine(indicator.bottomLeft, indicator.bottomRight, paint);
   }
 }
