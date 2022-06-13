@@ -13,12 +13,14 @@ class HomeFaceFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
   bool hasOriginalFace;
+  String tabString;
 
   HomeFaceFragment({
     Key? key,
     required this.dataList,
     required this.recentController,
     this.hasOriginalFace = true,
+    required this.tabString,
   }) : super(key: key);
 
   @override
@@ -86,7 +88,7 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   }
 
   _onEffectCategoryTap(List<EffectModel> list, int index) async {
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style, "page": widget.tabString,});
 
     await Navigator.push(
       context,
