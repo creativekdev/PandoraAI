@@ -112,6 +112,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   Future<void> initStoreInfo() async {
     _user = await API.getLogin();
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
+    controller.changeIsLogin(isLogin);
   }
 
   Obx _buildSignupBlock(BuildContext context) {
