@@ -50,6 +50,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       for (int i = 0; i < items.length; i++) {
         allItemList.add(EffectItemListData(
           key: value.key,
+          uniqueKey: '${value.key}${items[i].key}',
           pos: i,
           item: items[i],
         ));
@@ -129,7 +130,6 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
           list: effectModelList,
           pos: index,
           itemPos: data.pos,
-          recentController: recentController,
         ),
       ),
     );

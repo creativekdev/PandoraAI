@@ -37,8 +37,11 @@ class RecentController extends GetxController {
         for (int i = 0; i < items.length; i++) {
           var item = items[i];
           if (item.key == element.key) {
-            recentModelList.add(effectModel);
-            allItemList.add(EffectItemListData(key: effectModel.key, pos: i, item: item));
+            var copy = EffectModel.fromJson(effectModel.toJson());
+            copy.effects = {item.key: item};
+            copy.defaultEffect = item.key;
+            recentModelList.add(copy);
+            allItemList.add(EffectItemListData(key: effectModel.key, pos: i, item: item, uniqueKey: '${effectModel.key}${item.key}'));
           }
         }
       });

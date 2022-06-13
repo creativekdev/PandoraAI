@@ -34,9 +34,15 @@ class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
   int? itemPos;
-  RecentController recentController;
+  bool isFromRecent;
 
-  ChoosePhotoScreen({Key? key, required this.list, required this.pos, this.itemPos, required this.recentController,}) : super(key: key);
+  ChoosePhotoScreen({
+    Key? key,
+    required this.list,
+    required this.pos,
+    this.itemPos,
+    this.isFromRecent = false,
+  }) : super(key: key);
 
   @override
   _ChoosePhotoScreenState createState() => _ChoosePhotoScreenState();
@@ -51,18 +57,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   late UserModel _user;
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
-  final ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
-  late RecentController recentController;
-  var scrollController;
-  var scrollController1;
+  final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
+  late ItemScrollController scrollController;
+  late ItemScrollController scrollController1;
   var itemPos = 0;
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
 
   @override
   void dispose() {
-    Get.reset(clearRouteBindings: true);
     super.dispose();
+    _videoPlayerController?.dispose();
   }
 
   @override
@@ -73,8 +78,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     initStoreInfo();
 
-    recentController = widget.recentController;
     controller.setLastItemIndex(widget.pos);
+    controller.setLastItemIndex1(widget.pos);
     if (widget.itemPos != null) {
       controller.setLastSelectedIndex(widget.itemPos!);
     } else {
@@ -369,16 +374,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                       videoPath = value as String;
                                       if (value != "") {
                                         CommonExtension().showVideoSavedOkToast(context);
-                                        // CommonExtension().showToast("Video Saved!");
                                       } else {
-                                        // CommonExtension().showFailedToast(context);
-                                        CommonExtension().showToast("Oops Failed!");
+                                        CommonExtension().showFailedToast(context);
                                       }
                                     });
                                   } else {
                                     await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
                                     CommonExtension().showImageSavedOkToast(context);
-                                    // CommonExtension().showToast("Image Saved!");
                                   }
                                 },
                                 child: Image.asset(
@@ -457,8 +459,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                       padding: EdgeInsets.symmetric(vertical: 2.h),
                                       child: (controller.isVideo.value)
                                           ? AspectRatio(
-                                              aspectRatio: _videoPlayerController.value.aspectRatio,
-                                              child: VideoPlayer(_videoPlayerController),
+                                              aspectRatio: _videoPlayerController!.value.aspectRatio,
+                                              child: VideoPlayer(_videoPlayerController!),
                                             )
                                           : Image.memory(
                                               base64Decode(image),
@@ -644,7 +646,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         )),
                     SizedBox(height: 0.5.h),
                     Container(
-                      height: 26.w,
+                      height: widget.isFromRecent ? 36.w : 26.w,
                       child: Scrollbar(
                         thickness: 0.0,
                         child: ScrollablePositionedList.separated(
@@ -675,8 +677,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                           return _buildTextItem(context, index);
                         },
                       ),
-                    ),
-                    SizedBox(height: Platform.isAndroid ? $(12) : 0),
+                    ).offstage(offstage: widget.isFromRecent),
+                    SizedBox(height: Platform.isAndroid ? $(12) : 0).offstage(offstage: widget.isFromRecent),
                   ],
                 ),
               ),
@@ -742,66 +744,87 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var effects = widget.list[itemIndex].effects;
     var keys = effects.keys.toList();
     var effectItem = effects[keys[index]];
-
-    return Card(
-      elevation: 0,
-      color: ColorConstant.BackgroundColor,
-      shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex) ? ColorConstant.BlueColor : ColorConstant.BackgroundColor,
-            width: 0.5.w,
+    var checked = (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex);
+    Widget icon = Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(2.w),
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          child: _createEffectModelIcon(context, effectItem: effectItem!),
+        ),
+        Visibility(
+          visible: (effectItem.key.endsWith("-transform")),
+          child: Positioned(
+            right: 1.5.w,
+            top: 0.4.h,
+            child: Image.asset(
+              ImagesConstant.ic_video,
+              height: 5.w,
+              width: 5.w,
+            ),
           ),
-          borderRadius: BorderRadius.circular(3.w)),
-      child: Padding(
+        ),
+        if (controller.isChecked.value && isSupportOriginalFace(effectItem))
+          Positioned(
+            bottom: 0.4.h,
+            left: 1.5.w,
+            child: controller.image.value != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(10.w),
+                    child: Image.file(
+                      controller.image.value as File,
+                      fit: BoxFit.fill,
+                      height: 5.w,
+                      width: 5.w,
+                    ),
+                  )
+                : SizedBox(),
+          ),
+      ],
+    ).intoContainer(
         padding: EdgeInsets.all(1.w),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(2.w),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: _createEffectModelIcon(context, effectItem: effectItem!),
-            ),
-            Visibility(
-              visible: (effectItem.key.endsWith("-transform")),
-              child: Positioned(
-                right: 1.5.w,
-                top: 0.4.h,
-                child: Image.asset(
-                  ImagesConstant.ic_video,
-                  height: 5.w,
-                  width: 5.w,
-                ),
-              ),
-            ),
-            if (controller.isChecked.value && isSupportOriginalFace(effectItem))
-              Positioned(
-                bottom: 0.4.h,
-                left: 1.5.w,
-                child: controller.image.value != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(10.w),
-                        child: Image.file(
-                          controller.image.value as File,
-                          fit: BoxFit.fill,
-                          height: 5.w,
-                          width: 5.w,
-                        ),
-                      )
-                    : SizedBox(),
-              ),
-          ],
-        ).intoGestureDetector(onTap: () async {
-          controller.setLastSelectedIndex(index);
-          controller.setLastItemIndex(itemIndex);
-          controller.setLastItemIndex1(itemIndex);
-          scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
-          if (controller.image.value != null) {
-            controller.changeIsPhotoSelect(true);
-            controller.changeIsLoading(true);
-            getCartoon(context);
-          }
-        }),
-      ),
+        decoration: BoxDecoration(
+            color: ColorConstant.BackgroundColor,
+            borderRadius: BorderRadius.circular(3.w),
+            border: Border.all(
+              color: checked ? ColorConstant.BlueColor : ColorConstant.BackgroundColor,
+              width: 0.5.w,
+            )));
+
+    return Padding(
+      padding: EdgeInsets.all(widget.isFromRecent ? 0.w : 1.w),
+      child: (widget.isFromRecent
+              ? Column(
+                  children: [
+                    icon,
+                    SizedBox(height: $(10)),
+                    Text(
+                      effectItem.displayName,
+                      style: TextStyle(
+                        fontFamily: 'poppins',
+                        color: checked ? ColorConstant.BlueColor : ColorConstant.White,
+                        fontSize: $(14),
+                        height: 1,
+                        fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ).intoContainer(constraints: BoxConstraints(maxWidth: $(24.w)), alignment: Alignment.center),
+                  ],
+                )
+              : icon)
+          .intoGestureDetector(onTap: () async {
+        controller.setLastSelectedIndex(index);
+        controller.setLastItemIndex(itemIndex);
+        controller.setLastItemIndex1(itemIndex);
+        scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
+        if (controller.image.value != null) {
+          controller.changeIsPhotoSelect(true);
+          controller.changeIsLoading(true);
+          getCartoon(context);
+        }
+      }),
     );
   }
 
@@ -924,7 +947,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
           });
-        _videoPlayerController.play();
+        _videoPlayerController!.play();
 
         urlFinal = data.imageUrl;
         algoName = selectedEffect.algoname;
@@ -986,7 +1009,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ..initialize().then((value) async {
                     controller.changeIsLoading(false);
                   });
-                _videoPlayerController.play();
+                _videoPlayerController!.play();
 
                 urlFinal = imageUrl;
                 algoName = selectedEffect.algoname;
@@ -1041,7 +1064,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ..initialize().then((value) async {
                     controller.changeIsLoading(false);
                   });
-                _videoPlayerController.play();
+                _videoPlayerController!.play();
 
                 urlFinal = imageUrl;
                 algoName = selectedEffect.algoname;
@@ -1088,7 +1111,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        recentController.onEffectUsed(selectedEffect);
+        Get.find<RecentController>().onEffectUsed(selectedEffect);
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
@@ -1113,6 +1136,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildSeparator() {
+    if (widget.isFromRecent) {
+      return Container();
+    }
     return VerticalDivider(
       color: ColorConstant.HintColor,
       width: 1.w,

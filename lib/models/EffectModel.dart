@@ -19,11 +19,13 @@ class EffectModel {
   }
 
   EffectModel.fromJson(Map<String, dynamic> json) {
-    key = json['key'].toString();
+    key = (json['key'] ?? '').toString();
     defaultEffect = (json['default_effect'] ?? '').toString();
     var effectsMap = (json['effects'] ?? {}) as Map<String, dynamic>;
     effects = effectsMap.map((key, value) => MapEntry(key, EffectItem.fromJson(value)));
     thumbnails = json['thumbnails'] ?? [];
+    displayName = (json['display_name'] ?? '').toString();
+    style = (json['style'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -32,6 +34,8 @@ class EffectModel {
     data['default_effect'] = defaultEffect;
     data['effects'] = effects.map((key, value) => MapEntry(key, value.toJson()));
     data['thumbnails'] = thumbnails;
+    data['display_name'] = displayName;
+    data['style'] = style;
     return data;
   }
 }
@@ -77,6 +81,7 @@ class EffectItem {
     originalFace = (json['original_face'] ?? false);
     server = (json['server'] ?? '').toString();
     stickerName = (json['sticker_name'] ?? '').toString();
+    displayName = (json['display_name'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -92,12 +97,14 @@ class EffectItem {
     data['original_face'] = originalFace;
     data['server'] = server;
     data['sticker_name'] = stickerName;
+    data['display_name'] = displayName;
     return data;
   }
 }
 
 class EffectItemListData {
   String key;
+  String uniqueKey;
   int pos;
   EffectItem item;
 
@@ -105,6 +112,7 @@ class EffectItemListData {
     required this.key,
     required this.pos,
     required this.item,
+    required this.uniqueKey,
   });
 }
 
@@ -132,7 +140,7 @@ class RecentEffectModel {
 
 extension EffectItemEx on EffectItem {
   handleApiParams(Map<String, dynamic> params) {
-    if(type == 'sticker') {
+    if (type == 'sticker') {
       params['sticker_name'] = stickerName;
     }
   }
