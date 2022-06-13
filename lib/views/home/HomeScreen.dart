@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           item: HomeFaceFragment(
                             dataList: _.data!.effectList(value),
                             recentController: recentController,
+                            tabString: value,
                           ),
                           title: _.data!.localeName(value)),
                     );
@@ -91,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           item: HomeFullBodyFragment(
                             dataList: _.data!.effectList(value),
                             recentController: recentController,
+                            tabString: value,
                           ),
                           title: _.data!.localeName(value)),
                     );
@@ -101,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             dataList: _.data!.effectList(value),
                             recentController: recentController,
                             hasOriginalFace: false,
+                            tabString: value,
                           ),
                           title: _.data!.localeName(value)),
                     );

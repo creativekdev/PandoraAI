@@ -11,11 +11,12 @@ import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 class HomeFullBodyFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
-
+  String tabString;
   HomeFullBodyFragment({
     Key? key,
     required this.recentController,
     required this.dataList,
+    required this.tabString,
   }) : super(key: key);
 
   @override
@@ -120,7 +121,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       return;
     }
 
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style, "page": widget.tabString,});
 
     await Navigator.push(
       context,

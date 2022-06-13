@@ -79,7 +79,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
     if (effectModel == null) {
       return;
     }
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style, "page": "recent",});
 
     Navigator.push(
       context,
