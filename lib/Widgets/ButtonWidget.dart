@@ -1,11 +1,12 @@
 import 'package:cartoonizer/common/importFile.dart';
 
-Widget ButtonWidget(String btnText, {double? radius}) {
+Widget ButtonWidget(String btnText, {double? radius, EdgeInsets? padding}) {
   radius ??= 10.w;
+  padding ??= EdgeInsets.symmetric(horizontal: 5.w);
   return Container(
     width: double.maxFinite,
     height: 54,
-    padding: EdgeInsets.symmetric(horizontal: 5.w),
+    padding: padding,
     child: Card(
       elevation: 2.h,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
