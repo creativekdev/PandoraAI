@@ -34,7 +34,7 @@ extension EffectMapEx on EffectMap {
     json.forEach((key, value) {
       var effect = EffectModel.fromJson(value);
       effect.effects.values.forEach((element) {
-        element.displayName = effectLocalName(key, defaultName: element.category);
+        element.displayName = localeName(element.key, defaultName: element.category);
       });
       effect.displayName = effectLocalName(key);
       effect.style = key;

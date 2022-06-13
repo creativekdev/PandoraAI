@@ -93,7 +93,6 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
         builder: (context) => ChoosePhotoScreen(
           list: list,
           pos: index,
-          recentController: recentController,
         ),
       ),
     );

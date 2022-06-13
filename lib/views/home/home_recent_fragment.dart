@@ -61,9 +61,18 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
     int index = 0;
     for (int i = 0; i < originList.length; i++) {
       var model = originList[i];
-      if (model.key == data.key) {
-        effectModel = model;
-        index = i;
+      var list = model.effects.values.toList();
+      bool find = false;
+      for (int j = 0; j < list.length; j++) {
+        var item = list[j];
+        if('${model.key}${item.key}' == data.uniqueKey) {
+          effectModel = model;
+          index = i;
+          find = true;
+          break;
+        }
+      }
+      if (find) {
         break;
       }
     }
@@ -79,8 +88,8 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
         builder: (context) => ChoosePhotoScreen(
           list: originList,
           pos: index,
-          itemPos: data.pos,
-          recentController: recentController,
+          itemPos: 0,
+          isFromRecent: true,
         ),
       ),
     );

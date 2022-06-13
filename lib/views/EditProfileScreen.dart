@@ -22,14 +22,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final EditProfileScreenController controller = Get.put(EditProfileScreenController());
+  final EditProfileScreenController controller = EditProfileScreenController();
   late ImagePicker imagePicker;
   final nameController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
-    Get.reset(clearRouteBindings: true);
     super.dispose();
   }
 

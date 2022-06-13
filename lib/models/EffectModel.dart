@@ -104,6 +104,7 @@ class EffectItem {
 
 class EffectItemListData {
   String key;
+  String uniqueKey;
   int pos;
   EffectItem item;
 
@@ -111,6 +112,7 @@ class EffectItemListData {
     required this.key,
     required this.pos,
     required this.item,
+    required this.uniqueKey,
   });
 }
 
