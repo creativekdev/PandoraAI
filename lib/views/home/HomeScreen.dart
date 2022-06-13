@@ -100,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           item: HomeFaceFragment(
                             dataList: _.data!.effectList(value),
                             recentController: recentController,
+                            hasOriginalFace: false,
                           ),
                           title: _.data!.localeName(value)),
                     );
