@@ -130,6 +130,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
           list: effectModelList,
           pos: index,
           itemPos: data.pos,
+          hasOriginalCheck: false,
         ),
       ),
     );

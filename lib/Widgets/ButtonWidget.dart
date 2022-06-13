@@ -1,6 +1,7 @@
 import 'package:cartoonizer/common/importFile.dart';
 
-Widget ButtonWidget(String btnText) {
+Widget ButtonWidget(String btnText, {double? radius}) {
+  radius ??= 10.w;
   return Container(
     width: double.maxFinite,
     height: 54,
@@ -11,7 +12,7 @@ Widget ButtonWidget(String btnText) {
       shadowColor: ColorConstant.ShadowColor,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.w),
+          borderRadius: BorderRadius.circular(radius),
           gradient: RadialGradient(
             colors: [ColorConstant.RadialColor1, ColorConstant.RadialColor2],
             radius: 1.w,

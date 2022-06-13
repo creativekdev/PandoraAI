@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
-import 'package:cartoonizer/Widgets/toast/ok_toast.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -35,6 +34,7 @@ class ChoosePhotoScreen extends StatefulWidget {
   int pos;
   int? itemPos;
   bool isFromRecent;
+  bool hasOriginalCheck;
 
   ChoosePhotoScreen({
     Key? key,
@@ -42,6 +42,7 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.pos,
     this.itemPos,
     this.isFromRecent = false,
+    this.hasOriginalCheck = true,
   }) : super(key: key);
 
   @override
@@ -526,7 +527,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               onTap: () {
                                                 pickImageFromGallery(context, from: "center");
                                               },
-                                              child: ButtonWidget(StringConstant.choose_photo),
+                                              child: ButtonWidget(StringConstant.choose_photo, radius: 2.w),
                                             ),
                                             SizedBox(height: 1.h),
                                             GestureDetector(
@@ -643,8 +644,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                             TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
                             SizedBox(width: 2.w),
                           ],
-                        )),
-                    SizedBox(height: 0.5.h),
+                        )).offstage(offstage: !widget.hasOriginalCheck),
+                    SizedBox(height: 0.5.h).offstage(offstage: !widget.hasOriginalCheck),
                     Container(
                       height: widget.isFromRecent ? 36.w : 26.w,
                       child: Scrollbar(
@@ -692,7 +693,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
 
     return Padding(
-      padding: EdgeInsets.all(1.w),
+      padding: EdgeInsets.only(top: 1.w, left: 1.w, bottom: 1.w, right: widget.isFromRecent ? 0 : 1.w),
       child: ListView.builder(
         itemCount: keys.length,
         scrollDirection: Axis.horizontal,

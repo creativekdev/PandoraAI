@@ -12,11 +12,13 @@ import 'home_tab_user_ex.dart';
 class HomeFaceFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
+  bool hasOriginalFace;
 
   HomeFaceFragment({
     Key? key,
     required this.dataList,
     required this.recentController,
+    this.hasOriginalFace = true,
   }) : super(key: key);
 
   @override
@@ -93,6 +95,7 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
         builder: (context) => ChoosePhotoScreen(
           list: list,
           pos: index,
+          hasOriginalCheck: widget.hasOriginalFace,
         ),
       ),
     );
