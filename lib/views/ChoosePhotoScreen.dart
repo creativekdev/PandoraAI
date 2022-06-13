@@ -527,7 +527,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               onTap: () {
                                                 pickImageFromGallery(context, from: "center");
                                               },
-                                              child: ButtonWidget(StringConstant.choose_photo, radius: 2.w),
+                                              child: ButtonWidget(StringConstant.choose_photo, radius: $(8), padding: EdgeInsets.symmetric(horizontal: $(50))),
                                             ),
                                             SizedBox(height: 1.h),
                                             GestureDetector(
@@ -647,7 +647,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         )).offstage(offstage: !widget.hasOriginalCheck),
                     SizedBox(height: 0.5.h).offstage(offstage: !widget.hasOriginalCheck),
                     Container(
-                      height: widget.isFromRecent ? 36.w : 26.w,
+                      height: widget.isFromRecent ? $(150) : $(100),
                       child: Scrollbar(
                         thickness: 0.0,
                         child: ScrollablePositionedList.separated(
@@ -693,7 +693,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
 
     return Padding(
-      padding: EdgeInsets.only(top: 1.w, left: 1.w, bottom: 1.w, right: widget.isFromRecent ? 0 : 1.w),
+      padding: EdgeInsets.all($(3.6)),
       child: ListView.builder(
         itemCount: keys.length,
         scrollDirection: Axis.horizontal,
@@ -749,51 +749,51 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     Widget icon = Stack(
       children: [
         ClipRRect(
-          borderRadius: BorderRadius.circular(2.w),
+          borderRadius: BorderRadius.circular($(7.2)),
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: _createEffectModelIcon(context, effectItem: effectItem!),
         ),
         Visibility(
           visible: (effectItem.key.endsWith("-transform")),
           child: Positioned(
-            right: 1.5.w,
-            top: 0.4.h,
+            right: $(3.6),
+            top: $(1),
             child: Image.asset(
               ImagesConstant.ic_video,
-              height: 5.w,
-              width: 5.w,
+              height: $(18),
+              width: $(18),
             ),
           ),
         ),
         if (controller.isChecked.value && isSupportOriginalFace(effectItem))
           Positioned(
-            bottom: 0.4.h,
-            left: 1.5.w,
+            bottom: $(1),
+            left: $(3.6),
             child: controller.image.value != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(10.w),
+                    borderRadius: BorderRadius.circular($(36)),
                     child: Image.file(
                       controller.image.value as File,
                       fit: BoxFit.fill,
-                      height: 5.w,
-                      width: 5.w,
+                      height: $(18),
+                      width: $(18),
                     ),
                   )
                 : SizedBox(),
           ),
       ],
     ).intoContainer(
-        padding: EdgeInsets.all(1.w),
+        padding: EdgeInsets.all($(3.6)),
         decoration: BoxDecoration(
             color: ColorConstant.BackgroundColor,
-            borderRadius: BorderRadius.circular(3.w),
+            borderRadius: BorderRadius.circular($(10.8)),
             border: Border.all(
               color: checked ? ColorConstant.BlueColor : ColorConstant.BackgroundColor,
-              width: 0.5.w,
+              width: $(1.8),
             )));
 
     return Padding(
-      padding: EdgeInsets.all(widget.isFromRecent ? 0.w : 1.w),
+      padding: EdgeInsets.all(widget.isFromRecent ? 0 : $(3.6)),
       child: (widget.isFromRecent
               ? Column(
                   children: [
@@ -811,7 +811,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
-                    ).intoContainer(constraints: BoxConstraints(maxWidth: $(24.w)), alignment: Alignment.center),
+                    ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
                   ],
                 )
               : icon)

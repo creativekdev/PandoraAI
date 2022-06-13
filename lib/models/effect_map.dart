@@ -48,7 +48,7 @@ extension EffectMapEx on EffectMap {
     if (defaultName != null) {
       dn = defaultName;
     }
-    return locale[key] ?? dn;
+    return locale[key] ?? locale[dn] ?? effectLocalName(key, defaultName: defaultName);
   }
 
   String effectLocalName(String key, {String? defaultName}) {
@@ -56,6 +56,6 @@ extension EffectMapEx on EffectMap {
     if (defaultName != null) {
       dn = defaultName;
     }
-    return locale['key']?[key] ?? dn;
+    return locale['key']?[key] ?? locale['key']?[dn] ?? dn;
   }
 }
