@@ -10,6 +10,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/helper/shared_pref.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
@@ -843,6 +844,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     bool showAds = isShowAds(_user);
     if (showAds == false) return;
 
+    int lastTime = await SharedPreferencesHelper.getInt(SharedPreferencesHelper.keyLastVideoAdsShowTime);
+    var nowTime = DateTime.now().millisecondsSinceEpoch;
+    if ((nowTime - lastTime) < 120000) {
+      return;
+    }
+    SharedPreferencesHelper.setInt(SharedPreferencesHelper.keyLastVideoAdsShowTime, nowTime);
     var isInterstitialVideoAvailable = await FlutterApplovinMax.isInterstitialLoaded((listener) => null);
     if (isInterstitialVideoAvailable as bool) {
       FlutterApplovinMax.showInterstitialVideo((listener) => null);
@@ -1130,8 +1137,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
-        CommonExtension().showToast(e.toString());
-        // CommonExtension().showToast("Error while uploading image");
+        CommonExtension().showToast("Error while uploading image");
       }
     }
   }
