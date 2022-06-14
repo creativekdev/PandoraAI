@@ -27,7 +27,7 @@ class RecentController extends GetxController {
     refreshDataList();
   }
 
-  refreshDataList() {
+  refreshDataList({bool needUpdate = true}) {
     recentModelList.clear();
     List<EffectItemListData> allItemList = [];
     recentList.forEach((element) {
@@ -53,7 +53,9 @@ class RecentController extends GetxController {
         dataList.add([element]);
       }
     });
-    update();
+    if (needUpdate) {
+      update();
+    }
   }
 
   loadingFromCache() async {
@@ -79,6 +81,6 @@ class RecentController extends GetxController {
     }
     recentList.insert(0, pick);
     _saveToCache(recentList);
-    refreshDataList();
+    refreshDataList(needUpdate: false);
   }
 }

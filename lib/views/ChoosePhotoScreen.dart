@@ -286,6 +286,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        recentController.update();
         return _willPopCallback(context);
       },
       child: Scaffold(
