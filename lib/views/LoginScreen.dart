@@ -9,6 +9,7 @@ import 'package:cartoonizer/common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -416,8 +417,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
-                              // CommonExtension().showToast("Oops! Something went wrong");
+                              CommonExtension().showToast("Oops! Something went wrong");
                             }
+                          } on SignInWithAppleAuthorizationException catch (e) {
+                              switch(e.code) {
+                                case AuthorizationErrorCode.canceled:
+                                case AuthorizationErrorCode.unknown:
+                                  // do nothing
+                                  break;
+                                default:
+                                  CommonExtension().showToast("Oops! Something went wrong");
+                                  break;
+                              }
                           } catch (e) {
                             CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
