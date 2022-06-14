@@ -215,7 +215,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } catch (e) {
-                          CommonExtension().showToast("Oops! Something went wrong");
+                          // CommonExtension().showToast("Oops! Something went wrong");
                         } finally {
                           if (isLoading) {
                             setState(() {
@@ -548,7 +548,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
             ),
-          ),
+          ).intoGestureDetector(onTap: (){
+            FocusScope.of(context).requestFocus(FocusNode());
+          }),
         ),
       ),
     );

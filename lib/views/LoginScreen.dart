@@ -547,7 +547,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-          ),
+          ).intoGestureDetector(onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          }),
         ),
       ),
     );
