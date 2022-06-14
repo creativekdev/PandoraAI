@@ -212,10 +212,10 @@ class _SignupScreenState extends State<SignupScreen> {
                             await loginBack(context);
                             logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
                           } else {
-                            CommonExtension().showToast("Oops! Something went wrong");
+                            // CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } catch (e) {
-                          // CommonExtension().showToast("Oops! Something went wrong");
+                          CommonExtension().showToast("Oops! Something went wrong");
                         } finally {
                           if (isLoading) {
                             setState(() {

@@ -416,10 +416,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
-                              CommonExtension().showToast("Oops! Something went wrong");
+                              // CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } catch (e) {
-                            // CommonExtension().showToast("Oops! Something went wrong");
+                            CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
                             if (isLoading) {
                               setState(() {
