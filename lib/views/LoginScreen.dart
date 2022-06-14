@@ -419,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } catch (e) {
-                            CommonExtension().showToast("Oops! Something went wrong");
+                            // CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
                             if (isLoading) {
                               setState(() {
