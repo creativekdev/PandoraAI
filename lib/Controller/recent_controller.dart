@@ -56,7 +56,7 @@ class RecentController extends GetxController {
     update();
   }
 
-  loadingFromCache() async {
+  Future<void> loadingFromCache() async {
     recentList = await _loadingFromCache();
   }
 

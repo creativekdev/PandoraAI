@@ -286,7 +286,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        recentController.loadingFromCache();
+        recentController.loadingFromCache().whenComplete(() {
+          recentController.refreshDataList();
+        });
         return _willPopCallback(context);
       },
       child: Scaffold(
@@ -1120,7 +1122,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        if(!widget.isFromRecent) {
+        if (!widget.isFromRecent) {
           recentController.onEffectUsed(selectedEffect);
         } else {
           recentController.onEffectUsedToCache(selectedEffect);
