@@ -286,7 +286,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        recentController.update();
+        recentController.loadingFromCache();
         return _willPopCallback(context);
       },
       child: Scaffold(
@@ -712,7 +712,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem}) {
     if (effectItem.imageUrl.endsWith("mp4")) {
-      return EffectVideoPlayer(url: effectItem.imageUrl);
+      return Container(
+        width: 20.w,
+        height: 20.w,
+        child: EffectVideoPlayer(url: effectItem.imageUrl),
+      );
     } else {
       return _imageWidget(context, imageUrl: effectItem.imageUrl);
     }
@@ -1116,11 +1120,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        recentController.onEffectUsed(selectedEffect);
+        if(!widget.isFromRecent) {
+          recentController.onEffectUsed(selectedEffect);
+        } else {
+          recentController.onEffectUsedToCache(selectedEffect);
+        }
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
-        CommonExtension().showToast("Error while uploading image");
+        CommonExtension().showToast(e.toString());
+        // CommonExtension().showToast("Error while uploading image");
       }
     }
   }

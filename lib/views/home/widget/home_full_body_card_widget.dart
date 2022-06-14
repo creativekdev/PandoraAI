@@ -1,6 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/views/home/home_full_body_fragment.dart';
 
 import 'home_card_ex.dart';
 
@@ -36,7 +35,7 @@ class HomeFullBodyCardWidget extends StatelessWidget with HomeCardEx {
         ClipRRect(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: imageWidget(
+          child: urlWidget(
             context,
             width: imageSize,
             height: imageSize,

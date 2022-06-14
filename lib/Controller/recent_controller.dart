@@ -27,7 +27,7 @@ class RecentController extends GetxController {
     refreshDataList();
   }
 
-  refreshDataList({bool needUpdate = true}) {
+  refreshDataList() {
     recentModelList.clear();
     List<EffectItemListData> allItemList = [];
     recentList.forEach((element) {
@@ -53,18 +53,22 @@ class RecentController extends GetxController {
         dataList.add([element]);
       }
     });
-    if (needUpdate) {
-      update();
-    }
+    update();
   }
 
   loadingFromCache() async {
+    recentList = await _loadingFromCache();
+  }
+
+  Future<List<RecentEffectModel>> _loadingFromCache() async {
+    List<RecentEffectModel> result = [];
     var string = await SharedPreferencesHelper.getString(SharedPreferencesHelper.keyRecentEffects);
     try {
       var json = jsonDecode(string);
-      recentList = (json as List<dynamic>).map((e) => RecentEffectModel.fromJson(e)).toList();
+      result = (json as List<dynamic>).map((e) => RecentEffectModel.fromJson(e)).toList();
       refreshDataList();
     } catch (e) {}
+    return result;
   }
 
   _saveToCache(List<RecentEffectModel> recentList) {
@@ -81,6 +85,19 @@ class RecentController extends GetxController {
     }
     recentList.insert(0, pick);
     _saveToCache(recentList);
-    refreshDataList(needUpdate: false);
+    refreshDataList();
+  }
+
+  onEffectUsedToCache(EffectItem effectItem) async {
+    var newList = await _loadingFromCache();
+    var pick = newList.pick((element) => effectItem.key == element.key);
+    if (pick != null) {
+      pick.lastTime = DateTime.now().millisecond;
+      newList.remove(pick);
+    } else {
+      pick = RecentEffectModel(lastTime: DateTime.now().millisecond, key: effectItem.key);
+    }
+    newList.insert(0, pick);
+    _saveToCache(newList);
   }
 }

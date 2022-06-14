@@ -49,13 +49,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
           child: VideoPlayer(controller),
         ),
         !controller.value.isPlaying
-            ? Container(
-                height: 20.w,
-                width: 20.w,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
+            ? CircularProgressIndicator().intoCenter()
             : Container(),
       ],
     );

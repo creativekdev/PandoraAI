@@ -35,7 +35,7 @@ class HomeFaceCardWidget extends StatelessWidget with HomeCardEx {
               return ClipRRect(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 borderRadius: BorderRadius.all(Radius.circular($(6))),
-                child: imageWidget(
+                child: urlWidget(
                   context,
                   width: size,
                   height: size,
