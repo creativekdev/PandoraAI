@@ -27,6 +27,7 @@ import '../models/OfflineEffectModel.dart';
 import 'PurchaseScreen.dart';
 import 'ShareScreen.dart';
 import 'StripeSubscriptionScreen.dart';
+const int adsShowDuration = 120000;
 
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
@@ -846,7 +847,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     int lastTime = await SharedPreferencesHelper.getInt(SharedPreferencesHelper.keyLastVideoAdsShowTime);
     var nowTime = DateTime.now().millisecondsSinceEpoch;
-    if ((nowTime - lastTime) < 120000) {
+    if ((nowTime - lastTime) < adsShowDuration) {
       return;
     }
     SharedPreferencesHelper.setInt(SharedPreferencesHelper.keyLastVideoAdsShowTime, nowTime);
