@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/helper/shared_pref.dart';

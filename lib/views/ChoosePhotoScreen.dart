@@ -12,10 +12,8 @@ import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/utils/dialog_util.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -59,6 +57,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
+  late RecentController recentController;
   late ItemScrollController scrollController;
   late ItemScrollController scrollController1;
   var itemPos = 0;
@@ -77,6 +76,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     logEvent(Events.upload_page_loading);
 
+    recentController = Get.find();
     initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
@@ -1115,7 +1115,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        Get.find<RecentController>().onEffectUsed(selectedEffect);
+        recentController.onEffectUsed(selectedEffect);
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
