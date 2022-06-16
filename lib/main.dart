@@ -9,7 +9,7 @@ import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/helper/shared_pref.dart';
 import 'package:cartoonizer/views/home/HomeScreen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
-import 'package:flutter_applovin_max/flutter_applovin_max.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import 'config.dart';
@@ -45,10 +45,8 @@ void main() async {
   // init appsflyer
   Appsflyer.instance;
 
-  // init applovin
-  // FlutterApplovinMax.initSDK();
-  FlutterApplovinMax.initInterstitialAd(AppLovinConfig.INTERSTITIAL_AD_ID);
-
+  // init admob
+  MobileAds.instance.initialize();
   // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }

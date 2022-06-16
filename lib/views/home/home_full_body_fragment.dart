@@ -1,8 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
-import 'package:cartoonizer/Widgets/applovin_banner.dart';
-import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/home/home_tab_user_ex.dart';
@@ -12,6 +11,7 @@ class HomeFullBodyFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
   String tabString;
+
   HomeFullBodyFragment({
     Key? key,
     required this.recentController,
@@ -30,12 +30,20 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   List<List<EffectItemListData>> dataList = [];
   Widget? adWidget;
   late RecentController recentController;
+  late BannerAdsHolder bannerAdsHolder;
 
   @override
   initState() {
     super.initState();
     effectModelList = widget.dataList;
     recentController = widget.recentController;
+    bannerAdsHolder = BannerAdsHolder(
+      this,
+      closeable: false,
+      onUpdated: () {
+        setState(() {});
+      },
+    );
     delay(() {
       buildDataList();
       initStoreInfo(context).then((value) {
@@ -66,6 +74,13 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       }
     });
     setState(() {});
+    bannerAdsHolder.onReady(horizontalPadding: $(50));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bannerAdsHolder.onDispose();
   }
 
   @override
@@ -121,7 +136,11 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       return;
     }
 
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style, "page": widget.tabString,});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {
+      "category": effectModel.key,
+      "style": effectModel.style,
+      "page": widget.tabString,
+    });
 
     await Navigator.push(
       context,
@@ -143,14 +162,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
     var showAds = isShowAds(user);
 
     if (showAds && index == 2) {
-      if (adWidget != null) {
-        return adWidget!;
-      }
-      adWidget = Padding(
-        padding: EdgeInsets.only(bottom: 2.h),
-        child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
-      );
-      return adWidget!;
+      return bannerAdsHolder.buildBannerAd();
     }
 
     return Container();

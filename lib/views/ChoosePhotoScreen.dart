@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -15,7 +16,6 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter_applovin_max/flutter_applovin_max.dart';
 import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +27,7 @@ import '../models/OfflineEffectModel.dart';
 import 'PurchaseScreen.dart';
 import 'ShareScreen.dart';
 import 'StripeSubscriptionScreen.dart';
+
 const int adsShowDuration = 120000;
 
 class ChoosePhotoScreen extends StatefulWidget {
@@ -65,11 +66,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var itemPos = 0;
   VideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
+  late InterstitialAdsHolder adsHolder;
 
   @override
   void dispose() {
     super.dispose();
     _videoPlayerController?.dispose();
+    adsHolder.onDisposed();
   }
 
   @override
@@ -78,6 +81,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
     logEvent(Events.upload_page_loading);
 
+    adsHolder = InterstitialAdsHolder(maxFailedLoadAttempts: 3);
     recentController = Get.find();
     initStoreInfo();
 
@@ -110,6 +114,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         }
       }
     });
+    adsHolder.onReady();
   }
 
   Future<void> initStoreInfo() async {
@@ -851,10 +856,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       return;
     }
     SharedPreferencesHelper.setInt(SharedPreferencesHelper.keyLastVideoAdsShowTime, nowTime);
-    var isInterstitialVideoAvailable = await FlutterApplovinMax.isInterstitialLoaded((listener) => null);
-    if (isInterstitialVideoAvailable as bool) {
-      FlutterApplovinMax.showInterstitialVideo((listener) => null);
-    }
+    adsHolder.showInterstitialAd();
   }
 
   Future<void> pickImageFromGallery(BuildContext context, {String from = "center"}) async {
