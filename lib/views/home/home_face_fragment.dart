@@ -1,8 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
-import 'package:cartoonizer/Widgets/applovin_banner.dart';
+import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';
@@ -32,19 +31,32 @@ class HomeFaceFragment extends StatefulWidget {
 class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
   List<EffectModel> dataList = [];
   late RecentController recentController;
-
-  Widget? adWidget;
+  late BannerAdsHolder bannerAdsHolder;
 
   @override
   initState() {
     super.initState();
     recentController = widget.recentController;
     dataList = widget.dataList;
+    bannerAdsHolder = BannerAdsHolder(
+      this,
+      closeable: false,
+      onUpdated: () {
+        setState(() {});
+      },
+    );
     delay(() {
+      bannerAdsHolder.onReady(horizontalPadding: $(50));
       initStoreInfo(context).then((value) {
         setState(() {});
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    bannerAdsHolder.onDispose();
   }
 
   changeData(List<EffectModel> dataList) {
@@ -88,7 +100,11 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   }
 
   _onEffectCategoryTap(List<EffectModel> list, int index) async {
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": list[index].key, "style": list[index].style, "page": widget.tabString,});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {
+      "category": list[index].key,
+      "style": list[index].style,
+      "page": widget.tabString,
+    });
 
     await Navigator.push(
       context,
@@ -109,14 +125,7 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
     var showAds = isShowAds(user);
 
     if (showAds && index == 2) {
-      if (adWidget != null) {
-        return adWidget!;
-      }
-      adWidget = Padding(
-        padding: EdgeInsets.only(bottom: 2.h),
-        child: BannerMaxView((listener) => null, BannerAdSize.mrec, AppLovinConfig.MERC_AD_ID),
-      );
-      return adWidget!;
+      return bannerAdsHolder.buildBannerAd();
     }
 
     return Container();

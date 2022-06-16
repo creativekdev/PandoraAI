@@ -20,7 +20,7 @@ String get APP_TYPE {
 
 Future<UserModel> getUser() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  var localUser = sharedPreferences.getString(_kUser) ?? "";
+  var localUser = sharedPreferences.getString(_kUser) ?? "{}";
   return UserModel.fromJson(jsonDecode(localUser));
 }
 
