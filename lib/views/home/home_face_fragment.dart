@@ -69,15 +69,16 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
-    return ListView.builder(
-      itemCount: dataList.length,
-      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
-          .intoContainer(
-        margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
-      )
-          .intoGestureDetector(onTap: () {
-        _onEffectCategoryTap(dataList, index);
-      }),
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+            delegate: SliverChildBuilderDelegate(
+          (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+              .intoContainer(margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)))
+              .intoGestureDetector(onTap: () => _onEffectCategoryTap(dataList, index)),
+          childCount: dataList.length,
+        ))
+      ],
     );
   }
 
@@ -88,15 +89,22 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
     double parentWidth,
   ) {
     var data = list[index];
-    return Column(
-      children: [
-        _buildMERCAd(index),
-        HomeFaceCardWidget(
-          data: data,
-          parentWidth: parentWidth,
-        ),
-      ],
-    );
+    if (index == 2) {
+      return Column(
+        children: [
+          _buildMERCAd(),
+          HomeFaceCardWidget(
+            data: data,
+            parentWidth: parentWidth,
+          ),
+        ],
+      );
+    } else {
+      return HomeFaceCardWidget(
+        data: data,
+        parentWidth: parentWidth,
+      );
+    }
   }
 
   _onEffectCategoryTap(List<EffectModel> list, int index) async {
@@ -121,10 +129,10 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
     initStoreInfo(context);
   }
 
-  Widget _buildMERCAd(int index) {
+  Widget _buildMERCAd() {
     var showAds = isShowAds(user);
 
-    if (showAds && index == 2) {
+    if (showAds) {
       return bannerAdsHolder.buildBannerAd();
     }
 

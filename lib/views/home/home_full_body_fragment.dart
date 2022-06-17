@@ -87,16 +87,15 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
-    return ListView.builder(
-      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
-        margin: EdgeInsets.only(
-          right: $(15),
-          left: $(15),
-          top: index == 0 ? $(16) : $(8),
-          bottom: $(8),
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+              (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+                  .intoContainer(margin: EdgeInsets.only(right: $(15), left: $(15), top: index == 0 ? $(16) : $(8), bottom: $(8))),
+              childCount: dataList.length),
         ),
-      ),
-      itemCount: dataList.length,
+      ],
     );
   }
 
@@ -107,18 +106,28 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
     double parentWidth,
   ) {
     var data = list[index];
-    return Column(
-      children: [
-        _buildMERCAd(index),
-        HomeFullBodyCardWidget(
-          data: data,
-          parentWidth: parentWidth,
-          onTap: (item) {
-            _onEffectCategoryTap(item);
-          },
-        ),
-      ],
-    );
+    if (index == 2) {
+      return Column(
+        children: [
+          _buildMERCAd(),
+          HomeFullBodyCardWidget(
+            data: data,
+            parentWidth: parentWidth,
+            onTap: (item) {
+              _onEffectCategoryTap(item);
+            },
+          ),
+        ],
+      );
+    } else {
+      return HomeFullBodyCardWidget(
+        data: data,
+        parentWidth: parentWidth,
+        onTap: (item) {
+          _onEffectCategoryTap(item);
+        },
+      );
+    }
   }
 
   _onEffectCategoryTap(EffectItemListData data) async {
@@ -158,10 +167,10 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
     initStoreInfo(context);
   }
 
-  Widget _buildMERCAd(int index) {
+  Widget _buildMERCAd() {
     var showAds = isShowAds(user);
 
-    if (showAds && index == 2) {
+    if (showAds) {
       return bannerAdsHolder.buildBannerAd();
     }
 
