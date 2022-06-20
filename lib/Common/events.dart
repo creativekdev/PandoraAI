@@ -35,6 +35,8 @@ class Events {
   static String contact_socialmedia = "contact_socialmedia"; // channel
   static String premium_continue = "premium_continue";
   static String paid_success = "paid_success"; // plan_id, product_id, price, currency, quantity},
+  static String open_my_discovery = "open_my_discovery";
+  static String delete_account = "delete_account";
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
