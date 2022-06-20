@@ -272,8 +272,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                           deleteAccount().then((value) {
                                             if (value) {
                                               setState(() => isLoading = false);
-                                              CommonExtension().showToast("Delete successfully");
-                                              Navigator.of(context).pop();
+                                              showDeleteSuccessDialog(context).whenComplete(() {
+                                                Navigator.of(context).pop();
+                                              });
                                             }
                                           });
                                         }
@@ -475,6 +476,28 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   onPressed: () async {
                     Navigator.pop(context, true);
+                  }),
+            ],
+          ));
+
+  Future<void> showDeleteSuccessDialog(BuildContext context) => showDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+            content: Text(
+              'Your account has been successfully deleted. We always welcome you to use our service again.',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context);
                   }),
             ],
           ));
