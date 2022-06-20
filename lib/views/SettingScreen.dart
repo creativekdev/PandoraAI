@@ -466,7 +466,6 @@ class _SettingScreenState extends State<SettingScreen> {
                     style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
                   ),
                   onPressed: () async {
-                    logEvent(Events.delete_account);
                     Navigator.pop(context, true);
                   }),
               CupertinoDialogAction(
