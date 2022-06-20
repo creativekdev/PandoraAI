@@ -9,10 +9,9 @@ const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.so
 const String IOS_APP_ID = '1604123460';
 
 class AdMobConfig {
-  static String get BANNER_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
-  // static String get BANNER_AD_ID => Platform.isIOS? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';
-  static String get INTERSTITIAL_AD_ID => 'ca-app-pub-3940256099942544/8691691433'; //
-// static String get INTERSTITIAL_AD_ID => Platform.isIOS? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
+  static String get BANNER_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';
+
+  static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
 }
 
 abstract class BaseConfig {

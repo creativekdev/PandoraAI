@@ -87,15 +87,12 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
-    return CustomScrollView(
-      slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-              (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
-                  .intoContainer(margin: EdgeInsets.only(right: $(15), left: $(15), top: index == 0 ? $(16) : $(8), bottom: $(8))),
-              childCount: dataList.length),
-        ),
-      ],
+    return ListView.builder(
+      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
+        margin: EdgeInsets.only(right: $(15), left: $(15), top: index == 0 ? $(16) : $(8), bottom: $(8)),
+      ),
+      cacheExtent: 5,
+      itemCount: dataList.length,
     );
   }
 

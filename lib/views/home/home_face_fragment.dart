@@ -69,16 +69,14 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
-    return CustomScrollView(
-      slivers: [
-        SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
-              .intoContainer(margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)))
-              .intoGestureDetector(onTap: () => _onEffectCategoryTap(dataList, index)),
-          childCount: dataList.length,
-        ))
-      ],
+    return ListView.builder(
+      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+          .intoContainer(margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)))
+          .intoGestureDetector(
+            onTap: () => _onEffectCategoryTap(dataList, index),
+          ),
+      cacheExtent: 5,
+      itemCount: dataList.length,
     );
   }
 
