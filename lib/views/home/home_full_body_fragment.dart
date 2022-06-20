@@ -74,7 +74,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       }
     });
     setState(() {});
-    bannerAdsHolder.onReady(horizontalPadding: $(50));
+    bannerAdsHolder.onReady(horizontalPadding: $(35));
   }
 
   @override
@@ -91,7 +91,6 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
         margin: EdgeInsets.only(right: $(15), left: $(15), top: index == 0 ? $(16) : $(8), bottom: $(8)),
       ),
-      cacheExtent: 5,
       itemCount: dataList.length,
     );
   }

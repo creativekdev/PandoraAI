@@ -75,7 +75,6 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
           .intoGestureDetector(
             onTap: () => _onEffectCategoryTap(dataList, index),
           ),
-      cacheExtent: 5,
       itemCount: dataList.length,
     );
   }
