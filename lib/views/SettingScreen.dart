@@ -272,7 +272,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           deleteAccount().then((value) {
                                             if (value) {
                                               setState(() => isLoading = false);
-                                              CommonExtension().showToast("delete success");
+                                              CommonExtension().showToast("Delete successfully");
                                               Navigator.of(context).pop();
                                             }
                                           });
@@ -462,19 +462,19 @@ class _SettingScreenState extends State<SettingScreen> {
             actions: [
               CupertinoDialogAction(
                   child: Text(
-                    'Delete',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context, true);
-                  }),
-              CupertinoDialogAction(
-                  child: Text(
                     'Cancel',
                     style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                   ),
                   onPressed: () {
                     Navigator.pop(context);
+                  }),
+              CupertinoDialogAction(
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context, true);
                   }),
             ],
           ));
