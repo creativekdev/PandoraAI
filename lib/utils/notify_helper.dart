@@ -66,7 +66,7 @@ class NotifyHelper {
       debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = notification?.android;
-      AppleNotification? apple = notification?.apple;
+      // AppleNotification? apple = notification?.apple;
       if (notification == null) {
         return;
       }
@@ -77,13 +77,13 @@ class NotifyHelper {
           _showNotificationDefault(notification);
         }
       } else {
-        if (apple != null) {
-          if (apple.imageUrl != null && apple.imageUrl!.isNotEmpty) {
-            _showNotificationWithAttachment(notification);
-          } else {
-            _showNotificationDefault(notification);
-          }
-        }
+        // if (apple != null) {
+        //   if (apple.imageUrl != null && apple.imageUrl!.isNotEmpty) {
+        //     _showNotificationWithAttachment(notification);
+        //   } else {
+        //     _showNotificationDefault(notification);
+        //   }
+        // }
       }
     });
 
