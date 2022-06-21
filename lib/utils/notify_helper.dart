@@ -70,7 +70,7 @@ class NotifyHelper {
               channel.id,
               channel.name,
               channelDescription: channel.description,
-              icon: 'ic_launcher', // icon in res/drawable|mipmap
+              icon: '@mipmap/ic_launcher', // icon in res/drawable|mipmap
               importance: channel.importance,
             ),
             iOS: IOSNotificationDetails(),
