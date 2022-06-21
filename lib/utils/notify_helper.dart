@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:js_util/js_util_wasm.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/firebase_options.dart';
