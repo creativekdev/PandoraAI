@@ -52,7 +52,7 @@ class NotifyHelper {
     );
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('onNewMessage: ${message.data.toJS().toString()}');
+      debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
