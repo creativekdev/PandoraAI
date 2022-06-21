@@ -65,24 +65,24 @@ class NotifyHelper {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
+      AndroidNotification? android = notification?.android;
+      AppleNotification? apple = notification?.apple;
+      if (notification == null) {
+        return;
+      }
+      if (android != null) {
         if (android.imageUrl != null && android.imageUrl!.isNotEmpty) {
           _showBigPictureNotificationHiddenLargeIcon(notification);
         } else {
-          flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                channelDescription: channel.description,
-                importance: channel.importance,
-              ),
-            ),
-          );
+          _showNotificationDefault(notification);
+        }
+      } else {
+        if (apple != null) {
+          if (apple.imageUrl != null && apple.imageUrl!.isNotEmpty) {
+            _showNotificationWithAttachment(notification);
+          } else {
+            _showNotificationDefault(notification);
+          }
         }
       }
     });
@@ -110,6 +110,24 @@ class NotifyHelper {
     return null;
   }
 
+  /// normal notification
+  void _showNotificationDefault(RemoteNotification notification) {
+    flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          channelDescription: channel.description,
+          importance: channel.importance,
+        ),
+      ),
+    );
+  }
+
+  /// image on Android
   Future<void> _showBigPictureNotificationHiddenLargeIcon(
     RemoteNotification notification,
   ) async {
@@ -148,5 +166,25 @@ class NotifyHelper {
     final File file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return filePath;
+  }
+
+  /// image on iOS
+  Future<void> _showNotificationWithAttachment(RemoteNotification notification) async {
+    final String bigPicturePath = await _downloadAndSaveFile(notification.apple!.imageUrl!, 'bigPicture.jpg');
+    final IOSNotificationDetails iOSPlatformChannelSpecifics = IOSNotificationDetails(
+      attachments: <IOSNotificationAttachment>[IOSNotificationAttachment(bigPicturePath)],
+    );
+    final MacOSNotificationDetails macOSPlatformChannelSpecifics =
+        MacOSNotificationDetails(attachments: <MacOSNotificationAttachment>[MacOSNotificationAttachment(bigPicturePath)]);
+    final NotificationDetails notificationDetails = NotificationDetails(
+      iOS: iOSPlatformChannelSpecifics,
+      macOS: macOSPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      notificationDetails,
+    );
   }
 }
