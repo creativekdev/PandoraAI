@@ -4,6 +4,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
@@ -28,7 +30,6 @@ class NotifyHelper {
   }
 
   Future<void> initializeFirebase() async {
-
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     requireFirebasePermission();
@@ -41,6 +42,10 @@ class NotifyHelper {
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android: android, iOS: ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings);
 
     /// Create an Android Notification Channel.
     ///
@@ -55,27 +60,30 @@ class NotifyHelper {
       badge: true,
       sound: true,
     );
+    //https://assets.pandaily.com/uploads/2019/12/bilibili-platform.jpg
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
       if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channelDescription: channel.description,
-              icon: '@mipmap/ic_launcher', // icon in res/drawable|mipmap
-              importance: channel.importance,
+        if (android.imageUrl != null && android.imageUrl!.isNotEmpty) {
+          _showBigPictureNotificationHiddenLargeIcon(notification);
+        } else {
+          flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                channel.id,
+                channel.name,
+                channelDescription: channel.description,
+                importance: channel.importance,
+              ),
             ),
-            iOS: IOSNotificationDetails(),
-          ),
-        );
+          );
+        }
       }
     });
 
@@ -100,5 +108,45 @@ class NotifyHelper {
       );
     }
     return null;
+  }
+
+  Future<void> _showBigPictureNotificationHiddenLargeIcon(
+    RemoteNotification notification,
+  ) async {
+    final String largeIconPath = await _downloadAndSaveFile(notification.android!.imageUrl!, 'largeIcon');
+    final String bigPicturePath = await _downloadAndSaveFile(notification.android!.imageUrl!, 'bigPicture');
+    final BigPictureStyleInformation bigPictureStyleInformation = BigPictureStyleInformation(
+      FilePathAndroidBitmap(bigPicturePath),
+      hideExpandedLargeIcon: true,
+      contentTitle: notification.title,
+      htmlFormatContentTitle: true,
+      summaryText: notification.body,
+      htmlFormatSummaryText: true,
+    );
+    final AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      channel.id,
+      channel.name,
+      channelDescription: channel.description,
+      largeIcon: FilePathAndroidBitmap(largeIconPath),
+      styleInformation: bigPictureStyleInformation,
+    );
+    final NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await flutterLocalNotificationsPlugin.show(
+      notification.hashCode,
+      notification.title,
+      notification.body,
+      platformChannelSpecifics,
+    );
+  }
+
+  Future<String> _downloadAndSaveFile(String url, String fileName) async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final String filePath = '${directory.path}/$fileName';
+    final http.Response response = await http.get(Uri.parse(url));
+    final File file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
   }
 }
