@@ -272,8 +272,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                           deleteAccount().then((value) {
                                             if (value) {
                                               setState(() => isLoading = false);
-                                              CommonExtension().showToast("delete success");
-                                              Navigator.of(context).pop();
+                                              showDeleteSuccessDialog(context).whenComplete(() {
+                                                Navigator.of(context).pop();
+                                              });
                                             }
                                           });
                                         }
@@ -462,19 +463,40 @@ class _SettingScreenState extends State<SettingScreen> {
             actions: [
               CupertinoDialogAction(
                   child: Text(
-                    'Delete',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
-                  ),
-                  onPressed: () async {
-                    logEvent(Events.delete_account);
-                    Navigator.pop(context, true);
-                  }),
-              CupertinoDialogAction(
-                  child: Text(
                     'Cancel',
                     style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                   ),
                   onPressed: () {
+                    Navigator.pop(context);
+                  }),
+              CupertinoDialogAction(
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context, true);
+                  }),
+            ],
+          ));
+
+  Future<void> showDeleteSuccessDialog(BuildContext context) => showDialog<void>(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+            content: Text(
+              'Your account has been successfully deleted. We always welcome you to use our service again.',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontFamily: 'Poppins',
+              ),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                  child: Text(
+                    'OK',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
+                  ),
+                  onPressed: () async {
                     Navigator.pop(context);
                   }),
             ],

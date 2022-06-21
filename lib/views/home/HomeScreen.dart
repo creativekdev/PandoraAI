@@ -4,6 +4,7 @@ import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/utils/notify_helper.dart';
 
 import '../SettingScreen.dart';
 import 'home_face_fragment.dart';
@@ -37,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {});
       }
     });
+    NotifyHelper.instance.initializeFirebase();
   }
 
   void _pageChange(int index) {
