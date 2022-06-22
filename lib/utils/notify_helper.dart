@@ -187,4 +187,26 @@ class NotifyHelper {
       notificationDetails,
     );
   }
+
+
+  ///
+  /// 调用通知栏
+  Future<void> showNotification() async {
+    var android = new AndroidNotificationDetails(
+      channel.id,
+      channel.name,
+      channelDescription: channel.description,
+      priority: Priority.high,
+      importance: Importance.high,
+      color: ColorConstant.BlueColor,
+    );
+    var iOS = new IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: iOS);
+    return flutterLocalNotificationsPlugin.show(
+      1,
+      '测试',
+      '内容',
+      platform,
+    );
+  }
 }
