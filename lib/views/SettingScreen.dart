@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/config.dart';
@@ -505,8 +507,7 @@ class _SettingScreenState extends State<SettingScreen> {
     var post = await API.post("/api/user/delete_account");
     if (post.statusCode == 200) {
       logEvent(Events.delete_account);
-      var sharedPrefs = await SharedPreferences.getInstance();
-      sharedPrefs.clear();
+      AppDelegate.instance.getManager<CacheManager>().clear();
       return true;
     }
     return false;

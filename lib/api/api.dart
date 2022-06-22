@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
@@ -120,10 +122,12 @@ class API {
     var localUser = sharedPreferences.getString('user') ?? "";
 
     if (needLoad || localUser == '') {
+      var manager = AppDelegate.instance.getManager<UserManager>();
       var response = await get('/api/user/get_login');
       Map data = jsonDecode(response.body.toString());
 
       if (response.statusCode == 200 && data['login'] == true) {
+        manager.refreshUser();
         UserModel user = UserModel.fromGetLogin(data);
         sharedPreferences.setString("user", jsonEncode(user));
 

@@ -36,6 +36,10 @@ class NotificationManager extends BaseManager {
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var ios = IOSInitializationSettings();
+    var initSettings = InitializationSettings(android: android, iOS: ios);
+    flutterLocalNotificationsPlugin.initialize(initSettings);
 
     /// Create an Android Notification Channel.
     ///
@@ -54,23 +58,25 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channelDescription: channel.description,
-              icon: 'ic_launcher', // icon in res/drawable|mipmap
-              importance: channel.importance,
-            ),
-            iOS: IOSNotificationDetails(),
-          ),
-        );
+      AndroidNotification? android = notification?.android;
+      // AppleNotification? apple = notification?.apple;
+      if (notification == null) {
+        return;
+      }
+      if (android != null) {
+        if (android.imageUrl != null && android.imageUrl!.isNotEmpty) {
+          _showBigPictureNotificationHiddenLargeIcon(notification);
+        } else {
+          _showNotificationDefault(notification);
+        }
+      } else {
+        // if (apple != null) {
+        //   if (apple.imageUrl != null && apple.imageUrl!.isNotEmpty) {
+        //     _showNotificationWithAttachment(notification);
+        //   } else {
+        //     _showNotificationDefault(notification);
+        //   }
+        // }
       }
     });
 

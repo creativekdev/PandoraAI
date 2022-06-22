@@ -224,10 +224,6 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     var headers = response.headers;
     if (response.statusCode == 200) {
       onPreHandleResult(response);
-      if (response.data == null) {
-        onError(Exception('response is empty'), toastOnFailed: toastOnFailed);
-        return null;
-      }
       var baseEntity = BaseEntity(data: response.data, headers: headers);
       return baseEntity;
     } else {

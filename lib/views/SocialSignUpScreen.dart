@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/UserModel.dart';
@@ -23,6 +25,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
   bool isLoading = false;
   final emailController = TextEditingController();
   final passController = TextEditingController();
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void dispose() {
@@ -359,6 +362,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
+                              userManager.refreshUser();
                               await loginBack(context);
 
                               logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -24,6 +26,8 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+
+  UserManager userManager = AppDelegate.instance.getManager();
   @override
   void initState() {
     logEvent(Events.signup_page_loading);
@@ -210,6 +214,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         try {
                           var result = await signInWithApple();
                           if (result) {
+                            userManager.refreshUser();
                             await loginBack(context);
                             logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
                           } else {
@@ -301,6 +306,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
+                            userManager.refreshUser();
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "google"});
                           }
@@ -387,6 +393,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
+                            userManager.refreshUser();
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "youtube"});
                           }

@@ -40,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {});
       }
     });
-    // delay(() => notificationManager.showNotification(), milliseconds: 2000);
+    delay(() => notificationManager.showNotification(), milliseconds: 2000);
   }
 
   void _pageChange(int index) {

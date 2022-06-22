@@ -8,7 +8,8 @@ class CacheManager extends BaseManager {
   static const keyRecentEffects = "RECENT_EFFECTS";
   static const keyLastVideoAdsShowTime = "LAST_ADS_SHOW_TIME";
   static const keyLoginCookie = "login_cookie";
-  static const keyCurrentUser = "user";
+  static const keyCurrentUser = "user_info";
+  static const keyAiServer = "ai_servers";
 
   late SharedPreferences _sharedPreferences;
 
@@ -53,6 +54,13 @@ class CacheManager extends BaseManager {
   }
 
   Future<bool> setJson(String key, dynamic json) async {
+    if(json == null) {
+      return _sharedPreferences.remove(key);
+    }
     return _sharedPreferences.setString(key, jsonEncode(json));
+  }
+
+  clear() {
+    _sharedPreferences.clear();
   }
 }

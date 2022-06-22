@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -330,41 +333,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": APP_TYPE};
-                          print(body);
-                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {});
-
-                          print(response.body);
-                          if (response.statusCode == 200) {
+                          var baseEntity = await userManager.login(emailController.text.trim(), passController.text.trim());
+                          if(baseEntity != null) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
-                            String cookie = response.headers.toString();
-                            var str = cookie.split(";");
-                            String id = "";
-                            for (int j = 0; j < str.length; j++) {
-                              if (str[j].contains("sb.connect.sid")) {
-                                id = str[j];
-                                j = str.length;
-                              }
-                            }
-                            var finalId = id.split(",");
-                            if (finalId.length > 1) {
-                              for (int j = 0; j < finalId.length; j++) {
-                                if (finalId[j].contains("sb.connect.sid")) {
-                                  id = finalId[j];
-                                  j = finalId.length;
-                                }
-                              }
-                            }
                             prefs.setBool("isLogin", true);
-                            prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "email"});
-                          } else {
-                            try {
-                              CommonExtension().showToast(json.decode(response.body)['message']);
-                            } catch (e) {
-                              CommonExtension().showToast(response.body.toString());
-                            }
                           }
                           setState(() {
                             isLoading = false;
@@ -414,21 +388,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             var result = await signInWithApple();
 
                             if (result) {
+                              userManager.refreshUser();
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } on SignInWithAppleAuthorizationException catch (e) {
-                              switch(e.code) {
-                                case AuthorizationErrorCode.canceled:
-                                case AuthorizationErrorCode.unknown:
-                                  // do nothing
-                                  break;
-                                default:
-                                  CommonExtension().showToast("Oops! Something went wrong");
-                                  break;
-                              }
+                            switch (e.code) {
+                              case AuthorizationErrorCode.canceled:
+                              case AuthorizationErrorCode.unknown:
+                                // do nothing
+                                break;
+                              default:
+                                CommonExtension().showToast("Oops! Something went wrong");
+                                break;
+                            }
                           } catch (e) {
                             CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
@@ -505,6 +480,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
+                              userManager.refreshUser();
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "google"});
                             }

@@ -1,5 +1,6 @@
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
+import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/widgets.dart';
@@ -106,6 +107,7 @@ class AppDelegate {
   ///register all data manager, app need to be restarted whenever add or remove any manager instance
   _registerManager(List<BaseManager> list) {
     list.add(NotificationManager());
+    list.add(ThirdpartManager());
     list.add(CacheManager());
     list.add(UserManager());
   }

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,15 +65,18 @@ class ResponseHandler {
 
   /// pre handle response. like cookie, token, etc...
   onPreHandleResult(dio.Response<Map<String, dynamic>> response) {
-    LogUtil.v('response-headers: ${response.headers}');
-    // todo 通用返回结果处理，比如在这里提取cookie，sid等并持久化
-    // var authorizationHolder = response.headers['authorization'];
-    // if (authorizationHolder != null && authorizationHolder.length != 0) {
-    //   var token = authorizationHolder[0].toString();
-    //   var manager = AppDelegate.instance.getManager<UserManager>();
-    //   if (!TextUtil.isEmpty(token) && manager.token != token) {
-    //     manager.token = token;
-    //   }
-    // }
+    LogUtil.v('response-headers: ${response.headers.toString()}');
+    var headers = response.headers.map;
+    if (headers.containsKey("set-cookie")) {
+      var cookie = headers['set-cookie'] ?? [];
+      if (cookie.isNotEmpty) {
+        var keyValues = cookie[0].split(";");
+        for (var value in keyValues) {
+          if (value.startsWith('sb.connect.sid')) {
+            AppDelegate.instance.getManager<UserManager>().sid = value.split('=')[1];
+          }
+        }
+      }
+    }
   }
 }
