@@ -42,7 +42,7 @@ class NotifyHelper {
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var android = AndroidInitializationSettings('@mipmap/ic_launcher_small');
     var ios = IOSInitializationSettings();
     var initSettings = InitializationSettings(android: android, iOS: ios);
     flutterLocalNotificationsPlugin.initialize(initSettings);

@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     });
     NotifyHelper.instance.initializeFirebase();
-    //delay(() => NotifyHelper.instance.showNotification(), milliseconds: 2000);
   }
 
   void _pageChange(int index) {
