@@ -64,6 +64,11 @@ class Images {
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_success = 'assets/images/ic_success.png';
+   static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
+   static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';
+   static const String ic_tab_effect_normal = 'assets/images/ic_tab_effect_normal.png';
+   static const String ic_tab_my = 'assets/images/ic_tab_my.png';
+   static const String ic_tab_my_normal = 'assets/images/ic_tab_my_normal.png';
    static const String ic_term = 'assets/images/ic_term.png';
    static const String ic_tiktok = 'assets/images/ic_tiktok.png';
    static const String ic_unchecked = 'assets/images/ic_unchecked.png';

@@ -62,8 +62,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           ? AppTabBar(
               items: createBottomItem(context),
               activeColor: ColorConstant.BlueColor,
-              inactiveColor: Color(0xFF8a8a8a),
-              backgroundColor: Colors.white,
+              inactiveColor: ColorConstant.White,
+              backgroundColor: ColorConstant.BackgroundColor,
               iconSize: $(25),
               onTap: (pos) {
                 _setIndex(pos);

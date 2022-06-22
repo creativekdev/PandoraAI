@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/discovery/discovery_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_fragment.dart';
@@ -11,13 +12,13 @@ List<AppRoleTabItem> buildTabItem() => [
       //Home
       AppRoleTabItem(
         id: AppTabId.HOME.id(),
-        normalIcon: Icon(
-          Icons.home_rounded,
-          size: $(28),
+        normalIcon: Image.asset(
+          Images.ic_tab_effect_normal,
+          width: $(28),
         ),
-        selectedIcon: Icon(
-          Icons.home_rounded,
-          size: $(28),
+        selectedIcon: Image.asset(
+          Images.ic_tab_effect_normal,
+          width: $(28),
           color: ColorConstant.BlueColor,
         ),
         titleBuilder: (context) => 'HOME',
@@ -30,14 +31,13 @@ List<AppRoleTabItem> buildTabItem() => [
       //Discovery
       AppRoleTabItem(
         id: AppTabId.DISCOVERY.id(),
-        normalIcon: Icon(
-          Icons.list_alt,
-          size: $(28),
+        normalIcon: Image.asset(
+          Images.ic_tab_discovery_normal,
+          width: $(28),
         ),
-        selectedIcon: Icon(
-          Icons.list_alt,
-          size: $(28),
-          color: ColorConstant.BlueColor,
+        selectedIcon: Image.asset(
+          Images.ic_tab_discovery,
+          width: $(28),
         ),
         titleBuilder: (context) => 'Discovery',
         keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
@@ -49,14 +49,13 @@ List<AppRoleTabItem> buildTabItem() => [
       //Mine
       AppRoleTabItem(
         id: AppTabId.MINE.id(),
-        normalIcon: Icon(
-          Icons.person,
-          size: $(28),
+        normalIcon: Image.asset(
+          Images.ic_tab_my_normal,
+          width: $(28),
         ),
-        selectedIcon: Icon(
-          Icons.person,
-          size: $(28),
-          color: ColorConstant.BlueColor,
+        selectedIcon: Image.asset(
+          Images.ic_tab_my,
+          width: $(28),
         ),
         titleBuilder: (context) => 'Mine',
         keyBuilder: () => GlobalKey<MineFragmentState>(),
