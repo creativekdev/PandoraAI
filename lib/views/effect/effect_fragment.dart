@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -32,6 +33,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   late PageController _pageController;
   late TabController _tabController;
   List<HomeTabConfig> tabConfig = [];
+  Size? proButtonSize;
 
   @override
   void initState() {
@@ -153,7 +155,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                             setIndex(index);
                           },
                           tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.all($(8)))).toList(),
-                        )),
+                        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
                     SizedBox(height: $(4)),
                     Expanded(
                         child: PageView.builder(
@@ -180,25 +182,39 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(
-              height: $(38),
-              width: $(38),
+              width: proButtonSize?.width,
             ),
             TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-            GestureDetector(
-              onTap: () => {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/SettingScreen"),
-                      builder: (context) => SettingScreen(),
-                    ))
-              },
-              child: Image.asset(
-                ImagesConstant.ic_user_round,
-                height: $(30),
-                width: $(30),
-              ).intoContainer(padding: EdgeInsets.all($(4))),
-            ),
+            OutlineWidget(
+              strokeWidth: 1,
+              radius: $(6),
+              gradient: LinearGradient(
+                colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              child: ShaderMask(
+                shaderCallback: (Rect bounds) => LinearGradient(
+                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ).createShader(Offset.zero & bounds.size),
+                blendMode: BlendMode.srcATop,
+                child: Text(
+                  "Pro",
+                  style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                ).intoContainer(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
+                ),
+              ),
+            ).intoGestureDetector(onTap: () {
+              // jump to pro page
+            }).listenSizeChanged(onSizeChanged: (size) {
+              setState(() {
+                proButtonSize = size;
+              });
+            }),
           ],
         ),
       );

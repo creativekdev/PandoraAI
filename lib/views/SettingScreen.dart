@@ -44,27 +44,27 @@ class _SettingScreenState extends State<SettingScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              Container(
-                margin: EdgeConstants.TopBarEdgeInsets,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () => {Navigator.pop(context)},
-                      child: Image.asset(
-                        ImagesConstant.ic_back,
-                        height: 30,
-                        width: 30,
-                      ),
-                    ),
-                    TitleTextWidget(StringConstant.setting, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
-                    SizedBox(
-                      height: 30,
-                      width: 30,
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   margin: EdgeConstants.TopBarEdgeInsets,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       GestureDetector(
+              //         onTap: () => {Navigator.pop(context)},
+              //         child: Image.asset(
+              //           ImagesConstant.ic_back,
+              //           height: 30,
+              //           width: 30,
+              //         ),
+              //       ),
+              //       TitleTextWidget(StringConstant.setting, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
+              //       SizedBox(
+              //         height: 30,
+              //         width: 30,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(

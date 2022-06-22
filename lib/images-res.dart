@@ -66,6 +66,7 @@ class Images {
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';
+   static const String ic_tab_effect = 'assets/images/ic_tab_effect.png';
    static const String ic_tab_effect_normal = 'assets/images/ic_tab_effect_normal.png';
    static const String ic_tab_my = 'assets/images/ic_tab_my.png';
    static const String ic_tab_my_normal = 'assets/images/ic_tab_my_normal.png';

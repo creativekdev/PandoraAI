@@ -17,9 +17,8 @@ List<AppRoleTabItem> buildTabItem() => [
           width: $(28),
         ),
         selectedIcon: Image.asset(
-          Images.ic_tab_effect_normal,
+          Images.ic_tab_effect,
           width: $(28),
-          color: ColorConstant.BlueColor,
         ),
         titleBuilder: (context) => 'HOME',
         keyBuilder: () => GlobalKey<EffectFragmentState>(),

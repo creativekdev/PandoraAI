@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
 
 extension WidgetExtension on Widget {
@@ -161,6 +162,16 @@ extension WidgetExtension on Widget {
   Visibility visibility({Key? key, bool visible = true}) => Visibility(
         key: key,
         visible: visible,
+        child: this,
+      );
+
+  SizeChanged listenSizeChanged({
+    Key? key,
+    Function(Size size)? onSizeChanged,
+  }) =>
+      SizeChanged(
+        key: key,
+        onSizeChanged: onSizeChanged,
         child: this,
       );
 }
