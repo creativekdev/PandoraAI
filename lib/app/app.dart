@@ -1,6 +1,7 @@
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/widgets.dart';
 
 ///
@@ -28,21 +29,10 @@ class AppDelegate {
     _listeners.add(listener);
   }
 
-  cancelListen(Function(bool status) listener) {
-    _listeners.remove(listener);
+  cancelListenAsync(Function(bool status) listener) async {
+    return delay(() => _listeners.remove(listener));
   }
 
-  /// don't use for loop, because this is a length-uncontrollable list.
-  /// other developers might call cancelListen immediately after listener be called.
-  /// for example:
-  ///
-  ///   Function(bool status)? listener;
-  ///   listener = (status) {
-  ///     ...do something
-  ///     AppDelegate().cancelListen(listener);//this call will cause _listeners.length changed.
-  ///   };
-  ///   AppDelegate().listen(listener);
-  /// these code will be throw exception while use for-loop
   _notifyStatus() {
     var iterator = _listeners.iterator;
     while (iterator.moveNext()) {

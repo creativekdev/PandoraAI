@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       listener = (status) {
         if (status) {
           _checkIntroductionPage();
-          AppDelegate.instance.cancelListen(listener!);
+          AppDelegate.instance.cancelListenAsync(listener!);
         }
       };
       AppDelegate.instance.listen(listener);
