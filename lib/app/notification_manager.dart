@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cartoonizer/app/app.dart';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -14,22 +16,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message ${message.messageId}');
 }
 
-class NotifyHelper {
-  factory NotifyHelper() => _getInstance();
-
-  static NotifyHelper get instance => _getInstance();
-  static NotifyHelper? _instance;
+class NotificationManager extends BaseManager {
   late AndroidNotificationChannel channel;
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
-  NotifyHelper._internal();
+  @override
+  Future<void> onCreate() async {
+    await super.onCreate();
 
-  static NotifyHelper _getInstance() {
-    _instance ??= NotifyHelper._internal();
-    return _instance!;
-  }
-
-  Future<void> initializeFirebase() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     requireFirebasePermission();
@@ -42,10 +36,6 @@ class NotifyHelper {
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    var android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    var ios = IOSInitializationSettings();
-    var initSettings = InitializationSettings(android: android, iOS: ios);
-    flutterLocalNotificationsPlugin.initialize(initSettings);
 
     /// Create an Android Notification Channel.
     ///
@@ -60,30 +50,27 @@ class NotifyHelper {
       badge: true,
       sound: true,
     );
-    //https://assets.pandaily.com/uploads/2019/12/bilibili-platform.jpg
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
       RemoteNotification? notification = message.notification;
-      AndroidNotification? android = notification?.android;
-      // AppleNotification? apple = notification?.apple;
-      if (notification == null) {
-        return;
-      }
-      if (android != null) {
-        if (android.imageUrl != null && android.imageUrl!.isNotEmpty) {
-          _showBigPictureNotificationHiddenLargeIcon(notification);
-        } else {
-          _showNotificationDefault(notification);
-        }
-      } else {
-        // if (apple != null) {
-        //   if (apple.imageUrl != null && apple.imageUrl!.isNotEmpty) {
-        //     _showNotificationWithAttachment(notification);
-        //   } else {
-        //     _showNotificationDefault(notification);
-        //   }
-        // }
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              icon: 'ic_launcher', // icon in res/drawable|mipmap
+              importance: channel.importance,
+            ),
+            iOS: IOSNotificationDetails(),
+          ),
+        );
       }
     });
 
@@ -187,7 +174,6 @@ class NotifyHelper {
       notificationDetails,
     );
   }
-
 
   ///
   /// 调用通知栏

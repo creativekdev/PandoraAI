@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 
 typedef ItemRender = Widget Function();

@@ -4,14 +4,15 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home/HomeScreen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'app/app.dart';
 import 'config.dart';
 import 'firebase_options.dart';
 
@@ -54,6 +55,7 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AppDelegate.instance.init();
     return Sizer(
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
@@ -79,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    _checkIntroductionPage();
+    waitAppInitialize();
 
     // log app open
     logSystemEvent(Events.open_app);
@@ -136,23 +138,37 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  waitAppInitialize() {
+    if (AppDelegate.instance.initialized) {
+      _checkIntroductionPage();
+    } else {
+      Function(bool status)? listener;
+      listener = (status) {
+        if (status) {
+          _checkIntroductionPage();
+          AppDelegate.instance.cancelListen(listener!);
+        }
+      };
+      AppDelegate.instance.listen(listener);
+    }
+  }
+
   _checkIntroductionPage() {
-    SharedPreferencesHelper.getBool(SharedPreferencesHelper.keyHasIntroductionPageShowed).then((value) {
-      if (value) {
-        _checkAppVersion();
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
-          ModalRoute.withName('/HomeScreen'),
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
-          ModalRoute.withName('/IntroductionScreen'),
-        );
-      }
-    });
+    var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
+    if (value) {
+      _checkAppVersion();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+        ModalRoute.withName('/HomeScreen'),
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
+        ModalRoute.withName('/IntroductionScreen'),
+      );
+    }
   }
 
   //监听程序进入前后台的状态改变的方法

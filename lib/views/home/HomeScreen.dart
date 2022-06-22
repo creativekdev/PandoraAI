@@ -2,9 +2,10 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/home_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/utils/notify_helper.dart';
 
 import '../SettingScreen.dart';
 import 'home_face_fragment.dart';
@@ -20,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final Connectivity _connectivity = Connectivity();
+  NotificationManager notificationManager = AppDelegate.instance.getManager();
   HomeDataController dataController = Get.put(HomeDataController());
   RecentController recentController = Get.put(RecentController());
 
@@ -38,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {});
       }
     });
-    NotifyHelper.instance.initializeFirebase();
-    //delay(() => NotifyHelper.instance.showNotification(), milliseconds: 2000);
+    // delay(() => notificationManager.showNotification(), milliseconds: 2000);
   }
 
   void _pageChange(int index) {

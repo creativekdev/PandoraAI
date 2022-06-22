@@ -10,7 +10,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_model.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_form.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'LoginScreen.dart';
 
 class StripeAddNewCardScreen extends StatefulWidget {

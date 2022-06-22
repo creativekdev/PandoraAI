@@ -11,8 +11,8 @@ import 'package:path/path.dart';
 
 import '../common/Extension.dart';
 import '../models/UserModel.dart';
-import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/utils/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);

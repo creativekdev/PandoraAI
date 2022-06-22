@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';

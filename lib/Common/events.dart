@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';

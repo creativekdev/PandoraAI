@@ -9,8 +9,8 @@ import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'Common/importFile.dart';
-import 'Common/sToken.dart';
+import '../Common/importFile.dart';
+import '../Common/sToken.dart';
 
 class API {
   // Stitching parameters

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 
 import '../common/Extension.dart';
 import './EmailVerificationScreen.dart';
@@ -11,6 +11,7 @@ import './EmailVerificationScreen.dart';
 class SocialSignUpScreen extends StatefulWidget {
   final additionalUserInfo;
   final token, tokenId, channel;
+
   const SocialSignUpScreen({Key? key, required this.additionalUserInfo, required this.token, required this.tokenId, required this.channel}) : super(key: key);
 
   @override

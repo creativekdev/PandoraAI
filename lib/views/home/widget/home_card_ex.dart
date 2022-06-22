@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/utils/cacheImage/image_cache_manager.dart';
 
 class HomeCardEx {
   Widget urlWidget(BuildContext context, {required String url, required double width, required double height}) {

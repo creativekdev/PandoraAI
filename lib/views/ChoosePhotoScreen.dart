@@ -6,14 +6,15 @@ import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:http/http.dart';
@@ -849,13 +850,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   Future<void> _showInterstitialVideo() async {
     bool showAds = isShowAds(_user);
     if (showAds == false) return;
-
-    int lastTime = await SharedPreferencesHelper.getInt(SharedPreferencesHelper.keyLastVideoAdsShowTime);
+    CacheManager cacheManager = AppDelegate.instance.getManager();
+    int lastTime = cacheManager.getInt(CacheManager.keyLastVideoAdsShowTime);
     var nowTime = DateTime.now().millisecondsSinceEpoch;
     if ((nowTime - lastTime) < adsShowDuration) {
       return;
     }
-    SharedPreferencesHelper.setInt(SharedPreferencesHelper.keyLastVideoAdsShowTime, nowTime);
+    cacheManager.setInt(CacheManager.keyLastVideoAdsShowTime, nowTime);
     adsHolder.showInterstitialAd();
   }
 

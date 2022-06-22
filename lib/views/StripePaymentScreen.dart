@@ -7,7 +7,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'StripeAddNewCardScreen.dart';
 
 class StripePaymentScreen extends StatefulWidget {

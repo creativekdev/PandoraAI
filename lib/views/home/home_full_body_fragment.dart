@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';

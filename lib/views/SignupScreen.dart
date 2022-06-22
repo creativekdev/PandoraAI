@@ -3,13 +3,13 @@ import 'dart:io';
 
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'InstaLoginScreen.dart';
@@ -215,11 +215,11 @@ class _SignupScreenState extends State<SignupScreen> {
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
-                        }  on SignInWithAppleAuthorizationException catch (e) {
-                          switch(e.code) {
+                        } on SignInWithAppleAuthorizationException catch (e) {
+                          switch (e.code) {
                             case AuthorizationErrorCode.canceled:
                             case AuthorizationErrorCode.unknown:
-                            // do nothing
+                              // do nothing
                               break;
                             default:
                               CommonExtension().showToast("Oops! Something went wrong");
@@ -559,7 +559,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
             ),
-          ).intoGestureDetector(onTap: (){
+          ).intoGestureDetector(onTap: () {
             FocusScope.of(context).requestFocus(FocusNode());
           }),
         ),

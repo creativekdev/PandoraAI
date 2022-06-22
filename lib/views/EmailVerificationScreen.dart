@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/views/home/HomeScreen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
