@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 
-class HomeTabUserHolder {
+class TabUserHolder {
   UserModel? user;
 
   Future<void> initStoreInfo(BuildContext context) async {

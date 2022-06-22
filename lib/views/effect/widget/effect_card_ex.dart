@@ -3,7 +3,7 @@ import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
 
-class HomeCardEx {
+class EffectCardEx {
   Widget urlWidget(BuildContext context, {required String url, required double width, required double height}) {
     if (url.endsWith('mp4')) {
       return _videoWidget(context, url: url, width: width, height: height);

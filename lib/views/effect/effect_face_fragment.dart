@@ -4,17 +4,17 @@ import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/widget/home_face_card_widget.dart';
 
-import 'home_tab_user_ex.dart';
+import 'tab_user_ex.dart';
+import 'widget/effect_face_card_widget.dart';
 
-class HomeFaceFragment extends StatefulWidget {
+class EffectFaceFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
   bool hasOriginalFace;
   String tabString;
 
-  HomeFaceFragment({
+  EffectFaceFragment({
     Key? key,
     required this.dataList,
     required this.recentController,
@@ -24,11 +24,11 @@ class HomeFaceFragment extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return HomeFaceFragmentState();
+    return EffectFaceFragmentState();
   }
 }
 
-class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, TabUserHolder {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
@@ -90,14 +90,14 @@ class HomeFaceFragmentState extends State<HomeFaceFragment> with AutomaticKeepAl
       return Column(
         children: [
           _buildMERCAd(),
-          HomeFaceCardWidget(
+          EffectFaceCardWidget(
             data: data,
             parentWidth: parentWidth,
           ),
         ],
       );
     } else {
-      return HomeFaceCardWidget(
+      return EffectFaceCardWidget(
         data: data,
         parentWidth: parentWidth,
       );

@@ -4,7 +4,7 @@ import 'package:cartoonizer/models/effect_map.dart';
 
 typedef ItemRender = Widget Function();
 
-class HomeDataController extends GetxController {
+class EffectDataController extends GetxController {
   EffectMap? data = null;
   bool loading = true;
 

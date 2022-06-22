@@ -4,15 +4,16 @@ import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/home_tab_user_ex.dart';
-import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
+import 'package:cartoonizer/views/effect/tab_user_ex.dart';
 
-class HomeFullBodyFragment extends StatefulWidget {
+import 'widget/effect_full_body_card_widget.dart';
+
+class EffectFullBodyFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
   String tabString;
 
-  HomeFullBodyFragment({
+  EffectFullBodyFragment({
     Key? key,
     required this.recentController,
     required this.dataList,
@@ -21,11 +22,11 @@ class HomeFullBodyFragment extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return HomeFullBodyFragmentState();
+    return EffectFullBodyFragmentState();
   }
 }
 
-class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with AutomaticKeepAliveClientMixin, HomeTabUserHolder {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, TabUserHolder {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   Widget? adWidget;
@@ -106,7 +107,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
       return Column(
         children: [
           _buildMERCAd(),
-          HomeFullBodyCardWidget(
+          EffectFullBodyCardWidget(
             data: data,
             parentWidth: parentWidth,
             onTap: (item) {
@@ -116,7 +117,7 @@ class HomeFullBodyFragmentState extends State<HomeFullBodyFragment> with Automat
         ],
       );
     } else {
-      return HomeFullBodyCardWidget(
+      return EffectFullBodyCardWidget(
         data: data,
         parentWidth: parentWidth,
         onTap: (item) {

@@ -7,7 +7,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';

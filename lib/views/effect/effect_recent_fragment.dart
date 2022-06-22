@@ -2,18 +2,19 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/home/widget/home_full_body_card_widget.dart';
 
-class HomeRecentFragment extends StatefulWidget {
+import 'widget/effect_full_body_card_widget.dart';
+
+class EffectRecentFragment extends StatefulWidget {
   RecentController controller;
 
-  HomeRecentFragment({Key? key, required this.controller}) : super(key: key);
+  EffectRecentFragment({Key? key, required this.controller}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => HomeRecentFragmentState();
+  State<StatefulWidget> createState() => EffectRecentFragmentState();
 }
 
-class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKeepAliveClientMixin {
+class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin {
   late RecentController recentController;
 
   @override
@@ -43,7 +44,7 @@ class HomeRecentFragmentState extends State<HomeRecentFragment> with AutomaticKe
                 ).intoContainer(alignment: Alignment.center, margin: EdgeInsets.all($(25))).intoCenter()
               : ListView.builder(
                   itemCount: _.dataList.length,
-                  itemBuilder: (context, index) => HomeFullBodyCardWidget(
+                  itemBuilder: (context, index) => EffectFullBodyCardWidget(
                     parentWidth: width,
                     data: _.dataList[index],
                     onTap: (data) {

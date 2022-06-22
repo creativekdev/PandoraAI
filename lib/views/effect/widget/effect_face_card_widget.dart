@@ -1,16 +1,17 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/views/home/widget/home_card_ex.dart';
+
+import 'effect_card_ex.dart';
 
 ///
 /// @Author: wangyu
 /// @Date: 2022/6/7
 /// ignore: must_be_immutable
-class HomeFaceCardWidget extends StatelessWidget with HomeCardEx {
+class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
   EffectModel data;
   double parentWidth;
 
-  HomeFaceCardWidget({
+  EffectFaceCardWidget({
     Key? key,
     required this.parentWidth,
     required this.data,

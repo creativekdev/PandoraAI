@@ -1,15 +1,15 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 
-import 'home_card_ex.dart';
+import 'effect_card_ex.dart';
 
-class HomeFullBodyCardWidget extends StatelessWidget with HomeCardEx {
+class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
   List<EffectItemListData> data;
   double parentWidth;
   double imageSize = 0;
   Function(EffectItemListData data) onTap;
 
-  HomeFullBodyCardWidget({
+  EffectFullBodyCardWidget({
     Key? key,
     required this.data,
     required this.parentWidth,
