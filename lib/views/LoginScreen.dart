@@ -45,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.popUntil(context, ModalRoute.withName(login_back_page));
       box.remove('login_back_page');
     } else {
-      Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+      Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
     }
   }
 
@@ -334,15 +334,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             isLoading = true;
                           });
                           var baseEntity = await userManager.login(emailController.text.trim(), passController.text.trim());
-                          if(baseEntity != null) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          if (baseEntity != null) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
                             prefs.setBool("isLogin", true);
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "email"});
                           }
-                          setState(() {
-                            isLoading = false;
-                          });
                         }
                       },
                       child: ButtonWidget(StringConstant.sign_in),

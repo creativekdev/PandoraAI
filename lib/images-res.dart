@@ -16,6 +16,7 @@ class Images {
    static const String ic_demo = 'assets/images/ic_demo.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
    static const String ic_demo2 = 'assets/images/ic_demo2.png';
+   static const String ic_discovery_comment = 'assets/images/ic_discovery_comment.png';
    static const String ic_download = 'assets/images/ic_download.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
    static const String ic_email = 'assets/images/ic_email.png';

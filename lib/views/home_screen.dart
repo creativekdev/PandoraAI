@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 
 import 'home_tab.dart';
@@ -16,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   @override
   void initState() {
+    logEvent(Events.homepage_loading);
     super.initState();
     initialTab(false);
   }
@@ -57,13 +59,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      backgroundColor: ColorConstant.BackgroundColor,
+      appBar: AppNavigationBar(
+        visible: false,
+        backgroundColor: ColorConstant.BackgroundColor,
+      ),
       body: IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()),
       bottomNavigationBar: tabItems.length > 1
           ? AppTabBar(
               items: createBottomItem(context),
               activeColor: ColorConstant.BlueColor,
               inactiveColor: ColorConstant.White,
-              backgroundColor: ColorConstant.BackgroundColor,
+              backgroundColor: ColorConstant.TabBackground,
               iconSize: $(25),
               onTap: (pos) {
                 _setIndex(pos);

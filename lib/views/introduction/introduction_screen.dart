@@ -11,7 +11,10 @@ class IntroductionScreen extends StatelessWidget {
     AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.keyHasIntroductionPageShowed, true);
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      MaterialPageRoute(
+        builder: (BuildContext context) => HomeScreen(),
+        settings: RouteSettings(name: "/HomeScreen"),
+      ),
       ModalRoute.withName('/HomeScreen'),
     );
   }

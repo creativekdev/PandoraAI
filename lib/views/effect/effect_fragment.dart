@@ -5,9 +5,8 @@ import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/views/SettingScreen.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_fragment.dart';
@@ -38,7 +37,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-    logEvent(Events.homepage_loading);
     API.getLogin(needLoad: true, context: context);
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
@@ -73,106 +71,101 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      body: SafeArea(
-        child: GetBuilder<EffectDataController>(
-          init: dataController,
-          builder: (_) {
-            if (_.loading) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              if (_.data == null) {
-                return FutureBuilder(
-                    future: getConnectionStatus(),
-                    builder: (context, snapshot1) {
-                      return Center(
-                        child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg,
-                            ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
-                      );
-                    });
+    return GetBuilder<EffectDataController>(
+      init: dataController,
+      builder: (_) {
+        if (_.loading) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          if (_.data == null) {
+            return FutureBuilder(
+                future: getConnectionStatus(),
+                builder: (context, snapshot1) {
+                  return Center(
+                    child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg, ColorConstant.BtnTextColor,
+                        FontWeight.w400, 12.sp),
+                  );
+                });
+          } else {
+            recentController.updateOriginData(_.data!.allEffectList());
+            tabConfig.clear();
+            for (var value in _.data!.data.keys) {
+              if (value == 'face') {
+                tabConfig.add(
+                  HomeTabConfig(
+                      item: EffectFaceFragment(
+                        dataList: _.data!.effectList(value),
+                        recentController: recentController,
+                        tabString: value,
+                      ),
+                      title: _.data!.localeName(value)),
+                );
+              } else if (value == 'full_body') {
+                tabConfig.add(
+                  HomeTabConfig(
+                      item: EffectFullBodyFragment(
+                        dataList: _.data!.effectList(value),
+                        recentController: recentController,
+                        tabString: value,
+                      ),
+                      title: _.data!.localeName(value)),
+                );
               } else {
-                recentController.updateOriginData(_.data!.allEffectList());
-                tabConfig.clear();
-                for (var value in _.data!.data.keys) {
-                  if (value == 'face') {
-                    tabConfig.add(
-                      HomeTabConfig(
-                          item: EffectFaceFragment(
-                            dataList: _.data!.effectList(value),
-                            recentController: recentController,
-                            tabString: value,
-                          ),
-                          title: _.data!.localeName(value)),
-                    );
-                  } else if (value == 'full_body') {
-                    tabConfig.add(
-                      HomeTabConfig(
-                          item: EffectFullBodyFragment(
-                            dataList: _.data!.effectList(value),
-                            recentController: recentController,
-                            tabString: value,
-                          ),
-                          title: _.data!.localeName(value)),
-                    );
-                  } else {
-                    tabConfig.add(
-                      HomeTabConfig(
-                          item: EffectFaceFragment(
-                            dataList: _.data!.effectList(value),
-                            recentController: recentController,
-                            hasOriginalFace: false,
-                            tabString: value,
-                          ),
-                          title: _.data!.localeName(value)),
-                    );
-                  }
-                }
-                tabConfig.add(HomeTabConfig(item: EffectRecentFragment(controller: recentController), title: 'Recent'));
-                _pageController = PageController(initialPage: currentIndex);
-                _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
-                return Column(
-                  children: [
-                    navbar(context),
-                    SizedBox(height: $(10)),
-                    Theme(
-                        data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                        child: TabBar(
-                          indicatorSize: TabBarIndicatorSize.label,
-                          indicator: LineTabIndicator(
-                            width: $(20),
-                            strokeCap: StrokeCap.butt,
-                            borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                          ),
-                          isScrollable: tabConfig.length < 4,
-                          labelColor: ColorConstant.PrimaryColor,
-                          labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-                          labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-                          unselectedLabelColor: ColorConstant.PrimaryColor,
-                          unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-                          controller: _tabController,
-                          onTap: (index) {
-                            setIndex(index);
-                          },
-                          tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.all($(8)))).toList(),
-                        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
-                    SizedBox(height: $(4)),
-                    Expanded(
-                        child: PageView.builder(
-                      onPageChanged: _pageChange,
-                      controller: _pageController,
-                      itemBuilder: (BuildContext context, int index) {
-                        return tabConfig[index].item;
-                      },
-                      itemCount: tabConfig.length,
-                    )),
-                  ],
+                tabConfig.add(
+                  HomeTabConfig(
+                      item: EffectFaceFragment(
+                        dataList: _.data!.effectList(value),
+                        recentController: recentController,
+                        hasOriginalFace: false,
+                        tabString: value,
+                      ),
+                      title: _.data!.localeName(value)),
                 );
               }
             }
-          },
-        ),
-      ),
+            tabConfig.add(HomeTabConfig(item: EffectRecentFragment(controller: recentController), title: 'Recent'));
+            _pageController = PageController(initialPage: currentIndex);
+            _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
+            return Column(
+              children: [
+                navbar(context),
+                SizedBox(height: $(10)),
+                Theme(
+                    data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicator: LineTabIndicator(
+                        width: $(20),
+                        strokeCap: StrokeCap.butt,
+                        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                      ),
+                      isScrollable: tabConfig.length < 4,
+                      labelColor: ColorConstant.PrimaryColor,
+                      labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                      labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                      unselectedLabelColor: ColorConstant.PrimaryColor,
+                      unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                      controller: _tabController,
+                      onTap: (index) {
+                        setIndex(index);
+                      },
+                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.all($(8)))).toList(),
+                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
+                SizedBox(height: $(4)),
+                Expanded(
+                    child: PageView.builder(
+                  onPageChanged: _pageChange,
+                  controller: _pageController,
+                  itemBuilder: (BuildContext context, int index) {
+                    return tabConfig[index].item;
+                  },
+                  itemCount: tabConfig.length,
+                )),
+              ],
+            );
+          }
+        }
+      },
     );
   }
 
@@ -201,7 +194,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 ).createShader(Offset.zero & bounds.size),
                 blendMode: BlendMode.srcATop,
                 child: Text(
-                  "Pro",
+                  StringConstant.pro,
                   style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
                 ).intoContainer(
                   alignment: Alignment.centerLeft,

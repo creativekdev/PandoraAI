@@ -13,6 +13,7 @@ class ColorConstant {
   static const PrimaryColor = Colors.white;
   static const BlueColor = Color.fromRGBO(62, 96, 255, 1);
   static const BackgroundColor = Color.fromRGBO(22, 23, 25, 1);
+  static const TabBackground = Color(0xff0a070a);
   static const CardColor = Color.fromRGBO(35, 37, 40, 1);
   static const ShadowColor = Color.fromRGBO(62, 96, 255, 0.5);
   static const RadialColor1 = Color.fromRGBO(55, 83, 250, 1);
@@ -27,4 +28,5 @@ class ColorConstant {
   static const TextBlack = Color.fromRGBO(6, 10, 47, 1);
   static const TextBlue = Color.fromRGBO(55, 83, 250, 1);
   static const LightTextColor = Color.fromRGBO(38, 50, 92, 1);
+  static const DiscoveryBtn = Color(0xff3E60FF);
 }

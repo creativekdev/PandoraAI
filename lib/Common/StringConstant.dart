@@ -30,7 +30,10 @@ class StringConstant {
   static const forgot_your_password = "Forgot Your Password?";
   static const forgot_password_text = "Enter your registered email below to receive password reset instruction";
   static const send = "Send";
-  static const home = "Home";
+  static const home = app_name;
+  static const tabHome = "Home";
+  static const tabDiscovery = "Discovery";
+  static const tabMine = "My";
   static const view_all = "View All";
   static const std_combo = "Standard Combo";
   static const in_original = "Include original";
@@ -106,4 +109,5 @@ class StringConstant {
   static const welcome_title2 = "Turn Photos into Art";
   static const setting_my_discovery = "My Discovery";
   static const setting_my_delete_account = "Delete Account";
+  static const pro = "Pro";
 }

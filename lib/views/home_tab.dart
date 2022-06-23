@@ -20,7 +20,7 @@ List<AppRoleTabItem> buildTabItem() => [
           Images.ic_tab_effect,
           width: $(28),
         ),
-        titleBuilder: (context) => 'HOME',
+        titleBuilder: (context) => StringConstant.tabHome,
         keyBuilder: () => GlobalKey<EffectFragmentState>(),
         fragmentBuilder: (key) => EffectFragment(
           key: key,
@@ -38,7 +38,7 @@ List<AppRoleTabItem> buildTabItem() => [
           Images.ic_tab_discovery,
           width: $(28),
         ),
-        titleBuilder: (context) => 'Discovery',
+        titleBuilder: (context) => StringConstant.tabDiscovery,
         keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
         fragmentBuilder: (key) => DiscoveryFragment(
           key: key,
@@ -56,7 +56,7 @@ List<AppRoleTabItem> buildTabItem() => [
           Images.ic_tab_my,
           width: $(28),
         ),
-        titleBuilder: (context) => 'Mine',
+        titleBuilder: (context) => StringConstant.tabMine,
         keyBuilder: () => GlobalKey<MineFragmentState>(),
         fragmentBuilder: (key) => MineFragment(
           key: key,

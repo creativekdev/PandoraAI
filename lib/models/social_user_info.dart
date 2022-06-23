@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class SocialUserInfo {
-  String id = '';
+  int id = 0;
   String email = "";
   String name = "";
   String avatar = "";
@@ -13,7 +13,7 @@ class SocialUserInfo {
   List<dynamic> creditcards = [];
 
   SocialUserInfo.fromJson(Map<String, dynamic> json) {
-    id = (json['id'] ?? '').toString();
+    id = json['id'] ?? 0;
     email = json['email'] ?? '';
     name = json['name'] ?? '';
     avatar = json['avatar'] ?? '';

@@ -159,7 +159,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       _checkAppVersion();
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+        MaterialPageRoute(
+          builder: (BuildContext context) => HomeScreen(),
+          settings: RouteSettings(name: "/HomeScreen"),
+        ),
         ModalRoute.withName('/HomeScreen'),
       );
     } else {
