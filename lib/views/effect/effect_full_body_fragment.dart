@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
@@ -90,7 +91,12 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
     return ListView.builder(
       itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
-        margin: EdgeInsets.only(right: $(15), left: $(15), top: index == 0 ? $(16) : $(8), bottom: $(8)),
+        margin: EdgeInsets.only(
+          right: $(15),
+          left: $(15),
+          top: $(8),
+          bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+        ),
       ),
       itemCount: dataList.length,
     );

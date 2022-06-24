@@ -3,6 +3,7 @@ class Images {
    static const String american_express = 'assets/images/american_express.png';
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_back = 'assets/images/ic_back.png';
    static const String ic_back_dark = 'assets/images/ic_back_dark.png';
    static const String ic_background = 'assets/images/ic_background.png';
@@ -17,6 +18,9 @@ class Images {
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
    static const String ic_demo2 = 'assets/images/ic_demo2.png';
    static const String ic_discovery_comment = 'assets/images/ic_discovery_comment.png';
+   static const String ic_discovery_like = 'assets/images/ic_discovery_like.png';
+   static const String ic_discovery_liked = 'assets/images/ic_discovery_liked.png';
+   static const String ic_discovery_share = 'assets/images/ic_discovery_share.png';
    static const String ic_download = 'assets/images/ic_download.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
    static const String ic_email = 'assets/images/ic_email.png';

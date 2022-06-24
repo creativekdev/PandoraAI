@@ -110,4 +110,8 @@ class StringConstant {
   static const setting_my_discovery = "My Discovery";
   static const setting_my_delete_account = "Delete Account";
   static const pro = "Pro";
+  static const discoveryDetails = "Details";
+  static const discoveryDetailsUseSameTemplate = "Use the same template";
+  static const discoveryComments = "Comments";
+  static const discoveryLikes = "Likes";
 }

@@ -14,11 +14,11 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.HOME.id(),
         normalIcon: Image.asset(
           Images.ic_tab_effect_normal,
-          width: $(28),
+          width: $(24),
         ),
         selectedIcon: Image.asset(
           Images.ic_tab_effect,
-          width: $(28),
+          width: $(24),
         ),
         titleBuilder: (context) => StringConstant.tabHome,
         keyBuilder: () => GlobalKey<EffectFragmentState>(),
@@ -32,11 +32,11 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.DISCOVERY.id(),
         normalIcon: Image.asset(
           Images.ic_tab_discovery_normal,
-          width: $(28),
+          width: $(24),
         ),
         selectedIcon: Image.asset(
           Images.ic_tab_discovery,
-          width: $(28),
+          width: $(24),
         ),
         titleBuilder: (context) => StringConstant.tabDiscovery,
         keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
@@ -50,11 +50,11 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.MINE.id(),
         normalIcon: Image.asset(
           Images.ic_tab_my_normal,
-          width: $(28),
+          width: $(24),
         ),
         selectedIcon: Image.asset(
           Images.ic_tab_my,
-          width: $(28),
+          width: $(24),
         ),
         titleBuilder: (context) => StringConstant.tabMine,
         keyBuilder: () => GlobalKey<MineFragmentState>(),

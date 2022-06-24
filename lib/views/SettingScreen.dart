@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
@@ -366,7 +367,7 @@ class _SettingScreenState extends State<SettingScreen> {
               height: 2.h,
             ),
           ],
-        ),
+        ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),
       ),
     );
   }

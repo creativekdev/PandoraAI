@@ -24,10 +24,8 @@ class UserInfoHeaderWidget extends StatelessWidget {
         ).intoContainer(width: $(45), height: $(45)),
         SizedBox(width: $(10)),
         Expanded(
-            child: Text(
-          name,
-          style: TextStyle(color: ColorConstant.White, fontSize: $(16)),
-        )),
+          child: TitleTextWidget(name, ColorConstant.White, FontWeight.normal, $(16), align: TextAlign.start),
+        ),
       ],
     );
   }

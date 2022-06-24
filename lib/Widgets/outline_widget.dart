@@ -3,7 +3,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 class OutlineWidget extends StatelessWidget {
   final _GradientPainter _painter;
   final Widget _child;
-  final double _radius;
   final EdgeInsets? padding;
 
   OutlineWidget({
@@ -13,8 +12,7 @@ class OutlineWidget extends StatelessWidget {
     required Widget child,
     this.padding,
   })  : this._painter = _GradientPainter(strokeWidth: strokeWidth, radius: radius, gradient: gradient),
-        this._child = child,
-        this._radius = radius;
+        this._child = child;
 
   @override
   Widget build(BuildContext context) {

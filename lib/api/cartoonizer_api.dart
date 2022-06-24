@@ -45,6 +45,7 @@ class CartoonizerApi extends BaseRequester {
     required int pageSize,
     DiscoverySort sort = DiscoverySort.likes,
     bool isMyPost = false,
+    int? userId,
   }) async {
     var map = {
       'from': page,
@@ -53,6 +54,9 @@ class CartoonizerApi extends BaseRequester {
     };
     if (isMyPost) {
       map['is_my_post'] = 1;
+    }
+    if (userId != null) {
+      map['user_id'] = userId;
     }
     var baseEntity = await get('/social_post/all', params: map);
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
@@ -77,7 +81,7 @@ class CartoonizerApi extends BaseRequester {
     required int socialPostId,
     int? replySocialPostCommentId,
   }) async {
-    var map = {
+    var map = <String, dynamic>{
       'from': page,
       'size': pageSize,
       'social_post_id': socialPostId,

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 
 import 'effect_card_ex.dart';
@@ -46,9 +47,12 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                 padding: EdgeInsets.all($(6)),
               );
             }).toList(),
-          ).intoContainer(alignment: Alignment.centerLeft, padding: EdgeInsets.all($(6))),
+          ).intoContainer(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.all($(6)),
+          ),
           Padding(
-            padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(24), top: $(12)),
+            padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -56,9 +60,8 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                   child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
                 ),
                 Image.asset(
-                  ImagesConstant.ic_next,
-                  height: $(32),
-                  width: $(32),
+                  Images.ic_arrow_right,
+                  width: $(18),
                 ),
               ],
             ),

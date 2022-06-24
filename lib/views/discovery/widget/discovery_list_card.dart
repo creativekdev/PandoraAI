@@ -3,19 +3,18 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 
 import 'discovery_attr_holder.dart';
 
 class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   DiscoveryListEntity data;
   late List<String> images;
-  int index;
   GestureTapCallback? onTap;
 
   DiscoveryListCard({
     Key? key,
     required this.data,
-    required this.index,
     this.onTap,
   }) : super(key: key) {
     images = data.images.split(',');
@@ -29,15 +28,23 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
           child: CachedNetworkImage(
-              imageUrl: images[index % 2],
+              imageUrl: images[0],
               placeholder: (context, url) => loadingWidget(context),
               errorWidget: (context, url, error) => loadingWidget(context),
               cacheManager: CachedImageCacheManager()),
         ),
         Row(
           children: [
-            buildAttr(context, iconRes: Images.ic_tab_discovery_normal, value: data.likes),
-            buildAttr(context, iconRes: Images.ic_tab_discovery_normal, value: data.comments),
+            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => DiscoveryCommentsListScreen(socialPostId: data.id),
+                  settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
+                ),
+              );
+            }),
+            buildAttr(context, iconRes: Images.ic_discovery_like, value: data.likes),
           ],
         ),
       ],

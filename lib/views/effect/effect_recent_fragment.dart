@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 
@@ -51,7 +52,12 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
                       _onEffectCategoryTap(_.recentModelList, _.dataList, data);
                     },
                   ).intoContainer(
-                    margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)),
+                    margin: EdgeInsets.only(
+                      left: $(20),
+                      right: $(20),
+                      top: index == 0 ? $(16) : $(8),
+                      bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+                    ),
                   ),
                 );
         });
@@ -66,7 +72,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
       bool find = false;
       for (int j = 0; j < list.length; j++) {
         var item = list[j];
-        if('${model.key}${item.key}' == data.uniqueKey) {
+        if ('${model.key}${item.key}' == data.uniqueKey) {
           effectModel = model;
           index = i;
           find = true;
@@ -80,7 +86,11 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
     if (effectModel == null) {
       return;
     }
-    logEvent(Events.choose_home_cartoon_type, eventValues: {"category": effectModel.key, "style": effectModel.style, "page": "recent",});
+    logEvent(Events.choose_home_cartoon_type, eventValues: {
+      "category": effectModel.key,
+      "style": effectModel.style,
+      "page": "recent",
+    });
 
     Navigator.push(
       context,

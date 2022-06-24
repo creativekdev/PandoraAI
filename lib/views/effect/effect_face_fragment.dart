@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
@@ -71,7 +72,14 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
     return ListView.builder(
       itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
-          .intoContainer(margin: EdgeInsets.only(left: $(20), right: $(20), top: index == 0 ? $(16) : $(8), bottom: $(8)))
+          .intoContainer(
+            margin: EdgeInsets.only(
+              left: $(15),
+              right: $(15),
+              top: $(0),
+              bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+            ),
+          )
           .intoGestureDetector(
             onTap: () => _onEffectCategoryTap(dataList, index),
           ),

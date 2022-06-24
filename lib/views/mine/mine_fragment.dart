@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
@@ -42,6 +44,11 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
 
   @override
   Widget buildWidget(BuildContext context) {
-    return SettingScreen();
+    return Column(
+      children: [
+        AppNavigationBar(visible: false, backgroundColor: ColorConstant.BackgroundColor),
+        Expanded(child: SettingScreen()),
+      ],
+    );
   }
 }

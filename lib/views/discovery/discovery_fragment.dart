@@ -1,4 +1,8 @@
+import 'dart:ui';
+
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -27,6 +31,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   int pageSize = 10;
   late CartoonizerApi api;
   List<DiscoveryListEntity> dataList = [];
+  Size? navbarSize;
 
   @override
   void initState() {
@@ -61,8 +66,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         _easyRefreshController.finishRefresh();
         if (value != null) {
           page = 0;
+          var list = value.getDataList<DiscoveryListEntity>();
           setState(() {
-            dataList.addAll(value.getDataList<DiscoveryListEntity>());
+            dataList = list;
           });
         }
         _easyRefreshController.finishLoad(noMore: dataList.length != pageSize);
@@ -99,12 +105,10 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        navbar(context),
-        SizedBox(height: $(12)),
-        Expanded(
-            child: EasyRefresh(
+        EasyRefresh(
+          header: CartoonizerMaterialHeader(),
           controller: _easyRefreshController,
           enableControlFinishRefresh: true,
           enableControlFinishLoad: false,
@@ -118,7 +122,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
             ),
             itemBuilder: (context, index) => DiscoveryListCard(
               data: dataList[index],
-              index: index,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -126,22 +129,35 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
-            ),
+            ).intoContainer(margin: EdgeInsets.only(top: index < 2 ? ((navbarSize?.height ?? 70) + $(10)) : 0)),
             itemCount: dataList.length,
           ),
-        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))),
+        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+        navbar(context),
       ],
     );
   }
 
-  Widget navbar(BuildContext context) => TitleTextWidget(
-        StringConstant.tabDiscovery,
-        ColorConstant.BtnTextColor,
-        FontWeight.w600,
-        $(18),
-      ).intoContainer(
-        alignment: Alignment.center,
-        margin: EdgeInsets.only(top: $(10), left: $(15), right: $(15)),
+  Widget navbar(BuildContext context) => ClipRect(
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppNavigationBar(
+                    showBackItem: false,
+                    blurAble: true,
+                    backgroundColor: ColorConstant.BackgroundColorBlur,
+                    middle: TitleTextWidget(
+                      StringConstant.tabDiscovery,
+                      ColorConstant.BtnTextColor,
+                      FontWeight.w600,
+                      $(18),
+                    )).listenSizeChanged(onSizeChanged: (size) {
+                  setState(() => navbarSize = size);
+                }),
+              ],
+            )),
       );
 
   @override

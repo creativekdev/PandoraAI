@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -171,43 +172,52 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
 
   Widget navbar(BuildContext context) => Container(
         margin: EdgeInsets.only(top: $(10), left: $(15), right: $(15)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(
-              width: proButtonSize?.width,
+            AppNavigationBar(
+              backgroundColor: Colors.transparent,
+              visible: false,
             ),
-            TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-            OutlineWidget(
-              strokeWidth: 1,
-              radius: $(6),
-              gradient: LinearGradient(
-                colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              child: ShaderMask(
-                shaderCallback: (Rect bounds) => LinearGradient(
-                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ).createShader(Offset.zero & bounds.size),
-                blendMode: BlendMode.srcATop,
-                child: Text(
-                  StringConstant.pro,
-                  style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
-                ).intoContainer(
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(
+                  width: proButtonSize?.width,
                 ),
-              ),
-            ).intoGestureDetector(onTap: () {
-              // jump to pro page
-            }).listenSizeChanged(onSizeChanged: (size) {
-              setState(() {
-                proButtonSize = size;
-              });
-            }),
+                TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+                OutlineWidget(
+                  strokeWidth: 1,
+                  radius: $(6),
+                  gradient: LinearGradient(
+                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) => LinearGradient(
+                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ).createShader(Offset.zero & bounds.size),
+                    blendMode: BlendMode.srcATop,
+                    child: Text(
+                      StringConstant.pro,
+                      style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                    ).intoContainer(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
+                    ),
+                  ),
+                ).intoGestureDetector(onTap: () {
+                  // jump to pro page
+                }).listenSizeChanged(onSizeChanged: (size) {
+                  setState(() {
+                    proButtonSize = size;
+                  });
+                }),
+              ],
+            ),
           ],
         ),
       );

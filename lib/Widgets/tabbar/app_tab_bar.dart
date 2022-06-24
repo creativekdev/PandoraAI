@@ -1,17 +1,11 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-// @dart = 2.12
-
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-// Standard iOS 10 tab bar height.
-const double _kTabBarHeight = 52.0;
+const double _appTabBarHeight = 50.0;
+
+double get AppTabBarHeight => _appTabBarHeight;
 
 const Color _kDefaultTabBarBorderColor = CupertinoDynamicColor.withBrightness(
   color: Color(0x4C000000),
@@ -39,15 +33,11 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
         style: BorderStyle.solid,
       ),
     ),
-  })  : assert(items != null),
-        assert(
+  })  : assert(
           items.length >= 2,
           "Tabs need at least 2 items to conform to Apple's HIG",
         ),
-        assert(currentIndex != null),
         assert(0 <= currentIndex && currentIndex < items.length),
-        assert(iconSize != null),
-        assert(inactiveColor != null),
         super(key: key);
 
   /// Must not be null.
@@ -77,13 +67,11 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
   final Border border;
 
   @override
-  Size get preferredSize => const Size.fromHeight(_kTabBarHeight);
+  Size get preferredSize => const Size.fromHeight(_appTabBarHeight);
 
   bool opaque(BuildContext context) {
-    final Color backgroundColor =
-        this.backgroundColor ?? CupertinoTheme.of(context).barBackgroundColor;
-    return CupertinoDynamicColor.resolve(backgroundColor, context).alpha ==
-        0xFF;
+    final Color backgroundColor = this.backgroundColor ?? CupertinoTheme.of(context).barBackgroundColor;
+    return CupertinoDynamicColor.resolve(backgroundColor, context).alpha == 0xFF;
   }
 
   @override
@@ -96,14 +84,11 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
     );
 
     BorderSide resolveBorderSide(BorderSide side) {
-      return side == BorderSide.none
-          ? side
-          : side.copyWith(
-              color: CupertinoDynamicColor.resolve(side.color, context));
+      return side == BorderSide.none ? side : side.copyWith(color: CupertinoDynamicColor.resolve(side.color, context));
     }
 
     // Return the border as is when it's a subclass.
-    final Border resolvedBorder = border == null || border.runtimeType != Border
+    final Border resolvedBorder = border.runtimeType != Border
         ? border
         : Border(
             top: resolveBorderSide(border.top),
@@ -112,25 +97,21 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
             right: resolveBorderSide(border.right),
           );
 
-    final Color inactive =
-        CupertinoDynamicColor.resolve(inactiveColor, context);
+    final Color inactive = CupertinoDynamicColor.resolve(inactiveColor, context);
     Widget result = Material(
+      color: backgroundColor,
       child: DecoratedBox(
         decoration: BoxDecoration(
           border: resolvedBorder,
-          color: backgroundColor,
         ),
         child: SizedBox(
-          height: _kTabBarHeight + bottomPadding,
+          height: _appTabBarHeight + bottomPadding,
           child: IconTheme.merge(
             // Default with the inactive state.
             data: IconThemeData(color: inactive, size: iconSize),
             child: DefaultTextStyle(
               // Default with the inactive state.
-              style: CupertinoTheme.of(context)
-                  .textTheme
-                  .tabLabelTextStyle
-                  .copyWith(color: inactive),
+              style: CupertinoTheme.of(context).textTheme.tabLabelTextStyle.copyWith(color: inactive),
               child: Padding(
                 padding: EdgeInsets.only(bottom: bottomPadding),
                 child: Semantics(
@@ -164,14 +145,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
 
   List<Widget> _buildTabItems(BuildContext context) {
     final List<Widget> result = <Widget>[];
-    final CupertinoLocalizations localizations =
-        CupertinoLocalizations.of(context);
-    assert(
-        localizations != null,
-        'CupertinoTabBar requires a Localizations parent in order to provide an '
-        'appropriate Semantics hint for tab indexing. A CupertinoApp will '
-        'provide the DefaultCupertinoLocalizations, or you can instantiate your '
-        'own Localizations.');
+    final CupertinoLocalizations localizations = CupertinoLocalizations.of(context);
 
     for (int index = 0; index < items.length; index += 1) {
       final bool active = index == currentIndex;
@@ -229,8 +203,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   /// Change the active tab item's icon and title colors to active.
-  Widget _wrapActiveItem(BuildContext context, Widget item,
-      {required bool active}) {
+  Widget _wrapActiveItem(BuildContext context, Widget item, {required bool active}) {
     if (!active) return item;
 
     final Color activeColor = CupertinoDynamicColor.resolve(

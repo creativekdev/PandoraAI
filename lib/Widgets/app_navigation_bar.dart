@@ -56,6 +56,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
   Widget? backIcon;
   Widget? statusBar;
   Decoration? decoration;
+  bool blurAble;
 
   AppNavigationBar({
     this.key,
@@ -80,6 +81,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
     this.backIcon,
     this.statusBar,
     this.decoration,
+    this.blurAble = false,
   }) {
     this.backIcon ??= Image.asset(
       Images.ic_back,
@@ -87,7 +89,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
       width: $(24),
     );
     this.statusBar ??= Container(
-      color: backgroundColor,
+      color: Colors.transparent,
       height: ScreenUtil.getStatusBarHeight(),
     );
   }
@@ -103,7 +105,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                 brightness: brightness,
                 heroTag: heroTag,
                 key: key,
-                backgroundColor: backgroundColor,
+                backgroundColor: blurAble ? Colors.transparent : backgroundColor,
                 leading: showBackItem
                     ? GestureDetector(
                         child: Row(
@@ -156,6 +158,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
         ],
       ).intoContainer(decoration: decoration),
       elevation: elevation,
+      color: backgroundColor,
     );
   }
 
