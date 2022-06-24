@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';

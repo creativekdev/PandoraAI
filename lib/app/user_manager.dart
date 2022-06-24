@@ -77,7 +77,10 @@ class UserManager extends BaseManager {
           // remove all route and push email verification screen
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (BuildContext context) => EmailVerificationScreen(user!.email)),
+            MaterialPageRoute(
+              builder: (BuildContext context) => EmailVerificationScreen(user!.email),
+              settings: RouteSettings(name: "/EmailVerificationScreen"),
+            ),
             ModalRoute.withName('/EmailVerificationScreen'),
           );
         }
