@@ -1,21 +1,60 @@
-import 'package:flutter/material.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 
-///触摸外侧关闭软键盘
-///当界面有输入框时最外层的widget需要继承此state类
+///app state
+///features:
+/// hide keyboard on touch outside
+/// add loading state
 abstract class AppState<T extends StatefulWidget> extends State<T> {
+  bool loading = false;
+  bool canCancelOnLoading = true;
+
+  AppState({this.canCancelOnLoading = true});
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: buildWidget(context),
-    );
+    return WillPopScope(
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: buildWidget(context),
+            ),
+            loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  ).intoContainer(color: Color(0x55000000))
+                : Container(),
+          ],
+          fit: StackFit.expand,
+        ).ignore(ignoring: loading),
+        onWillPop: () async {
+          if (canCancelOnLoading) {
+            return true;
+          }
+          return !loading;
+        });
+  }
+
+  Future<void> showLoading() async {
+    setState(() {
+      loading = true;
+    });
+  }
+
+  Future<void> hideLoading() async {
+    setState(() {
+      loading = false;
+    });
   }
 
   @protected
   Widget buildWidget(BuildContext context);
 }
+
+///
+abstract class KeyboardState<T extends StatefulWidget> extends State<T> {}
 
 mixin AppTabState<T extends StatefulWidget> on State<T> {
   bool _attached = true;

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
+import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -11,12 +12,18 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
   DiscoveryCommentListEntity data;
   bool isLast;
   GestureTapCallback? onTap;
+  GestureTapCallback? onLikeTap;
+  bool isTopComments;
+  CommentsListCardType type;
 
   DiscoveryCommentsListCard({
     Key? key,
     required this.data,
     required this.isLast,
+    this.type = CommentsListCardType.list,
     this.onTap,
+    this.onLikeTap,
+    this.isTopComments = true,
   }) : super(key: key);
 
   @override
@@ -30,7 +37,17 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             imageUrl: data.userAvatar,
             fit: BoxFit.cover,
           ),
-        ).intoContainer(width: $(45), height: $(45)),
+        ).intoContainer(width: $(45), height: $(45)).intoGestureDetector(onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => UserDiscoveryScreen(
+                userId: data.userId,
+              ),
+              settings: RouteSettings(name: "/UserDiscoveryScreen"),
+            ),
+          );
+        }),
         SizedBox(width: $(10)),
         Expanded(
           child: Column(
@@ -42,27 +59,21 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
               Text(
                 data.text,
                 style: TextStyle(color: ColorConstant.White, fontSize: $(16), fontFamily: 'Poppins'),
-              ),
+              ).intoContainer(width: double.maxFinite).intoGestureDetector(onTap: () {
+                if (isTopComments) {
+                  onTap?.call();
+                }
+              }),
               SizedBox(height: $(6)),
               TitleTextWidget('other ${data.comments} replies >', ColorConstant.BlueColor, FontWeight.normal, $(13))
                   .intoContainer(
-                width: double.maxFinite,
-                color: Colors.black,
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(6)),
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => DiscoveryCommentsListScreen(
-                      socialPostId: data.socialPostId,
-                      replySocialPostCommentId: data.id,
-                    ),
-                    settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
-                  ),
-                );
-              }).offstage(offstage: data.comments == 0),
+                      width: double.maxFinite,
+                      color: Colors.black,
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(6)),
+                      margin: EdgeInsets.only(top: $(4), bottom: $(8)))
+                  .intoGestureDetector(onTap: () => _onCommentTap(context))
+                  .offstage(offstage: data.comments == 0 || type == CommentsListCardType.header || !isTopComments),
               Row(
                 children: [
                   Text(
@@ -76,27 +87,49 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                     value: data.comments,
                     axis: Axis.horizontal,
                     color: ColorConstant.DiscoveryCommentGrey,
-                  ),
+                    onTap: () => _onCommentTap(context),
+                  ).offstage(offstage: !isTopComments),
                   buildAttr(
                     context,
                     iconRes: Images.ic_discovery_like,
                     value: data.likes,
                     axis: Axis.horizontal,
                     color: ColorConstant.DiscoveryCommentGrey,
-                  ),
+                    onTap: onLikeTap,
+                  ).offstage(offstage: !isTopComments),
                 ],
               ),
-              SizedBox(height: $(6)),
+              SizedBox(height: $(12)),
               !isLast ? Divider(height: 1, color: ColorConstant.DiscoveryCommentGrey) : Container(),
             ],
           ),
         )
       ],
-    )
-        .intoContainer(
-          color: ColorConstant.BackgroundColor,
-          padding: EdgeInsets.only(top: $(15), left: $(15), right: $(15)),
-        )
-        .intoGestureDetector(onTap: onTap);
+    ).intoContainer(
+      color: ColorConstant.BackgroundColor,
+      padding: EdgeInsets.only(top: $(15), left: $(15), right: $(15)),
+    );
   }
+
+  _onCommentTap(BuildContext context) {
+    if (!isTopComments) {
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => DiscoveryCommentsListScreen(
+          socialPostId: data.socialPostId,
+          parentComment: data,
+          userName: data.userName,
+        ),
+        settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
+      ),
+    );
+  }
+}
+
+enum CommentsListCardType {
+  header,
+  list,
 }

@@ -113,5 +113,7 @@ class StringConstant {
   static const discoveryDetails = "Details";
   static const discoveryDetailsUseSameTemplate = "Use the same template";
   static const discoveryComments = "Comments";
-  static const discoveryLikes = "Likes";
+  static const discoveryComment = "Comment";
+  static const discoveryLike = "Like";
+  static const discoveryUnlike = "Unlike";
 }

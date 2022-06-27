@@ -39,7 +39,10 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryCommentsListScreen(socialPostId: data.id),
+                  builder: (BuildContext context) => DiscoveryCommentsListScreen(
+                    socialPostId: data.id,
+                    userName: data.userName,
+                  ),
                   settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
                 ),
               );

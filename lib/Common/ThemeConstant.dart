@@ -30,4 +30,6 @@ class ColorConstant {
   static const LightTextColor = Color.fromRGBO(38, 50, 92, 1);
   static const DiscoveryBtn = Color(0xff3E60FF);
   static const DiscoveryCommentGrey = Color(0xff8f8f8f);
+  static const InputBackground = Color(0xff3a3a3b);
+  static const InputContent = Color(0xff565656);
 }

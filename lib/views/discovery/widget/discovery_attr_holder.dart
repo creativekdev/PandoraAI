@@ -45,7 +45,7 @@ class DiscoveryAttrHolder {
                 ],
               ))
         .intoContainer(
-          padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(6)),
+          padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(6)),
           constraints: BoxConstraints(minWidth: $(0)),
         )
         .intoGestureDetector(onTap: onTap);

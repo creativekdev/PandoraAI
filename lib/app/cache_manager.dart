@@ -10,6 +10,7 @@ class CacheManager extends BaseManager {
   static const keyLoginCookie = "login_cookie";
   static const keyCurrentUser = "user_info";
   static const keyAiServer = "ai_servers";
+  static const keyCacheInput = "cache_input";
 
   late SharedPreferences _sharedPreferences;
 
