@@ -99,6 +99,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
           page = 0;
           var list = value.getDataList<DiscoveryCommentListEntity>();
           setState(() {
+            parentComment.comments = value.records;
             dataList = list;
           });
           _refreshController.finishLoad(noMore: dataList.length != pageSize);
@@ -119,6 +120,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
           page++;
           var list = value.getDataList<DiscoveryCommentListEntity>();
           setState(() {
+            parentComment.comments = value.records;
             dataList.addAll(list);
           });
           _refreshController.finishLoad(noMore: list.length != pageSize);
@@ -179,7 +181,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
       appBar: AppNavigationBar(
         heroTag: "comments_app_bar",
         backgroundColor: ColorConstant.BackgroundColor,
-        middle: TitleTextWidget(StringConstant.discoveryComments, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        middle: TitleTextWidget('${parentComment.comments} replies', ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
       ),
       body: Column(
         children: [
