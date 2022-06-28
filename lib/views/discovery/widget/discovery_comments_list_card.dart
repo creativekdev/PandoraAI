@@ -101,7 +101,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                   buildAttr(
                     context,
                     iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-                    iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
+                    iconColor: data.likeId == null ? ColorConstant.DiscoveryCommentGrey : ColorConstant.Red,
                     value: data.likes,
                     axis: Axis.horizontal,
                     color: ColorConstant.DiscoveryCommentGrey,

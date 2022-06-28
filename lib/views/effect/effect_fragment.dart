@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
@@ -11,6 +13,8 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/PurchaseScreen.dart';
+import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_fragment.dart';
@@ -59,13 +63,18 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       refreshProVisible();
       setState(() {});
     });
+    refreshProVisible();
   }
 
   refreshProVisible() {
     if (userManager.isNeedLogin) {
       proVisible = true;
     } else {
-      proVisible = false;
+      if (userManager.user!.userSubscription.isEmpty) {
+        proVisible = true;
+      } else {
+        proVisible = false;
+      }
     }
   }
 
@@ -235,7 +244,23 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   ),
                 )
                     .intoGestureDetector(onTap: () {
-                      // jump to pro page
+                      if (Platform.isIOS) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/PurchaseScreen"),
+                            builder: (context) => PurchaseScreen(),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                            builder: (context) => StripeSubscriptionScreen(),
+                          ),
+                        );
+                      }
                     })
                     .offstage(offstage: !proVisible)
                     .listenSizeChanged(onSizeChanged: (size) {

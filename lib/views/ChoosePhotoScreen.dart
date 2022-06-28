@@ -5,6 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -299,328 +301,317 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         });
         return _willPopCallback(context);
       },
-      child: Scaffold(
-        backgroundColor: ColorConstant.BackgroundColor,
-        body: Obx(() => LoadingOverlay(
-              isLoading: controller.isLoading.value,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    Container(
-                      margin: EdgeConstants.TopBarEdgeInsets,
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              logEvent(Events.result_back);
-                              Navigator.maybePop(context);
-                            },
-                            child: Image.asset(
-                              ImagesConstant.ic_back,
-                              height: 30,
-                              width: 30,
-                            ),
-                          ),
-                          Expanded(
-                            child: SizedBox(),
-                          ),
-                          Obx(
-                            () => Visibility(
-                              visible: controller.isPhotoSelect.value,
-                              maintainState: true,
-                              maintainAnimation: true,
-                              maintainSize: true,
-                              child: GestureDetector(
-                                onTap: () {
-                                  pickImageFromGallery(context, from: "result");
-                                },
-                                child: Image.asset(
-                                  ImagesConstant.ic_gallery,
-                                  height: 30,
-                                  width: 30,
-                                ),
+      child: Obx(
+        () => LoadingOverlay(
+            isLoading: controller.isLoading.value,
+            child: Scaffold(
+              backgroundColor: ColorConstant.BackgroundColor,
+              appBar: AppNavigationBar(
+                backgroundColor: ColorConstant.BackgroundColor,
+                middle: TitleTextWidget('Cartoonize', ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+              ),
+              body: Column(
+                children: [
+                  Container(
+                    margin: EdgeConstants.TopBarEdgeInsets,
+                    child: Row(
+                      children: [
+                        Obx(
+                          () => Visibility(
+                            visible: controller.isPhotoSelect.value,
+                            maintainState: true,
+                            maintainAnimation: true,
+                            maintainSize: true,
+                            child: GestureDetector(
+                              onTap: () {
+                                pickImageFromGallery(context, from: "result");
+                              },
+                              child: Image.asset(
+                                ImagesConstant.ic_gallery,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Obx(
-                            () => Visibility(
-                              visible: controller.isPhotoSelect.value,
-                              maintainState: true,
-                              maintainAnimation: true,
-                              maintainSize: true,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  pickImageFromCamera(context, from: "result");
-                                },
-                                child: Image.asset(
-                                  ImagesConstant.ic_camera,
-                                  height: 30,
-                                  width: 30,
-                                ),
+                        ),
+                        SizedBox(
+                          width: 3.w,
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: controller.isPhotoSelect.value,
+                            maintainState: true,
+                            maintainAnimation: true,
+                            maintainSize: true,
+                            child: GestureDetector(
+                              onTap: () async {
+                                pickImageFromCamera(context, from: "result");
+                              },
+                              child: Image.asset(
+                                ImagesConstant.ic_camera,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
                           ),
-                          Obx(
-                            () => Visibility(
-                              visible: controller.isPhotoDone.value,
-                              child: SizedBox(
-                                width: 3.w,
-                              ),
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: controller.isPhotoDone.value,
+                            child: SizedBox(
+                              width: 3.w,
                             ),
                           ),
-                          Obx(
-                            () => Visibility(
-                              visible: controller.isPhotoDone.value,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  var category = widget.list[controller.lastItemIndex.value];
-                                  var effects = category.effects;
-                                  var keys = effects.keys.toList();
-                                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: controller.isPhotoDone.value,
+                            child: GestureDetector(
+                              onTap: () async {
+                                var category = widget.list[controller.lastItemIndex.value];
+                                var effects = category.effects;
+                                var keys = effects.keys.toList();
+                                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                                logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
 
-                                  if (controller.isVideo.value) {
-                                    controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
-                                      controller.changeIsLoading(false);
-                                      videoPath = value as String;
-                                      if (value != "") {
-                                        CommonExtension().showVideoSavedOkToast(context);
-                                      } else {
-                                        CommonExtension().showFailedToast(context);
-                                      }
-                                    });
-                                  } else {
-                                    await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-                                    CommonExtension().showImageSavedOkToast(context);
-                                  }
-                                },
-                                child: Image.asset(
-                                  ImagesConstant.ic_download,
-                                  height: 30,
-                                  width: 30,
-                                ),
+                                if (controller.isVideo.value) {
+                                  controller.changeIsLoading(true);
+                                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
+                                    controller.changeIsLoading(false);
+                                    videoPath = value as String;
+                                    if (value != "") {
+                                      CommonExtension().showVideoSavedOkToast(context);
+                                    } else {
+                                      CommonExtension().showFailedToast(context);
+                                    }
+                                  });
+                                } else {
+                                  await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+                                  CommonExtension().showImageSavedOkToast(context);
+                                }
+                              },
+                              child: Image.asset(
+                                ImagesConstant.ic_download,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Obx(
-                            () => Visibility(
-                              visible: controller.isPhotoDone.value,
-                              child: GestureDetector(
-                                onTap: () async {
-                                  var category = widget.list[controller.lastItemIndex.value];
-                                  var effects = category.effects;
-                                  var keys = effects.keys.toList();
-                                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
+                        ),
+                        SizedBox(
+                          width: 3.w,
+                        ),
+                        Obx(
+                          () => Visibility(
+                            visible: controller.isPhotoDone.value,
+                            child: GestureDetector(
+                              onTap: () async {
+                                var category = widget.list[controller.lastItemIndex.value];
+                                var effects = category.effects;
+                                var keys = effects.keys.toList();
+                                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                                logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
 
-                                  if (controller.isVideo.value) {
-                                    controller.changeIsLoading(true);
-                                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
-                                      controller.changeIsLoading(false);
-                                      videoPath = value as String;
-                                      if (value != "") {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              settings: RouteSettings(name: "/ShareScreen"),
-                                              builder: (context) => ShareScreen(
-                                                style: selectedEffect.key,
-                                                image: (controller.isVideo.value) ? videoPath : image,
-                                                isVideo: controller.isVideo.value,
-                                              ),
-                                            ));
-                                      } else {
-                                        CommonExtension().showToast("Oops Failed!");
-                                      }
-                                    });
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          settings: RouteSettings(name: "/ShareScreen"),
-                                          builder: (context) => ShareScreen(
-                                            style: selectedEffect.key,
-                                            image: (controller.isVideo.value) ? videoPath : image,
-                                            isVideo: controller.isVideo.value,
-                                          ),
-                                        ));
-                                  }
-                                },
-                                child: Image.asset(
-                                  ImagesConstant.ic_share,
-                                  height: 30,
-                                  width: 30,
-                                ),
+                                if (controller.isVideo.value) {
+                                  controller.changeIsLoading(true);
+                                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                                    controller.changeIsLoading(false);
+                                    videoPath = value as String;
+                                    if (value != "") {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            settings: RouteSettings(name: "/ShareScreen"),
+                                            builder: (context) => ShareScreen(
+                                              style: selectedEffect.key,
+                                              image: (controller.isVideo.value) ? videoPath : image,
+                                              isVideo: controller.isVideo.value,
+                                            ),
+                                          ));
+                                    } else {
+                                      CommonExtension().showToast("Oops Failed!");
+                                    }
+                                  });
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        settings: RouteSettings(name: "/ShareScreen"),
+                                        builder: (context) => ShareScreen(
+                                          style: selectedEffect.key,
+                                          image: (controller.isVideo.value) ? videoPath : image,
+                                          isVideo: controller.isVideo.value,
+                                        ),
+                                      ));
+                                }
+                              },
+                              child: Image.asset(
+                                ImagesConstant.ic_share,
+                                height: 30,
+                                width: 30,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Obx(
-                      () => Expanded(
-                        child: (controller.isPhotoDone.value)
-                            ? SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 2.h),
-                                      child: (controller.isVideo.value)
-                                          ? AspectRatio(
-                                              aspectRatio: _videoPlayerController!.value.aspectRatio,
-                                              child: VideoPlayer(_videoPlayerController!),
-                                            )
-                                          : Image.memory(
-                                              base64Decode(image),
-                                              width: 88.w,
-                                              height: 88.w,
-                                            ),
+                  ),
+                  Obx(
+                    () => Expanded(
+                      child: (controller.isPhotoDone.value)
+                          ? SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 2.h),
+                                    child: (controller.isVideo.value)
+                                        ? AspectRatio(
+                                            aspectRatio: _videoPlayerController!.value.aspectRatio,
+                                            child: VideoPlayer(_videoPlayerController!),
+                                          )
+                                        : Image.memory(
+                                            base64Decode(image),
+                                            width: 88.w,
+                                            height: 88.w,
+                                          ),
+                                  ),
+                                  SizedBox(height: 1.h),
+                                  _buildSignupBlock(context),
+                                  _buildPremiumBlock(),
+                                  TitleTextWidget(
+                                    StringConstant.rate_result,
+                                    ColorConstant.BtnTextColor,
+                                    FontWeight.w500,
+                                    12.sp,
+                                  ).visibility(visible: false),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 1.h),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        SimpleShadow(
+                                          child: Image.asset(
+                                            ImagesConstant.ic_emoji1,
+                                            height: 10.w,
+                                            width: 10.w,
+                                          ),
+                                          sigma: 5,
+                                        ).intoGestureDetector(onTap: () async {
+                                          likeDislike(true);
+                                        }),
+                                        SizedBox(width: 5.w),
+                                        SimpleShadow(
+                                          child: Image.asset(
+                                            ImagesConstant.ic_emoji2,
+                                            height: 10.w,
+                                            width: 10.w,
+                                          ),
+                                          sigma: 5,
+                                        ).intoGestureDetector(onTap: () async {
+                                          likeDislike(false);
+                                        }),
+                                      ],
                                     ),
-                                    SizedBox(height: 1.h),
-                                    _buildSignupBlock(context),
-                                    _buildPremiumBlock(),
-                                    TitleTextWidget(
-                                      StringConstant.rate_result,
-                                      ColorConstant.BtnTextColor,
-                                      FontWeight.w500,
-                                      12.sp,
-                                    ).visibility(visible: false),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 1.h),
-                                      child: Row(
+                                  ).visibility(visible: false),
+                                  SizedBox(height: 1.5.h),
+                                ],
+                              ),
+                            )
+                          : Stack(
+                              children: [
+                                Obx(() => Center(
+                                      child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          SimpleShadow(
-                                            child: Image.asset(
-                                              ImagesConstant.ic_emoji1,
-                                              height: 10.w,
-                                              width: 10.w,
+                                          Image.asset(
+                                            ImagesConstant.ic_man,
+                                            height: 40.h,
+                                            width: 70.w,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              pickImageFromGallery(context, from: "center");
+                                            },
+                                            child: ButtonWidget(StringConstant.choose_photo, radius: $(8), padding: EdgeInsets.symmetric(horizontal: $(50))),
+                                          ),
+                                          SizedBox(height: 1.h),
+                                          GestureDetector(
+                                            onTap: () {
+                                              pickImageFromCamera(context, from: "center");
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(vertical: 1.h),
+                                              child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.White, FontWeight.w400, 14),
                                             ),
-                                            sigma: 5,
-                                          ).intoGestureDetector(onTap: () async {
-                                            likeDislike(true);
-                                          }),
-                                          SizedBox(width: 5.w),
-                                          SimpleShadow(
-                                            child: Image.asset(
-                                              ImagesConstant.ic_emoji2,
-                                              height: 10.w,
-                                              width: 10.w,
-                                            ),
-                                            sigma: 5,
-                                          ).intoGestureDetector(onTap: () async {
-                                            likeDislike(false);
-                                          }),
+                                          ),
                                         ],
                                       ),
-                                    ).visibility(visible: false),
-                                    SizedBox(height: 1.5.h),
-                                  ],
-                                ),
-                              )
-                            : Stack(
-                                children: [
-                                  Obx(() => Center(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              ImagesConstant.ic_man,
-                                              height: 40.h,
-                                              width: 70.w,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                pickImageFromGallery(context, from: "center");
-                                              },
-                                              child: ButtonWidget(StringConstant.choose_photo, radius: $(8), padding: EdgeInsets.symmetric(horizontal: $(50))),
-                                            ),
-                                            SizedBox(height: 1.h),
-                                            GestureDetector(
-                                              onTap: () {
-                                                pickImageFromCamera(context, from: "center");
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(vertical: 1.h),
-                                                child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.White, FontWeight.w400, 14),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ).visibility(visible: !controller.isPhotoSelect.value)),
-                                  Obx(() => Column(
-                                        children: [
-                                          Expanded(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(vertical: 2.h),
-                                              child: Center(
-                                                child: Container(
-                                                  width: 90.w,
-                                                  child: Card(
-                                                    color: ColorConstant.CardColor,
-                                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                    elevation: 1.h,
-                                                    shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.all(
-                                                        Radius.circular(2.w),
-                                                      ),
+                                    ).visibility(visible: !controller.isPhotoSelect.value)),
+                                Obx(() => Column(
+                                      children: [
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                                            child: Center(
+                                              child: Container(
+                                                width: 90.w,
+                                                child: Card(
+                                                  color: ColorConstant.CardColor,
+                                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                  elevation: 1.h,
+                                                  shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                      Radius.circular(2.w),
                                                     ),
-                                                    child: Padding(
-                                                      padding: EdgeInsets.all(5.w),
-                                                      child: DottedBorder(
-                                                        color: ColorConstant.White,
-                                                        strokeWidth: 0.1.h,
-                                                        radius: Radius.circular(1.w),
-                                                        borderType: BorderType.RRect,
-                                                        child: Padding(
-                                                          padding: EdgeInsets.all(4.w),
-                                                          child: Row(
-                                                            mainAxisSize: MainAxisSize.max,
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Stack(
-                                                                children: [
-                                                                  (controller.image.value) != null
-                                                                      ? ClipRRect(
-                                                                          borderRadius: BorderRadius.circular(2.w),
-                                                                          child: Image.file(
-                                                                            controller.image.value as File,
-                                                                            fit: BoxFit.cover,
-                                                                            width: 68.w,
-                                                                          ),
-                                                                        )
-                                                                      : SizedBox(),
-                                                                  Positioned(
-                                                                    left: 2.w,
-                                                                    bottom: 2.w,
-                                                                    child: GestureDetector(
-                                                                      onTap: () async {
-                                                                        offlineEffect.clear();
-                                                                        controller.changeIsPhotoSelect(false);
-                                                                        controller.changeIsPhotoDone(false);
-                                                                        controller.updateImageFile(null);
-                                                                        controller.updateImageUrl("");
-                                                                      },
-                                                                      child: Image.asset(
-                                                                        ImagesConstant.ic_delete,
-                                                                        width: 8.w,
-                                                                        height: 8.w,
-                                                                      ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: EdgeInsets.all(5.w),
+                                                    child: DottedBorder(
+                                                      color: ColorConstant.White,
+                                                      strokeWidth: 0.1.h,
+                                                      radius: Radius.circular(1.w),
+                                                      borderType: BorderType.RRect,
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(4.w),
+                                                        child: Row(
+                                                          mainAxisSize: MainAxisSize.max,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: [
+                                                            Stack(
+                                                              children: [
+                                                                (controller.image.value) != null
+                                                                    ? ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(2.w),
+                                                                        child: Image.file(
+                                                                          controller.image.value as File,
+                                                                          fit: BoxFit.cover,
+                                                                          width: 68.w,
+                                                                        ),
+                                                                      )
+                                                                    : SizedBox(),
+                                                                Positioned(
+                                                                  left: 2.w,
+                                                                  bottom: 2.w,
+                                                                  child: GestureDetector(
+                                                                    onTap: () async {
+                                                                      offlineEffect.clear();
+                                                                      controller.changeIsPhotoSelect(false);
+                                                                      controller.changeIsPhotoDone(false);
+                                                                      controller.updateImageFile(null);
+                                                                      controller.updateImageUrl("");
+                                                                    },
+                                                                    child: Image.asset(
+                                                                      ImagesConstant.ic_delete,
+                                                                      width: 8.w,
+                                                                      height: 8.w,
                                                                     ),
                                                                   ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
                                                     ),
@@ -629,73 +620,78 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
-                                            height: 2.h,
-                                          )
-                                        ],
-                                      ).visibility(visible: controller.isPhotoSelect.value)),
-                                ],
-                              ),
-                      ),
+                                        ),
+                                        SizedBox(
+                                          height: 2.h,
+                                        )
+                                      ],
+                                    ).visibility(visible: controller.isPhotoSelect.value)),
+                              ],
+                            ),
                     ),
-                    SizedBox(height: 1.h),
-                    Obx(() => Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Image.asset(
-                              controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                              width: 20,
-                              height: 20,
-                            ).intoInkWell(onTap: () async {
-                              print(controller.isChecked.value);
-                              if (controller.isChecked.value) {
-                                controller.changeIsChecked(false);
-                              } else {
-                                controller.changeIsChecked(true);
-                              }
-                            }),
-                            SizedBox(width: 1.5.w),
-                            TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                            SizedBox(width: 2.w),
-                          ],
-                        )).offstage(offstage: !widget.hasOriginalCheck),
-                    SizedBox(height: 0.5.h).offstage(offstage: !widget.hasOriginalCheck),
-                    Container(
-                      height: widget.isFromRecent ? $(150) : $(100),
-                      child: Scrollbar(
-                        thickness: 0.0,
-                        child: ScrollablePositionedList.separated(
-                          initialScrollIndex: widget.pos,
-                          itemCount: widget.list.length,
-                          scrollDirection: Axis.horizontal,
-                          itemScrollController: scrollController,
-                          itemPositionsListener: itemPositionsListener,
-                          physics: ClampingScrollPhysics(),
-                          itemBuilder: (context, itemIndex) {
-                            return _buildCarouselItem(context, itemIndex);
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return _buildSeparator();
-                          },
-                        ),
-                      ),
+                  ),
+                  SizedBox(height: 1.h),
+                  Obx(() => Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Image.asset(
+                            controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                            width: 20,
+                            height: 20,
+                          ).intoInkWell(onTap: () async {
+                            print(controller.isChecked.value);
+                            if (controller.isChecked.value) {
+                              controller.changeIsChecked(false);
+                            } else {
+                              controller.changeIsChecked(true);
+                            }
+                          }),
+                          SizedBox(width: 1.5.w),
+                          TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                          SizedBox(width: 2.w),
+                        ],
+                      )).offstage(offstage: !widget.hasOriginalCheck),
+                  SizedBox(height: 0.5.h).offstage(offstage: !widget.hasOriginalCheck),
+                  Container(
+                    height: $(36),
+                    child: ScrollablePositionedList.builder(
+                      initialScrollIndex: widget.pos,
+                      itemCount: widget.list.length,
+                      scrollDirection: Axis.horizontal,
+                      itemScrollController: scrollController1,
+                      physics: ClampingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return _buildTextItem(context, index);
+                      },
                     ),
-                    Container(
-                      height: 5.h,
-                      child: ScrollablePositionedList.builder(
+                  ).offstage(offstage: widget.isFromRecent),
+                  Container(
+                    height: widget.isFromRecent ? $(150) : $(100),
+                    padding: EdgeInsets.only(
+                      left: widget.isFromRecent ? $(8) : 0,
+                      right: widget.isFromRecent ? $(8) : 0,
+                      top: widget.isFromRecent ? $(8) : 0,
+                    ),
+                    child: Scrollbar(
+                      thickness: 0.0,
+                      child: ScrollablePositionedList.separated(
                         initialScrollIndex: widget.pos,
                         itemCount: widget.list.length,
                         scrollDirection: Axis.horizontal,
-                        itemScrollController: scrollController1,
+                        itemScrollController: scrollController,
+                        itemPositionsListener: itemPositionsListener,
                         physics: ClampingScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          return _buildTextItem(context, index);
+                        itemBuilder: (context, itemIndex) {
+                          return _buildCarouselItem(context, itemIndex);
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return _buildSeparator();
                         },
                       ),
-                    ).offstage(offstage: widget.isFromRecent),
-                    SizedBox(height: Platform.isAndroid ? $(12) : 0).offstage(offstage: widget.isFromRecent),
-                  ],
-                ),
+                    ),
+                  ),
+                  SizedBox(height: Platform.isAndroid ? $(12) : 0).offstage(offstage: widget.isFromRecent),
+                ],
               ),
             )),
       ),
@@ -721,10 +717,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem}) {
+    var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
     if (effectItem.imageUrl.endsWith("mp4")) {
       return Container(
-        width: 20.w,
-        height: 20.w,
+        width: width,
+        height: width,
         child: EffectVideoPlayer(url: effectItem.imageUrl),
       );
     } else {
@@ -733,15 +730,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
+    var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
+
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: BoxFit.fill,
-      height: 20.w,
-      width: 20.w,
+      height: width,
+      width: width,
       placeholder: (context, url) {
         return Container(
-          height: 20.w,
-          width: 20.w,
+          height: width,
+          width: width,
           child: Center(
             child: CircularProgressIndicator(),
           ),
@@ -749,8 +748,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
       },
       errorWidget: (context, url, error) {
         return Container(
-          height: 20.w,
-          width: 20.w,
+          height: width,
+          width: width,
           child: Center(
             child: CircularProgressIndicator(),
           ),
@@ -764,72 +763,85 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
     var effectItem = effects[keys[index]];
     var checked = (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex);
-    Widget icon = Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular($(7.2)),
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: _createEffectModelIcon(context, effectItem: effectItem!),
+    Widget icon = OutlineWidget(
+        radius: $(10.8),
+        strokeWidth: 3,
+        gradient: LinearGradient(
+          colors: [checked ? Color(0xffE31ECD) : Colors.transparent, checked ? Color(0xff243CFF) : Colors.transparent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        Visibility(
-          visible: (effectItem.key.endsWith("-transform")),
-          child: Positioned(
-            right: $(3.6),
-            top: $(1),
-            child: Image.asset(
-              ImagesConstant.ic_video,
-              height: $(18),
-              width: $(18),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular($(8)),
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: _createEffectModelIcon(context, effectItem: effectItem!),
             ),
-          ),
-        ),
-        if (controller.isChecked.value && isSupportOriginalFace(effectItem))
-          Positioned(
-            bottom: $(1),
-            left: $(3.6),
-            child: controller.image.value != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular($(36)),
-                    child: Image.file(
-                      controller.image.value as File,
-                      fit: BoxFit.fill,
-                      height: $(18),
-                      width: $(18),
-                    ),
-                  )
-                : SizedBox(),
-          ),
-      ],
-    ).intoContainer(
-        padding: EdgeInsets.all($(3.6)),
-        decoration: BoxDecoration(
-            color: ColorConstant.BackgroundColor,
-            borderRadius: BorderRadius.circular($(10.8)),
-            border: Border.all(
-              color: checked ? ColorConstant.BlueColor : ColorConstant.BackgroundColor,
-              width: $(1.8),
-            )));
+            Visibility(
+              visible: (effectItem.key.endsWith("-transform")),
+              child: Positioned(
+                right: $(3.6),
+                top: $(1),
+                child: Image.asset(
+                  ImagesConstant.ic_video,
+                  height: $(18),
+                  width: $(18),
+                ),
+              ),
+            ),
+            if (controller.isChecked.value && isSupportOriginalFace(effectItem))
+              Positioned(
+                bottom: $(1),
+                left: $(3.6),
+                child: controller.image.value != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular($(36)),
+                        child: Image.file(
+                          controller.image.value as File,
+                          fit: BoxFit.fill,
+                          height: $(18),
+                          width: $(18),
+                        ),
+                      )
+                    : SizedBox(),
+              ),
+          ],
+        ).intoContainer(
+          padding: EdgeInsets.all($(3)),
+        ));
 
     return Padding(
       padding: EdgeInsets.all(widget.isFromRecent ? 0 : $(3.6)),
       child: (widget.isFromRecent
               ? Column(
                   children: [
-                    icon,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          effectItem.displayName,
+                          style: TextStyle(
+                            fontFamily: 'poppins',
+                            color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                            fontSize: $(14),
+                            height: 1,
+                            fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
+                        Container(
+                          width: $(18),
+                          height: $(4),
+                          margin: EdgeInsets.only(top: $(4)),
+                          color: checked ? ColorConstant.BlueColor : Colors.transparent,
+                        ),
+                      ],
+                    ),
                     SizedBox(height: $(10)),
-                    Text(
-                      effectItem.displayName,
-                      style: TextStyle(
-                        fontFamily: 'poppins',
-                        color: checked ? ColorConstant.BlueColor : ColorConstant.White,
-                        fontSize: $(14),
-                        height: 1,
-                        fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
+                    icon,
                   ],
                 )
               : icon)
@@ -1181,9 +1193,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 6),
-            child: TitleTextWidget(widget.list[index].displayName, (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : ColorConstant.White,
-                (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400, 14),
+            padding: EdgeInsets.only(left: $(6), right: $(6), top: $(6)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TitleTextWidget(
+                  widget.list[index].displayName,
+                  (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
+                  (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
+                  14,
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: $(4)),
+                  width: $(18),
+                  height: $(4),
+                  color: (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : Colors.transparent,
+                ),
+              ],
+            ),
           ),
         ));
   }
