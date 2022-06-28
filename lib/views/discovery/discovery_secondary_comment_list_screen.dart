@@ -7,30 +7,27 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
-import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
-import 'discovery_secondary_comment_list_screen.dart';
+class DiscoverySecondaryCommentsListScreen extends StatefulWidget {
+  DiscoveryCommentListEntity parentComment;
 
-class DiscoveryCommentsListScreen extends StatefulWidget {
-  DiscoveryListEntity discoveryEntity;
-
-  DiscoveryCommentsListScreen({
+  DiscoverySecondaryCommentsListScreen({
     Key? key,
-    required this.discoveryEntity,
+    required this.parentComment,
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => DiscoveryCommentsListState();
+  State<StatefulWidget> createState() => DiscoverySecondaryCommentsListState();
 }
 
-class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
+class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCommentsListScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   EasyRefreshController _refreshController = EasyRefreshController();
   List<DiscoveryCommentListEntity> dataList = [];
-  late DiscoveryListEntity discoveryEntity;
+  late DiscoveryCommentListEntity parentComment;
   int page = 0;
   int pageSize = 20;
   late CartoonizerApi api;
@@ -38,16 +35,14 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
-  late StreamSubscription onDiscoveryLikeEventListener;
-  late StreamSubscription onDiscoveryUnlikeEventListener;
 
-  DiscoveryCommentsListState() : super(canCancelOnLoading: false);
+  DiscoverySecondaryCommentsListState() : super(canCancelOnLoading: false);
 
   @override
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
-    discoveryEntity = widget.discoveryEntity.copy();
+    parentComment = widget.parentComment;
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
         _refreshController.callRefresh();
@@ -78,20 +73,6 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
         }
       }
     });
-    onDiscoveryLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
-      if (discoveryEntity.id == event.data!.key) {
-        discoveryEntity.likes++;
-        discoveryEntity.likeId = event.data!.value;
-        setState(() {});
-      }
-    });
-    onDiscoveryUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
-      if (discoveryEntity.id == event.data) {
-        discoveryEntity.likes--;
-        discoveryEntity.likeId = null;
-        setState(() {});
-      }
-    });
     delay(() => _refreshController.callRefresh());
   }
 
@@ -103,15 +84,14 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     onUnlikeEventListener.cancel();
     onLikeEventListener.cancel();
     onLoginEventListener.cancel();
-    onDiscoveryLikeEventListener.cancel();
-    onDiscoveryUnlikeEventListener.cancel();
   }
 
   loadFirstPage() => api
           .listDiscoveryComments(
         page: 0,
         pageSize: pageSize,
-        socialPostId: discoveryEntity.id,
+        socialPostId: parentComment.socialPostId,
+        replySocialPostCommentId: parentComment.id,
       )
           .then((value) {
         _refreshController.finishRefresh();
@@ -129,7 +109,8 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
           .listDiscoveryComments(
         page: page + 1,
         pageSize: pageSize,
-        socialPostId: discoveryEntity.id,
+        socialPostId: parentComment.socialPostId,
+        replySocialPostCommentId: parentComment.id,
       )
           .then((value) {
         if (value == null) {
@@ -151,7 +132,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
           PageRouteBuilder(
             opaque: false,
             pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
-              uniqueId: "${discoveryEntity.id}_${replySocialPostCommentId ?? ''}",
+              uniqueId: "${parentComment.socialPostId}_${replySocialPostCommentId ?? ''}",
               hint: userName != null ? 'reply $userName' : '',
               callback: (text) async {
                 return createComment(text, replySocialPostCommentId);
@@ -165,7 +146,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     await showLoading();
     var baseEntity = await api.createDiscoveryComment(
       comment: comment,
-      socialPostId: discoveryEntity.id,
+      socialPostId: parentComment.socialPostId,
       replySocialPostCommentId: replySocialPostCommentId,
     );
     await hideLoading();
@@ -191,22 +172,6 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     }, autoExec: false);
   }
 
-  onDiscoveryLikeTap() {
-    userManager.doOnLogin(context, callback: () {
-      showLoading().whenComplete(() {
-        if (discoveryEntity.likeId == null) {
-          api.discoveryLike(discoveryEntity.id).then((value) {
-            hideLoading();
-          });
-        } else {
-          api.discoveryUnLike(discoveryEntity.id, discoveryEntity.likeId!).then((value) {
-            hideLoading();
-          });
-        }
-      });
-    }, autoExec: false);
-  }
-
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
@@ -218,6 +183,14 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
       ),
       body: Column(
         children: [
+          DiscoveryCommentsListCard(
+            data: parentComment,
+            isLast: true,
+            type: CommentsListCardType.header,
+            onLikeTap: () {
+              onCommentLikeTap(parentComment);
+            },
+          ),
           Expanded(
               child: EasyRefresh.custom(
             controller: _refreshController,
@@ -231,7 +204,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
                   (context, index) => DiscoveryCommentsListCard(
                     data: dataList[index],
                     isLast: index == dataList.length - 1,
-                    isTopComments: true,
+                    isTopComments: false,
                     onTap: () {
                       onCreateCommentClick(
                         replySocialPostCommentId: dataList[index].id,
@@ -240,17 +213,6 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
                     },
                     onLikeTap: () {
                       onCommentLikeTap(dataList[index]);
-                    },
-                    onCommentTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => DiscoverySecondaryCommentsListScreen(
-                            parentComment: dataList[index],
-                          ),
-                          settings: RouteSettings(name: "/DiscoverySecondaryCommentsListScreen"),
-                        ),
-                      );
                     },
                   ).intoContainer(margin: EdgeInsets.only(top: index == 0 ? $(8) : 0)),
                   childCount: dataList.length,
@@ -269,16 +231,16 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
       children: [
         Expanded(
             child: _function(context, Images.ic_discovery_comment, StringConstant.discoveryComment, onTap: () {
-          onCreateCommentClick(userName: discoveryEntity.userName);
+          onCreateCommentClick(userName: parentComment.userName, replySocialPostCommentId: parentComment.id);
         })),
         Expanded(
             child: _function(
           context,
-          discoveryEntity.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-          discoveryEntity.likeId == null ? StringConstant.discoveryLike : StringConstant.discoveryUnlike,
-          iconColor: discoveryEntity.likeId == null ? ColorConstant.White : ColorConstant.Red,
+          parentComment.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
+          parentComment.likeId == null ? StringConstant.discoveryLike : StringConstant.discoveryUnlike,
+          iconColor: parentComment.likeId == null ? ColorConstant.White : ColorConstant.Red,
           onTap: () {
-            onDiscoveryLikeTap();
+            onCommentLikeTap(parentComment);
           },
         )),
       ],

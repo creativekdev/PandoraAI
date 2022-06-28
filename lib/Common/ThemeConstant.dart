@@ -25,6 +25,7 @@ class ColorConstant {
   static const BtnColor = Colors.white;
   static const BtnTextColor = Colors.white;
   static const White = Colors.white;
+  static const Red = Color(0xffff375f);
   static const TextBlack = Color.fromRGBO(6, 10, 47, 1);
   static const TextBlue = Color.fromRGBO(55, 83, 250, 1);
   static const LightTextColor = Color.fromRGBO(38, 50, 92, 1);

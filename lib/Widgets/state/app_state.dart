@@ -12,19 +12,25 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
 
   @override
   Widget build(BuildContext context) {
+    return build2(context);
+  }
+
+  /// call this when state extends more than one super class like extends AppState with AutomaticKeepAliveClientMixin
+  /// and developer need to override build. like this
+  /// @override
+  /// Widget build(BuildContext context) {
+  ///   super.build(context);
+  ///   return build2(context);
+  /// }
+  Widget build2(BuildContext context) {
     return WillPopScope(
         child: Stack(
           children: [
-            GestureDetector(
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: buildWidget(context),
-            ),
+            buildWidget(context).blankAreaIntercept(),
             loading
                 ? Center(
-                    child: CircularProgressIndicator(),
-                  ).intoContainer(color: Color(0x55000000))
+              child: CircularProgressIndicator(),
+            ).intoContainer(color: Color(0x55000000))
                 : Container(),
           ],
           fit: StackFit.expand,

@@ -195,8 +195,8 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }
 
   Future<BaseEntity?> delete(
-    String path,
-    data, {
+    String path, {
+    data,
     Map<String, String>? headers,
     Map<String, dynamic>? params,
     bool toastOnFailed = true,

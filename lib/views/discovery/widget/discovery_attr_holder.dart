@@ -8,7 +8,9 @@ class DiscoveryAttrHolder {
     Axis axis = Axis.vertical,
     GestureTapCallback? onTap,
     Color color = Colors.white,
+    Color? iconColor,
   }) {
+    iconColor ??= color;
     var alignment = CrossAxisAlignment.center;
     if (value > 10) {
       alignment = CrossAxisAlignment.start;
@@ -20,7 +22,7 @@ class DiscoveryAttrHolder {
                   Image.asset(
                     iconRes,
                     width: $(18),
-                    color: color,
+                    color: iconColor,
                   ),
                   SizedBox(height: $(4)),
                   Text(
@@ -35,7 +37,7 @@ class DiscoveryAttrHolder {
                   Image.asset(
                     iconRes,
                     width: $(18),
-                    color: color,
+                    color: iconColor,
                   ),
                   SizedBox(width: $(4)),
                   Text(

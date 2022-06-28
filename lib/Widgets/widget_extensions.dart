@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
 
@@ -172,6 +173,16 @@ extension WidgetExtension on Widget {
       SizeChanged(
         key: key,
         onSizeChanged: onSizeChanged,
+        child: this,
+      );
+
+  BlankAreaIntercept blankAreaIntercept({
+    Key? key,
+    KeyboardInterceptType interceptType = KeyboardInterceptType.hideKeyboard,
+  }) =>
+      BlankAreaIntercept(
+        key: key,
+        interceptType: interceptType,
         child: this,
       );
 }

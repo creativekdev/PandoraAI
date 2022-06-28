@@ -1,17 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../discovery_comments_list_screen.dart';
-
 class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder {
   DiscoveryCommentListEntity data;
   bool isLast;
   GestureTapCallback? onTap;
+  GestureTapCallback? onCommentTap;
   GestureTapCallback? onLikeTap;
   bool isTopComments;
   CommentsListCardType type;
@@ -23,6 +24,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
     this.type = CommentsListCardType.list,
     this.onTap,
     this.onLikeTap,
+    this.onCommentTap,
     this.isTopComments = true,
   }) : super(key: key);
 
@@ -38,11 +40,14 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             fit: BoxFit.cover,
           ),
         ).intoContainer(width: $(45), height: $(45)).intoGestureDetector(onTap: () {
+          UserManager userManager = AppDelegate.instance.getManager();
+          bool isMe = userManager.user?.id == data.userId;
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (BuildContext context) => UserDiscoveryScreen(
                 userId: data.userId,
+                title: isMe ? StringConstant.setting_my_discovery : null,
               ),
               settings: RouteSettings(name: "/UserDiscoveryScreen"),
             ),
@@ -72,7 +77,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                       alignment: Alignment.centerLeft,
                       padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(6)),
                       margin: EdgeInsets.only(top: $(4), bottom: $(8)))
-                  .intoGestureDetector(onTap: () => _onCommentTap(context))
+                  .intoGestureDetector(onTap: onCommentTap)
                   .offstage(offstage: data.comments == 0 || type == CommentsListCardType.header || !isTopComments),
               Row(
                 children: [
@@ -87,11 +92,16 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                     value: data.comments,
                     axis: Axis.horizontal,
                     color: ColorConstant.DiscoveryCommentGrey,
-                    onTap: () => _onCommentTap(context),
+                    onTap: () {
+                      if (isTopComments) {
+                        onCommentTap?.call();
+                      }
+                    },
                   ).offstage(offstage: !isTopComments),
                   buildAttr(
                     context,
-                    iconRes: Images.ic_discovery_like,
+                    iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
+                    iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
                     value: data.likes,
                     axis: Axis.horizontal,
                     color: ColorConstant.DiscoveryCommentGrey,
@@ -108,23 +118,6 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
     ).intoContainer(
       color: ColorConstant.BackgroundColor,
       padding: EdgeInsets.only(top: $(15), left: $(15), right: $(15)),
-    );
-  }
-
-  _onCommentTap(BuildContext context) {
-    if (!isTopComments) {
-      return;
-    }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => DiscoveryCommentsListScreen(
-          socialPostId: data.socialPostId,
-          parentComment: data,
-          userName: data.userName,
-        ),
-        settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
-      ),
     );
   }
 }

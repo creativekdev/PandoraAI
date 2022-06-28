@@ -24,6 +24,8 @@ class DiscoveryListEntity {
   late String status;
   @JSONField(name: "cartoonize_key")
   late String cartoonizeKey;
+  @JSONField(name: "like_id")
+  int? likeId;
 
   DiscoveryListEntity({
     this.userId = 0,
@@ -39,6 +41,10 @@ class DiscoveryListEntity {
     this.id = 0,
     this.status = '',
     this.cartoonizeKey = '',
+    this.city = '',
+    this.userName = '',
+    this.userAvatar = '',
+    this.likeId,
   });
 
   factory DiscoveryListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryListEntityFromJson(json);
@@ -48,5 +54,9 @@ class DiscoveryListEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+
+  DiscoveryListEntity copy() {
+    return DiscoveryListEntity.fromJson(toJson());
   }
 }

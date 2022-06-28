@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
@@ -27,11 +30,15 @@ class DiscoveryFragment extends StatefulWidget {
 
 class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   EasyRefreshController _easyRefreshController = EasyRefreshController();
+  UserManager userManager = AppDelegate.instance.getManager();
   int page = 0;
   int pageSize = 10;
   late CartoonizerApi api;
   List<DiscoveryListEntity> dataList = [];
   Size? navbarSize;
+  late StreamSubscription onLoginEventListener;
+  late StreamSubscription onLikeEventListener;
+  late StreamSubscription onUnlikeEventListener;
 
   @override
   void initState() {
@@ -40,6 +47,36 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     delay(() {
       _easyRefreshController.callRefresh();
     });
+    onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      if (event.data ?? true) {
+        _easyRefreshController.callRefresh();
+      } else {
+        for (var value in dataList) {
+          value.likeId = null;
+        }
+        setState(() {});
+      }
+    });
+    onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
+      var id = event.data!.key;
+      var likeId = event.data!.value;
+      for (var data in dataList) {
+        if (data.id == id) {
+          data.likeId = likeId;
+          data.likes++;
+          setState(() {});
+        }
+      }
+    });
+    onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
+      for (var data in dataList) {
+        if (data.id == event.data) {
+          data.likeId = null;
+          data.likes--;
+          setState(() {});
+        }
+      }
+    });
   }
 
   @override
@@ -47,6 +84,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     super.dispose();
     api.unbind();
     _easyRefreshController.dispose();
+    onLoginEventListener.cancel();
+    onLikeEventListener.cancel();
+    onUnlikeEventListener.cancel();
   }
 
   void onAttached() {
@@ -92,15 +132,22 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       });
 
+  onLikeTap(DiscoveryListEntity entity) => showLoading().whenComplete(() {
+        if (entity.likeId == null) {
+          api.discoveryLike(entity.id).then((value) {
+            hideLoading();
+          });
+        } else {
+          api.discoveryUnLike(entity.id, entity.likeId!).then((value) {
+            hideLoading();
+          });
+        }
+      });
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: buildWidget(context),
-    );
+    return build2(context);
   }
 
   @override
@@ -129,6 +176,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
+              onLikeTap: () {
+                userManager.doOnLogin(context, callback: () {
+                  onLikeTap(dataList[index]);
+                }, autoExec: false);
+              },
             ).intoContainer(margin: EdgeInsets.only(top: index < 2 ? ((navbarSize?.height ?? 70) + $(10)) : 0)),
             itemCount: dataList.length,
           ),

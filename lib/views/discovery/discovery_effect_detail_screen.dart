@@ -1,16 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
-
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'widget/discovery_attr_holder.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
@@ -22,24 +26,71 @@ class DiscoveryEffectDetailScreen extends StatefulWidget {
   State<StatefulWidget> createState() => DiscoveryEffectDetailState();
 }
 
-class DiscoveryEffectDetailState extends State<DiscoveryEffectDetailScreen> with DiscoveryAttrHolder {
+class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> with DiscoveryAttrHolder {
+  UserManager userManager = AppDelegate.instance.getManager();
   late DiscoveryListEntity data;
   late List<String> images;
   Size? imageSize;
+  late CartoonizerApi api;
+  late StreamSubscription onLoginEventListener;
+  late StreamSubscription onLikeEventListener;
+  late StreamSubscription onUnlikeEventListener;
 
   @override
   void initState() {
     super.initState();
-    data = widget.data;
+    api = CartoonizerApi().bindState(this);
+    data = widget.data.copy();
     images = data.images.split(",");
     if (images.isEmpty) {
       CommonExtension().showToast("Oops Failed!");
       Navigator.pop(context);
     }
+    onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      if (event.data ?? true) {
+        refreshData();
+      } else {}
+    });
+    onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
+      var id = event.data!.key;
+      var likeId = event.data!.value;
+      if (data.id == id) {
+        data.likeId = likeId;
+        data.likes++;
+        setState(() {});
+      }
+    });
+    onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
+      if (data.id == event.data) {
+        data.likeId = null;
+        data.likes--;
+        setState(() {});
+      }
+    });
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    super.dispose();
+    api.unbind();
+  }
+
+  refreshData() {
+    showLoading().whenComplete(() {
+      api.getDiscoveryDetail(data.id).then((value) {
+        hideLoading().whenComplete(() {
+          if (value != null) {
+            setState(() {
+              data = value;
+            });
+          }
+        });
+      });
+    });
+  }
+
+  @override
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppNavigationBar(
@@ -53,10 +104,15 @@ class DiscoveryEffectDetailState extends State<DiscoveryEffectDetailScreen> with
               avatar: data.userAvatar,
               name: data.userName,
             ).intoGestureDetector(onTap: () {
+              UserManager userManager = AppDelegate.instance.getManager();
+              bool isMe = userManager.user?.id == data.userId;
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => UserDiscoveryScreen(userId: data.userId),
+                  builder: (BuildContext context) => UserDiscoveryScreen(
+                    userId: data.userId,
+                    title: isMe ? StringConstant.setting_my_discovery : null,
+                  ),
                   settings: RouteSettings(name: "/UserDiscoveryScreen"),
                 ),
               );
@@ -107,15 +163,25 @@ class DiscoveryEffectDetailState extends State<DiscoveryEffectDetailScreen> with
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => DiscoveryCommentsListScreen(
-                        socialPostId: data.id,
-                        userName: data.userName,
+                        discoveryEntity: data,
                       ),
                       settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
                     ),
                   );
                 }),
                 SizedBox(width: $(15)),
-                buildAttr(context, iconRes: Images.ic_discovery_like, value: data.likes, axis: Axis.horizontal),
+                buildAttr(
+                  context,
+                  iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
+                  iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
+                  value: data.likes,
+                  axis: Axis.horizontal,
+                  onTap: () {
+                    userManager.doOnLogin(context, callback: () {
+                      onLikeTap();
+                    }, autoExec: false);
+                  },
+                ),
               ],
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(6))),
             OutlineWidget(
@@ -172,4 +238,16 @@ class DiscoveryEffectDetailState extends State<DiscoveryEffectDetailScreen> with
       ),
     );
   }
+
+  onLikeTap() => showLoading().whenComplete(() {
+        if (data.likeId == null) {
+          api.discoveryLike(data.id).then((value) {
+            hideLoading();
+          });
+        } else {
+          api.discoveryUnLike(data.id, data.likeId!).then((value) {
+            hideLoading();
+          });
+        }
+      });
 }

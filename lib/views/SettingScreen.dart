@@ -5,12 +5,14 @@ import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -29,6 +31,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   late SharedPreferences sharedPrefs;
   bool isLoading = false;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -212,25 +215,25 @@ class _SettingScreenState extends State<SettingScreen> {
                 }
               },
             ),
-            // FutureBuilder(
-            //   future: _getIsLogin(),
-            //   builder: (context, snapshot) {
-            //     return ImageTextBarWidget(StringConstant.setting_my_discovery, Images.ic_setting_my_discovery, false)
-            //         .intoGestureDetector(onTap: () {
-            //       logEvent(Events.open_my_discovery);
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //             settings: RouteSettings(name: "/MyDiscoveryScreen"),
-            //             builder: (context) => MyDiscoveryScreen(),
-            //           )).then((value) async {
-            //         return;
-            //       });
-            //     })
-            //         .intoContainer(margin: EdgeInsets.only(top: 2.h))
-            //         .offstage(offstage: !((snapshot.data != null ? snapshot.data as bool : true) || isLoading));
-            //   },
-            // ),
+            FutureBuilder(
+              future: _getIsLogin(),
+              builder: (context, snapshot) {
+                return ImageTextBarWidget(StringConstant.setting_my_discovery, Images.ic_setting_my_discovery, false).intoGestureDetector(onTap: () {
+                  logEvent(Events.open_my_discovery);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/UserDiscoveryScreen"),
+                        builder: (context) => UserDiscoveryScreen(
+                          userId: userManager.user!.id,
+                          title: StringConstant.setting_my_discovery,
+                        ),
+                      )).then((value) async {
+                    return;
+                  });
+                }).offstage(offstage: !((snapshot.data != null ? snapshot.data as bool : true) || isLoading));
+              },
+            ),
             FutureBuilder(
               future: _getIsLogin(),
               builder: (context, snapshot) {
@@ -391,8 +394,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               onPressed: () async {
                 logEvent(Events.logout);
-                var sharedPrefs = await SharedPreferences.getInstance();
-                sharedPrefs.clear();
+                await userManager.logout();
                 Navigator.pop(context);
               }),
           CupertinoDialogAction(

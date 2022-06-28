@@ -48,4 +48,8 @@ class SocialUserInfo {
   bool equals(SocialUserInfo? userInfo) {
     return userInfo == null ? false : jsonEncode(toJson()) == jsonEncode(userInfo.toJson());
   }
+
+  SocialUserInfo copy() {
+    return SocialUserInfo.fromJson(toJson());
+  }
 }

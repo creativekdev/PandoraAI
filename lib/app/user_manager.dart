@@ -1,14 +1,14 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
-
-typedef OnUserChange = Function(SocialUserInfo user);
-typedef OnUserStateChange = Function(bool isLogin);
+import 'package:cartoonizer/views/LoginScreen.dart';
 
 ///
 /// 新的用户数据管理器，暂时与老逻辑并行，新缓存key使用user_info，老的使用user
@@ -26,8 +26,7 @@ class UserManager extends BaseManager {
   SocialUserInfo? _user;
 
   SocialUserInfo? get user {
-    if (_user == null) return null;
-    return SocialUserInfo.fromJson(_user!.toJson());
+    return _user?.copy();
   }
 
   set user(SocialUserInfo? userInfo) {
@@ -51,9 +50,6 @@ class UserManager extends BaseManager {
 
   set sid(String id) => cacheManager.setString(CacheManager.keyLoginCookie, id);
 
-  List<OnUserChange> _onUserChangeListeners = [];
-  List<OnUserStateChange> _onUserStateListeners = [];
-
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
     cacheManager = AppDelegate.instance.getManager();
@@ -68,24 +64,24 @@ class UserManager extends BaseManager {
     refreshUser();
   }
 
-  refreshUser({BuildContext? context}) {
-    CartoonizerApi().getCurrentUser().then((value) {
-      aiServers = value.aiServers;
-      if (value.loginSuccess) {
-        user = value.user!;
-        if (context != null && user!.status != 'activated') {
-          // remove all route and push email verification screen
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => EmailVerificationScreen(user!.email),
-              settings: RouteSettings(name: "/EmailVerificationScreen"),
-            ),
-            ModalRoute.withName('/EmailVerificationScreen'),
-          );
-        }
+  Future<OnlineModel> refreshUser({BuildContext? context}) async {
+    var value = await CartoonizerApi().getCurrentUser();
+    aiServers = value.aiServers;
+    if (value.loginSuccess) {
+      user = value.user!;
+      if (context != null && user!.status != 'activated') {
+        // remove all route and push email verification screen
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => EmailVerificationScreen(user!.email),
+            settings: RouteSettings(name: "/EmailVerificationScreen"),
+          ),
+          ModalRoute.withName('/EmailVerificationScreen'),
+        );
       }
-    });
+    }
+    return value;
   }
 
   Future<BaseEntity?> login(String email, String password) async {
@@ -95,32 +91,51 @@ class UserManager extends BaseManager {
       'type': APP_TYPE,
     });
     if (baseEntity != null) {
-      refreshUser();
+      await refreshUser();
     }
     return baseEntity;
   }
 
   _notifyUserChange() {
-    _onUserChangeListeners.forEach((element) => element.call(_user!));
+    EventBusHelper().eventBus.fire(UserInfoChangeEvent(data: user!));
   }
 
   _notifyUserStateChange() {
-    _onUserStateListeners.forEach((element) => element.call(_user != null));
+    EventBusHelper().eventBus.fire(LoginStateEvent(data: _user != null));
   }
 
-  listenUserInfo(OnUserChange userChange) {
-    _onUserChangeListeners.add(userChange);
+  doOnLogin(BuildContext context, {String? currentPageRoute, Function()? callback, bool autoExec = true}) {
+    if (!isNeedLogin) {
+      callback?.call();
+      return;
+    }
+    if (currentPageRoute == null) {
+      GetStorage().remove('login_back_page');
+    } else {
+      GetStorage().write('login_back_page', currentPageRoute);
+    }
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+          settings: RouteSettings(name: "/LoginScreen"),
+        )).then((value) async {
+      if (autoExec && !isNeedLogin) {
+        callback?.call();
+      } else {
+        // todo 非正常登录流程下，此时不一定及时获取到用户信息，需要更新一次。此代码需要在后续所有登录流程优化后删除。
+        refreshUser().then((value) {
+          if (autoExec && !isNeedLogin) {
+            callback?.call();
+          }
+        });
+      }
+    });
   }
 
-  cancelListenUserInfo(OnUserChange userChange) {
-    delay(() => _onUserChangeListeners.remove(userChange));
-  }
-
-  listenUserState(OnUserStateChange userStateChane) {
-    _onUserStateListeners.add(userStateChane);
-  }
-
-  cancelListenUserState(OnUserStateChange userStateChane) {
-    delay(() => _onUserStateListeners.remove(userStateChane));
+  Future<void> logout() async {
+    user = null;
+    _notifyUserStateChange();
+    cacheManager.clear();
   }
 }

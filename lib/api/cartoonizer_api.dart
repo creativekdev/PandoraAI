@@ -1,7 +1,10 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
@@ -62,6 +65,11 @@ class CartoonizerApi extends BaseRequester {
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
+  Future<DiscoveryListEntity?> getDiscoveryDetail(int id) async {
+    var baseEntity = await get('/social_post/get/$id');
+    return jsonConvert.convert(baseEntity?.data['data']);
+  }
+
   /// share effect to discovery
   Future<BaseEntity?> startSocialPost({
     required String description,
@@ -107,5 +115,43 @@ class CartoonizerApi extends BaseRequester {
       map['reply_social_post_comment_id'] = replySocialPostCommentId;
     }
     return post('/social_post_comment/create', params: map);
+  }
+
+  Future<int?> discoveryLike(
+    int id,
+  ) async {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id});
+    if (baseEntity != null) {
+      var likeId = baseEntity.data['data']?.toInt();
+      EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
+      return likeId;
+    }
+    return null;
+  }
+
+  Future<BaseEntity?> discoveryUnLike(int id, int likeId) async {
+    var baseEntity = await delete('/social_post_like/delete/$likeId');
+    if (baseEntity != null) {
+      EventBusHelper().eventBus.fire(OnDiscoveryUnlikeEvent(data: id));
+    }
+    return baseEntity;
+  }
+
+  Future<int?> commentLike(int id) async {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id});
+    if (baseEntity != null) {
+      var likeId = baseEntity.data['data']?.toInt();
+      EventBusHelper().eventBus.fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
+      return likeId;
+    }
+    return null;
+  }
+
+  Future<BaseEntity?> commentUnLike(int id, int likeId) async {
+    var baseEntity = await delete('/social_post_like/delete/$likeId');
+    if (baseEntity != null) {
+      EventBusHelper().eventBus.fire(OnCommentUnlikeEvent(data: id));
+    }
+    return baseEntity;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -6,6 +7,8 @@ import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
@@ -26,6 +29,7 @@ class EffectFragment extends StatefulWidget {
 
 class EffectFragmentState extends AppState<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
   final Connectivity _connectivity = Connectivity();
+  UserManager userManager = AppDelegate.instance.getManager();
   EffectDataController dataController = Get.put(EffectDataController());
   RecentController recentController = Get.put(RecentController());
 
@@ -34,6 +38,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   late TabController _tabController;
   List<HomeTabConfig> tabConfig = [];
   Size? proButtonSize;
+  late StreamSubscription onUserStateChangeListener;
+  late StreamSubscription onUserLoginListener;
+  bool proVisible = false;
 
   @override
   void initState() {
@@ -44,6 +51,28 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
         setState(() {});
       }
     });
+    onUserStateChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
+      refreshProVisible();
+      setState(() {});
+    });
+    onUserLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      refreshProVisible();
+      setState(() {});
+    });
+  }
+
+  refreshProVisible() {
+    if (userManager.isNeedLogin) {
+      proVisible = true;
+    } else {
+      proVisible = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    onUserStateChangeListener.cancel();
   }
 
   void _pageChange(int index) {
@@ -62,12 +91,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: buildWidget(context),
-    );
+    return super.build2(context);
   }
 
   @override
@@ -209,13 +233,16 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
                     ),
                   ),
-                ).intoGestureDetector(onTap: () {
-                  // jump to pro page
-                }).listenSizeChanged(onSizeChanged: (size) {
-                  setState(() {
-                    proButtonSize = size;
-                  });
-                }),
+                )
+                    .intoGestureDetector(onTap: () {
+                      // jump to pro page
+                    })
+                    .offstage(offstage: !proVisible)
+                    .listenSizeChanged(onSizeChanged: (size) {
+                      setState(() {
+                        proButtonSize = size;
+                      });
+                    }),
               ],
             ),
           ],

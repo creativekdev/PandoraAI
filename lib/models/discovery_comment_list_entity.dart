@@ -28,9 +28,28 @@ class DiscoveryCommentListEntity {
   @JSONField(name: "user_avatar")
   late String userAvatar;
   @JSONField(name: "like_id")
-  late int? likeId;
+  int? likeId;
 
-  DiscoveryCommentListEntity();
+  DiscoveryCommentListEntity({
+    this.userName = '',
+    this.userAvatar = '',
+    this.city = '',
+    this.likeId,
+    this.id = 0,
+    this.likes = 0,
+    this.userId = 0,
+    this.replySocialPostCommentId,
+    this.text = '',
+    this.socialPostId = 0,
+    this.comments = 0,
+    this.images = '',
+    this.modified = '',
+    this.created = '',
+    this.region = '',
+    this.country = '',
+    this.ip = '',
+    this.replyUserId,
+  });
 
   factory DiscoveryCommentListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryCommentListEntityFromJson(json);
 
@@ -39,5 +58,9 @@ class DiscoveryCommentListEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+
+  DiscoveryCommentListEntity copy() {
+    return DiscoveryCommentListEntity.fromJson(toJson());
   }
 }

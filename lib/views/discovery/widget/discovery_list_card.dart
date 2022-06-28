@@ -11,11 +11,13 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   DiscoveryListEntity data;
   late List<String> images;
   GestureTapCallback? onTap;
+  GestureTapCallback? onLikeTap;
 
   DiscoveryListCard({
     Key? key,
     required this.data,
     this.onTap,
+    this.onLikeTap,
   }) : super(key: key) {
     images = data.images.split(',');
   }
@@ -28,7 +30,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
           child: CachedNetworkImage(
-              imageUrl: images[0],
+              imageUrl: images.length > 1 ? images[1] : '',
               placeholder: (context, url) => loadingWidget(context),
               errorWidget: (context, url, error) => loadingWidget(context),
               cacheManager: CachedImageCacheManager()),
@@ -40,14 +42,19 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => DiscoveryCommentsListScreen(
-                    socialPostId: data.id,
-                    userName: data.userName,
+                    discoveryEntity: data,
                   ),
                   settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
                 ),
               );
             }),
-            buildAttr(context, iconRes: Images.ic_discovery_like, value: data.likes),
+            buildAttr(
+              context,
+              iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
+              iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
+              value: data.likes,
+              onTap: onLikeTap,
+            ),
           ],
         ),
       ],
