@@ -5,17 +5,22 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
+import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'widget/discovery_attr_holder.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity data;
@@ -28,21 +33,22 @@ class DiscoveryEffectDetailScreen extends StatefulWidget {
 
 class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> with DiscoveryAttrHolder {
   UserManager userManager = AppDelegate.instance.getManager();
+  EffectManager effectManager = AppDelegate.instance.getManager();
   late DiscoveryListEntity data;
-  late List<String> images;
   Size? imageSize;
   late CartoonizerApi api;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  List<DiscoveryResource> resources = [];
 
   @override
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
     data = widget.data.copy();
-    images = data.images.split(",");
-    if (images.isEmpty) {
+    resources = data.resourceList();
+    if (resources.isEmpty) {
       CommonExtension().showToast("Oops Failed!");
       Navigator.pop(context);
     }
@@ -131,27 +137,28 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
             Row(
               children: [
                 Expanded(
-                    child: CachedNetworkImage(
-                  imageUrl: images[0],
-                  cacheManager: CachedImageCacheManager(),
-                ).listenSizeChanged(onSizeChanged: (size) {
+                    child: buildResourceItem(resources[0]).listenSizeChanged(onSizeChanged: (size) {
                   setState(() {
                     imageSize = size;
                   });
-                }).intoGestureDetector(onTap: () => open(context, 0))),
+                }).intoGestureDetector(onTap: () {
+                  if (resources[0].type == 'image') {
+                    open(context, 0);
+                  }
+                })),
                 SizedBox(width: $(2)),
                 Expanded(
-                  child: (images.length > 1 && imageSize != null)
-                      ? CachedNetworkImage(
-                          imageUrl: images[1],
-                          fit: BoxFit.cover,
-                          cacheManager: CachedImageCacheManager(),
-                        )
+                  child: (resources.length > 1 && imageSize != null)
+                      ? buildResourceItem(resources[1])
                           .intoContainer(
-                            width: imageSize!.width,
-                            height: imageSize!.height,
-                          )
-                          .intoGestureDetector(onTap: () => open(context, 1))
+                          width: imageSize!.width,
+                          height: imageSize!.height,
+                        )
+                          .intoGestureDetector(onTap: () {
+                          if (resources[1].type == 'image') {
+                            open(context, 1);
+                          }
+                        })
                       : Container(),
                 ),
               ],
@@ -209,20 +216,33 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
                 ),
               ),
-            )
-                .intoGestureDetector(
-                  onTap: () {},
-                )
-                .intoContainer(
-                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
-                ),
+            ).intoGestureDetector(
+              onTap: () {
+                toChoosePage();
+              },
+            ).intoContainer(
+              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
+            ),
           ],
         ),
       ),
     );
   }
 
+  Widget buildResourceItem(DiscoveryResource resource) {
+    if (resource.type == DiscoveryResourceType.video.value()) {
+      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+    } else {
+      return CachedNetworkImage(
+        imageUrl: resource.url ?? '',
+        fit: BoxFit.cover,
+        cacheManager: CachedImageCacheManager(),
+      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+    }
+  }
+
   void open(BuildContext context, final int index) {
+    List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
     Navigator.push(
       context,
       PageRouteBuilder(
@@ -232,7 +252,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
           backgroundDecoration: const BoxDecoration(
             color: Colors.black,
           ),
-          initialIndex: index,
+          initialIndex: index >= images.length ? 0 : index,
           scrollDirection: Axis.horizontal,
         ),
       ),
@@ -250,4 +270,52 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
           });
         }
       });
+
+  toChoosePage() {
+    String key = data.cartoonizeKey;
+    showLoading().whenComplete(() {
+      effectManager.loadData().then((value) {
+        hideLoading().whenComplete(() {
+          if (value == null) {
+            return;
+          }
+          var targetSeries = value.targetSeries(key);
+          if (targetSeries == null) {
+            return;
+          }
+          EffectItem? effectItem;
+          int index = 0;
+          int itemIndex = 0;
+          for (int i = 0; i < targetSeries.length; i++) {
+            var model = targetSeries[i];
+            var list = model.effects.values.toList();
+            for (int j = 0; j < list.length; j++) {
+              var item = list[j];
+              if (item.key == key) {
+                effectItem = item;
+                index = i;
+                itemIndex = j;
+                break;
+              }
+            }
+          }
+          if (effectItem == null) {
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              settings: RouteSettings(name: "/ChoosePhotoScreen"),
+              builder: (context) => ChoosePhotoScreen(
+                list: targetSeries,
+                pos: index,
+                itemPos: itemIndex,
+                hasOriginalCheck: false,
+              ),
+            ),
+          );
+        });
+      });
+    });
+  }
 }

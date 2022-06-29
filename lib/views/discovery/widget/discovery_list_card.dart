@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
@@ -9,7 +10,7 @@ import 'discovery_attr_holder.dart';
 
 class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   DiscoveryListEntity data;
-  late List<String> images;
+  late List<DiscoveryResource> resources;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
 
@@ -19,7 +20,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     this.onTap,
     this.onLikeTap,
   }) : super(key: key) {
-    images = data.images.split(',');
+    resources = data.resourceList();
   }
 
   @override
@@ -29,11 +30,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         ClipRRect(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: CachedNetworkImage(
-              imageUrl: images.length > 1 ? images[1] : '',
-              placeholder: (context, url) => loadingWidget(context),
-              errorWidget: (context, url, error) => loadingWidget(context),
-              cacheManager: CachedImageCacheManager()),
+          child: resources.length > 1 ? buildResourceItem(resources[1]) : Container(),
         ),
         Row(
           children: [
@@ -59,6 +56,19 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         ),
       ],
     ).intoGestureDetector(onTap: onTap);
+  }
+
+  Widget buildResourceItem(DiscoveryResource resource) {
+    if (resource.type == DiscoveryResourceType.video.value()) {
+      return EffectVideoPlayer(url: resource.url ?? '');
+    } else {
+      return CachedNetworkImage(
+        imageUrl: resource.url ?? '',
+        cacheManager: CachedImageCacheManager(),
+        placeholder: (context, url) => loadingWidget(context),
+        errorWidget: (context, url, error) => loadingWidget(context),
+      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+    }
   }
 
   Widget loadingWidget(BuildContext context) => Container(

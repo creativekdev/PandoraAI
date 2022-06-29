@@ -34,6 +34,8 @@ class ColorConstant {
   static const DiscoveryBtn = Color(0xff3E60FF);
   static const DiscoveryCommentGrey = Color(0xff8f8f8f);
   static const EffectGrey = Color(0xff8f8f8f);
+  static const EffectFunctionGrey = Color(0xff232528);
+  static const EffectFunctionBlue = Color(0xff3E60FF);
   static const InputBackground = Color(0xff3a3a3b);
   static const InputContent = Color(0xff565656);
 }

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
@@ -110,6 +111,7 @@ class AppDelegate {
     list.add(ThirdpartManager());
     list.add(CacheManager());
     list.add(UserManager());
+    list.add(EffectManager());
   }
 
   T getManager<T extends BaseManager>() {

@@ -6,16 +6,18 @@ import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/dialog/app_bottom_sheet.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -28,7 +30,7 @@ import 'package:video_player/video_player.dart';
 import '../gallery_saver.dart';
 import '../models/OfflineEffectModel.dart';
 import 'PurchaseScreen.dart';
-import 'ShareScreen.dart';
+import 'share/ShareScreen.dart';
 import 'StripeSubscriptionScreen.dart';
 
 const int adsShowDuration = 120000;
@@ -59,7 +61,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   var image = "";
   var videoPath = "";
   late ImagePicker imagePicker;
-  late UserModel _user;
+  UserManager userManager = AppDelegate.instance.getManager();
+
+  // late UserModel _user;
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
@@ -120,94 +124,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     adsHolder.onReady();
   }
 
-  Future<void> initStoreInfo() async {
-    _user = await API.getLogin();
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
-    controller.changeIsLogin(isLogin);
-  }
-
-  Obx _buildSignupBlock(BuildContext context) {
-    return Obx(
-      () => Visibility(
-        visible: !controller.isLogin.value,
-        child: GestureDetector(
-          onTap: () => {
-            logEvent(Events.result_signup_get_credit),
-            GetStorage().write('signup_through', 'result_signup_get_credit'),
-            GetStorage().write('login_back_page', '/ChoosePhotoScreen'),
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
-                builder: (context) => SignupScreen(),
-              ),
-            ).then((value) async {
-              SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-              bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
-              if (isLogin) {
-                await API.getLogin(needLoad: false, context: context);
-                controller.changeIsLogin(isLogin);
-                setState(() {});
-              }
-            })
-          },
-          child: RoundedBorderBtnWidget(StringConstant.signup_text),
-        ),
-      ),
-    );
-  }
-
-  FutureBuilder _buildPremiumBlock() {
-    return FutureBuilder(
-        future: API.getLogin(),
-        builder: (context, snapshot) {
-          bool visible = false;
-          if (snapshot.data != null) {
-            UserModel user = snapshot.data as UserModel;
-            if (user.email != '' && (user.credit <= 0 && !user.subscription.containsKey('id'))) {
-              visible = true;
-            }
-          }
-          return Visibility(
-              visible: visible,
-              child: Column(children: [
-                SizedBox(
-                  height: 1.5.h,
-                ),
-                TitleTextWidget(StringConstant.no_watermark, ColorConstant.HintColor, FontWeight.w400, 14),
-                SizedBox(
-                  height: 2.h,
-                ),
-                GestureDetector(
-                  onTap: () => {
-                    if (Platform.isIOS)
-                      {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/PurchaseScreen"),
-                              builder: (context) => PurchaseScreen(),
-                            )).then((value) => {setState(() {})})
-                      }
-                    else
-                      {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                              builder: (context) => StripeSubscriptionScreen(),
-                            )).then((value) => {setState(() {})})
-                      }
-                  },
-                  child: ButtonWidget(StringConstant.go_premium),
-                ),
-                SizedBox(
-                  height: 2.h,
-                ),
-              ]));
-        });
-  }
+  initStoreInfo() => userManager.refreshUser();
 
   Future<bool> _willPopCallback(BuildContext context) async {
     if (controller.isPhotoDone.value) {
@@ -292,6 +209,160 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     return Future.value(true);
   }
 
+  showPickPhotoDialog(BuildContext context) {
+    AppBottomSheet.showDialog(context,
+        backgroundColor: Color(0x77000000),
+        builder: (context) => Column(
+              children: [
+                TitleTextWidget('Select from album', ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                  pickImageFromGallery(context, from: "result");
+                }),
+                Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
+                TitleTextWidget('Take a selfie', ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                  pickImageFromCamera(context, from: "result");
+                }),
+                Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+                TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                }),
+              ],
+            ).intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+                decoration: BoxDecoration(
+                    color: ColorConstant.EffectFunctionGrey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular($(24)),
+                      topRight: Radius.circular($(24)),
+                    ))));
+  }
+
+  showSavePhotoDialog(BuildContext context) {
+    AppBottomSheet.showDialog(
+      context,
+      backgroundColor: Color(0x77000000),
+      builder: (context) {
+        bool saveHDImageVisible = false;
+        if (!userManager.isNeedLogin) {
+          var user = userManager.user!;
+          if (user.email != '' && (user.cartoonizeCredit <= 0 && !user.userSubscription.containsKey('id'))) {
+            saveHDImageVisible = true;
+          }
+        }
+        return Column(
+          children: [
+            TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
+                .intoContainer(
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+            )
+                .intoGestureDetector(onTap: () async {
+              Navigator.of(context).pop();
+              var category = widget.list[controller.lastItemIndex.value];
+              var effects = category.effects;
+              var keys = effects.keys.toList();
+              var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+              logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
+
+              if (controller.isVideo.value) {
+                controller.changeIsLoading(true);
+                await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
+                  controller.changeIsLoading(false);
+                  videoPath = value as String;
+                  if (value != "") {
+                    CommonExtension().showVideoSavedOkToast(context);
+                  } else {
+                    CommonExtension().showFailedToast(context);
+                  }
+                });
+              } else {
+                await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+                CommonExtension().showImageSavedOkToast(context);
+              }
+            }),
+            Divider(height: 0.5, color: ColorConstant.EffectGrey)
+                .intoContainer(
+                  margin: EdgeInsets.symmetric(horizontal: $(25)),
+                )
+                .visibility(visible: userManager.isNeedLogin || saveHDImageVisible),
+            TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
+                .intoContainer(
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+            )
+                .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop();
+              if (Platform.isIOS) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PurchaseScreen"),
+                      builder: (context) => PurchaseScreen(),
+                    )).then((value) => {setState(() {})});
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                      builder: (context) => StripeSubscriptionScreen(),
+                    )).then((value) => {setState(() {})});
+              }
+            }).visibility(visible: saveHDImageVisible),
+            TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
+                .intoContainer(
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+            )
+                .intoGestureDetector(onTap: () async {
+              Navigator.of(context).pop();
+              logEvent(Events.result_signup_get_credit);
+              GetStorage().write('signup_through', 'result_signup_get_credit');
+              GetStorage().write('login_back_page', '/ChoosePhotoScreen');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
+                  builder: (context) => SignupScreen(),
+                ),
+              ).then((value) async {
+                userManager.doOnLogin(context, callback: () {
+                  setState(() {});
+                });
+              });
+            }).visibility(visible: userManager.isNeedLogin),
+            Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+            TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                .intoContainer(
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+            )
+                .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop();
+            }),
+          ],
+        ).intoContainer(
+            width: double.maxFinite,
+            padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+            decoration: BoxDecoration(
+                color: ColorConstant.EffectFunctionGrey,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular($(24)),
+                  topRight: Radius.circular($(24)),
+                )));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -312,156 +383,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               ),
               body: Column(
                 children: [
-                  Container(
-                    margin: EdgeConstants.TopBarEdgeInsets,
-                    child: Row(
-                      children: [
-                        Obx(
-                          () => Visibility(
-                            visible: controller.isPhotoSelect.value,
-                            maintainState: true,
-                            maintainAnimation: true,
-                            maintainSize: true,
-                            child: GestureDetector(
-                              onTap: () {
-                                pickImageFromGallery(context, from: "result");
-                              },
-                              child: Image.asset(
-                                ImagesConstant.ic_gallery,
-                                height: 30,
-                                width: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 3.w,
-                        ),
-                        Obx(
-                          () => Visibility(
-                            visible: controller.isPhotoSelect.value,
-                            maintainState: true,
-                            maintainAnimation: true,
-                            maintainSize: true,
-                            child: GestureDetector(
-                              onTap: () async {
-                                pickImageFromCamera(context, from: "result");
-                              },
-                              child: Image.asset(
-                                ImagesConstant.ic_camera,
-                                height: 30,
-                                width: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Obx(
-                          () => Visibility(
-                            visible: controller.isPhotoDone.value,
-                            child: SizedBox(
-                              width: 3.w,
-                            ),
-                          ),
-                        ),
-                        Obx(
-                          () => Visibility(
-                            visible: controller.isPhotoDone.value,
-                            child: GestureDetector(
-                              onTap: () async {
-                                var category = widget.list[controller.lastItemIndex.value];
-                                var effects = category.effects;
-                                var keys = effects.keys.toList();
-                                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
-
-                                if (controller.isVideo.value) {
-                                  controller.changeIsLoading(true);
-                                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
-                                    controller.changeIsLoading(false);
-                                    videoPath = value as String;
-                                    if (value != "") {
-                                      CommonExtension().showVideoSavedOkToast(context);
-                                    } else {
-                                      CommonExtension().showFailedToast(context);
-                                    }
-                                  });
-                                } else {
-                                  await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-                                  CommonExtension().showImageSavedOkToast(context);
-                                }
-                              },
-                              child: Image.asset(
-                                ImagesConstant.ic_download,
-                                height: 30,
-                                width: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 3.w,
-                        ),
-                        Obx(
-                          () => Visibility(
-                            visible: controller.isPhotoDone.value,
-                            child: GestureDetector(
-                              onTap: () async {
-                                var category = widget.list[controller.lastItemIndex.value];
-                                var effects = category.effects;
-                                var keys = effects.keys.toList();
-                                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                                logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
-
-                                if (controller.isVideo.value) {
-                                  controller.changeIsLoading(true);
-                                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
-                                    controller.changeIsLoading(false);
-                                    videoPath = value as String;
-                                    if (value != "") {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            settings: RouteSettings(name: "/ShareScreen"),
-                                            builder: (context) => ShareScreen(
-                                              style: selectedEffect.key,
-                                              image: (controller.isVideo.value) ? videoPath : image,
-                                              isVideo: controller.isVideo.value,
-                                            ),
-                                          ));
-                                    } else {
-                                      CommonExtension().showToast("Oops Failed!");
-                                    }
-                                  });
-                                } else {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        settings: RouteSettings(name: "/ShareScreen"),
-                                        builder: (context) => ShareScreen(
-                                          style: selectedEffect.key,
-                                          image: (controller.isVideo.value) ? videoPath : image,
-                                          isVideo: controller.isVideo.value,
-                                        ),
-                                      ));
-                                }
-                              },
-                              child: Image.asset(
-                                ImagesConstant.ic_share,
-                                height: 30,
-                                width: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   Obx(
                     () => Expanded(
                       child: (controller.isPhotoDone.value)
                           ? SingleChildScrollView(
                               child: Column(
                                 children: [
+                                  SizedBox(height: $(44)),
                                   Padding(
                                     padding: EdgeInsets.symmetric(vertical: 2.h),
                                     child: (controller.isVideo.value)
@@ -475,17 +403,29 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                             height: 88.w,
                                           ),
                                   ),
-                                  SizedBox(height: 1.h),
-                                  _buildSignupBlock(context),
-                                  _buildPremiumBlock(),
-                                  TitleTextWidget(
-                                    StringConstant.rate_result,
-                                    ColorConstant.BtnTextColor,
-                                    FontWeight.w500,
-                                    12.sp,
-                                  ).visibility(visible: false),
+                                  Obx(() => Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                                            width: 20,
+                                            height: 20,
+                                          ).intoInkWell(onTap: () async {
+                                            print(controller.isChecked.value);
+                                            if (controller.isChecked.value) {
+                                              controller.changeIsChecked(false);
+                                            } else {
+                                              controller.changeIsChecked(true);
+                                            }
+                                          }),
+                                          SizedBox(width: 1.5.w),
+                                          TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                                          SizedBox(width: 2.w),
+                                        ],
+                                      )).intoContainer(margin: EdgeInsets.only(bottom: $(4))).offstage(offstage: !widget.hasOriginalCheck),
+                                  buildSuccessFunctions(context),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 1.h),
+                                    padding: EdgeInsets.symmetric(vertical: $(4)),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
@@ -631,27 +571,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                     ),
                   ),
                   SizedBox(height: 1.h),
-                  Obx(() => Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Image.asset(
-                            controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                            width: 20,
-                            height: 20,
-                          ).intoInkWell(onTap: () async {
-                            print(controller.isChecked.value);
-                            if (controller.isChecked.value) {
-                              controller.changeIsChecked(false);
-                            } else {
-                              controller.changeIsChecked(true);
-                            }
-                          }),
-                          SizedBox(width: 1.5.w),
-                          TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                          SizedBox(width: 2.w),
-                        ],
-                      )).offstage(offstage: !widget.hasOriginalCheck),
-                  SizedBox(height: 0.5.h).offstage(offstage: !widget.hasOriginalCheck),
                   Container(
                     height: $(36),
                     child: ScrollablePositionedList.builder(
@@ -696,6 +615,98 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
             )),
       ),
     );
+  }
+
+  Widget buildSuccessFunctions(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Obx(
+          () => Expanded(
+            child: Image.asset(
+              Images.ic_camera,
+              height: $(24),
+              width: $(24),
+            )
+                .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(12)),
+                  decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+                )
+                .intoGestureDetector(
+                  onTap: () => showPickPhotoDialog(context),
+                )
+                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7)), constraints: BoxConstraints(maxWidth: ScreenUtil.screenSize.width / 3)),
+          ).visibility(visible: controller.isPhotoSelect.value),
+        ),
+        Obx(
+          () => Expanded(
+            child: Image.asset(
+              Images.ic_download,
+              height: $(24),
+              width: $(24),
+            )
+                .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(12)),
+                  decoration: BoxDecoration(color: ColorConstant.EffectFunctionBlue, borderRadius: BorderRadius.circular($(6))),
+                )
+                .intoGestureDetector(
+                  onTap: () => showSavePhotoDialog(context),
+                )
+                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+          ).visibility(visible: controller.isPhotoDone.value),
+        ),
+        Obx(() => Expanded(
+              child: Image.asset(
+                Images.ic_share,
+                height: $(24),
+                width: $(24),
+              )
+                  .intoContainer(
+                padding: EdgeInsets.symmetric(vertical: $(12)),
+                decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+              )
+                  .intoGestureDetector(
+                onTap: () async {
+                  var category = widget.list[controller.lastItemIndex.value];
+                  var effects = category.effects;
+                  var keys = effects.keys.toList();
+                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
+                  if (controller.isVideo.value) {
+                    controller.changeIsLoading(true);
+                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                      controller.changeIsLoading(false);
+                      videoPath = value as String;
+                      if (value != "") {
+                        ShareScreen.startShare(
+                          context,
+                          backgroundColor: Color(0x77000000),
+                          style: selectedEffect.key,
+                          image: (controller.isVideo.value) ? videoPath : image,
+                          isVideo: controller.isVideo.value,
+                          originalUrl: urlFinal,
+                          effectKey: selectedEffect.key,
+                        );
+                      } else {
+                        CommonExtension().showToast("Oops Failed!");
+                      }
+                    });
+                  } else {
+                    ShareScreen.startShare(
+                      context,
+                      backgroundColor: Color(0x77000000),
+                      style: selectedEffect.key,
+                      image: (controller.isVideo.value) ? videoPath : image,
+                      isVideo: controller.isVideo.value,
+                      originalUrl: urlFinal,
+                      effectKey: selectedEffect.key,
+                    );
+                  }
+                },
+              ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+            ).visibility(visible: controller.isPhotoDone.value)),
+      ],
+    ).intoContainer(margin: EdgeInsets.only(top: $(25), left: $(23), right: $(23))).visibility(visible: controller.isPhotoSelect.value);
   }
 
   Widget _buildCarouselItem(BuildContext context, int itemIndex) {
@@ -860,7 +871,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Future<void> _showInterstitialVideo() async {
-    bool showAds = isShowAds(_user);
+    bool showAds = isShowAdsNew();
     if (showAds == false) return;
     CacheManager cacheManager = AppDelegate.instance.getManager();
     int lastTime = cacheManager.getInt(CacheManager.keyLastVideoAdsShowTime);
@@ -1221,7 +1232,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   String _getAiHostByStyle(EffectItem effect) {
     var server = effect.server;
-    return _user.ai_servers[server] ?? Config.instance.aiHost;
+    return userManager.aiServers[server] ?? Config.instance.apiHost;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
@@ -1267,7 +1278,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
                       if (isLogin) {
                         await API.getLogin(needLoad: false, context: context);
-                        controller.changeIsLogin(isLogin);
                         setState(() {});
                       }
                     },

@@ -244,23 +244,25 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   ),
                 )
                     .intoGestureDetector(onTap: () {
-                      if (Platform.isIOS) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/PurchaseScreen"),
-                            builder: (context) => PurchaseScreen(),
-                          ),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                            builder: (context) => StripeSubscriptionScreen(),
-                          ),
-                        );
-                      }
+                      userManager.doOnLogin(context, callback: () {
+                        if (Platform.isIOS) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/PurchaseScreen"),
+                              builder: (context) => PurchaseScreen(),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                              builder: (context) => StripeSubscriptionScreen(),
+                            ),
+                          );
+                        }
+                      });
                     })
                     .offstage(offstage: !proVisible)
                     .listenSizeChanged(onSizeChanged: (size) {

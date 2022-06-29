@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 
 ///app state
 ///features:
@@ -7,8 +8,12 @@ import 'package:cartoonizer/Common/importFile.dart';
 abstract class AppState<T extends StatefulWidget> extends State<T> {
   bool loading = false;
   bool canCancelOnLoading = true;
+  KeyboardInterceptType interceptType = KeyboardInterceptType.hideKeyboard;
 
-  AppState({this.canCancelOnLoading = true});
+  AppState({
+    this.canCancelOnLoading = true,
+    this.interceptType = KeyboardInterceptType.hideKeyboard,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +31,11 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
     return WillPopScope(
         child: Stack(
           children: [
-            buildWidget(context).blankAreaIntercept(),
+            buildWidget(context).blankAreaIntercept(interceptType: interceptType),
             loading
                 ? Center(
-              child: CircularProgressIndicator(),
-            ).intoContainer(color: Color(0x55000000))
+                    child: CircularProgressIndicator(),
+                  ).intoContainer(color: Color(0x55000000))
                 : Container(),
           ],
           fit: StackFit.expand,

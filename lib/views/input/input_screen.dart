@@ -54,13 +54,17 @@ class InputScreenState extends State<InputScreen> {
   }
 
   submit() async {
+    var string = textEditingController.text.trim();
+    if (string.isEmpty) {
+      return;
+    }
     setState(() => ignore = true);
-    var bool = await callback.call(textEditingController.text);
+    var bool = await callback.call(string);
+    setState(() => ignore = false);
     if (bool) {
       cacheManager.setString(_getKey(), '');
+      Navigator.pop(context);
     }
-    setState(() => ignore = false);
-    Navigator.pop(context);
   }
 
   @override

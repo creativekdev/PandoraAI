@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+
 
 DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	final DiscoveryListEntity discoveryListEntity = DiscoveryListEntity();
@@ -71,6 +73,10 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (likeId != null) {
 		discoveryListEntity.likeId = likeId;
 	}
+	final String? resources = jsonConvert.convert<String>(json['resources']);
+	if (resources != null) {
+		discoveryListEntity.resources = resources;
+	}
 	return discoveryListEntity;
 }
 
@@ -93,5 +99,26 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['status'] = entity.status;
 	data['cartoonize_key'] = entity.cartoonizeKey;
 	data['like_id'] = entity.likeId;
+	data['resources'] = entity.resources;
+	return data;
+}
+
+DiscoveryResource $DiscoveryResourceFromJson(Map<String, dynamic> json) {
+	final DiscoveryResource discoveryResource = DiscoveryResource();
+	final String? type = jsonConvert.convert<String>(json['type']);
+	if (type != null) {
+		discoveryResource.type = type;
+	}
+	final String? url = jsonConvert.convert<String>(json['url']);
+	if (url != null) {
+		discoveryResource.url = url;
+	}
+	return discoveryResource;
+}
+
+Map<String, dynamic> $DiscoveryResourceToJson(DiscoveryResource entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['type'] = entity.type;
+	data['url'] = entity.url;
 	return data;
 }

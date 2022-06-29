@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 ///
@@ -8,7 +9,11 @@ import 'package:get/get.dart';
 class ExceptionHandler {
   onError(Exception e, {bool toastOnFailed = true}) {
     if (toastOnFailed) {
-      CommonExtension().showToast(e.toString());
+      if(!kReleaseMode) {
+        CommonExtension().showToast(e.toString());
+      } else {
+        CommonExtension().showToast("Oops Failed!");
+      }
     }
   }
 

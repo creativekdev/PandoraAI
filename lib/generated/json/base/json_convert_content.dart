@@ -15,6 +15,7 @@ class JsonConvert {
 	static final Map<String, JsonConvertFunction> _convertFuncMap = {
 		(DiscoveryCommentListEntity).toString(): DiscoveryCommentListEntity.fromJson,
 		(DiscoveryListEntity).toString(): DiscoveryListEntity.fromJson,
+		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
 	};
 
@@ -96,6 +97,9 @@ class JsonConvert {
 		}
 		if(<DiscoveryListEntity>[] is M){
 			return data.map<DiscoveryListEntity>((Map<String, dynamic> e) => DiscoveryListEntity.fromJson(e)).toList() as M;
+		}
+		if(<DiscoveryResource>[] is M){
+			return data.map<DiscoveryResource>((Map<String, dynamic> e) => DiscoveryResource.fromJson(e)).toList() as M;
 		}
 		if(<PageEntity>[] is M){
 			return data.map<PageEntity>((Map<String, dynamic> e) => PageEntity.fromJson(e)).toList() as M;

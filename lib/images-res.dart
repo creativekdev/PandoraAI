@@ -59,6 +59,7 @@ class Images {
    static const String ic_setting_my_discovery = 'assets/images/ic_setting_my_discovery.png';
    static const String ic_share = 'assets/images/ic_share.png';
    static const String ic_share_app = 'assets/images/ic_share_app.png';
+   static const String ic_share_discovery = 'assets/images/ic_share_discovery.png';
    static const String ic_share_email = 'assets/images/ic_share_email.png';
    static const String ic_share_facebook = 'assets/images/ic_share_facebook.png';
    static const String ic_share_instagram = 'assets/images/ic_share_instagram.png';

@@ -116,4 +116,6 @@ class StringConstant {
   static const discoveryComment = "Comment";
   static const discoveryLike = "Like";
   static const discoveryUnlike = "Unlike";
+  static const discoveryShareRelease = 'Release';
+  static const discoveryShareInputHint = 'Input share description';
 }

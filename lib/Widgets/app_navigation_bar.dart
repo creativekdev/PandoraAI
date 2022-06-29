@@ -47,7 +47,6 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
   EdgeInsetsDirectional? padding;
   bool transitionBetweenRoutes;
   Function? backAction;
-  String? backText;
   Object heroTag;
   double elevation;
   Widget? child;
@@ -69,7 +68,6 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
     this.showBackItem = true,
     this.trailing,
     this.padding,
-    this.backText,
     this.transitionBetweenRoutes = false,
     this.backAction,
     this.heroTag = _defaultHeroTag,
@@ -108,29 +106,11 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                 backgroundColor: blurAble ? Colors.transparent : backgroundColor,
                 leading: showBackItem
                     ? GestureDetector(
-                        child: Row(
-                          children: [
-                            Offstage(
-                              offstage: backText != null,
-                              child: Container(
-                                color: Colors.transparent,
-                                // width: backText == null ? $(32) : $(20),
-                                alignment: Alignment.centerLeft,
-                                child: backIcon,
-                              ),
-                            ),
-                            Offstage(
-                              offstage: backText == null,
-                              child: Text(
-                                backText ??= '',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: $(15),
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: Container(
+                          color: Colors.transparent,
+                          // width: backText == null ? $(32) : $(20),
+                          alignment: Alignment.centerLeft,
+                          child: backIcon,
                         ),
                         onTap: () {
                           backAction == null ? Navigator.pop(context) : backAction!();

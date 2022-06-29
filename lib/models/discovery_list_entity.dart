@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/discovery_list_entity.g.dart';
 
@@ -26,6 +27,7 @@ class DiscoveryListEntity {
   late String cartoonizeKey;
   @JSONField(name: "like_id")
   int? likeId;
+  late String resources;
 
   DiscoveryListEntity({
     this.userId = 0,
@@ -45,6 +47,7 @@ class DiscoveryListEntity {
     this.userName = '',
     this.userAvatar = '',
     this.likeId,
+    this.resources = '',
   });
 
   factory DiscoveryListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryListEntityFromJson(json);
@@ -56,7 +59,54 @@ class DiscoveryListEntity {
     return jsonEncode(this);
   }
 
+  List<DiscoveryResource> resourceList() {
+    try {
+      var json = jsonDecode(resources);
+      return (json as List<dynamic>).map((e) => jsonConvert.convert<DiscoveryResource>(e)!).toList();
+    } on FormatException catch (e) {
+      return [];
+    }
+  }
+
   DiscoveryListEntity copy() {
     return DiscoveryListEntity.fromJson(toJson());
+  }
+}
+
+@JsonSerializable()
+class DiscoveryResource {
+  String? type;
+  String? url;
+
+  DiscoveryResource({
+    this.type,
+    this.url,
+  });
+
+  factory DiscoveryResource.fromJson(Map<String, dynamic> json) => $DiscoveryResourceFromJson(json);
+
+  Map<String, dynamic> toJson() => $DiscoveryResourceToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  DiscoveryResource copy() => DiscoveryResource.fromJson(toJson());
+}
+
+enum DiscoveryResourceType {
+  image,
+  video,
+}
+
+extension DiscoveryResourceTypeEx on DiscoveryResourceType {
+  String value() {
+    switch (this) {
+      case DiscoveryResourceType.image:
+        return 'image';
+      case DiscoveryResourceType.video:
+        return 'video';
+    }
   }
 }

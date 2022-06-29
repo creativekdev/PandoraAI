@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/home_screen.dart';
@@ -76,6 +78,19 @@ launchURL(String url) async {
   }
 }
 
+bool isShowAdsNew() {
+  var manager = AppDelegate.instance.getManager<UserManager>();
+  if (manager.isNeedLogin) {
+    return false;
+  }
+  var user = manager.user!;
+  if (user.email != '' && (user.userSubscription.containsKey('id') || user.cartoonizeCredit > 0)) {
+    return false;
+  }
+  return true;
+}
+
+@Deprecated("instead by isShowAdsNew")
 bool isShowAds(UserModel? user) {
   if (user == null) return false;
 

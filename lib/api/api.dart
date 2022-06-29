@@ -127,7 +127,7 @@ class API {
       Map data = jsonDecode(response.body.toString());
 
       if (response.statusCode == 200 && data['login'] == true) {
-        manager.refreshUser();
+        await manager.refreshUser();
         UserModel user = UserModel.fromGetLogin(data);
         sharedPreferences.setString("user", jsonEncode(user));
 

@@ -1,9 +1,10 @@
+import 'dart:convert';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/online_model.dart';
@@ -73,12 +74,14 @@ class CartoonizerApi extends BaseRequester {
   /// share effect to discovery
   Future<BaseEntity?> startSocialPost({
     required String description,
-    required String imageUrl,
-    required String originalImageUrl,
+    required List<DiscoveryResource> resources,
+    required String effectKey,
   }) async {
+    var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
     return post('/social_post/create', params: {
-      'images': '$imageUrl,$originalImageUrl',
+      'resources': encode,
       'text': description,
+      'cartoonize_key': effectKey,
     });
   }
 
@@ -153,5 +156,10 @@ class CartoonizerApi extends BaseRequester {
       EventBusHelper().eventBus.fire(OnCommentUnlikeEvent(data: id));
     }
     return baseEntity;
+  }
+
+  Future<String?> getPresignedUrl(Map<String, dynamic> params) async {
+    var baseEntity = await get('/file/presigned_url', params: params);
+    return baseEntity?.data?['data'];
   }
 }
