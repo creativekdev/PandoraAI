@@ -46,6 +46,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.discovery_comment_loading);
     api = CartoonizerApi().bindState(this);
     discoveryEntity = widget.discoveryEntity.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {

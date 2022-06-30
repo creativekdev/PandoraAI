@@ -1,5 +1,4 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 
 import 'home_tab.dart';

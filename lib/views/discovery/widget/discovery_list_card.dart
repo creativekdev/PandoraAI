@@ -13,12 +13,14 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late List<DiscoveryResource> resources;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
+  double width;
 
   DiscoveryListCard({
     Key? key,
     required this.data,
     this.onTap,
     this.onLikeTap,
+    required this.width,
   }) : super(key: key) {
     resources = data.resourceList();
   }
@@ -30,7 +32,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         ClipRRect(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: resources.length > 1 ? buildResourceItem(resources[1]) : Container(),
+          child: resources.length > 0 ? buildResourceItem(resources[0]) : Container(),
         ),
         Row(
           children: [
@@ -60,14 +62,16 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
 
   Widget buildResourceItem(DiscoveryResource resource) {
     if (resource.type == DiscoveryResourceType.video.value()) {
-      return EffectVideoPlayer(url: resource.url ?? '');
+      return EffectVideoPlayer(
+        url: resource.url ?? '',
+      ).intoContainer(height: width);
     } else {
       return CachedNetworkImage(
         imageUrl: resource.url ?? '',
         cacheManager: CachedImageCacheManager(),
         placeholder: (context, url) => loadingWidget(context),
         errorWidget: (context, url, error) => loadingWidget(context),
-      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: width, maxHeight: $(700), maxWidth: $(400)));
     }
   }
 

@@ -1,22 +1,16 @@
-import 'dart:async';
 import 'dart:ui';
 
-import 'package:cartoonizer/Common/StringConstant.dart';
-import 'package:cartoonizer/Common/ThemeConstant.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Widgets/TitleTextWidget.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/widget_extensions.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/utils/screen_util.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -54,6 +48,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.user_discovery_loading);
     userId = widget.userId;
     title = widget.title ?? StringConstant.tabDiscovery;
     api = CartoonizerApi().bindState(this);
@@ -173,6 +168,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
               ),
               itemBuilder: (context, index) => DiscoveryListCard(
                 data: dataList[index],
+                width: (ScreenUtil.screenSize.width - $(38)) / 2,
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

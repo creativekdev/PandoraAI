@@ -11,6 +11,7 @@ class CacheManager extends BaseManager {
   static const keyCurrentUser = "user_info";
   static const keyAiServer = "ai_servers";
   static const keyCacheInput = "cache_input";
+  static const keyLastTabAttached = "last_tab_attached";
 
   late SharedPreferences _sharedPreferences;
 

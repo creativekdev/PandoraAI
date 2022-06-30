@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -31,6 +32,7 @@ class DiscoveryFragment extends StatefulWidget {
 class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   int page = 0;
   int pageSize = 10;
   late CartoonizerApi api;
@@ -39,11 +41,13 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  late AppTabId tabId;
 
   @override
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
+    tabId = widget.tabId;
     delay(() {
       _easyRefreshController.callRefresh();
     });
@@ -89,12 +93,16 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onUnlikeEventListener.cancel();
   }
 
+  @override
   void onAttached() {
     super.onAttached();
-  }
-
-  void onDetached() {
-    super.onDetached();
+    userManager.refreshUser();
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
+    var currentTime = DateTime.now().millisecondsSinceEpoch;
+    if (currentTime - lastTime > 5000) {
+      logEvent(Events.tab_discovery_loading);
+    }
+    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 
   onLoadFirstPage() => api
@@ -169,6 +177,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
             ),
             itemBuilder: (context, index) => DiscoveryListCard(
               data: dataList[index],
+              width: (ScreenUtil.screenSize.width - $(38)) / 2,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(

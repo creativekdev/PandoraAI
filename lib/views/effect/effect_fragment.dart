@@ -10,6 +10,7 @@ import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -34,8 +35,10 @@ class EffectFragment extends StatefulWidget {
 class EffectFragmentState extends AppState<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   EffectDataController dataController = Get.put(EffectDataController());
   RecentController recentController = Get.put(RecentController());
+  late AppTabId tabId;
 
   int currentIndex = 0;
   late PageController _pageController;
@@ -50,6 +53,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   void initState() {
     super.initState();
     API.getLogin(needLoad: true, context: context);
+    tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         setState(() {});
@@ -64,6 +68,17 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       setState(() {});
     });
     refreshProVisible();
+  }
+
+  @override
+  void onAttached() {
+    super.onAttached();
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
+    var currentTime = DateTime.now().millisecondsSinceEpoch;
+    if (currentTime - lastTime > 5000) {
+      logEvent(Events.tab_effect_loading);
+    }
+    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 
   refreshProVisible() {

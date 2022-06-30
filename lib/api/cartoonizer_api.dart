@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -78,6 +79,7 @@ class CartoonizerApi extends BaseRequester {
     required String effectKey,
   }) async {
     var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
+    logEvent(Events.create_discovery_share);
     return post('/social_post/create', params: {
       'resources': encode,
       'text': description,

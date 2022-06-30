@@ -45,6 +45,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
   @override
   void initState() {
     super.initState();
+    logEvent(Events.discovery_detail_loading);
     api = CartoonizerApi().bindState(this);
     data = widget.data.copy();
     resources = data.resourceList();
@@ -231,15 +232,25 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
 
   Widget buildResourceItem(DiscoveryResource resource) {
     if (resource.type == DiscoveryResourceType.video.value()) {
-      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
     } else {
       return CachedNetworkImage(
         imageUrl: resource.url ?? '',
         fit: BoxFit.cover,
         cacheManager: CachedImageCacheManager(),
-      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: $(150)));
+        placeholder: (context, url) => loadingWidget(context),
+        errorWidget: (context, url, error) => loadingWidget(context),
+      );
     }
   }
+
+  Widget loadingWidget(BuildContext context) => Container(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
 
   void open(BuildContext context, final int index) {
     List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
@@ -272,6 +283,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
       });
 
   toChoosePage() {
+
     String key = data.cartoonizeKey;
     showLoading().whenComplete(() {
       effectManager.loadData().then((value) {
@@ -302,6 +314,11 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
           if (effectItem == null) {
             return;
           }
+          logEvent(Events.choose_home_cartoon_type, eventValues: {
+            "category": targetSeries[index].key,
+            "style": targetSeries[index].style,
+            "page": 'discovery',
+          });
           Navigator.push(
             context,
             MaterialPageRoute(
