@@ -47,6 +47,7 @@ class DiscoveryAttrHolder {
                 ],
               ))
         .intoContainer(
+          color: Colors.transparent,
           padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(6)),
           constraints: BoxConstraints(minWidth: $(0)),
         )
