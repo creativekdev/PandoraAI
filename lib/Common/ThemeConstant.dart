@@ -1,3 +1,5 @@
+import 'package:cartoonizer/views/effect/effect_fragment.dart';
+
 import 'importFile.dart';
 
 class FontSizeConstants {
@@ -12,7 +14,8 @@ class ColorConstant {
   // colors
   static const PrimaryColor = Colors.white;
   static const BlueColor = Color.fromRGBO(62, 96, 255, 1);
-  static const BackgroundColor = Color.fromRGBO(22, 23, 25, 1);
+  static const BackgroundColor = Color(0xff161719);
+  static const BackgroundColorBlur = Color.fromARGB(204, 22, 23, 25);
   static const CardColor = Color.fromRGBO(35, 37, 40, 1);
   static const ShadowColor = Color.fromRGBO(62, 96, 255, 0.5);
   static const RadialColor1 = Color.fromRGBO(55, 83, 250, 1);
@@ -24,7 +27,15 @@ class ColorConstant {
   static const BtnColor = Colors.white;
   static const BtnTextColor = Colors.white;
   static const White = Colors.white;
+  static const Red = Color(0xffff375f);
   static const TextBlack = Color.fromRGBO(6, 10, 47, 1);
   static const TextBlue = Color.fromRGBO(55, 83, 250, 1);
   static const LightTextColor = Color.fromRGBO(38, 50, 92, 1);
+  static const DiscoveryBtn = Color(0xff3E60FF);
+  static const DiscoveryCommentGrey = Color(0xff8f8f8f);
+  static const EffectGrey = Color(0xff8f8f8f);
+  static const EffectFunctionGrey = Color(0xff232528);
+  static const EffectFunctionBlue = Color(0xff3E60FF);
+  static const InputBackground = Color(0xff3a3a3b);
+  static const InputContent = Color(0xff565656);
 }

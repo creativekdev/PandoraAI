@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
@@ -37,6 +37,14 @@ class Events {
   static String paid_success = "paid_success"; // plan_id, product_id, price, currency, quantity},
   static String open_my_discovery = "open_my_discovery";
   static String delete_account = "delete_account";
+  static String tab_effect_loading = "tab_effect_loading";
+  static String tab_discovery_loading = "tab_discovery_loading";
+  static String tab_me_loading = "tab_me_loading";
+  static String user_discovery_loading = "user_discovery_loading";
+  static String discovery_detail_loading = "discovery_detail_loading";
+  static String discovery_comment_loading = "discovery_comment_loading";
+  static String discovery_secondary_comment_loading = "discovery_secondary_comment_loading";
+  static String create_discovery_share = "create_discovery_share";
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
