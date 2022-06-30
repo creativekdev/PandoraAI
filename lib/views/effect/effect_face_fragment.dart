@@ -70,20 +70,25 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
-    return ListView.builder(
-      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
-          .intoContainer(
-            margin: EdgeInsets.only(
-              left: $(15),
-              right: $(15),
-              top: $(0),
-              bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      removeBottom: true,
+      child: ListView.builder(
+        itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
+            .intoContainer(
+              margin: EdgeInsets.only(
+                left: $(15),
+                right: $(15),
+                top: $(0),
+                bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+              ),
+            )
+            .intoGestureDetector(
+              onTap: () => _onEffectCategoryTap(dataList, index),
             ),
-          )
-          .intoGestureDetector(
-            onTap: () => _onEffectCategoryTap(dataList, index),
-          ),
-      itemCount: dataList.length,
+        itemCount: dataList.length,
+      ),
     );
   }
 

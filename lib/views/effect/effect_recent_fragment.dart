@@ -43,20 +43,25 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
                   ),
                   textAlign: TextAlign.center,
                 ).intoContainer(alignment: Alignment.center, margin: EdgeInsets.all($(25))).intoCenter()
-              : ListView.builder(
-                  itemCount: _.dataList.length,
-                  itemBuilder: (context, index) => EffectFullBodyCardWidget(
-                    parentWidth: width,
-                    data: _.dataList[index],
-                    onTap: (data) {
-                      _onEffectCategoryTap(_.recentModelList, _.dataList, data);
-                    },
-                  ).intoContainer(
-                    margin: EdgeInsets.only(
-                      left: $(20),
-                      right: $(20),
-                      top: index == 0 ? $(16) : $(8),
-                      bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+              : MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  removeBottom: true,
+                  child: ListView.builder(
+                    itemCount: _.dataList.length,
+                    itemBuilder: (context, index) => EffectFullBodyCardWidget(
+                      parentWidth: width,
+                      data: _.dataList[index],
+                      onTap: (data) {
+                        _onEffectCategoryTap(_.recentModelList, _.dataList, data);
+                      },
+                    ).intoContainer(
+                      margin: EdgeInsets.only(
+                        left: $(20),
+                        right: $(20),
+                        top: index == 0 ? $(16) : $(8),
+                        bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+                      ),
                     ),
                   ),
                 );

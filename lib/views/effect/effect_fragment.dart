@@ -198,9 +198,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       onTap: (index) {
                         setIndex(index);
                       },
-                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.all($(8)))).toList(),
+                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(4)))).toList(),
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
-                SizedBox(height: $(4)),
+                SizedBox(height: $(8)),
                 Expanded(
                     child: PageView.builder(
                   onPageChanged: _pageChange,

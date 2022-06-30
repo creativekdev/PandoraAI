@@ -89,16 +89,21 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
-    return ListView.builder(
-      itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
-        margin: EdgeInsets.only(
-          right: $(15),
-          left: $(15),
-          top: $(8),
-          bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+    return MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+      removeTop: true,
+      child: ListView.builder(
+        itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
+          margin: EdgeInsets.only(
+            right: $(15),
+            left: $(15),
+            top: $(8),
+            bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+          ),
         ),
+        itemCount: dataList.length,
       ),
-      itemCount: dataList.length,
     );
   }
 
