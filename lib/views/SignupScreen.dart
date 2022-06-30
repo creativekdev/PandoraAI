@@ -10,6 +10,7 @@ import 'package:http/http.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'InstaLoginScreen.dart';
 import 'SocialSignUpScreen.dart';
@@ -213,6 +214,16 @@ class _SignupScreenState extends State<SignupScreen> {
                             logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
                           } else {
                             CommonExtension().showToast("Oops! Something went wrong");
+                          }
+                        }  on SignInWithAppleAuthorizationException catch (e) {
+                          switch(e.code) {
+                            case AuthorizationErrorCode.canceled:
+                            case AuthorizationErrorCode.unknown:
+                            // do nothing
+                              break;
+                            default:
+                              CommonExtension().showToast("Oops! Something went wrong");
+                              break;
                           }
                         } catch (e) {
                           CommonExtension().showToast("Oops! Something went wrong");
@@ -548,7 +559,9 @@ class _SignupScreenState extends State<SignupScreen> {
                 ],
               ),
             ),
-          ),
+          ).intoGestureDetector(onTap: (){
+            FocusScope.of(context).requestFocus(FocusNode());
+          }),
         ),
       ),
     );

@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/views/EmailVerificationScreen.dart';
-import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/common/sToken.dart';
-import 'models/UserModel.dart';
+import 'Common/importFile.dart';
+import 'Common/sToken.dart';
 
 class API {
   // Stitching parameters
@@ -44,11 +45,17 @@ class API {
 
     // add custom params
     if (params == null || params.isEmpty) {
-      params = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+      params = {
+        "app_platform": Platform.operatingSystem,
+        "app_version": packageInfo.version,
+        "app_build": packageInfo.buildNumber,
+        'from_app': "1",
+      };
     } else {
       params["app_platform"] = Platform.operatingSystem;
       params["app_version"] = packageInfo.version;
       params["app_build"] = packageInfo.buildNumber;
+      params['from_app'] = "1";
     }
 
     // add ts and signature
@@ -83,11 +90,17 @@ class API {
 
     // add custom params
     if (body == null || body.isEmpty) {
-      body = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+      body = {
+        "app_platform": Platform.operatingSystem,
+        "app_version": packageInfo.version,
+        "app_build": packageInfo.buildNumber,
+        'from_app': "1",
+      };
     } else {
       body["app_platform"] = Platform.operatingSystem;
       body["app_version"] = packageInfo.version;
       body["app_build"] = packageInfo.buildNumber;
+      body['from_app'] = "1";
     }
 
     // add ts and signature
@@ -164,5 +177,14 @@ class API {
     } catch (e) {
       return {"need_update": false};
     }
+  }
+
+  static Future<EffectMap?> getHomeConfig() async {
+    var response = await API.get("/api/tool/cartoonize_config/v3");
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> parsed = json.decode(response.body.toString());
+      return EffectMap.fromJson(parsed);
+    }
+    return null;
   }
 }

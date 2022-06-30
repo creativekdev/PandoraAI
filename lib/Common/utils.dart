@@ -1,14 +1,14 @@
-import 'dart:io';
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/api.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/views/HomeScreen.dart';
-
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const String _kUser = 'user';
 
@@ -20,7 +20,7 @@ String get APP_TYPE {
 
 Future<UserModel> getUser() async {
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  var localUser = sharedPreferences.getString(_kUser) ?? "";
+  var localUser = sharedPreferences.getString(_kUser) ?? "{}";
   return UserModel.fromJson(jsonDecode(localUser));
 }
 

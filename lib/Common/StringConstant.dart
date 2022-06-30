@@ -89,7 +89,7 @@ class StringConstant {
   static const cancel = "Cancel";
   static const confirm = "Confirm";
   static const pay = "Pay";
-  static const share_title = "SocialBook Cartoonizer";
+  static const share_title = app_name;
   static const please_login_first = "Please login first";
   static const DAILY_IP_LIMIT_EXCEEDED = "You have run out of your daily credits. Please come back tomorrow.";
   static const resend = "Resend";
@@ -104,4 +104,6 @@ class StringConstant {
   static const zip_code_validation_message = "Invalid zip code";
   static const welcome_title1 = "Make your own cartoon avatar";
   static const welcome_title2 = "Turn Photos into Art";
+  static const setting_my_discovery = "My Discovery";
+  static const setting_my_delete_account = "Delete Account";
 }

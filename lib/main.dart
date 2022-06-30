@@ -1,19 +1,19 @@
-import 'dart:io';
 import 'dart:developer';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'firebase_options.dart';
-import 'package:flutter_applovin_max/flutter_applovin_max.dart';
+import 'dart:io';
 
-import 'package:cartoonizer/common/dialog.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/utils.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
-import 'package:cartoonizer/views/HomeScreen.dart';
-import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:cartoonizer/Common/dialog.dart';
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/utils.dart';
 import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/helper/shared_pref.dart';
+import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'config.dart';
+import 'firebase_options.dart';
 
 void main() async {
   // print the current configuration
@@ -45,10 +45,8 @@ void main() async {
   // init appsflyer
   Appsflyer.instance;
 
-  // init applovin
-  // FlutterApplovinMax.initSDK();
-  FlutterApplovinMax.initInterstitialAd(AppLovinConfig.INTERSTITIAL_AD_ID);
-
+  // init admob
+  MobileAds.instance.initialize();
   // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
@@ -160,7 +158,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   //监听程序进入前后台的状态改变的方法
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
     switch (state) {
       //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume

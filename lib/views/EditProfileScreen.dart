@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,14 +22,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final EditProfileScreenController controller = Get.put(EditProfileScreenController());
-  var imagePicker;
+  final EditProfileScreenController controller = EditProfileScreenController();
+  late ImagePicker imagePicker;
   final nameController = TextEditingController();
 
   @override
   void dispose() {
     nameController.dispose();
-    Get.reset(clearRouteBindings: true);
     super.dispose();
   }
 
@@ -266,48 +266,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.camera;
-                  XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                  XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                  if(image == null) {
+                    return;
+                  }
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
                 } on PlatformException catch (error) {
                   if (error.code == "camera_access_denied") {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoAlertDialog(
-                              title: Text(
-                                'Camera Permission',
-                                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                              ),
-                              content: Text(
-                                'This app needs camera access to take pictures for upload user profile photo',
-                                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                              ),
-                              actions: <Widget>[
-                                CupertinoDialogAction(
-                                  child: Text(
-                                    'Deny',
-                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                  ),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                ),
-                                CupertinoDialogAction(
-                                  child: Text(
-                                    'Settings',
-                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                  ),
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    try {
-                                      openAppSettings();
-                                    } catch (err) {
-                                      print("err");
-                                      print(err);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ));
+                    showCameraPermissionDialog(context);
                   }
                 } catch (error) {
                   print("error");
@@ -323,51 +291,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.gallery;
-                  XFile image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                  XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                  if(image == null) {
+                    return;
+                  }
                   controller.updateImageFile(File(image.path));
                   controller.changeIsPhotoSelect(true);
                   uploadImage();
                 } on PlatformException catch (error) {
                   print(error);
                   if (error.code == "photo_access_denied") {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => CupertinoAlertDialog(
-                              title: Text(
-                                'PhotoLibrary Permission',
-                                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-                              ),
-                              content: Text(
-                                'This app needs photo library access to choose pictures for upload user profile photo',
-                                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                              ),
-                              actions: <Widget>[
-                                CupertinoDialogAction(
-                                  child: Text(
-                                    'Deny',
-                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                  ),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                ),
-                                CupertinoDialogAction(
-                                  child: Text(
-                                    'Settings',
-                                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                                  ),
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                    try {
-                                      openAppSettings();
-                                    } catch (err) {
-                                      print("err");
-                                      print(err);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ));
+                    showPhotoLibraryPermissionDialog(context);
                   }
-                } catch (error) {}
+                } catch (error) {
+                  print(error);
+                }
               }),
         ],
         cancelButton: CupertinoActionSheetAction(

@@ -3,10 +3,10 @@ import 'package:cartoonizer/common/utils.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Events {
   static String open_app = "open app";
@@ -35,6 +35,8 @@ class Events {
   static String contact_socialmedia = "contact_socialmedia"; // channel
   static String premium_continue = "premium_continue";
   static String paid_success = "paid_success"; // plan_id, product_id, price, currency, quantity},
+  static String open_my_discovery = "open_my_discovery";
+  static String delete_account = "delete_account";
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {

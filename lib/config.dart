@@ -8,22 +8,25 @@ const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id
 const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.socialbook.cartoonizer';
 const String IOS_APP_ID = '1604123460';
 
-class AppLovinConfig {
-  static const String APPLOVIN_KEY = 'D9GdODAvyVCfkF8g5ZM0Ub5OTeh2TGPvpl6UvlBRuCgXuasSdG7bDo_-sr8R9vUU_Vx5KUhzhmJ74e5nIhISw6';
-  static String get INTERSTITIAL_AD_ID => Platform.isIOS ? "9620a0ef622da195" : "46442c2be0bc5d94";
-  static String get MERC_AD_ID => Platform.isIOS ? "15e7efce98556126" : "905f6f3f1520fcd2";
+class AdMobConfig {
+  // static String get BANNER_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
+  static String get BANNER_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';
+  // static String get INTERSTITIAL_AD_ID => 'ca-app-pub-3940256099942544/8691691433';
+  static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
 }
 
 abstract class BaseConfig {
   late String host;
   late String aiHost;
+
   String get apiHost;
+
   late String stripePublishableKey;
   late String appsflyerKey;
 
-  // appsflyer config
-  // {"ios":{"id":id1604123460, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
-  // {"android":{"id":io.socialbook.cartoonizer, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
+// appsflyer config
+// {"ios":{"id":id1604123460, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
+// {"android":{"id":io.socialbook.cartoonizer, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
 }
 
 class DevelopmentConfig implements BaseConfig {
@@ -51,6 +54,7 @@ class DevelopmentConfig implements BaseConfig {
 class ProductionConfig implements BaseConfig {
   String host = 'https://socialbook.io';
   String aiHost = 'https://ai.socialbook.io';
+
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_live_Rhji9hzPepvF00Mfh7GpWyeE';
   String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
