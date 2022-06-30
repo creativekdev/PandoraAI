@@ -1,17 +1,20 @@
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
-
-import 'package:cartoonizer/helper/shared_pref.dart';
-import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/welcome_widgets.dart';
 
 class IntroductionScreen extends StatelessWidget {
   const IntroductionScreen({Key? key}) : super(key: key);
 
   _onContinueClick(BuildContext context) {
-    SharedPreferencesHelper.setBool(SharedPreferencesHelper.keyHasIntroductionPageShowed, true);
+    AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.keyHasIntroductionPageShowed, true);
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      MaterialPageRoute(
+        builder: (BuildContext context) => HomeScreen(),
+        settings: RouteSettings(name: "/HomeScreen"),
+      ),
       ModalRoute.withName('/HomeScreen'),
     );
   }

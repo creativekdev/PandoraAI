@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:http/http.dart';
 // import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -10,11 +11,12 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_model.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_form.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'LoginScreen.dart';
 
 class StripeAddNewCardScreen extends StatefulWidget {
   final String planId;
+
   const StripeAddNewCardScreen({Key? key, required this.planId}) : super(key: key);
 
   @override
@@ -147,7 +149,8 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
         child: Column(
           children: [
             CreditCardForm(
-              formKey: formKey, // Required
+              formKey: formKey,
+              // Required
               cardNumber: cardNumber,
               expiryDate: expiryDate,
               cardHolderName: cardHolderName,
@@ -161,7 +164,8 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                   cvvCode = data.cvvCode;
                   zipCode = data.zipCode;
                 });
-              }, // Required
+              },
+              // Required
               themeColor: ColorConstant.White,
               textColor: ColorConstant.White,
               obscureCvv: true,
@@ -315,54 +319,36 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LoadingOverlay(
+      isLoading: _purchasePending,
+      child: Scaffold(
         backgroundColor: ColorConstant.BackgroundColor,
-        body: SafeArea(
-          child: LoadingOverlay(
-              isLoading: _purchasePending,
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeConstants.TopBarEdgeInsets,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () => {Navigator.pop(context)},
-                          child: Image.asset(
-                            ImagesConstant.ic_back,
-                            height: 30,
-                            width: 30,
-                          ),
-                        ),
-                      ],
-                    ),
+        appBar: AppNavigationBar(
+          blurAble: false,
+          backgroundColor: Colors.transparent,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                  // height: 5.h,
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              // height: 5.h,
-                              ),
-                          TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 24),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                          _buildNewCardField(),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                          _buildPurchaseButton(),
-                          SizedBox(
-                            height: 5.h,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-        ));
+              TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 24),
+              SizedBox(
+                height: 2.h,
+              ),
+              _buildNewCardField(),
+              SizedBox(
+                height: 5.h,
+              ),
+              _buildPurchaseButton(),
+              SizedBox(
+                height: 5.h,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

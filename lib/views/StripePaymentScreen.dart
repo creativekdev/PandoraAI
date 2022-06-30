@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -7,11 +8,12 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'StripeAddNewCardScreen.dart';
 
 class StripePaymentScreen extends StatefulWidget {
   final String planId;
+
   const StripePaymentScreen({Key? key, required this.planId}) : super(key: key);
 
   @override
@@ -302,58 +304,30 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: ColorConstant.BackgroundColor,
-        body: SafeArea(
-          child: LoadingOverlay(
-              isLoading: _purchasePending,
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeConstants.TopBarEdgeInsets,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () => {Navigator.pop(context)},
-                          child: Image.asset(
-                            ImagesConstant.ic_back,
-                            height: 30,
-                            width: 30,
-                          ),
-                        ),
-                        TitleTextWidget(StringConstant.payment, ColorConstant.BtnTextColor, FontWeight.w600, FontSizeConstants.topBarTitle),
-                        SizedBox(
-                          height: 30,
-                          width: 30,
-                        )
-                        // GestureDetector(
-                        //   onTap: () async {
-                        //     gotoAddNewCard();
-                        //   },
-                        //   child: Image.asset(
-                        //     ImagesConstant.ic_add,
-                        //     height: 38,
-                        //     width: 38,
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildCardList(),
-                          SizedBox(
-                            height: 2.h,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )),
-        ));
+    return LoadingOverlay(
+      isLoading: _purchasePending,
+      child: Scaffold(
+          backgroundColor: ColorConstant.BackgroundColor,
+          appBar: AppNavigationBar(
+            blurAble: false,
+            backgroundColor: Colors.transparent,
+            middle: TitleTextWidget(
+              StringConstant.payment,
+              ColorConstant.BtnTextColor,
+              FontWeight.w600,
+              FontSizeConstants.topBarTitle,
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildCardList(),
+                SizedBox(
+                  height: 2.h,
+                ),
+              ],
+            ),
+          )),
+    );
   }
 }
