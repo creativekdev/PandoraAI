@@ -609,7 +609,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: Platform.isAndroid ? $(12) : 0).offstage(offstage: widget.isFromRecent),
+                  SizedBox(height: $(12)).offstage(offstage: widget.isFromRecent),
                 ],
               ),
             )),
