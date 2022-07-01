@@ -234,25 +234,6 @@ class _SettingScreenState extends State<SettingScreen> {
                 }).offstage(offstage: !((snapshot.data != null ? snapshot.data as bool : true) || isLoading));
               },
             ),
-            FutureBuilder(
-              future: _getIsLogin(),
-              builder: (context, snapshot) {
-                return ImageTextBarWidget(StringConstant.setting_my_delete_account, Images.ic_setting_my_delete_account, false)
-                    .intoGestureDetector(
-                        onTap: () => showDeleteAccountDialog(context).then((value) {
-                              if (value ?? false) {
-                                setState(() => isLoading = true);
-                                deleteAccount().then((value) {
-                                  setState(() => isLoading = false);
-                                  if (value) {
-                                    showDeleteSuccessDialog(context);
-                                  }
-                                });
-                              }
-                            }))
-                    .offstage(offstage: !((snapshot.data != null ? snapshot.data as bool : true) || isLoading));
-              },
-            ),
             ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, false).intoGestureDetector(
               onTap: () async {
                 logEvent(Events.rate_us);
@@ -278,6 +259,25 @@ class _SettingScreenState extends State<SettingScreen> {
               logEvent(Events.open_privacy);
               launchURL("https://socialbook.io/privacy");
             }),
+            FutureBuilder(
+              future: _getIsLogin(),
+              builder: (context, snapshot) {
+                return ImageTextBarWidget(StringConstant.setting_my_delete_account, Images.ic_setting_my_delete_account, false)
+                    .intoGestureDetector(
+                        onTap: () => showDeleteAccountDialog(context).then((value) {
+                              if (value ?? false) {
+                                setState(() => isLoading = true);
+                                deleteAccount().then((value) {
+                                  setState(() => isLoading = false);
+                                  if (value) {
+                                    showDeleteSuccessDialog(context);
+                                  }
+                                });
+                              }
+                            }))
+                    .offstage(offstage: !((snapshot.data != null ? snapshot.data as bool : true) || isLoading));
+              },
+            ),
             FutureBuilder(
               future: _getIsLogin(),
               builder: (context, snapshot) {
