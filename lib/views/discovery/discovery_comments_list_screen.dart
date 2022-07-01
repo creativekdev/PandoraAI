@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -171,6 +172,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     );
     await hideLoading();
     if (baseEntity != null) {
+      CommonExtension().showToast('Comment posted');
       _refreshController.callRefresh();
     }
     return baseEntity != null;
@@ -224,6 +226,15 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
             controller: _refreshController,
             enableControlFinishRefresh: true,
             enableControlFinishLoad: false,
+            emptyWidget: dataList.isEmpty
+                ? TitleTextWidget(
+                    'No comments yet, be the first to comment',
+                    ColorConstant.White,
+                    FontWeight.normal,
+                    $(16),
+                    align: TextAlign.center,
+                  ).intoCenter()
+                : null,
             onRefresh: () async => loadFirstPage(),
             onLoad: () async => loadMorePage(),
             slivers: [
