@@ -33,6 +33,7 @@ class UserDiscoveryScreen extends StatefulWidget {
 class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
   late int userId;
   late String title;
+  late String emptyText;
   UserManager userManager = AppDelegate.instance.getManager();
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   int page = 0;
@@ -51,6 +52,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
     logEvent(Events.user_discovery_loading);
     userId = widget.userId;
     title = widget.title ?? StringConstant.tabDiscovery;
+    emptyText = widget.title == null ? 'This user has not posted anything' : 'You have not posted anything';
     api = CartoonizerApi().bindState(this);
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
@@ -157,7 +159,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
             controller: _easyRefreshController,
             enableControlFinishRefresh: true,
             enableControlFinishLoad: false,
-            emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+            emptyWidget: dataList.isEmpty ? TitleTextWidget(emptyText, ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
             onRefresh: () async => onLoadFirstPage(),
             onLoad: () async => onLoadMorePage(),
             child: WaterfallFlow.builder(
@@ -201,7 +203,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
                     blurAble: true,
                     backgroundColor: ColorConstant.BackgroundColorBlur,
                     middle: TitleTextWidget(
-                      StringConstant.tabDiscovery,
+                      title,
                       ColorConstant.BtnTextColor,
                       FontWeight.w600,
                       $(18),

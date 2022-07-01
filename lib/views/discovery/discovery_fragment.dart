@@ -167,6 +167,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           controller: _easyRefreshController,
           enableControlFinishRefresh: true,
           enableControlFinishLoad: false,
+          emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
           onRefresh: () async => onLoadFirstPage(),
           onLoad: () async => onLoadMorePage(),
           child: WaterfallFlow.builder(
