@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -14,13 +15,13 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+
 import 'widget/discovery_attr_holder.dart';
-import 'package:cartoonizer/models/effect_map.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity data;
@@ -283,7 +284,6 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
       });
 
   toChoosePage() {
-
     String key = data.cartoonizeKey;
     showLoading().whenComplete(() {
       effectManager.loadData().then((value) {
