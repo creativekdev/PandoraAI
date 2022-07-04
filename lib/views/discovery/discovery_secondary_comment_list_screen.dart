@@ -37,7 +37,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
 
-  DiscoverySecondaryCommentsListState() : super(canCancelOnLoading: false);
+  DiscoverySecondaryCommentsListState() : super(canCancelOnLoading: true);
 
   @override
   void initState() {

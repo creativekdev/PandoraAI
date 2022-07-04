@@ -379,7 +379,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               backgroundColor: ColorConstant.BackgroundColor,
               appBar: AppNavigationBar(
                 backgroundColor: ColorConstant.BackgroundColor,
-                middle: TitleTextWidget('Cartoonize', ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+                middle: TitleTextWidget(StringConstant.cartoonize, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               ),
               body: Column(
                 children: [
@@ -609,7 +609,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: Platform.isAndroid ? $(12) : 0).offstage(offstage: widget.isFromRecent),
+                  SizedBox(height: $(12)).offstage(offstage: widget.isFromRecent),
                 ],
               ),
             )),
@@ -729,7 +729,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem}) {
     var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
-    if (effectItem.imageUrl.endsWith("mp4")) {
+    if (effectItem.imageUrl.contains("-transform")) {
       return Container(
         width: width,
         height: width,

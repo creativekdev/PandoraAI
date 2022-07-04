@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
+          theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
           title: 'Cartoonizer',
           home: MyHomePage(title: 'Cartoonizer'),
           debugShowCheckedModeBanner: false,

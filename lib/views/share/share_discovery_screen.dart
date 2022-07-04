@@ -175,7 +175,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           $(16),
         ),
         trailing: TitleTextWidget(
-          StringConstant.discoveryShareRelease,
+          StringConstant.discoveryShareSubmit,
           canSubmit ? ColorConstant.White : ColorConstant.EffectFunctionGrey,
           FontWeight.normal,
           $(16),

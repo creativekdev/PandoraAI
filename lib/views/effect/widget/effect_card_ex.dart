@@ -5,7 +5,7 @@ import 'package:cartoonizer/common/importFile.dart';
 
 class EffectCardEx {
   Widget urlWidget(BuildContext context, {required String url, required double width, required double height}) {
-    if (url.endsWith('mp4')) {
+    if (url.contains('mp4')) {
       return _videoWidget(context, url: url, width: width, height: height);
     } else {
       return _imageWidget(context, url: url, width: width, height: height);

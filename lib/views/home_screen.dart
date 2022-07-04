@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 
@@ -65,18 +67,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           Align(
             alignment: Alignment.bottomCenter,
             child: tabItems.length > 1
-                ? AppTabBar(
-                    items: createBottomItem(context),
-                    activeColor: ColorConstant.BlueColor,
-                    inactiveColor: ColorConstant.White,
-                    // backgroundColor: ColorConstant.BackgroundColorBlur,
-                    backgroundColor: Color.fromARGB(204, 16, 17, 19),
-                    onTap: (pos) {
-                      _setIndex(pos);
-                    },
-                    currentIndex: currentIndex,
-                    elevation: $(4),
-                  )
+                ? ClipRect(
+                    child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        child: AppTabBar(
+                          items: createBottomItem(context),
+                          activeColor: ColorConstant.BlueColor,
+                          inactiveColor: ColorConstant.White,
+                          // backgroundColor: ColorConstant.BackgroundColorBlur,
+                          backgroundColor: Color.fromARGB(204, 16, 17, 19),
+                          onTap: (pos) {
+                            _setIndex(pos);
+                          },
+                          currentIndex: currentIndex,
+                          elevation: $(4),
+                        )))
                 : Container(),
           ),
         ],
