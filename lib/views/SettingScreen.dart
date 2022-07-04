@@ -30,9 +30,9 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends AppState<SettingScreen> {
-  late SharedPreferences sharedPrefs;
   UserManager userManager = AppDelegate.instance.getManager();
   late StreamSubscription userLoginEventListener;
+  late StreamSubscription userChangeEventListener;
 
   @override
   void initState() {
@@ -41,12 +41,16 @@ class _SettingScreenState extends AppState<SettingScreen> {
     userLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       setState(() {});
     });
+    userChangeEventListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     userLoginEventListener.cancel();
+    userChangeEventListener.cancel();
   }
 
   @override
@@ -143,9 +147,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 MaterialPageRoute(
                   settings: RouteSettings(name: "/ChangePasswordScreen"),
                   builder: (context) => ChangePasswordScreen(),
-                )).then((value) async {
-              _getIsLogin();
-            });
+                ));
           }).offstage(offstage: userManager.isNeedLogin || userManager.user?.appleId != ""),
           ImageTextBarWidget(StringConstant.premium, ImagesConstant.ic_premium, false).intoGestureDetector(onTap: () {
             if (Platform.isIOS) {
@@ -407,10 +409,5 @@ class _SettingScreenState extends AppState<SettingScreen> {
       return true;
     }
     return false;
-  }
-
-  Future<bool> _getIsLogin() async {
-    sharedPrefs = await SharedPreferences.getInstance();
-    return sharedPrefs.getBool("isLogin") ?? false;
   }
 }

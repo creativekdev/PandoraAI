@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:flutter/cupertino.dart';
@@ -197,6 +199,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                                         if (updateProfileResponse.statusCode == 200) {
                                           CommonExtension().showToast("Profile update successfully!!");
+                                          AppDelegate.instance.getManager<UserManager>().refreshUser();
                                           Navigator.pop(context, false);
                                         } else {
                                           CommonExtension().showToast("Oops something went wrong!!");

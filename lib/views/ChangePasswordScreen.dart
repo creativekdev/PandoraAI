@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
@@ -69,7 +71,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     setState(() {
                       isLoading = true;
                     });
-                    var sharedPreferences = await SharedPreferences.getInstance();
 
                     var body = {
                       "old_password": oPassController.text.trim(),
@@ -82,9 +83,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           }),
                         });
                     if (response.statusCode == 200) {
-                      sharedPreferences.clear();
                       CommonExtension().showToast("Password change successfully.");
-                      Navigator.pop(context, false);
+                      AppDelegate.instance.getManager<UserManager>().refreshUser();
+                      Navigator.pop(context);
                     } else {
                       CommonExtension().showToast(json.decode(response.body)['message']);
                     }

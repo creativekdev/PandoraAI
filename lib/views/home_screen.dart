@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: Color.fromARGB(204, 16, 17, 19),
       body: Stack(
         children: [
           IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()),
@@ -69,13 +69,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             child: tabItems.length > 1
                 ? ClipRect(
                     child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
                         child: AppTabBar(
                           items: createBottomItem(context),
                           activeColor: ColorConstant.BlueColor,
                           inactiveColor: ColorConstant.White,
                           // backgroundColor: ColorConstant.BackgroundColorBlur,
-                          backgroundColor: Color.fromARGB(204, 16, 17, 19),
+                          backgroundColor: Color.fromARGB(204, 16, 16, 16),
                           onTap: (pos) {
                             _setIndex(pos);
                           },
