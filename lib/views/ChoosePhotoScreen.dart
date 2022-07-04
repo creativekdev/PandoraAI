@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
@@ -71,7 +72,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   late ItemScrollController scrollController;
   late ItemScrollController scrollController1;
   var itemPos = 0;
-  VideoPlayerController? _videoPlayerController;
+  CachedVideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
   late InterstitialAdsHolder adsHolder;
 
@@ -395,7 +396,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                                     child: (controller.isVideo.value)
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
-                                            child: VideoPlayer(_videoPlayerController!),
+                                            child: CachedVideoPlayer(_videoPlayerController!),
                                           )
                                         : Image.memory(
                                             base64Decode(image),
@@ -987,7 +988,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+        _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1049,7 +1050,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               } else if (parsed['data'].toString().endsWith(".mp4")) {
                 offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                 controller.updateVideoUrl(parsed['data']);
-                _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                   ..setLooping(true)
                   ..initialize().then((value) async {
                     controller.changeIsLoading(false);
@@ -1104,7 +1105,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               } else if (parsed['data'].toString().endsWith(".mp4")) {
                 offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                 controller.updateVideoUrl(parsed['data']);
-                _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                   ..setLooping(true)
                   ..initialize().then((value) async {
                     controller.changeIsLoading(false);
