@@ -28,25 +28,27 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
   ///   return build2(context);
   /// }
   Widget build2(BuildContext context) {
+    if (canCancelOnLoading) {
+      return _pageWidget(context);
+    }
     return WillPopScope(
-        child: Stack(
-          children: [
-            buildWidget(context).blankAreaIntercept(interceptType: interceptType),
-            loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  ).intoContainer(color: Color(0x55000000))
-                : Container(),
-          ],
-          fit: StackFit.expand,
-        ).ignore(ignoring: loading),
+        child: _pageWidget(context),
         onWillPop: () async {
-          if (canCancelOnLoading) {
-            return true;
-          }
           return !loading;
         });
   }
+
+  Widget _pageWidget(BuildContext context) => Stack(
+        children: [
+          buildWidget(context).blankAreaIntercept(interceptType: interceptType),
+          loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                ).intoContainer(color: Color(0x55000000))
+              : Container(),
+        ],
+        fit: StackFit.expand,
+      ).ignore(ignoring: loading);
 
   Future<void> showLoading() async {
     setState(() {
@@ -63,9 +65,6 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
   @protected
   Widget buildWidget(BuildContext context);
 }
-
-///
-abstract class KeyboardState<T extends StatefulWidget> extends State<T> {}
 
 mixin AppTabState<T extends StatefulWidget> on State<T> {
   bool _attached = true;

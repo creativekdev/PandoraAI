@@ -20,6 +20,7 @@ import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'widget/discovery_attr_holder.dart';
 

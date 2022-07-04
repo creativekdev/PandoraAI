@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -38,6 +39,13 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
           child: CachedNetworkImage(
             imageUrl: data.userAvatar,
             fit: BoxFit.cover,
+            errorWidget: (context, url, error) {
+              return Text(
+                (data.userName ?? ' ')[0].toUpperCase(),
+                style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
+              ).intoContainer(width: $(40), height: $(40)).intoCenter();
+            },
+            cacheManager: CachedImageCacheManager(),
           ),
         ).intoContainer(width: $(45), height: $(45)).intoGestureDetector(onTap: () {
           UserManager userManager = AppDelegate.instance.getManager();
