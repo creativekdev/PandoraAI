@@ -1,3 +1,4 @@
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
@@ -18,13 +19,13 @@ class EffectVideoPlayer extends StatefulWidget {
 
 class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   late String url;
-  late VideoPlayerController controller;
+  late CachedVideoPlayerController controller;
 
   @override
   initState() {
     super.initState();
     url = widget.url;
-    controller = VideoPlayerController.network(url)
+    controller = CachedVideoPlayerController.network(url)
       ..setLooping(true)
       ..initialize().then((value) {
         setState(() {
@@ -46,9 +47,9 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
       children: [
         AspectRatio(
           aspectRatio: controller.value.aspectRatio,
-          child: VideoPlayer(controller),
+          child: CachedVideoPlayer(controller),
         ),
-        !controller.value.isPlaying
+        !controller.value.isInitialized
             ? CircularProgressIndicator().intoCenter()
             : Container(),
       ],

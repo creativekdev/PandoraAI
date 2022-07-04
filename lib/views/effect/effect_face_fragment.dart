@@ -81,7 +81,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
                 left: $(15),
                 right: $(15),
                 top: $(0),
-                bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+                bottom: index == dataList.length - 1 ? ($(15) + AppTabBarHeight) : $(8),
               ),
             )
             .intoGestureDetector(
