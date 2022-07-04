@@ -41,10 +41,19 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Text(
-                (data.userName ?? ' ')[0].toUpperCase(),
+                (data.userName == '' ? ' ' : data.userName)[0].toUpperCase(),
                 style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
-              ).intoContainer(width: $(40), height: $(40)).intoCenter();
+              ).intoContainer(
+                  width: $(45),
+                  height: $(45),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular($(32)),
+                    border: Border.all(color: ColorConstant.White, width: 1),
+                  ));
             },
+            width: $(45),
+            height: $(45),
             cacheManager: CachedImageCacheManager(),
           ),
         ).intoContainer(width: $(45), height: $(45)).intoGestureDetector(onTap: () {
