@@ -1,9 +1,10 @@
 import 'dart:ui' show ImageFilter;
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const double _appTabBarHeight = 50.0;
+const double _appTabBarHeight = 55.0;
 
 double get AppTabBarHeight => _appTabBarHeight;
 
@@ -177,7 +178,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
                       }
                     : null,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 4.0),
+                  padding: const EdgeInsets.only(bottom: 12.0, top: 6),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: _buildSingleTabItem(items[index], active),
@@ -195,9 +196,15 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
 
   List<Widget> _buildSingleTabItem(BottomNavigationBarItem item, bool active) {
     return <Widget>[
-      Expanded(
-        child: Center(child: active ? item.activeIcon : item.icon),
-      ),
+      Stack(
+        children: [
+          item.activeIcon.offstage(offstage: !active),
+          item.icon.offstage(offstage: active),
+        ],
+      ).intoContainer(width: iconSize, height: iconSize),
+      // Expanded(
+      //   child: Center(child: active ? item.activeIcon : item.icon),
+      // ),
       if (item.label != null) Text(item.label!),
     ];
   }

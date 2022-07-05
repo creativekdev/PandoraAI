@@ -73,7 +73,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
-      removeBottom: true,
       child: ListView.builder(
         itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
             .intoContainer(

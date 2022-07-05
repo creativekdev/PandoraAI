@@ -573,7 +573,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ),
                   SizedBox(height: 1.h),
                   Container(
-                    height: $(36),
+                    height: $(42),
                     child: ScrollablePositionedList.builder(
                       initialScrollIndex: widget.pos,
                       itemCount: widget.list.length,
@@ -584,14 +584,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                         return _buildTextItem(context, index);
                       },
                     ),
+                    padding: EdgeInsets.only(left: $(20), right: $(20)),
                   ).offstage(offstage: widget.isFromRecent),
                   Container(
                     height: widget.isFromRecent ? $(150) : $(100),
                     padding: EdgeInsets.only(
-                      left: widget.isFromRecent ? $(8) : 0,
-                      right: widget.isFromRecent ? $(8) : 0,
+                      left: $(20),
+                      right: $(20),
                       top: widget.isFromRecent ? $(8) : 0,
                     ),
+                    margin: EdgeInsets.only(bottom: $(15)),
                     child: Scrollbar(
                       thickness: 0.0,
                       child: ScrollablePositionedList.separated(
@@ -715,7 +717,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var keys = effects.keys.toList();
 
     return Padding(
-      padding: EdgeInsets.all($(3.6)),
+      padding: EdgeInsets.only(left: 0, right: 0, top: $(7.2), bottom: $(7.2)),
       child: ListView.builder(
         itemCount: keys.length,
         scrollDirection: Axis.horizontal,
@@ -820,39 +822,36 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               ),
           ],
         ).intoContainer(
-          padding: EdgeInsets.all($(3)),
+          padding: EdgeInsets.all($(3.2)),
         ));
 
     return Padding(
-      padding: EdgeInsets.all(widget.isFromRecent ? 0 : $(3.6)),
+      padding: EdgeInsets.all(0),
+      // padding: EdgeInsets.all(widget.isFromRecent ? 0 : $(3.2)),
       child: (widget.isFromRecent
               ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          effectItem.displayName,
-                          style: TextStyle(
-                            fontFamily: 'poppins',
-                            color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                            fontSize: $(14),
-                            height: 1,
-                            fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                        ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
-                        Container(
-                          width: $(18),
-                          height: $(4),
-                          margin: EdgeInsets.only(top: $(4)),
-                          color: checked ? ColorConstant.BlueColor : Colors.transparent,
-                        ),
-                      ],
+                    Text(
+                      effectItem.displayName,
+                      style: TextStyle(
+                        fontFamily: 'poppins',
+                        color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                        fontSize: $(16),
+                        height: 1,
+                        fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
+                    Container(
+                      width: $(18),
+                      height: $(4),
+                      margin: EdgeInsets.only(top: $(4)),
+                      color: checked ? ColorConstant.BlueColor : Colors.transparent,
                     ),
-                    SizedBox(height: $(10)),
+                    Expanded(child: Container()),
                     icon,
                   ],
                 )
@@ -1213,7 +1212,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   widget.list[index].displayName,
                   (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
                   (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
-                  14,
+                  $(16),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: $(4)),

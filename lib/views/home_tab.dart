@@ -12,14 +12,8 @@ List<AppRoleTabItem> buildTabItem() => [
       //Home
       AppRoleTabItem(
         id: AppTabId.HOME.id(),
-        normalIcon: Image.asset(
-          Images.ic_tab_effect_normal,
-          width: $(24),
-        ),
-        selectedIcon: Image.asset(
-          Images.ic_tab_effect,
-          width: $(24),
-        ),
+        normalIcon: Images.ic_tab_effect_normal,
+        selectedIcon: Images.ic_tab_effect,
         titleBuilder: (context) => StringConstant.tabHome,
         keyBuilder: () => GlobalKey<EffectFragmentState>(),
         fragmentBuilder: (key) => EffectFragment(
@@ -30,14 +24,8 @@ List<AppRoleTabItem> buildTabItem() => [
       //Discovery
       AppRoleTabItem(
         id: AppTabId.DISCOVERY.id(),
-        normalIcon: Image.asset(
-          Images.ic_tab_discovery_normal,
-          width: $(24),
-        ),
-        selectedIcon: Image.asset(
-          Images.ic_tab_discovery,
-          width: $(24),
-        ),
+        normalIcon: Images.ic_tab_discovery_normal,
+        selectedIcon: Images.ic_tab_discovery,
         titleBuilder: (context) => StringConstant.tabDiscovery,
         keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
         fragmentBuilder: (key) => DiscoveryFragment(
@@ -48,14 +36,8 @@ List<AppRoleTabItem> buildTabItem() => [
       //Mine
       AppRoleTabItem(
         id: AppTabId.MINE.id(),
-        normalIcon: Image.asset(
-          Images.ic_tab_my_normal,
-          width: $(24),
-        ),
-        selectedIcon: Image.asset(
-          Images.ic_tab_my,
-          width: $(24),
-        ),
+        normalIcon: Images.ic_tab_my_normal,
+        selectedIcon: Images.ic_tab_my,
         titleBuilder: (context) => StringConstant.tabMine,
         keyBuilder: () => GlobalKey<MineFragmentState>(),
         fragmentBuilder: (key) => MineFragment(
@@ -67,8 +49,8 @@ List<AppRoleTabItem> buildTabItem() => [
 
 ///appTab，关联角色权限
 class AppRoleTabItem {
-  Widget normalIcon;
-  Widget selectedIcon;
+  String normalIcon;
+  String selectedIcon;
   TitleBuilder titleBuilder;
   late GlobalKey<AppTabState> _key;
   int id;

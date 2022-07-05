@@ -9,8 +9,7 @@ class ThirdpartManager extends BaseManager {
   Future<void> onCreate() async {
     super.onCreate();
     LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode);
-    // EasyRefresh.defaultHeader = ClassicalHeader(textColor: ColorConstant.White, infoColor: ColorConstant.White);
+    EasyRefresh.defaultHeader = ClassicalHeader(textColor: ColorConstant.White, infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
-    EasyRefresh.defaultHeader = MaterialHeader();
   }
 }

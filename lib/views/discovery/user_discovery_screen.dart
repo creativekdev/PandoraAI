@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -155,7 +154,6 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
       body: Stack(
         children: [
           EasyRefresh(
-            header: CartoonizerMaterialHeader(),
             controller: _easyRefreshController,
             enableControlFinishRefresh: true,
             enableControlFinishLoad: false,
@@ -170,7 +168,6 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
               ),
               itemBuilder: (context, index) => DiscoveryListCard(
                 data: dataList[index],
-                width: (ScreenUtil.screenSize.width - $(38)) / 2,
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -183,10 +180,10 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
                     _onLikeTap(dataList[index]);
                   }, autoExec: false);
                 },
-              ).intoContainer(margin: EdgeInsets.only(top: index < 2 ? ((navbarSize?.height ?? 70) + $(10)) : 0)),
+              ),
               itemCount: dataList.length,
             ),
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+          ).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: navbarSize?.height ?? 0)),
           navbar(context),
         ],
       ),
