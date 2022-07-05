@@ -8,32 +8,85 @@ import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart'
 
 import 'discovery_attr_holder.dart';
 
-class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
+class DiscoveryListCard extends StatefulWidget {
   DiscoveryListEntity data;
-  late List<DiscoveryResource> resources;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
-  double width;
 
   DiscoveryListCard({
     Key? key,
     required this.data,
     this.onTap,
     this.onLikeTap,
-    required this.width,
-  }) : super(key: key) {
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return DiscoveryListCardState();
+  }
+}
+
+class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttrHolder {
+  late DiscoveryListEntity data;
+  late List<DiscoveryResource> resources;
+  GestureTapCallback? onTap;
+  GestureTapCallback? onLikeTap;
+  Size? contentSize;
+
+  @override
+  initState() {
+    super.initState();
+    data = widget.data;
+    onTap = widget.onTap;
+    onLikeTap = widget.onLikeTap;
     resources = data.resourceList();
+  }
+
+  @override
+  void didUpdateWidget(DiscoveryListCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (data.id != oldWidget.data.id) {
+      data = oldWidget.data;
+      onTap = oldWidget.onTap;
+      onLikeTap = oldWidget.onLikeTap;
+      resources = data.resourceList();
+      contentSize = null;
+    }
+  }
+
+  Widget buildChild(BuildContext context) {
+    return ClipRRect(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      borderRadius: BorderRadius.all(Radius.circular($(6))),
+      child: resources.length > 0 ? buildResourceItem(resources[0]) : Container(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ClipRRect(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: resources.length > 0 ? buildResourceItem(resources[0]) : Container(),
-        ),
+        contentSize == null
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        buildChild(context).listenSizeChanged(onSizeChanged: (size) {
+                          if (size.height != 0) {
+                            setState(() {
+                              contentSize = size;
+                            });
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
+                  loadingWidget(context),
+                ],
+              ).intoContainer(height: $(80), width: double.maxFinite)
+            : buildChild(context).intoContainer(width: contentSize!.width, height: contentSize!.height),
         Row(
           children: [
             buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, onTap: () {
@@ -64,14 +117,14 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
-      ).intoContainer(height: width);
+      );
     } else {
       return CachedNetworkImage(
         imageUrl: resource.url ?? '',
         cacheManager: CachedImageCacheManager(),
-        placeholder: (context, url) => loadingWidget(context),
+        // placeholder: (context, url) => loadingWidget(context),
         errorWidget: (context, url, error) => loadingWidget(context),
-      ).intoContainer(constraints: BoxConstraints(minHeight: $(40), minWidth: width, maxHeight: $(700), maxWidth: $(400)));
+      );
     }
   }
 

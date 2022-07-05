@@ -7,8 +7,9 @@ import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/dialog/app_bottom_sheet.dart';
+import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -26,13 +27,12 @@ import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
-import 'package:video_player/video_player.dart';
 
 import '../gallery_saver.dart';
 import '../models/OfflineEffectModel.dart';
 import 'PurchaseScreen.dart';
-import 'share/ShareScreen.dart';
 import 'StripeSubscriptionScreen.dart';
+import 'share/ShareScreen.dart';
 
 const int adsShowDuration = 120000;
 
@@ -56,7 +56,7 @@ class ChoosePhotoScreen extends StatefulWidget {
   _ChoosePhotoScreenState createState() => _ChoosePhotoScreenState();
 }
 
-class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
+class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTickerProviderStateMixin {
   var algoName = "";
   var urlFinal = "";
   var image = "";
@@ -70,7 +70,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
   late ItemScrollController scrollController;
-  late ItemScrollController scrollController1;
+  late ItemScrollController categoryScrollController;
+  TabController? effectTabController;
   var itemPos = 0;
   CachedVideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
@@ -102,13 +103,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     }
     imagePicker = ImagePicker();
     scrollController = ItemScrollController();
-    scrollController1 = ItemScrollController();
+    categoryScrollController = ItemScrollController();
+    if (widget.isFromRecent) {
+      effectTabController = TabController(length: widget.list.length, vsync: this);
+      effectTabController!.index = controller.lastItemIndex.value;
+    }
     itemPositionsListener.itemPositions.addListener(() {
       if (itemPos != ((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index)) {
         controller.setLastItemIndex1((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index);
         try {
           itemPos = (widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index;
-          scrollController1.scrollTo(
+          categoryScrollController.scrollTo(
             index: (widget.pos == widget.list.length - 1)
                 ? widget.pos
                 : (itemPositionsListener.itemPositions.value.first.index > 0)
@@ -211,157 +216,171 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   showPickPhotoDialog(BuildContext context) {
-    AppBottomSheet.showDialog(context,
-        backgroundColor: Color(0x77000000),
-        builder: (context) => Column(
-              children: [
-                TitleTextWidget('Select from album', ColorConstant.White, FontWeight.normal, $(17))
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop();
-                  pickImageFromGallery(context, from: "result");
-                }),
-                Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
-                TitleTextWidget('Take a selfie', ColorConstant.White, FontWeight.normal, $(17))
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop();
-                  pickImageFromCamera(context, from: "result");
-                }),
-                Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
-                TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop();
-                }),
-              ],
-            ).intoContainer(
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TitleTextWidget('Select from album', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
                 width: double.maxFinite,
-                padding: EdgeInsets.only(top: $(19), bottom: $(10)),
-                decoration: BoxDecoration(
-                    color: ColorConstant.EffectFunctionGrey,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular($(24)),
-                      topRight: Radius.circular($(24)),
-                    ))));
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                pickImageFromGallery(context, from: "result");
+              }),
+              Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
+              TitleTextWidget('Take a selfie', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                pickImageFromCamera(context, from: "result");
+              }),
+              Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+              TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
+              }),
+            ],
+          ).intoContainer(
+              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              decoration: BoxDecoration(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(24)),
+                    topRight: Radius.circular($(24)),
+                  )));
+        },
+        backgroundColor: Colors.transparent);
   }
 
   showSavePhotoDialog(BuildContext context) {
-    AppBottomSheet.showDialog(
-      context,
-      backgroundColor: Color(0x77000000),
-      builder: (context) {
-        bool saveHDImageVisible = false;
-        if (!userManager.isNeedLogin) {
-          var user = userManager.user!;
-          if (user.email != '' && (user.cartoonizeCredit <= 0 && !user.userSubscription.containsKey('id'))) {
-            saveHDImageVisible = true;
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          bool saveHDImageVisible = false;
+          if (!userManager.isNeedLogin) {
+            var user = userManager.user!;
+            if (user.email != '' && (user.cartoonizeCredit <= 0 && !user.userSubscription.containsKey('id'))) {
+              saveHDImageVisible = true;
+            }
           }
-        }
-        return Column(
-          children: [
-            TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
-                .intoContainer(
-              padding: EdgeInsets.symmetric(vertical: $(10)),
-            )
-                .intoGestureDetector(onTap: () async {
-              Navigator.of(context).pop();
-              var category = widget.list[controller.lastItemIndex.value];
-              var effects = category.effects;
-              var keys = effects.keys.toList();
-              var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-              logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+                width: double.maxFinite,
+              )
+                  .intoGestureDetector(onTap: () async {
+                Navigator.of(context).pop();
+                var category = widget.list[controller.lastItemIndex.value];
+                var effects = category.effects;
+                var keys = effects.keys.toList();
+                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
 
-              if (controller.isVideo.value) {
-                controller.changeIsLoading(true);
-                await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
-                  controller.changeIsLoading(false);
-                  videoPath = value as String;
-                  if (value != "") {
-                    CommonExtension().showVideoSavedOkToast(context);
-                  } else {
-                    CommonExtension().showFailedToast(context);
-                  }
-                });
-              } else {
-                await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-                CommonExtension().showImageSavedOkToast(context);
-              }
-            }),
-            Divider(height: 0.5, color: ColorConstant.EffectGrey)
-                .intoContainer(
-                  margin: EdgeInsets.symmetric(horizontal: $(25)),
-                )
-                .visibility(visible: userManager.isNeedLogin || saveHDImageVisible),
-            TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
-                .intoContainer(
-              padding: EdgeInsets.symmetric(vertical: $(10)),
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
-              if (Platform.isIOS) {
+                if (controller.isVideo.value) {
+                  controller.changeIsLoading(true);
+                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
+                    controller.changeIsLoading(false);
+                    videoPath = value as String;
+                    if (value != "") {
+                      CommonExtension().showVideoSavedOkToast(context);
+                    } else {
+                      CommonExtension().showFailedToast(context);
+                    }
+                  });
+                } else {
+                  await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+                  CommonExtension().showImageSavedOkToast(context);
+                }
+              }),
+              Divider(height: 0.5, color: ColorConstant.EffectGrey)
+                  .intoContainer(
+                    margin: EdgeInsets.symmetric(horizontal: $(25)),
+                  )
+                  .visibility(visible: userManager.isNeedLogin || saveHDImageVisible),
+              TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+                width: double.maxFinite,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
+                if (Platform.isIOS) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/PurchaseScreen"),
+                        builder: (context) => PurchaseScreen(),
+                      )).then((value) => {setState(() {})});
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                        builder: (context) => StripeSubscriptionScreen(),
+                      )).then((value) => {setState(() {})});
+                }
+              }).visibility(visible: saveHDImageVisible),
+              TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+                width: double.maxFinite,
+              )
+                  .intoGestureDetector(onTap: () async {
+                Navigator.of(context).pop();
+                logEvent(Events.result_signup_get_credit);
+                GetStorage().write('signup_through', 'result_signup_get_credit');
+                GetStorage().write('login_back_page', '/ChoosePhotoScreen');
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/PurchaseScreen"),
-                      builder: (context) => PurchaseScreen(),
-                    )).then((value) => {setState(() {})});
-              } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                      builder: (context) => StripeSubscriptionScreen(),
-                    )).then((value) => {setState(() {})});
-              }
-            }).visibility(visible: saveHDImageVisible),
-            TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
-                .intoContainer(
-              padding: EdgeInsets.symmetric(vertical: $(10)),
-            )
-                .intoGestureDetector(onTap: () async {
-              Navigator.of(context).pop();
-              logEvent(Events.result_signup_get_credit);
-              GetStorage().write('signup_through', 'result_signup_get_credit');
-              GetStorage().write('login_back_page', '/ChoosePhotoScreen');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
-                  builder: (context) => SignupScreen(),
-                ),
-              ).then((value) async {
-                userManager.doOnLogin(context, callback: () {
-                  setState(() {});
+                  context,
+                  MaterialPageRoute(
+                    settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
+                    builder: (context) => SignupScreen(),
+                  ),
+                ).then((value) async {
+                  userManager.doOnLogin(context, callback: () {
+                    setState(() {});
+                  });
                 });
-              });
-            }).visibility(visible: userManager.isNeedLogin),
-            Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
-            TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
-                .intoContainer(
-              padding: EdgeInsets.symmetric(vertical: $(10)),
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
-            }),
-          ],
-        ).intoContainer(
-            width: double.maxFinite,
-            padding: EdgeInsets.only(top: $(19), bottom: $(10)),
-            decoration: BoxDecoration(
-                color: ColorConstant.EffectFunctionGrey,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular($(24)),
-                  topRight: Radius.circular($(24)),
-                )));
-      },
-    );
+              }).visibility(visible: userManager.isNeedLogin),
+              Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+              TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
+                width: double.maxFinite,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
+              }),
+            ],
+          ).intoContainer(
+              width: double.maxFinite,
+              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              decoration: BoxDecoration(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(24)),
+                    topRight: Radius.circular($(24)),
+                  )));
+        },
+        backgroundColor: Colors.transparent);
   }
 
   @override
@@ -573,25 +592,50 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                   ),
                   SizedBox(height: 1.h),
                   Container(
-                    height: $(36),
-                    child: ScrollablePositionedList.builder(
-                      initialScrollIndex: widget.pos,
-                      itemCount: widget.list.length,
-                      scrollDirection: Axis.horizontal,
-                      itemScrollController: scrollController1,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return _buildTextItem(context, index);
-                      },
-                    ),
-                  ).offstage(offstage: widget.isFromRecent),
+                    height: $(42),
+                    child: widget.isFromRecent
+                        ? Theme(
+                            data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                            child: TabBar(
+                              indicatorSize: TabBarIndicatorSize.label,
+                              indicator: LineTabIndicator(
+                                width: $(20),
+                                strokeCap: StrokeCap.butt,
+                                borderSide: BorderSide(width: $(4), color: ColorConstant.BlueColor),
+                              ),
+                              labelPadding: EdgeInsets.symmetric(horizontal: $(10)),
+                              isScrollable: true,
+                              padding: EdgeInsets.symmetric(horizontal: $(15)),
+                              labelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w600),
+                              unselectedLabelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w400),
+                              tabs: widget.list.map((e) => Text(e.effects.values.toList()[0].displayName)).toList(),
+                              controller: effectTabController,
+                              onTap: (index) {
+                                controller.setLastItemIndex(index);
+                                controller.setLastItemIndex1(index);
+                                controller.setLastSelectedIndex(0);
+                                scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
+                                if (controller.image.value != null) {
+                                  controller.changeIsPhotoSelect(true);
+                                  controller.changeIsLoading(true);
+                                  getCartoon(context);
+                                }
+                              },
+                            ))
+                        : ScrollablePositionedList.builder(
+                            initialScrollIndex: widget.pos,
+                            itemCount: widget.list.length,
+                            scrollDirection: Axis.horizontal,
+                            itemScrollController: categoryScrollController,
+                            physics: ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return _buildTextItem(context, index);
+                            },
+                          ),
+                  ),
                   Container(
-                    height: widget.isFromRecent ? $(150) : $(100),
-                    padding: EdgeInsets.only(
-                      left: widget.isFromRecent ? $(8) : 0,
-                      right: widget.isFromRecent ? $(8) : 0,
-                      top: widget.isFromRecent ? $(8) : 0,
-                    ),
+                    height: $(100),
+                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                     child: Scrollbar(
                       thickness: 0.0,
                       child: ScrollablePositionedList.separated(
@@ -610,7 +654,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: $(12)).offstage(offstage: widget.isFromRecent),
+                  SizedBox(height: $(12)),
                 ],
               ),
             )),
@@ -714,8 +758,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
     var effects = widget.list[itemIndex].effects;
     var keys = effects.keys.toList();
 
-    return Padding(
-      padding: EdgeInsets.all($(3.6)),
+    return Container(
+      padding: EdgeInsets.only(left: 0, right: 0, top: $(7.2), bottom: $(7.2)),
+      margin: EdgeInsets.only(
+        left: itemIndex == 0 ? $(15) : 0,
+        right: itemIndex == widget.list.length - 1 ? $(15) : 0,
+      ),
       child: ListView.builder(
         itemCount: keys.length,
         scrollDirection: Axis.horizontal,
@@ -820,55 +868,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
               ),
           ],
         ).intoContainer(
-          padding: EdgeInsets.all($(3)),
+          padding: EdgeInsets.all($(3.2)),
         ));
 
-    return Padding(
-      padding: EdgeInsets.all(widget.isFromRecent ? 0 : $(3.6)),
-      child: (widget.isFromRecent
-              ? Column(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          effectItem.displayName,
-                          style: TextStyle(
-                            fontFamily: 'poppins',
-                            color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                            fontSize: $(14),
-                            height: 1,
-                            fontWeight: checked ? FontWeight.w600 : FontWeight.w400,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                        ).intoContainer(constraints: BoxConstraints(maxWidth: $(86)), alignment: Alignment.center),
-                        Container(
-                          width: $(18),
-                          height: $(4),
-                          margin: EdgeInsets.only(top: $(4)),
-                          color: checked ? ColorConstant.BlueColor : Colors.transparent,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: $(10)),
-                    icon,
-                  ],
-                )
-              : icon)
-          .intoGestureDetector(onTap: () async {
-        controller.setLastSelectedIndex(index);
-        controller.setLastItemIndex(itemIndex);
-        controller.setLastItemIndex1(itemIndex);
-        scrollController1.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
-        if (controller.image.value != null) {
-          controller.changeIsPhotoSelect(true);
-          controller.changeIsLoading(true);
-          getCartoon(context);
-        }
-      }),
-    );
+    return icon.intoGestureDetector(onTap: () async {
+      controller.setLastSelectedIndex(index);
+      controller.setLastItemIndex(itemIndex);
+      controller.setLastItemIndex1(itemIndex);
+      if (widget.isFromRecent) {
+        effectTabController?.index = itemIndex;
+      } else {
+        categoryScrollController.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
+      }
+      if (controller.image.value != null) {
+        controller.changeIsPhotoSelect(true);
+        controller.changeIsLoading(true);
+        getCartoon(context);
+      }
+    });
   }
 
   Future<void> _showInterstitialVideo() async {
@@ -1199,32 +1216,35 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> {
   }
 
   Widget _buildTextItem(BuildContext context, int index) {
-    return Obx(() => GestureDetector(
-          onTap: () async {
-            controller.setLastItemIndex1(index);
-            scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
-          },
-          child: Padding(
-            padding: EdgeInsets.only(left: $(6), right: $(6), top: $(6)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                TitleTextWidget(
-                  widget.list[index].displayName,
-                  (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
-                  (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
-                  14,
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: $(4)),
-                  width: $(18),
-                  height: $(4),
-                  color: (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : Colors.transparent,
-                ),
-              ],
-            ),
+    return Obx(() {
+      var item = widget.list[index].effects.values.toList()[0];
+      return GestureDetector(
+        onTap: () async {
+          controller.setLastItemIndex1(index);
+          scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
+        },
+        child: Padding(
+          padding: EdgeInsets.only(left: $(6), right: $(6), top: $(6)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TitleTextWidget(
+                widget.isFromRecent ? item.displayName : widget.list[index].displayName,
+                (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
+                (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
+                $(16),
+              ),
+              Container(
+                margin: EdgeInsets.only(top: $(4)),
+                width: $(18),
+                height: $(4),
+                color: (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : Colors.transparent,
+              ),
+            ],
           ),
-        ));
+        ),
+      );
+    });
   }
 
   bool isSupportOriginalFace(EffectItem effect) {

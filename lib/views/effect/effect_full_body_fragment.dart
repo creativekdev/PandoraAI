@@ -91,7 +91,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
     return MediaQuery.removePadding(
       context: context,
-      removeBottom: true,
       removeTop: true,
       child: ListView.builder(
         itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(

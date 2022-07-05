@@ -46,7 +46,6 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
               : MediaQuery.removePadding(
                   context: context,
                   removeTop: true,
-                  removeBottom: true,
                   child: ListView.builder(
                     itemCount: _.dataList.length,
                     itemBuilder: (context, index) => EffectFullBodyCardWidget(

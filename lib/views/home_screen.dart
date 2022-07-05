@@ -60,22 +60,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: Color.fromARGB(204, 16, 17, 19),
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()),
+          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()).intoContainer(color: ColorConstant.BackgroundColor),
           Align(
             alignment: Alignment.bottomCenter,
             child: tabItems.length > 1
                 ? ClipRect(
                     child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: AppTabBar(
                           items: createBottomItem(context),
                           activeColor: ColorConstant.BlueColor,
                           inactiveColor: ColorConstant.White,
                           // backgroundColor: ColorConstant.BackgroundColorBlur,
-                          backgroundColor: Color.fromARGB(204, 16, 16, 16),
+                          backgroundColor: Color.fromARGB(180, 14, 16, 17),
+                          iconSize: $(24),
                           onTap: (pos) {
                             _setIndex(pos);
                           },
@@ -91,22 +92,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   List<BottomNavigationBarItem> createBottomItem(BuildContext context) {
     List<BottomNavigationBarItem> result = List.empty(growable: true);
-    for (var value in tabItems) {
+    for (int i = 0; i < tabItems.length; i++) {
+      var value = tabItems[i];
       result.add(BottomNavigationBarItem(
-        icon: Column(
-          children: [
-            SizedBox(height: $(4)),
-            value.normalIcon,
-            Text(value.titleBuilder(context)),
-          ],
+        icon: Image.asset(
+          value.normalIcon,
+          gaplessPlayback: true,
         ),
-        activeIcon: Column(
-          children: [
-            SizedBox(height: $(4)),
-            value.selectedIcon,
-            Text(value.titleBuilder(context)),
-          ],
+        activeIcon: Image.asset(
+          value.selectedIcon,
+          gaplessPlayback: true,
         ),
+        label: value.titleBuilder(context),
       ));
     }
     return result;
