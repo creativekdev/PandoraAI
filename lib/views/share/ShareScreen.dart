@@ -71,20 +71,19 @@ class ShareScreen extends StatefulWidget {
     required String originalUrl,
     required String effectKey,
   }) {
-    Navigator.push(
-      context,
-      FadeRouter(
-        child: ShareScreen(
-          style: style,
-          image: image,
-          isVideo: isVideo,
-          originalUrl: originalUrl,
-          backgroundColor: backgroundColor,
-          effectKey: effectKey,
-        ),
-        opaque: false,
-      ),
-    );
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ShareScreen(
+            style: style,
+            image: image,
+            isVideo: isVideo,
+            originalUrl: originalUrl,
+            backgroundColor: backgroundColor,
+            effectKey: effectKey,
+          );
+        },
+        backgroundColor: backgroundColor);
   }
 
   final String style;
@@ -108,7 +107,7 @@ class ShareScreen extends StatefulWidget {
   _ShareScreenState createState() => _ShareScreenState();
 }
 
-class _ShareScreenState extends AppState<ShareScreen> {
+class _ShareScreenState extends State<ShareScreen> {
   static const platform = MethodChannel('io.socialbook/cartoonizer');
   Size? cancelSize;
 
@@ -120,8 +119,6 @@ class _ShareScreenState extends AppState<ShareScreen> {
     ShareType.email,
     ShareType.system,
   ];
-
-  _ShareScreenState() : super(interceptType: KeyboardInterceptType.pop);
 
   @override
   void initState() {
@@ -236,62 +233,43 @@ class _ShareScreenState extends AppState<ShareScreen> {
   }
 
   @override
-  Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      backgroundColor: widget.backgroundColor,
-      body: Column(
-        children: [
-          Expanded(
-              child: Container(
-            width: double.maxFinite,
-            color: Colors.transparent,
-          )),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  SizedBox(width: cancelSize?.width ?? 50),
-                  Expanded(child: TitleTextWidget(StringConstant.share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
-                  TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(15))
-                      .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)))
-                      .listenSizeChanged(onSizeChanged: (size) {
-                    setState(() {
-                      cancelSize = size;
-                    });
-                  })
-                ],
-              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8))),
-              Container(
-                height: 0.5,
-                color: ColorConstant.EffectGrey,
-                margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)),
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: typeList
-                      .map((e) => _FunctionCard(
-                            type: e,
-                            onTap: () {
-                              onShareClick(e);
-                            },
-                          ))
-                      .toList(),
-                ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(30), horizontal: $(6))),
-              ),
-            ],
-          ).intoContainer(
-              padding: EdgeInsets.symmetric(vertical: $(15)),
-              decoration: BoxDecoration(
-                  color: ColorConstant.EffectFunctionGrey,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular($(24)),
-                    topRight: Radius.circular($(24)),
-                  ))),
-        ],
-      ),
-    );
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            SizedBox(width: cancelSize?.width ?? 50),
+            Expanded(child: TitleTextWidget(StringConstant.share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
+            TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(15))
+                .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)))
+                .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop();
+            }).listenSizeChanged(onSizeChanged: (size) {
+              setState(() => cancelSize = size);
+            })
+          ],
+        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8))),
+        Container(
+          height: 0.5,
+          color: ColorConstant.EffectGrey,
+          margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)),
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: typeList.map((e) => _FunctionCard(type: e, onTap: () => onShareClick(e))).toList(),
+          ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(30), horizontal: $(6))),
+        ),
+      ],
+    ).intoContainer(
+        padding: EdgeInsets.symmetric(vertical: $(15)),
+        decoration: BoxDecoration(
+            color: ColorConstant.EffectFunctionGrey,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular($(24)),
+              topRight: Radius.circular($(24)),
+            )));
   }
 }
 

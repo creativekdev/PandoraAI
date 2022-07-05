@@ -69,13 +69,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             child: tabItems.length > 1
                 ? ClipRect(
                     child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                         child: AppTabBar(
                           items: createBottomItem(context),
                           activeColor: ColorConstant.BlueColor,
                           inactiveColor: ColorConstant.White,
                           // backgroundColor: ColorConstant.BackgroundColorBlur,
-                          backgroundColor: Color.fromARGB(210, 0, 0, 0),
+                          backgroundColor: Color.fromARGB(180, 14, 16, 17),
                           iconSize: $(24),
                           onTap: (pos) {
                             _setIndex(pos);
