@@ -186,6 +186,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           ),
           itemBuilder: (context, index) => DiscoveryListCard(
             data: dataList[index],
+            width: (ScreenUtil.screenSize.width-$(36))/2,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -222,6 +223,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
             ),
             itemBuilder: (context, index) => DiscoveryListCard(
               data: dataList[index],
+              width: (ScreenUtil.screenSize.width-$(36))/2,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
