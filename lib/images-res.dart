@@ -51,6 +51,7 @@ class Images {
    static const String ic_radio_off = 'assets/images/ic_radio_off.png';
    static const String ic_radio_on = 'assets/images/ic_radio_on.png';
    static const String ic_rate_us = 'assets/images/ic_rate_us.png';
+   static const String ic_refresh_header = 'assets/images/ic_refresh_header.svg';
    static const String ic_right_arrow = 'assets/images/ic_right_arrow.png';
    static const String ic_ring = 'assets/images/ic_ring.png';
    static const String ic_rocket = 'assets/images/ic_rocket.png';
