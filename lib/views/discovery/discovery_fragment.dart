@@ -204,44 +204,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         ),
       ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
     );
-    return Column(
-      children: [
-        navbar(context),
-        Expanded(
-            child: EasyRefresh(
-          controller: _easyRefreshController,
-          enableControlFinishRefresh: true,
-          enableControlFinishLoad: false,
-          emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
-          onRefresh: () async => onLoadFirstPage(),
-          onLoad: () async => onLoadMorePage(),
-          child: WaterfallFlow.builder(
-            gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: $(8),
-              mainAxisSpacing: $(8),
-            ),
-            itemBuilder: (context, index) => DiscoveryListCard(
-              data: dataList[index],
-              width: (ScreenUtil.screenSize.width-$(36))/2,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index]),
-                  settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
-                ),
-              ),
-              onLikeTap: () {
-                userManager.doOnLogin(context, callback: () {
-                  onLikeTap(dataList[index]);
-                }, autoExec: false);
-              },
-            ),
-            itemCount: dataList.length,
-          ),
-        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))),
-      ],
-    );
   }
 
   Widget navbar(BuildContext context) => ClipRect(
