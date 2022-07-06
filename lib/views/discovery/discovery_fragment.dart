@@ -4,7 +4,6 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
@@ -119,10 +118,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   }
 
   onTabClick(index) {
-    // if (currentTab != tabList[index]) {
     currentTab = tabList[index];
     _easyRefreshController.callRefresh();
-    // }
   }
 
   onLoadFirstPage() {
@@ -216,27 +213,32 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               ignoring: listLoading,
               sliver: SliverPersistentHeader(
                 delegate: SliverTabBarDelegate(
-                  TabBar(
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicator: LineTabIndicator(
-                      width: $(20),
-                      strokeCap: StrokeCap.butt,
-                      borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                  ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                      child: TabBar(
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicator: LineTabIndicator(
+                          width: $(20),
+                          strokeCap: StrokeCap.butt,
+                          borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                        ),
+                        labelColor: ColorConstant.PrimaryColor,
+                        labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                        labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                        unselectedLabelColor: ColorConstant.PrimaryColor,
+                        unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                        controller: tabController,
+                        tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8)))).toList(),
+                        onTap: (index) {
+                          onTabClick(index);
+                        },
+                        padding: EdgeInsets.zero,
+                      ).intoContainer(
+                        padding: EdgeInsets.symmetric(vertical: $(4)),
+                        color: ColorConstant.BackgroundColorBlur,
+                      ),
                     ),
-                    labelColor: ColorConstant.PrimaryColor,
-                    labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-                    labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-                    unselectedLabelColor: ColorConstant.PrimaryColor,
-                    unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-                    controller: tabController,
-                    tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8)))).toList(),
-                    onTap: (index) {
-                      onTabClick(index);
-                    },
-                    padding: EdgeInsets.zero,
-                  ).intoContainer(
-                    padding: EdgeInsets.symmetric(vertical: $(4)),
-                    color: ColorConstant.BackgroundColor,
                   ),
                 ),
                 pinned: true,
@@ -252,37 +254,39 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   Widget buildRefreshList() {
     return EasyRefresh(
-      controller: _easyRefreshController,
-      enableControlFinishRefresh: true,
-      enableControlFinishLoad: false,
-      emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
-      onRefresh: () async => onLoadFirstPage(),
-      onLoad: () async => onLoadMorePage(),
-      child: WaterfallFlow.builder(
-        gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: $(8),
-          mainAxisSpacing: $(8),
-        ),
-        itemBuilder: (context, index) => DiscoveryListCard(
-          data: dataList[index],
-          width: (ScreenUtil.screenSize.width - $(36)) / 2,
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index]),
-              settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
-            ),
+        controller: _easyRefreshController,
+        enableControlFinishRefresh: true,
+        enableControlFinishLoad: false,
+        emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+        onRefresh: () async => onLoadFirstPage(),
+        onLoad: () async => onLoadMorePage(),
+        child: WaterfallFlow.custom(
+          cacheExtent: 1.0,
+          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: $(8),
+            mainAxisSpacing: $(8),
           ),
-          onLikeTap: () {
-            userManager.doOnLogin(context, callback: () {
-              onLikeTap(dataList[index]);
-            }, autoExec: false);
-          },
-        ).intoContainer(margin: EdgeInsets.only(top: $(index < 2 ? 10 : 0))),
-        itemCount: dataList.length,
-      ),
-    ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)));
+          childrenDelegate: SliverChildBuilderDelegate(
+            (context, index) => DiscoveryListCard(
+              data: dataList[index],
+              width: (ScreenUtil.screenSize.width - $(36)) / 2,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index]),
+                  settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
+                ),
+              ),
+              onLikeTap: () {
+                userManager.doOnLogin(context, callback: () {
+                  onLikeTap(dataList[index]);
+                }, autoExec: false);
+              },
+            ).intoContainer(margin: EdgeInsets.only(top: $(index < 2 ? 10 : 0))),
+            childCount: dataList.length,
+          ),
+        )).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)));
   }
 
   Widget navbar(BuildContext context) => ClipRect(

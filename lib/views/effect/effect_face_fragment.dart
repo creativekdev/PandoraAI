@@ -79,7 +79,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
               margin: EdgeInsets.only(
                 left: $(15),
                 right: $(15),
-                top: $(0),
+                top: index == 0 ? $(125) : 0,
                 bottom: index == dataList.length - 1 ? ($(15) + AppTabBarHeight) : $(8),
               ),
             )

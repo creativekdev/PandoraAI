@@ -541,6 +541,9 @@ class FrameAnimatedSvgState extends State<FrameAnimatedSvg> {
       angle -= aLoop;
     }
     delay(() {
+      if (!mounted) {
+        return;
+      }
       setState(() {});
       startLoop();
     }, milliseconds: 128);

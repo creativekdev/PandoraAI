@@ -97,7 +97,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           margin: EdgeInsets.only(
             right: $(15),
             left: $(15),
-            top: $(8),
+            top: index == 0?$(132):$(8),
             bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
           ),
         ),
