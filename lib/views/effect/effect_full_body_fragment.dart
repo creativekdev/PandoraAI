@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
@@ -45,6 +46,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       onUpdated: () {
         setState(() {});
       },
+      adId: AdMobConfig.BANNER_AD_ID,
     );
     delay(() {
       buildDataList();
@@ -97,7 +99,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           margin: EdgeInsets.only(
             right: $(15),
             left: $(15),
-            top: $(8),
+            top: index == 0?$(132):$(8),
             bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
           ),
         ),

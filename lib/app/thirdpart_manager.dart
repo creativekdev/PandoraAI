@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,7 @@ class ThirdpartManager extends BaseManager {
   Future<void> onCreate() async {
     super.onCreate();
     LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode);
-    EasyRefresh.defaultHeader = ClassicalHeader(textColor: ColorConstant.White, infoColor: ColorConstant.White);
+    EasyRefresh.defaultHeader = AppClassicalHeader(textColor: ColorConstant.White, infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
   }
 }

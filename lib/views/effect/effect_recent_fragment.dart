@@ -58,7 +58,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
                       margin: EdgeInsets.only(
                         left: $(20),
                         right: $(20),
-                        top: index == 0 ? $(16) : $(8),
+                        top: index == 0 ? $(132) : $(8),
                         bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
                       ),
                     ),

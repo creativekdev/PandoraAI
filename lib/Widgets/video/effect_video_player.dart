@@ -1,6 +1,5 @@
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
 
 class EffectVideoPlayer extends StatefulWidget {

@@ -168,6 +168,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
               ),
               itemBuilder: (context, index) => DiscoveryListCard(
                 data: dataList[index],
+                width: (ScreenUtil.screenSize.width-$(36))/2,
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

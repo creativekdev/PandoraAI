@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -175,41 +176,17 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
             tabConfig.add(HomeTabConfig(item: EffectRecentFragment(controller: recentController), title: 'Recent'));
             _pageController = PageController(initialPage: currentIndex);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
-            return Column(
+            return Stack(
               children: [
-                navbar(context),
-                SizedBox(height: $(10)),
-                Theme(
-                    data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                    child: TabBar(
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicator: LineTabIndicator(
-                        width: $(20),
-                        strokeCap: StrokeCap.butt,
-                        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                      ),
-                      isScrollable: tabConfig.length < 4,
-                      labelColor: ColorConstant.PrimaryColor,
-                      labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-                      labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-                      unselectedLabelColor: ColorConstant.PrimaryColor,
-                      unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-                      controller: _tabController,
-                      onTap: (index) {
-                        setIndex(index);
-                      },
-                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(4)))).toList(),
-                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
-                SizedBox(height: $(8)),
-                Expanded(
-                    child: PageView.builder(
+                PageView.builder(
                   onPageChanged: _pageChange,
                   controller: _pageController,
                   itemBuilder: (BuildContext context, int index) {
                     return tabConfig[index].item;
                   },
                   itemCount: tabConfig.length,
-                )),
+                ),
+                header(context),
               ],
             );
           }
@@ -217,6 +194,40 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       },
     );
   }
+
+  Widget header(BuildContext context) => ClipRect(
+          child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            navbar(context),
+            SizedBox(height: $(10)),
+            Theme(
+                data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                child: TabBar(
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicator: LineTabIndicator(
+                    width: $(20),
+                    strokeCap: StrokeCap.butt,
+                    borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                  ),
+                  isScrollable: tabConfig.length < 4,
+                  labelColor: ColorConstant.PrimaryColor,
+                  labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                  labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                  unselectedLabelColor: ColorConstant.PrimaryColor,
+                  unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                  controller: _tabController,
+                  onTap: (index) {
+                    setIndex(index);
+                  },
+                  tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(4)))).toList(),
+                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
+            SizedBox(height: $(8)),
+          ],
+        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: (){}),
+      ));
 
   Widget navbar(BuildContext context) => Container(
         margin: EdgeInsets.only(top: $(10), left: $(15), right: $(15)),
