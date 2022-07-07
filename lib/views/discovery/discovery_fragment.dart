@@ -33,9 +33,16 @@ class DiscoveryFragment extends StatefulWidget {
 }
 
 class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticKeepAliveClientMixin, AppTabState, SingleTickerProviderStateMixin {
+  late AppTabId tabId;
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
+  late TabController tabController;
+  late List<DiscoveryFilterTab> tabList = [
+    DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
+    DiscoveryFilterTab(sort: DiscoverySort.newest, title: 'Newest'),
+  ];
+  late DiscoveryFilterTab currentTab;
   int page = 0;
   int pageSize = 10;
   late CartoonizerApi api;
@@ -44,15 +51,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
-  late AppTabId tabId;
 
-  late List<DiscoveryFilterTab> tabList;
-  late TabController tabController;
   bool listLoading = false;
-  late DiscoveryFilterTab currentTab;
+
   late CardAdsMap cardAdsMap;
   double cardWidth = 150;
+
   late ScrollController scrollController;
+  double titleHeight = $(36);
   double tabBarOffset = 0;
 
   @override
@@ -97,10 +103,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       }
     });
-    tabList = [
-      DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
-      DiscoveryFilterTab(sort: DiscoverySort.newest, title: 'Newest'),
-    ];
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
@@ -110,22 +112,18 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         },
         scale: 1);
     cardAdsMap.init();
-    delay(() {
-      _easyRefreshController.callRefresh();
-    });
     scrollController = ScrollController();
     scrollController.addListener(() {
-      print(scrollController.offset);
       var top = MediaQuery.of(context).padding.top;
-      if (scrollController.offset > top) {
-        if (scrollController.offset < top + $(36)) {
-          var d = scrollController.offset - top;
+      if (scrollController.offset > titleHeight) {
+        if (scrollController.offset < top + titleHeight) {
+          var d = scrollController.offset - titleHeight;
           setState(() {
             tabBarOffset = d;
           });
         } else {
           setState(() {
-            tabBarOffset = $(36);
+            tabBarOffset = top;
           });
         }
       } else {
@@ -133,6 +131,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           tabBarOffset = 0;
         });
       }
+    });
+    delay(() {
+      _easyRefreshController.callRefresh();
     });
   }
 
@@ -249,7 +250,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         controller: scrollController,
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
           SliverAppBar(
-            collapsedHeight: $(36),
+            toolbarHeight: titleHeight,
+            collapsedHeight: titleHeight,
             floating: false,
             pinned: false,
             flexibleSpace: FlexibleSpaceBar(
@@ -264,7 +266,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               titlePadding: EdgeInsets.only(bottom: $(0)),
             ),
             backgroundColor: ColorConstant.BackgroundColor,
-            toolbarHeight: $(36),
           ),
           SliverIgnorePointer(
             ignoring: listLoading,
