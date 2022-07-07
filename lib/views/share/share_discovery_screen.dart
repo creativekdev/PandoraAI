@@ -148,7 +148,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
               ]).then((value) {
                 if (value != null) {
-                  CommonExtension().showToast("Your share will be released after admin approve");
+                  CommonExtension().showToast("Your post has been submitted successfully");
                   Navigator.pop(context, true);
                 }
               });

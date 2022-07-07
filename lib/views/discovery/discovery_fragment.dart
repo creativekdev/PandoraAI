@@ -165,16 +165,20 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     _easyRefreshController.callRefresh();
   }
 
-  addToDataList(int page, List<DiscoveryListEntity> list) {
+  Future<void> addToDataList(int page, List<DiscoveryListEntity> list) async {
     if (!cardAdsMap.hasAdHolder(page + 2)) {
       cardAdsMap.addAdsCard(page + 2);
     }
-    if (list.length > 4) {
-      dataList.addAll(list.sublist(0, 4).map((e) => _ListData(data: e, page: page)));
-      dataList.add(_ListData(isAd: true, page: page));
-      dataList.addAll(list.sublist(4).map((e) => _ListData(data: e, page: page)));
-    } else {
-      dataList.addAll(list.map((e) => _ListData(data: e, page: page)));
+    for (int i = 0; i < list.length; i++) {
+      var data = list[i];
+      dataList.add(_ListData(
+        page: page,
+        data: data,
+        visible: dataList.pick((t) => t.data?.id == data.id) == null,
+      ));
+      if (i == 4) {
+        dataList.add(_ListData(isAd: true, page: page));
+      }
     }
   }
 
@@ -191,10 +195,10 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       _easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;
+        dataList.clear();
         var list = value.getDataList<DiscoveryListEntity>();
-        setState(() {
-          dataList.clear();
-          addToDataList(value.page, list);
+        addToDataList(page, list).whenComplete(() {
+          setState(() {});
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
@@ -205,7 +209,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     setState(() => listLoading = true);
     api
         .listDiscovery(
-      page: page + 1,
+      page: (page + 1) * pageSize,
       pageSize: pageSize,
       sort: currentTab.sort,
     )
@@ -216,8 +220,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       } else {
         page++;
         var list = value.getDataList<DiscoveryListEntity>();
-        setState(() {
-          addToDataList(value.page, list);
+        addToDataList(page, list).whenComplete(() {
+          setState(() {});
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
@@ -341,7 +345,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                     onLikeTap(data.data!);
                   }, autoExec: false);
                 },
-              ).intoContainer(margin: EdgeInsets.only(top: $(8)));
+              ).intoContainer(margin: EdgeInsets.only(top: $(8))).offstage(offstage: !data.visible);
             },
             childCount: dataList.length,
           ),
@@ -435,10 +439,12 @@ class _ListData {
   bool isAd;
   int page;
   DiscoveryListEntity? data;
+  bool visible;
 
   _ListData({
     this.isAd = false,
     this.data,
     required this.page,
+    this.visible = true,
   });
 }
