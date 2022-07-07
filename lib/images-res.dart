@@ -37,6 +37,7 @@ class Images {
    static const String ic_image_failed = 'assets/images/ic_image_failed.png';
    static const String ic_image_saved = 'assets/images/ic_image_saved.png';
    static const String ic_instagram = 'assets/images/ic_instagram.png';
+   static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';

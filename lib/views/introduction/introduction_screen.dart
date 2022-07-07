@@ -58,71 +58,73 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(
-        child: Stack(
-          children: [
-            Container(
-              width: 100.w,
-              height: 100.h,
-              child: PageView(
-                  controller: pageController,
-                  onPageChanged: (index) {
-                    setState(() {
-                      position = index;
-                    });
-                  },
-                  children: pages
-                      .map((e) => WelcomeWidgets(
-                            image: e['image'],
-                            title: e['title'],
-                            subTitle: e['subTitle'],
-                            color: Colors.white,
-                          ))
-                      .toList()),
-            ),
-            Positioned(
-              bottom: $(36),
-              child: Column(
-                children: [
-                  Row(
-                    children: buildPoint(),
-                  ).intoContainer(margin: EdgeInsets.only(bottom: 24)),
-                  GestureDetector(
-                    onTap: () => _onContinueClick(context),
-                    child: Container(
-                      width: 100.w,
-                      height: 54,
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      child: Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: LinearGradient(
-                              colors: [Color.fromRGBO(36, 60, 255, 1), Color.fromRGBO(227, 30, 205, 1)],
-                            ),
+      body: Stack(
+        children: [
+          Container(
+            width: 100.w,
+            height: 100.h,
+            child: PageView(
+                controller: pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    position = index;
+                  });
+                },
+                children: pages
+                    .map((e) => WelcomeWidgets(
+                          image: e['image'],
+                          title: e['title'],
+                          subTitle: e['subTitle'],
+                          color: Colors.white,
+                        ))
+                    .toList()),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(children: buildPoint(), mainAxisSize: MainAxisSize.min),
+                SizedBox(height: $(20)),
+                GestureDetector(
+                  onTap: () => _onContinueClick(context),
+                  child: Container(
+                    width: 100.w,
+                    height: 54,
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Card(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          gradient: LinearGradient(
+                            colors: [Color.fromRGBO(36, 60, 255, 1), Color.fromRGBO(227, 30, 205, 1)],
                           ),
-                          child: Center(
-                            child: Text(
-                              StringConstant.txtContinue,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, fontFamily: "Poppins"),
-                            ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            StringConstant.txtContinue,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, fontFamily: "Poppins"),
                           ),
                         ),
                       ),
                     ),
-                  ).visibility(
-                    visible: position == pages.length - 1,
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
+                ).visibility(visible: position == pages.length - 1),
+                GestureDetector(
+                  onTap: () {
+                    pageController.animateToPage(position + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                  },
+                  child: Image.asset(Images.ic_introduction_next, width: $(44)).intoContainer(margin: EdgeInsets.symmetric(vertical: $(4))),
+                ).visibility(visible: position != pages.length - 1),
+              ],
+            ).intoContainer(
+              margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + $(10)),
+            ),
+          ),
+        ],
       ),
     );
   }
