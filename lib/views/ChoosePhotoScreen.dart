@@ -9,7 +9,6 @@ import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -128,6 +127,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     });
     adsHolder.onReady();
+    var length = widget.list[controller.lastItemIndex.value].effects.values.length;
+    if (length > 4) {
+      delay(() {
+        var alignment = (controller.lastSelectedIndex.value + 1) / length + 0.18;
+        scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
+      });
+    }
   }
 
   initStoreInfo() => userManager.refreshUser();
