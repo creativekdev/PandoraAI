@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
@@ -45,6 +46,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       onUpdated: () {
         setState(() {});
       },
+      adId: AdMobConfig.BANNER_AD_ID,
     );
     delay(() {
       bannerAdsHolder.onReady(horizontalPadding: $(50));

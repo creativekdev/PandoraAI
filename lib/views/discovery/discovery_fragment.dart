@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
@@ -11,6 +12,7 @@ import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -37,7 +39,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   int page = 0;
   int pageSize = 10;
   late CartoonizerApi api;
-  List<DiscoveryListEntity> dataList = [];
+  List<_ListData> dataList = [];
   Size? navbarSize;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
@@ -48,21 +50,25 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late TabController tabController;
   bool listLoading = false;
   late DiscoveryFilterTab currentTab;
+  late CardAdsMap cardAdsMap;
+  double cardWidth = 150;
+  late ScrollController scrollController;
+  double tabBarOffset = 0;
 
   @override
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
     tabId = widget.tabId;
-    delay(() {
-      _easyRefreshController.callRefresh();
-    });
+    cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
         _easyRefreshController.callRefresh();
       } else {
         for (var value in dataList) {
-          value.likeId = null;
+          if (!value.isAd) {
+            value.data!.likeId = null;
+          }
         }
         setState(() {});
       }
@@ -71,19 +77,23 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       var id = event.data!.key;
       var likeId = event.data!.value;
       for (var data in dataList) {
-        if (data.id == id) {
-          data.likeId = likeId;
-          data.likes++;
-          setState(() {});
+        if (!data.isAd) {
+          if (data.data!.id == id) {
+            data.data!.likeId = likeId;
+            data.data!.likes++;
+            setState(() {});
+          }
         }
       }
     });
     onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
       for (var data in dataList) {
-        if (data.id == event.data) {
-          data.likeId = null;
-          data.likes--;
-          setState(() {});
+        if (!data.isAd) {
+          if (data.data!.id == event.data) {
+            data.data!.likeId = null;
+            data.data!.likes--;
+            setState(() {});
+          }
         }
       }
     });
@@ -93,12 +103,44 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     ];
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
+    cardAdsMap = CardAdsMap(
+        width: cardWidth,
+        onUpdated: () {
+          setState(() {});
+        },
+        scale: 1);
+    cardAdsMap.init();
+    delay(() {
+      _easyRefreshController.callRefresh();
+    });
+    scrollController = ScrollController();
+    scrollController.addListener(() {
+      print(scrollController.offset);
+      var top = MediaQuery.of(context).padding.top;
+      if (scrollController.offset > top) {
+        if (scrollController.offset < top + $(36)) {
+          var d = scrollController.offset - top;
+          setState(() {
+            tabBarOffset = d;
+          });
+        } else {
+          setState(() {
+            tabBarOffset = $(36);
+          });
+        }
+      } else {
+        setState(() {
+          tabBarOffset = 0;
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     api.unbind();
+    cardAdsMap.dispose();
     _easyRefreshController.dispose();
     onLoginEventListener.cancel();
     onLikeEventListener.cancel();
@@ -122,6 +164,19 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     _easyRefreshController.callRefresh();
   }
 
+  addToDataList(int page, List<DiscoveryListEntity> list) {
+    if (!cardAdsMap.hasAdHolder(page + 2)) {
+      cardAdsMap.addAdsCard(page + 2);
+    }
+    if (list.length > 4) {
+      dataList.addAll(list.sublist(0, 4).map((e) => _ListData(data: e, page: page)));
+      dataList.add(_ListData(isAd: true, page: page));
+      dataList.addAll(list.sublist(4).map((e) => _ListData(data: e, page: page)));
+    } else {
+      dataList.addAll(list.map((e) => _ListData(data: e, page: page)));
+    }
+  }
+
   onLoadFirstPage() {
     setState(() => listLoading = true);
     api
@@ -137,10 +192,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         page = 0;
         var list = value.getDataList<DiscoveryListEntity>();
         setState(() {
-          dataList = list;
+          dataList.clear();
+          addToDataList(value.page, list);
         });
+        _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
-      _easyRefreshController.finishLoad(noMore: dataList.length != pageSize);
     });
   }
 
@@ -160,7 +216,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         page++;
         var list = value.getDataList<DiscoveryListEntity>();
         setState(() {
-          dataList.addAll(list);
+          addToDataList(value.page, list);
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
@@ -189,65 +245,62 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      body: SafeArea(
-        child: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
-            SliverAppBar(
-              floating: false,
-              pinned: false,
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                expandedTitleScale: 1,
-                title: TitleTextWidget(
-                  StringConstant.tabDiscovery,
-                  ColorConstant.BtnTextColor,
-                  FontWeight.w600,
-                  $(18),
-                ),
-                titlePadding: EdgeInsets.only(bottom: $(8)),
+      body: NestedScrollView(
+        controller: scrollController,
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
+          SliverAppBar(
+            collapsedHeight: $(36),
+            floating: false,
+            pinned: false,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              expandedTitleScale: 1,
+              title: TitleTextWidget(
+                StringConstant.tabDiscovery,
+                ColorConstant.BtnTextColor,
+                FontWeight.w600,
+                $(18),
               ),
-              backgroundColor: ColorConstant.BackgroundColor,
-              toolbarHeight: $(44),
+              titlePadding: EdgeInsets.only(bottom: $(0)),
             ),
-            SliverIgnorePointer(
-              ignoring: listLoading,
-              sliver: SliverPersistentHeader(
-                delegate: SliverTabBarDelegate(
-                  ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                      child: TabBar(
-                        indicatorSize: TabBarIndicatorSize.label,
-                        indicator: LineTabIndicator(
-                          width: $(20),
-                          strokeCap: StrokeCap.butt,
-                          borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                        ),
-                        labelColor: ColorConstant.PrimaryColor,
-                        labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-                        labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-                        unselectedLabelColor: ColorConstant.PrimaryColor,
-                        unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-                        controller: tabController,
-                        tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8)))).toList(),
-                        onTap: (index) {
-                          onTabClick(index);
-                        },
-                        padding: EdgeInsets.zero,
-                      ).intoContainer(
-                        padding: EdgeInsets.symmetric(vertical: $(4)),
-                        color: ColorConstant.BackgroundColorBlur,
-                      ),
-                    ),
+            backgroundColor: ColorConstant.BackgroundColor,
+            toolbarHeight: $(36),
+          ),
+          SliverIgnorePointer(
+            ignoring: listLoading,
+            sliver: SliverPersistentHeader(
+              delegate: SliverTabBarDelegate(
+                TabBar(
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicator: LineTabIndicator(
+                    width: $(20),
+                    strokeCap: StrokeCap.butt,
+                    borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
                   ),
+                  labelColor: ColorConstant.PrimaryColor,
+                  labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                  labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                  unselectedLabelColor: ColorConstant.PrimaryColor,
+                  unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                  controller: tabController,
+                  tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
+                  onTap: (index) {
+                    onTabClick(index);
+                  },
+                  padding: EdgeInsets.zero,
+                ).intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(4)),
+                  height: $(44),
+                  color: Colors.transparent,
                 ),
-                pinned: true,
-                floating: true,
+                height: $(44) + tabBarOffset,
               ),
+              pinned: true,
+              floating: true,
             ),
-          ],
-          body: buildRefreshList(),
-        ),
+          ),
+        ],
+        body: buildRefreshList(),
       ),
     );
   }
@@ -265,25 +318,30 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
-            mainAxisSpacing: $(8),
           ),
           childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) => DiscoveryListCard(
-              data: dataList[index],
-              width: (ScreenUtil.screenSize.width - $(36)) / 2,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index]),
-                  settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
+            (context, index) {
+              var data = dataList[index];
+              if (data.isAd) {
+                return _buildMERCAd(data.page);
+              }
+              return DiscoveryListCard(
+                data: data.data!,
+                width: cardWidth,
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: data.data!),
+                    settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
+                  ),
                 ),
-              ),
-              onLikeTap: () {
-                userManager.doOnLogin(context, callback: () {
-                  onLikeTap(dataList[index]);
-                }, autoExec: false);
-              },
-            ).intoContainer(margin: EdgeInsets.only(top: $(index < 2 ? 10 : 0))),
+                onLikeTap: () {
+                  userManager.doOnLogin(context, callback: () {
+                    onLikeTap(data.data!);
+                  }, autoExec: false);
+                },
+              ).intoContainer(margin: EdgeInsets.only(top: $(8)));
+            },
             childCount: dataList.length,
           ),
         )).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)));
@@ -313,6 +371,18 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget _buildMERCAd(int page) {
+    var showAds = isShowAdsNew();
+
+    if (showAds) {
+      var result = cardAdsMap.buildBannerAd(page);
+      if (result != null) {
+        return result.intoContainer(margin: EdgeInsets.only(top: $(8)));
+      }
+    }
+    return Container();
+  }
 }
 
 class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
@@ -323,7 +393,22 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Theme(data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent), child: widget);
+    return ClipRect(
+      child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            child: Theme(
+                data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    widget,
+                  ],
+                )),
+            color: ColorConstant.BackgroundColorBlur,
+          )),
+    );
   }
 
   @override
@@ -343,4 +428,16 @@ class DiscoveryFilterTab {
   DiscoverySort sort;
 
   DiscoveryFilterTab({required this.sort, required this.title});
+}
+
+class _ListData {
+  bool isAd;
+  int page;
+  DiscoveryListEntity? data;
+
+  _ListData({
+    this.isAd = false,
+    this.data,
+    required this.page,
+  });
 }

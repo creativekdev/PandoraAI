@@ -81,10 +81,10 @@ launchURL(String url) async {
 bool isShowAdsNew() {
   var manager = AppDelegate.instance.getManager<UserManager>();
   if (manager.isNeedLogin) {
-    return false;
+    return true;
   }
   var user = manager.user!;
-  if (user.email != '' && (user.userSubscription.containsKey('id') || user.cartoonizeCredit > 0)) {
+  if (user.userSubscription.containsKey('id') || user.cartoonizeCredit > 0) {
     return false;
   }
   return true;

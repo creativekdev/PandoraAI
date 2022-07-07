@@ -4,55 +4,28 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 ///
 /// @Author: wangyu
-/// @Date: 2022/6/16
-///
-/// banner ads holder
-/// usage:
-///
-/// in your state to initialize Holder
-///
-///   late BannerAdsHolder bannerAdsHolder;
-///   @override
-///   initState() {
-///    bannerAdsHolder = BannerAdsHolder(
-///      this,
-///      closeable: false,
-///      onUpdated: () {
-///        setState(() {});
-///      },
-///    );
-///   }
-///
-/// and call onReady when you want to load ad
-///
-///   bannerAdsHolder.onReady(horizontalPadding: $(50));
-/// call bannerAdsHolder.buildBannerAd(); to build widget and add to your widget-tree
-///
-/// don't forget to call dispose
-///   bannerAdsHolder.onDispose();
-class BannerAdsHolder {
+/// @Date: 2022/7/7
+class CardAdsHolder {
   AdManagerBannerAd? _inlineAdaptiveAd;
   double scale = 0.75;
   bool _isLoaded = false;
   AdSize? _adSize;
-  double _adWidth = 0;
-  State? state;
   Function() onUpdated;
   AdWidget? adWidget;
   final bool closeable;
   bool closeAds = false;
   late String adId;
+  final double width;
 
-  BannerAdsHolder(
-    this.state, {
+  CardAdsHolder({
+    required this.width,
     required this.onUpdated, // call widget to call setState
     this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
   });
 
-  onReady({double horizontalPadding = 0}) {
-    _adWidth = ScreenUtil.getCurrentWidgetSize(state!.context).width - horizontalPadding;
+  onReady() {
     loadAd();
   }
 
@@ -64,10 +37,10 @@ class BannerAdsHolder {
     onUpdated.call();
 
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
-    var height = _adWidth * scale;
+    var height = width * scale;
     _inlineAdaptiveAd = AdManagerBannerAd(
       adUnitId: adId,
-      sizes: [AdSize(width: _adWidth.toInt(), height: height.toInt())],
+      sizes: [AdSize(width: width.toInt(), height: height.toInt())],
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {
@@ -99,12 +72,11 @@ class BannerAdsHolder {
 
   onDispose() {
     _inlineAdaptiveAd?.dispose();
-    state = null;
   }
 
-  Widget buildBannerAd() {
+  Widget? buildBannerAd() {
     if (!_isLoaded || closeAds) {
-      return Container();
+      return null;
     }
     if (adWidget == null) {
       adWidget = AdWidget(ad: _inlineAdaptiveAd!);
@@ -112,7 +84,7 @@ class BannerAdsHolder {
     return Stack(
       children: [
         Container(
-          width: _adWidth,
+          width: width,
           height: (_adSize?.height ?? $(80)).toDouble(),
           child: adWidget,
         ),
@@ -137,9 +109,55 @@ class BannerAdsHolder {
         ).offstage(offstage: !closeable),
       ],
     ).intoContainer(
-      width: _adWidth,
+      width: width,
       height: (_adSize?.height ?? $(80)).toDouble(),
-      margin: EdgeInsets.only(bottom: $(12)),
     );
+  }
+}
+
+class CardAdsMap {
+  Map<int, CardAdsHolder> _holderMap = {};
+  final double width;
+  final Function() onUpdated;
+  final double scale;
+
+  CardAdsMap({required this.width, required this.onUpdated, this.scale = 0.6});
+
+  ///先初始化两个广告
+  init() {
+    _holderMap.clear();
+    addAdsCard(0);
+    addAdsCard(1);
+  }
+
+  bool hasAdHolder(int page) {
+    return _holderMap.containsKey(page);
+  }
+
+  addAdsCard(int page) {
+    if (_holderMap[page] == null) {
+      _holderMap[page] = CardAdsHolder(
+        width: width,
+        onUpdated: onUpdated,
+        adId: AdMobConfig.DISCOVERY_AD_ID,
+        scale: scale,
+      );
+      _holderMap[page]?.onReady();
+    }
+  }
+
+  Widget? buildBannerAd(int page) {
+    if (_holderMap.containsKey(page)) {
+      return _holderMap[page]!.buildBannerAd();
+    } else {
+      return null;
+    }
+  }
+
+  dispose() {
+    for (var value in _holderMap.values) {
+      value.onDispose();
+    }
+    _holderMap.clear();
   }
 }
