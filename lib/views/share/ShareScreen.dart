@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -11,10 +8,9 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:video_player/video_player.dart';
-import 'package:flutter_share_me/flutter_share_me.dart';
 
 enum ShareType {
   discovery,
@@ -194,7 +190,11 @@ class _ShareScreenState extends State<ShareScreen> {
             originalUrl: widget.originalUrl,
             image: widget.image,
             isVideo: widget.isVideo,
-          ).then((value) {});
+          ).then((value) {
+            if (value ?? false) {
+              Navigator.of(context).pop();
+            }
+          });
         });
         break;
       case ShareType.facebook:
@@ -209,12 +209,15 @@ class _ShareScreenState extends State<ShareScreen> {
             await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
           }
         }
+        Navigator.of(context).pop();
         break;
       case ShareType.instagram:
         await flutterShareMe.shareToInstagram(filePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        Navigator.of(context).pop();
         break;
       case ShareType.whatsapp:
         await flutterShareMe.shareToWhatsApp(msg: StringConstant.share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        Navigator.of(context).pop();
         break;
       case ShareType.email:
         List<String> paths = [file.path];
@@ -225,6 +228,7 @@ class _ShareScreenState extends State<ShareScreen> {
           attachmentPaths: paths,
         );
         await FlutterEmailSender.send(email);
+        Navigator.of(context).pop();
         break;
       case ShareType.system:
         _openShareAction(context, [file.path]);
