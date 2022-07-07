@@ -160,10 +160,24 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
-  Visibility visibility({Key? key, bool visible = true}) => Visibility(
+  Visibility visibility({
+    Key? key,
+    bool visible = true,
+    bool maintainState = false,
+    bool maintainAnimation = false,
+    bool maintainSize = false,
+    bool maintainSemantics = false,
+    bool maintainInteractivity = false,
+  }) =>
+      Visibility(
         key: key,
         visible: visible,
         child: this,
+        maintainSize: maintainSize,
+        maintainAnimation: maintainAnimation,
+        maintainState: maintainState,
+        maintainSemantics: maintainSemantics,
+        maintainInteractivity: maintainInteractivity,
       );
 
   SizeChanged listenSizeChanged({
