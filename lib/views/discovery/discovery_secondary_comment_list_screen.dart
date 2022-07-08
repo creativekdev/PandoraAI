@@ -37,7 +37,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
 
-  DiscoverySecondaryCommentsListState() : super(canCancelOnLoading: true);
+  DiscoverySecondaryCommentsListState() : super(canCancelOnLoading: false);
 
   @override
   void initState() {
@@ -258,7 +258,11 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
           },
         )),
       ],
-    ).intoMaterial(elevation: 2, color: ColorConstant.BackgroundColor);
+    )
+        .intoContainer(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        )
+        .intoMaterial(elevation: 2, color: ColorConstant.BackgroundColor);
   }
 
   Widget _function(BuildContext context, String imgRes, String text, {GestureTapCallback? onTap, Color iconColor = ColorConstant.White}) {

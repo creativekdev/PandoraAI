@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cached_video_player/cached_video_player.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
@@ -75,12 +77,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   CachedVideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
   late InterstitialAdsHolder adsHolder;
+  late StreamSubscription userChangeListener;
+  late StreamSubscription userLoginListener;
+  _BuildType lastBuildType = _BuildType.waterMark;
 
   @override
   void dispose() {
     super.dispose();
     _videoPlayerController?.dispose();
     adsHolder.onDisposed();
+    userChangeListener.cancel();
+    userLoginListener.cancel();
   }
 
   @override
@@ -88,10 +95,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.initState();
 
     logEvent(Events.upload_page_loading);
-
+    userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) => setState(() {}));
+    userLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) => setState(() {}));
     adsHolder = InterstitialAdsHolder(maxFailedLoadAttempts: 3);
     recentController = Get.find();
-    initStoreInfo();
 
     controller.setLastItemIndex(widget.pos);
     controller.setLastItemIndex1(widget.pos);
@@ -127,16 +134,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     });
     adsHolder.onReady();
+    userManager.refreshUser();
     var length = widget.list[controller.lastItemIndex.value].effects.values.length;
-    if (length > 4) {
+    if (length > 4 && controller.lastSelectedIndex > 3) {
       delay(() {
         var alignment = (controller.lastSelectedIndex.value + 1) / length + 0.18;
         scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
       });
     }
   }
-
-  initStoreInfo() => userManager.refreshUser();
 
   Future<bool> _willPopCallback(BuildContext context) async {
     if (controller.isPhotoDone.value) {
@@ -271,122 +277,125 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   showSavePhotoDialog(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          bool saveHDImageVisible = false;
-          if (!userManager.isNeedLogin) {
-            var user = userManager.user!;
-            if (user.email != '' && (user.cartoonizeCredit <= 0 && !user.userSubscription.containsKey('id'))) {
-              saveHDImageVisible = true;
-            }
-          }
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
-                  .intoContainer(
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                color: Colors.transparent,
-                width: double.maxFinite,
-              )
-                  .intoGestureDetector(onTap: () async {
-                Navigator.of(context).pop();
-                var category = widget.list[controller.lastItemIndex.value];
-                var effects = category.effects;
-                var keys = effects.keys.toList();
-                var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
-
-                if (controller.isVideo.value) {
-                  controller.changeIsLoading(true);
-                  await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
-                    controller.changeIsLoading(false);
-                    videoPath = value as String;
-                    if (value != "") {
-                      CommonExtension().showVideoSavedOkToast(context);
-                    } else {
-                      CommonExtension().showFailedToast(context);
+    if (lastBuildType == _BuildType.hdImage) {
+      saveToAlbum(context);
+    } else {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  color: Colors.transparent,
+                  width: double.maxFinite,
+                )
+                    .intoGestureDetector(onTap: () async {
+                  Navigator.of(context).pop();
+                  await saveToAlbum(context);
+                }),
+                Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
+                  margin: EdgeInsets.symmetric(horizontal: $(25)),
+                ),
+                TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  color: Colors.transparent,
+                  width: double.maxFinite,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                  if (Platform.isIOS) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: RouteSettings(name: "/PurchaseScreen"),
+                          builder: (context) => PurchaseScreen(),
+                        )).then((value) => {setState(() {})});
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                          builder: (context) => StripeSubscriptionScreen(),
+                        )).then((value) => {setState(() {})});
+                  }
+                }).visibility(visible: !userManager.isNeedLogin),
+                TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  color: Colors.transparent,
+                  width: double.maxFinite,
+                )
+                    .intoGestureDetector(onTap: () async {
+                  Navigator.of(context).pop();
+                  logEvent(Events.result_signup_get_credit);
+                  GetStorage().write('signup_through', 'result_signup_get_credit');
+                  GetStorage().write('login_back_page', '/ChoosePhotoScreen');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
+                      builder: (context) => SignupScreen(),
+                    ),
+                  ).then((value) async {
+                    if (userManager.isNeedLogin) {
+                      return;
+                    }
+                    if (lastBuildType == _BuildType.waterMark && getBuildType() == _BuildType.hdImage) {
+                      controller.changeIsLoading(true);
+                      getCartoon(context, rebuild: true);
                     }
                   });
-                } else {
-                  await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-                  CommonExtension().showImageSavedOkToast(context);
-                }
-              }),
-              Divider(height: 0.5, color: ColorConstant.EffectGrey)
-                  .intoContainer(
-                    margin: EdgeInsets.symmetric(horizontal: $(25)),
-                  )
-                  .visibility(visible: userManager.isNeedLogin || saveHDImageVisible),
-              TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
-                  .intoContainer(
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                color: Colors.transparent,
+                }).visibility(visible: userManager.isNeedLogin),
+                Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+                TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                    .intoContainer(
+                  padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
+                  width: double.maxFinite,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                }),
+              ],
+            ).intoContainer(
                 width: double.maxFinite,
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.of(context).pop();
-                if (Platform.isIOS) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: "/PurchaseScreen"),
-                        builder: (context) => PurchaseScreen(),
-                      )).then((value) => {setState(() {})});
-                } else {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                        builder: (context) => StripeSubscriptionScreen(),
-                      )).then((value) => {setState(() {})});
-                }
-              }).visibility(visible: saveHDImageVisible),
-              TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
-                  .intoContainer(
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                color: Colors.transparent,
-                width: double.maxFinite,
-              )
-                  .intoGestureDetector(onTap: () async {
-                Navigator.of(context).pop();
-                logEvent(Events.result_signup_get_credit);
-                GetStorage().write('signup_through', 'result_signup_get_credit');
-                GetStorage().write('login_back_page', '/ChoosePhotoScreen');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
-                    builder: (context) => SignupScreen(),
-                  ),
-                ).then((value) async {
-                  userManager.doOnLogin(context, callback: () {
-                    setState(() {});
-                  });
-                });
-              }).visibility(visible: userManager.isNeedLogin),
-              Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
-              TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
-                  .intoContainer(
-                padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
-                width: double.maxFinite,
-              )
-                  .intoGestureDetector(onTap: () {
-                Navigator.of(context).pop();
-              }),
-            ],
-          ).intoContainer(
-              width: double.maxFinite,
-              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
-              decoration: BoxDecoration(
-                  color: ColorConstant.EffectFunctionGrey,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular($(24)),
-                    topRight: Radius.circular($(24)),
-                  )));
-        },
-        backgroundColor: Colors.transparent);
+                padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+                decoration: BoxDecoration(
+                    color: ColorConstant.EffectFunctionGrey,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular($(24)),
+                      topRight: Radius.circular($(24)),
+                    )));
+          },
+          backgroundColor: Colors.transparent);
+    }
+  }
+
+  Future<void> saveToAlbum(BuildContext context) async {
+    var category = widget.list[controller.lastItemIndex.value];
+    var effects = category.effects;
+    var keys = effects.keys.toList();
+    var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+    logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
+
+    if (controller.isVideo.value) {
+      controller.changeIsLoading(true);
+      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
+        controller.changeIsLoading(false);
+        videoPath = value as String;
+        if (value != "") {
+          CommonExtension().showVideoSavedOkToast(context);
+        } else {
+          CommonExtension().showFailedToast(context);
+        }
+      });
+    } else {
+      await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+      CommonExtension().showImageSavedOkToast(context);
+    }
   }
 
   @override
@@ -985,7 +994,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     return '';
   }
 
-  Future<void> getCartoon(BuildContext context) async {
+  refreshLastBuildType() {
+    lastBuildType = getBuildType();
+  }
+
+  _BuildType getBuildType() {
+    if (userManager.isNeedLogin) {
+      return _BuildType.waterMark;
+    } else {
+      var socialUserInfo = userManager.user!;
+      if (socialUserInfo.cartoonizeCredit <= 0) {
+        return _BuildType.waterMark;
+      } else {
+        return _BuildType.hdImage;
+      }
+    }
+  }
+
+  Future<void> getCartoon(BuildContext context, {bool rebuild = false}) async {
+    refreshLastBuildType();
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       controller.changeIsLoading(false);
@@ -1001,7 +1028,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.key + "-original_face" : selectedEffect.key;
 
-    if (offlineEffect.containsKey(key)) {
+    if (offlineEffect.containsKey(key) && !rebuild) {
       var data = offlineEffect[key] as OfflineEffectModel;
       if (data.data.toString().startsWith('<')) {
         controller.changeIsLoading(false);
@@ -1185,6 +1212,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         } else {
           recentController.onEffectUsedToCache(selectedEffect);
         }
+        userManager.refreshUser();
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
@@ -1318,4 +1346,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       },
     );
   }
+}
+
+enum _BuildType {
+  waterMark,
+  hdImage,
 }

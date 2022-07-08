@@ -42,7 +42,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   late StreamSubscription onDiscoveryLikeEventListener;
   late StreamSubscription onDiscoveryUnlikeEventListener;
 
-  DiscoveryCommentsListState() : super(canCancelOnLoading: true);
+  DiscoveryCommentsListState() : super(canCancelOnLoading: false);
 
   @override
   void initState() {
@@ -294,7 +294,11 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
           },
         )),
       ],
-    ).intoMaterial(elevation: 2, color: ColorConstant.BackgroundColor);
+    )
+        .intoContainer(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        )
+        .intoMaterial(elevation: 2, color: ColorConstant.BackgroundColor);
   }
 
   Widget _function(BuildContext context, String imgRes, String text, {GestureTapCallback? onTap, Color iconColor = ColorConstant.White}) {
