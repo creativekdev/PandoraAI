@@ -198,7 +198,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       sort: currentTab.sort,
     )
         .then((value) {
-      setState(() => listLoading = false);
+      delay(() => setState(() => listLoading = false), milliseconds: 500);
       _easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;
@@ -221,7 +221,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       sort: currentTab.sort,
     )
         .then((value) {
-      setState(() => listLoading = false);
+      delay(() => setState(() => listLoading = false), milliseconds: 500);
       if (value == null) {
         _easyRefreshController.finishLoad(noMore: false);
       } else {
