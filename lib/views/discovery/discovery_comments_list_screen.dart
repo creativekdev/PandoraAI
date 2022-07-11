@@ -173,7 +173,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     await hideLoading();
     if (baseEntity != null) {
       CommonExtension().showToast('Comment posted');
-      _refreshController.callRefresh();
+      delay(() => _refreshController.callRefresh());
     }
     return baseEntity != null;
   }
