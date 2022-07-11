@@ -1,5 +1,8 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -31,9 +34,10 @@ class EffectFullBodyFragment extends StatefulWidget {
 class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, TabUserHolder {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
-  Widget? adWidget;
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
+  late StreamSubscription appStateListener;
 
   @override
   initState() {
@@ -53,6 +57,9 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       initStoreInfo(context).then((value) {
         setState(() {});
       });
+    });
+    appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      setState(() {});
     });
   }
 
@@ -85,6 +92,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   void dispose() {
     super.dispose();
     bannerAdsHolder.onDispose();
+    appStateListener.cancel();
   }
 
   @override
@@ -99,7 +107,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           margin: EdgeInsets.only(
             right: $(15),
             left: $(15),
-            top: index == 0?$(132):$(8),
+            top: index == 0 ? $(132) : $(8),
             bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
           ),
         ),
@@ -180,7 +188,11 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     var showAds = isShowAds(user);
 
     if (showAds) {
-      return bannerAdsHolder.buildBannerAd();
+      if (thirdpartManager.appBackground) {
+        return const SizedBox();
+      } else {
+        return bannerAdsHolder.buildBannerAd();
+      }
     }
 
     return Container();

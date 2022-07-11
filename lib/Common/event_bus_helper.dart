@@ -82,3 +82,5 @@ class OnCommentLikeEvent extends BaseEvent<MapEntry<int, int>> {
 class OnCommentUnlikeEvent extends BaseEvent<int> {
   OnCommentUnlikeEvent({required int data}) : super(data: data);
 }
+
+class OnAppStateChangeEvent extends BaseEvent {}

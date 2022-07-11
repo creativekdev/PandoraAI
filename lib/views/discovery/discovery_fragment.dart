@@ -8,6 +8,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -37,6 +38,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late TabController tabController;
   late List<DiscoveryFilterTab> tabList = [
     DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
@@ -51,6 +53,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  late StreamSubscription onAppStateListener;
 
   bool listLoading = false;
 
@@ -103,6 +106,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       }
     });
+    onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      setState(() {});
+    });
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
@@ -110,7 +116,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         onUpdated: () {
           setState(() {});
         },
-        scale: 1);
+        scale: 1.35);
     cardAdsMap.init();
     scrollController = ScrollController();
     scrollController.addListener(() {
@@ -146,6 +152,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onLoginEventListener.cancel();
     onLikeEventListener.cancel();
     onUnlikeEventListener.cancel();
+    onAppStateListener.cancel();
   }
 
   @override
@@ -381,9 +388,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     var showAds = isShowAdsNew();
 
     if (showAds) {
-      var result = cardAdsMap.buildBannerAd(page);
-      if (result != null) {
-        return result.intoContainer(margin: EdgeInsets.only(top: $(8)));
+      var appBackground = thirdpartManager.appBackground;
+      if (appBackground) {
+        return const SizedBox();
+      } else {
+        var result = cardAdsMap.buildBannerAd(page);
+        if (result != null) {
+          return result.intoContainer(margin: EdgeInsets.only(top: $(8)));
+        }
       }
     }
     return Container();
