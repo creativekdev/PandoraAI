@@ -108,7 +108,7 @@ class _ShareScreenState extends State<ShareScreen> {
   Size? cancelSize;
 
   List<ShareType> typeList = [
-    ShareType.discovery,
+    // ShareType.discovery,
     ShareType.facebook,
     ShareType.instagram,
     ShareType.whatsapp,

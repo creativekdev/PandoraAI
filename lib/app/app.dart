@@ -1,10 +1,10 @@
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
+import 'package:cartoonizer/app/image_scale_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:flutter/widgets.dart';
 
 ///
 /// @Author: wangyu
@@ -112,6 +112,7 @@ class AppDelegate {
     list.add(CacheManager());
     list.add(UserManager());
     list.add(EffectManager());
+    list.add(ImageScaleManager());
   }
 
   T getManager<T extends BaseManager>() {

@@ -149,21 +149,23 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                     open(context, 0);
                   }
                 })),
-                SizedBox(width: $(2)),
-                Expanded(
-                  child: (resources.length > 1 && imageSize != null)
-                      ? buildResourceItem(resources[1])
-                          .intoContainer(
-                          width: imageSize!.width,
-                          height: imageSize!.height,
-                        )
-                          .intoGestureDetector(onTap: () {
-                          if (resources[1].type == 'image') {
-                            open(context, 1);
-                          }
-                        })
-                      : Container(),
-                ),
+                SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
+                resources.length > 1
+                    ? Expanded(
+                        child: (imageSize != null)
+                            ? buildResourceItem(resources[1])
+                                .intoContainer(
+                                width: imageSize!.width,
+                                height: imageSize!.height,
+                              )
+                                .intoGestureDetector(onTap: () {
+                                if (resources[1].type == 'image') {
+                                  open(context, 1);
+                                }
+                              })
+                            : Container(),
+                      )
+                    : Container(),
               ],
             ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
             Row(

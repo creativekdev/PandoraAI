@@ -23,6 +23,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -241,6 +242,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 color: Colors.transparent,
               )
                   .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
                 pickImageFromGallery(context, from: "result");
               }),
               Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
@@ -251,6 +253,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 color: Colors.transparent,
               )
                   .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
                 pickImageFromCamera(context, from: "result");
               }),
               Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
@@ -415,6 +418,46 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               appBar: AppNavigationBar(
                 backgroundColor: ColorConstant.BackgroundColor,
                 middle: TitleTextWidget(StringConstant.cartoonize, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+                trailing: Image.asset(
+                  Images.ic_share,
+                  width: $(24),
+                ).intoGestureDetector(onTap: () async {
+                  var category = widget.list[controller.lastItemIndex.value];
+                  var effects = category.effects;
+                  var keys = effects.keys.toList();
+                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
+                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
+                  if (controller.isVideo.value) {
+                    controller.changeIsLoading(true);
+                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                      controller.changeIsLoading(false);
+                      videoPath = value as String;
+                      if (value != "") {
+                        ShareScreen.startShare(
+                          context,
+                          backgroundColor: Color(0x77000000),
+                          style: selectedEffect.key,
+                          image: (controller.isVideo.value) ? videoPath : image,
+                          isVideo: controller.isVideo.value,
+                          originalUrl: urlFinal,
+                          effectKey: selectedEffect.key,
+                        );
+                      } else {
+                        CommonExtension().showToast("Oops Failed!");
+                      }
+                    });
+                  } else {
+                    ShareScreen.startShare(
+                      context,
+                      backgroundColor: Color(0x77000000),
+                      style: selectedEffect.key,
+                      image: (controller.isVideo.value) ? videoPath : image,
+                      isVideo: controller.isVideo.value,
+                      originalUrl: urlFinal,
+                      effectKey: selectedEffect.key,
+                    );
+                  }
+                }).offstage(offstage: !controller.isPhotoDone.value),
               ),
               body: Column(
                 children: [
@@ -717,7 +760,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         ),
         Obx(() => Expanded(
               child: Image.asset(
-                Images.ic_share,
+                Images.ic_share_discovery,
                 height: $(24),
                 width: $(24),
               )
@@ -732,36 +775,19 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   var keys = effects.keys.toList();
                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
-                  if (controller.isVideo.value) {
-                    controller.changeIsLoading(true);
-                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
-                      controller.changeIsLoading(false);
-                      videoPath = value as String;
-                      if (value != "") {
-                        ShareScreen.startShare(
-                          context,
-                          backgroundColor: Color(0x77000000),
-                          style: selectedEffect.key,
-                          image: (controller.isVideo.value) ? videoPath : image,
-                          isVideo: controller.isVideo.value,
-                          originalUrl: urlFinal,
-                          effectKey: selectedEffect.key,
-                        );
-                      } else {
-                        CommonExtension().showToast("Oops Failed!");
-                      }
-                    });
-                  } else {
-                    ShareScreen.startShare(
+                  AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                    ShareDiscoveryScreen.push(
                       context,
-                      backgroundColor: Color(0x77000000),
-                      style: selectedEffect.key,
+                      effectKey: selectedEffect.key,
+                      originalUrl: urlFinal,
                       image: (controller.isVideo.value) ? videoPath : image,
                       isVideo: controller.isVideo.value,
-                      originalUrl: urlFinal,
-                      effectKey: selectedEffect.key,
-                    );
-                  }
+                    ).then((value) {
+                      if (value ?? false) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  });
                 },
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
             ).visibility(visible: controller.isPhotoDone.value)),

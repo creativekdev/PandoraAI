@@ -112,7 +112,7 @@ class StringConstant {
   static const setting_my_delete_account = "Delete Account";
   static const pro = "Pro";
   static const discoveryDetails = "Details";
-  static const discoveryDetailsUseSameTemplate = "Use the same template";
+  static const discoveryDetailsUseSameTemplate = "Try this template";
   static const discoveryComments = "Comments";
   static const discoveryComment = "Comment";
   static const discoveryLike = "Like";
@@ -120,4 +120,6 @@ class StringConstant {
   static const discoveryShareSubmit = 'Submit';
   static const discoveryShareInputHint = 'Input share description';
   static const cartoonize = 'Cartoonize';
+  static const shareIncludeOriginal = "Also share the original image";
+
 }

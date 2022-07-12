@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -49,7 +48,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   int pageSize = 10;
   late CartoonizerApi api;
   List<_ListData> dataList = [];
-  Size? navbarSize;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
@@ -59,10 +57,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   late CardAdsMap cardAdsMap;
   double cardWidth = 150;
+  final double adScale = 1.55;
 
   late ScrollController scrollController;
-  double titleHeight = $(36);
-  double tabBarOffset = 0;
+  late ScrollController headerScrollController;
+  double headerHeight = 0;
+  double tabBarHeight = 0;
+  double lastOffset = 0;
+  bool maskVisible = true;
 
   @override
   void initState() {
@@ -116,27 +118,39 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         onUpdated: () {
           setState(() {});
         },
-        scale: 1.35);
+        scale: adScale);
     cardAdsMap.init();
     scrollController = ScrollController();
+    headerScrollController = ScrollController();
     scrollController.addListener(() {
-      var top = MediaQuery.of(context).padding.top;
-      if (scrollController.offset > titleHeight) {
-        if (scrollController.offset < top + titleHeight) {
-          var d = scrollController.offset - titleHeight;
-          setState(() {
-            tabBarOffset = d;
-          });
+      if (scrollController.offset > 0) {
+        var range = headerHeight - MediaQuery.of(context).padding.top;
+        if (scrollController.offset < range) {
+          lastOffset = scrollController.offset;
+          headerScrollController.jumpTo(scrollController.offset);
+          if (!maskVisible) {
+            maskVisible = true;
+          }
+          setState(() {});
         } else {
-          setState(() {
-            tabBarOffset = top;
-          });
+          if (lastOffset != range) {
+            lastOffset = range;
+            headerScrollController.jumpTo(lastOffset);
+            setState(() {
+              maskVisible = false;
+            });
+          }
         }
       } else {
-        setState(() {
-          tabBarOffset = 0;
-        });
+        if (lastOffset != 0) {
+          lastOffset = 0;
+          headerScrollController.jumpTo(lastOffset);
+          setState(() {
+            maskVisible = true;
+          });
+        }
       }
+      print("offset:${lastOffset}");
     });
     delay(() {
       _easyRefreshController.callRefresh();
@@ -198,7 +212,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       sort: currentTab.sort,
     )
         .then((value) {
-      delay(() => setState(() => listLoading = false), milliseconds: 500);
+      delay(() => setState(() => listLoading = false), milliseconds: 1500);
       _easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;
@@ -221,7 +235,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       sort: currentTab.sort,
     )
         .then((value) {
-      delay(() => setState(() => listLoading = false), milliseconds: 500);
+      delay(() => setState(() => listLoading = false), milliseconds: 1500);
       if (value == null) {
         _easyRefreshController.finishLoad(noMore: false);
       } else {
@@ -256,130 +270,132 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      body: NestedScrollView(
-        controller: scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
-          SliverAppBar(
-            toolbarHeight: titleHeight,
-            collapsedHeight: titleHeight,
-            floating: false,
-            pinned: false,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              expandedTitleScale: 1,
-              title: TitleTextWidget(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          buildRefreshList().intoContainer(margin: EdgeInsets.only(top: headerHeight)),
+          SingleChildScrollView(
+            controller: headerScrollController,
+            child: Column(children: [
+              TitleTextWidget(
                 StringConstant.tabDiscovery,
                 ColorConstant.BtnTextColor,
                 FontWeight.w600,
                 $(18),
-              ),
-              titlePadding: EdgeInsets.only(bottom: $(0)),
-            ),
-            backgroundColor: ColorConstant.BackgroundColor,
-          ),
-          SliverIgnorePointer(
-            ignoring: listLoading,
-            sliver: SliverPersistentHeader(
-              delegate: SliverTabBarDelegate(
-                TabBar(
-                  indicatorSize: TabBarIndicatorSize.label,
-                  indicator: LineTabIndicator(
-                    width: $(20),
-                    strokeCap: StrokeCap.butt,
-                    borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                  ),
-                  labelColor: ColorConstant.PrimaryColor,
-                  labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-                  labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-                  unselectedLabelColor: ColorConstant.PrimaryColor,
-                  unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-                  controller: tabController,
-                  tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
-                  onTap: (index) {
-                    onTabClick(index);
-                  },
-                  padding: EdgeInsets.zero,
-                ).intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(4)),
-                  height: $(44),
-                  color: Colors.transparent,
-                ),
-                height: $(44) + tabBarOffset,
-              ),
-              pinned: true,
-              floating: true,
-            ),
-          ),
+              )
+                  .visibility(
+                    visible: maskVisible,
+                    maintainState: true,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                  )
+                  .intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()))
+                  .listenSizeChanged(onSizeChanged: (size) {
+                setState(() {
+                  headerHeight = size.height;
+                });
+              }),
+              (maskVisible
+                      ? buildTabBar()
+                      : ClipRect(
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                            child: buildTabBar(),
+                          ),
+                        ))
+                  .listenSizeChanged(onSizeChanged: (size) {
+                setState(() {
+                  tabBarHeight = size.height;
+                });
+              }),
+              SizedBox(height: headerHeight, width: 0),
+            ]),
+          ).intoContainer(height: headerHeight + tabBarHeight, color: Colors.transparent),
+          Container(
+            height: MediaQuery.of(context).padding.top,
+            color: ColorConstant.BackgroundColor,
+          ).visibility(visible: maskVisible),
         ],
-        body: buildRefreshList(),
       ),
+    );
+  }
+
+  Container buildTabBar() {
+    return TabBar(
+      indicatorSize: TabBarIndicatorSize.label,
+      indicator: LineTabIndicator(
+        width: $(20),
+        strokeCap: StrokeCap.butt,
+        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+      ),
+      labelColor: ColorConstant.PrimaryColor,
+      labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+      labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+      unselectedLabelColor: ColorConstant.PrimaryColor,
+      unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+      controller: tabController,
+      tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
+      onTap: (index) {
+        onTabClick(index);
+      },
+      padding: EdgeInsets.zero,
+    ).intoContainer(
+      padding: EdgeInsets.symmetric(vertical: $(4)),
+      height: $(44),
+      color: Colors.transparent,
     );
   }
 
   Widget buildRefreshList() {
     return EasyRefresh(
         controller: _easyRefreshController,
+        scrollController: scrollController,
         enableControlFinishRefresh: true,
         enableControlFinishLoad: false,
         emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
         onRefresh: () async => onLoadFirstPage(),
         onLoad: () async => onLoadMorePage(),
-        child: WaterfallFlow.custom(
-          cacheExtent: 1.0,
+        child: WaterfallFlow.builder(
+          cacheExtent: ScreenUtil.screenSize.height,
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
+            closeToTrailing: true,
           ),
-          childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) {
-              var data = dataList[index];
-              if (data.isAd) {
-                return _buildMERCAd(data.page);
-              }
-              return DiscoveryListCard(
-                data: data.data!,
-                width: cardWidth,
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: data.data!),
-                    settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
-                  ),
+          itemBuilder: (context, index) {
+            var data = dataList[index];
+            if (data.isAd) {
+              return _buildMERCAd(data.page);
+            }
+            return DiscoveryListCard(
+              data: data.data!,
+              width: cardWidth,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: data.data!),
+                  settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
-                onLikeTap: () {
-                  userManager.doOnLogin(context, callback: () {
-                    onLikeTap(data.data!);
-                  }, autoExec: false);
-                },
-              ).intoContainer(margin: EdgeInsets.only(top: $(8))).offstage(offstage: !data.visible);
-            },
-            childCount: dataList.length,
-          ),
-        )).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)));
+              ),
+              onLikeTap: () {
+                userManager.doOnLogin(context, callback: () {
+                  onLikeTap(data.data!);
+                }, autoExec: false);
+              },
+            )
+                .intoContainer(
+                  margin: EdgeInsets.only(top: (index < 2 ? 0 : 0) + $(8)),
+                )
+                .offstage(offstage: !data.visible);
+          },
+          itemCount: dataList.length,
+        )).intoContainer(
+        margin: EdgeInsets.only(
+      left: $(15),
+      right: $(15),
+      top: lastOffset != 0 ? tabBarHeight - lastOffset : tabBarHeight,
+    ));
   }
-
-  Widget navbar(BuildContext context) => ClipRect(
-        child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppNavigationBar(
-                    showBackItem: false,
-                    blurAble: true,
-                    backgroundColor: ColorConstant.BackgroundColorBlur,
-                    middle: TitleTextWidget(
-                      StringConstant.tabDiscovery,
-                      ColorConstant.BtnTextColor,
-                      FontWeight.w600,
-                      $(18),
-                    )).listenSizeChanged(onSizeChanged: (size) {
-                  setState(() => navbarSize = size);
-                }),
-              ],
-            )),
-      );
 
   @override
   bool get wantKeepAlive => true;
@@ -394,7 +410,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       } else {
         var result = cardAdsMap.buildBannerAd(page);
         if (result != null) {
-          return result.intoContainer(margin: EdgeInsets.only(top: $(8)));
+          return result.intoContainer(
+            margin: EdgeInsets.only(top: $(8), bottom: $(8)),
+            width: cardWidth,
+            height: cardWidth * adScale,
+          );
         }
       }
     }

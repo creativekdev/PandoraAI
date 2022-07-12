@@ -138,6 +138,18 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
+  AbsorbPointer absorb({
+    Key? key,
+    bool absorbing = true,
+    bool? ignoringSemantics,
+  }) =>
+      AbsorbPointer(
+        child: this,
+        key: key,
+        absorbing: absorbing,
+        ignoringSemantics: ignoringSemantics,
+      );
+
   IgnorePointer ignore({
     Key? key,
     bool ignoring = true,
@@ -168,6 +180,7 @@ extension WidgetExtension on Widget {
     bool maintainSize = false,
     bool maintainSemantics = false,
     bool maintainInteractivity = false,
+    Widget replacement = const SizedBox.shrink(),
   }) =>
       Visibility(
         key: key,
@@ -178,6 +191,7 @@ extension WidgetExtension on Widget {
         maintainState: maintainState,
         maintainSemantics: maintainSemantics,
         maintainInteractivity: maintainInteractivity,
+        replacement: replacement,
       );
 
   SizeChanged listenSizeChanged({

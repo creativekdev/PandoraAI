@@ -15,35 +15,8 @@ class AppClassicalHeader extends Header {
   /// 方位
   final AlignmentGeometry? alignment;
 
-  /// 提示刷新文字
-  final String? refreshText;
-
-  /// 准备刷新文字
-  final String? refreshReadyText;
-
-  /// 正在刷新文字
-  final String? refreshingText;
-
-  /// 刷新完成文字
-  final String? refreshedText;
-
-  /// 刷新失败文字
-  final String? refreshFailedText;
-
-  /// 没有更多文字
-  final String? noMoreText;
-
-  /// 显示额外信息(默认为时间)
-  final bool showInfo;
-
-  /// 更多信息
-  final String? infoText;
-
   /// 背景颜色
   final Color bgColor;
-
-  /// 字体颜色
-  final Color textColor;
 
   /// 更多信息文字颜色
   final Color infoColor;
@@ -58,16 +31,7 @@ class AppClassicalHeader extends Header {
     bool overScroll = true,
     this.key,
     this.alignment,
-    this.refreshText,
-    this.refreshReadyText,
-    this.refreshingText,
-    this.refreshedText,
-    this.refreshFailedText,
-    this.noMoreText,
-    this.showInfo: true,
-    this.infoText,
     this.bgColor: Colors.transparent,
-    this.textColor: Colors.black,
     this.infoColor: Colors.teal,
   }) : super(
           extent: extent,
@@ -122,20 +86,20 @@ class AppClassicalHeaderWidget extends StatefulWidget {
   final bool success;
   final bool noMore;
 
-  AppClassicalHeaderWidget(
-      {Key? key,
-      required this.refreshState,
-      required this.classicalHeader,
-      required this.pulledExtent,
-      required this.refreshTriggerPullDistance,
-      required this.refreshIndicatorExtent,
-      required this.axisDirection,
-      required this.float,
-      required this.completeDuration,
-      required this.enableInfiniteRefresh,
-      required this.success,
-      required this.noMore})
-      : super(key: key);
+  AppClassicalHeaderWidget({
+    Key? key,
+    required this.refreshState,
+    required this.classicalHeader,
+    required this.pulledExtent,
+    required this.refreshTriggerPullDistance,
+    required this.refreshIndicatorExtent,
+    required this.axisDirection,
+    required this.float,
+    required this.completeDuration,
+    required this.enableInfiniteRefresh,
+    required this.success,
+    required this.noMore,
+  }) : super(key: key);
 
   @override
   AppClassicalHeaderWidgetState createState() => AppClassicalHeaderWidgetState();
@@ -152,35 +116,6 @@ class AppClassicalHeaderWidgetState extends State<AppClassicalHeaderWidget> with
       _overTriggerDistance ? _readyController.forward() : _restoreController.forward();
       _overTriggerDistance = over;
     }
-  }
-
-  /// 文本
-  String get _refreshText {
-    return widget.classicalHeader.refreshText ?? 'Pull to refresh';
-  }
-
-  String get _refreshReadyText {
-    return widget.classicalHeader.refreshReadyText ?? 'Release to refresh';
-  }
-
-  String get _refreshingText {
-    return widget.classicalHeader.refreshingText ?? 'Refreshing...';
-  }
-
-  String get _refreshedText {
-    return widget.classicalHeader.refreshedText ?? 'Refresh completed';
-  }
-
-  String get _refreshFailedText {
-    return widget.classicalHeader.refreshFailedText ?? 'Refresh failed';
-  }
-
-  String get _noMoreText {
-    return widget.classicalHeader.noMoreText ?? 'No more';
-  }
-
-  String get _infoText {
-    return widget.classicalHeader.infoText ?? 'Update at %T';
   }
 
   // 是否刷新完成
@@ -217,41 +152,6 @@ class AppClassicalHeaderWidgetState extends State<AppClassicalHeaderWidget> with
   // 浮动时,收起距离
   double? _floatBackDistance;
 
-  // 显示文字
-  String get _showText {
-    if (widget.noMore) return _noMoreText;
-    if (widget.enableInfiniteRefresh) {
-      if (widget.refreshState == RefreshMode.refreshed || widget.refreshState == RefreshMode.inactive || widget.refreshState == RefreshMode.drag) {
-        return _finishedText;
-      } else {
-        return _refreshingText;
-      }
-    }
-    switch (widget.refreshState) {
-      case RefreshMode.refresh:
-        return _refreshingText;
-      case RefreshMode.armed:
-        return _refreshingText;
-      case RefreshMode.refreshed:
-        return _finishedText;
-      case RefreshMode.done:
-        return _finishedText;
-      default:
-        if (overTriggerDistance) {
-          return _refreshReadyText;
-        } else {
-          return _refreshText;
-        }
-    }
-  }
-
-  // 刷新结束文字
-  String get _finishedText {
-    if (!widget.success) return _refreshFailedText;
-    if (widget.noMore) return _noMoreText;
-    return _refreshedText;
-  }
-
   // 刷新结束图标
   IconData get _finishedIcon {
     if (!widget.success) return Icons.error_outline;
@@ -261,15 +161,6 @@ class AppClassicalHeaderWidgetState extends State<AppClassicalHeaderWidget> with
 
   // 更新时间
   late DateTime _dateTime;
-
-  // 获取更多信息
-  String get _infoTextStr {
-    if (widget.refreshState == RefreshMode.refreshed) {
-      _dateTime = DateTime.now();
-    }
-    String fillChar = _dateTime.minute < 10 ? "0" : "";
-    return _infoText.replaceAll("%T", "${_dateTime.hour}:$fillChar${_dateTime.minute}");
-  }
 
   @override
   void initState() {
@@ -434,51 +325,17 @@ class AppClassicalHeaderWidgetState extends State<AppClassicalHeaderWidget> with
                             widget.noMore
                         ? Icon(
                             _finishedIcon,
-                            color: widget.classicalHeader.textColor,
+                            color: widget.classicalHeader.infoColor,
                           )
                         : Transform.rotate(
                             child: Icon(
                               isReverse ? Icons.arrow_upward : Icons.arrow_downward,
-                              color: widget.classicalHeader.textColor,
+                              color: widget.classicalHeader.infoColor,
                             ),
                             angle: 2 * pi * _iconRotationValue,
                           ),
               ),
             ),
-            // Expanded(
-            //   flex: 3,
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.center,
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: <Widget>[
-            //       Text(
-            //         _showText,
-            //         style: TextStyle(
-            //           fontSize: 16.0,
-            //           color: widget.classicalHeader.textColor,
-            //         ),
-            //       ),
-            //       widget.classicalHeader.showInfo
-            //           ? Container(
-            //               margin: EdgeInsets.only(
-            //                 top: 2.0,
-            //               ),
-            //               child: Text(
-            //                 _infoTextStr,
-            //                 style: TextStyle(
-            //                   fontSize: 12.0,
-            //                   color: widget.classicalHeader.infoColor,
-            //                 ),
-            //               ),
-            //             )
-            //           : Container(),
-            //     ],
-            //   ),
-            // ),
-            // Expanded(
-            //   flex: 2,
-            //   child: SizedBox(),
-            // ),
           ]
         : <Widget>[
             Container(
@@ -496,12 +353,12 @@ class AppClassicalHeaderWidgetState extends State<AppClassicalHeaderWidget> with
                           widget.noMore
                       ? Icon(
                           _finishedIcon,
-                          color: widget.classicalHeader.textColor,
+                          color: widget.classicalHeader.infoColor,
                         )
                       : Transform.rotate(
                           child: Icon(
                             isReverse ? Icons.arrow_back : Icons.arrow_forward,
-                            color: widget.classicalHeader.textColor,
+                            color: widget.classicalHeader.infoColor,
                           ),
                           angle: 2 * pi * _iconRotationValue,
                         ),

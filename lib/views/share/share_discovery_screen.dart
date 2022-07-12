@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/selected_button.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
@@ -63,6 +66,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   late TextEditingController textEditingController;
   late CartoonizerApi api;
   late String effectKey;
+  bool includeOriginal = true;
+  Size? imageSize;
 
   @override
   void initState() {
@@ -111,10 +116,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             if (res.statusCode == 200) {
               var imageUrl = url.split("?")[0];
-              api.startSocialPost(description: text, effectKey: effectKey, resources: [
+              var list = [
                 DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
-                DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
-              ]).then((value) {
+              ];
+              if (includeOriginal) {
+                list.add(
+                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
+                );
+              }
+              api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
                 if (value != null) {
                   CommonExtension().showToast("Your post has been submitted successfully");
                   Navigator.pop(context, true);
@@ -143,10 +153,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             if (res.statusCode == 200) {
               var imageUrl = url.split("?")[0];
-              api.startSocialPost(description: text, effectKey: effectKey, resources: [
+              var list = [
                 DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
-                DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
-              ]).then((value) {
+              ];
+              if (includeOriginal) {
+                list.add(
+                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
+                );
+              }
+              api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
                 if (value != null) {
                   CommonExtension().showToast("Your post has been submitted successfully");
                   Navigator.pop(context, true);
@@ -207,10 +222,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               inputFormatters: [
                 LengthLimitingTextInputFormatter(_maxInputLength),
               ],
-              textInputAction: TextInputAction.done,
-              style: TextStyle(height: 1, color: ColorConstant.White),
-              maxLines: 3,
-              minLines: 1,
+              style: TextStyle(
+                height: 1,
+                color: ColorConstant.White,
+                fontFamily: 'Poppins',
+                fontSize: $(14),
+              ),
+              maxLines: 5,
+              minLines: 3,
               onChanged: (text) {
                 setState(() {
                   canSubmit = text.trim().isNotEmpty;
@@ -221,18 +240,72 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 hintText: StringConstant.discoveryShareInputHint,
                 hintStyle: TextStyle(
                   color: ColorConstant.DiscoveryCommentGrey,
+                  fontFamily: 'Poppins',
+                  fontSize: $(14),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
+                contentPadding: EdgeInsets.symmetric(horizontal: $(0), vertical: $(12)),
                 isDense: true,
               ),
             ),
-            SizedBox(height: $(40)),
-            (isVideo ? EffectVideoPlayer(url: image) : Image.memory(imageData!)).intoContainer(
-                padding: EdgeInsets.symmetric(
-              horizontal: $(8),
-            )),
+            SizedBox(height: $(60)),
+            Row(
+              children: [
+                Expanded(
+                    child: (isVideo ? EffectVideoPlayer(url: image) : Image.memory(imageData!))
+                        .intoContainer()
+                        .visibility(
+                          visible: imageSize != null,
+                          maintainSize: true,
+                          maintainState: true,
+                          maintainAnimation: true,
+                        )
+                        .listenSizeChanged(onSizeChanged: (size) {
+                  setState(() {
+                    imageSize = size;
+                  });
+                })),
+                SizedBox(width: $(2)),
+                Expanded(
+                    child: includeOriginal && imageSize != null
+                        ? Container(
+                            width: imageSize!.width,
+                            height: imageSize!.height,
+                            child: CachedNetworkImage(
+                              imageUrl: originalUrl,
+                            ),
+                          )
+                        : Container()),
+                SizedBox(width: $(2)),
+                Expanded(child: Container()),
+              ],
+            ),
+            SizedBox(height: $(22)),
+            Divider(height: 1, color: ColorConstant.EffectGrey),
+            SizedBox(height: $(18)),
+            SelectedButton(
+              selected: includeOriginal,
+              selectedImage: Row(
+                children: [
+                  Image.asset(Images.ic_checked, width: $(16)),
+                  SizedBox(width: $(6)),
+                  TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
+                ],
+              ),
+              normalImage: Row(
+                children: [
+                  Image.asset(Images.ic_unchecked, width: $(16)),
+                  SizedBox(width: $(6)),
+                  TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
+                ],
+              ),
+              onChange: (value) {
+                setState(() {
+                  includeOriginal = value;
+                });
+              },
+            ),
           ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(25))),
+        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(25))),
       ),
     );
   }
