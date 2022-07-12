@@ -150,7 +150,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           });
         }
       }
-      print("offset:${lastOffset}");
     });
     delay(() {
       _easyRefreshController.callRefresh();
