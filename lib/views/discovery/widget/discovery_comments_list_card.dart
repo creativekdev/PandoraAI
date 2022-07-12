@@ -17,6 +17,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
   GestureTapCallback? onLikeTap;
   bool isTopComments;
   CommentsListCardType type;
+  late DateTime dateTime;
 
   DiscoveryCommentsListCard({
     Key? key,
@@ -27,7 +28,11 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
     this.onLikeTap,
     this.onCommentTap,
     this.isTopComments = true,
-  }) : super(key: key);
+  }) : super(key: key) {
+    var date = DateUtil.getDateTime(data.created, isUtc: true)!;
+    var timeZoneOffset = DateTime.now().timeZoneOffset;
+    dateTime = date.add(timeZoneOffset);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +104,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
               Row(
                 children: [
                   Text(
-                    DateUtil.formatDateStr(data.modified, format: 'MM-dd HH:mm'),
+                    DateUtil.formatDate(dateTime, format: 'MM-dd HH:mm'),
                     style: TextStyle(color: ColorConstant.DiscoveryCommentGrey, fontSize: $(12), fontFamily: 'Poppins'),
                   ),
                   Expanded(child: Container()),

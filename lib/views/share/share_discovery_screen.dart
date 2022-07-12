@@ -68,6 +68,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   late String effectKey;
   bool includeOriginal = true;
   Size? imageSize;
+  FocusNode focusNode = new FocusNode();
 
   @override
   void initState() {
@@ -81,6 +82,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     if (!isVideo) {
       imageData = base64Decode(image);
     }
+    delay(() {
+      FocusScope.of(context).requestFocus(focusNode);
+    }, milliseconds: 500);
   }
 
   @override
@@ -178,135 +182,149 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backgroundColor: Colors.transparent,
-        blurAble: false,
-        backIcon: TitleTextWidget(
-          StringConstant.cancel,
-          ColorConstant.White,
-          FontWeight.normal,
-          $(16),
-        ),
-        trailing: TitleTextWidget(
-          StringConstant.discoveryShareSubmit,
-          canSubmit ? ColorConstant.White : ColorConstant.EffectFunctionGrey,
-          FontWeight.normal,
-          $(16),
-        )
-            .intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular($(6)),
-                    gradient: LinearGradient(
-                      colors: [
-                        canSubmit ? Color(0xffE31ECD) : ColorConstant.EffectGrey,
-                        canSubmit ? Color(0xff243CFF) : ColorConstant.EffectGrey,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )))
-            .intoGestureDetector(onTap: () {
-          if (canSubmit) {
-            submit();
-          }
-        }),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextField(
-              controller: textEditingController,
-              autofocus: true,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(_maxInputLength),
-              ],
-              style: TextStyle(
-                height: 1,
-                color: ColorConstant.White,
-                fontFamily: 'Poppins',
-                fontSize: $(14),
-              ),
-              maxLines: 5,
-              minLines: 3,
-              onChanged: (text) {
-                setState(() {
-                  canSubmit = text.trim().isNotEmpty;
-                });
-              },
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: StringConstant.discoveryShareInputHint,
-                hintStyle: TextStyle(
-                  color: ColorConstant.DiscoveryCommentGrey,
-                  fontFamily: 'Poppins',
-                  fontSize: $(14),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: $(0), vertical: $(12)),
-                isDense: true,
-              ),
+    return WillPopScope(
+        child: Scaffold(
+          backgroundColor: ColorConstant.BackgroundColor,
+          appBar: AppNavigationBar(
+            backgroundColor: Colors.transparent,
+            blurAble: false,
+            backIcon: TitleTextWidget(
+              StringConstant.cancel,
+              ColorConstant.White,
+              FontWeight.normal,
+              $(16),
             ),
-            SizedBox(height: $(60)),
-            Row(
+            backAction: () async {
+              if (focusNode.hasFocus) {
+                await delay(() => FocusScope.of(context).requestFocus(FocusNode()), milliseconds: 300);
+              }
+              Navigator.of(context).pop();
+            },
+            trailing: TitleTextWidget(
+              StringConstant.discoveryShareSubmit,
+              canSubmit ? ColorConstant.White : ColorConstant.EffectFunctionGrey,
+              FontWeight.normal,
+              $(16),
+            )
+                .intoContainer(
+                    padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular($(6)),
+                        gradient: LinearGradient(
+                          colors: [
+                            canSubmit ? Color(0xffE31ECD) : ColorConstant.EffectGrey,
+                            canSubmit ? Color(0xff243CFF) : ColorConstant.EffectGrey,
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )))
+                .intoGestureDetector(onTap: () {
+              if (canSubmit) {
+                submit();
+              }
+            }),
+          ),
+          body: SingleChildScrollView(
+            child: Column(
               children: [
-                Expanded(
-                    child: (isVideo ? EffectVideoPlayer(url: image) : Image.memory(imageData!))
-                        .intoContainer()
-                        .visibility(
-                          visible: imageSize != null,
-                          maintainSize: true,
-                          maintainState: true,
-                          maintainAnimation: true,
-                        )
-                        .listenSizeChanged(onSizeChanged: (size) {
-                  setState(() {
-                    imageSize = size;
-                  });
-                })),
-                SizedBox(width: $(2)),
-                Expanded(
-                    child: includeOriginal && imageSize != null
-                        ? Container(
-                            width: imageSize!.width,
-                            height: imageSize!.height,
-                            child: CachedNetworkImage(
-                              imageUrl: originalUrl,
-                            ),
-                          )
-                        : Container()),
-                SizedBox(width: $(2)),
-                Expanded(child: Container()),
+                TextField(
+                  controller: textEditingController,
+                  autofocus: false,
+                  focusNode: focusNode,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(_maxInputLength),
+                  ],
+                  style: TextStyle(
+                    height: 1,
+                    color: ColorConstant.White,
+                    fontFamily: 'Poppins',
+                    fontSize: $(14),
+                  ),
+                  maxLines: 5,
+                  minLines: 3,
+                  onChanged: (text) {
+                    setState(() {
+                      canSubmit = text.trim().isNotEmpty;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: StringConstant.discoveryShareInputHint,
+                    hintStyle: TextStyle(
+                      color: ColorConstant.DiscoveryCommentGrey,
+                      fontFamily: 'Poppins',
+                      fontSize: $(14),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: $(0), vertical: $(12)),
+                    isDense: true,
+                  ),
+                ),
+                SizedBox(height: $(60)),
+                Row(
+                  children: [
+                    Expanded(
+                        child: (isVideo ? EffectVideoPlayer(url: image) : Image.memory(imageData!))
+                            .intoContainer()
+                            .visibility(
+                              visible: imageSize != null,
+                              maintainSize: true,
+                              maintainState: true,
+                              maintainAnimation: true,
+                            )
+                            .listenSizeChanged(onSizeChanged: (size) {
+                      setState(() {
+                        imageSize = size;
+                      });
+                    })),
+                    SizedBox(width: $(2)),
+                    Expanded(
+                        child: includeOriginal && imageSize != null
+                            ? Container(
+                                width: imageSize!.width,
+                                height: imageSize!.height,
+                                child: CachedNetworkImage(
+                                  imageUrl: originalUrl,
+                                ),
+                              )
+                            : Container()),
+                    SizedBox(width: $(2)),
+                    Expanded(child: Container()),
+                  ],
+                ),
+                SizedBox(height: $(22)),
+                Divider(height: 1, color: ColorConstant.EffectGrey),
+                SizedBox(height: $(18)),
+                SelectedButton(
+                  selected: includeOriginal,
+                  selectedImage: Row(
+                    children: [
+                      Image.asset(Images.ic_checked, width: $(16)),
+                      SizedBox(width: $(6)),
+                      TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
+                    ],
+                  ),
+                  normalImage: Row(
+                    children: [
+                      Image.asset(Images.ic_unchecked, width: $(16)),
+                      SizedBox(width: $(6)),
+                      TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
+                    ],
+                  ),
+                  onChange: (value) {
+                    setState(() {
+                      includeOriginal = value;
+                    });
+                  },
+                ),
               ],
-            ),
-            SizedBox(height: $(22)),
-            Divider(height: 1, color: ColorConstant.EffectGrey),
-            SizedBox(height: $(18)),
-            SelectedButton(
-              selected: includeOriginal,
-              selectedImage: Row(
-                children: [
-                  Image.asset(Images.ic_checked, width: $(16)),
-                  SizedBox(width: $(6)),
-                  TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
-                ],
-              ),
-              normalImage: Row(
-                children: [
-                  Image.asset(Images.ic_unchecked, width: $(16)),
-                  SizedBox(width: $(6)),
-                  TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
-                ],
-              ),
-              onChange: (value) {
-                setState(() {
-                  includeOriginal = value;
-                });
-              },
-            ),
-          ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(25))),
-      ),
-    );
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(25))),
+          ),
+        ),
+        onWillPop: () async {
+          if (focusNode.hasFocus) {
+            await delay(() => FocusScope.of(context).requestFocus(FocusNode()), milliseconds: 300);
+          }
+          return true;
+        });
   }
 }

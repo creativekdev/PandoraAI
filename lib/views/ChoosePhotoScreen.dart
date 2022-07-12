@@ -782,11 +782,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       originalUrl: urlFinal,
                       image: (controller.isVideo.value) ? videoPath : image,
                       isVideo: controller.isVideo.value,
-                    ).then((value) {
-                      if (value ?? false) {
-                        Navigator.of(context).pop();
-                      }
-                    });
+                    );
                   });
                 },
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
