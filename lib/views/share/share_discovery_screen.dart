@@ -277,7 +277,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         imageSize = size;
                       });
                     })),
-                    SizedBox(width: $(2)),
+                    SizedBox(width: $(8)),
                     Expanded(
                         child: includeOriginal && imageSize != null
                             ? Container(
@@ -288,7 +288,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                                 ),
                               )
                             : Container()),
-                    SizedBox(width: $(2)),
+                    SizedBox(width: $(8)),
                     Expanded(child: Container()),
                   ],
                 ),
