@@ -274,6 +274,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         children: [
           buildRefreshList().intoContainer(margin: EdgeInsets.only(top: headerHeight)),
           SingleChildScrollView(
+            physics: NeverScrollableScrollPhysics(),
             controller: headerScrollController,
             child: Column(children: [
               TitleTextWidget(
@@ -320,25 +321,27 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   }
 
   Container buildTabBar() {
-    return TabBar(
-      indicatorSize: TabBarIndicatorSize.label,
-      indicator: LineTabIndicator(
-        width: $(20),
-        strokeCap: StrokeCap.butt,
-        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-      ),
-      labelColor: ColorConstant.PrimaryColor,
-      labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-      labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-      unselectedLabelColor: ColorConstant.PrimaryColor,
-      unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-      controller: tabController,
-      tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
-      onTap: (index) {
-        onTabClick(index);
-      },
-      padding: EdgeInsets.zero,
-    ).intoContainer(
+    return Theme(
+        data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+        child: TabBar(
+          indicatorSize: TabBarIndicatorSize.label,
+          indicator: LineTabIndicator(
+            width: $(20),
+            strokeCap: StrokeCap.butt,
+            borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+          ),
+          labelColor: ColorConstant.PrimaryColor,
+          labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+          labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+          unselectedLabelColor: ColorConstant.PrimaryColor,
+          unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+          controller: tabController,
+          tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
+          onTap: (index) {
+            onTabClick(index);
+          },
+          padding: EdgeInsets.zero,
+        )).intoContainer(
       padding: EdgeInsets.symmetric(vertical: $(4)),
       height: $(44),
       color: Colors.transparent,
