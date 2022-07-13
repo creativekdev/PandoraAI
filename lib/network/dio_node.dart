@@ -134,8 +134,12 @@ class DioNode {
           logData[element.key] = "<file-${element.value.filename}>";
         });
         data = json.encode(logData);
-      } else {
+      } else if(reqData is Map){
         data = json.encode(reqData);
+      } else if(reqData is List<Map>) {
+        data = json.encode(reqData);
+      } else {
+        data = reqData.toString();
       }
       result = data;
     }

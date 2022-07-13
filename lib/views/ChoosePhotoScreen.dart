@@ -60,7 +60,14 @@ class ChoosePhotoScreen extends StatefulWidget {
 class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTickerProviderStateMixin {
   var algoName = "";
   var urlFinal = "";
-  var image = "";
+  var _image = "";
+
+  set image(String data) {
+    _image = data;
+    _cachedImage = null;
+  }
+
+  String get image => _image;
   var videoPath = "";
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
@@ -80,6 +87,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late StreamSubscription userChangeListener;
   late StreamSubscription userLoginListener;
   _BuildType lastBuildType = _BuildType.waterMark;
+
+  Widget? _cachedImage;
+
+  Widget get cachedImage {
+    if (_cachedImage != null) {
+      return _cachedImage!;
+    }
+    _cachedImage = Image.memory(
+      base64Decode(image),
+      width: 88.w,
+      height: 88.w,
+    );
+    return _cachedImage!;
+  }
 
   @override
   void dispose() {
@@ -474,11 +495,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: CachedVideoPlayer(_videoPlayerController!),
                                           )
-                                        : Image.memory(
-                                            base64Decode(image),
-                                            width: 88.w,
-                                            height: 88.w,
-                                          ),
+                                        : cachedImage,
                                   ),
                                   Obx(() => Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -717,6 +734,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             )),
       ),
     );
+  }
+
+  @override
+  // ignore: must_call_super
+  void didChangeDependencies() {
+    // super.didChangeDependencies();
   }
 
   Widget buildSuccessFunctions(BuildContext context) {
