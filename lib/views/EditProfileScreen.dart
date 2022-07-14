@@ -251,7 +251,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 color: Colors.transparent,
               )
                   .intoGestureDetector(onTap: () async {
-                Navigator.of(context).pop();
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.gallery;
@@ -279,7 +278,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 color: Colors.transparent,
               )
                   .intoGestureDetector(onTap: () async {
-                Navigator.of(context).pop();
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.camera;
