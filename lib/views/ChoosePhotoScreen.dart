@@ -160,8 +160,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     userManager.refreshUser();
     var length = widget.list[controller.lastItemIndex.value].effects.values.length;
     if (length > 4 && controller.lastSelectedIndex > 3) {
-      delay(() {
-        var alignment = (controller.lastSelectedIndex.value + 1) / length + 0.18;
+      delay(() {//todo need to optimize, and remove magic number
+        double alignment = 4 / length + 0.1;
+        if (controller.lastSelectedIndex > 4) {
+          alignment = (controller.lastSelectedIndex.value + 1) / length + 0.18;
+        }
         scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
       });
     }
