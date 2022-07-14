@@ -98,8 +98,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
     _cachedImage = Image.memory(
       base64Decode(image),
-      width: 88.w,
-      height: 88.w,
+      width: 85.w,
+      height: 85.w,
     );
     return _cachedImage!;
   }
@@ -499,7 +499,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: CachedVideoPlayer(_videoPlayerController!),
-                                          ).intoContainer(height: 80.w)
+                                          ).intoContainer(height: 85.w)
                                         : cachedImage,
                                   ),
                                   Obx(() => Row(
