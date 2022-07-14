@@ -11,6 +11,7 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:common_utils/common_utils.dart';
@@ -106,45 +107,52 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     FocusScope.of(context).requestFocus(FocusNode());
     showLoading().whenComplete(() {
       if (isVideo) {
-        String b_name = "fast-socialbook";
-        String f_name = path.basename(image);
-        var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
-        if (TextUtil.isEmpty(fileType)) {
-          fileType = '*';
-        }
-        String c_type = "video/$fileType";
-        final params = {
-          "bucket": b_name,
-          "file_name": f_name,
-          "content_type": c_type,
-        };
-        api.getPresignedUrl(params).then((url) async {
-          if (url == null) {
+        GallerySaver.saveVideo(image, false).then((value) {
+          if (value == null) {
             hideLoading();
-            CommonExtension().showToast('Oops failed');
+            CommonExtension().showToast('Oops Failed');
           } else {
-            var baseEntity = await Uploader().uploadFile(url, File(image), c_type);
-            if (baseEntity != null) {
-              var imageUrl = url.split("?")[0];
-              var list = [
-                DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
-              ];
-              if (includeOriginal) {
-                list.add(
-                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
-                );
-              }
-              api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
-                hideLoading();
-                if (value != null) {
-                  CommonExtension().showToast("Your post has been submitted successfully");
-                  Navigator.pop(context, true);
-                }
-              });
-            } else {
-              hideLoading();
-              CommonExtension().showToast("Failed to upload image");
+            String b_name = "fast-socialbook";
+            String f_name = path.basename(value);
+            var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+            if (TextUtil.isEmpty(fileType)) {
+              fileType = '*';
             }
+            String c_type = "video/$fileType";
+            final params = {
+              "bucket": b_name,
+              "file_name": f_name,
+              "content_type": c_type,
+            };
+            api.getPresignedUrl(params).then((url) async {
+              if (url == null) {
+                hideLoading();
+                CommonExtension().showToast('Oops failed');
+              } else {
+                var baseEntity = await Uploader().uploadFile(url, File(value), c_type);
+                if (baseEntity != null) {
+                  var imageUrl = url.split("?")[0];
+                  var list = [
+                    DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
+                  ];
+                  if (includeOriginal) {
+                    list.add(
+                      DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
+                    );
+                  }
+                  api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
+                    hideLoading();
+                    if (value != null) {
+                      CommonExtension().showToast("Your post has been submitted successfully");
+                      Navigator.pop(context, true);
+                    }
+                  });
+                } else {
+                  hideLoading();
+                  CommonExtension().showToast("Failed to upload image");
+                }
+              }
+            });
           }
         });
       } else {
@@ -238,15 +246,6 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  StringConstant.discoveryShareInputTitle,
-                  style: TextStyle(
-                    color: ColorConstant.White,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: $(15),
-                  ),
-                ),
                 TextField(
                   controller: textEditingController,
                   autofocus: false,
@@ -269,7 +268,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   },
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: StringConstant.discoveryShareInputHint,
+                    hintText: StringConstant.discoveryShareInputTitle,
                     hintStyle: TextStyle(
                       color: ColorConstant.DiscoveryCommentGrey,
                       fontFamily: 'Poppins',

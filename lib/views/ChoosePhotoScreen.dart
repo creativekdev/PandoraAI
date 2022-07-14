@@ -801,22 +801,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
                   AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
                     if (controller.isVideo.value) {
-                      controller.changeIsLoading(true);
-                      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
-                        controller.changeIsLoading(false);
-                        videoPath = value as String;
-                        if (value != "") {
-                          ShareDiscoveryScreen.push(
-                            context,
-                            effectKey: selectedEffect.key,
-                            originalUrl: urlFinal,
-                            image: videoPath,
-                            isVideo: controller.isVideo.value,
-                          );
-                        } else {
-                          CommonExtension().showToast("Oops Failed!");
-                        }
-                      });
+                      var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
+                      ShareDiscoveryScreen.push(
+                        context,
+                        effectKey: selectedEffect.key,
+                        originalUrl: urlFinal,
+                        image: videoUrl,
+                        isVideo: controller.isVideo.value,
+                      );
                     } else {
                       ShareDiscoveryScreen.push(
                         context,
