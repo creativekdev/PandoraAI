@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
@@ -245,7 +247,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           CupertinoActionSheetAction(
               child: Text(
                 'Take a photo',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
               ),
               onPressed: () async {
                 try {
@@ -266,11 +268,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   print("error");
                   print(error);
                 }
-              }),
+              }).intoContainer(color: ColorConstant.EffectFunctionGrey),
           CupertinoActionSheetAction(
               child: Text(
                 'Choose from library',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
               ),
               onPressed: () async {
                 try {
@@ -291,16 +293,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 } catch (error) {
                   print(error);
                 }
-              }),
+              }).intoContainer(color: ColorConstant.EffectFunctionGrey),
         ],
         cancelButton: CupertinoActionSheetAction(
             child: Text(
               'Cancel',
-              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
             ),
             onPressed: () {
               Navigator.pop(context);
-            }),
+            }).intoContainer(color: ColorConstant.EffectFunctionGrey),
       ),
     );
   }
@@ -308,22 +310,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   uploadImage() async {
     controller.changeIsLoading(true);
     String f_name = basename((controller.image.value as File).path);
-
+    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+    if (TextUtil.isEmpty(fileType)) {
+      fileType = '*';
+    }
+    String c_type = "image/${fileType}";
     final params = {
       'bucket': "fast-socialbook",
       'file_name': f_name,
-      'content_type': "image/*",
+      'content_type': c_type,
     };
 
     final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
     final Map parsed = json.decode(response.body.toString());
     try {
-      var res = await put(Uri.parse(parsed['data']), body: (controller.image.value as File).readAsBytesSync());
+      var url = parsed['data'];
+      var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
       controller.changeIsLoading(false);
-      print(res.body);
-      print(res.statusCode);
-      if (res.statusCode == 200) {
-        var imageUrl = "https://fast-socialbook.s3.us-west-2.amazonaws.com/$f_name";
+      if (baseEntity != null) {
+        var imageUrl = url.split("?")[0];
+        // var imageUrl = "https://fast-socialbook.s3.us-west-2.amazonaws.com/$f_name";
         controller.updateImageUrl(imageUrl);
       }
     } catch (e) {

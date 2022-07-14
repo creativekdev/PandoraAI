@@ -12,6 +12,7 @@ import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
@@ -23,6 +24,7 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -797,14 +799,33 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   var keys = effects.keys.toList();
                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
-                  AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
-                    ShareDiscoveryScreen.push(
-                      context,
-                      effectKey: selectedEffect.key,
-                      originalUrl: urlFinal,
-                      image: (controller.isVideo.value) ? videoPath : image,
-                      isVideo: controller.isVideo.value,
-                    );
+                  AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
+                    controller.changeIsLoading(true);
+                    if (controller.isVideo.value) {
+                      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                        controller.changeIsLoading(false);
+                        videoPath = value as String;
+                        if (value != "") {
+                          ShareDiscoveryScreen.push(
+                            context,
+                            effectKey: selectedEffect.key,
+                            originalUrl: urlFinal,
+                            image: videoPath,
+                            isVideo: controller.isVideo.value,
+                          );
+                        } else {
+                          CommonExtension().showToast("Oops Failed!");
+                        }
+                      });
+                    } else {
+                      ShareDiscoveryScreen.push(
+                        context,
+                        effectKey: selectedEffect.key,
+                        originalUrl: urlFinal,
+                        image: image,
+                        isVideo: controller.isVideo.value,
+                      );
+                    }
                   });
                 },
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
@@ -1017,7 +1038,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Future<String> uploadCompressedImage() async {
     String b_name = "free-socialbook";
     String f_name = basename((controller.image.value as File).path);
-    String c_type = "image/*";
+    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+    if (TextUtil.isEmpty(fileType)) {
+      fileType = '*';
+    }
+    String c_type = "image/${fileType}";
     final params = {
       "bucket": b_name,
       "file_name": f_name,
@@ -1026,9 +1051,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
     final Map parsed = json.decode(response.body.toString());
     var url = (parsed['data'] ?? '').toString();
-    var res = await put(Uri.parse(url), body: (controller.image.value as File).readAsBytesSync());
-
-    if (res.statusCode == 200) {
+    var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
+    if (baseEntity != null) {
       // String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
       var imageUrl = url.split("?")[0];
       controller.updateImageUrl(imageUrl);

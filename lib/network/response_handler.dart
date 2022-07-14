@@ -41,7 +41,7 @@ class ResponseHandler {
   ///intercept http response
   ///go forward while holder is active.
   ///such as State is mounted or GetxController is not close
-  bool interceptResponse(dio.Response<Map<String, dynamic>> response) {
+  bool interceptResponse(dio.Response response) {
     if (state != null) {
       if (!state!.mounted) {
         // current state is unmounted, stop forward.
@@ -64,7 +64,7 @@ class ResponseHandler {
   }
 
   /// pre handle response. like cookie, token, etc...
-  onPreHandleResult(dio.Response<Map<String, dynamic>> response) {
+  onPreHandleResult(dio.Response response) {
     LogUtil.v('response-headers: ${response.headers.toString()}');
     var headers = response.headers.map;
     if (headers.containsKey("set-cookie")) {

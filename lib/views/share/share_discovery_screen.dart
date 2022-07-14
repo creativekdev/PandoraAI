@@ -8,10 +8,12 @@ import 'package:cartoonizer/Widgets/selected_button.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
 
@@ -74,7 +76,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
-    textEditingController = TextEditingController();
+    textEditingController = TextEditingController(text: StringConstant.discoveryShareInputHint);
+    canSubmit = textEditingController.text.trim().isNotEmpty;
     isVideo = widget.isVideo;
     image = widget.image;
     originalUrl = widget.originalUrl;
@@ -105,7 +108,11 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
       if (isVideo) {
         String b_name = "fast-socialbook";
         String f_name = path.basename(image);
-        String c_type = "video/*";
+        var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+        if (TextUtil.isEmpty(fileType)) {
+          fileType = '*';
+        }
+        String c_type = "video/$fileType";
         final params = {
           "bucket": b_name,
           "file_name": f_name,
@@ -116,9 +123,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             CommonExtension().showToast('Oops failed');
           } else {
-            var res = await put(Uri.parse(url), body: File(image).readAsBytesSync());
-            hideLoading();
-            if (res.statusCode == 200) {
+            var baseEntity = await Uploader().uploadFile(url, File(image), c_type);
+            if (baseEntity != null) {
               var imageUrl = url.split("?")[0];
               var list = [
                 DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
@@ -129,12 +135,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 );
               }
               api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
+                hideLoading();
                 if (value != null) {
                   CommonExtension().showToast("Your post has been submitted successfully");
                   Navigator.pop(context, true);
                 }
               });
             } else {
+              hideLoading();
               CommonExtension().showToast("Failed to upload image");
             }
           }
@@ -142,7 +150,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
       } else {
         String b_name = "fast-socialbook";
         String f_name = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-        String c_type = "image/*";
+        String c_type = "image/jpg";
         final params = {
           "bucket": b_name,
           "file_name": f_name,
@@ -153,9 +161,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             CommonExtension().showToast('Oops failed');
           } else {
-            var res = await put(Uri.parse(url), body: imageData);
-            hideLoading();
-            if (res.statusCode == 200) {
+            var baseEntity = await Uploader().upload(url, imageData!, c_type);
+            if (baseEntity != null) {
               var imageUrl = url.split("?")[0];
               var list = [
                 DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
@@ -166,12 +173,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 );
               }
               api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
+                hideLoading();
                 if (value != null) {
                   CommonExtension().showToast("Your post has been submitted successfully");
                   Navigator.pop(context, true);
                 }
               });
             } else {
+              hideLoading();
               CommonExtension().showToast("Failed to upload image");
             }
           }
@@ -227,7 +236,17 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           ),
           body: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  StringConstant.discoveryShareInputTitle,
+                  style: TextStyle(
+                    color: ColorConstant.White,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: $(15),
+                  ),
+                ),
                 TextField(
                   controller: textEditingController,
                   autofocus: false,
@@ -256,7 +275,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       fontFamily: 'Poppins',
                       fontSize: $(14),
                     ),
-                    contentPadding: EdgeInsets.symmetric(horizontal: $(0), vertical: $(12)),
+                    contentPadding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(12)),
                     isDense: true,
                   ),
                 ),
@@ -264,7 +283,12 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 Row(
                   children: [
                     Expanded(
-                        child: (isVideo ? EffectVideoPlayer(url: image) : Image.memory(imageData!))
+                        child: (isVideo
+                                ? EffectVideoPlayer(url: image)
+                                : Image.memory(
+                                    imageData!,
+                                    fit: BoxFit.cover,
+                                  ))
                             .intoContainer()
                             .visibility(
                               visible: imageSize != null,
@@ -285,6 +309,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                                 height: imageSize!.height,
                                 child: CachedNetworkImage(
                                   imageUrl: originalUrl,
+                                  fit: BoxFit.cover,
                                 ),
                               )
                             : Container()),

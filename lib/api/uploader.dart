@@ -1,22 +1,39 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:dio/dio.dart';
 
 class Uploader extends BaseRequester {
+  Uploader() : super(newInstance: true);
+
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     return ApiOptions(baseUrl: '', headers: {});
   }
 
   /// upload file to aws s3
-  /// if use file, data should be set file.openRead(),
-  Future<BaseEntity?> upload(String url, Uint8List image, String fileName) async {
+  Future<BaseEntity?> upload(String url, Uint8List image, String contentType) async {
     var stream = MultipartFile.fromBytes(image).finalize();
     return await put(url, stream,
         options: Options(
           headers: {'Content-Length': image.length},
         ),
-        preHandleRequest: false);
+        preHandleRequest: false,
+        headers: {
+          'Content-Type': contentType,
+        });
+  }
+
+  /// upload file to aws s3
+  Future<BaseEntity?> uploadFile(String url, File file, String contentType) async {
+    return await put(url, file.openRead(),
+        options: Options(
+          headers: {'Content-Length': file.lengthSync()},
+        ),
+        preHandleRequest: false,
+        headers: {
+          'Content-Type': contentType,
+        });
   }
 }

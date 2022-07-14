@@ -118,7 +118,8 @@ class StringConstant {
   static const discoveryLike = "Like";
   static const discoveryUnlike = "Unlike";
   static const discoveryShareSubmit = 'Submit';
-  static const discoveryShareInputHint = 'Input share description';
+  static const discoveryShareInputTitle = 'Add some text';
+  static const discoveryShareInputHint = 'I created this using #ProfilePicMaker';
   static const cartoonize = 'Cartoonize';
   static const shareIncludeOriginal = "Also share the original image";
 

@@ -87,6 +87,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     }
     _client.options.baseUrl = options.baseUrl;
     if (!preHandleRequest) {
+      _client.options.headers.addAll(headers);
       return null;
     }
 
@@ -120,7 +121,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     headers ??= Map();
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
-      Response<Map<String, dynamic>> response = await _client.get(
+      Response response = await _client.get(
         path,
         queryParameters: params,
         onReceiveProgress: onReceiveProgress,
@@ -152,7 +153,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       data = params;
     }
     try {
-      Response<Map<String, dynamic>> response = await _client.post(
+      Response response = await _client.post(
         path,
         data: data,
         onSendProgress: onSendProgress,
@@ -180,7 +181,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     headers ??= Map();
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
-      Response<Map<String, dynamic>> response = await _client.put(
+      Response response = await _client.put(
         path,
         data: data,
         queryParameters: params,
@@ -207,7 +208,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     headers ??= Map();
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
-      Response<Map<String, dynamic>> response = await _client.delete(path, data: data, queryParameters: params);
+      Response response = await _client.delete(path, data: data, queryParameters: params);
       return _onResponse(response, toastOnFailed: toastOnFailed);
     } on DioError catch (e) {
       onError(e);
@@ -216,7 +217,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   }
 
   BaseEntity? _onResponse(
-    Response<Map<String, dynamic>> response, {
+    Response response, {
     bool toastOnFailed = true,
   }) {
     if (!interceptResponse(response)) {
@@ -228,7 +229,12 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       var baseEntity = BaseEntity(data: response.data, headers: headers);
       return baseEntity;
     } else {
-      onReqError(response.data?['message'] ?? response.statusMessage, toastOnFailed: toastOnFailed);
+      if (response.data is Map<String, dynamic>) {
+        var map = response.data as Map<String, dynamic>?;
+        onReqError(map?['message'] ?? response.statusMessage, toastOnFailed: toastOnFailed);
+      } else {
+        onReqError(response.statusMessage ?? '', toastOnFailed: toastOnFailed);
+      }
       return null;
     }
   }
