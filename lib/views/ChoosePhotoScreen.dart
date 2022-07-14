@@ -496,7 +496,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: CachedVideoPlayer(_videoPlayerController!),
-                                          )
+                                          ).intoContainer(height: 80.w)
                                         : cachedImage,
                                   ),
                                   Obx(() => Row(
@@ -800,8 +800,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
                   AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
-                    controller.changeIsLoading(true);
                     if (controller.isVideo.value) {
+                      controller.changeIsLoading(true);
                       await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
                         controller.changeIsLoading(false);
                         videoPath = value as String;

@@ -2,22 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
+import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 import '../common/Extension.dart';
-import '../models/UserModel.dart';
-import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/utils/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -239,42 +237,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return user;
   }
 
-  showCameraDialog(BuildContext context) async {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (_) => CupertinoActionSheet(
-        actions: [
-          CupertinoActionSheetAction(
-              child: Text(
-                'Take a photo',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
-              ),
-              onPressed: () async {
-                try {
-                  Navigator.pop(context);
-                  var source = ImageSource.camera;
-                  XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-                  if (image == null) {
-                    return;
-                  }
-                  controller.updateImageFile(File(image.path));
-                  controller.changeIsPhotoSelect(true);
-                  uploadImage();
-                } on PlatformException catch (error) {
-                  if (error.code == "camera_access_denied") {
-                    showCameraPermissionDialog(context);
-                  }
-                } catch (error) {
-                  print("error");
-                  print(error);
-                }
-              }).intoContainer(color: ColorConstant.EffectFunctionGrey),
-          CupertinoActionSheetAction(
-              child: Text(
-                'Choose from library',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
-              ),
-              onPressed: () async {
+  showCameraDialog(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TitleTextWidget('Select from album', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () async {
+                Navigator.of(context).pop();
                 try {
                   Navigator.pop(context);
                   var source = ImageSource.gallery;
@@ -293,18 +270,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 } catch (error) {
                   print(error);
                 }
-              }).intoContainer(color: ColorConstant.EffectFunctionGrey),
-        ],
-        cancelButton: CupertinoActionSheetAction(
-            child: Text(
-              'Cancel',
-              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.white),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            }).intoContainer(color: ColorConstant.EffectFunctionGrey),
-      ),
-    );
+              }),
+              Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
+              TitleTextWidget('Take a selfie', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () async {
+                Navigator.of(context).pop();
+                try {
+                  Navigator.pop(context);
+                  var source = ImageSource.camera;
+                  XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+                  if (image == null) {
+                    return;
+                  }
+                  controller.updateImageFile(File(image.path));
+                  controller.changeIsPhotoSelect(true);
+                  uploadImage();
+                } on PlatformException catch (error) {
+                  if (error.code == "camera_access_denied") {
+                    showCameraPermissionDialog(context);
+                  }
+                } catch (error) {
+                  print("error");
+                  print(error);
+                }
+              }),
+              Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
+              TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop();
+              }),
+            ],
+          ).intoContainer(
+              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              decoration: BoxDecoration(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(24)),
+                    topRight: Radius.circular($(24)),
+                  )));
+        },
+        backgroundColor: Colors.transparent);
   }
 
   uploadImage() async {
