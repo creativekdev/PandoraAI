@@ -1,6 +1,5 @@
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:video_player/video_player.dart';
 
 class EffectVideoPlayer extends StatefulWidget {
   String url;
@@ -43,6 +42,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       children: [
         AspectRatio(
           aspectRatio: controller.value.aspectRatio,
