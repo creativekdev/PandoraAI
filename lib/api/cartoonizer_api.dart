@@ -18,9 +18,7 @@ class CartoonizerApi extends BaseRequester {
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     var userManager = AppDelegate.instance.getManager<UserManager>();
     Map<String, String> headers = {};
-    if (!userManager.isNeedLogin) {
-      headers['cookie'] = "sb.connect.sid=${userManager.sid}";
-    }
+    headers['cookie'] = "sb.connect.sid=${userManager.sid}";
     return ApiOptions(baseUrl: Config.instance.apiHost, headers: headers);
   }
 
