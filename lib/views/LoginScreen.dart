@@ -349,14 +349,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             isLoading = true;
                           });
                           var baseEntity = await userManager.login(emailController.text.trim(), passController.text.trim());
-                          setState(() {
-                            isLoading = false;
-                          });
                           if (baseEntity != null) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
                             prefs.setBool("isLogin", true);
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "email"});
+                          }
+                          if (mounted) {
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
                         }
                       },
@@ -423,9 +425,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
                             if (isLoading) {
-                              setState(() {
-                                isLoading = false;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
                             }
                           }
                         },
@@ -503,9 +507,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } finally {
-                          setState(() {
-                            isLoading = false;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         }
                       },
                       child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),

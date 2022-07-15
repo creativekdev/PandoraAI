@@ -58,14 +58,14 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
   @override
   void didUpdateWidget(DiscoveryListCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    data = widget.data;
-    resources = data.resourceList();
     if (oldWidget.data.id != data.id) {
       onTap = widget.onTap;
       onLikeTap = widget.onLikeTap;
       width = widget.width;
       loading = true;
     }
+    data = widget.data;
+    resources = data.resourceList();
   }
 
   @override
