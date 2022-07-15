@@ -82,6 +82,9 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
   void dispose() {
     super.dispose();
     api.unbind();
+    onLoginEventListener.cancel();
+    onLikeEventListener.cancel();
+    onUnlikeEventListener.cancel();
   }
 
   refreshData() {
