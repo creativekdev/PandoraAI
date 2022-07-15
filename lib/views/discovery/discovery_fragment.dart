@@ -374,13 +374,13 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: data.data!),
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index].data!),
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
               onLikeTap: () {
                 userManager.doOnLogin(context, callback: () {
-                  onLikeTap(data.data!);
+                  onLikeTap(dataList[index].data!);
                 }, autoExec: false);
               },
             )
