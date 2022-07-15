@@ -41,7 +41,7 @@ class SocialUserInfo {
       'apple_id': appleId,
       'cartoonize_credit': cartoonizeCredit,
       'creditcards': creditcards,
-      'user_subscription': userSubscription,
+      'user_subscription': [userSubscription],
     };
   }
 
