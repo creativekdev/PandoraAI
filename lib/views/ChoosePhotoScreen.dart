@@ -26,7 +26,6 @@ import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:http/http.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -73,8 +72,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var videoPath = "";
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
-
-  // late UserModel _user;
 
   final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
@@ -158,16 +155,19 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
     adsHolder.onReady();
     userManager.refreshUser();
-    var length = widget.list[controller.lastItemIndex.value].effects.values.length;
-    if (length > 4 && controller.lastSelectedIndex > 3) {
-      delay(() {//todo need to optimize, and remove magic number
-        double alignment = 4 / length + 0.1;
-        if (controller.lastSelectedIndex > 4) {
-          alignment = (controller.lastSelectedIndex.value + 1) / length + 0.18;
-        }
-        scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
-      });
-    }
+    autoScrollToSelectedIndex();
+  }
+
+  /// calculate scroll offset in child horizontal list
+  void autoScrollToSelectedIndex() {
+    var index = controller.lastSelectedIndex.value;
+    var screenWidth = ScreenUtil.screenSize.width;
+    //remove padding offset and get real rate of selectedIndex in hole child list
+    var d = (screenWidth - $(30)) / screenWidth;
+    var alignment = d * index / 4;
+    delay(() {
+      scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
+    });
   }
 
   Future<bool> _willPopCallback(BuildContext context) async {

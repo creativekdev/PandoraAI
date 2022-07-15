@@ -354,7 +354,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         scrollController: scrollController,
         enableControlFinishRefresh: true,
         enableControlFinishLoad: false,
-        emptyWidget: dataList.isEmpty ? TitleTextWidget('Don\'t found any Discovery yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+        emptyWidget: dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
         onRefresh: () async => onLoadFirstPage(),
         onLoad: () async => onLoadMorePage(),
         child: WaterfallFlow.builder(
@@ -362,7 +362,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
-            closeToTrailing: true,
           ),
           itemBuilder: (context, index) {
             var data = dataList[index];
@@ -386,7 +385,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               },
             )
                 .intoContainer(
-                  margin: EdgeInsets.only(top: (index < 2 ? 0 : 0) + $(8)),
+                  margin: EdgeInsets.only(top: $(8)),
                 )
                 .offstage(offstage: !data.visible);
           },
