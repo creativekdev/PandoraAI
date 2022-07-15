@@ -31,24 +31,36 @@ class CacheManager extends BaseManager {
     return _sharedPreferences.getString(key) ?? '';
   }
 
-  Future<bool> setString(String key, String value) async {
-    return _sharedPreferences.setString(key, value);
+  Future<bool> setString(String key, String? value) async {
+    if (value == null) {
+      return _sharedPreferences.remove(key);
+    } else {
+      return _sharedPreferences.setString(key, value);
+    }
   }
 
   bool getBool(String key) {
     return _sharedPreferences.getBool(key) ?? false;
   }
 
-  Future<bool> setBool(String key, bool value) async {
-    return _sharedPreferences.setBool(key, value);
+  Future<bool> setBool(String key, bool? value) async {
+    if (value == null) {
+      return _sharedPreferences.remove(key);
+    } else {
+      return _sharedPreferences.setBool(key, value);
+    }
   }
 
   int getInt(String key) {
     return _sharedPreferences.getInt(key) ?? 0;
   }
 
-  Future<bool> setInt(String key, int value) async {
-    return _sharedPreferences.setInt(key, value);
+  Future<bool> setInt(String key, int? value) async {
+    if (value == null) {
+      return _sharedPreferences.remove(key);
+    } else {
+      return _sharedPreferences.setInt(key, value);
+    }
   }
 
   dynamic getJson(String key) {

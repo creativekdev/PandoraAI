@@ -48,7 +48,9 @@ class UserManager extends BaseManager {
 
   String get sid => cacheManager.getString(CacheManager.keyLoginCookie);
 
-  set sid(String id) => cacheManager.setString(CacheManager.keyLoginCookie, id);
+  set sid(String? id) {
+    cacheManager.setString(CacheManager.keyLoginCookie, id);
+  }
 
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
@@ -135,7 +137,6 @@ class UserManager extends BaseManager {
 
   Future<void> logout() async {
     user = null;
-    _notifyUserStateChange();
-    cacheManager.clear();
+    sid = null;
   }
 }

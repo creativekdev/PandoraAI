@@ -70,10 +70,13 @@ class ResponseHandler {
     if (headers.containsKey("set-cookie")) {
       var cookie = headers['set-cookie'] ?? [];
       if (cookie.isNotEmpty) {
-        var keyValues = cookie[0].split(";");
-        for (var value in keyValues) {
-          if (value.startsWith('sb.connect.sid')) {
-            AppDelegate.instance.getManager<UserManager>().sid = value.split('=')[1];
+        for (var element in cookie) {
+          var keyValues = element.split(';');
+          for (var value in keyValues) {
+            if (value.startsWith('sb.connect.sid')) {
+              AppDelegate.instance.getManager<UserManager>().sid = value.split('=')[1];
+              break;
+            }
           }
         }
       }
