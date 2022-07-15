@@ -101,6 +101,27 @@ bool isShowAds(UserModel? user) {
   return showAds;
 }
 
+String getFileName(String url) {
+  return url.substring(url.lastIndexOf('/') + 1);
+}
+
+String getFileType(String fileName) {
+  return fileName.substring(fileName.lastIndexOf(".") + 1);
+}
+
+Future<bool> mkdirByPath(String path) async {
+  return mkdir(Directory(path));
+}
+
+Future<bool> mkdir(Directory file) async {
+  var bool = await file.exists();
+  if (!bool) {
+    await file.create();
+    return true;
+  }
+  return true;
+}
+
 Future<File> imageCompressAndGetFile(File file) async {
   UserModel user = await getUser();
 

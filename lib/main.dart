@@ -5,7 +5,7 @@ import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';

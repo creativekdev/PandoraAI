@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/social_user_info.dart';

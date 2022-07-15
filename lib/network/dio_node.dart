@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 const _receiveTimeout = 10000;
 const _connectTimeout = 15000;
@@ -31,12 +32,13 @@ class DioNode {
     options.connectTimeout = _connectTimeout;
     options.responseType = _responseType;
     Dio client = Dio(options);
-    client.interceptors
-        .add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) {
+    client.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) {
+      if (kReleaseMode) {
+        return handler.next(options);
+      }
       var tag = _generateRequestTag(options);
       String url = options.baseUrl + options.path;
-      LogUtil.v('request: $url  headers: ${_generateHeaders(options)}',
-          tag: tag);
+      LogUtil.v('request: $url  headers: ${_generateHeaders(options)}', tag: tag);
       var getParams = _generateGetParams(options);
       if (getParams != null) {
         LogUtil.v('request: $url  queryParams: $getParams', tag: tag);
@@ -44,9 +46,7 @@ class DioNode {
       var postParams = _generatePostParams(options);
       if (postParams != null) {
         if (postParams.length > logMaxLength) {
-          LogUtil.v(
-              'request: $url  data: ${postParams.substring(0, logMaxLength)}',
-              tag: tag);
+          LogUtil.v('request: $url  data: ${postParams.substring(0, logMaxLength)}', tag: tag);
         } else {
           LogUtil.v('request: $url  data: $postParams', tag: tag);
         }
@@ -55,13 +55,23 @@ class DioNode {
       }
       return handler.next(options);
     }, onResponse: (Response response, handler) {
-      String url =
-          response.requestOptions.baseUrl + response.requestOptions.path;
-      String result = json.encode(response.data).toString();
+      if (kReleaseMode) {
+        return handler.next(response);
+      }
+      String url = response.requestOptions.baseUrl + response.requestOptions.path;
+      String result;
+      try {
+        result = json.encode(response.data).toString();
+      } catch (e) {
+        result = response.data?.toString() ?? 'unsupported response data';
+      }
       var tag = _generateRequestTag(response.requestOptions);
       LogUtil.v('response: $url  response: $result', tag: tag);
       return handler.next(response);
     }, onError: (e, handler) {
+      if (kReleaseMode) {
+        return handler.next(e);
+      }
       String url = e.requestOptions.baseUrl + e.requestOptions.path;
       var tag = _generateRequestTag(e.requestOptions);
       LogUtil.v('response: $url  error: ${e.toString()}', tag: tag);
@@ -82,14 +92,11 @@ class DioNode {
     String url = options.baseUrl + options.path;
     var getParams = _generateGetParams(options);
     if (getParams != null) {
-      requestTag =
-          _TAG + "_" + EncryptUtil.encodeMd5(url + getParams).substring(0, 8);
+      requestTag = _TAG + "_" + EncryptUtil.encodeMd5(url + getParams).substring(0, 8);
     } else {
       var postParams = _generatePostParams(options);
       if (postParams != null) {
-        requestTag = _TAG +
-            "_" +
-            EncryptUtil.encodeMd5(url + postParams).substring(0, 8);
+        requestTag = _TAG + "_" + EncryptUtil.encodeMd5(url + postParams).substring(0, 8);
       } else {
         requestTag = _TAG + "_" + EncryptUtil.encodeMd5(url).substring(0, 8);
       }
@@ -134,9 +141,9 @@ class DioNode {
           logData[element.key] = "<file-${element.value.filename}>";
         });
         data = json.encode(logData);
-      } else if(reqData is Map){
+      } else if (reqData is Map) {
         data = json.encode(reqData);
-      } else if(reqData is List<Map>) {
+      } else if (reqData is List<Map>) {
         data = json.encode(reqData);
       } else {
         data = reqData.toString();

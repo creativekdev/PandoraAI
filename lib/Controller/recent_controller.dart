@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 
 ///

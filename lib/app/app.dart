@@ -1,7 +1,8 @@
-import 'package:cartoonizer/app/cache_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/image_scale_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -31,8 +32,8 @@ class AppDelegate {
     _listeners.add(listener);
   }
 
-  cancelListenAsync(Function(bool status) listener) async {
-    return delay(() => _listeners.remove(listener));
+  cancelListenAsync(Function(bool status) listener) {
+    delay(() => _listeners.remove(listener));
   }
 
   _notifyStatus() {
@@ -121,11 +122,13 @@ class AppDelegate {
 }
 
 abstract class BaseManager {
-  bool mounted = false;
+  bool _mounted = false;
+
+  get mounted => _mounted;
 
   @protected
   Future<void> onCreate() async {
-    mounted = true;
+    _mounted = true;
   }
 
   @protected
@@ -133,7 +136,7 @@ abstract class BaseManager {
 
   @protected
   Future<void> onDestroy() async {
-    mounted = false;
+    _mounted = false;
   }
 
   T getManager<T extends BaseManager>() {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheManager extends BaseManager {
@@ -14,11 +15,16 @@ class CacheManager extends BaseManager {
   static const keyLastTabAttached = "last_tab_attached";
 
   late SharedPreferences _sharedPreferences;
+  late StorageOperator _storageOperator;
+
+  StorageOperator get storageOperator => _storageOperator;
 
   @override
   Future<void> onCreate() async {
     await super.onCreate();
     _sharedPreferences = await SharedPreferences.getInstance();
+    _storageOperator = StorageOperator();
+    _storageOperator.initializeDir();
   }
 
   String getString(String key) {
@@ -56,7 +62,7 @@ class CacheManager extends BaseManager {
   }
 
   Future<bool> setJson(String key, dynamic json) async {
-    if(json == null) {
+    if (json == null) {
       return _sharedPreferences.remove(key);
     }
     return _sharedPreferences.setString(key, jsonEncode(json));
