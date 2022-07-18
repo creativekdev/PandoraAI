@@ -25,7 +25,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb801412163654865</string>
+				<string>fb1043807369586450</string>
 				<string>aw9iospxikqd2qsx</string>
 			</array>
 		</dict>
@@ -41,9 +41,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FacebookAppID</key>
-	<string>801412163654865</string>
+	<string>1043807369586450</string>
 	<key>FacebookClientToken</key>
-	<string>f43d04dd22a9134960f973c1bd5af735</string>
+	<string>04c886707467a9eaa9c66ad95ffdb4bb</string>
 	<key>FacebookDisplayName</key>
 	<string>ProfilePicMaker</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -55,6 +55,8 @@
 		<string>facebook</string>
 		<string>fbshareextension</string>
 		<string>fbapi</string>
+        <string>fb-messenger-api</string>
+        <string>fbauth2</string>
 		<string>tiktokopensdk</string>
 		<string>tiktoksharesdk</string>
 		<string>snssdk1180</string>
