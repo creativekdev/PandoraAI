@@ -30,7 +30,7 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
   void initState() {
     super.initState();
     cardAdsHolder = CardAdsHolder(
-      width: ScreenUtil.screenSize.width,c
+      width: ScreenUtil.screenSize.width,
       onUpdated: () {
         hideLoading();
         // setState(() {});
