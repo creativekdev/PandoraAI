@@ -8,9 +8,22 @@ class SocialUserInfo {
   String status = "registered";
   String appleId = "";
   int cartoonizeCredit = 0;
+  MemberInfo? member;
 
   Map<String, dynamic> userSubscription = {};
   List<dynamic> creditcards = [];
+
+  String getShownEmail() {
+    return member?.email ?? email;
+  }
+
+  String getShownName() {
+    return member?.name ?? name;
+  }
+
+  String getShownAvatar() {
+    return member?.avatar ?? avatar;
+  }
 
   SocialUserInfo.fromJson(Map<String, dynamic> json) {
     id = json['id'] ?? 0;
@@ -29,10 +42,14 @@ class SocialUserInfo {
         userSubscription = item;
       }
     }
+    var memberJson = json['member'];
+    if (memberJson != null && memberJson is Map<String, dynamic>) {
+      member = MemberInfo.fromJson(memberJson);
+    }
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    var map = {
       'id': id,
       'email': email,
       'name': name,
@@ -41,8 +58,16 @@ class SocialUserInfo {
       'apple_id': appleId,
       'cartoonize_credit': cartoonizeCredit,
       'creditcards': creditcards,
-      'user_subscription': userSubscription.keys.isEmpty ? [] : [userSubscription],
     };
+    if (userSubscription.keys.isEmpty) {
+      map['user_subscription'] = [];
+    } else {
+      map['user_subscription'] = [userSubscription];
+    }
+    if (member != null) {
+      map['member'] = member!.toJson();
+    }
+    return map;
   }
 
   bool equals(SocialUserInfo? userInfo) {
@@ -51,5 +76,36 @@ class SocialUserInfo {
 
   SocialUserInfo copy() {
     return SocialUserInfo.fromJson(toJson());
+  }
+}
+
+class MemberInfo {
+  int id = 0;
+  String email = '';
+  String name = '';
+  String avatar = '';
+
+  MemberInfo.fromJson(Map<String, dynamic> json) {
+    id = json['id'] ?? 0;
+    email = json['email'] ?? '';
+    name = json['name'] ?? '';
+    avatar = json['avatar'] ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'avatar': avatar,
+    };
+  }
+
+  bool equals(MemberInfo? member) {
+    return member == null ? false : jsonEncode(toJson()) == jsonEncode(member.toJson());
+  }
+
+  MemberInfo copy() {
+    return MemberInfo.fromJson(toJson());
   }
 }

@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final EditProfileScreenController controller = EditProfileScreenController();
   late ImagePicker imagePicker;
   final nameController = TextEditingController();
+
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void dispose() {
@@ -125,7 +128,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                         ),
                                                       )
                                                     : Image.network(
-                                                        (snapshot.hasData) ? (snapshot.data as UserModel).avatar : "",
+                                                        (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownAvatar() : "",
                                                         width: 40.w,
                                                         height: 40.w,
                                                         fit: BoxFit.fill,
@@ -166,7 +169,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   SizedBox(
                                     height: 2.h,
                                   ),
-                                  TitleTextWidget((snapshot.hasData) ? (snapshot.data as UserModel).email : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
+                                  TitleTextWidget((snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownEmail() : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
                                   SizedBox(
                                     height: 2.h,
                                   ),
@@ -230,10 +233,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Future<UserModel> _getData() async {
-    UserModel user = await API.getLogin();
-    controller.updateImageUrl(user.avatar);
-    nameController.text = user.name;
+  Future<SocialUserInfo> _getData() async {
+    var user = userManager.user!;
+    controller.updateImageUrl(user.getShownAvatar());
+    nameController.text = user.getShownName();
     return user;
   }
 

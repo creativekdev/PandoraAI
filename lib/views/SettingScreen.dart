@@ -85,7 +85,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(15.w),
                                   child: CachedNetworkImage(
-                                    imageUrl: userManager.user?.avatar ?? "",
+                                    imageUrl: userManager.user?.getShownAvatar() ?? '',
                                     fit: BoxFit.fill,
                                     width: 15.w,
                                     height: 15.w,
@@ -119,8 +119,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                TitleTextWidget(userManager.user?.email ?? '', Colors.white, FontWeight.w500, 12.sp, align: TextAlign.start),
-                                TitleTextWidget(userManager.user?.name ?? '', Colors.white, FontWeight.w400, 12.sp, align: TextAlign.start),
+                                TitleTextWidget(userManager.user?.getShownEmail() ?? '', Colors.white, FontWeight.w500, 12.sp, align: TextAlign.start),
+                                TitleTextWidget(userManager.user?.getShownName() ?? '', Colors.white, FontWeight.w400, 12.sp, align: TextAlign.start),
                               ],
                             ),
                           ),
@@ -362,19 +362,19 @@ class _SettingScreenState extends AppState<SettingScreen> {
             actions: [
               CupertinoDialogAction(
                   child: Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-              CupertinoDialogAction(
-                  child: Text(
                     'Delete',
                     style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
                   ),
                   onPressed: () async {
                     Navigator.pop(context, true);
+                  }),
+              CupertinoDialogAction(
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
                   }),
             ],
           ));

@@ -326,7 +326,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           builder: (context) => StripeSubscriptionScreen(),
                         )).then((value) => {setState(() {})});
                   }
-                }).visibility(visible: !userManager.isNeedLogin),
+                }).visibility(visible: !userManager.isNeedLogin && userManager.user!.userSubscription.isEmpty),
                 TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),

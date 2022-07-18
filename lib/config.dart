@@ -14,7 +14,9 @@ class AdMobConfig {
   // static String get INTERSTITIAL_AD_ID => 'ca-app-pub-3940256099942544/8691691433';
   static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
   // static String get DISCOVERY_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
-  static String get DISCOVERY_AD_ID => Platform.isIOS? 'ca-app-pub-8401689731796078/6102802285':'ca-app-pub-8401689731796078/9945860280';
+  static String get DISCOVERY_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6102802285' : 'ca-app-pub-8401689731796078/9945860280';
+  // static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
+  static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
 }
 
 abstract class BaseConfig {
