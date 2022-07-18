@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
+import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
 
 extension WidgetExtension on Widget {
@@ -10,6 +12,16 @@ extension WidgetExtension on Widget {
         key: key,
         widthFactor: widthFactor,
         heightFactor: heightFactor,
+        child: this,
+      );
+
+  Padding intoPadding({
+    Key? key,
+    required EdgeInsets padding,
+  }) =>
+      Padding(
+        key: key,
+        padding: padding,
         child: this,
       );
 
@@ -136,6 +148,18 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
+  AbsorbPointer absorb({
+    Key? key,
+    bool absorbing = true,
+    bool? ignoringSemantics,
+  }) =>
+      AbsorbPointer(
+        child: this,
+        key: key,
+        absorbing: absorbing,
+        ignoringSemantics: ignoringSemantics,
+      );
+
   IgnorePointer ignore({
     Key? key,
     bool ignoring = true,
@@ -158,9 +182,45 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
-  Visibility visibility({Key? key, bool visible = true}) => Visibility(
+  Visibility visibility({
+    Key? key,
+    bool visible = true,
+    bool maintainState = false,
+    bool maintainAnimation = false,
+    bool maintainSize = false,
+    bool maintainSemantics = false,
+    bool maintainInteractivity = false,
+    Widget replacement = const SizedBox.shrink(),
+  }) =>
+      Visibility(
         key: key,
         visible: visible,
+        child: this,
+        maintainSize: maintainSize,
+        maintainAnimation: maintainAnimation,
+        maintainState: maintainState,
+        maintainSemantics: maintainSemantics,
+        maintainInteractivity: maintainInteractivity,
+        replacement: replacement,
+      );
+
+  SizeChanged listenSizeChanged({
+    Key? key,
+    Function(Size size)? onSizeChanged,
+  }) =>
+      SizeChanged(
+        key: key,
+        onSizeChanged: onSizeChanged,
+        child: this,
+      );
+
+  BlankAreaIntercept blankAreaIntercept({
+    Key? key,
+    KeyboardInterceptType interceptType = KeyboardInterceptType.hideKeyboard,
+  }) =>
+      BlankAreaIntercept(
+        key: key,
+        interceptType: interceptType,
         child: this,
       );
 }

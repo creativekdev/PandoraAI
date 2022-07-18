@@ -1,3 +1,4 @@
+@Deprecated('use UserManager and SocialUserInfo')
 class UserModel {
   int id = 0;
   String email = "";

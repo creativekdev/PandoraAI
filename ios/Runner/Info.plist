@@ -74,8 +74,8 @@
 	<string>Your data will be used to provide you a better and personalized product enhancements.</string>
 	<key>TikTokAppID</key>
 	<string>aw9iospxikqd2qsx</string>
-    <key>AppLovinSdkKey</key>
-	<string>D9GdODAvyVCfkF8g5ZM0Ub5OTeh2TGPvpl6UvlBRuCgXuasSdG7bDo_-sr8R9vUU_Vx5KUhzhmJ74e5nIhISw6</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-8401689731796078~2462812893</string>
     <key>SKAdNetworkItems</key>
 	<array>
         <dict>

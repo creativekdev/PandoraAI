@@ -4,6 +4,7 @@ import Flutter
 import Photos
 import TikTokOpenSDK
 import UIKit
+import GoogleMobileAds
 
 @UIApplicationMain @objc class AppDelegate: FlutterAppDelegate {
   override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
@@ -45,10 +46,7 @@ import UIKit
     GeneratedPluginRegistrant.register(with:  self)
     TikTokOpenSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
 
-    let registrar = self.registrar(forPlugin: "io.socialbook/applovin_banner_view")!
-    let factory = FLNativeViewFactory(messenger: registrar.messenger())
-    registrar.register(factory, withId: "io.socialbook/applovin_banner_view")
-
+    GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID ]
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
