@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
@@ -8,8 +9,13 @@ import 'widget/effect_full_body_card_widget.dart';
 
 class EffectRecentFragment extends StatefulWidget {
   RecentController controller;
+  int tabId;
 
-  EffectRecentFragment({Key? key, required this.controller}) : super(key: key);
+  EffectRecentFragment({
+    Key? key,
+    required this.tabId,
+    required this.controller,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => EffectRecentFragmentState();
@@ -17,11 +23,24 @@ class EffectRecentFragment extends StatefulWidget {
 
 class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin {
   late RecentController recentController;
+  late StreamSubscription tabOnDoubleClickListener;
+  ScrollController scrollController = ScrollController();
 
   @override
   initState() {
     super.initState();
     recentController = widget.controller;
+    tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
+      if (event.data == widget.tabId) {
+        scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabOnDoubleClickListener.cancel();
   }
 
   @override
@@ -47,6 +66,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
                   context: context,
                   removeTop: true,
                   child: ListView.builder(
+                    controller: scrollController,
                     itemCount: _.dataList.length,
                     itemBuilder: (context, index) => EffectFullBodyCardWidget(
                       parentWidth: width,

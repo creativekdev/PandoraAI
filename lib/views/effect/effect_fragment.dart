@@ -144,6 +144,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 tabConfig.add(
                   HomeTabConfig(
                       item: EffectFaceFragment(
+                        tabId: tabId.id(),
                         dataList: _.data!.effectList(value),
                         recentController: recentController,
                         tabString: value,
@@ -154,6 +155,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 tabConfig.add(
                   HomeTabConfig(
                       item: EffectFullBodyFragment(
+                        tabId: tabId.id(),
                         dataList: _.data!.effectList(value),
                         recentController: recentController,
                         tabString: value,
@@ -164,6 +166,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 tabConfig.add(
                   HomeTabConfig(
                       item: EffectFaceFragment(
+                        tabId: tabId.id(),
                         dataList: _.data!.effectList(value),
                         recentController: recentController,
                         hasOriginalFace: false,
@@ -173,7 +176,13 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 );
               }
             }
-            tabConfig.add(HomeTabConfig(item: EffectRecentFragment(controller: recentController), title: 'Recent'));
+            tabConfig.add(HomeTabConfig(
+              item: EffectRecentFragment(
+                tabId: tabId.id(),
+                controller: recentController,
+              ),
+              title: 'Recent',
+            ));
             _pageController = PageController(initialPage: currentIndex);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
             return Stack(
@@ -226,7 +235,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
             SizedBox(height: $(8)),
           ],
-        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: (){}),
+        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: () {}),
       ));
 
   Widget navbar(BuildContext context) => Container(

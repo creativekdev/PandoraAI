@@ -17,9 +17,11 @@ class EffectFullBodyFragment extends StatefulWidget {
   List<EffectModel> dataList;
   RecentController recentController;
   String tabString;
+  int tabId;
 
   EffectFullBodyFragment({
     Key? key,
+    required this.tabId,
     required this.recentController,
     required this.dataList,
     required this.tabString,
@@ -38,6 +40,8 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
   late StreamSubscription appStateListener;
+  late StreamSubscription tabOnDoubleClickListener;
+  ScrollController scrollController = ScrollController();
 
   @override
   initState() {
@@ -60,6 +64,11 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
+    });
+    tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
+      if (event.data == widget.tabId) {
+        scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+      }
     });
   }
 
@@ -93,6 +102,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     super.dispose();
     bannerAdsHolder.onDispose();
     appStateListener.cancel();
+    tabOnDoubleClickListener.cancel();
   }
 
   @override
@@ -103,6 +113,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       context: context,
       removeTop: true,
       child: ListView.builder(
+        controller: scrollController,
         itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width).intoContainer(
           margin: EdgeInsets.only(
             right: $(15),

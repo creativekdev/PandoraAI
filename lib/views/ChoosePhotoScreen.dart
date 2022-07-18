@@ -115,8 +115,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.initState();
 
     logEvent(Events.upload_page_loading);
-    userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) => setState(() {}));
-    userLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) => setState(() {}));
+    userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
+      setState(() {});
+    });
+    userLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      setState(() {});
+    });
     adsHolder = InterstitialAdsHolder(maxFailedLoadAttempts: 3);
     recentController = Get.find();
 
@@ -172,85 +176,57 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<bool> _willPopCallback(BuildContext context) async {
     if (controller.isPhotoDone.value) {
-      showModalBottomSheet<void>(
+      showModalBottomSheet<bool>(
         context: context,
         backgroundColor: Colors.transparent,
-        builder: (BuildContext context) {
-          return Wrap(
-            children: [
-              Container(
-                child: Padding(
-                  padding: EdgeInsets.all(5.w),
-                  child: Card(
-                    elevation: 1.h,
-                    shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4.w),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(2.w),
-                      child: Column(
-                        children: [
-                          TitleTextWidget(StringConstant.exit_msg, ColorConstant.TextBlack, FontWeight.w600, 18),
-                          SizedBox(
-                            height: 1.h,
-                          ),
-                          TitleTextWidget(StringConstant.exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
-                          SizedBox(
-                            height: 1.h,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              height: 6.h,
-                              padding: EdgeInsets.symmetric(horizontal: 5.w),
-                              child: Card(
-                                elevation: 2.h,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.w)),
-                                shadowColor: ColorConstant.ShadowColor,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.w),
-                                    gradient: RadialGradient(
-                                      colors: [ColorConstant.RadialColor1, ColorConstant.RadialColor2],
-                                      radius: 1.w,
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: TitleTextWidget(StringConstant.exit_editing, ColorConstant.White, FontWeight.w600, 16),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              Navigator.pop(context);
-                            },
-                            child: Padding(
-                              child: TitleTextWidget(StringConstant.cancel, ColorConstant.HintColor, FontWeight.w400, 16),
-                              padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          );
-        },
-      );
+        builder: (BuildContext context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: $(20)),
+            TitleTextWidget(StringConstant.exit_msg, ColorConstant.White, FontWeight.w600, 18),
+            SizedBox(height: $(15)),
+            TitleTextWidget(StringConstant.exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+            SizedBox(height: $(15)),
+            TitleTextWidget(
+              StringConstant.exit_editing,
+              ColorConstant.White,
+              FontWeight.w600,
+              16,
+            )
+                .intoContainer(
+              margin: EdgeInsets.symmetric(horizontal: $(25)),
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+              width: double.maxFinite,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
+            )
+                .intoGestureDetector(onTap: () {
+              Navigator.pop(context, true);
+            }),
+            TitleTextWidget(
+              StringConstant.cancel,
+              ColorConstant.White,
+              FontWeight.w400,
+              16,
+            ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
+              Navigator.pop(context);
+            }),
+          ],
+        ).intoContainer(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+          decoration: BoxDecoration(
+            color: ColorConstant.EffectFunctionGrey,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
+          ),
+        ),
+      ).then((value) {
+        if (value ?? false) {
+          Navigator.pop(context);
+        }
+      });
+      return false;
     } else {
-      Navigator.pop(context);
+      return true;
     }
-    return Future.value(true);
   }
 
   showPickPhotoDialog(BuildContext context) {

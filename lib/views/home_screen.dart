@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 
@@ -79,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                           iconSize: $(24),
                           onTap: (pos) {
                             _setIndex(pos);
+                          },
+                          onDoubleTap: (index) {
+                            EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));
+                          },
+                          onLongPress: (index) {
+                            EventBusHelper().eventBus.fire(OnTabLongPressEvent(data: tabItems[index].id));
                           },
                           currentIndex: currentIndex,
                           elevation: $(4),

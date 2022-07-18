@@ -31,7 +31,7 @@ class UserManager extends BaseManager {
 
   set user(SocialUserInfo? userInfo) {
     if (_user != null && userInfo != null) {
-      bool update = userInfo.equals(_user);
+      bool update = !userInfo.equals(_user);
       _user = userInfo;
       cacheManager.setJson(CacheManager.keyCurrentUser, _user?.toJson());
       if (update) {

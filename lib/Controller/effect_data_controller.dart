@@ -39,5 +39,8 @@ class HomeTabConfig {
   String title;
   Widget item;
 
-  HomeTabConfig({required this.item, required this.title});
+  HomeTabConfig({
+    required this.item,
+    required this.title,
+  });
 }

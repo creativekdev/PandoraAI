@@ -52,6 +52,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
   late StreamSubscription onAppStateListener;
+  late StreamSubscription onTabDoubleClickListener;
 
   bool listLoading = false;
 
@@ -111,6 +112,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
     });
+    onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
+      if (tabId.id() == event.data) {
+        _easyRefreshController.callRefresh();
+      }
+    });
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
@@ -151,9 +157,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       }
     });
-    delay(() {
-      _easyRefreshController.callRefresh();
-    });
+    delay(() => _easyRefreshController.callRefresh());
   }
 
   @override
@@ -166,6 +170,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onLikeEventListener.cancel();
     onUnlikeEventListener.cancel();
     onAppStateListener.cancel();
+    onTabDoubleClickListener.cancel();
   }
 
   @override

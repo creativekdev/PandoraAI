@@ -15,6 +15,16 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
+  Padding intoPadding({
+    Key? key,
+    required EdgeInsets padding,
+  }) =>
+      Padding(
+        key: key,
+        padding: padding,
+        child: this,
+      );
+
   Container intoContainer({
     Key? key,
     AlignmentGeometry? alignment,

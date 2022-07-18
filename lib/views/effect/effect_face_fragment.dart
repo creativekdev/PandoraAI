@@ -18,9 +18,11 @@ class EffectFaceFragment extends StatefulWidget {
   RecentController recentController;
   bool hasOriginalFace;
   String tabString;
+  int tabId;
 
   EffectFaceFragment({
     Key? key,
+    required this.tabId,
     required this.dataList,
     required this.recentController,
     this.hasOriginalFace = true,
@@ -39,6 +41,8 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   late BannerAdsHolder bannerAdsHolder;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late StreamSubscription appStateListener;
+  late StreamSubscription tabOnDoubleClickListener;
+  ScrollController scrollController = ScrollController();
 
   @override
   initState() {
@@ -60,7 +64,12 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       });
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
-      setState((){});
+      setState(() {});
+    });
+    tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
+      if (event.data == widget.tabId) {
+        scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+      }
     });
   }
 
@@ -69,6 +78,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     super.dispose();
     bannerAdsHolder.onDispose();
     appStateListener.cancel();
+    tabOnDoubleClickListener.cancel();
   }
 
   changeData(List<EffectModel> dataList) {
@@ -85,6 +95,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       context: context,
       removeTop: true,
       child: ListView.builder(
+        controller: scrollController,
         itemBuilder: (context, index) => _buildEffectCategoryCard(context, dataList, index, width)
             .intoContainer(
               margin: EdgeInsets.only(
@@ -153,7 +164,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     var showAds = isShowAds(user);
 
     if (showAds) {
-      if(thirdpartManager.appBackground) {
+      if (thirdpartManager.appBackground) {
         return const SizedBox();
       } else {
         return bannerAdsHolder.buildBannerAd();
