@@ -6,6 +6,7 @@ import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
@@ -23,6 +24,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
+import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -82,7 +84,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var itemPos = 0;
   CachedVideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
-  late InterstitialAdsHolder adsHolder;
+
+  late CardAdsHolder adsHolder;
   late StreamSubscription userChangeListener;
   late StreamSubscription userLoginListener;
   _BuildType lastBuildType = _BuildType.waterMark;
@@ -93,11 +96,30 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (_cachedImage != null) {
       return _cachedImage!;
     }
-    _cachedImage = Image.memory(
-      base64Decode(image),
-      width: 85.w,
-      height: 85.w,
-    );
+    if (lastBuildType == _BuildType.waterMark) {
+      _cachedImage = Stack(
+        children: [
+          Image.memory(
+            base64Decode(image),
+            width: double.maxFinite,
+            height: double.maxFinite,
+          ),
+          Align(
+            child: Image.asset(
+              Images.ic_watermark,
+              width: 35.w,
+            ).intoContainer(margin: EdgeInsets.only(bottom: $(10))),
+            alignment: Alignment.bottomCenter,
+          ),
+        ],
+      ).intoContainer(width: 85.w, height: 85.w);
+    } else {
+      _cachedImage = Image.memory(
+        base64Decode(image),
+        width: 85.w,
+        height: 85.w,
+      );
+    }
     return _cachedImage!;
   }
 
@@ -105,7 +127,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void dispose() {
     super.dispose();
     _videoPlayerController?.dispose();
-    adsHolder.onDisposed();
+    adsHolder.onDispose();
     userChangeListener.cancel();
     userLoginListener.cancel();
   }
@@ -121,7 +143,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     userLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       setState(() {});
     });
-    adsHolder = InterstitialAdsHolder(maxFailedLoadAttempts: 3);
+    adsHolder = CardAdsHolder(
+      width: ScreenUtil.screenSize.width,
+      height: ScreenUtil.screenSize.height - $(170),
+      onUpdated: () {},
+      adId: AdMobConfig.PROCESSING_AD_ID,
+    );
+    adsHolder.initHolder();
     recentController = Get.find();
 
     controller.setLastItemIndex(widget.pos);
@@ -939,17 +967,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
   }
 
-  Future<void> _showInterstitialVideo() async {
-    bool showAds = isShowAdsNew();
-    if (showAds == false) return;
-    CacheManager cacheManager = AppDelegate.instance.getManager();
-    int lastTime = cacheManager.getInt(CacheManager.keyLastVideoAdsShowTime);
-    var nowTime = DateTime.now().millisecondsSinceEpoch;
-    if ((nowTime - lastTime) < adsShowDuration) {
+  Future<void> _showInterstitialVideo(BuildContext context) async {
+    if (!isShowAdsNew()) {
       return;
     }
-    cacheManager.setInt(CacheManager.keyLastVideoAdsShowTime, nowTime);
-    adsHolder.showInterstitialAd();
+    if (adsHolder.adsReady) {
+      ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder);
+    }
   }
 
   Future<void> pickImageFromGallery(BuildContext context, {String from = "center"}) async {
@@ -1098,7 +1122,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     } else {
       controller.changeIsRate(true);
-      _showInterstitialVideo();
+      _showInterstitialVideo(context);
 
       try {
         var imageUrl = controller.imageUrl.value;
@@ -1122,6 +1146,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'is_data': 0,
               'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
               'direct': 1,
+              'hide_watermark': 1,
             };
             selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
@@ -1176,6 +1201,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
               'direct': 1,
               'token': token,
+              'hide_watermark': 1,
             };
             selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);

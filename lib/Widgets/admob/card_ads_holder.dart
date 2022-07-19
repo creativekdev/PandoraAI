@@ -2,31 +2,48 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import 'ads_holder.dart';
+
 ///
 /// @Author: wangyu
 /// @Date: 2022/7/7
-class CardAdsHolder {
+class CardAdsHolder extends AdsHolder {
   AdManagerBannerAd? _inlineAdaptiveAd;
   double scale = 0.75;
   bool _isLoaded = false;
   AdSize? _adSize;
-  Function() onUpdated;
+  Function? onUpdated;
   AdWidget? adWidget;
   final bool closeable;
   bool closeAds = false;
   late String adId;
   final double width;
+  double? height;
 
   CardAdsHolder({
     required this.width,
-    required this.onUpdated, // call widget to call setState
+    this.onUpdated, // call widget to call setState
     this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
+    this.height, // while height was provided, scale will be ignored.
   });
 
-  onReady() {
+  @override
+  initHolder() {
     loadAd();
+  }
+
+  @override
+  onReady() {
+    super.onReady();
+    onUpdated?.call();
+  }
+
+  @override
+  onReset() {
+    super.onReset();
+    onUpdated?.call();
   }
 
   loadAd() async {
@@ -34,13 +51,15 @@ class CardAdsHolder {
     _inlineAdaptiveAd = null;
     _isLoaded = false;
     closeAds = false;
-    onUpdated.call();
+    onReset();
 
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
-    var height = width * scale;
+    if (height == null) {
+      height = width * scale;
+    }
     _inlineAdaptiveAd = AdManagerBannerAd(
       adUnitId: adId,
-      sizes: [AdSize(width: width.toInt(), height: height.toInt())],
+      sizes: [AdSize(width: width.toInt(), height: height!.toInt())],
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {
@@ -57,24 +76,27 @@ class CardAdsHolder {
           delay(() {
             _isLoaded = true;
             _adSize = size;
-            onUpdated.call();
+            onReady();
           }, milliseconds: 16);
           // onUpdated.call();
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           print('Inline adaptive banner failedToLoad: $error');
           ad.dispose();
+          onReset();
         },
       ),
     );
     await _inlineAdaptiveAd!.load();
   }
 
+  @override
   onDispose() {
     _inlineAdaptiveAd?.dispose();
   }
 
-  Widget? buildBannerAd() {
+  @override
+  Widget? buildAdWidget() {
     if (!_isLoaded || closeAds) {
       return null;
     }
@@ -102,7 +124,7 @@ class CardAdsHolder {
               .intoGestureDetector(onTap: () {
             if (closeable) {
               closeAds = true;
-              onUpdated.call();
+              onReady();
             }
           }),
           alignment: Alignment.topRight,
@@ -142,13 +164,13 @@ class CardAdsMap {
         adId: AdMobConfig.DISCOVERY_AD_ID,
         scale: scale,
       );
-      _holderMap[page]?.onReady();
+      _holderMap[page]?.initHolder();
     }
   }
 
   Widget? buildBannerAd(int page) {
     if (_holderMap.containsKey(page)) {
-      return _holderMap[page]!.buildBannerAd();
+      return _holderMap[page]!.buildAdWidget();
     } else {
       return null;
     }

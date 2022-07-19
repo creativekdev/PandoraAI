@@ -84,6 +84,7 @@ class Images {
    static const String ic_user = 'assets/images/ic_user.png';
    static const String ic_user_round = 'assets/images/ic_user_round.png';
    static const String ic_video = 'assets/images/ic_video.png';
+   static const String ic_watermark = 'assets/images/ic_watermark.png';
    static const String ic_youtube = 'assets/images/ic_youtube.png';
    static const String introduction_bg1 = 'assets/images/introduction_bg1.jpg';
    static const String introduction_bg2 = 'assets/images/introduction_bg2.jpg';

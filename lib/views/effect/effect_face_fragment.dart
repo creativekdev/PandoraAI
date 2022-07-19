@@ -5,12 +5,11 @@ import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-
-import 'tab_user_ex.dart';
 import 'widget/effect_face_card_widget.dart';
 
 class EffectFaceFragment extends StatefulWidget {
@@ -35,11 +34,12 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, TabUserHolder {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
+  UserManager userManager = AppDelegate.instance.getManager();
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
@@ -56,12 +56,11 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
         setState(() {});
       },
       adId: AdMobConfig.BANNER_AD_ID,
+      horizontalPadding: $(50),
     );
     delay(() {
-      bannerAdsHolder.onReady(horizontalPadding: $(50));
-      initStoreInfo(context).then((value) {
-        setState(() {});
-      });
+      bannerAdsHolder.initHolder();
+      refreshUserInfo();
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
@@ -70,6 +69,12 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       if (event.data == widget.tabId) {
         scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
       }
+    });
+  }
+
+  void refreshUserInfo() {
+    userManager.refreshUser(context: context).then((value) {
+      setState(() {});
     });
   }
 
@@ -156,18 +161,15 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
         ),
       ),
     );
-
-    initStoreInfo(context);
+    refreshUserInfo();
   }
 
   Widget _buildMERCAd() {
-    var showAds = isShowAds(user);
-
-    if (showAds) {
+    if (isShowAdsNew()) {
       if (thirdpartManager.appBackground) {
         return const SizedBox();
       } else {
-        return bannerAdsHolder.buildBannerAd();
+        return bannerAdsHolder.buildAdWidget() ?? SizedBox();
       }
     }
 

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -30,14 +31,14 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 ///
 /// don't forget to call dispose
 ///   bannerAdsHolder.onDispose();
-class BannerAdsHolder {
+class BannerAdsHolder extends AdsHolder {
   AdManagerBannerAd? _inlineAdaptiveAd;
   double scale = 0.75;
   bool _isLoaded = false;
   AdSize? _adSize;
   double _adWidth = 0;
   State? state;
-  Function() onUpdated;
+  Function? onUpdated;
   AdWidget? adWidget;
   final bool closeable;
   bool closeAds = false;
@@ -45,15 +46,30 @@ class BannerAdsHolder {
 
   BannerAdsHolder(
     this.state, {
-    required this.onUpdated, // call widget to call setState
+    this.onUpdated, // call widget to call setState
     this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
-  });
-
-  onReady({double horizontalPadding = 0}) {
+    double horizontalPadding = 0,
+  }) {
     _adWidth = ScreenUtil.getCurrentWidgetSize(state!.context).width - horizontalPadding;
+  }
+
+  @override
+  initHolder() {
     loadAd();
+  }
+
+  @override
+  onReady() {
+    super.onReady();
+    onUpdated?.call();
+  }
+
+  @override
+  onReset() {
+    super.onReset();
+    onUpdated?.call();
   }
 
   loadAd() async {
@@ -61,7 +77,7 @@ class BannerAdsHolder {
     _inlineAdaptiveAd = null;
     _isLoaded = false;
     closeAds = false;
-    onUpdated.call();
+    onReset();
 
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
     var height = _adWidth * scale;
@@ -84,25 +100,26 @@ class BannerAdsHolder {
           delay(() {
             _isLoaded = true;
             _adSize = size;
-            onUpdated.call();
+            onReady();
           }, milliseconds: 16);
-          // onUpdated.call();
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           print('Inline adaptive banner failedToLoad: $error');
           ad.dispose();
+          onReset();
         },
       ),
     );
     await _inlineAdaptiveAd!.load();
   }
 
+  @override
   onDispose() {
     _inlineAdaptiveAd?.dispose();
     state = null;
   }
 
-  Widget buildBannerAd() {
+  Widget? buildAdWidget() {
     if (!_isLoaded || closeAds) {
       return Container();
     }
@@ -130,7 +147,7 @@ class BannerAdsHolder {
               .intoGestureDetector(onTap: () {
             if (closeable) {
               closeAds = true;
-              onUpdated.call();
+              onReady();
             }
           }),
           alignment: Alignment.topRight,
