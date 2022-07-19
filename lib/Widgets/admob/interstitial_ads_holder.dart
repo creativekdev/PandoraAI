@@ -23,6 +23,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 ///
 /// don't forget to call dispose
 ///   adsHolder.onDispose();
+@deprecated
 class InterstitialAdsHolder {
   InterstitialAd? _interstitialAd;
   int _numInterstitialLoadAttempts = 0;
