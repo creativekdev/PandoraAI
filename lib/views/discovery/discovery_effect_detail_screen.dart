@@ -42,6 +42,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  late StreamSubscription onCreateCommentListener;
   List<DiscoveryResource> resources = [];
 
   @override
@@ -76,6 +77,15 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
         setState(() {});
       }
     });
+    onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      if (event.data?.length == 1) {
+        if (data.id == event.data![0]) {
+          setState(() {
+            data.comments++;
+          });
+        }
+      }
+    });
   }
 
   @override
@@ -85,6 +95,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
     onLoginEventListener.cancel();
     onLikeEventListener.cancel();
     onUnlikeEventListener.cancel();
+    onCreateCommentListener.cancel();
   }
 
   refreshData() {

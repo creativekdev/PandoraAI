@@ -53,6 +53,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onUnlikeEventListener;
   late StreamSubscription onAppStateListener;
   late StreamSubscription onTabDoubleClickListener;
+  late StreamSubscription onCreateCommentListener;
 
   bool listLoading = false;
 
@@ -117,6 +118,19 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         _easyRefreshController.callRefresh();
       }
     });
+    onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      if (event.data?.length == 1) {
+        for (var value in dataList) {
+          if (!value.isAd) {
+            if (value.data!.id == event.data![0]) {
+              value.data!.comments++;
+              break;
+            }
+          }
+        }
+        setState(() {});
+      }
+    });
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
@@ -171,6 +185,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onUnlikeEventListener.cancel();
     onAppStateListener.cancel();
     onTabDoubleClickListener.cancel();
+    onCreateCommentListener.cancel();
   }
 
   @override

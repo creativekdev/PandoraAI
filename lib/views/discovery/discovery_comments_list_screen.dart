@@ -41,6 +41,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   late StreamSubscription onUnlikeEventListener;
   late StreamSubscription onDiscoveryLikeEventListener;
   late StreamSubscription onDiscoveryUnlikeEventListener;
+  late StreamSubscription onCreateCommentListener;
 
   DiscoveryCommentsListState() : super(canCancelOnLoading: false);
 
@@ -94,6 +95,17 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
         setState(() {});
       }
     });
+    onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      if ((event.data?.length ?? 0) > 1) {
+        for (var value in dataList) {
+          if (value.id == event.data![1]) {
+            value.comments++;
+            break;
+          }
+        }
+        setState(() {});
+      }
+    });
     delay(() => _refreshController.callRefresh());
   }
 
@@ -107,6 +119,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
     onLoginEventListener.cancel();
     onDiscoveryLikeEventListener.cancel();
     onDiscoveryUnlikeEventListener.cancel();
+    onCreateCommentListener.cancel();
   }
 
   loadFirstPage() => api
