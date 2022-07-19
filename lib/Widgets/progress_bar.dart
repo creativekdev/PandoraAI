@@ -44,9 +44,11 @@ class AppProgressBarState extends State<AppProgressBar> with SingleTickerProvide
     offset = -dashSize;
     animationController = AnimationController(vsync: this, duration: widget.duration);
     animationController.addListener(() {
-      setState(() {
-        offset = (animationController.value - 0.5) * 2 * dashSize;
-      });
+      if (mounted) {
+        setState(() {
+          offset = (animationController.value - 0.5) * 2 * dashSize;
+        });
+      }
     });
     animationController.addStatusListener((status) {
       switch (status) {
