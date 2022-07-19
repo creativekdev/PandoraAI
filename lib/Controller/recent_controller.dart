@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 
 ///
@@ -14,6 +15,7 @@ class RecentController extends GetxController {
   List<EffectModel> originList = [];
   List<EffectModel> recentModelList = [];
   List<List<EffectItemListData>> dataList = [];
+  CacheManager cacheManager = AppDelegate.instance.getManager();
 
   @override
   void onInit() async {
@@ -60,9 +62,9 @@ class RecentController extends GetxController {
     recentList = await _loadingFromCache();
   }
 
-  Future<List<RecentEffectModel>> _loadingFromCache() async {
+  List<RecentEffectModel> _loadingFromCache() {
     List<RecentEffectModel> result = [];
-    var string = await SharedPreferencesHelper.getString(SharedPreferencesHelper.keyRecentEffects);
+    var string = cacheManager.getString(CacheManager.keyRecentEffects);
     try {
       var json = jsonDecode(string);
       result = (json as List<dynamic>).map((e) => RecentEffectModel.fromJson(e)).toList();
@@ -72,7 +74,7 @@ class RecentController extends GetxController {
   }
 
   _saveToCache(List<RecentEffectModel> recentList) {
-    SharedPreferencesHelper.setString(SharedPreferencesHelper.keyRecentEffects, jsonEncode(recentList.map((e) => e.toJson()).toList()));
+    cacheManager.setString(CacheManager.keyRecentEffects, jsonEncode(recentList.map((e) => e.toJson()).toList()));
   }
 
   onEffectUsed(EffectItem effectItem) {

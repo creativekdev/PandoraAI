@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:crypto/crypto.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 
 /// Returns the sha256 hash of [input] in hex notation.
 String sha256ofString(String input) {

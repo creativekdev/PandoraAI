@@ -4,14 +4,16 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/utils.dart';
-import 'package:cartoonizer/api.dart';
-import 'package:cartoonizer/helper/shared_pref.dart';
-import 'package:cartoonizer/views/home/HomeScreen.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'app/app.dart';
 import 'config.dart';
 import 'firebase_options.dart';
 
@@ -54,9 +56,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AppDelegate.instance.init();
     return Sizer(
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
+          theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
           title: 'Cartoonizer',
           home: MyHomePage(title: 'Cartoonizer'),
           debugShowCheckedModeBanner: false,
@@ -79,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
 
-    _checkIntroductionPage();
+    waitAppInitialize();
 
     // log app open
     logSystemEvent(Events.open_app);
@@ -136,37 +140,57 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  waitAppInitialize() {
+    if (AppDelegate.instance.initialized) {
+      _checkIntroductionPage();
+    } else {
+      Function(bool status)? listener;
+      listener = (status) {
+        if (status) {
+          _checkIntroductionPage();
+          AppDelegate.instance.cancelListenAsync(listener!);
+        }
+      };
+      AppDelegate.instance.listen(listener);
+    }
+  }
+
   _checkIntroductionPage() {
-    SharedPreferencesHelper.getBool(SharedPreferencesHelper.keyHasIntroductionPageShowed).then((value) {
-      if (value) {
-        _checkAppVersion();
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
-          ModalRoute.withName('/HomeScreen'),
-        );
-      } else {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
-          ModalRoute.withName('/IntroductionScreen'),
-        );
-      }
-    });
+    var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
+    if (value) {
+      _checkAppVersion();
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => HomeScreen(),
+          settings: RouteSettings(name: "/HomeScreen"),
+        ),
+        ModalRoute.withName('/HomeScreen'),
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
+        ModalRoute.withName('/IntroductionScreen'),
+      );
+    }
   }
 
   //监听程序进入前后台的状态改变的方法
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    var manager = AppDelegate.instance.getManager<ThirdpartManager>();
     switch (state) {
       //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
       case AppLifecycleState.resumed:
+        manager.appBackground = false;
         print("didChangeAppLifecycleState-------> 应用进入前台======");
         break;
       //应用状态处于闲置状态，并且没有用户的输入事件，
       // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
       case AppLifecycleState.inactive:
+        manager.appBackground = true;
         print("didChangeAppLifecycleState-------> 应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
         break;
       //当前页面即将退出

@@ -1,3 +1,5 @@
+import 'package:cartoonizer/common/importFile.dart';
+
 import 'EffectModel.dart';
 
 class EffectMap {
@@ -20,6 +22,20 @@ class EffectMap {
 }
 
 extension EffectMapEx on EffectMap {
+  List<EffectModel>? targetSeries(String childKey) {
+    for (var key in data.keys) {
+      var list = effectList(key);
+      var pick = list.pick((e) {
+        var item = e.effects.values.toList().pick((t) => t.key == childKey);
+        return item != null;
+      });
+      if (pick != null) {
+        return list;
+      }
+    }
+    return null;
+  }
+
   List<EffectModel> allEffectList() {
     List<EffectModel> result = [];
     data.keys.forEach((element) {

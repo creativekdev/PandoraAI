@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 ///
 /// @Author: wangyu
 /// @Date: 2022/6/16
@@ -40,12 +41,14 @@ class BannerAdsHolder {
   AdWidget? adWidget;
   final bool closeable;
   bool closeAds = false;
+  late String adId;
 
   BannerAdsHolder(
     this.state, {
     required this.onUpdated, // call widget to call setState
     this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
+    required this.adId,
   });
 
   onReady({double horizontalPadding = 0}) {
@@ -63,7 +66,7 @@ class BannerAdsHolder {
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
     var height = _adWidth * scale;
     _inlineAdaptiveAd = AdManagerBannerAd(
-      adUnitId: AdMobConfig.BANNER_AD_ID,
+      adUnitId: adId,
       sizes: [AdSize(width: _adWidth.toInt(), height: height.toInt())],
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cartoonizer/common/utils.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cartoonizer/api.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'ForgotPasswordScreen.dart';
 import 'SignupScreen.dart';
@@ -28,11 +31,26 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
+  UserManager userManager = AppDelegate.instance.getManager();
+  late ScrollController scrollController;
+  double blueAreaHeight = 100;
 
   @override
   void initState() {
     logEvent(Events.login_page_loading);
     super.initState();
+    scrollController = ScrollController();
+    scrollController.addListener(() {
+      if (scrollController.offset < 0) {
+        setState(() {
+          blueAreaHeight = 100 + scrollController.offset.abs();
+        });
+      } else {
+        setState(() {
+          blueAreaHeight = 0;
+        });
+      }
+    });
   }
 
   Future<void> goBack() async {
@@ -42,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.popUntil(context, ModalRoute.withName(login_back_page));
       box.remove('login_back_page');
     } else {
-      Navigator.popUntil(context, ModalRoute.withName('/SettingScreen'));
+      Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
     }
   }
 
@@ -121,23 +139,47 @@ class _LoginScreenState extends State<LoginScreen> {
     emailController.dispose();
     passController.dispose();
     super.dispose();
+    scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var prefixPage = ModalRoute.of(context)!.settings.arguments;
 
-    return Scaffold(
-      backgroundColor: ColorConstant.BlueColor,
-      body: LoadingOverlay(
-        isLoading: isLoading,
-        child: SafeArea(
-          bottom: false,
-          child: Container(
-            color: ColorConstant.BackgroundColor,
-            child: Padding(
+    return LoadingOverlay(
+      isLoading: isLoading,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Column(
+            children: [
+              Container(
+                height: blueAreaHeight,
+                width: double.maxFinite,
+                color: ColorConstant.BlueColor,
+              ),
+              Expanded(
+                  child: Container(
+                color: ColorConstant.BackgroundColor,
+              ))
+            ],
+          ),
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppNavigationBar(
+                blurAble: false,
+                backgroundColor: ColorConstant.BlueColor,
+                middle: TitleTextWidget(
+                  StringConstant.login,
+                  ColorConstant.BtnTextColor,
+                  FontWeight.w600,
+                  $(18),
+                )),
+            body: Container(
+              color: Colors.transparent,
               padding: EdgeInsets.only(bottom: 2.h),
               child: SingleChildScrollView(
+                controller: scrollController,
                 child: Column(
                   children: [
                     Container(
@@ -162,30 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fit: BoxFit.contain,
                                 ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeConstants.TopBarEdgeInsets,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    print("back");
-                                    Navigator.pop(context);
-                                  },
-                                  child: Image.asset(
-                                    ImagesConstant.ic_back,
-                                    height: 30,
-                                    width: 30,
-                                  ),
-                                ),
-                                TitleTextWidget(StringConstant.login, ColorConstant.White, FontWeight.w600, FontSizeConstants.topBarTitle),
-                                SizedBox(
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              ],
                             ),
                           ),
                         ],
@@ -330,45 +348,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          var body = {"email": emailController.text.trim(), "password": passController.text.trim(), "type": APP_TYPE};
-                          print(body);
-                          final response = await API.post("/api/user/login", body: body).whenComplete(() => {});
-
-                          print(response.body);
-                          if (response.statusCode == 200) {
+                          var baseEntity = await userManager.login(emailController.text.trim(), passController.text.trim());
+                          if (baseEntity != null) {
                             SharedPreferences prefs = await SharedPreferences.getInstance();
-                            String cookie = response.headers.toString();
-                            var str = cookie.split(";");
-                            String id = "";
-                            for (int j = 0; j < str.length; j++) {
-                              if (str[j].contains("sb.connect.sid")) {
-                                id = str[j];
-                                j = str.length;
-                              }
-                            }
-                            var finalId = id.split(",");
-                            if (finalId.length > 1) {
-                              for (int j = 0; j < finalId.length; j++) {
-                                if (finalId[j].contains("sb.connect.sid")) {
-                                  id = finalId[j];
-                                  j = finalId.length;
-                                }
-                              }
-                            }
                             prefs.setBool("isLogin", true);
-                            prefs.setString("login_cookie", id.split("=")[1]);
                             await loginBack(context);
                             logEvent(Events.login, eventValues: {"method": "email"});
-                          } else {
-                            try {
-                              CommonExtension().showToast(json.decode(response.body)['message']);
-                            } catch (e) {
-                              CommonExtension().showToast(response.body.toString());
-                            }
                           }
-                          setState(() {
-                            isLoading = false;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         }
                       },
                       child: ButtonWidget(StringConstant.sign_in),
@@ -414,28 +405,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             var result = await signInWithApple();
 
                             if (result) {
+                              userManager.refreshUser();
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "apple"});
                             } else {
                               CommonExtension().showToast("Oops! Something went wrong");
                             }
                           } on SignInWithAppleAuthorizationException catch (e) {
-                              switch(e.code) {
-                                case AuthorizationErrorCode.canceled:
-                                case AuthorizationErrorCode.unknown:
-                                  // do nothing
-                                  break;
-                                default:
-                                  CommonExtension().showToast("Oops! Something went wrong");
-                                  break;
-                              }
+                            switch (e.code) {
+                              case AuthorizationErrorCode.canceled:
+                              case AuthorizationErrorCode.unknown:
+                                // do nothing
+                                break;
+                              default:
+                                CommonExtension().showToast("Oops! Something went wrong");
+                                break;
+                            }
                           } catch (e) {
                             CommonExtension().showToast("Oops! Something went wrong");
                           } finally {
                             if (isLoading) {
-                              setState(() {
-                                isLoading = false;
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  isLoading = false;
+                                });
+                              }
                             }
                           }
                         },
@@ -505,6 +499,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               }
                               prefs.setBool("isLogin", true);
                               prefs.setString("login_cookie", id.split("=")[1]);
+                              userManager.refreshUser();
                               await loginBack(context);
                               logEvent(Events.login, eventValues: {"method": "google"});
                             }
@@ -512,9 +507,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             CommonExtension().showToast("Oops! Something went wrong");
                           }
                         } finally {
-                          setState(() {
-                            isLoading = false;
-                          });
+                          if (mounted) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
                         }
                       },
                       child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
@@ -558,11 +555,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-          ).intoGestureDetector(onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          }),
-        ),
+          ),
+        ],
       ),
-    );
+    ).blankAreaIntercept();
   }
 }

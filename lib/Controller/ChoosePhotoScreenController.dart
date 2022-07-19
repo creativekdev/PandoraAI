@@ -5,8 +5,6 @@ class ChoosePhotoScreenController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    var sharedPreferences = await SharedPreferences.getInstance();
-    isLogin.value = sharedPreferences.getBool("isLogin") ?? false;
   }
 
   final isPhotoSelect = false.obs;
@@ -20,9 +18,6 @@ class ChoosePhotoScreenController extends GetxController {
 
   final isRate = true.obs;
   changeIsRate(bool value) => isRate.value = value;
-
-  final isLogin = false.obs;
-  changeIsLogin(bool value) => isLogin.value = value;
 
   final isChecked = false.obs;
   changeIsChecked(bool value) => isChecked.value = value;
