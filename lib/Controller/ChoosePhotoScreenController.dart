@@ -16,9 +16,6 @@ class ChoosePhotoScreenController extends GetxController {
   final isPhotoDone = false.obs;
   changeIsPhotoDone(bool value) => isPhotoDone.value = value;
 
-  final isRate = true.obs;
-  changeIsRate(bool value) => isRate.value = value;
-
   final isChecked = false.obs;
   changeIsChecked(bool value) => isChecked.value = value;
 

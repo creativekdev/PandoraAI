@@ -24,14 +24,15 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 ///    );
 ///   }
 ///
-/// and call onReady when you want to load ad
+/// and call initHolder when you want to load ad
 ///
-///   bannerAdsHolder.onReady(horizontalPadding: $(50));
-/// call bannerAdsHolder.buildBannerAd(); to build widget and add to your widget-tree
+///    bannerAdsHolder.initHolder();
+///
+/// call bannerAdsHolder.buildAdWidget(); to build widget and add to your widget-tree
 ///
 /// don't forget to call dispose
 ///   bannerAdsHolder.onDispose();
-class BannerAdsHolder extends AdsHolder {
+class BannerAdsHolder extends WidgetAdsHolder {
   AdManagerBannerAd? _inlineAdaptiveAd;
   double scale = 0.75;
   bool _isLoaded = false;
@@ -119,6 +120,7 @@ class BannerAdsHolder extends AdsHolder {
     state = null;
   }
 
+  @override
   Widget? buildAdWidget() {
     if (!_isLoaded || closeAds) {
       return Container();

@@ -14,8 +14,8 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:http/http.dart';
 import 'package:path/path.dart' as path;
 
 const int _maxInputLength = 512;
@@ -169,7 +169,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             CommonExtension().showToast('Oops failed');
           } else {
-            var baseEntity = await Uploader().upload(url, imageData!, c_type);
+            Uint8List image = await imageCompressWithList(imageData!);
+            var baseEntity = await Uploader().upload(url, image, c_type);
             if (baseEntity != null) {
               var imageUrl = url.split("?")[0];
               var list = [

@@ -1,4 +1,4 @@
-import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 ///
@@ -17,29 +17,33 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 ///   }
 ///
 /// and call onReady when you want to load ad
-///   adsHolder.onReady();
+///   adsHolder.initHolder();
 ///
-/// call showInterstitialAd() to open fullscreen ads
+/// call show() to open fullscreen ads
 ///
 /// don't forget to call dispose
 ///   adsHolder.onDispose();
-@deprecated
-class InterstitialAdsHolder {
+class InterstitialAdsHolder extends PageAdsHolder {
+  String adId;
   InterstitialAd? _interstitialAd;
   int _numInterstitialLoadAttempts = 0;
   int _maxFailedLoadAttempts = 3;
 
-  InterstitialAdsHolder({required int maxFailedLoadAttempts}) {
+  InterstitialAdsHolder({
+    required int maxFailedLoadAttempts,
+    required this.adId,
+  }) {
     _maxFailedLoadAttempts = maxFailedLoadAttempts;
   }
 
-  onReady() {
+  @override
+  initHolder() {
     _createInterstitialAd();
   }
 
   _createInterstitialAd() {
     InterstitialAd.load(
-        adUnitId: AdMobConfig.INTERSTITIAL_AD_ID,
+        adUnitId: adId,
         request: AdManagerAdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
@@ -59,7 +63,13 @@ class InterstitialAdsHolder {
         ));
   }
 
-  void showInterstitialAd() {
+  @override
+  onDispose() {
+    _interstitialAd?.dispose();
+  }
+
+  @override
+  show() {
     if (_interstitialAd == null) {
       print('Warning: attempt to show interstitial before loaded.');
       return;
@@ -82,9 +92,5 @@ class InterstitialAdsHolder {
       print('adLoadFinished');
       _interstitialAd = null;
     });
-  }
-
-  onDisposed() {
-    _interstitialAd?.dispose();
   }
 }

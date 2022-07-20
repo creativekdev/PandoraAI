@@ -7,7 +7,7 @@ import 'ads_holder.dart';
 ///
 /// @Author: wangyu
 /// @Date: 2022/7/7
-class CardAdsHolder extends AdsHolder {
+class CardAdsHolder extends WidgetAdsHolder {
   AdManagerBannerAd? _inlineAdaptiveAd;
   double scale = 0.75;
   bool _isLoaded = false;
@@ -73,12 +73,9 @@ class CardAdsHolder extends AdsHolder {
           }
 
           _inlineAdaptiveAd = bannerAd;
-          delay(() {
-            _isLoaded = true;
-            _adSize = size;
-            onReady();
-          }, milliseconds: 16);
-          // onUpdated.call();
+          _isLoaded = true;
+          _adSize = size;
+          onReady();
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           print('Inline adaptive banner failedToLoad: $error');

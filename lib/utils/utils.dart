@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
@@ -123,27 +124,27 @@ Future<bool> mkdir(Directory file) async {
 }
 
 Future<File> imageCompressAndGetFile(File file) async {
-  UserModel user = await getUser();
-
-  if (file.lengthSync() < 200 * 1024) {
+  var user = AppDelegate.instance.getManager<UserManager>().user;
+  var length = await file.length();
+  if (length < 200 * 1024) {
     return file;
   }
 
   var quality = 100;
-  if (file.lengthSync() > 4 * 1024 * 1024) {
+  if (length > 4 * 1024 * 1024) {
     quality = 50;
-  } else if (file.lengthSync() > 2 * 1024 * 1024) {
+  } else if (length > 2 * 1024 * 1024) {
     quality = 60;
-  } else if (file.lengthSync() > 1 * 1024 * 1024) {
+  } else if (length > 1 * 1024 * 1024) {
     quality = 70;
-  } else if (file.lengthSync() > 0.5 * 1024 * 1024) {
+  } else if (length > 0.5 * 1024 * 1024) {
     quality = 80;
   }
 
   var dir = await getTemporaryDirectory();
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
 
-  var minSize = user.credit > 0 ? 1024 : 512;
+  var minSize = (user?.cartoonizeCredit ?? 0) > 0 ? 1024 : 512;
 
   var result = await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
@@ -154,4 +155,27 @@ Future<File> imageCompressAndGetFile(File file) async {
   );
 
   return result!;
+}
+
+Future<Uint8List> imageCompressWithList(Uint8List image) async {
+  var length = image.length;
+  if (length < 200 * 1024) {
+    return image;
+  }
+
+  var quality = 100;
+  if (length > 4 * 1024 * 1024) {
+    quality = 50;
+  } else if (length > 2 * 1024 * 1024) {
+    quality = 60;
+  } else if (length > 1 * 1024 * 1024) {
+    quality = 70;
+  } else if (length > 0.5 * 1024 * 1024) {
+    quality = 80;
+  }
+  var uint8list = await FlutterImageCompress.compressWithList(
+    image,
+    quality: quality,
+  );
+  return Uint8List.fromList(uint8list.toList());
 }

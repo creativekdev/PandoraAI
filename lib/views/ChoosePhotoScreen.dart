@@ -6,8 +6,9 @@ import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
-import 'package:cartoonizer/Widgets/admob/interstitial_ads_holder.dart';
+import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -15,7 +16,6 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -37,8 +37,6 @@ import '../models/OfflineEffectModel.dart';
 import 'PurchaseScreen.dart';
 import 'StripeSubscriptionScreen.dart';
 import 'share/ShareScreen.dart';
-
-const int adsShowDuration = 120000;
 
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
@@ -85,7 +83,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   CachedVideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
 
-  late CardAdsHolder adsHolder;
+  late WidgetAdsHolder adsHolder;
+  late PageAdsHolder rewardAdsHolder;
   late StreamSubscription userChangeListener;
   late StreamSubscription userLoginListener;
   _BuildType lastBuildType = _BuildType.waterMark;
@@ -128,6 +127,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.dispose();
     _videoPlayerController?.dispose();
     adsHolder.onDispose();
+    rewardAdsHolder.onDispose();
     userChangeListener.cancel();
     userLoginListener.cancel();
   }
@@ -150,6 +150,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       adId: AdMobConfig.PROCESSING_AD_ID,
     );
     adsHolder.initHolder();
+    rewardAdsHolder = RewardInterstitialAdsHolder(adId: AdMobConfig.REWARD_PROCESSING_AD_ID);
+    rewardAdsHolder.initHolder();
     recentController = Get.find();
 
     controller.setLastItemIndex(widget.pos);
@@ -185,7 +187,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         }
       }
     });
-    adsHolder.onReady();
     userManager.refreshUser();
     autoScrollToSelectedIndex();
   }
@@ -967,12 +968,28 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
   }
 
-  Future<void> _showInterstitialVideo(BuildContext context) async {
+  bool _judgeAndShowAdvertisement(
+    BuildContext context, {
+    required Function onSuccess,
+    required Function onCancel,
+    Function? onFail,
+  }) {
     if (!isShowAdsNew()) {
-      return;
+      return false;
     }
     if (adsHolder.adsReady) {
-      ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder);
+      ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
+        if (value == null) {
+          onCancel.call();
+        } else if (value) {
+          onSuccess.call();
+        } else {
+          onFail?.call();
+        }
+      });
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -1121,9 +1138,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsVideo(false);
       }
     } else {
-      controller.changeIsRate(true);
-      _showInterstitialVideo(context);
-
+      bool ignoreResult = false;
+      Function? successForward;
+      bool hasAd = _judgeAndShowAdvertisement(
+        context,
+        onSuccess: () {
+          successForward?.call();
+        },
+        onCancel: () {
+          ignoreResult = true;
+          controller.changeIsLoading(false);
+          logEvent(Events.photo_cartoon_result, eventValues: {
+            "success": 2,
+            "effect": selectedEffect.key,
+            "sticker_name": selectedEffect.stickerName,
+            "category": category.key,
+            "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
+          });
+        },
+        onFail: () {},
+      );
       try {
         var imageUrl = controller.imageUrl.value;
         if (imageUrl == "") {
@@ -1136,6 +1170,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
         final Map tokenParsed = json.decode(tokenResponse.body.toString());
 
+        if (ignoreResult) {
+          controller.changeIsLoading(false);
+          return;
+        }
         int resultSuccess = 0;
 
         if (tokenResponse.statusCode == 200) {
@@ -1150,41 +1188,56 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             };
             selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
+            if (ignoreResult) {
+              controller.changeIsLoading(false);
+              return;
+            }
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
               if (parsed['data'].toString().startsWith('<')) {
-                controller.changeIsLoading(false);
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                successForward = () {
+                  controller.changeIsLoading(false);
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                };
               } else if (parsed['data'].toString() == "") {
-                controller.changeIsLoading(false);
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
-                CommonExtension().showToast(parsed['message']);
+                successForward = () {
+                  controller.changeIsLoading(false);
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  CommonExtension().showToast(parsed['message']);
+                };
               } else if (parsed['data'].toString().endsWith(".mp4")) {
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                controller.updateVideoUrl(parsed['data']);
-                _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                  ..setLooping(true)
-                  ..initialize().then((value) async {
-                    controller.changeIsLoading(false);
-                  });
-                _videoPlayerController!.play();
+                successForward = () {
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  controller.updateVideoUrl(parsed['data']);
+                  _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                    ..setLooping(true)
+                    ..initialize().then((value) async {
+                      controller.changeIsLoading(false);
+                    });
+                  _videoPlayerController!.play();
 
-                urlFinal = imageUrl;
-                algoName = selectedEffect.algoname;
-                controller.changeIsPhotoDone(true);
-                controller.changeIsVideo(true);
+                  urlFinal = imageUrl;
+                  algoName = selectedEffect.algoname;
+                  controller.changeIsPhotoDone(true);
+                  controller.changeIsVideo(true);
+                };
               } else {
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                controller.changeIsLoading(false);
-                image = parsed['data'];
-                urlFinal = imageUrl;
-                algoName = selectedEffect.algoname;
-                controller.changeIsPhotoDone(true);
-                controller.changeIsVideo(false);
-                var params = {"algoname": selectedEffect.algoname};
-                API.get("/api/log/cartoonize", params: params);
+                successForward = () {
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  controller.changeIsLoading(false);
+                  image = parsed['data'];
+                  urlFinal = imageUrl;
+                  algoName = selectedEffect.algoname;
+                  controller.changeIsPhotoDone(true);
+                  controller.changeIsVideo(false);
+                  var params = {"algoname": selectedEffect.algoname};
+                  API.get("/api/log/cartoonize", params: params);
+                };
+              }
+              if (!hasAd) {
+                successForward.call();
               }
               resultSuccess = 1;
             } else {
@@ -1207,40 +1260,55 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
             print(cartoonizeResponse.statusCode);
             print(cartoonizeResponse.body.toString());
+            if (ignoreResult) {
+              controller.changeIsLoading(false);
+              return;
+            }
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
               if (parsed['data'].toString().startsWith('<')) {
-                controller.changeIsLoading(false);
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                successForward = () {
+                  controller.changeIsLoading(false);
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                };
               } else if (parsed['data'].toString() == "") {
-                controller.changeIsLoading(false);
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
-                CommonExtension().showToast(parsed['message']);
+                successForward = () {
+                  controller.changeIsLoading(false);
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  CommonExtension().showToast(parsed['message']);
+                };
               } else if (parsed['data'].toString().endsWith(".mp4")) {
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                controller.updateVideoUrl(parsed['data']);
-                _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                  ..setLooping(true)
-                  ..initialize().then((value) async {
-                    controller.changeIsLoading(false);
-                  });
-                _videoPlayerController!.play();
+                successForward = () {
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  controller.updateVideoUrl(parsed['data']);
+                  _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                    ..setLooping(true)
+                    ..initialize().then((value) async {
+                      controller.changeIsLoading(false);
+                    });
+                  _videoPlayerController!.play();
 
-                urlFinal = imageUrl;
-                algoName = selectedEffect.algoname;
-                controller.changeIsPhotoDone(true);
-                controller.changeIsVideo(true);
+                  urlFinal = imageUrl;
+                  algoName = selectedEffect.algoname;
+                  controller.changeIsPhotoDone(true);
+                  controller.changeIsVideo(true);
+                };
               } else {
-                offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                controller.changeIsLoading(false);
-                image = parsed['data'];
-                urlFinal = imageUrl;
-                algoName = selectedEffect.algoname;
-                controller.changeIsPhotoDone(true);
-                controller.changeIsVideo(false);
-                var params = {"algoname": selectedEffect.algoname};
-                API.get("/api/log/cartoonize", params: params);
+                successForward = () {
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  controller.changeIsLoading(false);
+                  image = parsed['data'];
+                  urlFinal = imageUrl;
+                  algoName = selectedEffect.algoname;
+                  controller.changeIsPhotoDone(true);
+                  controller.changeIsVideo(false);
+                  var params = {"algoname": selectedEffect.algoname};
+                  API.get("/api/log/cartoonize", params: params);
+                };
+              }
+              if (!hasAd) {
+                successForward.call();
               }
               resultSuccess = 1;
             } else {
@@ -1265,6 +1333,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           }
         }
 
+        EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
         logEvent(Events.photo_cartoon_result, eventValues: {
           "success": resultSuccess,
           "effect": selectedEffect.key,
@@ -1282,6 +1351,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         print(e);
         controller.changeIsLoading(false);
         CommonExtension().showToast("Error while uploading image");
+        EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
     }
   }
@@ -1297,7 +1367,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     await API.post("/api/tool/matting/evaluate", body: databody).whenComplete(() async {
       controller.changeIsLoading(false);
-      controller.changeIsRate(false);
     });
   }
 

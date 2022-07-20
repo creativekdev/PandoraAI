@@ -84,3 +84,8 @@ class OnCommentUnlikeEvent extends BaseEvent<int> {
 }
 
 class OnAppStateChangeEvent extends BaseEvent {}
+
+/// cartoonizer process event
+class OnCartoonizerFinishedEvent extends BaseEvent<bool> {
+  OnCartoonizerFinishedEvent({required bool data}) : super(data: data);
+}

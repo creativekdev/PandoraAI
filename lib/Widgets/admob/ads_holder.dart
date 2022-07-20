@@ -5,19 +5,23 @@ abstract class AdsHolder {
 
   bool get adsReady => _adsReady;
 
-  @protected
   initHolder();
 
   onReady() {
     _adsReady = true;
   }
 
-  onReset(){
+  onReset() {
     _adsReady = false;
   }
 
-  @protected
   onDispose();
+}
 
+abstract class WidgetAdsHolder extends AdsHolder {
   Widget? buildAdWidget();
+}
+
+abstract class PageAdsHolder extends AdsHolder {
+  show();
 }
