@@ -104,7 +104,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           Image.memory(
             imageUint8List,
             width: double.maxFinite,
-            height: double.maxFinite,
+            height: imageSize?.height ?? 85.w,
           ),
           Align(
             child: Image.asset(
@@ -112,7 +112,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               width: 46.75.w,
             ).intoContainer(margin: EdgeInsets.only(bottom: $(10))),
             alignment: Alignment.bottomCenter,
-          ),
+          ).visibility(visible: imageSize != null),
         ],
       ).intoContainer(width: imageSize?.width ?? 85.w, height: imageSize?.height ?? 85.w);
       if (imageSize == null) {
@@ -367,6 +367,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     if (value ?? false) {
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
+                        _cachedImage = null;
+                        imageSize = null;
                       });
                       saveToAlbum();
                     } else {
@@ -532,7 +534,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: VideoPlayer(_videoPlayerController!),
                                           ).intoContainer(height: 85.w)
-                                        : cachedImage,
+                                        : Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [cachedImage],
+                                          ).intoContainer(height: 85.w),
                                   ),
                                   Obx(() => Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
