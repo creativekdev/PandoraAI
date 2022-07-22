@@ -44,7 +44,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
     super.initState();
     logEvent(Events.discovery_secondary_comment_loading);
     api = CartoonizerApi().bindState(this);
-    parentComment = widget.parentComment;
+    parentComment = widget.parentComment.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
         _refreshController.callRefresh();

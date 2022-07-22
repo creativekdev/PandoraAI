@@ -117,7 +117,15 @@ class CartoonizerApi extends BaseRequester {
     if (replySocialPostCommentId != null) {
       map['reply_social_post_comment_id'] = replySocialPostCommentId;
     }
-    return post('/social_post_comment/create', params: map);
+    var baseEntity = await post('/social_post_comment/create', params: map);
+    if (baseEntity != null) {
+      var data = [socialPostId];
+      if (replySocialPostCommentId != null) {
+        data.add(replySocialPostCommentId);
+      }
+      EventBusHelper().eventBus.fire(OnCreateCommentEvent(data: data));
+    }
+    return baseEntity;
   }
 
   Future<int?> discoveryLike(

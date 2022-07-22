@@ -84,6 +84,12 @@ class OnCommentUnlikeEvent extends BaseEvent<int> {
   OnCommentUnlikeEvent({required int data}) : super(data: data);
 }
 
+/// create comment event
+/// @data <socialPostId, replyCommentId>
+class OnCreateCommentEvent extends BaseEvent<List<int>> {
+  OnCreateCommentEvent({required List<int> data}) : super(data: data);
+}
+
 class OnAppStateChangeEvent extends BaseEvent {}
 
 /// cartoonizer process event
