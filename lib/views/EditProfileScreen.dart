@@ -195,11 +195,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                                         final updateProfileResponse = await API.post("/api/user/update", body: body);
 
-                                        saveUser({
-                                          'name': name,
-                                          'avatar': avatar,
-                                        });
-
                                         if (updateProfileResponse.statusCode == 200) {
                                           CommonExtension().showToast("Profile update successfully!!");
                                           AppDelegate.instance.getManager<UserManager>().refreshUser();

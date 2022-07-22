@@ -1,3 +1,5 @@
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:cartoonizer/common/importFile.dart';
@@ -37,8 +39,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   bool _loading = true;
   bool _purchasePending = false;
   bool _showPurchasePlan = false;
-
-  late UserModel _user;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -55,16 +56,18 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
 
   Future<void> initStoreInfo() async {
     // reload user by get login
-    UserModel user = await API.getLogin(needLoad: true);
-    setState(() {
-      _loading = false;
-    });
-    if (user.subscription.containsKey('id')) {
+    userManager.refreshUser().then((value) {
       setState(() {
-        _showPurchasePlan = true;
-        _user = user;
+        _loading = false;
       });
-    }
+      if (userManager.user != null) {
+        if (userManager.user!.userSubscription.containsKey('id')) {
+          setState(() {
+            _showPurchasePlan = true;
+          });
+        }
+      }
+    });
   }
 
   void showPendingUI() {
@@ -112,15 +115,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
       onTap: () async {
         if (_purchasePending) return;
         // FirebaseAnalytics.instance.logEvent(name: Events.click_purchase);
-        showPendingUI();
-        var sharedPrefs = await SharedPreferences.getInstance();
 
-        UserModel user = await API.getLogin(needLoad: true);
-        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
-        hidePendingUI();
-
-        if (!isLogin || user.email == "") {
+        if (userManager.isNeedLogin) {
           CommonExtension().showToast(StringConstant.please_login_first);
           Navigator.push(
             context,
@@ -141,7 +137,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     if (_loading) return Column();
 
     if (_showPurchasePlan) {
-      var currentSubscription = subscriptions[_user.subscription['plan_type']];
+      var currentSubscription = subscriptions[userManager.user!.userSubscription['plan_type']];
 
       return Column(children: [
         Padding(
@@ -323,11 +319,11 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                         children: [
                           GestureDetector(
                             onTap: () => {Navigator.pop(context)},
-                            child: Image.asset(
-                              ImagesConstant.ic_close,
-                              height: 30,
-                              width: 30,
-                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: $(24),
+                            ).intoContainer(padding: EdgeInsets.all(3)),
                           ),
                           Expanded(
                             child: SizedBox(),

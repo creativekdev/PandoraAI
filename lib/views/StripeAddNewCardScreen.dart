@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:http/http.dart';
 // import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -29,7 +33,6 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
   bool _purchasePending = false;
   bool _showNewCard = false;
   dynamic _selectedCard = null;
-  dynamic _user = null;
 
   String cardNumber = '';
   String expiryDate = '';
@@ -40,22 +43,12 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
 
   @override
   void initState() {
-    initStoreInfo();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-  }
-
-  Future<void> initStoreInfo() async {
-    // reload user by get login
-    UserModel user = await API.getLogin(needLoad: false);
-
-    setState(() {
-      _user = user;
-    });
   }
 
   void showPendingUI() {
@@ -100,8 +93,8 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
         "fundingSource": "",
         "stripeToken": tokenData['id']
       };
-      var result = await API.buyPlan(body);
-      if (result) {
+      var baseEntity = await CartoonizerApi().buyPlan(body);
+      if (baseEntity != null) {
         _handlePaymentSuccess();
       }
     } catch (e) {
@@ -113,6 +106,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
 
   void _handlePaymentSuccess() async {
     GetStorage().write('payment_result', true);
+    EventBusHelper().eventBus.fire(OnPaySuccessEvent());
     Navigator.popUntil(context, ModalRoute.withName('/StripeSubscriptionScreen'));
 
     Get.dialog(
@@ -294,12 +288,10 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
       onTap: () async {
         if (_purchasePending) return;
         showPendingUI();
-        var sharedPrefs = await SharedPreferences.getInstance();
+        var userManager = AppDelegate().getManager<UserManager>();
+        await userManager.refreshUser();
 
-        UserModel user = await API.getLogin(needLoad: true);
-        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
-        if (!isLogin || user.email == "") {
+        if (userManager.isNeedLogin) {
           hidePendingUI();
           CommonExtension().showToast(StringConstant.please_login_first);
           Navigator.push(

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/dialog.dart';
-import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'StripeAddNewCardScreen.dart';
@@ -25,7 +28,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
 
   bool _purchasePending = false;
   dynamic _selectedCard = null;
-  dynamic _user = null;
 
   String cardNumber = '';
   String expiryDate = '';
@@ -33,6 +35,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   String cvvCode = '';
   bool isCvvFocused = false;
 
+  UserManager userManager = AppDelegate.instance.getManager();
   @override
   void initState() {
     initStoreInfo();
@@ -46,7 +49,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
 
   Future<void> initStoreInfo() async {
     // reload user by get login
-    UserModel user = await API.getLogin(needLoad: false);
+    var user = userManager.user!;
     // find default card
     var creditcards = user.creditcards;
 
@@ -63,7 +66,6 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     }
 
     setState(() {
-      _user = user;
       _selectedCard = selectedCard;
     });
   }
@@ -146,8 +148,8 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
         "fundingSource": card["card_id"] != null ? card["card_id"] : "",
       };
 
-      var result = await API.buyPlan(body);
-      if (result == true) {
+      var baseEntity = await CartoonizerApi().buyPlan(body);
+      if(baseEntity != null) {
         _handlePaymentSuccess();
       }
     } catch (e) {
@@ -159,6 +161,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
 
   void _handlePaymentSuccess() async {
     GetStorage().write('payment_result', true);
+    EventBusHelper().eventBus.fire(OnPaySuccessEvent());
     Navigator.pop(context, true);
     Get.dialog(
       CommonDialog(
@@ -282,9 +285,9 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   }
 
   Widget _buildCardList() {
-    if (_user == null) return Container();
+    if (userManager.user == null) return Container();
 
-    var creditcards = _user.creditcards;
+    var creditcards = userManager.user!.creditcards;
     var cardList = List.generate(creditcards.length, (index) => _buildCreditCard(creditcards[index]));
     cardList.add(_buildNewCreditCard());
     return Column(

@@ -8,6 +8,11 @@ class Images {
    static const String ic_back_dark = 'assets/images/ic_back_dark.png';
    static const String ic_background = 'assets/images/ic_background.png';
    static const String ic_bg_premium = 'assets/images/ic_bg_premium.png';
+   static const String ic_bug_no_ad = 'assets/images/ic_bug_no_ad.png';
+   static const String ic_buy_background = 'assets/images/ic_buy_background.png';
+   static const String ic_buy_faster_convert = 'assets/images/ic_buy_faster_convert.png';
+   static const String ic_buy_hd_image = 'assets/images/ic_buy_hd_image.png';
+   static const String ic_buy_no_watermark = 'assets/images/ic_buy_no_watermark.png';
    static const String ic_camera = 'assets/images/ic_camera.png';
    static const String ic_camera_upload = 'assets/images/ic_camera_upload.png';
    static const String ic_change_password = 'assets/images/ic_change_password.png';

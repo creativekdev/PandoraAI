@@ -46,18 +46,31 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
   late StreamSubscription onCartoonizerFinishedListener;
   bool? cartoonizerStatus;
   bool curvedAnimFinished = false;
+  bool hasAd = false;
+  List<Curve> curves = [
+    Curves.linear,
+    Curves.decelerate,
+    Curves.ease,
+    Curves.easeOut,
+    Curves.easeIn,
+    Curves.easeInQuart,
+    Curves.easeInOut,
+    Curves.easeInOutQuint,
+    Curves.easeOutCubic,
+  ];
 
   @override
   void initState() {
     super.initState();
     adsHolder = widget.adsHolder;
+    hasAd = adsHolder.adsReady;
     animationController = AnimationController(
       vsync: this,
       duration: Duration(
         milliseconds: minDuration + math.Random().nextInt(5000),
       ),
     );
-    curvedAnimation = CurvedAnimation(parent: animationController, curve: Curves.easeOutCubic);
+    curvedAnimation = CurvedAnimation(parent: animationController, curve: curves[math.Random().nextInt(curves.length)]);
     curvedAnimation.addListener(() {
       setState(() {
         progress = (curvedAnimation.value * convertProgress).toInt();
@@ -156,7 +169,7 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
                   SizedBox(height: $(6)),
                 ],
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center)),
-              adsHolder.buildAdWidget() ?? Container(),
+              hasAd ? adsHolder.buildAdWidget() ?? Container() : placeHolder(context),
             ],
           ),
         ),
@@ -226,5 +239,9 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
           .intoCenter()
           .intoContainer(),
     );
+  }
+
+  Widget placeHolder(BuildContext context) {
+    return Container();
   }
 }

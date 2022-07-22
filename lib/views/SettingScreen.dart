@@ -135,9 +135,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     MaterialPageRoute(
                       settings: RouteSettings(name: "/EditProfileScreen"),
                       builder: (context) => EditProfileScreen(),
-                    )).then((value) async {
-                  API.getLogin(needLoad: true);
-                }),
+                    )),
               )
               .intoContainer(margin: EdgeInsets.only(top: 1.h))
               .offstage(offstage: userManager.isNeedLogin),

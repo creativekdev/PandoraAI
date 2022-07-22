@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:video_player/video_player.dart';
 
 class EffectVideoPlayer extends StatefulWidget {
   String url;
@@ -25,7 +25,7 @@ class EffectVideoPlayer extends StatefulWidget {
 
 class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   late String url;
-  late CachedVideoPlayerController controller;
+  late VideoPlayerController controller;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late String fileName;
   late bool downloading = true;
@@ -40,7 +40,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     url = widget.url;
     if (!useCached) {
       downloading = false;
-      controller = CachedVideoPlayerController.network(url)
+      controller = VideoPlayerController.network(url)
         ..setLooping(true)
         ..initialize().then((value) {
           setState(() {
@@ -52,7 +52,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
           onChanged: (count, total) {},
           onError: (error) {},
           onFinished: (File file) {
-            controller = CachedVideoPlayerController.file(file)
+            controller = VideoPlayerController.file(file)
               ..setLooping(true)
               ..initialize().then((value) {
                 setState(() {
@@ -70,7 +70,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
       File data = File(savePath);
       if (data.existsSync()) {
         downloading = false;
-        controller = CachedVideoPlayerController.file(data)
+        controller = VideoPlayerController.file(data)
           ..setLooping(true)
           ..initialize().then((value) {
             setState(() {
@@ -104,7 +104,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
             children: [
               AspectRatio(
                 aspectRatio: controller.value.aspectRatio,
-                child: CachedVideoPlayer(controller),
+                child: VideoPlayer(controller),
               ),
               (controller.value.isInitialized) ? Container() : CircularProgressIndicator().intoCenter()
             ],

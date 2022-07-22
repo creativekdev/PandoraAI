@@ -39,4 +39,5 @@ class ColorConstant {
   static const InputBackground = Color(0xff3a3a3b);
   static const InputContent = Color(0xff565656);
   static const LineColor = Color(0xff404040);
+  static const WatchAdColor = Color(0xff243cff);
 }

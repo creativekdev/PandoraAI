@@ -162,4 +162,10 @@ class CartoonizerApi extends BaseRequester {
     var baseEntity = await get('/file/presigned_url', params: params);
     return baseEntity?.data?['data'];
   }
+
+  // buy plan with stripe
+  Future<BaseEntity?> buyPlan(body) async {
+    var baseEntity = await post("/plan/buy", params: body);
+    return baseEntity;
+  }
 }

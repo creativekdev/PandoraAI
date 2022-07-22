@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/api/api.dart';
@@ -81,14 +83,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       isLoading = true;
     });
     startTimer();
-    var user = await getUser();
+    var userId = AppDelegate().getManager<UserManager>().user?.id??'';
 
     Map<String, String> body = {
       "email": widget.email ?? "",
     };
 
     try {
-      final response = await API.post("/user/${user.id}/activation/send", body: body);
+      final response = await API.post("/user/${userId}/activation/send", body: body);
       if (response.statusCode == 200) {
         CommonExtension().showToast("Resend successfully!");
       } else {

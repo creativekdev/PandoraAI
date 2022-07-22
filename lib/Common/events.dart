@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/models/UserModel.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:flutter/foundation.dart';
 import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
@@ -55,13 +56,13 @@ logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
 }
 
 logAppsflyerEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
-  UserModel user = await getUser();
+  SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
-  if (user.email != "") {
+  if(user != null) {
     defaultValues["user_id"] = user.id.toString();
-    defaultValues["user_email"] = user.email;
+    defaultValues["user_email"] = user.getShownEmail();
     Appsflyer.instance.setCustomerUserId(user.id.toString());
   }
   var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};

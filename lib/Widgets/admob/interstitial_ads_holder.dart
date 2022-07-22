@@ -42,6 +42,7 @@ class InterstitialAdsHolder extends PageAdsHolder {
   }
 
   _createInterstitialAd() {
+    onReset();
     InterstitialAd.load(
         adUnitId: adId,
         request: AdManagerAdRequest(),
@@ -51,11 +52,13 @@ class InterstitialAdsHolder extends PageAdsHolder {
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
+            onReady();
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('InterstitialAd failed to load: $error.');
             _numInterstitialLoadAttempts += 1;
             _interstitialAd = null;
+            onReset();
             if (_numInterstitialLoadAttempts < _maxFailedLoadAttempts) {
               _createInterstitialAd();
             }

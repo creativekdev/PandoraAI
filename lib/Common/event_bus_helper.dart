@@ -1,4 +1,5 @@
 import 'package:cartoonizer/models/social_user_info.dart';
+import 'package:cartoonizer/network/base_requester.dart';
 import 'package:event_bus/event_bus.dart';
 
 /// EventBusHelper
@@ -88,4 +89,8 @@ class OnAppStateChangeEvent extends BaseEvent {}
 /// cartoonizer process event
 class OnCartoonizerFinishedEvent extends BaseEvent<bool> {
   OnCartoonizerFinishedEvent({required bool data}) : super(data: data);
+}
+
+class OnPaySuccessEvent extends BaseEntity {
+
 }

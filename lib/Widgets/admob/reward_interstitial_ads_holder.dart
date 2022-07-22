@@ -6,8 +6,14 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
   int _numInterstitialLoadAttempts = 0;
   int _maxFailedLoadAttempts = 3;
   String adId;
+  Function? onRewardCall;
+  Function? onDismiss;
 
-  RewardInterstitialAdsHolder({required this.adId});
+  RewardInterstitialAdsHolder({
+    required this.adId,
+    this.onRewardCall,
+    this.onDismiss,
+  });
 
   @override
   initHolder() {
@@ -15,6 +21,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
   }
 
   _createRewardedInterstitialAd() {
+    onReset();
     RewardedInterstitialAd.load(
         adUnitId: adId,
         request: AdManagerAdRequest(),
@@ -23,11 +30,14 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
             print('$ad loaded.');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
+            onReady();
           },
           onAdFailedToLoad: (LoadAdError error) {
             print('RewardedInterstitialAd failed to load: $error');
             _interstitialAd = null;
             _numInterstitialLoadAttempts += 1;
+            _interstitialAd?.dispose();
+            onReset();
             if (_numInterstitialLoadAttempts < _maxFailedLoadAttempts) {
               _createRewardedInterstitialAd();
             }
@@ -52,6 +62,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
         print('$ad onAdDismissedFullScreenContent.');
         ad.dispose();
         _createRewardedInterstitialAd();
+        onDismiss?.call();
       },
       onAdFailedToShowFullScreenContent: (RewardedInterstitialAd ad, AdError error) {
         print('$ad onAdFailedToShowFullScreenContent: $error');
@@ -63,6 +74,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
     _interstitialAd!.setImmersiveMode(true);
     _interstitialAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
+      onRewardCall?.call();
     });
     _interstitialAd = null;
   }

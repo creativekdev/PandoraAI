@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/api/api.dart';
 
-import '../common/Extension.dart';
 import './EmailVerificationScreen.dart';
+import '../common/Extension.dart';
 
 class SocialSignUpScreen extends StatefulWidget {
   final additionalUserInfo;
@@ -248,10 +247,10 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            UserModel user = await API.getLogin(needLoad: true);
+                            var onlineModel = await userManager.refreshUser();
                             logEvent(Events.signup, eventValues: {"method": "google", "signup_through": GetStorage().read('signup_through') ?? ""});
 
-                            if (user.status != "activated") {
+                            if (onlineModel.user?.status != "activated") {
                               Navigator.pushReplacement<void, void>(
                                 context,
                                 MaterialPageRoute<void>(
@@ -300,10 +299,10 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            UserModel user = await API.getLogin(needLoad: true);
+                            var onlineModel = await userManager.refreshUser();
 
                             logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
-                            if (user.status != "activated") {
+                            if (onlineModel.user?.status != "activated") {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(

@@ -53,7 +53,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void initState() {
     super.initState();
-    API.getLogin(needLoad: true, context: context);
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
@@ -69,6 +68,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       setState(() {});
     });
     refreshProVisible();
+    delay(() => userManager.refreshUser(context: context));
   }
 
   @override

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cached_video_player/cached_video_player.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -30,12 +30,12 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
+import 'package:video_player/video_player.dart';
 
 import '../gallery_saver.dart';
 import '../models/OfflineEffectModel.dart';
-import 'PurchaseScreen.dart';
-import 'StripeSubscriptionScreen.dart';
+import 'advertisement/reward_advertisement_screen.dart';
 import 'share/ShareScreen.dart';
 
 class ChoosePhotoScreen extends StatefulWidget {
@@ -65,6 +65,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   set image(String data) {
     _image = data;
+    imageSize = null;
     _cachedImage = null;
   }
 
@@ -80,46 +81,67 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late ItemScrollController categoryScrollController;
   TabController? effectTabController;
   var itemPos = 0;
-  CachedVideoPlayerController? _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
 
   late WidgetAdsHolder adsHolder;
-  late PageAdsHolder rewardAdsHolder;
+  late RewardInterstitialAdsHolder rewardAdsHolder;
   late StreamSubscription userChangeListener;
   late StreamSubscription userLoginListener;
   _BuildType lastBuildType = _BuildType.waterMark;
 
   Widget? _cachedImage;
+  Size? imageSize;
 
   Widget get cachedImage {
     if (_cachedImage != null) {
       return _cachedImage!;
     }
+    var imageUint8List = base64Decode(image);
     if (lastBuildType == _BuildType.waterMark) {
       _cachedImage = Stack(
         children: [
           Image.memory(
-            base64Decode(image),
+            imageUint8List,
             width: double.maxFinite,
             height: double.maxFinite,
           ),
           Align(
             child: Image.asset(
               Images.ic_watermark,
-              width: 35.w,
+              width: 46.75.w,
             ).intoContainer(margin: EdgeInsets.only(bottom: $(10))),
             alignment: Alignment.bottomCenter,
           ),
         ],
-      ).intoContainer(width: 85.w, height: 85.w);
+      ).intoContainer(width: imageSize?.width ?? 85.w, height: imageSize?.height ?? 85.w);
+      if (imageSize == null) {
+        asyncRefreshImageSize(imageUint8List);
+      }
     } else {
       _cachedImage = Image.memory(
-        base64Decode(image),
+        imageUint8List,
         width: 85.w,
         height: 85.w,
       );
     }
     return _cachedImage!;
+  }
+
+  asyncRefreshImageSize(Uint8List imageUint8List) {
+    var resolve = MemoryImage(imageUint8List).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      var scale = image.image.width / image.image.height;
+      if (scale < 0.9 || scale > 1.1) {
+        double width = 85.w;
+        double height = 85.w / scale;
+        imageSize = Size(width, height);
+      } else {
+        imageSize = null;
+      }
+      _cachedImage = null;
+      setState(() {});
+    }));
   }
 
   @override
@@ -311,7 +333,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   showSavePhotoDialog(BuildContext context) {
     if (lastBuildType == _BuildType.hdImage) {
-      saveToAlbum(context);
+      saveToAlbum();
     } else {
       showModalBottomSheet(
           context: context,
@@ -327,7 +349,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () async {
                   Navigator.of(context).pop();
-                  await saveToAlbum(context);
+                  await saveToAlbum();
                 }),
                 Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
                   margin: EdgeInsets.symmetric(horizontal: $(25)),
@@ -340,21 +362,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () {
                   Navigator.of(context).pop();
-                  if (Platform.isIOS) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: "/PurchaseScreen"),
-                          builder: (context) => PurchaseScreen(),
-                        )).then((value) => {setState(() {})});
-                  } else {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                          builder: (context) => StripeSubscriptionScreen(),
-                        )).then((value) => {setState(() {})});
-                  }
+                  // to reward or pay
+                  RewardAdvertisementScreen.push(context, adsHolder: rewardAdsHolder).then((value) {
+                    if (value ?? false) {
+                      setState(() {
+                        lastBuildType = _BuildType.hdImage;
+                      });
+                      saveToAlbum();
+                    } else {
+                      refreshLastBuildType();
+                    }
+                  });
                 }).visibility(visible: !userManager.isNeedLogin && userManager.user!.userSubscription.isEmpty),
                 TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
@@ -407,7 +425,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  Future<void> saveToAlbum(BuildContext context) async {
+  Future<void> saveToAlbum() async {
     var category = widget.list[controller.lastItemIndex.value];
     var effects = category.effects;
     var keys = effects.keys.toList();
@@ -416,18 +434,27 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
-      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true).then((value) async {
-        controller.changeIsLoading(false);
-        videoPath = value as String;
-        if (value != "") {
-          CommonExtension().showVideoSavedOkToast(context);
-        } else {
-          CommonExtension().showFailedToast(context);
-        }
-      });
+      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true);
+      controller.changeIsLoading(false);
+      videoPath = result as String;
+      if (result != '') {
+        CommonExtension().showVideoSavedOkToast(context);
+      } else {
+        CommonExtension().showFailedToast(context);
+      }
     } else {
-      await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
-      CommonExtension().showImageSavedOkToast(context);
+      if (lastBuildType == _BuildType.waterMark) {
+        var imageData = await decodeImageFromList(base64Decode(image));
+        var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
+        assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
+          var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
+          await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+          CommonExtension().showImageSavedOkToast(context);
+        }));
+      } else {
+        await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+        CommonExtension().showImageSavedOkToast(context);
+      }
     }
   }
 
@@ -503,7 +530,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                     child: (controller.isVideo.value)
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
-                                            child: CachedVideoPlayer(_videoPlayerController!),
+                                            child: VideoPlayer(_videoPlayerController!),
                                           ).intoContainer(height: 85.w)
                                         : cachedImage,
                                   ),
@@ -669,7 +696,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           height: 2.h,
                                         )
                                       ],
-                                    ).visibility(visible: controller.isPhotoSelect.value)),
+                                    ).visibility(visible: controller.isPhotoSelect.value && false)),
                               ],
                             ),
                     ),
@@ -977,20 +1004,19 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (!isShowAdsNew()) {
       return false;
     }
-    if (adsHolder.adsReady) {
-      ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
-        if (value == null) {
-          onCancel.call();
-        } else if (value) {
-          onSuccess.call();
-        } else {
-          onFail?.call();
-        }
-      });
-      return true;
-    } else {
-      return false;
-    }
+    ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
+      if (value == null) {
+        onCancel.call();
+      } else if (value) {
+        onSuccess.call();
+      } else {
+        onFail?.call();
+      }
+      if (!adsHolder.adsReady) {
+        adsHolder.initHolder();
+      }
+    });
+    return true;
   }
 
   Future<void> pickImageFromGallery(BuildContext context, {String from = "center"}) async {
@@ -1049,7 +1075,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<String> uploadCompressedImage() async {
     String b_name = "free-socialbook";
-    String f_name = basename((controller.image.value as File).path);
+    String f_name = path.basename((controller.image.value as File).path);
     var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
     if (TextUtil.isEmpty(fileType)) {
       fileType = '*';
@@ -1075,7 +1101,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   refreshLastBuildType() {
-    lastBuildType = getBuildType();
+    setState(() {
+      lastBuildType = getBuildType();
+    });
   }
 
   _BuildType getBuildType() {
@@ -1118,7 +1146,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1211,7 +1239,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1282,7 +1310,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = CachedVideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1316,7 +1344,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               CommonExtension().showToast('Error while processing image');
             }
           }
-          await API.getLogin(needLoad: true, context: context);
+          await userManager.refreshUser(context: context);
         } else {
           controller.changeIsLoading(false);
           var responseBody = json.decode(tokenResponse.body);
@@ -1463,12 +1491,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                             settings: RouteSettings(name: "/SignupScreen", arguments: "choose_photo"),
                             builder: (context) => SignupScreen(),
                           ));
-
-                      bool isLogin = sharedPreferences.getBool("isLogin") ?? false;
-                      if (isLogin) {
-                        await API.getLogin(needLoad: false, context: context);
-                        setState(() {});
-                      }
+                      userManager.refreshUser(context: context);
                     },
                     child: RoundedBorderBtnWidget(StringConstant.sign_up, color: ColorConstant.TextBlack),
                   ),

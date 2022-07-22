@@ -1,17 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/common/ConsumableStore.dart';
+import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:http/http.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-import 'package:cartoonizer/common/ConsumableStore.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'LoginScreen.dart';
 
 class PurchaseScreen extends StatefulWidget {
@@ -42,8 +43,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   bool _purchasePending = false;
   bool _loading = true;
   bool _showPurchasePlan = false;
-  late UserModel _user;
   String? _queryProductError;
+  UserManager userManager = AppDelegate().getManager();
 
   @override
   void initState() {
@@ -110,7 +111,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         _purchasePending = false;
       });
     }
-
+    EventBusHelper().eventBus.fire(OnPaySuccessEvent());
     logEvent(
       Events.paid_success,
       eventValues: {"product_id": purchaseDetails.productID, "price": (isYear ? 39.99 : 3.99).toString(), "currency": "USD", "quantity": 1},
@@ -134,11 +135,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
           if (valid) {
             // reload user by get login
-            UserModel user = await API.getLogin(needLoad: true);
-            if (user.subscription.containsKey('id')) {
+            await userManager.refreshUser();
+            var user = userManager.user!;
+            if (user.userSubscription.containsKey('id')) {
               setState(() {
                 _showPurchasePlan = true;
-                _user = user;
               });
             }
             deliverProduct(purchaseDetails);
@@ -195,11 +196,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       });
     }
 
-    UserModel user = await API.getLogin(needLoad: true);
-    if (user.subscription.containsKey('id')) {
+    await userManager.refreshUser();
+    var user = userManager.user!;
+    if (user.userSubscription.containsKey('id')) {
       setState(() {
         _showPurchasePlan = true;
-        _user = user;
       });
     }
 
@@ -256,10 +257,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
         var sharedPrefs = await SharedPreferences.getInstance();
 
-        UserModel user = await API.getLogin(needLoad: true);
-        bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
-        if (!isLogin || user.email == "") {
+        if (userManager.isNeedLogin) {
           CommonExtension().showToast(StringConstant.please_login_first);
           Navigator.push(
             context,
@@ -309,7 +307,8 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     var currentPlan;
     if (_showPurchasePlan) {
-      bool isMonthlyPlan = _user.subscription['plan_type'] == 'monthly';
+      var user = userManager.user!;
+      bool isMonthlyPlan = user.userSubscription['plan_type'] == 'monthly';
       currentPlan = isMonthlyPlan ? month : year;
 
       return Column(children: [
@@ -501,11 +500,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                         children: [
                           GestureDetector(
                             onTap: () => {Navigator.pop(context)},
-                            child: Image.asset(
-                              ImagesConstant.ic_close,
-                              height: 30,
-                              width: 30,
-                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: $(24),
+                            ).intoContainer(padding: EdgeInsets.all(3)),
                           ),
                           Expanded(
                             child: SizedBox(),

@@ -116,6 +116,7 @@ class API {
   }
 
   // get login
+  @deprecated
   static Future<dynamic> getLogin({bool needLoad = false, BuildContext? context}) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool isLogin = sharedPreferences.getBool('isLogin') ?? false;

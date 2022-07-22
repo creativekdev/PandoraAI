@@ -1,19 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-const String _kUser = 'user';
 
 String get APP_TYPE {
   String platform = Platform.isIOS ? 'ios' : 'android';
@@ -21,34 +16,12 @@ String get APP_TYPE {
   return type;
 }
 
-Future<UserModel> getUser() async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  var localUser = sharedPreferences.getString(_kUser) ?? "{}";
-  return UserModel.fromJson(jsonDecode(localUser));
-}
-
-Future<void> saveUser(Map data) async {
-  SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-
-  UserModel user = await getUser();
-
-  if (data.containsKey('name')) {
-    user.name = data['name'];
-  }
-  if (data.containsKey('email')) {
-    user.email = data['email'];
-  }
-  if (data.containsKey('avatar')) {
-    user.avatar = data['avatar'];
-  }
-
-  sharedPreferences.setString(_kUser, jsonEncode(user));
-}
-
 Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
   if (!isLogout) {
-    var user = await API.getLogin(needLoad: true, context: context) as UserModel;
-    if (user.status != 'activated') return;
+    var onlineModel = await AppDelegate.instance.getManager<UserManager>().refreshUser(context: context);
+    if (onlineModel.user == null || onlineModel.user!.status != 'activated') {
+      return;
+    }
   }
 
   final box = GetStorage();
@@ -89,17 +62,6 @@ bool isShowAdsNew() {
     return false;
   }
   return true;
-}
-
-@Deprecated("instead by isShowAdsNew")
-bool isShowAds(UserModel? user) {
-  if (user == null) return false;
-
-  bool showAds = true;
-  if (user.email != "" && (user.subscription.containsKey('id') || user.credit > 0)) {
-    showAds = false;
-  }
-  return showAds;
 }
 
 String getFileName(String url) {
@@ -178,4 +140,41 @@ Future<Uint8List> imageCompressWithList(Uint8List image) async {
     quality: quality,
   );
   return Uint8List.fromList(uint8list.toList());
+}
+
+Future<Uint8List> addWaterMark({
+  required ui.Image image,
+  required ui.Image watermark,
+  double widthRate = 0.2,
+  double bottomRate = 0.07,
+}) async {
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(image.width.toDouble(), image.height.toDouble())));
+
+  double targetWatermarkWidth = image.width * (1 - widthRate * 2);
+  var scale = watermark.width / watermark.height;
+  double targetWatermarkHeight = targetWatermarkWidth / scale;
+
+  final paint = Paint()
+    ..color = Colors.black
+    ..style = PaintingStyle.fill;
+
+  canvas.drawImage(image, Offset.zero, paint);
+  canvas.drawImageRect(
+    watermark,
+    Rect.fromLTWH(0, 0, watermark.width.toDouble(), watermark.height.toDouble()),
+    Rect.fromLTWH(
+      (image.width - targetWatermarkWidth) / 2,
+      image.height * (1 - bottomRate) - targetWatermarkHeight,
+      targetWatermarkWidth,
+      targetWatermarkHeight,
+    ),
+    paint,
+  );
+
+  final picture = recorder.endRecording();
+  final img = await picture.toImage(image.width, image.height);
+  final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
+  // var outBytes = await img.toByteData();
+  return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
 }

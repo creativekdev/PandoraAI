@@ -106,7 +106,7 @@ class StringConstant {
   static const zip_code = "Zip Code";
   static const zip_code_validation_message = "Invalid zip code";
   static const welcome_title1 = "Make your own cartoon avatar";
-  static const welcome_title2 = "Turn Photos into Art";
+  static const welcome_title2 = "Turn photos into art";
   static const welcome_title3 = "Add stickers to your cartoon";
   static const setting_my_discovery = "My Discovery";
   static const setting_my_delete_account = "Delete Account";
