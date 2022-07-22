@@ -187,13 +187,14 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    'Watch AD',
-                    style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(17)),
+                    'Download HD image\nwithout watermark',
+                    style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(15), height: 1.2),
+                    textAlign: TextAlign.center,
                   )
                       .intoContainer(
                           width: double.maxFinite,
                           alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(vertical: $(10)),
+                          padding: EdgeInsets.symmetric(vertical: $(8)),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular($(6)),
                             color: ColorConstant.WatchAdColor,
