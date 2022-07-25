@@ -29,6 +29,8 @@ class ExceptionHandler {
   onDioError(DioError e) {
     if (e.response?.statusCode == 401) {
       onTokenExpired(e.response?.statusCode, e.response?.statusMessage);
+    } else {
+      onError(e);
     }
   }
 
