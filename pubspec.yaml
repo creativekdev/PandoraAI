@@ -45,7 +45,6 @@ dependencies:
   share_plus: ^4.0.0
   url_launcher: ^6.0.18
   flutter_share_me:
-    git: https://github.com/OpenFlutter/flutter_share_me
   get: ^4.6.3
   get_storage: ^2.0.3
   scrollable_positioned_list: ^0.3.2
@@ -67,7 +66,10 @@ dependencies:
   appsflyer_sdk: ^6.5.2
   app_tracking_transparency:
   firebase_analytics: ^9.1.6
-  google_mobile_ads: ^1.3.0
+  google_mobile_ads:
+    git:
+      url: https://github.com/googleads/googleads-mobile-flutter
+      path: packages/google_mobile_ads
   flutter_image_compress: ^1.1.0
   flutter_local_notifications: ^9.6.1
   common_utils: ^2.0.2
