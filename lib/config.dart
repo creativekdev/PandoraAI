@@ -15,10 +15,10 @@ class AdMobConfig {
   static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
   // static String get DISCOVERY_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
   static String get DISCOVERY_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6102802285' : 'ca-app-pub-8401689731796078/9945860280';
-  static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
-  // static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
-  static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用id
-  // static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582': 'ca-app-pub-8401689731796078/4291918781';
+  // static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
+  static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
+  // static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用id
+  static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582': 'ca-app-pub-8401689731796078/4291918781';
 }
 
 abstract class BaseConfig {
