@@ -109,8 +109,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           Align(
             child: Image.asset(
               Images.ic_watermark,
-              width: 46.75.w,
-            ).intoContainer(margin: EdgeInsets.only(bottom: $(10))),
+              width: (imageSize?.width ?? 85.w) * 0.56,
+            ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
             alignment: Alignment.bottomCenter,
           ).visibility(visible: imageSize != null),
         ],
@@ -132,12 +132,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var resolve = MemoryImage(imageUint8List).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var scale = image.image.width / image.image.height;
-      if (scale < 0.9 || scale > 1.1) {
+      if (scale < 0.9) {
+        double height = 85.w;
+        double width = height * scale;
+        imageSize = Size(width, height);
+      } else if (scale > 1.1) {
         double width = 85.w;
-        double height = 85.w / scale;
+        double height = width / scale;
         imageSize = Size(width, height);
       } else {
-        imageSize = null;
+        imageSize = Size(85.w, 85.w);
       }
       _cachedImage = null;
       setState(() {});
@@ -701,7 +705,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           height: 2.h,
                                         )
                                       ],
-                                    ).visibility(visible: controller.isPhotoSelect.value && false)),
+                                    ).visibility(visible: controller.isPhotoSelect.value)),
                               ],
                             ),
                     ),
