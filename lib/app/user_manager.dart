@@ -30,6 +30,9 @@ class UserManager extends BaseManager {
   }
 
   set user(SocialUserInfo? userInfo) {
+    if (_user == null && userInfo == null) {
+      return;
+    }
     if (_user != null && userInfo != null) {
       bool update = !userInfo.equals(_user);
       _user = userInfo;

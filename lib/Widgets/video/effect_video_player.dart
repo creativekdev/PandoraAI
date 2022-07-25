@@ -48,7 +48,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
         ..setLooping(true)
         ..initialize().then((value) {
           setState(() {
-            controller.play();
+            play();
           });
         });
     } else {
@@ -60,7 +60,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
               ..setLooping(true)
               ..initialize().then((value) {
                 setState(() {
-                  controller.play();
+                  play();
                 });
               });
             setState(() {
@@ -76,9 +76,10 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
         downloading = false;
         controller = VideoPlayerController.file(data)
           ..setLooping(true)
+          ..setVolume(0)
           ..initialize().then((value) {
             setState(() {
-              controller.play();
+              play();
             });
           });
       } else {
@@ -90,6 +91,20 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
     });
+  }
+
+  play() {
+    controller.play();
+  }
+
+  pause() {
+    controller.pause();
+  }
+
+  @override
+  void didUpdateWidget(EffectVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    play();
   }
 
   @override

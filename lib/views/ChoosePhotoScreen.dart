@@ -83,6 +83,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var itemPos = 0;
   VideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
+  Map<String, GlobalKey<EffectVideoPlayerState>> videoKeys = {};
 
   late WidgetAdsHolder adsHolder;
   late RewardInterstitialAdsHolder rewardAdsHolder;
@@ -892,13 +893,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     );
   }
 
-  Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem}) {
+  Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
     var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
     if (effectItem.imageUrl.contains("-transform")) {
+      var key = videoKeys[effectItem.imageUrl];
+      if (key == null) {
+        key = GlobalKey<EffectVideoPlayerState>();
+        videoKeys[effectItem.imageUrl] = key;
+      }
+      if (checked) {
+        delay(() => key!.currentState?.play(), milliseconds: 32);
+      } else {
+        key.currentState?.pause();
+      }
       return Container(
         width: width,
         height: width,
-        child: EffectVideoPlayer(url: effectItem.imageUrl),
+        child: EffectVideoPlayer(
+          url: effectItem.imageUrl,
+          key: key,
+        ),
       );
     } else {
       return _imageWidget(context, imageUrl: effectItem.imageUrl);
@@ -952,7 +966,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             ClipRRect(
               borderRadius: BorderRadius.circular($(8)),
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: _createEffectModelIcon(context, effectItem: effectItem!),
+              child: _createEffectModelIcon(context, effectItem: effectItem!, checked: checked),
             ),
             Visibility(
               visible: (effectItem.key.endsWith("-transform")),
@@ -1193,7 +1207,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
           });
         },
-        onFail: () {},
+        onFail: () {
+          controller.changeIsLoading(false);
+        },
       );
       try {
         var imageUrl = controller.imageUrl.value;

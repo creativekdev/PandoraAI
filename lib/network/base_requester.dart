@@ -128,7 +128,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed);
     } on DioError catch (e) {
-      onError(e);
+      onDioError(e);
       return null;
     }
   }
@@ -161,7 +161,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed);
     } on DioError catch (e) {
-      onError(e);
+      onDioError(e);
       return null;
     }
   }
@@ -191,7 +191,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed);
     } on DioError catch (e) {
-      onError(e);
+      onDioError(e);
       return null;
     }
   }
@@ -211,7 +211,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       Response response = await _client.delete(path, data: data, queryParameters: params);
       return _onResponse(response, toastOnFailed: toastOnFailed);
     } on DioError catch (e) {
-      onError(e);
+      onDioError(e);
       return null;
     }
   }
@@ -228,6 +228,9 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       onPreHandleResult(response);
       var baseEntity = BaseEntity(data: response.data, headers: headers);
       return baseEntity;
+    } else if (response.statusCode == 401) {
+      onTokenExpired(response.statusCode, response.statusMessage);
+      return null;
     } else {
       if (response.data is Map<String, dynamic>) {
         var map = response.data as Map<String, dynamic>?;
