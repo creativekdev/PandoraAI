@@ -2,8 +2,10 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -34,12 +36,13 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
@@ -84,6 +87,19 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     bannerAdsHolder.onDispose();
     appStateListener.cancel();
     tabOnDoubleClickListener.cancel();
+  }
+
+  @override
+  void onAttached() {
+    super.onAttached();
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${widget.tabString}');
+    var currentTime = DateTime.now().millisecondsSinceEpoch;
+    if (currentTime - lastTime > 5000) {
+      logEvent(Events.effect_child_tab_switch, eventValues: {
+        'type': widget.tabString,
+      });
+    }
+    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${widget.tabString}', currentTime);
   }
 
   changeData(List<EffectModel> dataList) {

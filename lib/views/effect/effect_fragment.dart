@@ -107,6 +107,13 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
         _tabController.index = currentIndex;
       }
     });
+    for (var i = 0; i < tabConfig.length; i++) {
+      if (i == currentIndex) {
+        tabConfig[i].key.currentState?.onAttached();
+      } else {
+        tabConfig[i].key.currentState?.onDetached();
+      }
+    }
   }
 
   void setIndex(int index) {
@@ -140,39 +147,48 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
             recentController.updateOriginData(_.data!.allEffectList());
             tabConfig.clear();
             for (var value in _.data!.data.keys) {
+              var key = GlobalKey<AppTabState>();
               if (value == 'face') {
                 tabConfig.add(
                   HomeTabConfig(
-                      item: EffectFaceFragment(
-                        tabId: tabId.id(),
-                        dataList: _.data!.effectList(value),
-                        recentController: recentController,
-                        tabString: value,
-                      ),
-                      title: _.data!.localeName(value)),
+                    item: EffectFaceFragment(
+                      key: key,
+                      tabId: tabId.id(),
+                      dataList: _.data!.effectList(value),
+                      recentController: recentController,
+                      tabString: value,
+                    ),
+                    title: _.data!.localeName(value),
+                    key: key,
+                  ),
                 );
               } else if (value == 'full_body') {
                 tabConfig.add(
                   HomeTabConfig(
                       item: EffectFullBodyFragment(
+                        key: key,
                         tabId: tabId.id(),
                         dataList: _.data!.effectList(value),
                         recentController: recentController,
                         tabString: value,
                       ),
+                      key: key,
                       title: _.data!.localeName(value)),
                 );
               } else {
                 tabConfig.add(
                   HomeTabConfig(
-                      item: EffectFaceFragment(
-                        tabId: tabId.id(),
-                        dataList: _.data!.effectList(value),
-                        recentController: recentController,
-                        hasOriginalFace: false,
-                        tabString: value,
-                      ),
-                      title: _.data!.localeName(value)),
+                    item: EffectFaceFragment(
+                      key: key,
+                      tabId: tabId.id(),
+                      dataList: _.data!.effectList(value),
+                      recentController: recentController,
+                      hasOriginalFace: false,
+                      tabString: value,
+                    ),
+                    title: _.data!.localeName(value),
+                    key: key,
+                  ),
                 );
               }
             }
@@ -182,9 +198,11 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 controller: recentController,
               ),
               title: 'Recent',
+              key: GlobalKey<AppTabState>(),
             ));
             _pageController = PageController(initialPage: currentIndex);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
+            delay(() => _pageChange(currentIndex), milliseconds: 32);
             return Stack(
               children: [
                 PageView.builder(

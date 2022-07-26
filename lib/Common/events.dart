@@ -46,6 +46,8 @@ class Events {
   static String discovery_comment_loading = "discovery_comment_loading";
   static String discovery_secondary_comment_loading = "discovery_secondary_comment_loading";
   static String create_discovery_share = "create_discovery_share";
+  static String reward_advertisement_loading = "reward_advertisement_loading";
+  static String effect_child_tab_switch = "effect_child_tab_switch";
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
@@ -60,7 +62,7 @@ logAppsflyerEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
-  if(user != null) {
+  if (user != null) {
     defaultValues["user_id"] = user.id.toString();
     defaultValues["user_email"] = user.getShownEmail();
     Appsflyer.instance.setCustomerUserId(user.id.toString());

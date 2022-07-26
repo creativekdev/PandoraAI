@@ -1,7 +1,9 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -33,11 +35,12 @@ class EffectFullBodyFragment extends StatefulWidget {
   }
 }
 
-class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
   late StreamSubscription appStateListener;
@@ -70,6 +73,19 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       buildDataList();
       refreshUserInfo();
     });
+  }
+
+  @override
+  void onAttached() {
+    super.onAttached();
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${widget.tabString}');
+    var currentTime = DateTime.now().millisecondsSinceEpoch;
+    if (currentTime - lastTime > 5000) {
+      logEvent(Events.effect_child_tab_switch, eventValues: {
+        'type': widget.tabString,
+      });
+    }
+    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${widget.tabString}', currentTime);
   }
 
   void refreshUserInfo() {

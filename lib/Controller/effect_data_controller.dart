@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
@@ -38,9 +39,11 @@ class EffectDataController extends GetxController {
 class HomeTabConfig {
   String title;
   Widget item;
+  GlobalKey<AppTabState> key;
 
   HomeTabConfig({
     required this.item,
     required this.title,
+    required this.key,
   });
 }

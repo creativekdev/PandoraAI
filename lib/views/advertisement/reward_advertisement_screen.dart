@@ -42,6 +42,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.reward_advertisement_loading);
     adsHolder = widget.adsHolder;
     hasAd = adsHolder.adsReady;
     adsHolder.onRewardCall = () {

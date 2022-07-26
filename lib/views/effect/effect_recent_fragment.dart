@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
@@ -21,7 +22,7 @@ class EffectRecentFragment extends StatefulWidget {
   State<StatefulWidget> createState() => EffectRecentFragmentState();
 }
 
-class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin {
+class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   late RecentController recentController;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
