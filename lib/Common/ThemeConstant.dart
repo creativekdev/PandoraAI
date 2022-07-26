@@ -1,5 +1,3 @@
-import 'package:cartoonizer/views/effect/effect_fragment.dart';
-
 import 'importFile.dart';
 
 class FontSizeConstants {

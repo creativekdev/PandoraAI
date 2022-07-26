@@ -507,7 +507,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           effectKey: selectedEffect.key,
                         );
                       } else {
-                        CommonExtension().showToast("Oops Failed!");
+                        CommonExtension().showToast(StringConstant.commonFailedToast);
                       }
                     });
                   } else {

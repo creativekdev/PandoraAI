@@ -98,13 +98,13 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: $(25)),
-                              buildBuyAttr(context, 'No advertisements', Images.ic_bug_no_ad),
-                              buildBuyAttr(context, 'No watermark', Images.ic_buy_no_watermark),
-                              buildBuyAttr(context, 'High resolution images', Images.ic_buy_hd_image),
-                              buildBuyAttr(context, 'Faster speed', Images.ic_buy_faster_convert),
+                              buildBuyAttr(context, StringConstant.buyAttrNoAds, Images.ic_bug_no_ad),
+                              buildBuyAttr(context, StringConstant.buyAttrNoWatermark, Images.ic_buy_no_watermark),
+                              buildBuyAttr(context, StringConstant.buyAttrHDImages, Images.ic_buy_hd_image),
+                              buildBuyAttr(context, StringConstant.buyAttrFasterSpeed, Images.ic_buy_faster_convert),
                               SizedBox(height: $(20)),
                               Text(
-                                'Buy now',
+                                StringConstant.buyNow,
                                 style: TextStyle(color: Colors.white, fontSize: $(17)),
                               )
                                   .intoContainer(
@@ -157,7 +157,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                   Align(
                     child: Container(
                       child: Text(
-                        'ProfilePicMaker Pro',
+                        StringConstant.ppmPro,
                         style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: $(18), color: Colors.white),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(4)),
@@ -182,12 +182,12 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
               Column(
                 children: [
                   Text(
-                    'Watch an ad to remove watermark\n(only this time)',
+                    StringConstant.watchAdHint,
                     style: TextStyle(color: Colors.white, fontSize: $(14), fontFamily: 'Poppins'),
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    'Download HD image\nwithout watermark',
+                    StringConstant.watchAdText,
                     style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(15), height: 1.2),
                     textAlign: TextAlign.center,
                   )

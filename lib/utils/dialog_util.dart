@@ -7,24 +7,24 @@ showPhotoLibraryPermissionDialog(BuildContext context) {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
             title: Text(
-              'PhotoLibrary Permission',
+              StringConstant.permissionPhotoLibrary,
               style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
             ),
             content: Text(
-              'This app needs photo library access to choose pictures for upload user profile photo',
+              StringConstant.permissionPhotoLibraryContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  'Deny',
+                  StringConstant.deny,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               CupertinoDialogAction(
                 child: Text(
-                  'Settings',
+                  StringConstant.settings,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () async {
@@ -47,24 +47,24 @@ showCameraPermissionDialog(BuildContext context) {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
             title: Text(
-              'Camera Permission',
+              StringConstant.permissionCamera,
               style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
             ),
             content: Text(
-              'This app needs camera access to take pictures for upload user profile photo',
+              StringConstant.permissionCameraContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  'Deny',
+                  StringConstant.deny,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               CupertinoDialogAction(
                 child: Text(
-                  'Settings',
+                  StringConstant.settings,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () async {

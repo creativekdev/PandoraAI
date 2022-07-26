@@ -1,9 +1,9 @@
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:dio/src/dio_error.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 
 ///
 /// @Author: wangyu
@@ -15,7 +15,7 @@ class ExceptionHandler {
       if (!kReleaseMode) {
         CommonExtension().showToast(e.toString());
       } else {
-        CommonExtension().showToast("Oops Failed!");
+        CommonExtension().showToast(StringConstant.commonFailedToast);
       }
     }
   }

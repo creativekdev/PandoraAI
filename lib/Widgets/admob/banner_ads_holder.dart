@@ -1,6 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 ///

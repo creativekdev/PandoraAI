@@ -52,8 +52,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
         builder: (_) {
           return _.dataList.isEmpty
               ? Text(
-                  'No record of your usage found\n'
-                  'Please make your first profile pic to view your history here',
+                  StringConstant.effectRecentEmptyHint,
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontWeight: FontWeight.w500,

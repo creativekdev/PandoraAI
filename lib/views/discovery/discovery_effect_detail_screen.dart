@@ -53,7 +53,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
     data = widget.data.copy();
     resources = data.resourceList();
     if (resources.isEmpty) {
-      CommonExtension().showToast("Oops Failed!");
+      CommonExtension().showToast(StringConstant.commonFailedToast);
       Navigator.pop(context);
     }
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {

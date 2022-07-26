@@ -55,6 +55,7 @@ class StringConstant {
   static const txtContinue = "Continue";
   static const paymentBtn = "Place your order";
   static const setting = "Setting";
+  static const settings = "Settings";
   static const payment = "Payment";
   static const payment_successfully = "Payment successfully";
   static const edit_profile = "Edit Profile";
@@ -123,4 +124,22 @@ class StringConstant {
   static const cartoonize = 'Cartoonize';
   static const shareIncludeOriginal = "Also share the original image";
   static const cartoonizeCancelTitle = "Closing the page will stop the conversion process, are you sure you want to continue?";
+  static const toastImageSaved = 'Image Saved';
+  static const toastVideoSaved = 'Video Saved';
+  static const commonFailedToast = 'Oops Failed';
+  static const permissionPhotoLibrary = 'PhotoLibrary Permission';
+  static const permissionPhotoLibraryContent = 'This app needs photo library access to choose pictures for upload user profile photo';
+  static const permissionCamera = 'Camera Permission';
+  static const permissionCameraContent = 'This app needs camera access to take pictures for upload user profile photo';
+  static const deny = 'Deny';
+  static const buyAttrNoAds = 'No advertisements';
+  static const buyAttrNoWatermark = 'No watermark';
+  static const buyAttrHDImages = 'High resolution images';
+  static const buyAttrFasterSpeed = 'Faster speed';
+  static const buyNow = 'Buy now';
+  static const ppmPro = 'ProfilePicMaker Pro';
+  static const watchAdHint = 'Watch an ad to remove watermark\n(only this time)';
+  static const watchAdText = 'Download HD image\nwithout watermark';
+  static const effectRecentEmptyHint = 'No record of your usage found\n'
+      'Please make your first profile pic to view your history here';
 }

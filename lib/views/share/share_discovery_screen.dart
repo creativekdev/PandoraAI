@@ -110,7 +110,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         GallerySaver.saveVideo(image, false).then((value) {
           if (value == null) {
             hideLoading();
-            CommonExtension().showToast('Oops Failed');
+            CommonExtension().showToast(StringConstant.commonFailedToast);
           } else {
             String b_name = "fast-socialbook";
             String f_name = path.basename(value);
@@ -127,7 +127,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             api.getPresignedUrl(params).then((url) async {
               if (url == null) {
                 hideLoading();
-                CommonExtension().showToast('Oops failed');
+                CommonExtension().showToast(StringConstant.commonFailedToast);
               } else {
                 var baseEntity = await Uploader().uploadFile(url, File(value), c_type);
                 if (baseEntity != null) {
@@ -167,7 +167,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         api.getPresignedUrl(params).then((url) async {
           if (url == null) {
             hideLoading();
-            CommonExtension().showToast('Oops failed');
+            CommonExtension().showToast(StringConstant.commonFailedToast);
           } else {
             Uint8List image = await imageCompressWithList(imageData!);
             var baseEntity = await Uploader().upload(url, image, c_type);
