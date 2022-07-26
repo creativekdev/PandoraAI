@@ -12,6 +12,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'effect_fragment.dart';
 import 'widget/effect_face_card_widget.dart';
 
 class EffectFaceFragment extends StatefulWidget {
@@ -36,7 +37,7 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
@@ -46,6 +47,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
+  double marginTop = $(128);
 
   @override
   initState() {
@@ -89,19 +91,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     tabOnDoubleClickListener.cancel();
   }
 
-  @override
-  void onAttached() {
-    super.onAttached();
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${widget.tabString}');
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.effect_child_tab_switch, eventValues: {
-        'type': widget.tabString,
-      });
-    }
-    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${widget.tabString}', currentTime);
-  }
-
   changeData(List<EffectModel> dataList) {
     setState(() {
       this.dataList = dataList;
@@ -122,7 +111,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
               margin: EdgeInsets.only(
                 left: $(15),
                 right: $(15),
-                top: index == 0 ? $(125) : 0,
+                top: index == 0 ? marginTop : 0,
                 bottom: index == dataList.length - 1 ? ($(15) + AppTabBarHeight) : $(8),
               ),
             )

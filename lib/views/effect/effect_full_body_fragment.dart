@@ -1,16 +1,15 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
-import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 
 import 'widget/effect_full_body_card_widget.dart';
@@ -35,7 +34,7 @@ class EffectFullBodyFragment extends StatefulWidget {
   }
 }
 
-class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
@@ -46,6 +45,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
+  double marginTop = $(128);
 
   @override
   initState() {
@@ -73,19 +73,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       buildDataList();
       refreshUserInfo();
     });
-  }
-
-  @override
-  void onAttached() {
-    super.onAttached();
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${widget.tabString}');
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.effect_child_tab_switch, eventValues: {
-        'type': widget.tabString,
-      });
-    }
-    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${widget.tabString}', currentTime);
   }
 
   void refreshUserInfo() {
@@ -140,7 +127,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           margin: EdgeInsets.only(
             right: $(15),
             left: $(15),
-            top: index == 0 ? $(132) : $(8),
+            top: index == 0 ? (marginTop + $(8)) : $(8),
             bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
           ),
         ),

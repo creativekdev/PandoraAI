@@ -39,11 +39,9 @@ class EffectDataController extends GetxController {
 class HomeTabConfig {
   String title;
   Widget item;
-  GlobalKey<AppTabState> key;
 
   HomeTabConfig({
     required this.item,
     required this.title,
-    required this.key,
   });
 }

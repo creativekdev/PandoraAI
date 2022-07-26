@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 
+import 'effect_fragment.dart';
 import 'widget/effect_full_body_card_widget.dart';
 
 class EffectRecentFragment extends StatefulWidget {
@@ -22,10 +23,11 @@ class EffectRecentFragment extends StatefulWidget {
   State<StatefulWidget> createState() => EffectRecentFragmentState();
 }
 
-class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectRecentFragmentState extends State<EffectRecentFragment> with AutomaticKeepAliveClientMixin {
   late RecentController recentController;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
+  double marginTop = $(128);
 
   @override
   initState() {
@@ -47,7 +49,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
+    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
     return GetBuilder<RecentController>(
         init: recentController,
         builder: (_) {
@@ -76,9 +78,9 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
                       },
                     ).intoContainer(
                       margin: EdgeInsets.only(
-                        left: $(20),
-                        right: $(20),
-                        top: index == 0 ? $(132) : $(8),
+                        left: $(15),
+                        right: $(15),
+                        top: index == 0 ? (marginTop + $(8)) : $(8),
                         bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
                       ),
                     ),
