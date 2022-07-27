@@ -85,9 +85,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
     waitAppInitialize();
 
-    // log app open
-    logSystemEvent(Events.open_app);
-
     //2.页面初始化的时候，添加一个状态的监听者
     WidgetsBinding.instance.addObserver(this);
   }
@@ -156,6 +153,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   _checkIntroductionPage() {
+    // log app open
+    logSystemEvent(Events.open_app);
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion();

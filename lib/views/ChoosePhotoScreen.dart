@@ -172,7 +172,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
     adsHolder = CardAdsHolder(
       width: ScreenUtil.screenSize.width,
-      height: ScreenUtil.screenSize.height - $(170),
+      autoHeight: true,
       onUpdated: () {},
       adId: AdMobConfig.PROCESSING_AD_ID,
     );

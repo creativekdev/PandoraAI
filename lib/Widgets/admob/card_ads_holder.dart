@@ -19,6 +19,7 @@ class CardAdsHolder extends WidgetAdsHolder {
   late String adId;
   final double width;
   double? height;
+  bool autoHeight;
 
   CardAdsHolder({
     required this.width,
@@ -26,7 +27,8 @@ class CardAdsHolder extends WidgetAdsHolder {
     this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
-    this.height, // while height was provided, scale will be ignored.
+    this.height,
+    this.autoHeight = false, // while height was provided, scale will be ignored.
   });
 
   @override
@@ -53,13 +55,21 @@ class CardAdsHolder extends WidgetAdsHolder {
     closeAds = false;
     onReset();
 
+    AdSize adSize;
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
     if (height == null) {
-      height = width * scale;
+      if (autoHeight) {
+        adSize = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(width.truncate());
+      } else {
+        height = width * scale;
+        adSize = AdSize(width: width.toInt(), height: height!.toInt());
+      }
+    } else {
+      adSize = AdSize(width: width.toInt(), height: height!.toInt());
     }
     _inlineAdaptiveAd = AdManagerBannerAd(
       adUnitId: adId,
-      sizes: [AdSize(width: width.toInt(), height: height!.toInt())],
+      sizes: [adSize],
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {

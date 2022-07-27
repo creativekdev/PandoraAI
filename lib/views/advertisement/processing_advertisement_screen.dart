@@ -150,8 +150,7 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                  child: Column(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   AppProgressBar(
@@ -168,8 +167,10 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
                   ),
                   SizedBox(height: $(6)),
                 ],
-              ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center)),
-              hasAd ? adsHolder.buildAdWidget() ?? Container() : placeHolder(context),
+              ).intoContainer(height: $(100), padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),
+              Expanded(
+                child: hasAd ? (adsHolder.buildAdWidget() ?? Container()).intoContainer(alignment: Alignment.center) : placeHolder(context),
+              ),
             ],
           ),
         ),
