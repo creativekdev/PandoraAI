@@ -67,6 +67,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   double tabBarHeight = 0;
   double lastOffset = 0;
   bool maskVisible = true;
+  bool firstLoad = true;
 
   @override
   void initState() {
@@ -241,6 +242,10 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           setState(() {});
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
+      }
+      if (firstLoad) {
+        scrollController.animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
+        firstLoad = false;
       }
     });
   }
