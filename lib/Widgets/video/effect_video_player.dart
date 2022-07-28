@@ -27,7 +27,7 @@ class EffectVideoPlayer extends StatefulWidget {
 
 class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   late String url;
-  late VideoPlayerController controller;
+  VideoPlayerController? controller;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late String fileName;
@@ -94,11 +94,11 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   }
 
   play() {
-    controller.play();
+    controller?.play();
   }
 
   pause() {
-    controller.pause();
+    controller?.pause();
   }
 
   @override
@@ -110,9 +110,9 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   @override
   void dispose() {
     super.dispose();
-    controller.pause();
+    controller?.pause();
     appStateListener.cancel();
-    controller.dispose();
+    controller?.dispose();
     if (key != null) {
       Downloader.instance.unsubscribeSync(key!, downloadListener!);
     }
@@ -128,10 +128,10 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
                 alignment: Alignment.center,
                 children: [
                   AspectRatio(
-                    aspectRatio: controller.value.aspectRatio,
-                    child: VideoPlayer(controller),
+                    aspectRatio: controller!.value.aspectRatio,
+                    child: VideoPlayer(controller!),
                   ),
-                  (controller.value.isInitialized) ? Container() : CircularProgressIndicator().intoCenter()
+                  (controller!.value.isInitialized) ? Container() : CircularProgressIndicator().intoCenter()
                 ],
               );
   }

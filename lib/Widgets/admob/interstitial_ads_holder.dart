@@ -90,6 +90,7 @@ class InterstitialAdsHolder extends PageAdsHolder {
         _createInterstitialAd();
       },
     );
+    _interstitialAd!.setImmersiveMode(true);
     _interstitialAd!.show().whenComplete(() {
       //reload next ad when current ad has been shown,
       print('adLoadFinished');

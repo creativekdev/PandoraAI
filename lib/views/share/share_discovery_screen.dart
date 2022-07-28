@@ -77,7 +77,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   void initState() {
     super.initState();
     api = CartoonizerApi().bindState(this);
-    textEditingController = TextEditingController(text: StringConstant.discoveryShareInputHint);
+    textEditingController = TextEditingController();
     // canSubmit = textEditingController.text.trim().isNotEmpty;
     isVideo = widget.isVideo;
     image = widget.image;

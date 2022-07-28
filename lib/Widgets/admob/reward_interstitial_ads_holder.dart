@@ -75,7 +75,8 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
     _interstitialAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
       print('$ad with reward $RewardItem(${reward.amount}, ${reward.type})');
       onRewardCall?.call();
+    }).whenComplete(() {
+      _interstitialAd = null;
     });
-    _interstitialAd = null;
   }
 }
