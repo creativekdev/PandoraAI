@@ -171,6 +171,7 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
               Expanded(
                 child: hasAd ? (adsHolder.buildAdWidget() ?? Container()).intoContainer(alignment: Alignment.center) : placeHolder(context),
               ),
+              Container(height: $(144)),
             ],
           ),
         ),

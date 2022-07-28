@@ -61,7 +61,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
 }
 
 class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
-  bool canSubmit = false;
+  bool canSubmit = true;
   late bool isVideo;
   late String image;
   late String originalUrl;
@@ -78,7 +78,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     super.initState();
     api = CartoonizerApi().bindState(this);
     textEditingController = TextEditingController(text: StringConstant.discoveryShareInputHint);
-    canSubmit = textEditingController.text.trim().isNotEmpty;
+    // canSubmit = textEditingController.text.trim().isNotEmpty;
     isVideo = widget.isVideo;
     image = widget.image;
     originalUrl = widget.originalUrl;
@@ -101,8 +101,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   submit() {
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
-      CommonExtension().showToast('Please input description');
-      return;
+      text = StringConstant.discoveryShareInputHint;
+      // CommonExtension().showToast('Please input description');
+      // return;
     }
     FocusScope.of(context).requestFocus(FocusNode());
     showLoading().whenComplete(() {
@@ -238,9 +239,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                           end: Alignment.bottomRight,
                         )))
                 .intoGestureDetector(onTap: () {
-              if (canSubmit) {
+              // if (canSubmit) {
                 submit();
-              }
+              // }
             }),
           ),
           body: SingleChildScrollView(
@@ -262,14 +263,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   ),
                   maxLines: 5,
                   minLines: 3,
-                  onChanged: (text) {
-                    setState(() {
-                      canSubmit = text.trim().isNotEmpty;
-                    });
-                  },
+                  // onChanged: (text) {
+                    // setState(() {
+                      // canSubmit = text.trim().isNotEmpty;
+                    // });
+                  // },
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: StringConstant.discoveryShareInputTitle,
+                    hintText: StringConstant.discoveryShareInputHint,
                     hintStyle: TextStyle(
                       color: ColorConstant.DiscoveryCommentGrey,
                       fontFamily: 'Poppins',
