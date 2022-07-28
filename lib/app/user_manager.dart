@@ -143,5 +143,6 @@ class UserManager extends BaseManager {
   Future<void> logout() async {
     user = null;
     sid = null;
+    lastLauncherLoginStatus = false;
   }
 }
