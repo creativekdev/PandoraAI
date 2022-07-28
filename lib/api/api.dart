@@ -14,6 +14,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../Common/importFile.dart';
 import '../Common/sToken.dart';
 
+@deprecated
 class API {
   // Stitching parameters
   static String joinParams(Map<String, dynamic>? params, String url) {
@@ -113,41 +114,6 @@ class API {
       url = "${Config.instance.host}" + url;
     }
     return await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
-  }
-
-  // get login
-  @deprecated
-  static Future<dynamic> getLogin({bool needLoad = false, BuildContext? context}) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    bool isLogin = sharedPreferences.getBool('isLogin') ?? false;
-    var localUser = sharedPreferences.getString('user') ?? "";
-
-    if (needLoad || localUser == '') {
-      var manager = AppDelegate.instance.getManager<UserManager>();
-      var response = await get('/api/user/get_login');
-      Map data = jsonDecode(response.body.toString());
-
-      if (response.statusCode == 200 && data['login'] == true) {
-        await manager.refreshUser();
-        UserModel user = UserModel.fromGetLogin(data);
-        sharedPreferences.setString("user", jsonEncode(user));
-
-        if (context != null && user.status != 'activated') {
-          // remove all route and push email verification screen
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (BuildContext context) => EmailVerificationScreen(user.email)),
-            ModalRoute.withName('/EmailVerificationScreen'),
-          );
-        }
-        return user;
-      } else {
-        UserModel user = UserModel.fromUnlogin(data);
-        sharedPreferences.setString("user", jsonEncode(user));
-        return user;
-      }
-    }
-    return UserModel.fromJson(jsonDecode(localUser));
   }
 
   // buy plan with stripe

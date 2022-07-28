@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 
 import 'home_tab.dart';
 
@@ -17,11 +19,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   int currentIndex = 0;
   List<AppRoleTabItem> tabItems = [];
 
+  UserManager userManager = AppDelegate.instance.getManager();
+
   @override
   void initState() {
     logEvent(Events.homepage_loading);
     super.initState();
     initialTab(false);
+    if (userManager.lastLauncherLoginStatus) {
+      userManager.refreshUser().then((value) {
+        if (!value.loginSuccess) {
+          userManager.logout().then((value) {
+            userManager.doOnLogin(context);
+          });
+        }
+      });
+    }
   }
 
   initialTab(bool needSetState) {

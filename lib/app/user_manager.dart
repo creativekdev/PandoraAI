@@ -18,6 +18,7 @@ import 'package:cartoonizer/views/LoginScreen.dart';
 ///
 class UserManager extends BaseManager {
   late CacheManager cacheManager;
+  bool lastLauncherLoginStatus = false; //true login, false unLogin
 
   Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer);
 
@@ -65,6 +66,7 @@ class UserManager extends BaseManager {
     var json = cacheManager.getJson(CacheManager.keyCurrentUser);
     if (json != null) {
       _user = SocialUserInfo.fromJson(json);
+      lastLauncherLoginStatus = true;
     }
     refreshUser();
   }
