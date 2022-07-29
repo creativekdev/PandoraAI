@@ -116,6 +116,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     bool toastOnFailed = true,
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
+    Function(Response response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -126,9 +127,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         queryParameters: params,
         onReceiveProgress: onReceiveProgress,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
     } on DioError catch (e) {
       onDioError(e);
+      onFailed?.call(e.response!);
       return null;
     }
   }
@@ -142,6 +144,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
+    Function(Response response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -159,9 +162,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
     } on DioError catch (e) {
       onDioError(e);
+      onFailed?.call(e.response!);
       return null;
     }
   }
@@ -176,6 +180,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
     Options? options,
+    Function(Response response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -189,9 +194,10 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         onReceiveProgress: onReceiveProgress,
         options: options,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
     } on DioError catch (e) {
       onDioError(e);
+      onFailed?.call(e.response!);
       return null;
     }
   }
@@ -203,15 +209,17 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     Map<String, dynamic>? params,
     bool toastOnFailed = true,
     bool preHandleRequest = true,
+    Function(Response response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
       Response response = await _client.delete(path, data: data, queryParameters: params);
-      return _onResponse(response, toastOnFailed: toastOnFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
     } on DioError catch (e) {
       onDioError(e);
+      onFailed?.call(e.response!);
       return null;
     }
   }
@@ -219,6 +227,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   BaseEntity? _onResponse(
     Response response, {
     bool toastOnFailed = true,
+    Function(Response)? onFailed,
   }) {
     if (!interceptResponse(response)) {
       return null;
@@ -230,6 +239,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return baseEntity;
     } else if (response.statusCode == 401) {
       onTokenExpired(response.statusCode, response.statusMessage);
+      onFailed?.call(response);
       return null;
     } else {
       if (response.data is Map<String, dynamic>) {
@@ -238,6 +248,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       } else {
         onReqError(response.statusMessage ?? '', toastOnFailed: toastOnFailed);
       }
+      onFailed?.call(response);
       return null;
     }
   }

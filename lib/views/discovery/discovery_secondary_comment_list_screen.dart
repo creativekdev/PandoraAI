@@ -152,6 +152,9 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
       comment: comment,
       socialPostId: parentComment.socialPostId,
       replySocialPostCommentId: replySocialPostCommentId,
+      onUserExpired: () {
+        userManager.doOnLogin(context);
+      },
     );
     await hideLoading();
     if (baseEntity != null) {

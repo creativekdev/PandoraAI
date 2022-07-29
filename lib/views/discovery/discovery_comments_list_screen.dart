@@ -179,10 +179,12 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   Future<bool> createComment(String comment, int? replySocialPostCommentId) async {
     await showLoading();
     var baseEntity = await api.createDiscoveryComment(
-      comment: comment,
-      socialPostId: discoveryEntity.id,
-      replySocialPostCommentId: replySocialPostCommentId,
-    );
+        comment: comment,
+        socialPostId: discoveryEntity.id,
+        replySocialPostCommentId: replySocialPostCommentId,
+        onUserExpired: () {
+          userManager.doOnLogin(context);
+        });
     await hideLoading();
     if (baseEntity != null) {
       CommonExtension().showToast('Comment posted');

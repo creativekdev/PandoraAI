@@ -9,6 +9,8 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
@@ -141,7 +143,17 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
                     );
                   }
-                  api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
+                  api
+                      .startSocialPost(
+                          description: text,
+                          effectKey: effectKey,
+                          resources: list,
+                          onUserExpired: () {
+                            AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                              submit();
+                            }, autoExec: true);
+                          })
+                      .then((value) {
                     hideLoading();
                     if (value != null) {
                       CommonExtension().showToast("Your post has been submitted successfully");
@@ -182,7 +194,17 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
                 );
               }
-              api.startSocialPost(description: text, effectKey: effectKey, resources: list).then((value) {
+              api
+                  .startSocialPost(
+                      description: text,
+                      effectKey: effectKey,
+                      resources: list,
+                      onUserExpired: () {
+                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                          submit();
+                        }, autoExec: true);
+                      })
+                  .then((value) {
                 hideLoading();
                 if (value != null) {
                   CommonExtension().showToast("Your post has been submitted successfully");
@@ -240,7 +262,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         )))
                 .intoGestureDetector(onTap: () {
               // if (canSubmit) {
-                submit();
+              submit();
               // }
             }),
           ),
@@ -264,9 +286,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   maxLines: 5,
                   minLines: 3,
                   // onChanged: (text) {
-                    // setState(() {
-                      // canSubmit = text.trim().isNotEmpty;
-                    // });
+                  // setState(() {
+                  // canSubmit = text.trim().isNotEmpty;
+                  // });
                   // },
                   decoration: InputDecoration(
                     border: InputBorder.none,

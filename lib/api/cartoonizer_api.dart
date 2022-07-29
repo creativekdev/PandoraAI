@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -75,6 +75,7 @@ class CartoonizerApi extends BaseRequester {
     required String description,
     required List<DiscoveryResource> resources,
     required String effectKey,
+    required Function onUserExpired,
   }) async {
     var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
     logEvent(Events.create_discovery_share);
@@ -82,6 +83,10 @@ class CartoonizerApi extends BaseRequester {
       'resources': encode,
       'text': description,
       'cartoonize_key': effectKey,
+    }, onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired.call();
+      }
     });
   }
 
@@ -109,6 +114,7 @@ class CartoonizerApi extends BaseRequester {
     required String comment,
     required int socialPostId,
     int? replySocialPostCommentId,
+    Function? onUserExpired,
   }) async {
     var map = {
       'text': comment,
@@ -117,7 +123,11 @@ class CartoonizerApi extends BaseRequester {
     if (replySocialPostCommentId != null) {
       map['reply_social_post_comment_id'] = replySocialPostCommentId;
     }
-    var baseEntity = await post('/social_post_comment/create', params: map);
+    var baseEntity = await post('/social_post_comment/create', params: map, onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    });
     if (baseEntity != null) {
       var data = [socialPostId];
       if (replySocialPostCommentId != null) {
@@ -129,9 +139,14 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<int?> discoveryLike(
-    int id,
-  ) async {
-    var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id});
+    int id, {
+    Function? onUserExpired,
+  }) async {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id}, onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    });
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
       EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
@@ -140,16 +155,31 @@ class CartoonizerApi extends BaseRequester {
     return null;
   }
 
-  Future<BaseEntity?> discoveryUnLike(int id, int likeId) async {
-    var baseEntity = await delete('/social_post_like/delete/$likeId');
+  Future<BaseEntity?> discoveryUnLike(
+    int id,
+    int likeId, {
+    Function? onUserExpired,
+  }) async {
+    var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    });
     if (baseEntity != null) {
       EventBusHelper().eventBus.fire(OnDiscoveryUnlikeEvent(data: id));
     }
     return baseEntity;
   }
 
-  Future<int?> commentLike(int id) async {
-    var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id});
+  Future<int?> commentLike(
+    int id, {
+    Function? onUserExpired,
+  }) async {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id}, onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    });
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
       EventBusHelper().eventBus.fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
@@ -158,8 +188,16 @@ class CartoonizerApi extends BaseRequester {
     return null;
   }
 
-  Future<BaseEntity?> commentUnLike(int id, int likeId) async {
-    var baseEntity = await delete('/social_post_like/delete/$likeId');
+  Future<BaseEntity?> commentUnLike(
+    int id,
+    int likeId, {
+    Function? onUserExpired,
+  }) async {
+    var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
+      if (response.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    });
     if (baseEntity != null) {
       EventBusHelper().eventBus.fire(OnCommentUnlikeEvent(data: id));
     }
