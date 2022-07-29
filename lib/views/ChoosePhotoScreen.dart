@@ -606,11 +606,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
                                           controller.isPhotoSelect.value
-                                              ? Image.file(
-                                                  controller.image.value as File,
-                                                  fit: BoxFit.cover,
-                                                  width: 70.w,
-                                                  height: 70.w,
+                                              ? ClipRRect(
+                                                  child: Image.file(
+                                                    controller.image.value as File,
+                                                    fit: BoxFit.cover,
+                                                    width: 71.w,
+                                                    height: 71.w,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular($(8)),
                                                 ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
                                               : Image.asset(
                                                   ImagesConstant.ic_man,
