@@ -3,7 +3,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/progress_bar.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'dart:math' as math;
 
 const int minDuration = 10000; //at least shown time duration.
@@ -35,7 +34,7 @@ class ProcessingAdvertisementScreen extends StatefulWidget {
   }
 }
 
-class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScreen> with TickerProviderStateMixin {
+class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> with TickerProviderStateMixin {
   late WidgetAdsHolder adsHolder;
   late AnimationController animationController;
   late CurvedAnimation curvedAnimation;
@@ -126,7 +125,7 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
   }
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget build(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
           backgroundColor: ColorConstant.BackgroundColor,
@@ -163,15 +162,13 @@ class ProcessingAdvertisementState extends AppState<ProcessingAdvertisementScree
                   SizedBox(height: $(6)),
                   Text(
                     '${progress / 10}%',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: ColorConstant.EffectFunctionBlue, fontFamily: 'Poppins'),
                   ),
                   SizedBox(height: $(6)),
                 ],
-              ).intoContainer(height: $(100), padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),
-              Expanded(
-                child: hasAd ? (adsHolder.buildAdWidget() ?? Container()).intoContainer(alignment: Alignment.center) : placeHolder(context),
-              ),
-              Container(height: $(144)),
+              ).intoContainer(height: hasAd ? $(100) : double.maxFinite, padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),
+              hasAd ? Expanded(child: (adsHolder.buildAdWidget() ?? Container()).intoContainer(alignment: Alignment.center)) : placeHolder(context),
+              Container(height: hasAd ? $(144) : 0),
             ],
           ),
         ),

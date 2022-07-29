@@ -171,8 +171,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       setState(() {});
     });
     adsHolder = CardAdsHolder(
-      width: ScreenUtil.screenSize.width,
-      // autoHeight: true,
+      width: ScreenUtil.screenSize.width - $(32),
       scale: 0.75,
       onUpdated: () {},
       adId: AdMobConfig.PROCESSING_AD_ID,
@@ -606,11 +605,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         crossAxisAlignment: CrossAxisAlignment.center,
                                         children: [
-                                          Image.asset(
-                                            ImagesConstant.ic_man,
-                                            height: 40.h,
-                                            width: 70.w,
-                                          ),
+                                          controller.isPhotoSelect.value
+                                              ? Image.file(
+                                                  controller.image.value as File,
+                                                  fit: BoxFit.cover,
+                                                  width: 70.w,
+                                                  height: 70.w,
+                                                ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
+                                              : Image.asset(
+                                                  ImagesConstant.ic_man,
+                                                  height: 40.h,
+                                                  width: 70.w,
+                                                ),
                                           GestureDetector(
                                             onTap: () {
                                               pickImageFromGallery(context, from: "center");
@@ -629,85 +635,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           ),
                                         ],
                                       ),
-                                    ).visibility(visible: !controller.isPhotoSelect.value)),
-                                Obx(() => Column(
-                                      children: [
-                                        Expanded(
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(vertical: 2.h),
-                                            child: Center(
-                                              child: Container(
-                                                width: 90.w,
-                                                child: Card(
-                                                  color: ColorConstant.CardColor,
-                                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                                  elevation: 1.h,
-                                                  shadowColor: Color.fromRGBO(0, 0, 0, 0.5),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.all(
-                                                      Radius.circular(2.w),
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.all(5.w),
-                                                    child: DottedBorder(
-                                                      color: ColorConstant.White,
-                                                      strokeWidth: 0.1.h,
-                                                      radius: Radius.circular(1.w),
-                                                      borderType: BorderType.RRect,
-                                                      child: Padding(
-                                                        padding: EdgeInsets.all(4.w),
-                                                        child: Row(
-                                                          mainAxisSize: MainAxisSize.max,
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Stack(
-                                                              children: [
-                                                                (controller.image.value) != null
-                                                                    ? ClipRRect(
-                                                                        borderRadius: BorderRadius.circular(2.w),
-                                                                        child: Image.file(
-                                                                          controller.image.value as File,
-                                                                          fit: BoxFit.cover,
-                                                                          width: 68.w,
-                                                                        ),
-                                                                      )
-                                                                    : SizedBox(),
-                                                                Positioned(
-                                                                  left: 2.w,
-                                                                  bottom: 2.w,
-                                                                  child: GestureDetector(
-                                                                    onTap: () async {
-                                                                      offlineEffect.clear();
-                                                                      controller.changeIsPhotoSelect(false);
-                                                                      controller.changeIsPhotoDone(false);
-                                                                      controller.updateImageFile(null);
-                                                                      controller.updateImageUrl("");
-                                                                    },
-                                                                    child: Image.asset(
-                                                                      ImagesConstant.ic_delete,
-                                                                      width: 8.w,
-                                                                      height: 8.w,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 2.h,
-                                        )
-                                      ],
-                                    ).visibility(visible: controller.isPhotoSelect.value)),
+                                    ).visibility(visible: !controller.isPhotoDone.value)),
                               ],
                             ),
                     ),
@@ -1019,8 +947,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
   }
 
-  bool _judgeAndShowAdvertisement(
-    BuildContext context, {
+  bool _judgeAndShowAdvertisement({
     required Function onSuccess,
     required Function onCancel,
     Function? onFail,
@@ -1193,7 +1120,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       bool ignoreResult = false;
       Function? successForward;
       bool hasAd = _judgeAndShowAdvertisement(
-        context,
         onSuccess: () {
           successForward?.call();
         },
