@@ -99,7 +99,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
     });
     endController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        // Navigator.of(context).pop(true);
+        Navigator.of(context).pop(true);
       }
     });
     onCartoonizerFinishedListener = EventBusHelper().eventBus.on<OnCartoonizerFinishedEvent>().listen((event) {
