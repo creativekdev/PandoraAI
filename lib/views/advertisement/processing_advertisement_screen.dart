@@ -99,7 +99,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
     });
     endController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigator.of(context).pop(true);
+        // Navigator.of(context).pop(true);
       }
     });
     onCartoonizerFinishedListener = EventBusHelper().eventBus.on<OnCartoonizerFinishedEvent>().listen((event) {
@@ -166,7 +166,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
                   ),
                   SizedBox(height: $(6)),
                 ],
-              ).intoContainer(height: hasAd ? $(100) : double.maxFinite, padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),
+              ).intoContainer(height: $(100), padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),
               hasAd ? Expanded(child: (adsHolder.buildAdWidget() ?? Container()).intoContainer(alignment: Alignment.center)) : placeHolder(context),
               Container(height: hasAd ? $(144) : 0),
             ],
