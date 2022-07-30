@@ -198,7 +198,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
             children: [
               Expanded(
                   child: Text(
-                'Keep cartooning',
+                StringConstant.cartoonizeCancelDismiss,
                 style: TextStyle(fontSize: $(16), fontFamily: 'Poppins', color: ColorConstant.White),
               )
                       .intoContainer(
@@ -215,7 +215,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
               })),
               Expanded(
                   child: Text(
-                'Insist on cancel',
+                StringConstant.cartoonizeCancelExit,
                 style: TextStyle(
                   fontSize: $(16),
                   fontFamily: 'Poppins',

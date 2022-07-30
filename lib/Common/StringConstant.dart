@@ -123,7 +123,9 @@ class StringConstant {
   static const discoveryShareInputHint = 'I created this using #ProfilePicMaker';
   static const cartoonize = 'Cartoonize';
   static const shareIncludeOriginal = "Also share the original image";
-  static const cartoonizeCancelTitle = "Closing the page will stop the conversion process, are you sure you want to continue?";
+  static const cartoonizeCancelTitle = "Closing the page will stop the transforming process. Are you sure to continue?";
+  static const cartoonizeCancelExit = "Cancel now";
+  static const cartoonizeCancelDismiss = "Keep cartooning";
   static const toastImageSaved = 'Image Saved';
   static const toastVideoSaved = 'Video Saved';
   static const commonFailedToast = 'Oops Failed';

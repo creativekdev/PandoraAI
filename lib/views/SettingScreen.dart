@@ -403,8 +403,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
     var post = await API.post("/api/user/delete_account");
     if (post.statusCode == 200) {
       logEvent(Events.delete_account);
-      userManager.user = null;
-      AppDelegate.instance.getManager<CacheManager>().clear();
+      userManager.logout();
       return true;
     }
     return false;

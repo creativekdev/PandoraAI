@@ -64,8 +64,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   clickLogout() async {
-    var sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.clear();
+    AppDelegate.instance.getManager<UserManager>().logout();
 
     Navigator.pushAndRemoveUntil(
       context,
