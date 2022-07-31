@@ -480,6 +480,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             child: Scaffold(
               backgroundColor: ColorConstant.BackgroundColor,
               appBar: AppNavigationBar(
+                backAction: () {
+                  _willPopCallback(context);
+                },
                 backgroundColor: ColorConstant.BackgroundColor,
                 middle: TitleTextWidget(StringConstant.cartoonize, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
                 trailing: Image.asset(
