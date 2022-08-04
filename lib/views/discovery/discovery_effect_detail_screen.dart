@@ -344,6 +344,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                 list: targetSeries,
                 pos: index,
                 itemPos: itemIndex,
+                entrySource: EntrySource.fromDiscovery,
                 hasOriginalCheck: false,
               ),
             ),

@@ -27,7 +27,6 @@ import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -38,11 +37,16 @@ import '../models/OfflineEffectModel.dart';
 import 'advertisement/reward_advertisement_screen.dart';
 import 'share/ShareScreen.dart';
 
+enum EntrySource {
+  fromRecent,
+  fromDiscovery,
+  fromEffect,
+}
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
   int? itemPos;
-  bool isFromRecent;
+  EntrySource entrySource;
   bool hasOriginalCheck;
 
   ChoosePhotoScreen({
@@ -50,7 +54,7 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.list,
     required this.pos,
     this.itemPos,
-    this.isFromRecent = false,
+    this.entrySource = EntrySource.fromEffect,
     this.hasOriginalCheck = true,
   }) : super(key: key);
 
@@ -191,7 +195,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     imagePicker = ImagePicker();
     scrollController = ItemScrollController();
     categoryScrollController = ItemScrollController();
-    if (widget.isFromRecent) {
+    if (widget.entrySource == EntrySource.fromRecent) {
       effectTabController = TabController(length: widget.list.length, vsync: this);
       effectTabController!.index = controller.lastItemIndex.value;
     }
@@ -215,7 +219,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     });
     userManager.refreshUser();
-    autoScrollToSelectedIndex();
+    if(widget.entrySource == EntrySource.fromDiscovery) {
+      autoScrollToSelectedIndex();
+    }
   }
 
   /// calculate scroll offset in child horizontal list
@@ -223,7 +229,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var index = controller.lastSelectedIndex.value;
     var screenWidth = ScreenUtil.screenSize.width;
     //remove padding offset and get real rate of selectedIndex in hole child list
-    var d = (screenWidth - $(30)) / screenWidth;
+    var d = (screenWidth - $(40)) / screenWidth;
     var alignment = d * index / 4;
     delay(() {
       scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
@@ -651,7 +657,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   SizedBox(height: 1.h),
                   Container(
                     height: $(42),
-                    child: widget.isFromRecent
+                    child: widget.entrySource == EntrySource.fromRecent
                         ? Theme(
                             data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
                             child: TabBar(
@@ -942,7 +948,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       controller.setLastSelectedIndex(index);
       controller.setLastItemIndex(itemIndex);
       controller.setLastItemIndex1(itemIndex);
-      if (widget.isFromRecent) {
+      if (widget.entrySource == EntrySource.fromRecent) {
         effectTabController?.index = itemIndex;
       } else {
         categoryScrollController.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
@@ -1329,7 +1335,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
-        if (!widget.isFromRecent) {
+        if (widget.entrySource != EntrySource.fromRecent) {
           recentController.onEffectUsed(selectedEffect);
         } else {
           recentController.onEffectUsedToCache(selectedEffect);
@@ -1359,7 +1365,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Widget _buildSeparator() {
-    if (widget.isFromRecent) {
+    if (widget.entrySource == EntrySource.fromRecent) {
       return Container();
     }
     return VerticalDivider(
@@ -1385,7 +1391,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TitleTextWidget(
-                widget.isFromRecent ? item.displayName : widget.list[index].displayName,
+                widget.entrySource == EntrySource.fromRecent ? item.displayName : widget.list[index].displayName,
                 (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
                 (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
                 $(16),
