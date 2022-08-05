@@ -44,14 +44,14 @@ class CartoonizerApi extends BaseRequester {
 
   /// get discovery list data
   Future<PageEntity?> listDiscovery({
-    required int page,
+    required int from,
     required int pageSize,
     DiscoverySort sort = DiscoverySort.likes,
     bool isMyPost = false,
     int? userId,
   }) async {
     var map = {
-      'from': page,
+      'from': from,
       'size': pageSize,
       'sidx': sort.apiValue(),
     };
@@ -92,13 +92,13 @@ class CartoonizerApi extends BaseRequester {
 
   /// get discovery effect's comments
   Future<PageEntity?> listDiscoveryComments({
-    required int page,
+    required int from,
     required int pageSize,
     required int socialPostId,
     int? replySocialPostCommentId,
   }) async {
     var map = <String, dynamic>{
-      'from': page,
+      'from': from,
       'size': pageSize,
       'social_post_id': socialPostId,
     };
@@ -213,5 +213,25 @@ class CartoonizerApi extends BaseRequester {
   Future<BaseEntity?> buyPlan(body) async {
     var baseEntity = await post("/plan/buy", params: body);
     return baseEntity;
+  }
+
+  Future<PageEntity?> listMsg({
+    required int from,
+    required int size,
+  }) async {
+//    todo
+    List d = [];
+    for (int i = from; i < from + size; i++) {
+      d.add({
+        'id': i,
+        'title': 'title $i',
+        'read': false,
+      });
+    }
+    return PageEntity(rows: d);
+  }
+
+  Future<BaseEntity?> readMsg(int id) async {
+    return post('/api/msg/read/$id');
   }
 }

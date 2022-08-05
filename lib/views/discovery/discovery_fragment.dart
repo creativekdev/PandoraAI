@@ -7,7 +7,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -227,7 +227,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     setState(() => listLoading = true);
     api
         .listDiscovery(
-      page: 0,
+      from: 0,
       pageSize: pageSize,
       sort: currentTab.sort,
     )
@@ -254,7 +254,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     setState(() => listLoading = true);
     api
         .listDiscovery(
-      page: (page + 1) * pageSize,
+      from: (page + 1) * pageSize,
       pageSize: pageSize,
       sort: currentTab.sort,
     )

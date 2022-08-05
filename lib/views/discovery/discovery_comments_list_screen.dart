@@ -124,7 +124,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
 
   loadFirstPage() => api
           .listDiscoveryComments(
-        page: 0,
+        from: 0,
         pageSize: pageSize,
         socialPostId: discoveryEntity.id,
       )
@@ -142,7 +142,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
 
   loadMorePage() => api
           .listDiscoveryComments(
-        page: page + 1,
+        from: (page + 1) * pageSize,
         pageSize: pageSize,
         socialPostId: discoveryEntity.id,
       )

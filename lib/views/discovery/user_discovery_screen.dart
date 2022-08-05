@@ -100,7 +100,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
 
   onLoadFirstPage() => api
           .listDiscovery(
-        page: 0,
+        from: 0,
         pageSize: pageSize,
         userId: userId,
       )
@@ -118,7 +118,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
 
   onLoadMorePage() => api
           .listDiscovery(
-        page: page + 1,
+        from: page + 1,
         pageSize: pageSize,
         userId: userId,
       )
@@ -168,7 +168,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
               ),
               itemBuilder: (context, index) => DiscoveryListCard(
                 data: dataList[index],
-                width: (ScreenUtil.screenSize.width-$(36))/2,
+                width: (ScreenUtil.screenSize.width - $(36)) / 2,
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(

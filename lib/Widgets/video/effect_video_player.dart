@@ -5,7 +5,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:video_player/video_player.dart';
 

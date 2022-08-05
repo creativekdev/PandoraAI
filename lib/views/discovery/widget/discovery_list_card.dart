@@ -18,12 +18,14 @@ class DiscoveryListCard extends StatefulWidget {
   late DiscoveryListEntity data;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
+  GestureLongPressCallback? onLongPress;
   late double width;
 
   DiscoveryListCard({
     Key? key,
     required this.data,
     this.onTap,
+    this.onLongPress,
     this.onLikeTap,
     required this.width,
   }) : super(key: key);
@@ -39,6 +41,7 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
   late List<DiscoveryResource> resources;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
+  GestureLongPressCallback? onLongPress;
   late double width;
   bool loading = true;
 
@@ -51,6 +54,7 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
     resources = data.resourceList();
     onTap = widget.onTap;
     onLikeTap = widget.onLikeTap;
+    onLongPress = widget.onLongPress;
     width = widget.width;
     loading = true;
   }
@@ -100,7 +104,7 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
           ],
         ),
       ],
-    ).intoGestureDetector(onTap: onTap);
+    ).intoGestureDetector(onTap: onTap, onLongPress: onLongPress);
   }
 
   Widget buildResourceItem(DiscoveryResource resource) {

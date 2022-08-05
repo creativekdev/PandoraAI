@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';

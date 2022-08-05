@@ -6,7 +6,7 @@ import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';

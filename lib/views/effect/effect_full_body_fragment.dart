@@ -5,7 +5,7 @@ import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
