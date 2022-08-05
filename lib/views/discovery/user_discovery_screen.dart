@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -181,6 +182,11 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
                     _onLikeTap(dataList[index]);
                   }, autoExec: false);
                 },
+                onLongPress: dataList[index].userId == userManager.user?.id
+                    ? () {
+                        showDeleteDialog(index);
+                      }
+                    : null,
               ),
               itemCount: dataList.length,
             ),
@@ -211,4 +217,34 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
               ],
             )),
       );
+
+  showDeleteDialog(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+              title: Text(
+                'Are you sure to delete this post?',
+                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+              ),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                CupertinoDialogAction(
+                  child: Text(
+                    StringConstant.cancel,
+                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                  ),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ));
+  }
 }
