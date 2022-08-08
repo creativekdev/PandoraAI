@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/UserModel.dart';

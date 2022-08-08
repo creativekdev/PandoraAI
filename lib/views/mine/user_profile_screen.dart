@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/ChangePasswordScreen.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';

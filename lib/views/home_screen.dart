@@ -4,7 +4,8 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 
 import 'home_tab.dart';
 
@@ -20,21 +21,34 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   List<AppRoleTabItem> tabItems = [];
 
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
+  late StreamSubscription onPaySuccessListener;
 
   @override
   void initState() {
     logEvent(Events.homepage_loading);
     super.initState();
     initialTab(false);
+    onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
+      userManager.rateNoticeOperator.onBuy(context);
+    });
     if (userManager.lastLauncherLoginStatus) {
       userManager.refreshUser().then((value) {
         if (!value.loginSuccess) {
           userManager.logout().then((value) {
             userManager.doOnLogin(context);
           });
+        } else {
+          delay(() => userManager.rateNoticeOperator.judgeAndShowNotice(context));
         }
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    onPaySuccessListener.cancel();
   }
 
   initialTab(bool needSetState) {

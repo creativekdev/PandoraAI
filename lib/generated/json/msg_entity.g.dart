@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/models/enums/msg_type.dart';
+
 
 MsgEntity $MsgEntityFromJson(Map<String, dynamic> json) {
 	final MsgEntity msgEntity = MsgEntity();

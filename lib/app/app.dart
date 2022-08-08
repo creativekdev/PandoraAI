@@ -5,7 +5,7 @@ import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 
 ///

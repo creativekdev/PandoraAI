@@ -16,7 +16,8 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
@@ -42,6 +43,7 @@ enum EntrySource {
   fromDiscovery,
   fromEffect,
 }
+
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
@@ -219,7 +221,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     });
     userManager.refreshUser();
-    if(widget.entrySource == EntrySource.fromDiscovery) {
+    if (widget.entrySource == EntrySource.fromDiscovery) {
       autoScrollToSelectedIndex();
     }
   }
@@ -1136,6 +1138,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       bool hasAd = _judgeAndShowAdvertisement(
         onSuccess: () {
           successForward?.call();
+          onSwitchOnce();
         },
         onCancel: () {
           ignoreResult = true;
@@ -1232,6 +1235,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               }
               if (!hasAd) {
                 successForward.call();
+                onSwitchOnce();
               }
               resultSuccess = 1;
             } else {
@@ -1303,6 +1307,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               }
               if (!hasAd) {
                 successForward.call();
+                onSwitchOnce();
               }
               resultSuccess = 1;
             } else {
@@ -1468,6 +1473,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         );
       },
     );
+  }
+
+  void onSwitchOnce() {
+    userManager.rateNoticeOperator.onSwitch(context);
   }
 }
 

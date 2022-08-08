@@ -8,6 +8,7 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
+import 'package:cartoonizer/models/rate_config_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
 typedef JsonConvertFunction<T> = T Function(Map<String, dynamic> json);
@@ -19,6 +20,7 @@ class JsonConvert {
 		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
+		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 	};
 
   T? convert<T>(dynamic value) {
@@ -108,6 +110,9 @@ class JsonConvert {
 		}
 		if(<PageEntity>[] is M){
 			return data.map<PageEntity>((Map<String, dynamic> e) => PageEntity.fromJson(e)).toList() as M;
+		}
+		if(<RateConfigEntity>[] is M){
+			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
 		}
 
 		debugPrint("${M.toString()} not found");

@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
@@ -14,7 +17,7 @@ class CacheManager extends BaseManager {
   static const keyCacheInput = "cache_input";
   static const keyLastTabAttached = "last_tab_attached";
   static const keyLastEffectTabAttached = "last_effect_tab_attached";
-  static const lastRateTipsConfig = 'last_rate_tips_config';
+  static const _rateConfig = 'rate_config';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
@@ -27,6 +30,13 @@ class CacheManager extends BaseManager {
     _sharedPreferences = await SharedPreferences.getInstance();
     _storageOperator = StorageOperator();
     _storageOperator.initializeDir();
+  }
+
+  String? rateConfigKey() {
+    if (AppDelegate.instance.getManager<UserManager>().user == null) {
+      return null;
+    }
+    return '${_rateConfig}:${AppDelegate.instance.getManager<UserManager>().user!.id}';
   }
 
   String getString(String key) {

@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
@@ -221,30 +221,59 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
   showDeleteDialog(int index) {
     showDialog(
         context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-              title: Text(
-                'Are you sure to delete this post?',
-                style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-              ),
-              actions: <Widget>[
-                CupertinoDialogAction(
-                    child: Text(
+        builder: (BuildContext context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure to delete this post?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.White),
+                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Text(
                       'Delete',
-                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    }),
-                CupertinoDialogAction(
-                  child: Text(
-                    StringConstant.cancel,
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  },
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                  right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () async {
+                      Navigator.pop(context);
+                    })),
+                    Expanded(
+                        child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () {
+                      Navigator.pop(context);
+                    })),
+                  ],
                 ),
               ],
-            ));
+            )
+                .intoMaterial(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.circular($(16)),
+                )
+                .intoContainer(
+                  padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+                  margin: EdgeInsets.symmetric(horizontal: $(35)),
+                )
+                .intoCenter());
   }
 }
