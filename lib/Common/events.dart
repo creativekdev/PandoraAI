@@ -22,7 +22,8 @@ class Events {
   static String result_back = "result_back";
   static String homepage_loading = "homepage_loading";
   static String upload_page_loading = "upload_page_loading";
-  static String profile_page_loading = "profile_page_loading";
+  // static String profile_page_loading = "profile_page_loading";
+  static String setting_page_loading = "setting_page_loading";
   static String login_page_loading = "login_page_loading";
   static String signup_page_loading = "signup_page_loading";
   static String premium_page_loading = "premium_page_loading";
@@ -37,6 +38,7 @@ class Events {
   static String premium_continue = "premium_continue";
   static String paid_success = "paid_success"; // plan_id, product_id, price, currency, quantity},
   static String open_my_discovery = "open_my_discovery";
+  static String open_user_profile = "open_user_profile";
   static String delete_account = "delete_account";
   static String tab_effect_loading = "tab_effect_loading";
   static String tab_discovery_loading = "tab_discovery_loading";

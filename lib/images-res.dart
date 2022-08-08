@@ -64,6 +64,7 @@ class Images {
    static const String ic_round_top = 'assets/images/ic_round_top.png';
    static const String ic_setting_my_delete_account = 'assets/images/ic_setting_my_delete_account.png';
    static const String ic_setting_my_discovery = 'assets/images/ic_setting_my_discovery.png';
+   static const String ic_settings = 'assets/images/ic_settings.png';
    static const String ic_share = 'assets/images/ic_share.png';
    static const String ic_share_app = 'assets/images/ic_share_app.png';
    static const String ic_share_discovery = 'assets/images/ic_share_discovery.png';

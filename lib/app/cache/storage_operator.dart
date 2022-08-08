@@ -29,4 +29,33 @@ class StorageOperator {
     }
     return true;
   }
+
+  Future<int> totalSize() async {
+    return await _getFileSize(videoDir);
+  }
+
+  Future<int> _getFileSize(dynamic target) async {
+    if (target is Directory) {
+      int total = 0;
+      var list = await target.listSync();
+      for (var value in list) {
+        var i = await _getFileSize(value);
+        total += i;
+      }
+      return total;
+    } else if (target is File) {
+      return await target.length();
+    } else if (target is FileSystemEntity) {
+      return _getFileSize(File(target.path));
+    } else {
+      return 0;
+    }
+  }
+
+  Future clearDirectory(Directory directory) async {
+    var listSync = directory.listSync();
+    for (var value in listSync) {
+      await value.delete();
+    }
+  }
 }
