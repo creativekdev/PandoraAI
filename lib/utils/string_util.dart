@@ -25,11 +25,11 @@ extension NumEx on num {
 
   String get fileSize {
     if (this >= gb) {
-      return '${(this / gb).toStringAsFixed(2)}GB';
+      return '${(this / gb).toStringAsFixed(2)} GB';
     } else if (this > mb) {
-      return '${(this / mb).toStringAsFixed(2)}MB';
+      return '${(this / mb).toStringAsFixed(2)} MB';
     } else if (this > kb) {
-      return '${(this / kb).toStringAsFixed(2)}KB';
+      return '${(this / kb).toStringAsFixed(2)} KB';
     } else {
       return '$this Bytes';
     }

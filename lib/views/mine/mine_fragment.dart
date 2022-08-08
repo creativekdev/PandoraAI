@@ -5,7 +5,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user_manager.dart';
@@ -17,10 +16,8 @@ import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/LoginScreen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'user_profile_screen.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
@@ -98,25 +95,24 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
             child: SingleChildScrollView(
           child: Column(
             children: [
-              (userManager.isNeedLogin
-                  ? ButtonWidget(StringConstant.login).intoGestureDetector(onTap: () {
-                      GetStorage().write('login_back_page', '/HomeScreen');
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
-                        // if (await _getIsLogin()) {
-                        //   await API.getLogin(needLoad: true, context: context);
-                        // }
-                        setState(() {});
-                        if (value != null) {}
-                      });
-                    }).intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(54), bottom: $(16)), color: ColorConstant.BackgroundColor)
-                  : UserBaseInfoWidget(userInfo: userManager.user!).intoGestureDetector(onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/EditProfileScreen"),
-                            builder: (context) => EditProfileScreen(),
-                          ));
-                    })),
+              UserBaseInfoWidget(userInfo: userManager.user).intoGestureDetector(onTap: () {
+                if (userManager.isNeedLogin) {
+                  GetStorage().write('login_back_page', '/HomeScreen');
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
+                    // if (await _getIsLogin()) {
+                    //   await API.getLogin(needLoad: true, context: context);
+                    // }
+                    setState(() {});
+                  });
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        settings: RouteSettings(name: "/EditProfileScreen"),
+                        builder: (context) => EditProfileScreen(),
+                      ));
+                }
+              }),
               Container(height: $(12)),
               ImageTextBarWidget(
                 StringConstant.setting_my_discovery,
@@ -177,6 +173,86 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                         builder: (context) => SettingScreen(),
                       ));
                 },
+              ),
+              SizedBox(height: $(48)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: ColorConstant.DividerColor,
+                        thickness: 0.1.h,
+                      ),
+                    ),
+                    SizedBox(width: 3.w),
+                    TitleTextWidget(StringConstant.connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
+                    SizedBox(width: 3.w),
+                    Expanded(
+                      child: Divider(
+                        color: ColorConstant.DividerColor,
+                        thickness: 0.1.h,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.5.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
+                        launchURL("https://www.facebook.com/SocialBook.io");
+                      },
+                      child: Image.asset(
+                        ImagesConstant.ic_share_facebook,
+                        height: 14.w,
+                        width: 14.w,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
+                        launchURL("https://www.instagram.com/socialbook.io/");
+                      },
+                      child: Image.asset(
+                        ImagesConstant.ic_share_instagram,
+                        height: 14.w,
+                        width: 14.w,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
+                        launchURL("https://twitter.com/SocialBookdotio");
+                      },
+                      child: Image.asset(
+                        ImagesConstant.ic_share_twitter,
+                        height: 14.w,
+                        width: 14.w,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
+                        launchURL("https://tiktok.com/@socialbook.io");
+                      },
+                      child: Image.asset(
+                        ImagesConstant.ic_share_tiktok,
+                        height: 14.w,
+                        width: 14.w,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 2.h,
               ),
             ],
           ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),

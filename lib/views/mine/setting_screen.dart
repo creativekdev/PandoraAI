@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
@@ -10,7 +11,6 @@ import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
 
 import '../ChangePasswordScreen.dart';
 import '../PurchaseScreen.dart';
@@ -132,6 +132,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                       showLoading().whenComplete(() {
                         cacheManager.storageOperator.clearDirectory(cacheManager.storageOperator.videoDir).whenComplete(() {
                           hideLoading().whenComplete(() {
+                            CommonExtension().showToast('Clear Success');
                             getCacheSize();
                           });
                         });
@@ -179,86 +180,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   setState(() {});
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              SizedBox(height: 2.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        color: ColorConstant.DividerColor,
-                        thickness: 0.1.h,
-                      ),
-                    ),
-                    SizedBox(width: 3.w),
-                    TitleTextWidget(StringConstant.connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
-                    SizedBox(width: 3.w),
-                    Expanded(
-                      child: Divider(
-                        color: ColorConstant.DividerColor,
-                        thickness: 0.1.h,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.5.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/SocialBook.io");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_facebook,
-                        height: 14.w,
-                        width: 14.w,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/socialbook.io/");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_instagram,
-                        height: 14.w,
-                        width: 14.w,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/SocialBookdotio");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_twitter,
-                        height: 14.w,
-                        width: 14.w,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://tiktok.com/@socialbook.io");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_tiktok,
-                        height: 14.w,
-                        width: 14.w,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
             ],
           ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),
         ));
@@ -286,89 +207,159 @@ class _SettingScreenState extends AppState<SettingScreen> {
   Future<void> showLogoutAlertDialog() async {
     return showDialog(
       context: context,
-      builder: (_) => CupertinoAlertDialog(
-        content: Text(
-          'Are you sure want to logout?',
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontFamily: 'Poppins',
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-              child: Text(
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Are you sure want to logout?',
+            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+            textAlign: TextAlign.center,
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
                 'Logout',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
-              ),
-              onPressed: () async {
+                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+              )
+                      .intoContainer(
+                          padding: EdgeInsets.all(10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                          )))
+                      .intoGestureDetector(onTap: () async {
                 logEvent(Events.logout);
                 await userManager.logout();
                 Navigator.pop(context);
-              }),
-          CupertinoDialogAction(
-              child: Text(
+              })),
+              Expanded(
+                  child: Text(
                 'Cancel',
-                style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-              ),
-              onPressed: () {
+                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+              )
+                      .intoContainer(
+                          padding: EdgeInsets.all(10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                          )))
+                      .intoGestureDetector(onTap: () {
                 Navigator.pop(context);
-              }),
+              })),
+            ],
+          ),
         ],
-      ),
+      )
+          .intoMaterial(
+            color: ColorConstant.EffectFunctionGrey,
+            borderRadius: BorderRadius.circular($(16)),
+          )
+          .intoContainer(
+            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+            margin: EdgeInsets.symmetric(horizontal: $(35)),
+          )
+          .intoCenter(),
     );
   }
 
   Future<bool?> showDeleteAccountDialog() => showDialog<bool>(
-      context: context,
-      builder: (_) => CupertinoAlertDialog(
-            content: Text(
+        context: context,
+        builder: (_) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
               'Are you sure to delete your account?',
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: 'Poppins',
-              ),
+              style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+              textAlign: TextAlign.center,
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+            Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  'Delete',
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                              right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () async {
+                  Navigator.pop(context, true);
+                })),
+                Expanded(
+                    child: Text(
+                  'Cancel',
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () {
+                  Navigator.pop(context);
+                })),
+              ],
             ),
-            actions: [
-              CupertinoDialogAction(
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: Colors.red),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context, true);
-                  }),
-              CupertinoDialogAction(
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  }),
-            ],
-          ));
+          ],
+        )
+            .intoMaterial(
+              color: ColorConstant.EffectFunctionGrey,
+              borderRadius: BorderRadius.circular($(16)),
+            )
+            .intoContainer(
+              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+              margin: EdgeInsets.symmetric(horizontal: $(35)),
+            )
+            .intoCenter(),
+      );
 
   Future<void> showDeleteSuccessDialog() => showDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-            content: Text(
+        context: context,
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
               'Your account has been successfully deleted. We always welcome you to use our service again.',
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontFamily: 'Poppins',
-              ),
-            ),
-            actions: [
-              CupertinoDialogAction(
-                  child: Text(
-                    'OK',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context);
-                  }),
-            ],
-          ));
+              style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+              textAlign: TextAlign.center,
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+            Text(
+              'OK',
+              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
+            )
+                .intoContainer(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border(
+                      top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                    )))
+                .intoGestureDetector(onTap: () {
+              Navigator.pop(context);
+            }),
+          ],
+        )
+            .intoMaterial(
+              color: ColorConstant.EffectFunctionGrey,
+              borderRadius: BorderRadius.circular($(16)),
+            )
+            .intoContainer(
+              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+              margin: EdgeInsets.symmetric(horizontal: $(35)),
+            )
+            .intoCenter(),
+      );
 
   Future<bool> deleteAccount() async {
     var post = await API.post("/api/user/delete_account");
@@ -381,32 +372,60 @@ class _SettingScreenState extends AppState<SettingScreen> {
   }
 
   Future<bool?> showClearCacheDialog() => showDialog<bool>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-            content: Text(
+        context: context,
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
               'Are you sure to clear all cache?\n total: ${totalSize.fileSize}',
-              style: TextStyle(
-                fontSize: $(15),
-                fontFamily: 'Poppins',
-              ),
+              style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+              textAlign: TextAlign.center,
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+            Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  'Clear',
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                              right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () async {
+                  Navigator.pop(context, true);
+                })),
+                Expanded(
+                    child: Text(
+                  'Cancel',
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () {
+                  Navigator.pop(context);
+                })),
+              ],
             ),
-            actions: [
-              CupertinoDialogAction(
-                  child: Text(
-                    'Clear',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.Red),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context, true);
-                  }),
-              CupertinoDialogAction(
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
-                  ),
-                  onPressed: () async {
-                    Navigator.pop(context, false);
-                  }),
-            ],
-          ));
+          ],
+        )
+            .intoMaterial(
+              color: ColorConstant.EffectFunctionGrey,
+              borderRadius: BorderRadius.circular($(16)),
+            )
+            .intoContainer(
+              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+              margin: EdgeInsets.symmetric(horizontal: $(35)),
+            )
+            .intoCenter(),
+      );
 }

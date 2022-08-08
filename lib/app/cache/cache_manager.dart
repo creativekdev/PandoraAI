@@ -14,6 +14,7 @@ class CacheManager extends BaseManager {
   static const keyCacheInput = "cache_input";
   static const keyLastTabAttached = "last_tab_attached";
   static const keyLastEffectTabAttached = "last_effect_tab_attached";
+  static const lastRateTipsConfig = 'last_rate_tips_config';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

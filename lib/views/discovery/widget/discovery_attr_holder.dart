@@ -5,7 +5,7 @@ class DiscoveryAttrHolder {
     BuildContext context, {
     required String iconRes,
     required int value,
-    Axis axis = Axis.vertical,
+    Axis axis = Axis.horizontal,
     GestureTapCallback? onTap,
     Color color = Colors.white,
     Color? iconColor,

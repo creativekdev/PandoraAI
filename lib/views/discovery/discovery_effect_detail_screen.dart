@@ -195,7 +195,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                     ),
                   );
                 }),
-                SizedBox(width: $(15)),
+                SizedBox(width: $(10)),
                 buildAttr(
                   context,
                   iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
