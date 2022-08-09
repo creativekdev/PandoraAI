@@ -12,7 +12,7 @@ extension DialogWidgetEx on Widget {
         )
         .intoContainer(
           padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-          margin: EdgeInsets.symmetric(horizontal: $(35)),
+          margin: EdgeInsets.symmetric(horizontal: $(25)),
         )
         .intoCenter();
   }

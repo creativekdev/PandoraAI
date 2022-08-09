@@ -69,7 +69,7 @@ class RateNoticeOperator {
         return true;
       }
     }
-    if (configEntity!.switchCount > maxSwitchCount) {
+    if (configEntity!.switchCount >= maxSwitchCount) {
       return true;
     }
     return false;

@@ -18,6 +18,7 @@ class Images {
    static const String ic_change_password = 'assets/images/ic_change_password.png';
    static const String ic_checked = 'assets/images/ic_checked.png';
    static const String ic_close = 'assets/images/ic_close.png';
+   static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delete = 'assets/images/ic_delete.png';
    static const String ic_demo = 'assets/images/ic_demo.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';

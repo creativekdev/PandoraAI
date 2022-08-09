@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 
 class UserBaseInfoWidget extends StatelessWidget {
@@ -14,11 +15,17 @@ class UserBaseInfoWidget extends StatelessWidget {
       children: [
         SizedBox(width: $(24)),
         ClipRRect(
-          child: CachedNetworkImageUtils.custom(
-            imageUrl: userInfo?.getShownAvatar() ?? '',
-            height: $(56),
-            width: $(56),
-          ),
+          child: userInfo != null
+              ? CachedNetworkImageUtils.custom(
+                  imageUrl: userInfo?.getShownAvatar() ?? '',
+                  height: $(56),
+                  width: $(56),
+                )
+              : Image.asset(
+                  Images.ic_default_user_icon,
+                  width: $(56),
+                  height: $(56),
+                ),
           borderRadius: BorderRadius.circular(64),
         ),
         SizedBox(width: $(16)),
@@ -43,8 +50,8 @@ class UserBaseInfoWidget extends StatelessWidget {
             Expanded(child: TitleTextWidget(userInfo!.getShownName(), Colors.white, FontWeight.w400, $(13), align: TextAlign.start)),
             Image.asset(
               ImagesConstant.ic_right_arrow,
-              height: $(24),
-              width: $(24),
+              height: $(28),
+              width: $(28),
             ),
           ],
         )
@@ -53,10 +60,10 @@ class UserBaseInfoWidget extends StatelessWidget {
       return [
         Row(
           children: [
-            TitleTextWidget('Login or Register', Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
+            TitleTextWidget('Sign in / Sign up', Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
             SizedBox(width: $(16)),
             Image.asset(
-              ImagesConstant.ic_right_arrow,
+              Images.ic_right_arrow,
               height: $(28),
               width: $(28),
             ),
