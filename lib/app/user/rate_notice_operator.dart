@@ -16,10 +16,14 @@ const int day = hour * 24;
 // in production
 // const int maxSwitchCount = 10;
 // const int maxDuration = 2 * day;
+// const int nextActivatePositive = 90 * 24;
+// const int nextActivateNegative = 30 * 24;
 
 // in development
 const int maxSwitchCount = 3;
 const int maxDuration = 10 * minute;
+const int nextActivatePositive = 2;
+const int nextActivateNegative = 1;
 
 class RateNoticeOperator {
   CacheManager cacheManager;
@@ -106,11 +110,11 @@ class RateNoticeOperator {
       ).then((value) {
         if (value ?? false) {
           // 3 month later
-          configEntity!.nextActivateDate = DateTime.now().add(Duration(days: 90)).millisecondsSinceEpoch;
+          configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
           configEntity!.calculateInNextActivate = true;
         } else {
           // 1 month later
-          configEntity!.nextActivateDate = DateTime.now().add(Duration(days: 30)).millisecondsSinceEpoch;
+          configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivateNegative)).millisecondsSinceEpoch;
           configEntity!.switchCount = 0;
           configEntity!.calculateInNextActivate = false;
         }
