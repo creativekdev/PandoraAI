@@ -20,6 +20,19 @@ class UserBaseInfoWidget extends StatelessWidget {
                   imageUrl: userInfo?.getShownAvatar() ?? '',
                   height: $(56),
                   width: $(56),
+                  errorWidget: (context, url, error) {
+                    return Text(
+                      (userInfo?.getShownName() == '' ? ' ' : userInfo!.getShownName())[0].toUpperCase(),
+                      style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
+                    ).intoContainer(
+                        width: $(45),
+                        height: $(45),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular($(32)),
+                          border: Border.all(color: ColorConstant.White, width: 1),
+                        ));
+                  },
                 )
               : Image.asset(
                   Images.ic_default_user_icon,
