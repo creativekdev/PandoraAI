@@ -111,6 +111,7 @@ class RateNoticeOperator {
         } else {
           // 1 month later
           configEntity!.nextActivateDate = DateTime.now().add(Duration(days: 30)).millisecondsSinceEpoch;
+          configEntity!.switchCount = 0;
           configEntity!.calculateInNextActivate = false;
         }
         saveConfig(configEntity!);
