@@ -236,9 +236,9 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> feedback(String feedback) async {
-    //todo
-    return post('/api/feedback', params: {
-      'text': feedback,
+    return post('/user/feedback', params: {
+      'message': feedback,
+      'app_name': APP_NAME,
     });
   }
 }
