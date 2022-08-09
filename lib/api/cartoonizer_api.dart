@@ -219,7 +219,7 @@ class CartoonizerApi extends BaseRequester {
     required int from,
     required int size,
   }) async {
-//    todo
+    //todo
     List d = [];
     for (int i = from; i < from + size; i++) {
       d.add({
@@ -232,6 +232,14 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> readMsg(int id) async {
+    //todo
     return post('/api/msg/read/$id');
+  }
+
+  Future<BaseEntity?> feedback(String feedback) async {
+    //todo
+    return post('/api/feedback', params: {
+      'text': feedback,
+    });
   }
 }

@@ -34,9 +34,11 @@ class RateConfigEntity {
   String toString() {
     return jsonEncode(this);
   }
-}
 
-extension RateConfigEntityEx on RateConfigEntity {
-
-
+  String print() {
+    return 'firstLoginDate: ${DateTime.fromMillisecondsSinceEpoch(firstLoginDate).toString()},'
+        ' switchCount: $switchCount, '
+        'nextActivateDate: ${DateTime.fromMillisecondsSinceEpoch(nextActivateDate).toString()},'
+        'calculateInNextActivate: $calculateInNextActivate';
+  }
 }
