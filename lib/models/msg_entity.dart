@@ -5,18 +5,48 @@ import 'package:cartoonizer/models/enums/msg_type.dart';
 
 @JsonSerializable()
 class MsgEntity {
-  late int id;
-  late String title;
+  late String action;
+  late String detail;
+  @JSONField(name: 'to_id')
+  late int toId;
+  @JSONField(name: 'is_system')
+  late bool isSystem;
   late bool read;
-  late String msgType;
+  @JSONField(name: 'target_id')
+  late int targetId;
+  @JSONField(name: 'campaign_id')
+  late int campaignId;
+  @JSONField(name: 'email_campaign_id')
+  late int emailCampaignId;
+  @JSONField(name: 'email_assignment_id')
+  late int emailAssignmentId;
+  @JSONField(name: 'product_id')
+  late int productId;
+  @JSONField(name: 'product_assignment_id')
+  late int productAssignmentId;
+  late String payload;
+  late String created;
+  late String modified;
+  late int id;
 
-  MsgType get type => MsgTypeUtils.build(msgType);
+  MsgType get msgType => MsgTypeUtils.build(action);
 
   MsgEntity({
     this.id = 0,
-    this.title = '',
     this.read = false,
-    this.msgType = 'notice',
+    this.created = '',
+    this.modified = '',
+    this.action = '',
+    this.campaignId = 0,
+    this.detail = '',
+    this.emailAssignmentId = 0,
+    this.emailCampaignId = 0,
+    this.isSystem = false,
+    this.payload = '',
+    this.productAssignmentId = 0,
+    this.productId = 0,
+    this.targetId = 0,
+    this.toId = 0,
   });
 
   factory MsgEntity.fromJson(Map<String, dynamic> json) => $MsgEntityFromJson(json);

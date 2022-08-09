@@ -34,3 +34,28 @@ Map<String, dynamic> $PageEntityToJson(PageEntity entity) {
 	data['rows'] =  entity.rows;
 	return data;
 }
+
+MsgPageEntity $MsgPageEntityFromJson(Map<String, dynamic> json) {
+	final MsgPageEntity msgPageEntity = MsgPageEntity();
+	final int? records = jsonConvert.convert<int>(json['records']);
+	if (records != null) {
+		msgPageEntity.records = records;
+	}
+	final int? unreadCount = jsonConvert.convert<int>(json['unread_count']);
+	if (unreadCount != null) {
+		msgPageEntity.unreadCount = unreadCount;
+	}
+	final List<dynamic>? rows = jsonConvert.convertListNotNull<dynamic>(json['rows']);
+	if (rows != null) {
+		msgPageEntity.rows = rows;
+	}
+	return msgPageEntity;
+}
+
+Map<String, dynamic> $MsgPageEntityToJson(MsgPageEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['records'] = entity.records;
+	data['unread_count'] = entity.unreadCount;
+	data['rows'] =  entity.rows;
+	return data;
+}

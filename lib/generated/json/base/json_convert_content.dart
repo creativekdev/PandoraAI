@@ -20,6 +20,7 @@ class JsonConvert {
 		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
+		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 	};
 
@@ -110,6 +111,9 @@ class JsonConvert {
 		}
 		if(<PageEntity>[] is M){
 			return data.map<PageEntity>((Map<String, dynamic> e) => PageEntity.fromJson(e)).toList() as M;
+		}
+		if(<MsgPageEntity>[] is M){
+			return data.map<MsgPageEntity>((Map<String, dynamic> e) => MsgPageEntity.fromJson(e)).toList() as M;
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;

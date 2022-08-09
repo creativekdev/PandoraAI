@@ -219,25 +219,20 @@ class CartoonizerApi extends BaseRequester {
     return baseEntity;
   }
 
-  Future<PageEntity?> listMsg({
+  Future<MsgPageEntity?> listMsg({
     required int from,
     required int size,
   }) async {
-    //todo
-    List d = [];
-    for (int i = from; i < from + size; i++) {
-      d.add({
-        'id': i,
-        'title': 'title $i',
-        'read': false,
-      });
-    }
-    return PageEntity(rows: d);
+    var baseEntity = await get('/notification/all', params: {
+      'app_name': APP_NAME,
+      'from': from,
+      'size': size,
+    });
+    return jsonConvert.convert<MsgPageEntity>(baseEntity?.data['data']);
   }
 
   Future<BaseEntity?> readMsg(int id) async {
-    //todo
-    return post('/api/msg/read/$id');
+    return post('/notification/mark_read/$id');
   }
 
   Future<BaseEntity?> feedback(String feedback) async {

@@ -1,10 +1,13 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
+import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_card.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
@@ -18,11 +21,19 @@ class MsgListScreen extends StatefulWidget {
 class MsgListState extends AppState<MsgListScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   MsgManager msgManager = AppDelegate.instance.getManager();
+  late CartoonizerApi api;
 
   @override
   void initState() {
     super.initState();
+    api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    api.unbind();
   }
 
   loadFirstPage() => msgManager.loadFirstPage().then((value) {
@@ -37,6 +48,9 @@ class MsgListState extends AppState<MsgListScreen> {
       });
 
   asyncReadMsg(MsgEntity data) {
+    if (data.read) {
+      return;
+    }
     msgManager.readMsg(data);
     setState(() {
       data.read = true;
@@ -44,18 +58,36 @@ class MsgListState extends AppState<MsgListScreen> {
   }
 
   onMsgClick(MsgEntity entity) {
-    switch (entity.type) {
-      case MsgType.notice:
-        // TODO: Handle this case.
+    switch (entity.msgType) {
+      case MsgType.like_social_post:
+      case MsgType.comment_social_post:
+        showLoading().whenComplete(() {
+          api.getDiscoveryDetail(entity.targetId).then((value) {
+            hideLoading().whenComplete(() {
+              if (value != null) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(data: value)));
+              }
+            });
+          });
+        });
         break;
-      case MsgType.effect:
-        // TODO: Handle this case.
-        break;
-      case MsgType.comment:
-        // TODO: Handle this case.
+      case MsgType.like_social_post_comment:
+      case MsgType.comment_social_post_comment:
+        showLoading().whenComplete(() {
+          api.getDiscoveryDetail(entity.targetId).then((value) {
+            hideLoading().whenComplete(() {
+              if (value != null) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => DiscoveryEffectDetailScreen(
+                          data: value,
+                          autoToComments: true,
+                        )));
+              }
+            });
+          });
+        });
         break;
       case MsgType.UNDEFINED:
-        // TODO: Handle this case.
         break;
     }
   }

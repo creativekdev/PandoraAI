@@ -26,8 +26,9 @@ import 'widget/discovery_attr_holder.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity data;
+  bool autoToComments;
 
-  DiscoveryEffectDetailScreen({Key? key, required this.data}) : super(key: key);
+  DiscoveryEffectDetailScreen({Key? key, required this.data, this.autoToComments = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => DiscoveryEffectDetailState();
@@ -84,6 +85,19 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
             data.comments++;
           });
         }
+      }
+    });
+    delay(() {
+      if (widget.autoToComments) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => DiscoveryCommentsListScreen(
+              discoveryEntity: data,
+            ),
+            settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
+          ),
+        );
       }
     });
   }

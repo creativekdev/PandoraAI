@@ -6,11 +6,13 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/badge.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -313,11 +315,15 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   )
                   .offstage(offstage: !proVisible),
               middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-              trailing: Icon(
-                Icons.notifications_outlined,
-                size: $(24),
-                color: Colors.white,
-              ).intoContainer(padding: EdgeInsets.all(8)).intoGestureDetector(onTap: () {
+              trailing: Obx(() => BadgeView(
+                    type: BadgeType.fill,
+                    count: AppDelegate.instance.getManager<MsgManager>().unreadCount.value,
+                    child: Icon(
+                      Icons.notifications_outlined,
+                      size: $(24),
+                      color: Colors.white,
+                    ),
+                  )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
                 userManager.doOnLogin(context, callback: () {
                   Navigator.push(
                     context,

@@ -5,6 +5,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 
 import 'home_tab.dart';
@@ -39,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             userManager.doOnLogin(context);
           });
         } else {
-          delay(() => userManager.rateNoticeOperator.judgeAndShowNotice(context));
+          delay(() {
+            userManager.rateNoticeOperator.judgeAndShowNotice(context);
+            AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
+          });
         }
       });
     }

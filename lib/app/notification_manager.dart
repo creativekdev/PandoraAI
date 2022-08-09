@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:cartoonizer/app/app.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
+import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,7 +41,11 @@ class NotificationManager extends BaseManager {
     var android = AndroidInitializationSettings('@mipmap/ic_launcher_small');
     var ios = IOSInitializationSettings();
     var initSettings = InitializationSettings(android: android, iOS: ios);
-    flutterLocalNotificationsPlugin.initialize(initSettings);
+    flutterLocalNotificationsPlugin.initialize(initSettings, onSelectNotification: (payload) async {
+      if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+        Get.to(MsgListScreen());
+      }
+    });
 
     /// Create an Android Notification Channel.
     ///

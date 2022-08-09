@@ -15,6 +15,10 @@ RateConfigEntity $RateConfigEntityFromJson(Map<String, dynamic> json) {
 	if (nextActivateDate != null) {
 		rateConfigEntity.nextActivateDate = nextActivateDate;
 	}
+	final bool? calculateInNextActivate = jsonConvert.convert<bool>(json['calculate_in_next_activate']);
+	if (calculateInNextActivate != null) {
+		rateConfigEntity.calculateInNextActivate = calculateInNextActivate;
+	}
 	return rateConfigEntity;
 }
 
@@ -23,5 +27,6 @@ Map<String, dynamic> $RateConfigEntityToJson(RateConfigEntity entity) {
 	data['first_login_date'] = entity.firstLoginDate;
 	data['switch_count'] = entity.switchCount;
 	data['next_activate_date'] = entity.nextActivateDate;
+	data['calculate_in_next_activate'] = entity.calculateInNextActivate;
 	return data;
 }

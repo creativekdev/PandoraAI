@@ -13,16 +13,33 @@ class MsgCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        Text(
-          data.title,
-          style: textStyle(),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                data.detail,
+                style: textStyle(),
+              ),
+              SizedBox(height: 4),
+              Text(
+                data.created.isEmpty ? '2022-01-01' : data.created,
+                style: timeStyle(),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: data.read ? Colors.transparent : Colors.red, borderRadius: BorderRadius.circular(8)),
         ),
       ],
     )
         .intoContainer(
-          padding: EdgeInsets.all($(10)),
+          padding: EdgeInsets.all($(15)),
         )
         .intoMaterial(
           color: ColorConstant.CardColor,
@@ -37,9 +54,17 @@ class MsgCard extends StatelessWidget {
 
   TextStyle textStyle() {
     if (data.read) {
-      return TextStyle(color: Color(0xfff3f3f3), fontFamily: 'Poppins', fontSize: $(15), fontWeight: FontWeight.w400);
+      return TextStyle(color: Color(0xfff3f3f3), fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w400);
     } else {
-      return TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(15), fontWeight: FontWeight.w800);
+      return TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w800);
+    }
+  }
+
+  TextStyle timeStyle() {
+    if (data.read) {
+      return TextStyle(color: Color(0xfff3f3f3), fontFamily: 'Poppins', fontSize: $(12), fontWeight: FontWeight.normal);
+    } else {
+      return TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(12), fontWeight: FontWeight.w700);
     }
   }
 }
