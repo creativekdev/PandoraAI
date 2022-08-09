@@ -12,6 +12,7 @@ import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CartoonizerApi extends BaseRequester {
   @override
@@ -27,7 +28,10 @@ class CartoonizerApi extends BaseRequester {
 
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
-    var baseEntity = await get('/user/get_login');
+    var baseEntity = await get('/user/get_login', params: {
+      'app_name': APP_NAME,
+      'device_id': await FirebaseMessaging.instance.getToken(),
+    });
     if (baseEntity != null) {
       if (baseEntity.data != null) {
         Map<String, dynamic> data = baseEntity.data;
