@@ -39,7 +39,7 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
           children: [
             ClipRRect(
               clipBehavior: Clip.antiAliasWithSaveLayer,
-              borderRadius: BorderRadius.all(Radius.circular($(6))),
+              borderRadius: BorderRadius.all(Radius.circular($(8))),
               child: urlWidget(
                 context,
                 width: imageSize,
