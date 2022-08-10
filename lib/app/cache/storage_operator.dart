@@ -5,12 +5,15 @@ import 'package:path_provider/path_provider.dart';
 
 const _appDir = '/cartoonizer/';
 const _videoDir = 'video/';
+const _tempDir = 'temp/';
 
 class StorageOperator {
   var _mainPath = '';
 
   /// videoDir
   Directory get videoDir => Directory('$_mainPath$_videoDir');
+
+  Directory get tempDir => Directory('$_mainPath$_tempDir');
 
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
@@ -19,6 +22,7 @@ class StorageOperator {
     _mainPath = '${directory.path}$_appDir';
     await _mkdirs(_mainPath, [
       _videoDir,
+      _tempDir,
     ]);
     return true;
   }
@@ -31,7 +35,9 @@ class StorageOperator {
   }
 
   Future<int> totalSize() async {
-    return await _getFileSize(videoDir);
+    var tempSize = await _getFileSize(tempDir);
+    var videoSize = await _getFileSize(videoDir);
+    return videoSize + tempSize;
   }
 
   Future<int> _getFileSize(dynamic target) async {
@@ -52,10 +58,21 @@ class StorageOperator {
     }
   }
 
+  Future clearDirectories(List<Directory> list) async {
+    for (var directory in list) {
+      await clearDirectory(directory);
+    }
+  }
+
   Future clearDirectory(Directory directory) async {
     var listSync = directory.listSync();
     for (var value in listSync) {
-      await value.delete();
+      Directory d = Directory(value.path);
+      if (d.existsSync()) {
+        clearDirectory(d);
+      } else {
+        await value.delete();
+      }
     }
   }
 }

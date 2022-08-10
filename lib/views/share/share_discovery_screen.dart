@@ -8,14 +8,17 @@ import 'package:cartoonizer/Widgets/selected_button.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:path/path.dart' as path;
@@ -74,6 +77,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   bool includeOriginal = true;
   Size? imageSize;
   FocusNode focusNode = new FocusNode();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -115,55 +119,56 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             hideLoading();
             CommonExtension().showToast(StringConstant.commonFailedToast);
           } else {
-            String b_name = "fast-socialbook";
-            String f_name = path.basename(value);
-            var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
-            if (TextUtil.isEmpty(fileType)) {
-              fileType = '*';
-            }
-            String c_type = "video/$fileType";
-            final params = {
-              "bucket": b_name,
-              "file_name": f_name,
-              "content_type": c_type,
-            };
-            api.getPresignedUrl(params).then((url) async {
-              if (url == null) {
+            uploadFile(value, needCompress: false).then((value) async {
+              if (value == null) {
                 hideLoading();
                 CommonExtension().showToast(StringConstant.commonFailedToast);
               } else {
-                var baseEntity = await Uploader().uploadFile(url, File(value), c_type);
-                if (baseEntity != null) {
-                  var imageUrl = url.split("?")[0];
-                  var list = [
-                    DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
-                  ];
-                  if (includeOriginal) {
-                    list.add(
-                      DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
-                    );
+                var imageUrl = value.key;
+                var list = [
+                  DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
+                ];
+                if (includeOriginal) {
+                  var fileType = originalUrl.substring(originalUrl.lastIndexOf(".") + 1);
+                  if (fileType.isEmpty) {
+                    fileType = "jpg";
                   }
-                  api
-                      .startSocialPost(
-                          description: text,
-                          effectKey: effectKey,
-                          resources: list,
-                          onUserExpired: () {
-                            AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
-                              submit();
-                            }, autoExec: true);
-                          })
-                      .then((value) {
+                  var fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileType';
+                  var tempDir = cacheManager.storageOperator.tempDir;
+                  var originFilePath = tempDir.path + '/$fileName';
+                  var response = await Downloader().downloadSync(originalUrl, originFilePath);
+                  if (response?.statusCode != 200) {
                     hideLoading();
-                    if (value != null) {
-                      CommonExtension().showToast("Your post has been submitted successfully");
-                      Navigator.pop(context, true);
-                    }
-                  });
-                } else {
-                  hideLoading();
-                  CommonExtension().showToast("Failed to upload image");
+                    CommonExtension().showToast(StringConstant.commonFailedToast);
+                    return;
+                  }
+                  var keyValue = await uploadFile(originFilePath, needCompress: true);
+                  if (keyValue == null) {
+                    hideLoading();
+                    CommonExtension().showToast(StringConstant.commonFailedToast);
+                    return;
+                  }
+                  list.add(
+                    DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
+                  );
                 }
+                api
+                    .startSocialPost(
+                        description: text,
+                        effectKey: effectKey,
+                        resources: list,
+                        onUserExpired: () {
+                          AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                            submit();
+                          }, autoExec: true);
+                        })
+                    .then((value) {
+                  hideLoading();
+                  if (value != null) {
+                    CommonExtension().showToast("Your post has been submitted successfully");
+                    Navigator.pop(context, true);
+                  }
+                });
               }
             });
           }
@@ -190,8 +195,27 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
               ];
               if (includeOriginal) {
+                var fileType = originalUrl.substring(originalUrl.lastIndexOf(".") + 1);
+                if (fileType.isEmpty) {
+                  fileType = "jpg";
+                }
+                var fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileType';
+                var tempDir = cacheManager.storageOperator.tempDir;
+                var originFilePath = tempDir.path + '/$fileName';
+                var response = await Downloader().downloadSync(originalUrl, originFilePath);
+                if (response?.statusCode != 200) {
+                  hideLoading();
+                  CommonExtension().showToast(StringConstant.commonFailedToast);
+                  return;
+                }
+                var keyValue = await uploadFile(originFilePath, needCompress: true);
+                if (keyValue == null) {
+                  hideLoading();
+                  CommonExtension().showToast(StringConstant.commonFailedToast);
+                  return;
+                }
                 list.add(
-                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: originalUrl),
+                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
                 );
               }
               api
@@ -219,6 +243,41 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         });
       }
     });
+  }
+
+  Future<MapEntry<String, BaseEntity>?> uploadFile(String filePath, {required bool needCompress}) async {
+    String b_name = "fast-socialbook";
+    String f_name = path.basename(filePath);
+    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+    if (TextUtil.isEmpty(fileType)) {
+      fileType = '*';
+    }
+    String c_type = "${needCompress ? 'image' : 'video'}/$fileType";
+    final params = {
+      "bucket": b_name,
+      "file_name": f_name,
+      "content_type": c_type,
+    };
+    var url = await api.getPresignedUrl(params);
+    if (url == null) {
+      return null;
+    }
+    if (needCompress) {
+      File image = await imageCompressAndGetFile(File(filePath));
+      var baseEntity = await Uploader().uploadFile(url, image, c_type);
+      if (baseEntity != null) {
+        return MapEntry(url.split("?")[0], baseEntity);
+      } else {
+        return null;
+      }
+    } else {
+      var baseEntity = await Uploader().uploadFile(url, File(filePath), c_type);
+      if (baseEntity != null) {
+        return MapEntry(url.split("?")[0], baseEntity);
+      } else {
+        return null;
+      }
+    }
   }
 
   @override

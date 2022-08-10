@@ -130,7 +130,10 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   showClearCacheDialog().then((value) {
                     if (value ?? false) {
                       showLoading().whenComplete(() {
-                        cacheManager.storageOperator.clearDirectory(cacheManager.storageOperator.videoDir).whenComplete(() {
+                        cacheManager.storageOperator.clearDirectories([
+                          cacheManager.storageOperator.videoDir,
+                          cacheManager.storageOperator.tempDir,
+                        ]).whenComplete(() {
                           hideLoading().whenComplete(() {
                             CommonExtension().showToast('Clear Success');
                             getCacheSize();
