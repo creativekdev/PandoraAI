@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
@@ -240,5 +242,11 @@ class CartoonizerApi extends BaseRequester {
       'message': feedback,
       'app_name': APP_NAME,
     });
+  }
+
+  Future<EffectMap?> getHomeConfig() async {
+    var baseEntity = await get("/tool/cartoonize_config/v3");
+    if (baseEntity == null) return null;
+    return EffectMap.fromJson(baseEntity.data);
   }
 }

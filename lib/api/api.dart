@@ -149,13 +149,4 @@ class API {
       return {"need_update": false};
     }
   }
-
-  static Future<EffectMap?> getHomeConfig() async {
-    var response = await API.get("/api/tool/cartoonize_config/v3");
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> parsed = json.decode(response.body.toString());
-      return EffectMap.fromJson(parsed);
-    }
-    return null;
-  }
 }

@@ -27,12 +27,12 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
   late RecentController recentController;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(100);
+  double marginTop = $(110);
 
   @override
   initState() {
     super.initState();
-    marginTop = $(100) + ScreenUtil.getStatusBarHeight();
+    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
     recentController = widget.controller;
     tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (event.data == widget.tabId) {

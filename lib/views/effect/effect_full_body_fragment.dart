@@ -45,12 +45,12 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(100);
+  double marginTop = $(110);
 
   @override
   initState() {
     super.initState();
-    marginTop = $(100) + ScreenUtil.getStatusBarHeight();
+    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
     effectModelList = widget.dataList;
     recentController = widget.recentController;
     bannerAdsHolder = BannerAdsHolder(
