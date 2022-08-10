@@ -57,6 +57,7 @@ class EffectItem {
   late String modified;
   late String id;
   late String displayName;
+  late String tag;
 
   EffectItem({
     this.key = '',
@@ -71,6 +72,7 @@ class EffectItem {
     this.server = '',
     this.stickerName = '',
     this.displayName = '',
+    this.tag = '',
   });
 
   EffectItem.fromJson(Map<String, dynamic> json) {
@@ -86,6 +88,7 @@ class EffectItem {
     server = (json['server'] ?? '').toString();
     stickerName = (json['sticker_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
+    tag = (json['tag'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -102,6 +105,7 @@ class EffectItem {
     data['server'] = server;
     data['sticker_name'] = stickerName;
     data['display_name'] = displayName;
+    data['tag'] = tag;
     return data;
   }
 }

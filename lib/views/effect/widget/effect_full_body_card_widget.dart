@@ -1,5 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/tag/tag_widget.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/enums/effect_tag.dart';
 
 import 'effect_card_ex.dart';
 
@@ -30,30 +32,47 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
   }
 
   Widget buildItem(BuildContext context, {required EffectItemListData data}) {
-    return Column(
+    var tag = EffectTagUtils.build(data.item.tag);
+    return Stack(
       children: [
-        ClipRRect(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: urlWidget(
-            context,
-            width: imageSize,
-            height: imageSize,
-            url: data.item.imageUrl,
-          ),
+        Column(
+          children: [
+            ClipRRect(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              borderRadius: BorderRadius.all(Radius.circular($(6))),
+              child: urlWidget(
+                context,
+                width: imageSize,
+                height: imageSize,
+                url: data.item.imageUrl,
+              ),
+            ),
+            Text(
+              data.item.displayName,
+              style: TextStyle(
+                color: ColorConstant.White,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins',
+                fontSize: $(14),
+              ),
+            ).intoContainer(
+                padding: EdgeInsets.only(
+              top: $(6),
+            )),
+          ],
         ),
-        Text(
-          data.item.displayName,
-          style: TextStyle(
-            color: ColorConstant.White,
-            fontWeight: FontWeight.w400,
-            fontFamily: 'Poppins',
-            fontSize: $(14),
-          ),
-        ).intoContainer(
-            padding: EdgeInsets.only(
-          top: $(6),
-        )),
+        tag == EffectTag.UNDEFINED
+            ? Container()
+            : Tag(
+                child: Text(
+                  tag.value(),
+                  style: TextStyle(color: Colors.white, fontSize: 11),
+                ),
+                color: tag.color(),
+                width: 35,
+                height: 35,
+                gravity: TagGravity.topLeft,
+              ),
       ],
     ).intoGestureDetector(onTap: () {
       onTap(data);
