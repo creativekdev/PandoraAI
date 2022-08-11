@@ -8,6 +8,8 @@ const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id
 const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.socialbook.cartoonizer';
 const String IOS_APP_ID = '1604123460';
 const String APP_NAME = 'ppm';
+const String KOCHAVA_ANDROID_ID = 'koprofilepicmaker-cartoon-photo-2wd2';
+const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
 class AdMobConfig {
   // static String get BANNER_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
   static String get BANNER_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';

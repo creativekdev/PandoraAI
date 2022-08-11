@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -47,7 +48,8 @@ void main() async {
   await FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
 
   // init appsflyer
-  Appsflyer.instance;
+  // Appsflyer.instance;
+  KoChaVa.instance.init();
 
   // init admob
   MobileAds.instance.initialize();

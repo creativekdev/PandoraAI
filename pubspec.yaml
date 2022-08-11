@@ -79,6 +79,7 @@ dependencies:
   event_bus: ^2.0.0
   flutter_svg: ^1.0.3
   firebase_crashlytics: ^2.8.6
+  kochava_tracker: ^2.0.2
 
 dev_dependencies:
   flutter_test:

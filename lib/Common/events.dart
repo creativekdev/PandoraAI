@@ -7,6 +7,8 @@ import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Events {
@@ -22,6 +24,7 @@ class Events {
   static String result_back = "result_back";
   static String homepage_loading = "homepage_loading";
   static String upload_page_loading = "upload_page_loading";
+
   // static String profile_page_loading = "profile_page_loading";
   static String setting_page_loading = "setting_page_loading";
   static String login_page_loading = "login_page_loading";
@@ -55,6 +58,8 @@ class Events {
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
   // log appsflyer
   logAppsflyerEvent(eventName, eventValues: eventValues);
+  // log Kochava
+  logKochavaEvent(eventName, eventValues: eventValues);
   // log firebase analytics
   FirebaseAnalytics.instance.logEvent(name: eventName, parameters: eventValues);
 }
@@ -73,9 +78,23 @@ logAppsflyerEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
   Appsflyer.instance.logEvent(eventName, values);
 }
 
+logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
+  SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
+  if (user != null) {
+    defaultValues["user_id"] = user.id.toString();
+    defaultValues["user_email"] = user.getShownEmail();
+  }
+  var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
+  KochavaTracker.instance.sendEventWithDictionary(eventName, values);
+}
+
 logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {
   // log appsflyer
   logAppsflyerEvent(eventName, eventValues: eventValues);
+  logKochavaEvent(eventName, eventValues: eventValues);
 
   // log firebase analytics
   switch (eventName) {
