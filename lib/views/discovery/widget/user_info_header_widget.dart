@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:common_utils/common_utils.dart';
 
 class UserInfoHeaderWidget extends StatelessWidget {
   String avatar;
@@ -11,8 +12,8 @@ class UserInfoHeaderWidget extends StatelessWidget {
     required this.avatar,
     required this.name,
   }) : super(key: key) {
-    if (name == '') {
-      name = " ";
+    if (TextUtil.isEmpty(name)) {
+      name = StringConstant.accountCancelled;
     }
   }
 

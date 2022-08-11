@@ -81,7 +81,12 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: $(3)),
-              TitleTextWidget(data.userName, ColorConstant.DiscoveryCommentGrey, FontWeight.normal, $(14)),
+              TitleTextWidget(
+                TextUtil.isEmpty(data.userName) ? StringConstant.accountCancelled : data.userName,
+                ColorConstant.DiscoveryCommentGrey,
+                FontWeight.normal,
+                $(14),
+              ),
               SizedBox(height: $(6)),
               Text(
                 data.text,
