@@ -146,4 +146,5 @@ class StringConstant {
       'Please make your first profile pic to view your history here';
   static const msgTitle = "Messages";
   static const settingsClearCache = "Clear cache";
+  static const accountCancelled = 'Account cancelled';
 }

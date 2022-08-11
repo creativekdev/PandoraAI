@@ -283,8 +283,8 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                         style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
                       ).intoContainer(
                         alignment: Alignment.center,
-                        width: $(50),
-                        padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
+                        width: $(40),
+                        padding: EdgeInsets.symmetric(vertical: $(4)),
                       ),
                     ),
                   ).intoGestureDetector(onTap: () {
@@ -309,11 +309,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                     });
                   }),
                 ],
-              )
-                  .intoContainer(
-                    margin: EdgeInsets.only(left: $(10)),
-                  )
-                  .offstage(offstage: !proVisible),
+              ).intoContainer(margin: EdgeInsets.only(left: $(4))).offstage(offstage: !proVisible),
               middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,

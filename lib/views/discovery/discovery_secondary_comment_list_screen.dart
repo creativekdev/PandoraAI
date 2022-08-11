@@ -110,7 +110,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
 
   loadMorePage() => api
           .listDiscoveryComments(
-        from: page + 1,
+        from: (page + 1) * pageSize,
         pageSize: pageSize,
         socialPostId: parentComment.socialPostId,
         replySocialPostCommentId: parentComment.id,

@@ -6,6 +6,21 @@ const int kb = 1024;
 const int mb = 1024 * kb;
 const int gb = 1024 * mb;
 
+const _months = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December',
+};
+
 extension NumEx on num {
   String get socialize {
     if (this >= _billion) {
@@ -32,6 +47,21 @@ extension NumEx on num {
       return '${(this / kb).toStringAsFixed(2)} KB';
     } else {
       return '$this Bytes';
+    }
+  }
+
+  String get dateMonth {
+    String ym = '$this';
+    if (ym.length != 6) {
+      return '';
+    }
+    int year = int.parse(ym.substring(0, 4));
+    int month = int.parse(ym.substring(4));
+    var now = DateTime.now();
+    if (year == now.year) {
+      return _months[month]!;
+    } else {
+      return '${_months[month]!}, $year';
     }
   }
 }

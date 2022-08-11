@@ -5,6 +5,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
+import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:common_utils/common_utils.dart';
@@ -46,7 +47,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Text(
-                (data.userName == '' ? ' ' : data.userName)[0].toUpperCase(),
+                (data.userName == '' ? StringConstant.accountCancelled : data.userName)[0].toUpperCase(),
                 style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
               ).intoContainer(
                   width: $(45),
@@ -67,7 +68,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => UserDiscoveryScreen(
+              builder: (BuildContext context) => MyDiscoveryScreen(
                 userId: data.userId,
                 title: isMe ? StringConstant.setting_my_discovery : null,
               ),

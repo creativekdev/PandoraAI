@@ -34,6 +34,7 @@ class MsgListState extends AppState<MsgListScreen> {
   void dispose() {
     super.dispose();
     api.unbind();
+    _refreshController.dispose();
   }
 
   loadFirstPage() => msgManager.loadFirstPage().then((value) {
@@ -97,7 +98,7 @@ class MsgListState extends AppState<MsgListScreen> {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: ColorConstant.CardColor,
         blurAble: false,
         middle: TitleTextWidget(StringConstant.msgTitle, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
       ),

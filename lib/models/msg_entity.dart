@@ -31,6 +31,14 @@ class MsgEntity {
 
   MsgType get msgType => MsgTypeUtils.build(action);
 
+  Map<String, dynamic> get extras {
+    try {
+      return json.decode(payload);
+    } catch (e) {
+      return {};
+    }
+  }
+
   MsgEntity({
     this.id = 0,
     this.read = false,

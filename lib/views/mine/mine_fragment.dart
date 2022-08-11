@@ -14,6 +14,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -124,7 +125,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     context,
                     MaterialPageRoute(
                       settings: RouteSettings(name: "/UserDiscoveryScreen"),
-                      builder: (context) => UserDiscoveryScreen(
+                      builder: (context) => MyDiscoveryScreen(
                         userId: userManager.user!.id,
                         title: StringConstant.setting_my_discovery,
                       ),

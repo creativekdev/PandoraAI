@@ -10,7 +10,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -119,7 +118,7 @@ class UserDiscoveryState extends AppState<UserDiscoveryScreen> {
 
   onLoadMorePage() => api
           .listDiscovery(
-        from: page + 1,
+        from: (page + 1) * pageSize,
         pageSize: pageSize,
         userId: userId,
       )

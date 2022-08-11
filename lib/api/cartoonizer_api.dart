@@ -31,7 +31,6 @@ class CartoonizerApi extends BaseRequester {
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
     var baseEntity = await get('/user/get_login', params: {
-      'app_name': APP_NAME,
       'device_id': await FirebaseMessaging.instance.getToken(),
     });
     if (baseEntity != null) {
@@ -226,7 +225,6 @@ class CartoonizerApi extends BaseRequester {
     required int size,
   }) async {
     var baseEntity = await get('/notification/all', params: {
-      'app_name': APP_NAME,
       'from': from,
       'size': size,
     });
@@ -240,7 +238,6 @@ class CartoonizerApi extends BaseRequester {
   Future<BaseEntity?> feedback(String feedback) async {
     return post('/user/feedback', params: {
       'message': feedback,
-      'app_name': APP_NAME,
     });
   }
 
