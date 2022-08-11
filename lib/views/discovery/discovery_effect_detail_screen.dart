@@ -19,7 +19,6 @@ import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
-import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
 
 import 'widget/discovery_attr_holder.dart';
@@ -133,6 +132,9 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
         middle: TitleTextWidget(StringConstant.discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        trailing: TitleTextWidget('Delete', ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
+          showDeleteDialog();
+        }).visibility(visible: userManager.user?.id == data.userId),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -366,5 +368,78 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
         });
       });
     });
+  }
+
+  delete() {
+    showLoading().whenComplete(() {
+      api.deleteDiscovery(data.id).then((value) {
+        hideLoading().whenComplete(() {
+          if (value != null) {
+            CommonExtension().showToast('Delete succeed');
+            Navigator.of(context).pop();
+          }
+        });
+      });
+    });
+  }
+
+  showDeleteDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure to delete this post?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.White),
+                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                      'Delete',
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                  right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () async {
+                      Navigator.pop(context);
+                      delete();
+                    })),
+                    Expanded(
+                        child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () {
+                      Navigator.pop(context);
+                    })),
+                  ],
+                ),
+              ],
+            )
+                .intoMaterial(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.circular($(16)),
+                )
+                .intoContainer(
+                  padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+                  margin: EdgeInsets.symmetric(horizontal: $(35)),
+                )
+                .intoCenter());
   }
 }

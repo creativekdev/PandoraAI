@@ -103,4 +103,7 @@ class OnNewMsgReceivedEvent extends BaseEvent<String> {
   OnNewMsgReceivedEvent({required String id}) : super(data: id);
 }
 
-
+/// on delete discovery event
+class OnDeleteDiscoveryEvent extends BaseEvent<int> {
+  OnDeleteDiscoveryEvent({required int id}) : super(data: id);
+}

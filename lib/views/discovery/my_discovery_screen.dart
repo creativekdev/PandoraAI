@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -31,6 +32,7 @@ class MyDiscoveryScreen extends StatefulWidget {
 class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
+  late StreamSubscription onDeleteListen;
   late CartoonizerApi api;
   int page = 0;
   int size = 20;
@@ -50,6 +52,22 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
     imgWidth = (ScreenUtil.screenSize.width - $(90)) / 3;
+    onDeleteListen = EventBusHelper().eventBus.on<OnDeleteDiscoveryEvent>().listen((event) {
+      bool find = false;
+      for (var value in dataMap.values) {
+        if (find) {
+          break;
+        }
+        for (var element in value) {
+          if (element.id == event.data) {
+            element.removed = true;
+            find = true;
+            break;
+          }
+        }
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -57,6 +75,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     super.dispose();
     api.unbind();
     _refreshController.dispose();
+    onDeleteListen.cancel();
   }
 
   loadFirstPage() => api
@@ -134,7 +153,15 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 var keyValue = pickItem(index);
+                bool hasYear = false;
+                if (index != 0) {
+                  var lasKeyValue = pickItem(index - 1);
+                  if (!lasKeyValue.key.isSameYear(keyValue.key)) {
+                    hasYear = true;
+                  }
+                }
                 return MyDiscoveryListCard(
+                  hasYear: hasYear,
                   time: keyValue.key,
                   dataList: keyValue.value,
                   imgWidth: imgWidth,

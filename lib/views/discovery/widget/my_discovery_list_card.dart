@@ -11,16 +11,20 @@ class MyDiscoveryListCard extends StatelessWidget {
   int rows = 0;
   double height = 0;
   Function(DiscoveryListEntity data) onItemClick;
+  bool hasYear;
+  late List<DiscoveryListEntity> activeList;
 
   MyDiscoveryListCard({
     required this.dataList,
     required this.time,
     required this.imgWidth,
     required this.onItemClick,
+    required this.hasYear,
     Key? key,
   }) : super(key: key) {
-    rows = dataList.length ~/ 3;
-    if (dataList.length % 3 != 0) {
+    activeList = dataList.filter((t) => !t.removed);
+    rows = activeList.length ~/ 3;
+    if (activeList.length % 3 != 0) {
       rows++;
     }
     height = imgWidth * rows;
@@ -29,6 +33,26 @@ class MyDiscoveryListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(height: $(24)),
+          Container(
+            height: 1,
+            color: ColorConstant.LineColor,
+            margin: EdgeInsets.symmetric(horizontal: $(16)),
+          ),
+          Text(
+            time.dateYear,
+            style: TextStyle(
+              color: ColorConstant.White,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold,
+              fontSize: $(20),
+            ),
+          ).intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(16))),
+        ],
+      ).visibility(visible: hasYear),
       Text(
         time.dateMonth,
         style: TextStyle(
@@ -40,7 +64,7 @@ class MyDiscoveryListCard extends StatelessWidget {
       GridView.count(
         crossAxisCount: 3,
         physics: NeverScrollableScrollPhysics(),
-        children: dataList
+        children: activeList
             .map((e) => buildResourceItem(e.resourceList()[0]).intoGestureDetector(onTap: () {
                   onItemClick.call(e);
                 }))

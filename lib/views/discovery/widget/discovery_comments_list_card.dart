@@ -6,7 +6,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
-import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:common_utils/common_utils.dart';
 

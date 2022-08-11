@@ -246,4 +246,12 @@ class CartoonizerApi extends BaseRequester {
     if (baseEntity == null) return null;
     return EffectMap.fromJson(baseEntity.data);
   }
+
+  Future<BaseEntity?> deleteDiscovery(int id) async {
+    var baseEntity = await delete('/social_post/delete/$id');
+    if (baseEntity != null) {
+      EventBusHelper().eventBus.fire(OnDeleteDiscoveryEvent(id: id));
+    }
+    return baseEntity;
+  }
 }

@@ -55,13 +55,20 @@ extension NumEx on num {
     if (ym.length != 6) {
       return '';
     }
-    int year = int.parse(ym.substring(0, 4));
     int month = int.parse(ym.substring(4));
-    var now = DateTime.now();
-    if (year == now.year) {
-      return _months[month]!;
-    } else {
-      return '${_months[month]!}, $year';
+    return _months[month]!;
+  }
+
+  String get dateYear {
+    String ym = '$this';
+    if (ym.length != 6) {
+      return '';
     }
+    int year = int.parse(ym.substring(0, 4));
+    return '$year';
+  }
+
+  bool isSameYear(int value) {
+    return this.dateYear == value.dateYear;
   }
 }

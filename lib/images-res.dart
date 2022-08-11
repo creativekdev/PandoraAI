@@ -48,6 +48,7 @@ class Images {
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';
    static const String ic_man = 'assets/images/ic_man.png';
+   static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_list = 'assets/images/ic_msg_list.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
