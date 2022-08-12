@@ -14,6 +14,8 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/PurchaseScreen.dart';
+import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -163,6 +165,33 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   launchURL(url);
                 },
               ),
+              Container(
+                width: double.maxFinite,
+                height: 1,
+                color: Color(0xff323232),
+              ).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
+              ImageTextBarWidget(StringConstant.premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
+                if (Platform.isIOS) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PurchaseScreen"),
+                      builder: (context) => PurchaseScreen(),
+                    ),
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                      builder: (context) => StripeSubscriptionScreen(),
+                    ),
+                  );
+                }
+              }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
               ImageTextBarWidget(StringConstant.settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {

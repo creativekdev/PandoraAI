@@ -72,31 +72,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     color: ColorConstant.BackgroundColor,
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
-              functions(StringConstant.premium, onTap: () {
-                if (Platform.isIOS) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/PurchaseScreen"),
-                      builder: (context) => PurchaseScreen(),
-                    ),
-                  );
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                      builder: (context) => StripeSubscriptionScreen(),
-                    ),
-                  );
-                }
-              }).offstage(offstage: userManager.isNeedLogin),
-              Container(width: double.maxFinite, height: 1, color: Color(0xff323232))
-                  .intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: $(15)),
-                    color: ColorConstant.BackgroundColor,
-                  )
-                  .offstage(offstage: userManager.isNeedLogin),
               functions(StringConstant.help, onTap: () {
                 logEvent(Events.open_help_center);
                 launchURL("https://socialbook.io/help/");
