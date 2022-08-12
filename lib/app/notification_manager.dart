@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/app/app.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
@@ -14,8 +15,9 @@ import 'package:http/http.dart' as http;
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
+  AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print('Handling a background message ${message.messageId}');
+  print('Handling a background message ${message.data}');
 }
 
 class NotificationManager extends BaseManager {

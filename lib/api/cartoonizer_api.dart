@@ -150,7 +150,8 @@ class CartoonizerApi extends BaseRequester {
     return baseEntity;
   }
 
-  Future<int?> discoveryLike(int id, {
+  Future<int?> discoveryLike(
+    int id, {
     Function? onUserExpired,
   }) async {
     var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id}, onFailed: (response) {
@@ -166,10 +167,11 @@ class CartoonizerApi extends BaseRequester {
     return null;
   }
 
-  Future<BaseEntity?> discoveryUnLike(int id,
-      int likeId, {
-        Function? onUserExpired,
-      }) async {
+  Future<BaseEntity?> discoveryUnLike(
+    int id,
+    int likeId, {
+    Function? onUserExpired,
+  }) async {
     var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
       if (response.statusCode == 401) {
         onUserExpired?.call();
@@ -181,7 +183,8 @@ class CartoonizerApi extends BaseRequester {
     return baseEntity;
   }
 
-  Future<int?> commentLike(int id, {
+  Future<int?> commentLike(
+    int id, {
     Function? onUserExpired,
   }) async {
     var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id}, onFailed: (response) {
@@ -197,10 +200,11 @@ class CartoonizerApi extends BaseRequester {
     return null;
   }
 
-  Future<BaseEntity?> commentUnLike(int id,
-      int likeId, {
-        Function? onUserExpired,
-      }) async {
+  Future<BaseEntity?> commentUnLike(
+    int id,
+    int likeId, {
+    Function? onUserExpired,
+  }) async {
     var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
       if (response.statusCode == 401) {
         onUserExpired?.call();
@@ -236,6 +240,10 @@ class CartoonizerApi extends BaseRequester {
 
   Future<BaseEntity?> readMsg(int id) async {
     return post('/notification/mark_read/$id');
+  }
+
+  Future<BaseEntity?> readAllMsg() async {
+    return post('/notification/mark_read/all');
   }
 
   Future<BaseEntity?> feedback(String feedback) async {

@@ -46,7 +46,7 @@ class MsgCard extends StatelessWidget {
                       width: $(50),
                       height: $(50),
                       errorWidget: (context, url, error) => Container(
-                        color: ColorConstant.SysMsgIconColor,
+                        color: ColorConstant.EffectFunctionGrey,
                       ),
                     ),
                   ),

@@ -93,6 +93,16 @@ class MsgListState extends AppState<MsgListScreen> {
     }
   }
 
+  readAll() {
+    showLoading().whenComplete(() {
+      msgManager.readAll().then((value) {
+        hideLoading().whenComplete(() {
+          setState(() {});
+        });
+      });
+    });
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
@@ -101,6 +111,11 @@ class MsgListState extends AppState<MsgListScreen> {
         backgroundColor: ColorConstant.CardColor,
         blurAble: false,
         middle: TitleTextWidget(StringConstant.msgTitle, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        trailing: TitleTextWidget('Read All', ColorConstant.White, FontWeight.normal, $(15)).intoGestureDetector(
+          onTap: () {
+            readAll();
+          },
+        ).visibility(visible: msgManager.unreadCount != 0),
       ),
       body: EasyRefresh.custom(
         controller: _refreshController,

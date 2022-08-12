@@ -38,6 +38,7 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
       api.feedback(content).then((value) {
         hideLoading().whenComplete(() {
           if (value != null) {
+            CommonExtension().showToast('Thanks for your opinions');
             Navigator.pop(context, true);
           }
         });

@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
 import 'home_tab.dart';
 
@@ -45,6 +46,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
             AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
           });
         }
+      });
+    }
+    if (cacheManager.getBool(CacheManager.openToMsg)) {
+      delay(() {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
+        cacheManager.setBool(CacheManager.openToMsg, false);
       });
     }
   }

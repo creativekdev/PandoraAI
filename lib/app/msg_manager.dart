@@ -74,10 +74,18 @@ class MsgManager extends BaseManager {
     var readMsg = await api.readMsg(data.id);
     if (!data.read && readMsg != null) {
       unreadCount.value--;
-      if (unreadCount < 0) {
+      if (unreadCount.value < 0) {
         unreadCount.value = 0;
       }
     }
     return readMsg;
+  }
+
+  Future<BaseEntity?> readAll() async {
+    var baseEntity = await api.readAllMsg();
+    if(baseEntity != null) {
+      unreadCount.value = 0;
+    }
+    return baseEntity;
   }
 }
