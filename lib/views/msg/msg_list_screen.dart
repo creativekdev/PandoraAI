@@ -106,6 +106,7 @@ class MsgListState extends AppState<MsgListScreen> {
         controller: _refreshController,
         enableControlFinishRefresh: true,
         enableControlFinishLoad: false,
+        emptyWidget: msgManager.msgList.isEmpty ? TitleTextWidget('There are no messages yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
         onRefresh: () async => loadFirstPage(),
         onLoad: () async => loadMorePage(),
         slivers: [
