@@ -243,7 +243,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> readAllMsg() async {
-    return post('/notification/mark_read/all');
+    return post('/notification/mark_all_read');
   }
 
   Future<BaseEntity?> feedback(String feedback) async {
