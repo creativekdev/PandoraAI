@@ -3,7 +3,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:flutter/foundation.dart';
-import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
@@ -56,26 +55,10 @@ class Events {
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
-  // log appsflyer
-  logAppsflyerEvent(eventName, eventValues: eventValues);
   // log Kochava
   logKochavaEvent(eventName, eventValues: eventValues);
   // log firebase analytics
   FirebaseAnalytics.instance.logEvent(name: eventName, parameters: eventValues);
-}
-
-logAppsflyerEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
-  SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};
-  if (user != null) {
-    defaultValues["user_id"] = user.id.toString();
-    defaultValues["user_email"] = user.getShownEmail();
-    Appsflyer.instance.setCustomerUserId(user.id.toString());
-  }
-  var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
-  Appsflyer.instance.logEvent(eventName, values);
 }
 
 logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
@@ -93,7 +76,6 @@ logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
 
 logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {
   // log appsflyer
-  logAppsflyerEvent(eventName, eventValues: eventValues);
   logKochavaEvent(eventName, eventValues: eventValues);
 
   // log firebase analytics
@@ -102,58 +84,5 @@ logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {
       FirebaseAnalytics.instance.logAppOpen();
       break;
     default:
-  }
-}
-
-class Appsflyer {
-  Appsflyer._init();
-
-  static AppsflyerSdk? _instance;
-
-  static AppsflyerSdk get instance {
-    _instance ??= _initSdk();
-    return _instance!;
-  }
-
-  static AppsflyerSdk _initSdk() {
-    AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
-      afDevKey: Config.instance.appsflyerKey,
-      appId: IOS_APP_ID,
-      showDebug: kDebugMode,
-      timeToWaitForATTUserAuthorization: 60, // for iOS 14.5
-      // appInviteOneLink: oneLinkID, // Optional field
-      disableAdvertisingIdentifier: false, // Optional field
-      disableCollectASA: false,
-    ); // Optional field
-
-    AppsflyerSdk appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
-
-    appsflyerSdk.onAppOpenAttribution((res) {
-      print("onAppOpenAttribution res: " + res.toString());
-    });
-    appsflyerSdk.onInstallConversionData((res) {
-      print("onInstallConversionData res: " + res.toString());
-    });
-    appsflyerSdk.onDeepLinking((DeepLinkResult dp) {
-      switch (dp.status) {
-        case Status.FOUND:
-          print(dp.deepLink?.toString());
-          print("deep link value: ${dp.deepLink?.deepLinkValue}");
-          break;
-        case Status.NOT_FOUND:
-          print("deep link not found");
-          break;
-        case Status.ERROR:
-          print("deep link error: ${dp.error}");
-          break;
-        case Status.PARSE_ERROR:
-          print("deep link status parsing error");
-          break;
-      }
-      print("onDeepLinking res: " + dp.toString());
-    });
-
-    appsflyerSdk.initSdk(registerConversionDataCallback: true, registerOnAppOpenAttributionCallback: true, registerOnDeepLinkingCallback: true);
-    return appsflyerSdk;
   }
 }

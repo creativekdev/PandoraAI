@@ -63,7 +63,6 @@ dependencies:
   cached_network_image: ^3.2.1
   flutter_credit_card:
   package_info_plus: ^1.4.2
-  appsflyer_sdk: ^6.5.2
   app_tracking_transparency:
   firebase_analytics: ^9.1.6
   google_mobile_ads:
