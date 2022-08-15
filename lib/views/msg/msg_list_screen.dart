@@ -3,6 +3,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
@@ -21,11 +22,13 @@ class MsgListScreen extends StatefulWidget {
 class MsgListState extends AppState<MsgListScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   MsgManager msgManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
 
   @override
   void initState() {
     super.initState();
+    cacheManager.setBool(CacheManager.openToMsg, false);
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
   }

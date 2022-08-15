@@ -36,18 +36,14 @@ class NotificationManager extends BaseManager {
       'high_importance_channel', // id
       'High Importance Notifications', // title
       description: 'This channel is used for important notifications.', // description
-      importance: Importance.high,
+      importance: Importance.max,
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var android = AndroidInitializationSettings('@mipmap/ic_launcher_small');
     var ios = IOSInitializationSettings();
     var initSettings = InitializationSettings(android: android, iOS: ios);
-    flutterLocalNotificationsPlugin.initialize(initSettings, onSelectNotification: (payload) async {
-      if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-        Get.to(MsgListScreen());
-      }
-    });
+    flutterLocalNotificationsPlugin.initialize(initSettings, onSelectNotification: onSelectNotification);
 
     /// Create an Android Notification Channel.
     ///
@@ -65,6 +61,7 @@ class NotificationManager extends BaseManager {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
+      AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = notification?.android;
       // AppleNotification? apple = notification?.apple;
@@ -87,6 +84,10 @@ class NotificationManager extends BaseManager {
         // }
       }
     });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      debugPrint('onNewMessage: ${message.data.toString()}');
+      AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
+    });
 
     FirebaseMessaging.instance.getAPNSToken().then((value) {
       debugPrint('APNS------------------$value');
@@ -94,6 +95,12 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint('Token------------------$value');
     });
+  }
+
+  Future<void> onSelectNotification(String? payload) async {
+    if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+      Get.to(MsgListScreen());
+    }
   }
 
   Future<NotificationSettings?> requireFirebasePermission() async {
