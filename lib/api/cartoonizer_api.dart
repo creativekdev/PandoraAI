@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
@@ -15,6 +14,7 @@ import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CartoonizerApi extends BaseRequester {
@@ -31,11 +31,12 @@ class CartoonizerApi extends BaseRequester {
 
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
-    var token;
-    if (Platform.isIOS) {
-      token = await FirebaseMessaging.instance.getAPNSToken();
-    } else {
+    String? token = '';
+    try {
       token = await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      LogUtil.e(e.toString(), tag: 'tokenError');
+      token = '';
     }
     var baseEntity = await get('/user/get_login', params: {
       'device_id': token,
@@ -52,6 +53,10 @@ class CartoonizerApi extends BaseRequester {
       }
     }
     return OnlineModel(user: null, loginSuccess: false, aiServers: {});
+  }
+
+  Future<BaseEntity?> deleteAccount() async {
+    return post("/api/user/delete_account");
   }
 
   /// get discovery list data

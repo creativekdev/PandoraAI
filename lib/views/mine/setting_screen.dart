@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -13,8 +12,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 import '../ChangePasswordScreen.dart';
-import '../PurchaseScreen.dart';
-import '../StripeSubscriptionScreen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({Key? key}) : super(key: key);
@@ -340,8 +337,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
       );
 
   Future<bool> deleteAccount() async {
-    var post = await API.post("/api/user/delete_account");
-    if (post.statusCode == 200) {
+    var result = await CartoonizerApi().deleteAccount();
+    if (result != null) {
       logEvent(Events.delete_account);
       userManager.logout();
       return true;
