@@ -4,6 +4,7 @@ import 'package:cartoonizer/app/app.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
@@ -62,6 +63,7 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
       AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
+      AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = notification?.android;
       // AppleNotification? apple = notification?.apple;

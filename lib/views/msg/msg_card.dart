@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 class MsgCard extends StatelessWidget {
@@ -11,6 +14,8 @@ class MsgCard extends StatelessWidget {
   late Map<String, dynamic> extras;
   late MsgType msgType;
   DateTime? dateTime;
+  late String userName;
+  late String avatar;
 
   MsgCard({
     Key? key,
@@ -24,6 +29,13 @@ class MsgCard extends StatelessWidget {
       var timeZoneOffset = DateTime.now().timeZoneOffset;
       dateTime = date.add(timeZoneOffset);
     }
+    String? name = extras['user_name'];
+    if (TextUtil.isEmpty(name)) {
+      userName = StringConstant.accountCancelled;
+    } else {
+      userName = name!;
+    }
+    avatar = extras['user_avatar']?.toString() ?? '';
   }
 
   @override
@@ -41,14 +53,35 @@ class MsgCard extends StatelessWidget {
                   )
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(32),
-                    child: CachedNetworkImageUtils.custom(
-                      imageUrl: extras['user_avatar'] ?? '',
-                      width: $(50),
-                      height: $(50),
-                      errorWidget: (context, url, error) => Container(
-                        color: ColorConstant.EffectFunctionGrey,
-                      ),
-                    ),
+                    child: TextUtil.isEmpty(avatar)
+                        ? Text(
+                            userName[0].toUpperCase(),
+                            style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
+                          ).intoContainer(
+                            width: $(50),
+                            height: $(50),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular($(32)),
+                              border: Border.all(color: ColorConstant.White, width: 1),
+                            ))
+                        : CachedNetworkImageUtils.custom(
+                            imageUrl: avatar,
+                            width: $(50),
+                            height: $(50),
+                            errorWidget: (context, url, error) {
+                              return Text(
+                                userName[0].toUpperCase(),
+                                style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
+                              ).intoContainer(
+                                  width: $(50),
+                                  height: $(50),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular($(32)),
+                                    border: Border.all(color: ColorConstant.White, width: 1),
+                                  ));
+                            }),
                   ),
             SizedBox(width: 12),
             Expanded(

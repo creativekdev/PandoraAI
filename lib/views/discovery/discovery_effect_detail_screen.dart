@@ -16,6 +16,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -251,13 +252,16 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
                 ),
               ),
-            ).intoGestureDetector(
-              onTap: () {
-                toChoosePage();
-              },
-            ).intoContainer(
-              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
-            ),
+            )
+                .intoGestureDetector(
+                  onTap: () {
+                    toChoosePage();
+                  },
+                )
+                .intoContainer(
+                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
+                )
+                .visibility(visible: imageSize != null),
           ],
         ),
       ),

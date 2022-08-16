@@ -47,9 +47,9 @@ class RateNoticeOperator {
     }
   }
 
-  dispose() {
+  dispose() async {
     if (configEntity != null) {
-      saveConfig(configEntity!);
+      await saveConfig(configEntity!);
       configEntity = null;
     }
   }
@@ -141,7 +141,7 @@ class RateNoticeOperator {
         ),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'No, thanks',
+          'Looove it! rate now',
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
         )
             .intoContainer(
@@ -151,7 +151,10 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
-          Navigator.pop(context, false);
+          logEvent(Events.rate_us);
+          var url = Config.getStoreLink();
+          launchURL(url);
+          Navigator.pop(context, true);
         }),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
@@ -177,7 +180,7 @@ class RateNoticeOperator {
         }),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'Looove it! rate now',
+          'Not now',
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
         )
             .intoContainer(
@@ -187,10 +190,7 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
-          logEvent(Events.rate_us);
-          var url = Config.getStoreLink();
-          launchURL(url);
-          Navigator.pop(context, true);
+          Navigator.pop(context, false);
         }),
       ],
     ).intoContainer(width: double.maxFinite).customDialogStyle();

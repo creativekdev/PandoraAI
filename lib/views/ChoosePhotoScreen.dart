@@ -235,7 +235,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var alignment = d * index / 4;
     delay(() {
       scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
-    });
+    }, milliseconds: 32);
   }
 
   Future<bool> _willPopCallback(BuildContext context) async {
