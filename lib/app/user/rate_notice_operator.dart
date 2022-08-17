@@ -180,7 +180,7 @@ class RateNoticeOperator {
         }),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'Not now',
+          'No, thanks',
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
         )
             .intoContainer(

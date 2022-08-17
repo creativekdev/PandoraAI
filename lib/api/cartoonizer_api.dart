@@ -56,7 +56,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> deleteAccount() async {
-    return post("/api/user/delete_account");
+    return post("/user/delete_account");
   }
 
   /// get discovery list data

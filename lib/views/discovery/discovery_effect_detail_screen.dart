@@ -16,7 +16,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -156,7 +155,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   settings: RouteSettings(name: "/UserDiscoveryScreen"),
                 ),
               );
-            }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(25), bottom: 0)),
+            }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(25), bottom: 0), constraints: BoxConstraints(minHeight: $(30))),
             Text(
               data.text,
               style: TextStyle(
@@ -198,7 +197,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                       )
                     : Container(),
               ],
-            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100))),
             Row(
               children: [
                 buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
