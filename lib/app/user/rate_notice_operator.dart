@@ -14,16 +14,16 @@ const int hour = minute * 60;
 const int day = hour * 24;
 
 // in production
-// const int maxSwitchCount = 10;
-// const int maxDuration = 2 * day;
-// const int nextActivatePositive = 90 * 24;
-// const int nextActivateNegative = 30 * 24;
+const int maxSwitchCount = 10;
+const int maxDuration = 2 * day;
+const int nextActivatePositive = 2160;// 90 * 24; hour
+const int nextActivateNegative = 720;// 30 * 24; hour
 
 // in development
-const int maxSwitchCount = 3;
-const int maxDuration = 10 * minute;
-const int nextActivatePositive = 2;
-const int nextActivateNegative = 1;
+// const int maxSwitchCount = 3;
+// const int maxDuration = 10 * minute;
+// const int nextActivatePositive = 2;
+// const int nextActivateNegative = 1;
 
 class RateNoticeOperator {
   CacheManager cacheManager;

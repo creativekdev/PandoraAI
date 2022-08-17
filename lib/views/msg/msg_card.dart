@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 class MsgCard extends StatelessWidget {
@@ -66,6 +63,7 @@ class MsgCard extends StatelessWidget {
                               border: Border.all(color: ColorConstant.White, width: 1),
                             ))
                         : CachedNetworkImageUtils.custom(
+                            context: context,
                             imageUrl: avatar,
                             width: $(50),
                             height: $(50),

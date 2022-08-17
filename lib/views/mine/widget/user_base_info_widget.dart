@@ -5,8 +5,8 @@ import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 
 class UserBaseInfoWidget extends StatelessWidget {
-  SocialUserInfo? userInfo;
-  late String avatar;
+  final SocialUserInfo? userInfo;
+  late final String avatar;
 
   UserBaseInfoWidget({Key? key, required this.userInfo}) : super(key: key) {
     avatar = userInfo?.getShownAvatar() ?? '';
@@ -21,6 +21,7 @@ class UserBaseInfoWidget extends StatelessWidget {
         ClipRRect(
           child: userInfo != null && !TextUtil.isEmpty(avatar)
               ? CachedNetworkImageUtils.custom(
+                  context: context,
                   imageUrl: avatar,
                   height: $(56),
                   width: $(56),

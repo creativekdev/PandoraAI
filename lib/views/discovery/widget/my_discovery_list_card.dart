@@ -65,7 +65,7 @@ class MyDiscoveryListCard extends StatelessWidget {
         crossAxisCount: 3,
         physics: NeverScrollableScrollPhysics(),
         children: activeList
-            .map((e) => buildResourceItem(e.resourceList()[0]).intoGestureDetector(onTap: () {
+            .map((e) => buildResourceItem(context, e.resourceList()[0]).intoGestureDetector(onTap: () {
                   onItemClick.call(e);
                 }))
             .toList(),
@@ -73,13 +73,14 @@ class MyDiscoveryListCard extends StatelessWidget {
     ]);
   }
 
-  Widget buildResourceItem(DiscoveryResource resource) {
+  Widget buildResourceItem(BuildContext context, DiscoveryResource resource) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
       ).intoContainer(height: imgWidth, width: imgWidth, padding: EdgeInsets.all(3));
     } else {
       return CachedNetworkImageUtils.custom(
+        context: context,
         imageUrl: resource.url ?? '',
         width: imgWidth,
         height: imgWidth,
