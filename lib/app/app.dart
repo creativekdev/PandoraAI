@@ -121,6 +121,10 @@ class AppDelegate {
   T getManager<T extends BaseManager>() {
     return managerMap[T.toString()] as T;
   }
+
+  bool exists<T extends BaseManager>() {
+    return managerMap[T.toString()] != null;
+  }
 }
 
 abstract class BaseManager {
