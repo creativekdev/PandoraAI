@@ -6,13 +6,15 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/badge.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
@@ -20,6 +22,7 @@ import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_fragment.dart';
+import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -45,7 +48,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   late PageController _pageController;
   late TabController _tabController;
   List<HomeTabConfig> tabConfig = [];
-  Size? proButtonSize;
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
   bool proVisible = false;
@@ -252,73 +254,83 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       ));
 
   Widget navbar(BuildContext context) => Container(
-        margin: EdgeInsets.only(top: $(10), left: $(15), right: $(15)),
+        margin: EdgeInsets.only(top: $(10)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             AppNavigationBar(
               backgroundColor: Colors.transparent,
-              visible: false,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: proButtonSize?.width,
-                ),
-                TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-                OutlineWidget(
-                  strokeWidth: 1,
-                  radius: $(6),
-                  gradient: LinearGradient(
-                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) => LinearGradient(
+              showBackItem: false,
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  OutlineWidget(
+                    strokeWidth: 1,
+                    radius: $(6),
+                    gradient: LinearGradient(
                       colors: [Color(0xffE31ECD), Color(0xff243CFF)],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                    ).createShader(Offset.zero & bounds.size),
-                    blendMode: BlendMode.srcATop,
-                    child: Text(
-                      StringConstant.pro,
-                      style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
-                    ).intoContainer(
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(4)),
                     ),
-                  ),
-                )
-                    .intoGestureDetector(onTap: () {
-                      userManager.doOnLogin(context, callback: () {
-                        if (Platform.isIOS) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/PurchaseScreen"),
-                              builder: (context) => PurchaseScreen(),
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                              builder: (context) => StripeSubscriptionScreen(),
-                            ),
-                          );
-                        }
-                      });
-                    })
-                    .offstage(offstage: !proVisible)
-                    .listenSizeChanged(onSizeChanged: (size) {
-                      setState(() {
-                        proButtonSize = size;
-                      });
-                    }),
-              ],
+                    child: ShaderMask(
+                      shaderCallback: (Rect bounds) => LinearGradient(
+                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ).createShader(Offset.zero & bounds.size),
+                      blendMode: BlendMode.srcATop,
+                      child: Text(
+                        StringConstant.pro,
+                        style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                      ).intoContainer(
+                        alignment: Alignment.center,
+                        width: $(40),
+                        padding: EdgeInsets.symmetric(vertical: $(4)),
+                      ),
+                    ),
+                  ).intoGestureDetector(onTap: () {
+                    userManager.doOnLogin(context, callback: () {
+                      if (Platform.isIOS) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/PurchaseScreen"),
+                            builder: (context) => PurchaseScreen(),
+                          ),
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                            builder: (context) => StripeSubscriptionScreen(),
+                          ),
+                        );
+                      }
+                    });
+                  }),
+                ],
+              ).intoContainer(margin: EdgeInsets.only(left: $(4))).offstage(offstage: !proVisible),
+              middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+              trailing: Obx(() => BadgeView(
+                    type: BadgeType.fill,
+                    count: AppDelegate.instance.getManager<MsgManager>().unreadCount.value,
+                    child: Image.asset(
+                      Images.ic_msg_icon,
+                      width: $(26),
+                      color: Colors.white,
+                    ),
+                  )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
+                userManager.doOnLogin(context, callback: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/MsgListScreen"),
+                      builder: (context) => MsgListScreen(),
+                    ),
+                  );
+                }, autoExec: true);
+              }),
             ),
           ],
         ),

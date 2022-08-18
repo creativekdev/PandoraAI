@@ -1,17 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:common_utils/common_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CartoonizerApi extends BaseRequester {
   @override
@@ -27,7 +31,16 @@ class CartoonizerApi extends BaseRequester {
 
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
-    var baseEntity = await get('/user/get_login');
+    String? token = '';
+    try {
+      token = await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      LogUtil.e(e.toString(), tag: 'tokenError');
+      token = '';
+    }
+    var baseEntity = await get('/user/get_login', params: {
+      'device_id': token,
+    });
     if (baseEntity != null) {
       if (baseEntity.data != null) {
         Map<String, dynamic> data = baseEntity.data;
@@ -42,16 +55,20 @@ class CartoonizerApi extends BaseRequester {
     return OnlineModel(user: null, loginSuccess: false, aiServers: {});
   }
 
+  Future<BaseEntity?> deleteAccount() async {
+    return post("/user/delete_account");
+  }
+
   /// get discovery list data
   Future<PageEntity?> listDiscovery({
-    required int page,
+    required int from,
     required int pageSize,
     DiscoverySort sort = DiscoverySort.likes,
     bool isMyPost = false,
     int? userId,
   }) async {
     var map = {
-      'from': page,
+      'from': from,
       'size': pageSize,
       'sidx': sort.apiValue(),
     };
@@ -92,13 +109,13 @@ class CartoonizerApi extends BaseRequester {
 
   /// get discovery effect's comments
   Future<PageEntity?> listDiscoveryComments({
-    required int page,
+    required int from,
     required int pageSize,
     required int socialPostId,
     int? replySocialPostCommentId,
   }) async {
     var map = <String, dynamic>{
-      'from': page,
+      'from': from,
       'size': pageSize,
       'social_post_id': socialPostId,
     };
@@ -212,6 +229,45 @@ class CartoonizerApi extends BaseRequester {
   // buy plan with stripe
   Future<BaseEntity?> buyPlan(body) async {
     var baseEntity = await post("/plan/buy", params: body);
+    return baseEntity;
+  }
+
+  Future<MsgPageEntity?> listMsg({
+    required int from,
+    required int size,
+  }) async {
+    var baseEntity = await get('/notification/all', params: {
+      'from': from,
+      'size': size,
+    });
+    return jsonConvert.convert<MsgPageEntity>(baseEntity?.data['data']);
+  }
+
+  Future<BaseEntity?> readMsg(int id) async {
+    return post('/notification/mark_read/$id');
+  }
+
+  Future<BaseEntity?> readAllMsg() async {
+    return post('/notification/mark_all_read');
+  }
+
+  Future<BaseEntity?> feedback(String feedback) async {
+    return post('/user/feedback', params: {
+      'message': feedback,
+    });
+  }
+
+  Future<EffectMap?> getHomeConfig() async {
+    var baseEntity = await get("/tool/cartoonize_config/v3");
+    if (baseEntity == null) return null;
+    return EffectMap.fromJson(baseEntity.data);
+  }
+
+  Future<BaseEntity?> deleteDiscovery(int id) async {
+    var baseEntity = await delete('/social_post/delete/$id');
+    if (baseEntity != null) {
+      EventBusHelper().eventBus.fire(OnDeleteDiscoveryEvent(id: id));
+    }
     return baseEntity;
   }
 }

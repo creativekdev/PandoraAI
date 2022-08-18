@@ -1,13 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -49,12 +44,14 @@ class API {
     // add custom params
     if (params == null || params.isEmpty) {
       params = {
+        "app_name": APP_NAME,
         "app_platform": Platform.operatingSystem,
         "app_version": packageInfo.version,
         "app_build": packageInfo.buildNumber,
         'from_app': "1",
       };
     } else {
+      params["app_name"] = APP_NAME;
       params["app_platform"] = Platform.operatingSystem;
       params["app_version"] = packageInfo.version;
       params["app_build"] = packageInfo.buildNumber;
@@ -94,12 +91,14 @@ class API {
     // add custom params
     if (body == null || body.isEmpty) {
       body = {
+        "app_name": APP_NAME,
         "app_platform": Platform.operatingSystem,
         "app_version": packageInfo.version,
         "app_build": packageInfo.buildNumber,
         'from_app': "1",
       };
     } else {
+      body["app_name"] = APP_NAME;
       body["app_platform"] = Platform.operatingSystem;
       body["app_version"] = packageInfo.version;
       body["app_build"] = packageInfo.buildNumber;
@@ -148,14 +147,5 @@ class API {
     } catch (e) {
       return {"need_update": false};
     }
-  }
-
-  static Future<EffectMap?> getHomeConfig() async {
-    var response = await API.get("/api/tool/cartoonize_config/v3");
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> parsed = json.decode(response.body.toString());
-      return EffectMap.fromJson(parsed);
-    }
-    return null;
   }
 }

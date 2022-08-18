@@ -144,4 +144,7 @@ class StringConstant {
   static const watchAdText = 'Download HD image\nwithout watermark';
   static const effectRecentEmptyHint = 'No record of your usage found\n'
       'Please make your first profile pic to view your history here';
+  static const msgTitle = "Messages";
+  static const settingsClearCache = "Clear cache";
+  static const accountCancelled = 'Account cancelled';
 }

@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:dio/src/dio_error.dart';
 import 'package:flutter/foundation.dart';
 

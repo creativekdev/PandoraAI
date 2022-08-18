@@ -14,19 +14,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "761058819999-2viib809svl78lvc6atg33kmmck0h8od.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "f817a7cc524aa4d4cd54bb5f333fc2f6f589ea97"
+          }
+        },
+        {
           "client_id": "761058819999-6lqlps3agecvv8a4gks9eg3uf4fol78f.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.socialbook.cartoonizer",
             "certificate_hash": "23262efacf6c8fe7a58c38133d601ce4368ab5e3"
-          }
-        },
-        {
-          "client_id": "761058819999-it784a4rrt8pu1d2drkd4jac0vuf9m2j.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.socialbook.cartoonizer",
-            "certificate_hash": "4663e9e135bcf78cd998cd7eb0feade31b5f99b5"
           }
         },
         {
@@ -47,11 +47,93 @@
               "client_type": 3
             },
             {
-              "client_id": "761058819999-jfnuq5esusufkm9naikrfk7bbg4qiapb.apps.googleusercontent.com",
+              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.cartoonizer",
-                "app_store_id": "1604123460"
+                "bundle_id": "io.socialbook.videostudio",
+                "app_store_id": "1637403919"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:8a08e3ad476260545407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.photostudio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-kbhkmls9lik9qakqq17npgl7v3qke487.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.photostudio",
+            "certificate_hash": "9846d85a1b179297b24563cd374cfa0f966906fd"
+          }
+        },
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.videostudio",
+                "app_store_id": "1637403919"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:3c9b4d0c94d661e05407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.videostudio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.videostudio",
+                "app_store_id": "1637403919"
               }
             }
           ]

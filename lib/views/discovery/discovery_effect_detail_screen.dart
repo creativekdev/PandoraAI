@@ -10,7 +10,7 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
@@ -18,16 +18,16 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
-import 'package:cartoonizer/views/discovery/user_discovery_screen.dart';
+import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
-import 'package:flutter/cupertino.dart';
 
 import 'widget/discovery_attr_holder.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity data;
+  bool autoToComments;
 
-  DiscoveryEffectDetailScreen({Key? key, required this.data}) : super(key: key);
+  DiscoveryEffectDetailScreen({Key? key, required this.data, this.autoToComments = false}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => DiscoveryEffectDetailState();
@@ -86,6 +86,19 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
         }
       }
     });
+    delay(() {
+      if (widget.autoToComments) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => DiscoveryCommentsListScreen(
+              discoveryEntity: data,
+            ),
+            settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
+          ),
+        );
+      }
+    });
   }
 
   @override
@@ -119,6 +132,9 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
         middle: TitleTextWidget(StringConstant.discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        trailing: TitleTextWidget('Delete', ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
+          showDeleteDialog();
+        }).visibility(visible: userManager.user?.id == data.userId),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -132,14 +148,14 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => UserDiscoveryScreen(
+                  builder: (BuildContext context) => MyDiscoveryScreen(
                     userId: data.userId,
                     title: isMe ? StringConstant.setting_my_discovery : null,
                   ),
                   settings: RouteSettings(name: "/UserDiscoveryScreen"),
                 ),
               );
-            }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(25), bottom: 0)),
+            }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(25), bottom: 0), constraints: BoxConstraints(minHeight: $(30))),
             Text(
               data.text,
               style: TextStyle(
@@ -181,7 +197,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                       )
                     : Container(),
               ],
-            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100))),
             Row(
               children: [
                 buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
@@ -195,7 +211,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                     ),
                   );
                 }),
-                SizedBox(width: $(15)),
+                SizedBox(width: $(10)),
                 buildAttr(
                   context,
                   iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
@@ -235,13 +251,16 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
                 ),
               ),
-            ).intoGestureDetector(
-              onTap: () {
-                toChoosePage();
-              },
-            ).intoContainer(
-              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
-            ),
+            )
+                .intoGestureDetector(
+                  onTap: () {
+                    toChoosePage();
+                  },
+                )
+                .intoContainer(
+                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
+                )
+                .visibility(visible: imageSize != null),
           ],
         ),
       ),
@@ -352,5 +371,78 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
         });
       });
     });
+  }
+
+  delete() {
+    showLoading().whenComplete(() {
+      api.deleteDiscovery(data.id).then((value) {
+        hideLoading().whenComplete(() {
+          if (value != null) {
+            CommonExtension().showToast('Delete succeed');
+            Navigator.of(context).pop();
+          }
+        });
+      });
+    });
+  }
+
+  showDeleteDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Are you sure to delete this post?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.White),
+                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+                Row(
+                  children: [
+                    Expanded(
+                        child: Text(
+                      'Delete',
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                  right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () async {
+                      Navigator.pop(context);
+                      delete();
+                    })),
+                    Expanded(
+                        child: Text(
+                      'Cancel',
+                      style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                    )
+                            .intoContainer(
+                                padding: EdgeInsets.all(10),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                                )))
+                            .intoGestureDetector(onTap: () {
+                      Navigator.pop(context);
+                    })),
+                  ],
+                ),
+              ],
+            )
+                .intoMaterial(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.circular($(16)),
+                )
+                .intoContainer(
+                  padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+                  margin: EdgeInsets.symmetric(horizontal: $(35)),
+                )
+                .intoCenter());
   }
 }

@@ -7,8 +7,8 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
@@ -54,6 +54,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onAppStateListener;
   late StreamSubscription onTabDoubleClickListener;
   late StreamSubscription onCreateCommentListener;
+  late StreamSubscription onDeleteListener;
 
   bool listLoading = false;
 
@@ -132,6 +133,15 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         setState(() {});
       }
     });
+    onDeleteListener = EventBusHelper().eventBus.on<OnDeleteDiscoveryEvent>().listen((event) {
+      for (var value in dataList) {
+        if (value.isAd && value.data!.id == event.data) {
+          value.data!.removed = true;
+          break;
+        }
+      }
+      setState(() {});
+    });
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
@@ -187,6 +197,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onAppStateListener.cancel();
     onTabDoubleClickListener.cancel();
     onCreateCommentListener.cancel();
+    onDeleteListener.cancel();
   }
 
   @override
@@ -227,7 +238,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     setState(() => listLoading = true);
     api
         .listDiscovery(
-      page: 0,
+      from: 0,
       pageSize: pageSize,
       sort: currentTab.sort,
     )
@@ -254,7 +265,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     setState(() => listLoading = true);
     api
         .listDiscovery(
-      page: (page + 1) * pageSize,
+      from: (page + 1) * pageSize,
       pageSize: pageSize,
       sort: currentTab.sort,
     )

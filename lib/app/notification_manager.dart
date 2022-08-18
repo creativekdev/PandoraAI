@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:cartoonizer/app/app.dart';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
+import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
@@ -12,8 +16,9 @@ import 'package:http/http.dart' as http;
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
+  AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print('Handling a background message ${message.messageId}');
+  print('Handling a background message ${message.data}');
 }
 
 class NotificationManager extends BaseManager {
@@ -32,14 +37,14 @@ class NotificationManager extends BaseManager {
       'high_importance_channel', // id
       'High Importance Notifications', // title
       description: 'This channel is used for important notifications.', // description
-      importance: Importance.high,
+      importance: Importance.max,
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var android = AndroidInitializationSettings('@mipmap/ic_launcher_small');
     var ios = IOSInitializationSettings();
     var initSettings = InitializationSettings(android: android, iOS: ios);
-    flutterLocalNotificationsPlugin.initialize(initSettings);
+    flutterLocalNotificationsPlugin.initialize(initSettings, onSelectNotification: onSelectNotification);
 
     /// Create an Android Notification Channel.
     ///
@@ -57,6 +62,8 @@ class NotificationManager extends BaseManager {
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('onNewMessage: ${message.data.toString()}');
+      AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
+      AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = notification?.android;
       // AppleNotification? apple = notification?.apple;
@@ -79,6 +86,10 @@ class NotificationManager extends BaseManager {
         // }
       }
     });
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      debugPrint('onNewMessage: ${message.data.toString()}');
+      AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
+    });
 
     FirebaseMessaging.instance.getAPNSToken().then((value) {
       debugPrint('APNS------------------$value');
@@ -86,6 +97,12 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint('Token------------------$value');
     });
+  }
+
+  Future<void> onSelectNotification(String? payload) async {
+    if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+      Get.to(MsgListScreen());
+    }
   }
 
   Future<NotificationSettings?> requireFirebasePermission() async {

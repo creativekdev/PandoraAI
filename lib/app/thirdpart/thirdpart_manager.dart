@@ -25,4 +25,5 @@ class ThirdpartManager extends BaseManager {
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
   }
+
 }

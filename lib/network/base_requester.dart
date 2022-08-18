@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/sToken.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -94,6 +95,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     /// pre handle params
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     // add custom params
+    params["app_name"] = APP_NAME;
     params["app_platform"] = Platform.operatingSystem;
     params["app_version"] = packageInfo.version;
     params["app_build"] = packageInfo.buildNumber;

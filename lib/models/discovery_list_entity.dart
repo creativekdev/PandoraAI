@@ -28,6 +28,7 @@ class DiscoveryListEntity {
   @JSONField(name: "like_id")
   int? likeId;
   late String resources;
+  bool removed;
 
   DiscoveryListEntity({
     this.userId = 0,
@@ -48,6 +49,7 @@ class DiscoveryListEntity {
     this.userAvatar = '',
     this.likeId,
     this.resources = '',
+    this.removed = false,
   });
 
   factory DiscoveryListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryListEntityFromJson(json);

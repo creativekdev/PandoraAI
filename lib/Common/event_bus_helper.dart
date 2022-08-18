@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:cartoonizer/models/social_user_info.dart';
-import 'package:cartoonizer/network/base_requester.dart';
 import 'package:event_bus/event_bus.dart';
 
 /// EventBusHelper
@@ -99,4 +96,14 @@ class OnCartoonizerFinishedEvent extends BaseEvent<bool> {
   OnCartoonizerFinishedEvent({required bool data}) : super(data: data);
 }
 
-class OnPaySuccessEvent extends BaseEntity {}
+class OnPaySuccessEvent extends BaseEvent {}
+
+/// new notify send to app
+class OnNewMsgReceivedEvent extends BaseEvent<String> {
+  OnNewMsgReceivedEvent({required String id}) : super(data: id);
+}
+
+/// on delete discovery event
+class OnDeleteDiscoveryEvent extends BaseEvent<int> {
+  OnDeleteDiscoveryEvent({required int id}) : super(data: id);
+}

@@ -10,6 +10,8 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/LoginScreen.dart';
 
+import 'rate_notice_operator.dart';
+
 ///
 /// 新的用户数据管理器，暂时与老逻辑并行，新缓存key使用user_info，老的使用user
 /// 目前只把正常登录切换到userManager管理，其他第三方登录沿用老逻辑，只是在登录成功后埋点获取user_info。
@@ -56,10 +58,36 @@ class UserManager extends BaseManager {
     cacheManager.setString(CacheManager.keyLoginCookie, id);
   }
 
+  late RateNoticeOperator _rateNoticeOperator;
+
+  RateNoticeOperator get rateNoticeOperator => _rateNoticeOperator;
+  late StreamSubscription _userStataListen;
+
+  @override
+  Future<void> onCreate() async {
+    super.onCreate();
+    _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      if (event.data ?? false) {
+        _rateNoticeOperator.init();
+      } else {
+        _rateNoticeOperator.dispose();
+      }
+    });
+  }
+
+  @override
+  Future<void> onDestroy() async {
+    super.onDestroy();
+    _userStataListen.cancel();
+  }
+
+  @override
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
     cacheManager = AppDelegate.instance.getManager();
     initUser();
+    _rateNoticeOperator = RateNoticeOperator(cacheManager: cacheManager);
+    _rateNoticeOperator.init();
   }
 
   initUser() {
@@ -143,6 +171,7 @@ class UserManager extends BaseManager {
   Future<void> logout() async {
     user = null;
     sid = null;
+    cacheManager.setBool(CacheManager.openToMsg, false);
     lastLauncherLoginStatus = false;
   }
 }

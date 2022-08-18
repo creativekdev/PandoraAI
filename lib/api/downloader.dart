@@ -1,9 +1,10 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
+
+import '../Widgets/widget_extensions.dart';
 
 class Downloader {
   // 工厂模式
@@ -39,6 +40,18 @@ class Downloader {
     var listeners = _listenerMap[key];
     if (listeners != null) {
       delay(() => listeners.remove(listener));
+    }
+  }
+
+  Future<Response?> downloadSync(
+    String url,
+    String savePath, {
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      return client.download(url, savePath, onReceiveProgress: onReceiveProgress);
+    } on DioError catch (e) {
+      return null;
     }
   }
 

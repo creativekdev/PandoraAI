@@ -5,6 +5,7 @@ class EffectModel {
   late Map<String, EffectItem> effects;
   late String defaultEffect;
   late List<dynamic> thumbnails;
+  late String tag;
 
   EffectModel({
     required this.key,
@@ -13,6 +14,7 @@ class EffectModel {
     List<dynamic>? thumbnails,
     this.displayName = '',
     this.style = '',
+    this.tag = '',
   }) {
     this.effects = effects ?? {};
     this.thumbnails = thumbnails ?? [];
@@ -26,6 +28,7 @@ class EffectModel {
     thumbnails = json['thumbnails'] ?? [];
     displayName = (json['display_name'] ?? '').toString();
     style = (json['style'] ?? '').toString();
+    tag = (json['tag'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -36,6 +39,7 @@ class EffectModel {
     data['thumbnails'] = thumbnails;
     data['display_name'] = displayName;
     data['style'] = style;
+    data['tag'] = tag;
     return data;
   }
 }
@@ -53,6 +57,7 @@ class EffectItem {
   late String modified;
   late String id;
   late String displayName;
+  late String tag;
 
   EffectItem({
     this.key = '',
@@ -67,6 +72,7 @@ class EffectItem {
     this.server = '',
     this.stickerName = '',
     this.displayName = '',
+    this.tag = '',
   });
 
   EffectItem.fromJson(Map<String, dynamic> json) {
@@ -82,6 +88,7 @@ class EffectItem {
     server = (json['server'] ?? '').toString();
     stickerName = (json['sticker_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
+    tag = (json['tag'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -98,6 +105,7 @@ class EffectItem {
     data['server'] = server;
     data['sticker_name'] = stickerName;
     data['display_name'] = displayName;
+    data['tag'] = tag;
     return data;
   }
 }

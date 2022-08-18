@@ -33,3 +33,32 @@ class PageEntity {
     return rows.map((e) => jsonConvert.convert<T>(e)!).toList();
   }
 }
+
+@JsonSerializable()
+class MsgPageEntity {
+  late int records;
+  @JSONField(name: "unread_count")
+  late int unreadCount;
+  late List<dynamic> rows;
+
+  MsgPageEntity({
+    this.records = 0,
+    this.unreadCount = 0,
+    List<dynamic>? rows,
+  }) {
+    this.rows = rows ?? [];
+  }
+
+  factory MsgPageEntity.fromJson(Map<String, dynamic> json) => $MsgPageEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $MsgPageEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  List<T> getDataList<T>() {
+    return rows.map((e) => jsonConvert.convert<T>(e)!).toList();
+  }
+}

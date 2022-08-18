@@ -18,6 +18,7 @@ class Images {
    static const String ic_change_password = 'assets/images/ic_change_password.png';
    static const String ic_checked = 'assets/images/ic_checked.png';
    static const String ic_close = 'assets/images/ic_close.png';
+   static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delete = 'assets/images/ic_delete.png';
    static const String ic_demo = 'assets/images/ic_demo.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
@@ -47,6 +48,8 @@ class Images {
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';
    static const String ic_man = 'assets/images/ic_man.png';
+   static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
+   static const String ic_msg_list = 'assets/images/ic_msg_list.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
    static const String ic_no_watermark = 'assets/images/ic_no_watermark.png';
@@ -64,6 +67,7 @@ class Images {
    static const String ic_round_top = 'assets/images/ic_round_top.png';
    static const String ic_setting_my_delete_account = 'assets/images/ic_setting_my_delete_account.png';
    static const String ic_setting_my_discovery = 'assets/images/ic_setting_my_discovery.png';
+   static const String ic_settings = 'assets/images/ic_settings.png';
    static const String ic_share = 'assets/images/ic_share.png';
    static const String ic_share_app = 'assets/images/ic_share_app.png';
    static const String ic_share_discovery = 'assets/images/ic_share_discovery.png';

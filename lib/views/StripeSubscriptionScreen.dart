@@ -1,5 +1,5 @@
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:cartoonizer/common/importFile.dart';

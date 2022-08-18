@@ -6,7 +6,9 @@
 import 'package:flutter/material.dart' show debugPrint;
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
+import 'package:cartoonizer/models/rate_config_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
 typedef JsonConvertFunction<T> = T Function(Map<String, dynamic> json);
@@ -16,7 +18,10 @@ class JsonConvert {
 		(DiscoveryCommentListEntity).toString(): DiscoveryCommentListEntity.fromJson,
 		(DiscoveryListEntity).toString(): DiscoveryListEntity.fromJson,
 		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
+		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
+		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
+		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 	};
 
   T? convert<T>(dynamic value) {
@@ -101,8 +106,17 @@ class JsonConvert {
 		if(<DiscoveryResource>[] is M){
 			return data.map<DiscoveryResource>((Map<String, dynamic> e) => DiscoveryResource.fromJson(e)).toList() as M;
 		}
+		if(<MsgEntity>[] is M){
+			return data.map<MsgEntity>((Map<String, dynamic> e) => MsgEntity.fromJson(e)).toList() as M;
+		}
 		if(<PageEntity>[] is M){
 			return data.map<PageEntity>((Map<String, dynamic> e) => PageEntity.fromJson(e)).toList() as M;
+		}
+		if(<MsgPageEntity>[] is M){
+			return data.map<MsgPageEntity>((Map<String, dynamic> e) => MsgPageEntity.fromJson(e)).toList() as M;
+		}
+		if(<RateConfigEntity>[] is M){
+			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
 		}
 
 		debugPrint("${M.toString()} not found");

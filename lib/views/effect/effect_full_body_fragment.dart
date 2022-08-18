@@ -5,8 +5,8 @@ import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
-import 'package:cartoonizer/app/user_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -45,12 +45,12 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(100);
+  double marginTop = $(110);
 
   @override
   initState() {
     super.initState();
-    marginTop = $(100) + ScreenUtil.getStatusBarHeight();
+    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
     effectModelList = widget.dataList;
     recentController = widget.recentController;
     bannerAdsHolder = BannerAdsHolder(

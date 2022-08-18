@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/thirdpart_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -40,12 +43,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  if(kReleaseMode) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  }
 
   // init firebase analytics
   await FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
 
   // init appsflyer
-  Appsflyer.instance;
+  // Appsflyer.instance;
+  KoChaVa.instance.init();
 
   // init admob
   MobileAds.instance.initialize();
@@ -179,17 +186,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    var manager = AppDelegate.instance.getManager<ThirdpartManager>();
+    ThirdpartManager? manager;
+    if(AppDelegate.instance.exists<ThirdpartManager>()) {
+      manager = AppDelegate.instance.getManager<ThirdpartManager>();
+    }
     switch (state) {
       //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
       case AppLifecycleState.resumed:
-        manager.appBackground = false;
+        manager?.appBackground = false;
         print("didChangeAppLifecycleState-------> 应用进入前台======");
         break;
       //应用状态处于闲置状态，并且没有用户的输入事件，
       // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
       case AppLifecycleState.inactive:
-        manager.appBackground = true;
+        manager?.appBackground = true;
         print("didChangeAppLifecycleState-------> 应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
         break;
       //当前页面即将退出

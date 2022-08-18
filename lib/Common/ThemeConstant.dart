@@ -38,4 +38,6 @@ class ColorConstant {
   static const InputContent = Color(0xff565656);
   static const LineColor = Color(0xff404040);
   static const WatchAdColor = Color(0xff243cff);
+  static const MineBackgroundColor = Color(0xff080809);
+  static const SysMsgIconColor = Color(0xff5856D6);
 }

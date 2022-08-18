@@ -31,6 +31,7 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
@@ -118,4 +119,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
     implementation 'com.bytedance.ies.ugc.aweme:opensdk-oversea-external:0.2.0.2'
+    implementation 'com.unity3d.ads:unity-ads:4.3.0'
+    implementation 'com.google.ads.mediation:unity:4.3.0.0'
 }

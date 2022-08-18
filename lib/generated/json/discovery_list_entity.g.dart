@@ -77,6 +77,10 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (resources != null) {
 		discoveryListEntity.resources = resources;
 	}
+	final bool? removed = jsonConvert.convert<bool>(json['removed']);
+	if (removed != null) {
+		discoveryListEntity.removed = removed;
+	}
 	return discoveryListEntity;
 }
 
@@ -100,6 +104,7 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['cartoonize_key'] = entity.cartoonizeKey;
 	data['like_id'] = entity.likeId;
 	data['resources'] = entity.resources;
+	data['removed'] = entity.removed;
 	return data;
 }
 
