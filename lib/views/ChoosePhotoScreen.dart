@@ -995,13 +995,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast("cancelled");
         return;
       }
+      controller.changeIsLoading(true);
       File compressedImage = await imageCompressAndGetFile(File(image.path));
 
       offlineEffect.clear();
       controller.updateImageFile(compressedImage);
       controller.updateImageUrl("");
       controller.changeIsPhotoSelect(true);
-      controller.changeIsLoading(true);
       controller.changeIsPhotoDone(false);
       getCartoon(context);
     } on PlatformException catch (error) {
@@ -1022,13 +1022,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast("cancelled");
         return;
       }
+      controller.changeIsLoading(true);
       File compressedImage = await imageCompressAndGetFile(File(image.path));
 
       offlineEffect.clear();
       controller.updateImageFile(compressedImage);
       controller.updateImageUrl("");
       controller.changeIsPhotoSelect(true);
-      controller.changeIsLoading(true);
       controller.changeIsPhotoDone(false);
       getCartoon(context);
     } on PlatformException catch (error) {
