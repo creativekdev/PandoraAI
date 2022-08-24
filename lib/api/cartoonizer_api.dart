@@ -29,6 +29,18 @@ class CartoonizerApi extends BaseRequester {
   /// login normal
   Future<BaseEntity?> login(Map<String, dynamic> params) => post('/user/login', params: params);
 
+  Future<BaseEntity?> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) =>
+      post('/user/signup/simple', params: {
+        'name': name,
+        "email": email,
+        "password": password,
+        "type": 'email',
+      });
+
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
     String? token = '';

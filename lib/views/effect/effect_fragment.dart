@@ -70,7 +70,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       setState(() {});
     });
     refreshProVisible();
-    delay(() => userManager.refreshUser(context: context));
   }
 
   @override
@@ -264,31 +263,23 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
               leading: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OutlineWidget(
-                    strokeWidth: 1,
-                    radius: $(6),
-                    gradient: LinearGradient(
-                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    child: ShaderMask(
-                      shaderCallback: (Rect bounds) => LinearGradient(
-                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(Offset.zero & bounds.size),
-                      blendMode: BlendMode.srcATop,
-                      child: Text(
-                        StringConstant.pro,
-                        style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
-                      ).intoContainer(
-                        alignment: Alignment.center,
-                        width: $(40),
-                        padding: EdgeInsets.symmetric(vertical: $(4)),
-                      ),
-                    ),
-                  ).intoGestureDetector(onTap: () {
+                  Text(
+                    StringConstant.pro,
+                    style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                  )
+                      .intoContainer(
+                          width: $(45),
+                          padding: EdgeInsets.symmetric(vertical: $(4)),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular($(6)),
+                            gradient: LinearGradient(
+                              colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ))
+                      .intoGestureDetector(onTap: () {
                     userManager.doOnLogin(context, callback: () {
                       if (Platform.isIOS) {
                         Navigator.push(

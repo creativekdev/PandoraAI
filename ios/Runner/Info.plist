@@ -48,9 +48,9 @@
 	<string>04c886707467a9eaa9c66ad95ffdb4bb</string>
 	<key>FacebookDisplayName</key>
 	<string>ProfilePicMaker</string>
-	<key>FirebaseAutomaticScreenReportingEnabled</key>
-	<false/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FirebaseAutomaticScreenReportingEnabled</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>

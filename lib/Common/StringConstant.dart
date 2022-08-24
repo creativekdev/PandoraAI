@@ -147,4 +147,5 @@ class StringConstant {
   static const msgTitle = "Messages";
   static const settingsClearCache = "Clear cache";
   static const accountCancelled = 'Account cancelled';
+  static const feedback = 'Feedback';
 }

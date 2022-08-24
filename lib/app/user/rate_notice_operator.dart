@@ -16,8 +16,8 @@ const int day = hour * 24;
 // in production
 const int maxSwitchCount = 10;
 const int maxDuration = 2 * day;
-const int nextActivatePositive = 2160;// 90 * 24; hour
-const int nextActivateNegative = 720;// 30 * 24; hour
+const int nextActivatePositive = 2160; // 90 * 24; hour
+const int nextActivateNegative = 720; // 30 * 24; hour
 
 // in development
 // const int maxSwitchCount = 3;
@@ -54,7 +54,13 @@ class RateNoticeOperator {
     }
   }
 
-  Future<bool> saveConfig(RateConfigEntity configEntity) => cacheManager.setJson(cacheManager.rateConfigKey()!, configEntity.toJson());
+  Future<bool> saveConfig(RateConfigEntity configEntity) async {
+    var rateConfigKey = cacheManager.rateConfigKey();
+    if (rateConfigKey == null) {
+      return true;
+    }
+    return cacheManager.setJson(rateConfigKey, configEntity.toJson());
+  }
 
   bool shouldRate() {
     if (configEntity == null) {
@@ -170,7 +176,7 @@ class RateNoticeOperator {
             .intoGestureDetector(onTap: () {
           showDialog<bool>(
             context: context,
-            barrierDismissible: false,
+            barrierDismissible: true,
             builder: (context) => FeedbackDialog(),
           ).then((value) {
             if (value ?? false) {

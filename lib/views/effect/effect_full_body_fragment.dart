@@ -72,7 +72,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     });
     delay(() {
       buildDataList();
-      refreshUserInfo();
     });
   }
 

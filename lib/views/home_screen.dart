@@ -34,23 +34,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
     });
-    if (userManager.lastLauncherLoginStatus) {
-      userManager.refreshUser().then((value) {
-        if (!value.loginSuccess) {
-          userManager.logout().then((value) {
-            userManager.doOnLogin(context);
-          });
-        } else {
-          delay(() {
-            userManager.rateNoticeOperator.judgeAndShowNotice(context);
-            AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
-            if (cacheManager.getBool(CacheManager.openToMsg)) {
+    delay(() {
+      userManager.refreshUser(context: context).then((value) {
+        if (userManager.lastLauncherLoginStatus) {
+          if (!value.loginSuccess) {
+            userManager.logout().then((value) {
+              userManager.doOnLogin(context);
+            });
+          } else {
+            delay(() {
+              userManager.rateNoticeOperator.judgeAndShowNotice(context);
+              AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
+              if (cacheManager.getBool(CacheManager.openToMsg)) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-            }
-          });
+              }
+            });
+          }
         }
       });
-    }
+    });
   }
 
   @override

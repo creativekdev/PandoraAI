@@ -66,7 +66,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     );
     delay(() {
       bannerAdsHolder.initHolder();
-      refreshUserInfo();
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});

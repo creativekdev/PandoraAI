@@ -267,7 +267,6 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             "email": emailController.text,
                             "password": passController.text,
                             "channel": widget.channel ?? "",
-                            "type": APP_TYPE,
                           };
                           final access_response = await API.post("/api/user/signup_with_social_media", headers: headers, body: body);
 
@@ -320,7 +319,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                           setState(() {
                             isLoading = true;
                           });
-                          Map<String, String> body = {"email": emailController.text, "password": passController.text, "type": APP_TYPE};
+                          Map<String, String> body = {"email": emailController.text, "password": passController.text, "type": widget.channel};
                           final appleResponse = await API.post("/api/user/signup/simple", body: body);
 
                           setState(() {

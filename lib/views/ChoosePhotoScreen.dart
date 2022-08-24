@@ -99,6 +99,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget? _cachedImage;
   Size? imageSize;
+  late double imgContainerSize;
 
   Widget get cachedImage {
     if (_cachedImage != null) {
@@ -111,25 +112,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           Image.memory(
             imageUint8List,
             width: double.maxFinite,
-            height: imageSize?.height ?? 85.w,
+            height: imageSize?.height ?? imgContainerSize,
           ),
           Align(
             child: Image.asset(
               Images.ic_watermark,
-              width: (imageSize?.width ?? 85.w) * 0.56,
+              width: (imageSize?.width ?? imgContainerSize) * 0.56,
             ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
             alignment: Alignment.bottomCenter,
           ).visibility(visible: imageSize != null),
         ],
-      ).intoContainer(width: imageSize?.width ?? 85.w, height: imageSize?.height ?? 85.w);
+      ).intoContainer(width: imageSize?.width ?? imgContainerSize, height: imageSize?.height ?? imgContainerSize);
       if (imageSize == null) {
         asyncRefreshImageSize(imageUint8List);
       }
     } else {
       _cachedImage = Image.memory(
         imageUint8List,
-        width: 85.w,
-        height: 85.w,
+        width: imgContainerSize,
+        height: imgContainerSize,
       );
     }
     return _cachedImage!;
@@ -140,15 +141,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var scale = image.image.width / image.image.height;
       if (scale < 0.9) {
-        double height = 85.w;
+        double height = imgContainerSize;
         double width = height * scale;
         imageSize = Size(width, height);
       } else if (scale > 1.1) {
-        double width = 85.w;
+        double width = imgContainerSize;
         double height = width / scale;
         imageSize = Size(width, height);
       } else {
-        imageSize = Size(85.w, 85.w);
+        imageSize = Size(imgContainerSize, imgContainerSize);
       }
       _cachedImage = null;
       setState(() {});
@@ -170,6 +171,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.initState();
 
     logEvent(Events.upload_page_loading);
+    imgContainerSize = ScreenUtil.screenSize.width - $(60);
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
     });
@@ -546,16 +548,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                 children: [
                                   SizedBox(height: $(44)),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 2.h),
+                                    padding: EdgeInsets.symmetric(vertical: 4),
                                     child: (controller.isVideo.value)
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: VideoPlayer(_videoPlayerController!),
-                                          ).intoContainer(height: 85.w)
+                                          ).intoContainer(height: imgContainerSize)
                                         : Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [cachedImage],
-                                          ).intoContainer(height: 85.w),
+                                          ).intoContainer(height: imgContainerSize),
                                   ),
                                   Obx(() => Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -578,35 +580,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         ],
                                       )).intoContainer(margin: EdgeInsets.only(bottom: $(4))).offstage(offstage: !widget.hasOriginalCheck),
                                   buildSuccessFunctions(context),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: $(4)),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SimpleShadow(
-                                          child: Image.asset(
-                                            ImagesConstant.ic_emoji1,
-                                            height: 10.w,
-                                            width: 10.w,
-                                          ),
-                                          sigma: 5,
-                                        ).intoGestureDetector(onTap: () async {
-                                          likeDislike(true);
-                                        }),
-                                        SizedBox(width: 5.w),
-                                        SimpleShadow(
-                                          child: Image.asset(
-                                            ImagesConstant.ic_emoji2,
-                                            height: 10.w,
-                                            width: 10.w,
-                                          ),
-                                          sigma: 5,
-                                        ).intoGestureDetector(onTap: () async {
-                                          likeDislike(false);
-                                        }),
-                                      ],
-                                    ),
-                                  ).visibility(visible: false),
                                   SizedBox(height: 1.5.h),
                                 ],
                               ),
@@ -623,22 +596,32 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                                   child: Image.file(
                                                     controller.image.value as File,
                                                     fit: BoxFit.cover,
-                                                    width: 71.w,
-                                                    height: 71.w,
+                                                    width: imgContainerSize,
+                                                    height: imgContainerSize,
                                                   ),
                                                   borderRadius: BorderRadius.circular($(8)),
                                                 ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
                                               : Image.asset(
                                                   ImagesConstant.ic_man,
-                                                  height: 40.h,
-                                                  width: 70.w,
+                                                  height: imgContainerSize,
+                                                  width: imgContainerSize,
                                                 ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              pickImageFromGallery(context, from: "center");
-                                            },
-                                            child: ButtonWidget(StringConstant.choose_photo, radius: $(8), padding: EdgeInsets.symmetric(horizontal: $(50))),
-                                          ),
+                                          Text(
+                                            StringConstant.choose_photo,
+                                            style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
+                                          )
+                                              .intoContainer(
+                                                  width: double.maxFinite,
+                                                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                                                  margin: EdgeInsets.symmetric(horizontal: $(30)),
+                                                  alignment: Alignment.center,
+                                                  decoration: BoxDecoration(
+                                                    color: ColorConstant.DiscoveryBtn,
+                                                    borderRadius: BorderRadius.circular($(8)),
+                                                  ))
+                                              .intoGestureDetector(onTap: () {
+                                            pickImageFromGallery(context, from: "center");
+                                          }),
                                           SizedBox(height: 1.h),
                                           GestureDetector(
                                             onTap: () {
@@ -674,7 +657,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                               padding: EdgeInsets.symmetric(horizontal: $(15)),
                               labelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w600),
                               unselectedLabelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w400),
-                              tabs: widget.list.map((e) => Text(e.effects.values.toList()[0].displayName)).toList(),
+                              tabs: widget.list
+                                  .transfer(
+                                    (e, index) => Text(
+                                      e.effects.values.toList()[0].displayName,
+                                    ).intoContainer(margin: EdgeInsets.only(left: index == 0 ? $(30) : 0)),
+                                  )
+                                  .toList(),
                               controller: effectTabController,
                               onTap: (index) {
                                 controller.setLastItemIndex(index);
@@ -715,7 +704,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           return _buildCarouselItem(context, itemIndex);
                         },
                         separatorBuilder: (BuildContext context, int index) {
-                          return _buildSeparator();
+                          return Container();
                         },
                       ),
                     ),
@@ -726,12 +715,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             )),
       ),
     );
-  }
-
-  @override
-  // ignore: must_call_super
-  void didChangeDependencies() {
-    // super.didChangeDependencies();
   }
 
   Widget buildSuccessFunctions(BuildContext context) {
@@ -823,8 +806,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     return Container(
       padding: EdgeInsets.only(left: 0, right: 0, top: $(7.2), bottom: $(7.2)),
       margin: EdgeInsets.only(
-        left: itemIndex == 0 ? $(15) : 0,
-        right: itemIndex == widget.list.length - 1 ? $(15) : 0,
+        left: itemIndex == 0 ? $(30) : 0,
+        right: itemIndex == widget.list.length - 1 ? $(30) : 0,
       ),
       child: ListView.builder(
         itemCount: keys.length,
@@ -1315,7 +1298,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               CommonExtension().showToast('Error while processing image');
             }
           }
-          await userManager.refreshUser(context: context);
+          userManager.refreshUser(context: context);
         } else {
           controller.changeIsLoading(false);
           var responseBody = json.decode(tokenResponse.body);
@@ -1355,33 +1338,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  Future<void> likeDislike(bool like) async {
-    controller.changeIsLoading(true);
-    var databody = {
-      'type': "cartoonize",
-      'like': like ? 1 : -1,
-      'url': urlFinal,
-      'algo': algoName,
-    };
-
-    await API.post("/api/tool/matting/evaluate", body: databody).whenComplete(() async {
-      controller.changeIsLoading(false);
-    });
-  }
-
-  Widget _buildSeparator() {
-    if (widget.entrySource == EntrySource.fromRecent) {
-      return Container();
-    }
-    return VerticalDivider(
-      color: ColorConstant.HintColor,
-      width: 1.w,
-      indent: 3.h,
-      endIndent: 3.h,
-      thickness: 0.4.w,
-    );
-  }
-
   Widget _buildTextItem(BuildContext context, int index) {
     return Obx(() {
       var item = widget.list[index].effects.values.toList()[0];
@@ -1391,7 +1347,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
         },
         child: Padding(
-          padding: EdgeInsets.only(left: $(6), right: $(6), top: $(6)),
+          padding: EdgeInsets.only(left: index == 0 ? $(30) : $(6), right: $(6), top: $(6)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

@@ -1,5 +1,5 @@
 typedef TransAction<T, S> = T Function(S data);
-
+typedef TransAction2<T, S> = T Function(S data, int index);
 ///
 /// extensions feature dart > 2.7.0
 extension ArrayExtension<T> on List<T> {
@@ -46,5 +46,13 @@ extension ArrayExtension<T> on List<T> {
       }
     }
     return false;
+  }
+
+  List<Out> transfer<Out>(TransAction2<Out, T> action) {
+    List<Out> result = [];
+    for (int i = 0; i < this.length; i++) {
+      result.add(action(this[i], i));
+    }
+    return result;
   }
 }
