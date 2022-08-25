@@ -22,14 +22,17 @@ class ChoosePhotoScreenController extends GetxController {
   final isLoading = false.obs;
   changeIsLoading(bool value) => isLoading.value = value;
 
-  final lastSelectedIndex = 0.obs;
-  setLastSelectedIndex(int i) => lastSelectedIndex.value = i;
-
-  final lastItemIndex = 0.obs;
-  setLastItemIndex(int i) => lastItemIndex.value = i;
-
-  final lastItemIndex1 = 0.obs;
-  setLastItemIndex1(int i) => lastItemIndex1.value = i;
+  // @deprecated
+  // final lastSelectedIndex = 0.obs;
+  // setLastSelectedIndex(int i) => lastSelectedIndex.value = i;
+  //
+  // @deprecated
+  // final lastItemIndex = 0.obs;
+  // setLastItemIndex(int i) => lastItemIndex.value = i;
+  //
+  // @deprecated
+  // final lastItemIndex1 = 0.obs;
+  // setLastItemIndex1(int i) => lastItemIndex1.value = i;
 
   final Rx<File?> image = (null as File?).obs;
   updateImageFile(dynamic lFile) => image.value = lFile;

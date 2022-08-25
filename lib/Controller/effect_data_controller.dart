@@ -1,6 +1,4 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';

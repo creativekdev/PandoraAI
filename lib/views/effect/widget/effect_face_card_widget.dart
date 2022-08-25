@@ -1,8 +1,10 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/tag/tag_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/enums/effect_tag.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'effect_card_ex.dart';
 
@@ -35,46 +37,53 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
       ),
       child: Stack(
         children: [
-          Column(
-            children: [
-              Wrap(
-                direction: Axis.horizontal,
-                children: data.thumbnails.map((e) {
-                  var effect = data.effects[e]!;
-                  return ClipRRect(
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    borderRadius: BorderRadius.all(Radius.circular($(6))),
-                    child: urlWidget(
-                      context,
-                      width: size,
-                      height: size,
-                      url: effect.imageUrl,
-                    ),
-                  ).intoContainer(
-                    padding: EdgeInsets.all($(6)),
-                  );
-                }).toList(),
-              ).intoContainer(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.all($(6)),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          TextUtil.isEmpty(data.thumbnail)
+              ? Column(
                   children: [
-                    Expanded(
-                      child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
+                    Wrap(
+                      direction: Axis.horizontal,
+                      children: data.thumbnails.map((e) {
+                        var effect = data.effects[e]!;
+                        return ClipRRect(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          borderRadius: BorderRadius.all(Radius.circular($(6))),
+                          child: urlWidget(
+                            context,
+                            width: size,
+                            height: size,
+                            url: effect.imageUrl,
+                          ),
+                        ).intoContainer(
+                          padding: EdgeInsets.all($(6)),
+                        );
+                      }).toList(),
+                    ).intoContainer(
+                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.all($(6)),
                     ),
-                    Image.asset(
-                      Images.ic_arrow_right,
-                      width: $(18),
+                    Padding(
+                      padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
+                          ),
+                          Image.asset(
+                            Images.ic_arrow_right,
+                            width: $(18),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
+                )
+              : CachedNetworkImageUtils.custom(
+                  context: context,
+                  imageUrl: data.thumbnail,
+                  width: parentWidth,
+                  height: parentWidth,
                 ),
-              ),
-            ],
-          ),
           tag == EffectTag.UNDEFINED
               ? Container()
               : Tag(

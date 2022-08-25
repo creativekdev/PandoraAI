@@ -44,15 +44,25 @@ enum EntrySource {
   fromEffect,
 }
 
+class TabItemInfo {
+  EffectItem data;
+  int categoryIndex;
+  int childIndex;
+
+  TabItemInfo({required this.data, required this.categoryIndex, required this.childIndex});
+}
+
 class ChoosePhotoScreen extends StatefulWidget {
   final List<EffectModel> list;
   int pos;
   int? itemPos;
   EntrySource entrySource;
   bool hasOriginalCheck;
+  String tabString;
 
   ChoosePhotoScreen({
     Key? key,
+    required this.tabString,
     required this.list,
     required this.pos,
     this.itemPos,
@@ -80,13 +90,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
 
-  final ItemPositionsListener itemPositionsListener = ItemPositionsListener.create();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
-  late ItemScrollController scrollController;
-  late ItemScrollController categoryScrollController;
-  TabController? effectTabController;
-  var itemPos = 0;
+
+  late ItemScrollController titleScrollController;
+  final ItemPositionsListener titleScrollPositionsListener = ItemPositionsListener.create();
+  List<String> tabTitleList = [];
+  int currentTitleIndex = 0;
+  int currentItemIndex = 0;
+  List<TabItemInfo> tabItemList = [];
+  late double itemWidth;
+  late ItemScrollController itemScrollController;
+  final ItemPositionsListener itemScrollPositionsListener = ItemPositionsListener.create();
+  late VoidCallback itemScrollPositionsListen;
+
   VideoPlayerController? _videoPlayerController;
   Map<String, OfflineEffectModel> offlineEffect = {};
   Map<String, GlobalKey<EffectVideoPlayerState>> videoKeys = {};
@@ -156,6 +173,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }));
   }
 
+  /// true means flat second level displayName to tabs, false means use top level displayName
+  bool? _flatTitle;
+
+  get flatTitle {
+    if (_flatTitle == null) {
+      _flatTitle = widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent;
+    }
+    return _flatTitle;
+  }
+
+  bool lastChangeByTap = false;
+
   @override
   void dispose() {
     super.dispose();
@@ -164,6 +193,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     rewardAdsHolder.onDispose();
     userChangeListener.cancel();
     userLoginListener.cancel();
+    itemScrollPositionsListener.itemPositions.removeListener(itemScrollPositionsListen);
   }
 
   @override
@@ -171,6 +201,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.initState();
 
     logEvent(Events.upload_page_loading);
+    itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
     imgContainerSize = ScreenUtil.screenSize.width - $(60);
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
@@ -189,54 +220,110 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     rewardAdsHolder.initHolder();
     recentController = Get.find();
 
-    controller.setLastItemIndex(widget.pos);
-    controller.setLastItemIndex1(widget.pos);
-    if (widget.itemPos != null) {
-      controller.setLastSelectedIndex(widget.itemPos!);
-    } else {
-      controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
-    }
+    // controller.setLastItemIndex(widget.pos);
+    // controller.setLastItemIndex1(widget.pos);
+    // if (widget.itemPos != null) {
+    //   controller.setLastSelectedIndex(widget.itemPos!);
+    // } else {
+    //   controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
+    // }
     imagePicker = ImagePicker();
-    scrollController = ItemScrollController();
-    categoryScrollController = ItemScrollController();
-    if (widget.entrySource == EntrySource.fromRecent) {
-      effectTabController = TabController(length: widget.list.length, vsync: this);
-      effectTabController!.index = controller.lastItemIndex.value;
-    }
-    itemPositionsListener.itemPositions.addListener(() {
-      if (itemPos != ((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index)) {
-        controller.setLastItemIndex1((widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index);
-        try {
-          itemPos = (widget.pos == widget.list.length - 1) ? widget.pos : itemPositionsListener.itemPositions.value.first.index;
-          categoryScrollController.scrollTo(
-            index: (widget.pos == widget.list.length - 1)
-                ? widget.pos
-                : (itemPositionsListener.itemPositions.value.first.index > 0)
-                    ? itemPositionsListener.itemPositions.value.first.index - 1
-                    : 0,
-            duration: Duration(milliseconds: 10),
-          );
-        } catch (error) {
-          print("error");
-          print(error);
+    initTabBar();
+    userManager.refreshUser();
+    autoScrollToSelectedIndex();
+  }
+
+  initTabBar() {
+    titleScrollController = ItemScrollController();
+    itemScrollController = ItemScrollController();
+    itemScrollPositionsListen = () {
+      if (lastChangeByTap) {
+        return;
+      }
+      int first = itemScrollPositionsListener.itemPositions.value.first.index;
+      int last = itemScrollPositionsListener.itemPositions.value.last.index;
+      int scrollPos;
+      if (first > last) {
+        scrollPos = itemScrollPositionsListener.itemPositions.value.last.index;
+      } else {
+        scrollPos = itemScrollPositionsListener.itemPositions.value.first.index;
+      }
+      var firstVisibleData = tabItemList[scrollPos];
+      if (flatTitle) {
+      } else {
+        if (firstVisibleData.categoryIndex != currentTitleIndex) {
+          setState(() {
+            currentTitleIndex = firstVisibleData.categoryIndex;
+          });
+          titleScrollController.jumpTo(index: firstVisibleData.categoryIndex);
         }
       }
-    });
-    userManager.refreshUser();
-    if (widget.entrySource == EntrySource.fromDiscovery) {
-      autoScrollToSelectedIndex();
+    };
+    itemScrollPositionsListener.itemPositions.addListener(itemScrollPositionsListen);
+    tabTitleList.clear();
+    tabItemList.clear();
+    if (flatTitle) {
+      if (widget.entrySource == EntrySource.fromRecent) {
+        tabTitleList = widget.list.map((e) => e.effects.values.toList()[0].displayName).toList();
+        for (int i = 0; i < widget.list.length; i++) {
+          var value = widget.list[i];
+          for (int j = 0; j < value.effects.length; j++) {
+            var effectItem = value.effects.values.toList()[j];
+            tabItemList.add(TabItemInfo(data: effectItem, categoryIndex: i, childIndex: j));
+          }
+        }
+      } else {
+        for (int i = 0; i < widget.list.length; i++) {
+          var element = widget.list[i];
+          for (int j = 0; j < element.effects.length; j++) {
+            var effectItem = element.effects.values.toList()[j];
+            tabItemList.add(TabItemInfo(data: effectItem, categoryIndex: i, childIndex: j));
+            tabTitleList.add(effectItem.displayName);
+          }
+        }
+      }
+    } else {
+      tabTitleList = widget.list.map((e) => e.displayName).toList();
+      for (int i = 0; i < widget.list.length; i++) {
+        var value = widget.list[i];
+        for (int j = 0; j < value.effects.length; j++) {
+          var effectItem = value.effects.values.toList()[j];
+          tabItemList.add(TabItemInfo(data: effectItem, categoryIndex: i, childIndex: j));
+        }
+      }
+    }
+    var effectModel = widget.list[widget.pos];
+    var list = effectModel.effects.values.toList();
+    EffectItem effectItem;
+    if (widget.itemPos != null) {
+      effectItem = list[widget.itemPos!];
+    } else {
+      effectItem = list[effectModel.getDefaultPos()];
+    }
+    var position = tabItemList.findPosition((data) => data.data == effectItem);
+    if (position != null) {
+      if (flatTitle) {
+        currentTitleIndex = position;
+      } else {
+        currentTitleIndex = widget.pos;
+      }
+      currentItemIndex = position;
     }
   }
 
   /// calculate scroll offset in child horizontal list
   void autoScrollToSelectedIndex() {
-    var index = controller.lastSelectedIndex.value;
-    var screenWidth = ScreenUtil.screenSize.width;
-    //remove padding offset and get real rate of selectedIndex in hole child list
-    var d = (screenWidth - $(40)) / screenWidth;
-    var alignment = d * index / 4;
+    int pos;
+    if (widget.entrySource == EntrySource.fromDiscovery) {
+      pos = currentItemIndex;
+    } else {
+      pos = currentTitleIndex;
+    }
     delay(() {
-      scrollController.scrollTo(index: controller.lastItemIndex.value, duration: Duration(milliseconds: 200), alignment: -alignment);
+      if (widget.entrySource == EntrySource.fromDiscovery) {
+        titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
+      }
+      itemScrollController.scrollTo(index: pos, duration: Duration(milliseconds: 400));
     }, milliseconds: 32);
   }
 
@@ -443,11 +530,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> saveToAlbum() async {
-    var category = widget.list[controller.lastItemIndex.value];
-    var effects = category.effects;
-    var keys = effects.keys.toList();
-    var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-    logEvent(Events.result_download, eventValues: {"effect": selectedEffect!.key});
+    var selectedEffect = tabItemList[currentItemIndex].data;
+    logEvent(Events.result_download, eventValues: {"effect": selectedEffect.key});
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
@@ -501,11 +585,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Images.ic_share,
                   width: $(24),
                 ).intoGestureDetector(onTap: () async {
-                  var category = widget.list[controller.lastItemIndex.value];
-                  var effects = category.effects;
-                  var keys = effects.keys.toList();
-                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
+                  var selectedEffect = tabItemList[currentItemIndex].data;
+                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   if (controller.isVideo.value) {
                     controller.changeIsLoading(true);
                     await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
@@ -640,74 +721,111 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     ),
                   ),
                   SizedBox(height: 1.h),
-                  Container(
-                    height: $(42),
-                    child: widget.entrySource == EntrySource.fromRecent
-                        ? Theme(
-                            data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                            child: TabBar(
-                              indicatorSize: TabBarIndicatorSize.label,
-                              indicator: LineTabIndicator(
-                                width: $(20),
-                                strokeCap: StrokeCap.butt,
-                                borderSide: BorderSide(width: $(4), color: ColorConstant.BlueColor),
+                  Scrollbar(
+                    thickness: 0.0,
+                    child: ScrollablePositionedList.separated(
+                      initialScrollIndex: 0,
+                      itemCount: tabTitleList.length,
+                      scrollDirection: Axis.horizontal,
+                      itemScrollController: titleScrollController,
+                      itemPositionsListener: titleScrollPositionsListener,
+                      physics: ClampingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var checked = currentTitleIndex == index;
+                        return Column(
+                          children: [
+                            Text(
+                              tabTitleList[index],
+                              style: TextStyle(
+                                color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                fontSize: $(16),
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
                               ),
-                              labelPadding: EdgeInsets.symmetric(horizontal: $(10)),
-                              isScrollable: true,
-                              padding: EdgeInsets.symmetric(horizontal: $(15)),
-                              labelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w600),
-                              unselectedLabelStyle: TextStyle(fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w400),
-                              tabs: widget.list
-                                  .transfer(
-                                    (e, index) => Text(
-                                      e.effects.values.toList()[0].displayName,
-                                    ).intoContainer(margin: EdgeInsets.only(left: index == 0 ? $(30) : 0)),
-                                  )
-                                  .toList(),
-                              controller: effectTabController,
-                              onTap: (index) {
-                                controller.setLastItemIndex(index);
-                                controller.setLastItemIndex1(index);
-                                controller.setLastSelectedIndex(0);
-                                scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
-                                if (controller.image.value != null) {
-                                  controller.changeIsPhotoSelect(true);
-                                  controller.changeIsLoading(true);
-                                  getCartoon(context);
-                                }
-                              },
-                            ))
-                        : ScrollablePositionedList.builder(
-                            initialScrollIndex: widget.pos,
-                            itemCount: widget.list.length,
-                            scrollDirection: Axis.horizontal,
-                            itemScrollController: categoryScrollController,
-                            physics: ClampingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return _buildTextItem(context, index);
-                            },
-                          ),
-                  ),
-                  Container(
-                    height: $(100),
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                    child: Scrollbar(
-                      thickness: 0.0,
-                      child: ScrollablePositionedList.separated(
-                        initialScrollIndex: widget.pos,
-                        itemCount: widget.list.length,
-                        scrollDirection: Axis.horizontal,
-                        itemScrollController: scrollController,
-                        itemPositionsListener: itemPositionsListener,
-                        physics: ClampingScrollPhysics(),
-                        itemBuilder: (context, itemIndex) {
-                          return _buildCarouselItem(context, itemIndex);
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Container();
-                        },
-                      ),
+                            ),
+                            Container(
+                              height: 4,
+                              margin: EdgeInsets.only(top: 4),
+                              width: tabTitleList[index].length * 4,
+                              color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                            ),
+                          ],
+                        ).intoGestureDetector(onTap: () {
+                          if (checked) {
+                            return;
+                          }
+                          lastChangeByTap = true;
+                          setState(() {
+                            currentTitleIndex = index;
+                            var scrollPos;
+                            if (flatTitle) {
+                              scrollPos = index;
+                              currentItemIndex = index;
+                            } else {
+                              var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
+                              var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
+                              scrollPos = findPosition;
+                            }
+                            if (scrollPos > tabItemList.length - 4) {
+                              itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                            } else {
+                              itemScrollController.jumpTo(index: scrollPos);
+                            }
+                          });
+                          delay(() {
+                            lastChangeByTap = false;
+                          }, milliseconds: 32);
+                        }).intoContainer(
+                            margin: EdgeInsets.only(
+                          left: index == 0 ? 30 : 8,
+                          right: index == tabItemList.length - 1 ? 30 : 8,
+                        ));
+                      },
+                      separatorBuilder: (context, index) => Container(),
                     ),
+                  ).intoContainer(
+                    height: $(36),
+                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+                  ),
+                  Scrollbar(
+                    thickness: 0.0,
+                    child: ScrollablePositionedList.separated(
+                      initialScrollIndex: 0,
+                      itemCount: tabItemList.length,
+                      scrollDirection: Axis.horizontal,
+                      itemScrollController: itemScrollController,
+                      itemPositionsListener: itemScrollPositionsListener,
+                      physics: ClampingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return _buildTabItem(context, index).intoContainer(
+                            margin: EdgeInsets.only(
+                          left: index == 0 ? 30 : 0,
+                          right: index == tabItemList.length - 1 ? 30 : 0,
+                        ));
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
+                          return Container();
+                        } else {
+                          var current = tabItemList[index];
+                          var next = tabItemList[index + 1];
+                          if (next.categoryIndex == current.categoryIndex) {
+                            return Container();
+                          } else {
+                            return VerticalDivider(
+                              color: ColorConstant.HintColor,
+                              width: $(6),
+                              indent: $(12),
+                              endIndent: $(12),
+                              thickness: 2,
+                            );
+                          }
+                        }
+                      },
+                    ),
+                  ).intoContainer(
+                    height: itemWidth + (8),
+                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
                   ),
                   SizedBox(height: $(12)),
                 ],
@@ -715,6 +833,98 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             )),
       ),
     );
+  }
+
+  Widget _buildTabItem(BuildContext context, int index) {
+    var effect = tabItemList[index];
+    var effectItem = effect.data;
+    var checked = currentItemIndex == index;
+    Widget icon = OutlineWidget(
+        radius: $(8),
+        strokeWidth: 4,
+        gradient: LinearGradient(
+          colors: [checked ? Color(0xffE31ECD) : Colors.transparent, checked ? Color(0xff243CFF) : Colors.transparent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular($(5)),
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: _createEffectModelIcon(context, effectItem: effectItem, checked: checked),
+            ),
+            Visibility(
+              visible: (effectItem.key.endsWith("-transform")),
+              child: Positioned(
+                right: $(3.6),
+                top: $(1),
+                child: Image.asset(
+                  ImagesConstant.ic_video,
+                  height: $(18),
+                  width: $(18),
+                ),
+              ),
+            ),
+            if (controller.isChecked.value && isSupportOriginalFace(effectItem))
+              Positioned(
+                bottom: $(1),
+                left: $(3.6),
+                child: controller.image.value != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular($(36)),
+                        child: Image.file(
+                          controller.image.value as File,
+                          fit: BoxFit.fill,
+                          height: $(18),
+                          width: $(18),
+                        ),
+                      )
+                    : SizedBox(),
+              ),
+          ],
+        ).intoContainer(
+          padding: EdgeInsets.all($(4)),
+        ));
+
+    return icon.intoGestureDetector(onTap: () async {
+      lastChangeByTap = true;
+      int lastTitlePos = currentTitleIndex;
+      if (flatTitle) {
+        setState(() {
+          currentItemIndex = index;
+          currentTitleIndex = currentItemIndex;
+        });
+      } else {
+        setState(() {
+          currentItemIndex = index;
+          currentTitleIndex = effect.categoryIndex;
+        });
+      }
+
+      correctTitlePosition(lastTitlePos);
+
+      if (controller.image.value != null) {
+        controller.changeIsPhotoSelect(true);
+        controller.changeIsLoading(true);
+        getCartoon(context);
+      }
+      delay(() {
+        lastChangeByTap = false;
+      }, milliseconds: 32);
+    });
+  }
+
+  correctTitlePosition(int lastPos) {
+    if (!(lastPos > tabTitleList.length - 5 && currentTitleIndex > tabTitleList.length - 5)) {
+      titleScrollController.jumpTo(index: currentTitleIndex);
+    }
+  }
+
+  correctItemPosition(int lastPos) {
+    if (!(lastPos > tabItemList.length - 5 && currentItemIndex > tabItemList.length - 5)) {
+      itemScrollController.jumpTo(index: currentItemIndex);
+    }
   }
 
   Widget buildSuccessFunctions(BuildContext context) {
@@ -767,11 +977,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               )
                   .intoGestureDetector(
                 onTap: () async {
-                  var category = widget.list[controller.lastItemIndex.value];
-                  var effects = category.effects;
-                  var keys = effects.keys.toList();
-                  var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect!.key});
+                  var selectedEffect = tabItemList[currentItemIndex].data;
+                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
                     if (controller.isVideo.value) {
                       var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
@@ -799,30 +1006,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     ).intoContainer(margin: EdgeInsets.only(top: $(25), left: $(23), right: $(23))).visibility(visible: controller.isPhotoSelect.value);
   }
 
-  Widget _buildCarouselItem(BuildContext context, int itemIndex) {
-    var effects = widget.list[itemIndex].effects;
-    var keys = effects.keys.toList();
-
-    return Container(
-      padding: EdgeInsets.only(left: 0, right: 0, top: $(7.2), bottom: $(7.2)),
-      margin: EdgeInsets.only(
-        left: itemIndex == 0 ? $(30) : 0,
-        right: itemIndex == widget.list.length - 1 ? $(30) : 0,
-      ),
-      child: ListView.builder(
-        itemCount: keys.length,
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Obx(() => _buildListItem(context, index, itemIndex));
-        },
-      ),
-    );
-  }
-
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
-    var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
     if (effectItem.imageUrl.contains("-transform")) {
       var key = videoKeys[effectItem.imageUrl];
       if (key == null) {
@@ -835,8 +1019,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         key.currentState?.pause();
       }
       return Container(
-        width: width,
-        height: width,
+        width: itemWidth,
+        height: itemWidth,
         child: EffectVideoPlayer(
           url: effectItem.imageUrl,
           key: key,
@@ -848,17 +1032,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
-    var width = (ScreenUtil.screenSize.width - 5 * $(12)) / 4;
-
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: BoxFit.fill,
-      height: width,
-      width: width,
+      height: itemWidth,
+      width: itemWidth,
       placeholder: (context, url) {
         return Container(
-          height: width,
-          width: width,
+          height: itemWidth,
+          width: itemWidth,
           child: Center(
             child: CircularProgressIndicator(),
           ),
@@ -866,84 +1048,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       },
       errorWidget: (context, url, error) {
         return Container(
-          height: width,
-          width: width,
+          height: itemWidth,
+          width: itemWidth,
           child: Center(
             child: CircularProgressIndicator(),
           ),
         );
       },
     );
-  }
-
-  Widget _buildListItem(BuildContext context, int index, int itemIndex) {
-    var effects = widget.list[itemIndex].effects;
-    var keys = effects.keys.toList();
-    var effectItem = effects[keys[index]];
-    var checked = (controller.lastSelectedIndex.value == index && controller.lastItemIndex.value == itemIndex);
-    Widget icon = OutlineWidget(
-        radius: $(10.8),
-        strokeWidth: 3,
-        gradient: LinearGradient(
-          colors: [checked ? Color(0xffE31ECD) : Colors.transparent, checked ? Color(0xff243CFF) : Colors.transparent],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular($(8)),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: _createEffectModelIcon(context, effectItem: effectItem!, checked: checked),
-            ),
-            Visibility(
-              visible: (effectItem.key.endsWith("-transform")),
-              child: Positioned(
-                right: $(3.6),
-                top: $(1),
-                child: Image.asset(
-                  ImagesConstant.ic_video,
-                  height: $(18),
-                  width: $(18),
-                ),
-              ),
-            ),
-            if (controller.isChecked.value && isSupportOriginalFace(effectItem))
-              Positioned(
-                bottom: $(1),
-                left: $(3.6),
-                child: controller.image.value != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular($(36)),
-                        child: Image.file(
-                          controller.image.value as File,
-                          fit: BoxFit.fill,
-                          height: $(18),
-                          width: $(18),
-                        ),
-                      )
-                    : SizedBox(),
-              ),
-          ],
-        ).intoContainer(
-          padding: EdgeInsets.all($(3.2)),
-        ));
-
-    return icon.intoGestureDetector(onTap: () async {
-      controller.setLastSelectedIndex(index);
-      controller.setLastItemIndex(itemIndex);
-      controller.setLastItemIndex1(itemIndex);
-      if (widget.entrySource == EntrySource.fromRecent) {
-        effectTabController?.index = itemIndex;
-      } else {
-        categoryScrollController.scrollTo(index: itemIndex, duration: Duration(milliseconds: 10));
-      }
-      if (controller.image.value != null) {
-        controller.changeIsPhotoSelect(true);
-        controller.changeIsLoading(true);
-        getCartoon(context);
-      }
-    });
   }
 
   bool _judgeAndShowAdvertisement({
@@ -1077,12 +1189,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var category = widget.list[controller.lastItemIndex.value];
-    var effects = category.effects;
-    var keys = effects.keys.toList();
-    var selectedEffect = effects[keys[controller.lastSelectedIndex.value]];
-
-    String aiHost = _getAiHostByStyle(selectedEffect!);
+    var category = widget.list[currentTitleIndex];
+    var selectedEffect = tabItemList[currentItemIndex].data;
+    String aiHost = _getAiHostByStyle(selectedEffect);
 
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.key + "-original_face" : selectedEffect.key;
 
@@ -1336,38 +1445,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
     }
-  }
-
-  Widget _buildTextItem(BuildContext context, int index) {
-    return Obx(() {
-      var item = widget.list[index].effects.values.toList()[0];
-      return GestureDetector(
-        onTap: () async {
-          controller.setLastItemIndex1(index);
-          scrollController.scrollTo(index: index, duration: Duration(milliseconds: 10));
-        },
-        child: Padding(
-          padding: EdgeInsets.only(left: index == 0 ? $(30) : $(6), right: $(6), top: $(6)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              TitleTextWidget(
-                widget.entrySource == EntrySource.fromRecent ? item.displayName : widget.list[index].displayName,
-                (index == controller.lastItemIndex1.value) ? ColorConstant.White : ColorConstant.EffectGrey,
-                (index == controller.lastItemIndex1.value) ? FontWeight.w600 : FontWeight.w400,
-                $(16),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: $(4)),
-                width: $(18),
-                height: $(4),
-                color: (index == controller.lastItemIndex1.value) ? ColorConstant.BlueColor : Colors.transparent,
-              ),
-            ],
-          ),
-        ),
-      );
-    });
   }
 
   bool isSupportOriginalFace(EffectItem effect) {

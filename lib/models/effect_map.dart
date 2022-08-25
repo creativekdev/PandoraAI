@@ -22,7 +22,7 @@ class EffectMap {
 }
 
 extension EffectMapEx on EffectMap {
-  List<EffectModel>? targetSeries(String childKey) {
+  MapEntry<String, List<EffectModel>>? targetSeries(String childKey) {
     for (var key in data.keys) {
       var list = effectList(key);
       var pick = list.pick((e) {
@@ -30,7 +30,7 @@ extension EffectMapEx on EffectMap {
         return item != null;
       });
       if (pick != null) {
-        return list;
+        return MapEntry(key, list);
       }
     }
     return null;

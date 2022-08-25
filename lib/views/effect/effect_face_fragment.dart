@@ -163,6 +163,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
           list: list,
           pos: index,
           hasOriginalCheck: widget.hasOriginalFace,
+          tabString: widget.tabString,
         ),
       ),
     );

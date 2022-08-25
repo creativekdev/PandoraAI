@@ -197,6 +197,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           pos: index,
           itemPos: data.pos,
           hasOriginalCheck: false,
+          tabString: widget.tabString,
         ),
       ),
     );

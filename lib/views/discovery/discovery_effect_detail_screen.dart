@@ -329,13 +329,14 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
           }
           var targetSeries = value.targetSeries(key);
           if (targetSeries == null) {
+            CommonExtension().showToast("This template is not available now");
             return;
           }
           EffectItem? effectItem;
           int index = 0;
           int itemIndex = 0;
-          for (int i = 0; i < targetSeries.length; i++) {
-            var model = targetSeries[i];
+          for (int i = 0; i < targetSeries.value.length; i++) {
+            var model = targetSeries.value[i];
             var list = model.effects.values.toList();
             for (int j = 0; j < list.length; j++) {
               var item = list[j];
@@ -351,8 +352,8 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
             return;
           }
           logEvent(Events.choose_home_cartoon_type, eventValues: {
-            "category": targetSeries[index].key,
-            "style": targetSeries[index].style,
+            "category": targetSeries.value[index].key,
+            "style": targetSeries.value[index].style,
             "page": 'discovery',
           });
           Navigator.push(
@@ -360,11 +361,12 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
             MaterialPageRoute(
               settings: RouteSettings(name: "/ChoosePhotoScreen"),
               builder: (context) => ChoosePhotoScreen(
-                list: targetSeries,
+                list: targetSeries.value,
                 pos: index,
                 itemPos: itemIndex,
                 entrySource: EntrySource.fromDiscovery,
                 hasOriginalCheck: false,
+                tabString: targetSeries.key,
               ),
             ),
           );

@@ -128,6 +128,7 @@ class EffectRecentFragmentState extends State<EffectRecentFragment> with Automat
           pos: index,
           itemPos: 0,
           entrySource: EntrySource.fromRecent,
+          tabString: 'recent',
         ),
       ),
     );

@@ -1,4 +1,3 @@
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/models/effect_map.dart';

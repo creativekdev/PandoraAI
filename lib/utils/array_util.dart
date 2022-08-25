@@ -1,5 +1,8 @@
+import 'package:cartoonizer/Common/importFile.dart';
+
 typedef TransAction<T, S> = T Function(S data);
 typedef TransAction2<T, S> = T Function(S data, int index);
+
 ///
 /// extensions feature dart > 2.7.0
 extension ArrayExtension<T> on List<T> {
@@ -54,5 +57,14 @@ extension ArrayExtension<T> on List<T> {
       result.add(action(this[i], i));
     }
     return result;
+  }
+
+  int? findPosition(TransAction<bool, T> action) {
+    for (int i = 0; i < this.length; i++) {
+      if (action(this[i])) {
+        return i;
+      }
+    }
+    return null;
   }
 }

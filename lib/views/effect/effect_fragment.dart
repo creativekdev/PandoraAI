@@ -108,15 +108,15 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
         _tabController.index = currentIndex;
       }
     });
-    tabConfig[index].title;
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${tabConfig[index].title}');
+    var title = tabConfig[index].title;
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${title}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     if (currentTime - lastTime > 5000) {
       logEvent(Events.effect_child_tab_switch, eventValues: {
-        'type': tabConfig[index].title,
+        'type': title,
       });
     }
-    cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${tabConfig[index].title}', currentTime);
+    cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${title}', currentTime);
   }
 
   void setIndex(int index) {

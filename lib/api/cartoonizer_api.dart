@@ -270,7 +270,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<EffectMap?> getHomeConfig() async {
-    var baseEntity = await get("/tool/cartoonize_config/v3");
+    var baseEntity = await get("/tool/cartoonize_config/v4");
     if (baseEntity == null) return null;
     return EffectMap.fromJson(baseEntity.data);
   }
