@@ -752,7 +752,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           var scrollPos;
                           if (flatTitle) {
                             scrollPos = index;
-                            currentItemIndex = index;
+                            if (!controller.isPhotoSelect.value) {
+                              currentItemIndex = index;
+                            }
                           } else {
                             var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
                             var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
@@ -1169,6 +1171,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
+  EffectModel? findCategory(EffectItem effectItem) {
+    EffectModel? category;
+    var selectedEffect = tabItemList[currentItemIndex].data;
+    bool find = false;
+    for (var element in widget.list) {
+      if (find) {
+        break;
+      }
+      for (var value in element.effects.values) {
+        if (value == selectedEffect) {
+          find = true;
+          category = element;
+          break;
+        }
+      }
+    }
+    return category;
+  }
+
   Future<void> getCartoon(BuildContext context, {bool rebuild = false}) async {
     refreshLastBuildType();
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -1177,8 +1198,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       CommonExtension().showToast(StringConstant.no_internet_msg);
     }
 
-    var category = widget.list[currentTitleIndex];
     var selectedEffect = tabItemList[currentItemIndex].data;
+    EffectModel? category = findCategory(selectedEffect);
+    if (category == null) {
+      controller.changeIsLoading(false);
+      CommonExtension().showToast(StringConstant.commonFailedToast);
+    }
     String aiHost = _getAiHostByStyle(selectedEffect);
 
     var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.key + "-original_face" : selectedEffect.key;
@@ -1227,7 +1252,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             "success": 2,
             "effect": selectedEffect.key,
             "sticker_name": selectedEffect.stickerName,
-            "category": category.key,
+            "category": category!.key,
             "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
           });
         },
@@ -1417,7 +1442,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "success": resultSuccess,
           "effect": selectedEffect.key,
           "sticker_name": selectedEffect.stickerName,
-          "category": category.key,
+          "category": category!.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
         if (widget.entrySource != EntrySource.fromRecent) {
