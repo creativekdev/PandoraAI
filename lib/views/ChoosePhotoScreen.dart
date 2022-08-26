@@ -220,13 +220,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     rewardAdsHolder.initHolder();
     recentController = Get.find();
 
-    // controller.setLastItemIndex(widget.pos);
-    // controller.setLastItemIndex1(widget.pos);
-    // if (widget.itemPos != null) {
-    //   controller.setLastSelectedIndex(widget.itemPos!);
-    // } else {
-    //   controller.setLastSelectedIndex(widget.list[widget.pos].getDefaultPos());
-    // }
     imagePicker = ImagePicker();
     initTabBar();
     userManager.refreshUser();
@@ -237,6 +230,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     titleScrollController = ItemScrollController();
     itemScrollController = ItemScrollController();
     itemScrollPositionsListen = () {
+      if (!itemScrollController.isAttached) {
+        return;
+      }
       if (lastChangeByTap) {
         return;
       }
@@ -317,12 +313,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (widget.entrySource == EntrySource.fromDiscovery) {
       pos = currentItemIndex;
     } else {
-      pos = currentTitleIndex;
+      pos = currentItemIndex - tabItemList[currentItemIndex].childIndex;
     }
     delay(() {
-      if (widget.entrySource == EntrySource.fromDiscovery) {
-        titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
-      }
+      titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
       itemScrollController.scrollTo(index: pos, duration: Duration(milliseconds: 400));
     }, milliseconds: 32);
   }
@@ -721,113 +715,107 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     ),
                   ),
                   SizedBox(height: 1.h),
-                  Scrollbar(
-                    thickness: 0.0,
-                    child: ScrollablePositionedList.separated(
-                      initialScrollIndex: 0,
-                      itemCount: tabTitleList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemScrollController: titleScrollController,
-                      itemPositionsListener: titleScrollPositionsListener,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        var checked = currentTitleIndex == index;
-                        return Column(
-                          children: [
-                            Text(
-                              tabTitleList[index],
-                              style: TextStyle(
-                                color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                                fontSize: $(16),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
+                  ScrollablePositionedList.separated(
+                    initialScrollIndex: 0,
+                    itemCount: tabTitleList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemScrollController: titleScrollController,
+                    itemPositionsListener: titleScrollPositionsListener,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      var checked = currentTitleIndex == index;
+                      return Column(
+                        children: [
+                          Text(
+                            tabTitleList[index],
+                            style: TextStyle(
+                              color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                              fontSize: $(16),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
                             ),
-                            Container(
-                              height: 4,
-                              margin: EdgeInsets.only(top: 4),
-                              width: tabTitleList[index].length * 4,
-                              color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
-                            ),
-                          ],
-                        ).intoGestureDetector(onTap: () {
-                          if (checked) {
-                            return;
+                          ),
+                          Container(
+                            height: 4,
+                            margin: EdgeInsets.only(top: 4),
+                            width: tabTitleList[index].length * 4,
+                            color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                          ),
+                        ],
+                      ).intoGestureDetector(onTap: () {
+                        if (checked) {
+                          return;
+                        }
+                        lastChangeByTap = true;
+                        setState(() {
+                          currentTitleIndex = index;
+                          var scrollPos;
+                          if (flatTitle) {
+                            scrollPos = index;
+                            currentItemIndex = index;
+                          } else {
+                            var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
+                            var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
+                            scrollPos = findPosition;
                           }
-                          lastChangeByTap = true;
-                          setState(() {
-                            currentTitleIndex = index;
-                            var scrollPos;
-                            if (flatTitle) {
-                              scrollPos = index;
-                              currentItemIndex = index;
-                            } else {
-                              var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
-                              var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
-                              scrollPos = findPosition;
-                            }
-                            if (scrollPos > tabItemList.length - 4) {
-                              itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                            } else {
-                              itemScrollController.jumpTo(index: scrollPos);
-                            }
-                          });
-                          delay(() {
-                            lastChangeByTap = false;
-                          }, milliseconds: 32);
-                        }).intoContainer(
-                            margin: EdgeInsets.only(
-                          left: index == 0 ? 30 : 8,
-                          right: index == tabItemList.length - 1 ? 30 : 8,
-                        ));
-                      },
-                      separatorBuilder: (context, index) => Container(),
-                    ),
+                          if (scrollPos > tabItemList.length - 4) {
+                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                          } else {
+                            itemScrollController.jumpTo(index: scrollPos);
+                          }
+                        });
+                        delay(() {
+                          lastChangeByTap = false;
+                        }, milliseconds: 32);
+                      }).intoContainer(
+                          margin: EdgeInsets.only(
+                        left: index == 0 ? 30 : 8,
+                        right: index == tabItemList.length - 1 ? 30 : 8,
+                      ));
+                    },
+                    separatorBuilder: (context, index) => Container(),
                   ).intoContainer(
                     height: $(36),
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+                    margin: EdgeInsets.only(bottom: 10),
                   ),
-                  Scrollbar(
-                    thickness: 0.0,
-                    child: ScrollablePositionedList.separated(
-                      initialScrollIndex: 0,
-                      itemCount: tabItemList.length,
-                      scrollDirection: Axis.horizontal,
-                      itemScrollController: itemScrollController,
-                      itemPositionsListener: itemScrollPositionsListener,
-                      physics: ClampingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return _buildTabItem(context, index).intoContainer(
-                            margin: EdgeInsets.only(
-                          left: index == 0 ? 30 : 0,
-                          right: index == tabItemList.length - 1 ? 30 : 0,
-                        ));
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
+                  ScrollablePositionedList.separated(
+                    initialScrollIndex: 0,
+                    itemCount: tabItemList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemScrollController: itemScrollController,
+                    itemPositionsListener: itemScrollPositionsListener,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return _buildTabItem(context, index).intoContainer(
+                          margin: EdgeInsets.only(
+                        left: index == 0 ? 30 : 0,
+                        right: index == tabItemList.length - 1 ? 30 : 0,
+                      ));
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
+                        return Container();
+                      } else {
+                        var current = tabItemList[index];
+                        var next = tabItemList[index + 1];
+                        if (next.categoryIndex == current.categoryIndex) {
                           return Container();
                         } else {
-                          var current = tabItemList[index];
-                          var next = tabItemList[index + 1];
-                          if (next.categoryIndex == current.categoryIndex) {
-                            return Container();
-                          } else {
-                            return VerticalDivider(
-                              color: ColorConstant.HintColor,
-                              width: $(6),
-                              indent: $(12),
-                              endIndent: $(12),
-                              thickness: 2,
-                            );
-                          }
+                          return VerticalDivider(
+                            color: ColorConstant.HintColor,
+                            width: $(6),
+                            indent: $(12),
+                            endIndent: $(12),
+                            thickness: 2,
+                          );
                         }
-                      },
-                    ),
+                      }
+                    },
                   ).intoContainer(
                     height: itemWidth + (8),
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 10),
+                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                   ),
-                  SizedBox(height: $(12)),
+                  SizedBox(height: Platform.isAndroid ? $(12) : 0),
                 ],
               ),
             )),
