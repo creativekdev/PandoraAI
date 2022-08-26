@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
@@ -271,7 +272,8 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
     } else {
-      return CachedNetworkImage(
+      return CachedNetworkImageUtils.custom(
+        context: context,
         imageUrl: resource.url ?? '',
         fit: BoxFit.cover,
         cacheManager: CachedImageCacheManager(),

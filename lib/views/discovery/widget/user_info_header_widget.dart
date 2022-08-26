@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 class UserInfoHeaderWidget extends StatelessWidget {
@@ -23,8 +25,9 @@ class UserInfoHeaderWidget extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(64)),
-          child: CachedNetworkImage(
-            imageUrl: avatar,
+          child: CachedNetworkImageUtils.custom(
+            context: context,
+            imageUrl: avatar.avatar(),
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Text(
@@ -51,5 +54,4 @@ class UserInfoHeaderWidget extends StatelessWidget {
       ],
     );
   }
-
 }

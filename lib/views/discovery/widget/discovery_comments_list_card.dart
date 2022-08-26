@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -42,8 +43,8 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(64)),
-          child: CachedNetworkImage(
-            imageUrl: data.userAvatar,
+          child: CachedNetworkImageUtils.custom(
+            imageUrl: data.userAvatar.avatar(),
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Text(
@@ -61,6 +62,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             width: $(45),
             height: $(45),
             cacheManager: CachedImageCacheManager(),
+            context: context,
           ),
         ).intoContainer(width: $(45), height: $(45)).intoGestureDetector(onTap: () {
           UserManager userManager = AppDelegate.instance.getManager();
