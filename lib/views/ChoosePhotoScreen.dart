@@ -771,14 +771,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         }, milliseconds: 32);
                       }).intoContainer(
                           margin: EdgeInsets.only(
-                        left: index == 0 ? 30 : 8,
-                        right: index == tabItemList.length - 1 ? 30 : 8,
+                        left: index == 0 ? $(30) : $(12),
+                        right: index == tabItemList.length - 1 ? $(30) : $(12),
                       ));
                     },
                     separatorBuilder: (context, index) => Container(),
                   ).intoContainer(
                     height: $(36),
-                    margin: EdgeInsets.only(bottom: 10),
+                    margin: EdgeInsets.only(bottom: $(10)),
                   ),
                   ScrollablePositionedList.separated(
                     initialScrollIndex: 0,
@@ -790,8 +790,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     itemBuilder: (context, index) {
                       return _buildTabItem(context, index).intoContainer(
                           margin: EdgeInsets.only(
-                        left: index == 0 ? 30 : 0,
-                        right: index == tabItemList.length - 1 ? 30 : 0,
+                        left: index == 0 ? $(30) : 0,
+                        right: index == tabItemList.length - 1 ? $(30) : 0,
                       ));
                     },
                     separatorBuilder: (BuildContext context, int index) {
