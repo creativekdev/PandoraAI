@@ -71,6 +71,7 @@ class UserManager extends BaseManager {
         _rateNoticeOperator.init();
       } else {
         _rateNoticeOperator.dispose();
+        _rateNoticeOperator.init();
       }
     });
   }

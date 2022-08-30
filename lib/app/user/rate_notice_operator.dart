@@ -33,17 +33,13 @@ class RateNoticeOperator {
   RateNoticeOperator({required this.cacheManager});
 
   init() {
-    if (cacheManager.rateConfigKey() == null) {
-      configEntity = null;
+    var json = cacheManager.getJson(cacheManager.rateConfigKey());
+    if (json == null) {
+      configEntity = RateConfigEntity();
+      configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
+      saveConfig(configEntity!);
     } else {
-      var json = cacheManager.getJson(cacheManager.rateConfigKey()!);
-      if (json == null) {
-        configEntity = RateConfigEntity();
-        configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
-        saveConfig(configEntity!);
-      } else {
-        configEntity = jsonConvert.convert(json);
-      }
+      configEntity = jsonConvert.convert(json);
     }
   }
 
@@ -56,9 +52,6 @@ class RateNoticeOperator {
 
   Future<bool> saveConfig(RateConfigEntity configEntity) async {
     var rateConfigKey = cacheManager.rateConfigKey();
-    if (rateConfigKey == null) {
-      return true;
-    }
     return cacheManager.setJson(rateConfigKey, configEntity.toJson());
   }
 
@@ -109,6 +102,7 @@ class RateNoticeOperator {
   judgeAndShowNotice(BuildContext context) {
     print('-----------------------------rateConfig: ${configEntity?.print()}');
     if (shouldRate()) {
+      logEvent(Events.rate_dialog_loading);
       showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -196,6 +190,7 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
+          logEvent(Events.rate_no_thanks);
           Navigator.pop(context, false);
         }),
       ],

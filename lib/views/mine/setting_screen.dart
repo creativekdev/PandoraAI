@@ -101,7 +101,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   barrierDismissible: true,
                   builder: (context) => FeedbackDialog(),
                 );
-              }).offstage(offstage: userManager.isNeedLogin),
+              }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
