@@ -27,20 +27,14 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
 
   @override
   Widget build(BuildContext context) {
-    var size = (parentWidth - $(45)) / 2;
-    return Card(
-      color: ColorConstant.CardColor,
-      elevation: $(1),
-      shadowColor: Color.fromRGBO(0, 0, 0, 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular($(12)),
-      ),
+    var size = (parentWidth - $(28)) / 2;
+    return ClipRRect(
       child: Stack(
         children: [
-          TextUtil.isEmpty(data.thumbnail)
-              ? Column(
-                  children: [
-                    Wrap(
+          Column(
+            children: [
+              TextUtil.isEmpty(data.thumbnail)
+                  ? Wrap(
                       direction: Axis.horizontal,
                       children: data.thumbnails.map((e) {
                         var effect = data.effects[e]!;
@@ -59,31 +53,32 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                       }).toList(),
                     ).intoContainer(
                       alignment: Alignment.centerLeft,
+                    )
+                  : CachedNetworkImageUtils.custom(
+                      context: context,
+                      imageUrl: data.thumbnail,
+                      width: parentWidth,
+                      height: parentWidth,
+                    ).intoContainer(
                       padding: EdgeInsets.all($(6)),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
-                          ),
-                          Image.asset(
-                            Images.ic_arrow_right,
-                            width: $(18),
-                          ),
-                        ],
-                      ),
+              Padding(
+                padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
+                    ),
+                    Image.asset(
+                      Images.ic_arrow_right,
+                      width: $(18),
                     ),
                   ],
-                )
-              : CachedNetworkImageUtils.custom(
-                  context: context,
-                  imageUrl: data.thumbnail,
-                  width: parentWidth,
-                  height: parentWidth,
                 ),
+              ),
+            ],
+          ),
           tag == EffectTag.UNDEFINED
               ? Container()
               : Tag(
@@ -95,9 +90,12 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                   width: 35,
                   height: 35,
                   gravity: TagGravity.topLeft,
+                ).intoContainer(
+                  padding: EdgeInsets.all($(6)),
                 ),
         ],
       ),
+      borderRadius: BorderRadius.circular(6),
     );
   }
 }

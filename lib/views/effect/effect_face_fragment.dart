@@ -100,7 +100,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
+    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
