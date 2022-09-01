@@ -28,74 +28,74 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
   @override
   Widget build(BuildContext context) {
     var size = (parentWidth - $(28)) / 2;
-    return ClipRRect(
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              TextUtil.isEmpty(data.thumbnail)
-                  ? Wrap(
-                      direction: Axis.horizontal,
-                      children: data.thumbnails.map((e) {
-                        var effect = data.effects[e]!;
-                        return ClipRRect(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          borderRadius: BorderRadius.all(Radius.circular($(6))),
-                          child: urlWidget(
-                            context,
-                            width: size,
-                            height: size,
-                            url: effect.imageUrl,
-                          ),
-                        ).intoContainer(
-                          padding: EdgeInsets.all($(6)),
-                        );
-                      }).toList(),
-                    ).intoContainer(
-                      alignment: Alignment.centerLeft,
-                    )
-                  : CachedNetworkImageUtils.custom(
+    return Stack(
+      children: [
+        Column(
+          children: [
+            TextUtil.isEmpty(data.thumbnail)
+                ? Wrap(
+                    direction: Axis.horizontal,
+                    children: data.thumbnails.map((e) {
+                      var effect = data.effects[e]!;
+                      return ClipRRect(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        borderRadius: BorderRadius.all(Radius.circular($(6))),
+                        child: urlWidget(
+                          context,
+                          width: size,
+                          height: size,
+                          url: effect.imageUrl,
+                        ),
+                      ).intoContainer(
+                        padding: EdgeInsets.all($(6)),
+                      );
+                    }).toList(),
+                  ).intoContainer(
+                    alignment: Alignment.centerLeft,
+                  )
+                : ClipRRect(
+                    child: CachedNetworkImageUtils.custom(
                       context: context,
                       imageUrl: data.thumbnail,
                       width: parentWidth,
                       height: parentWidth,
-                    ).intoContainer(
-                      padding: EdgeInsets.all($(6)),
                     ),
-              Padding(
-                padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
-                    ),
-                    Image.asset(
-                      Images.ic_arrow_right,
-                      width: $(18),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          tag == EffectTag.UNDEFINED
-              ? Container()
-              : Tag(
-                  child: Text(
-                    tag.value(),
-                    style: TextStyle(color: Colors.white, fontSize: 11),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                  ).intoContainer(
+                    padding: EdgeInsets.all($(6)),
                   ),
-                  color: tag.color(),
-                  width: 35,
-                  height: 35,
-                  gravity: TagGravity.topLeft,
-                ).intoContainer(
-                  padding: EdgeInsets.all($(6)),
+            Padding(
+              padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
+                  ),
+                  Image.asset(
+                    Images.ic_arrow_right,
+                    width: $(18),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        tag == EffectTag.UNDEFINED
+            ? Container()
+            : Tag(
+                child: Text(
+                  tag.value(),
+                  style: TextStyle(color: Colors.white, fontSize: 11),
                 ),
-        ],
-      ),
-      borderRadius: BorderRadius.circular(6),
+                color: tag.color(),
+                width: 35,
+                height: 35,
+                gravity: TagGravity.topLeft,
+              ).intoContainer(
+                padding: EdgeInsets.all($(6)),
+              ),
+      ],
     );
   }
 }
