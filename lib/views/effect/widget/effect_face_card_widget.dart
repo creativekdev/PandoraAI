@@ -70,11 +70,11 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 17, align: TextAlign.start),
+                    child: TitleTextWidget(data.displayName, ColorConstant.BtnTextColor, FontWeight.w600, 14, align: TextAlign.start),
                   ),
                   Image.asset(
                     Images.ic_arrow_right,
-                    width: $(18),
+                    width: $(16),
                   ),
                 ],
               ),
