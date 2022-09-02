@@ -27,10 +27,19 @@ class ExceptionHandler {
   }
 
   onDioError(DioError e) {
-    if (e.response?.statusCode == 401) {
+    if (e.response == null) {
+      onError(e);
+    } else if (e.response?.statusCode == 401) {
       onTokenExpired(e.response?.statusCode, e.response?.statusMessage);
     } else {
-      onError(e);
+      var data = e.response!.data;
+      if (data == null) {
+        CommonExtension().showToast(StringConstant.commonFailedToast);
+      } else if (data is Map) {
+        CommonExtension().showToast(data['message'] ?? StringConstant.commonFailedToast);
+      } else {
+        CommonExtension().showToast(data.toString());
+      }
     }
   }
 

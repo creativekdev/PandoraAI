@@ -29,6 +29,18 @@ class CartoonizerApi extends BaseRequester {
   /// login normal
   Future<BaseEntity?> login(Map<String, dynamic> params) => post('/user/login', params: params);
 
+  Future<BaseEntity?> signUp({
+    required String name,
+    required String email,
+    required String password,
+  }) =>
+      post('/user/signup/simple', params: {
+        'name': name,
+        "email": email,
+        "password": password,
+        "type": 'email',
+      });
+
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
     String? token = '';
@@ -258,7 +270,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<EffectMap?> getHomeConfig() async {
-    var baseEntity = await get("/tool/cartoonize_config/v3");
+    var baseEntity = await get("/tool/cartoonize_config/v4");
     if (baseEntity == null) return null;
     return EffectMap.fromJson(baseEntity.data);
   }

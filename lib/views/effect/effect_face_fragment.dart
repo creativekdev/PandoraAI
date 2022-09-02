@@ -66,7 +66,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     );
     delay(() {
       bannerAdsHolder.initHolder();
-      refreshUserInfo();
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
@@ -101,7 +100,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(40);
+    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -164,6 +163,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
           list: list,
           pos: index,
           hasOriginalCheck: widget.hasOriginalFace,
+          tabString: widget.tabString,
         ),
       ),
     );

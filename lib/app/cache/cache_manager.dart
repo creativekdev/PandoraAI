@@ -6,7 +6,6 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
   static const keyRecentEffects = "RECENT_EFFECTS";
@@ -33,11 +32,8 @@ class CacheManager extends BaseManager {
     _storageOperator.initializeDir();
   }
 
-  String? rateConfigKey() {
-    if (AppDelegate.instance.getManager<UserManager>().user == null) {
-      return null;
-    }
-    return '${_rateConfig}:${AppDelegate.instance.getManager<UserManager>().user!.id}';
+  String rateConfigKey() {
+    return _rateConfig;
   }
 
   String getString(String key) {

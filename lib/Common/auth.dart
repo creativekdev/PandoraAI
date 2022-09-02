@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:crypto/crypto.dart';
+
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/api/api.dart';
 
 /// Returns the sha256 hash of [input] in hex notation.
 String sha256ofString(String input) {
@@ -45,8 +44,7 @@ Future<bool> signInWithApple() async {
     idToken: appleCredential.identityToken,
     rawNonce: rawNonce,
   );
-  var token = oauthCredential.idToken;
-  var tokenId = oauthCredential.idToken;
+
   print(oauthCredential.idToken);
 
   // Sign in the user with Firebase. If the nonce we generated earlier does
@@ -54,14 +52,15 @@ Future<bool> signInWithApple() async {
   var appleInfo = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   var appleUser = appleInfo.user;
 
+  var email = appleUser?.email ?? "";
+  var emptyName = email.isEmpty ? '' : email.split("@")[0];
   var body = {
-    "apple_id": appleInfo.user?.uid ?? "",
-    "email": appleInfo.user?.email ?? "",
-    "name": appleInfo.user?.displayName ?? "",
-    "type": APP_TYPE,
+    "apple_id": appleUser?.uid ?? "",
+    "email": email,
+    "name": appleUser?.displayName ?? emptyName,
+    "type": "apple_id",
   };
 
-  var tempUrl = "${Config.instance.host}/signup/oauth/apple/callback";
   final tokenResponse = await API.post("/signup/oauth/apple/callback", body: body);
 
   if (tokenResponse.statusCode == 200) {

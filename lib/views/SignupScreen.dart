@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/input_text.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -29,6 +33,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
 
+  late CartoonizerApi api;
   late ScrollController scrollController;
   double blueAreaHeight = 100;
 
@@ -36,6 +41,7 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     logEvent(Events.signup_page_loading);
     super.initState();
+    api = CartoonizerApi().bindState(this);
     scrollController = ScrollController();
     scrollController.addListener(() {
       if (scrollController.offset < 0) {
@@ -131,14 +137,46 @@ class _SignupScreenState extends State<SignupScreen> {
     return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
+  signUpNormal() {
+    var email = emailController.text.trim();
+    var pass = passController.text.trim();
+    if (!email.contains('@')) {
+      CommonExtension().showToast("Please input valid email!");
+      return;
+    }
+    if (TextUtil.isEmpty(pass)) {
+      CommonExtension().showToast("Please input password!");
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+    var split = email.split('@');
+    String name = '';
+    if (split.length > 0) {
+      name = split[0];
+    }
+    api.signUp(name: name, email: email, password: pass).then((value) async {
+      setState(() {
+        isLoading = false;
+      });
+      if (value != null) {
+        userManager.refreshUser(context: context).then((value) {
+          logEvent(Events.signup, eventValues: {"method": 'email', "signup_through": GetStorage().read('signup_through') ?? ""});
+        });
+      }
+    });
+  }
+
   @override
   void dispose() {
     emailController.dispose();
     nameController.dispose();
     passController.dispose();
     cPassController.dispose();
-    super.dispose();
+    api.unbind();
     scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -222,8 +260,92 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 3.h,
+                    SizedBox(height: 3.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          Images.ic_email,
+                          height: $(28),
+                        ),
+                        Container(
+                          width: 2,
+                          height: $(30),
+                          color: ColorConstant.BorderColor,
+                          margin: EdgeInsets.only(left: 10, right: 12, top: 10, bottom: 10),
+                        ),
+                        Expanded(
+                          child: InputText(
+                            controller: emailController,
+                            showClear: true,
+                            decoration: InputDecoration(hintText: StringConstant.email, border: InputBorder.none),
+                            textInputAction: TextInputAction.next,
+                          ),
+                        ),
+                      ],
+                    ).intoContainer(
+                      padding: EdgeInsets.only(left: 16, right: 10),
+                      margin: EdgeInsets.symmetric(horizontal: $(24)),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          Images.ic_password,
+                          height: $(28),
+                        ),
+                        Container(
+                          width: 2,
+                          height: $(30),
+                          color: ColorConstant.BorderColor,
+                          margin: EdgeInsets.only(left: 10, right: 12, top: 10, bottom: 10),
+                        ),
+                        Expanded(
+                          child: InputText(
+                            controller: passController,
+                            passwordInput: true,
+                            passwordIcon: Image.asset(Images.ic_eye, height: $(20)).intoContainer(padding: const EdgeInsets.all(10)),
+                            plainIcon: Image.asset(Images.ic_eye_close, height: $(20)).intoContainer(padding: const EdgeInsets.all(10)),
+                            decoration: InputDecoration(hintText: StringConstant.password, border: InputBorder.none),
+                          ),
+                        ),
+                      ],
+                    ).intoContainer(
+                      padding: EdgeInsets.only(left: 16, right: 10),
+                      margin: EdgeInsets.symmetric(horizontal: $(24), vertical: $(20)),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+                    ),
+                    ButtonWidget(StringConstant.sign_up).intoGestureDetector(onTap: () {
+                      signUpNormal();
+                    }),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: ColorConstant.DividerColor,
+                              thickness: 0.1.h,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          TitleTextWidget(StringConstant.or, ColorConstant.PrimaryColor, FontWeight.w500, 12),
+                          SizedBox(
+                            width: 3.w,
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: ColorConstant.DividerColor,
+                              thickness: 0.1.h,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     if (Platform.isIOS)
                       GestureDetector(
@@ -281,7 +403,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
-                            "type": APP_TYPE
+                            "type": "google_signup"
                           });
                           final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
                           if (tokenResponse.statusCode == 200) {

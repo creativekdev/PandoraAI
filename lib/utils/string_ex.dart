@@ -1,10 +1,13 @@
-import 'dart:io';
+import 'package:common_utils/common_utils.dart';
 
 extension StringEx on String {
   avatar() {
-    // if (Platform.isIOS && this.contains('googleusercontent.com')) {
-    //   return '';
-    // }
+    if (TextUtil.isEmpty(this)) {
+      return this;
+    }
+    if (!this.startsWith('http')) {
+      return 'https://s3-us-west-2.amazonaws.com/superboostaa/$this';
+    }
     return this;
   }
 }

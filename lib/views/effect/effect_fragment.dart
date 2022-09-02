@@ -70,7 +70,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       setState(() {});
     });
     refreshProVisible();
-    delay(() => userManager.refreshUser(context: context));
   }
 
   @override
@@ -109,15 +108,15 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
         _tabController.index = currentIndex;
       }
     });
-    tabConfig[index].title;
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${tabConfig[index].title}');
+    var title = tabConfig[index].title;
+    var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${title}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     if (currentTime - lastTime > 5000) {
       logEvent(Events.effect_child_tab_switch, eventValues: {
-        'type': tabConfig[index].title,
+        'type': title,
       });
     }
-    cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${tabConfig[index].title}', currentTime);
+    cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${title}', currentTime);
   }
 
   void setIndex(int index) {
@@ -264,31 +263,23 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
               leading: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  OutlineWidget(
-                    strokeWidth: 1,
-                    radius: $(6),
-                    gradient: LinearGradient(
-                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                    child: ShaderMask(
-                      shaderCallback: (Rect bounds) => LinearGradient(
-                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(Offset.zero & bounds.size),
-                      blendMode: BlendMode.srcATop,
-                      child: Text(
-                        StringConstant.pro,
-                        style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
-                      ).intoContainer(
-                        alignment: Alignment.center,
-                        width: $(40),
-                        padding: EdgeInsets.symmetric(vertical: $(4)),
-                      ),
-                    ),
-                  ).intoGestureDetector(onTap: () {
+                  Text(
+                    StringConstant.pro,
+                    style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
+                  )
+                      .intoContainer(
+                          width: $(45),
+                          padding: EdgeInsets.symmetric(vertical: $(4)),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular($(6)),
+                            gradient: LinearGradient(
+                              colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ))
+                      .intoGestureDetector(onTap: () {
                     userManager.doOnLogin(context, callback: () {
                       if (Platform.isIOS) {
                         Navigator.push(

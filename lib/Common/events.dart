@@ -53,6 +53,8 @@ class Events {
   static String reward_advertisement_loading = "reward_advertisement_loading";
   static String effect_child_tab_switch = "effect_child_tab_switch";
   static String feed_back_loading = "feed_back_loading";
+  static String rate_dialog_loading = "rate_dialog_loading";
+  static String rate_no_thanks= "rate_no_thanks";
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {

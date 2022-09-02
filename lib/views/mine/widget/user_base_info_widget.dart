@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 class UserBaseInfoWidget extends StatelessWidget {
@@ -22,7 +23,7 @@ class UserBaseInfoWidget extends StatelessWidget {
           child: userInfo != null && !TextUtil.isEmpty(avatar)
               ? CachedNetworkImageUtils.custom(
                   context: context,
-                  imageUrl: avatar,
+                  imageUrl: avatar.avatar(),
                   height: $(56),
                   width: $(56),
                   errorWidget: (context, url, error) {

@@ -4,17 +4,19 @@ class EffectModel {
   late String style = '';
   late Map<String, EffectItem> effects;
   late String defaultEffect;
-  late List<dynamic> thumbnails;
+  late List<String> thumbnails;
+  late String thumbnail;
   late String tag;
 
   EffectModel({
     required this.key,
     required this.defaultEffect,
     Map<String, EffectItem>? effects,
-    List<dynamic>? thumbnails,
+    List<String>? thumbnails,
     this.displayName = '',
     this.style = '',
     this.tag = '',
+    this.thumbnail = '',
   }) {
     this.effects = effects ?? {};
     this.thumbnails = thumbnails ?? [];
@@ -25,10 +27,11 @@ class EffectModel {
     defaultEffect = (json['default_effect'] ?? '').toString();
     var effectsMap = (json['effects'] ?? {}) as Map<String, dynamic>;
     effects = effectsMap.map((key, value) => MapEntry(key, EffectItem.fromJson(value)));
-    thumbnails = json['thumbnails'] ?? [];
+    thumbnails = ((json['thumbnails'] ?? []) as List).map((e) => e.toString()).toList();
     displayName = (json['display_name'] ?? '').toString();
     style = (json['style'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
+    thumbnail = (json['thumbnail'] ?? '').toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -40,6 +43,7 @@ class EffectModel {
     data['display_name'] = displayName;
     data['style'] = style;
     data['tag'] = tag;
+    data['thumbnail'] = thumbnail;
     return data;
   }
 }

@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
@@ -227,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 3.h,
                     ),
-                    TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next,
+                    TextInputWidget(StringConstant.email, Images.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next,
                         TextInputType.emailAddress, false, emailController),
                     SizedBox(
                       height: 1.5.h,
@@ -454,7 +455,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
                             "token_type": "Bearer",
                             "access_type": "offline",
-                            "type": APP_TYPE
+                            "type": "google_signup"
                           });
                           final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
                           if (tokenResponse.statusCode == 200) {
@@ -523,29 +524,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TitleTextWidget(StringConstant.no_account, ColorConstant.White, FontWeight.w400, 12),
-                        GestureDetector(
-                          onTap: () => {
-                            GetStorage().write('signup_through', ''),
-                            if (prefixPage == 'signup')
-                              {Navigator.pop(context)}
-                            else
-                              {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    settings: RouteSettings(name: "/SignupScreen"),
-                                    builder: (context) => SignupScreen(),
-                                  ),
-                                )
-                              }
+                        Text(
+                          StringConstant.sign_up,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
+                        ).intoGestureDetector(
+                          onTap: () {
+                            GetStorage().write('signup_through', '');
+                            if (prefixPage == 'signup') {
+                              Navigator.pop(context);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: RouteSettings(name: "/SignupScreen"),
+                                  builder: (context) => SignupScreen(),
+                                ),
+                              );
+                            }
                           },
-                          child: Text(
-                            StringConstant.sign_up,
-                            textAlign: TextAlign.center,
-                            style:
-                                TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
-                          ),
-                        )
+                        ),
                       ],
                     ),
                     SizedBox(

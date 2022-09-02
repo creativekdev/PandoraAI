@@ -10,12 +10,6 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-String get APP_TYPE {
-  String platform = Platform.isIOS ? 'ios' : 'android';
-  String type = 'app_cartoonizer_${platform}';
-  return type;
-}
-
 Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
   if (!isLogout) {
     var onlineModel = await AppDelegate.instance.getManager<UserManager>().refreshUser(context: context);

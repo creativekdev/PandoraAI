@@ -72,7 +72,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     });
     delay(() {
       buildDataList();
-      refreshUserInfo();
     });
   }
 
@@ -198,6 +197,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           pos: index,
           itemPos: data.pos,
           hasOriginalCheck: false,
+          tabString: widget.tabString,
         ),
       ),
     );

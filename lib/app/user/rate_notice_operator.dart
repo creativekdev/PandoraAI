@@ -16,8 +16,8 @@ const int day = hour * 24;
 // in production
 const int maxSwitchCount = 10;
 const int maxDuration = 2 * day;
-const int nextActivatePositive = 2160;// 90 * 24; hour
-const int nextActivateNegative = 720;// 30 * 24; hour
+const int nextActivatePositive = 2160; // 90 * 24; hour
+const int nextActivateNegative = 720; // 30 * 24; hour
 
 // in development
 // const int maxSwitchCount = 3;
@@ -33,17 +33,13 @@ class RateNoticeOperator {
   RateNoticeOperator({required this.cacheManager});
 
   init() {
-    if (cacheManager.rateConfigKey() == null) {
-      configEntity = null;
+    var json = cacheManager.getJson(cacheManager.rateConfigKey());
+    if (json == null) {
+      configEntity = RateConfigEntity();
+      configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
+      saveConfig(configEntity!);
     } else {
-      var json = cacheManager.getJson(cacheManager.rateConfigKey()!);
-      if (json == null) {
-        configEntity = RateConfigEntity();
-        configEntity!.firstLoginDate = DateTime.now().millisecondsSinceEpoch;
-        saveConfig(configEntity!);
-      } else {
-        configEntity = jsonConvert.convert(json);
-      }
+      configEntity = jsonConvert.convert(json);
     }
   }
 
@@ -54,7 +50,10 @@ class RateNoticeOperator {
     }
   }
 
-  Future<bool> saveConfig(RateConfigEntity configEntity) => cacheManager.setJson(cacheManager.rateConfigKey()!, configEntity.toJson());
+  Future<bool> saveConfig(RateConfigEntity configEntity) async {
+    var rateConfigKey = cacheManager.rateConfigKey();
+    return cacheManager.setJson(rateConfigKey, configEntity.toJson());
+  }
 
   bool shouldRate() {
     if (configEntity == null) {
@@ -103,6 +102,7 @@ class RateNoticeOperator {
   judgeAndShowNotice(BuildContext context) {
     print('-----------------------------rateConfig: ${configEntity?.print()}');
     if (shouldRate()) {
+      logEvent(Events.rate_dialog_loading);
       showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -170,7 +170,7 @@ class RateNoticeOperator {
             .intoGestureDetector(onTap: () {
           showDialog<bool>(
             context: context,
-            barrierDismissible: false,
+            barrierDismissible: true,
             builder: (context) => FeedbackDialog(),
           ).then((value) {
             if (value ?? false) {
@@ -190,6 +190,7 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
+          logEvent(Events.rate_no_thanks);
           Navigator.pop(context, false);
         }),
       ],

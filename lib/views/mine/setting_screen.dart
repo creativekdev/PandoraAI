@@ -8,6 +8,7 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
@@ -88,6 +89,18 @@ class _SettingScreenState extends AppState<SettingScreen> {
               functions(StringConstant.privacy_policy1, onTap: () {
                 logEvent(Events.open_privacy);
                 launchURL("https://socialbook.io/privacy");
+              }),
+              Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
+              functions(StringConstant.feedback, onTap: () {
+                logEvent(Events.feed_back_loading);
+                showDialog<bool>(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) => FeedbackDialog(),
+                );
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),

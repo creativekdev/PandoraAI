@@ -71,6 +71,7 @@ class UserManager extends BaseManager {
         _rateNoticeOperator.init();
       } else {
         _rateNoticeOperator.dispose();
+        _rateNoticeOperator.init();
       }
     });
   }
@@ -106,13 +107,13 @@ class UserManager extends BaseManager {
       user = value.user!;
       if (context != null && user!.status != 'activated') {
         // remove all route and push email verification screen
-        Navigator.pushAndRemoveUntil(
+        await Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
             settings: RouteSettings(name: "/EmailVerificationScreen"),
           ),
-          ModalRoute.withName('/EmailVerificationScreen'),
+          ModalRoute.withName('/HomeScreen'),
         );
       }
     }
@@ -123,7 +124,7 @@ class UserManager extends BaseManager {
     var baseEntity = await CartoonizerApi().login({
       'email': email,
       'password': password,
-      'type': APP_TYPE,
+      // 'type': APP_TYPE,
     });
     if (baseEntity != null) {
       await refreshUser();
