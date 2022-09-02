@@ -52,10 +52,12 @@ Future<bool> signInWithApple() async {
   var appleInfo = await FirebaseAuth.instance.signInWithCredential(oauthCredential);
   var appleUser = appleInfo.user;
 
+  var email = appleUser?.email ?? "";
+  var emptyName = email.isEmpty ? '' : email.split("@")[0];
   var body = {
     "apple_id": appleUser?.uid ?? "",
-    "email": appleUser?.email ?? "",
-    "name": appleUser?.displayName ?? "",
+    "email": email,
+    "name": appleUser?.displayName ?? emptyName,
     "type": "apple_id",
   };
 
