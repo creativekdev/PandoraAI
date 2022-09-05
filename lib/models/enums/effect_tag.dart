@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/images-res.dart';
+
 ///auto generate code, please do not modify;
 enum EffectTag {
   NEW,
@@ -32,12 +34,12 @@ extension EffectTagEx on EffectTag {
     }
   }
 
-  color() {
+  image() {
     switch (this) {
       case EffectTag.NEW:
-        return Color(0xffff9500);
+        return Images.ic_tag_new;
       case EffectTag.HOT:
-        return Color(0xffff0000);
+        return Images.ic_tag_hot;
       case EffectTag.UNDEFINED:
         return null;
     }

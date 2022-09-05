@@ -83,18 +83,9 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
         ),
         tag == EffectTag.UNDEFINED
             ? Container()
-            : Tag(
-                child: Text(
-                  tag.value(),
-                  style: TextStyle(color: Colors.white, fontSize: 11),
-                ),
-                color: tag.color(),
-                width: 35,
-                height: 35,
-                gravity: TagGravity.topLeft,
-              ).intoContainer(
-                padding: EdgeInsets.all($(6)),
-              ),
+            : Image.asset(
+                tag.image(),
+              ).intoContainer(width: $(44), padding: EdgeInsets.all($(6))),
       ],
     );
   }

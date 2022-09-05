@@ -63,16 +63,9 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
         ),
         tag == EffectTag.UNDEFINED
             ? Container()
-            : Tag(
-                child: Text(
-                  tag.value(),
-                  style: TextStyle(color: Colors.white, fontSize: 11),
-                ),
-                color: tag.color(),
-                width: 35,
-                height: 35,
-                gravity: TagGravity.topLeft,
-              ),
+            : Image.asset(
+                tag.image(),
+              ).intoContainer(width: $(32)),
       ],
     ).intoGestureDetector(onTap: () {
       onTap(data);
