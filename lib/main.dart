@@ -43,7 +43,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  if(kReleaseMode) {
+  if (kReleaseMode) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   }
 
@@ -112,28 +112,31 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           barrierDismissible: false,
           dismissAfterConfirm: false,
           isCancel: false,
-          content: Column(children: [
-            Image(image: AssetImage(ImagesConstant.ic_update_image)),
-            Padding(
-                padding: EdgeInsets.fromLTRB(20, 8, 20, 16),
-                child: Column(
-                  children: [
-                    Text(
-                      StringConstant.new_update_dialog_title,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                    SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: Text(
-                        StringConstant.new_update_dialog_content,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black, height: 1.3),
+          content: ClipRRect(
+            borderRadius: BorderRadius.circular($(8)),
+            child: Column(children: [
+              Image(image: AssetImage(ImagesConstant.ic_update_image)),
+              Padding(
+                  padding: EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  child: Column(
+                    children: [
+                      Text(
+                        StringConstant.new_update_dialog_title,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
-                    )
-                  ],
-                )),
-          ]),
+                      SizedBox(height: 24),
+                      Padding(
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        child: Text(
+                          StringConstant.new_update_dialog_content,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black, height: 1.3),
+                        ),
+                      )
+                    ],
+                  )),
+            ]),
+          ),
           confirmText: StringConstant.update_now,
           confirmCallback: () {
             var url = Config.getStoreLink();
@@ -187,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     ThirdpartManager? manager;
-    if(AppDelegate.instance.exists<ThirdpartManager>()) {
+    if (AppDelegate.instance.exists<ThirdpartManager>()) {
       manager = AppDelegate.instance.getManager<ThirdpartManager>();
     }
     switch (state) {
