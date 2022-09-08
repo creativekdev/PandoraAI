@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/selected_button.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
@@ -389,7 +390,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                             ? Container(
                                 width: imageSize!.width,
                                 height: imageSize!.height,
-                                child: CachedNetworkImage(
+                                child: CachedNetworkImageUtils.custom(
+                                  context: context,
                                   imageUrl: originalUrl,
                                   fit: BoxFit.cover,
                                 ),

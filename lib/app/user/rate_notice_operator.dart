@@ -152,8 +152,9 @@ class RateNoticeOperator {
         )
             .intoGestureDetector(onTap: () {
           logEvent(Events.rate_us);
-          var url = Config.getStoreLink();
-          launchURL(url);
+          rateApp();
+          // var url = Config.getStoreLink(toRate: true);
+          // launchURL(url);
           Navigator.pop(context, true);
         }),
         Container(height: 1, color: ColorConstant.LineColor),

@@ -4,23 +4,30 @@ import 'package:flutter/foundation.dart';
 // ANDROID_CHANNEL -> 单独发布的时候，需要指定一个 channel
 // flutter run --dart-define=ANDROID_CHANNEL=apk
 const String ANDROID_CHANNEL = String.fromEnvironment('ANDROID_CHANNEL', defaultValue: '');
-const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id1604123460';
-const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=io.socialbook.cartoonizer';
 const String IOS_APP_ID = '1604123460';
+const String IOS_LINK = 'https://apps.apple.com/us/app/socialbook-cartoonizer/id$IOS_APP_ID';
+const String ANDROID_STORE_ID = 'io.socialbook.cartoonizer';
+const String ANDROID_LINK = 'https://play.google.com/store/apps/details?id=$ANDROID_STORE_ID';
 const String APP_NAME = 'ppm';
 const String KOCHAVA_ANDROID_ID = 'koprofilepicmaker-cartoon-photo-2wd2';
 const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
+const String PLATFORM_CHANNEL = 'io.socialbook/cartoonizer';
+
 class AdMobConfig {
   // static String get BANNER_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
   static String get BANNER_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';
+
   // static String get INTERSTITIAL_AD_ID => 'ca-app-pub-3940256099942544/8691691433';
   static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
+
   // static String get DISCOVERY_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
   static String get DISCOVERY_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6102802285' : 'ca-app-pub-8401689731796078/9945860280';
+
   // static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用adid
   static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
+
   // static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用id
-  static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582': 'ca-app-pub-8401689731796078/4291918781';
+  static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582' : 'ca-app-pub-8401689731796078/4291918781';
 }
 
 abstract class BaseConfig {
@@ -86,11 +93,11 @@ class Config {
     }
   }
 
-  static String getStoreLink() {
+  static String getStoreLink({bool toRate = false}) {
     if (Platform.isIOS) {
-      return IOS_LINK;
+      return toRate ? IOS_LINK + "?action=write-review" : IOS_LINK;
     } else {
-      return ANDROID_LINK;
+      return toRate ? ANDROID_LINK + "&reviewId=0" : ANDROID_LINK;
     }
   }
 }

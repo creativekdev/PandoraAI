@@ -35,8 +35,8 @@ class CachedNetworkImageUtils {
     int? memCacheWidth,
     int? memCacheHeight,
     String? cacheKey,
-    int? maxWidthDiskCache,
-    int? maxHeightDiskCache,
+    int? maxWidthDiskCache = 1024,
+    int? maxHeightDiskCache = 1024,
   }) {
     if (cacheManager == null) {
       cacheManager = CachedImageCacheManager();

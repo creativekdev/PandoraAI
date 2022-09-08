@@ -8,7 +8,6 @@ import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -58,6 +57,8 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
+        dataController.loadData();
+        userManager.refreshUser();
         setState(() {});
       }
     });
@@ -144,7 +145,10 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   return Center(
                     child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg, ColorConstant.BtnTextColor,
                         FontWeight.w400, 12.sp),
-                  );
+                  ).intoGestureDetector(onTap: () {
+                    _.loadData();
+                    userManager.refreshUser();
+                  });
                 });
           } else {
             recentController.updateOriginData(_.data!.allEffectList());
@@ -215,7 +219,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
           }
         }
       },
-    );
+    ).intoContainer(color: Colors.black);
   }
 
   Widget header(BuildContext context) => ClipRect(

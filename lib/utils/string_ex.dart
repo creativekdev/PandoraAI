@@ -2,7 +2,7 @@ import 'package:common_utils/common_utils.dart';
 
 extension StringEx on String {
   avatar() {
-    if (TextUtil.isEmpty(this)) {
+    if (TextUtil.isEmpty(this.trim())) {
       return this;
     }
     if (!this.startsWith('http')) {

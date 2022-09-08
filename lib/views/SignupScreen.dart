@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
@@ -65,7 +66,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool isLoading = false;
   var token;
   var tokenId;
-  static const platform = MethodChannel('io.socialbook/cartoonizer');
+  static const platform = MethodChannel(PLATFORM_CHANNEL);
 
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow

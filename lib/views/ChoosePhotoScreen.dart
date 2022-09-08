@@ -10,6 +10,7 @@ import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
@@ -648,6 +649,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                             } else {
                                               controller.changeIsChecked(true);
                                             }
+                                            if (controller.isPhotoSelect.value) {
+                                              controller.changeIsLoading(true);
+                                              getCartoon(context);
+                                            }
                                           }),
                                           SizedBox(width: 1.5.w),
                                           TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
@@ -1022,7 +1027,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
-    return CachedNetworkImage(
+    return CachedNetworkImageUtils.custom(
+      context: context,
       imageUrl: imageUrl,
       fit: BoxFit.fill,
       height: itemWidth,
@@ -1196,6 +1202,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (connectivityResult == ConnectivityResult.none) {
       controller.changeIsLoading(false);
       CommonExtension().showToast(StringConstant.no_internet_msg);
+      return;
     }
 
     var selectedEffect = tabItemList[currentItemIndex].data;
@@ -1203,6 +1210,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (category == null) {
       controller.changeIsLoading(false);
       CommonExtension().showToast(StringConstant.commonFailedToast);
+      return;
     }
     String aiHost = _getAiHostByStyle(selectedEffect);
 
@@ -1252,7 +1260,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             "success": 2,
             "effect": selectedEffect.key,
             "sticker_name": selectedEffect.stickerName,
-            "category": category!.key,
+            "category": category.key,
             "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
           });
         },
@@ -1266,7 +1274,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           imageUrl = await uploadCompressedImage();
         }
 
-        if (imageUrl == "") return;
+        if (imageUrl == "") {
+          controller.changeIsLoading(false);
+          EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
+          return;
+        }
 
         var sharedPrefs = await SharedPreferences.getInstance();
         final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
@@ -1442,7 +1454,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "success": resultSuccess,
           "effect": selectedEffect.key,
           "sticker_name": selectedEffect.stickerName,
-          "category": category!.key,
+          "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
         if (widget.entrySource != EntrySource.fromRecent) {

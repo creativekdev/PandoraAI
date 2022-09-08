@@ -14,7 +14,7 @@ class ColorConstant {
   static const BlueColor = Color.fromRGBO(62, 96, 255, 1);
   static const BackgroundColor = Color(0xff161719);
   static const BackgroundColorBlur = Color.fromARGB(204, 22, 23, 25);
-  static const CardColor = Color.fromRGBO(35, 37, 40, 1);
+  static const CardColor = Color(0xFF070809);
   static const ShadowColor = Color.fromRGBO(62, 96, 255, 0.5);
   static const RadialColor1 = Color.fromRGBO(55, 83, 250, 1);
   static const RadialColor2 = Color.fromRGBO(125, 102, 252, 1);
