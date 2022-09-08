@@ -530,7 +530,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
-      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true);
+      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, true);
       controller.changeIsLoading(false);
       videoPath = result as String;
       if (result != '') {
@@ -584,7 +584,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   if (controller.isVideo.value) {
                     controller.changeIsLoading(true);
-                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, false).then((value) async {
                       controller.changeIsLoading(false);
                       videoPath = value as String;
                       if (value != "") {
@@ -773,8 +773,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                   }
                                   if (scrollPos > tabItemList.length - 4) {
                                     itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                                    // itemScrollController.scrollTo(index: tabItemList.length - 4, duration: Duration(milliseconds: 200));
                                   } else {
                                     itemScrollController.jumpTo(index: scrollPos);
+                                    // itemScrollController.scrollTo(index: scrollPos, duration: Duration(milliseconds: 200));
                                   }
                                 });
                                 delay(() {
@@ -984,7 +986,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
                     if (controller.isVideo.value) {
-                      var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
+                      var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
                       ShareDiscoveryScreen.push(
                         context,
                         effectKey: selectedEffect.key,
@@ -1234,7 +1236,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1333,7 +1335,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1405,7 +1407,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1486,7 +1488,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   String _getAiHostByStyle(EffectItem effect) {
     var server = effect.server;
-    return userManager.aiServers[server] ?? Config.instance.apiHost;
+    return userManager.aiServers[server] ?? Config.instance.host;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {
