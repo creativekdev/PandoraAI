@@ -259,7 +259,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/SocialBookdotio");
+                        launchURL("https://twitter.com/profilepicmak3r");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_twitter,
