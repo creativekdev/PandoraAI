@@ -8,7 +8,7 @@ import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
-import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/account/LoginScreen.dart';
 
 import 'rate_notice_operator.dart';
 

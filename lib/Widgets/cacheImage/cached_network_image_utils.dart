@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/widget_extensions.dart';
 import 'package:cartoonizer/utils/screen_util.dart';
 import 'package:common_utils/common_utils.dart';
@@ -46,7 +47,7 @@ class CachedNetworkImageUtils {
         return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter();
       };
     }
-    if (TextUtil.isEmpty(imageUrl)) {
+    if (TextUtil.isEmpty(imageUrl.trim())) {
       if (errorWidget == null) {
         return Container(width: width, height: height);
       } else {

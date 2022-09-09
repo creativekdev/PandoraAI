@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:common_utils/common_utils.dart';
 
 extension StringEx on String {
@@ -9,5 +11,13 @@ extension StringEx on String {
       return 'https://s3-us-west-2.amazonaws.com/superboostaa/$this';
     }
     return this;
+  }
+
+  get cartoonizeApi {
+    if (this == Config.instance.host) {
+      return '$this/api/tool/image/cartoon';
+    } else {
+      return '$this/api/image/cartoonize';
+    }
   }
 }

@@ -24,6 +24,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
@@ -1311,7 +1312,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'hide_watermark': 1,
             };
             selectedEffect.handleApiParams(dataBody);
-            final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
+            final cartoonizeResponse = await API.post(aiHost.cartoonizeApi, body: dataBody);
             if (ignoreResult) {
               controller.changeIsLoading(false);
               return;

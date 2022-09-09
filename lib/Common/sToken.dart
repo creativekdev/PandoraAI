@@ -2,14 +2,18 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:crypto/crypto.dart';
 
-
 String sToken(Map<String, dynamic> params) {
   var keys = params.keys.toList();
   keys.sort();
 
   var str = "x";
   for (var i = 0; i < keys.length; i++) {
-    str += keys[i] + params[keys[i]].toString();
+    var value = params[keys[i]];
+    if (value is List || value is Map) {
+      str += keys[i] + jsonEncode(value);
+    } else {
+      str += keys[i] + value.toString();
+    }
   }
   var content = new Utf8Encoder().convert('socialbook');
   var md5 = crypto.md5;

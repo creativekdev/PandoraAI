@@ -13,7 +13,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
-import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';

@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/EditProfileScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
@@ -125,20 +127,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           },
                                                         ),
                                                       )
-                                                    : Image.network(
-                                                        (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownAvatar() : "",
+                                                    : CachedNetworkImageUtils.custom(
+                                                        context: context,
+                                                        imageUrl: (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownAvatar() : "",
                                                         width: 40.w,
                                                         height: 40.w,
                                                         fit: BoxFit.fill,
-                                                        errorBuilder: (context, error, stackTrace) {
+                                                        errorWidget: (context, url, error) {
                                                           return Image.asset(
-                                                            ImagesConstant.ic_demo1,
+                                                            Images.ic_demo1,
                                                             fit: BoxFit.fill,
                                                             width: 40.w,
                                                             height: 40.w,
                                                           );
-                                                        },
-                                                      ),
+                                                        }),
                                               ),
                                             ),
                                           ),
@@ -167,7 +169,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   SizedBox(
                                     height: 2.h,
                                   ),
-                                  TitleTextWidget((snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownEmail() : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
+                                  TitleTextWidget(
+                                      (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownEmail() : "", ColorConstant.LightTextColor, FontWeight.w400, 14.sp),
                                   SizedBox(
                                     height: 2.h,
                                   ),

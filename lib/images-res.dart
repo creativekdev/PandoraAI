@@ -56,6 +56,8 @@ class Images {
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
    static const String ic_no_watermark = 'assets/images/ic_no_watermark.png';
    static const String ic_password = 'assets/images/ic_password.png';
+   static const String ic_password_hide = 'assets/images/ic_password_hide.png';
+   static const String ic_password_show = 'assets/images/ic_password_show.png';
    static const String ic_policy = 'assets/images/ic_policy.png';
    static const String ic_premium = 'assets/images/ic_premium.png';
    static const String ic_purchase_emoji = 'assets/images/ic_purchase_emoji.png';
@@ -80,6 +82,11 @@ class Images {
    static const String ic_share_tiktok = 'assets/images/ic_share_tiktok.png';
    static const String ic_share_twitter = 'assets/images/ic_share_twitter.png';
    static const String ic_share_whatsapp = 'assets/images/ic_share_whatsapp.png';
+   static const String ic_sign_apple = 'assets/images/ic_sign_apple.png';
+   static const String ic_sign_google = 'assets/images/ic_sign_google.png';
+   static const String ic_sign_instagram = 'assets/images/ic_sign_instagram.png';
+   static const String ic_sign_tiktok = 'assets/images/ic_sign_tiktok.png';
+   static const String ic_sign_youtube = 'assets/images/ic_sign_youtube.png';
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_success = 'assets/images/ic_success.png';

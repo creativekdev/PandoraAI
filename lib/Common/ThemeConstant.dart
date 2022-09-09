@@ -40,4 +40,5 @@ class ColorConstant {
   static const WatchAdColor = Color(0xff243cff);
   static const MineBackgroundColor = Color(0xff080809);
   static const SysMsgIconColor = Color(0xff5856D6);
+  static const loginTitleColor = Color(0xff909090);
 }
