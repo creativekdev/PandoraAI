@@ -24,6 +24,7 @@ class MsgListState extends AppState<MsgListScreen> {
   MsgManager msgManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -119,8 +120,10 @@ class MsgListState extends AppState<MsgListScreen> {
             readAll();
           },
         ).visibility(visible: msgManager.unreadCount != 0),
+        scrollController: scrollController,
       ),
       body: EasyRefresh.custom(
+        scrollController: scrollController,
         controller: _refreshController,
         enableControlFinishRefresh: true,
         enableControlFinishLoad: false,

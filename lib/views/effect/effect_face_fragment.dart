@@ -130,7 +130,8 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     double parentWidth,
   ) {
     var data = list[index];
-    if (index == 2) {
+    int adIndex = widget.tabString == 'face' ? 1 : 2;
+    if (index == adIndex) {
       return Column(
         children: [
           _buildMERCAd(),

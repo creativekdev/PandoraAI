@@ -142,10 +142,12 @@ extension WidgetExtension on Widget {
   GestureDetector intoGestureDetector({
     Key? key,
     GestureTapCallback? onTap,
+    GestureTapCallback? onDoubleTap,
     GestureLongPressCallback? onLongPress,
   }) =>
       GestureDetector(
         onTap: onTap,
+        onDoubleTap: onDoubleTap,
         onLongPress: onLongPress,
         child: this,
       );

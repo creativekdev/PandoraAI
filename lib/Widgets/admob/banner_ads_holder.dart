@@ -124,15 +124,15 @@ class BannerAdsHolder extends WidgetAdsHolder {
     if (!_isLoaded || closeAds) {
       return Container();
     }
-    if (adWidget == null) {
-      adWidget = AdWidget(ad: _inlineAdaptiveAd!);
-    }
+    // if (adWidget == null) {
+    //   adWidget = AdWidget(ad: _inlineAdaptiveAd!);
+    // }
     return Stack(
       children: [
         Container(
           width: _adWidth,
           height: (_adSize?.height ?? $(80)).toDouble(),
-          child: adWidget,
+          child: AdWidget(ad: _inlineAdaptiveAd!),
         ),
         Align(
           child: Icon(

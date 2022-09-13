@@ -253,11 +253,17 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
             SizedBox(height: $(8)),
           ],
-        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(onTap: () {}),
+        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(
+            onTap: () {},
+            onDoubleTap: Platform.isIOS
+                ? () {
+                    EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabId.id()));
+                  }
+                : null),
       ));
 
   Widget navbar(BuildContext context) => Container(
-        margin: EdgeInsets.only(top: $(10)),
+        // margin: EdgeInsets.only(top: $(10)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
