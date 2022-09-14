@@ -182,7 +182,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                 margin: EdgeInsets.only(top: $(70), bottom: $(24)),
               ),
               iconInput(
-                title: StringConstant.emailAddress,
+                title: StringConstant.email,
                 iconRes: Images.ic_email,
                 controller: emailController,
                 inputAction: TextInputAction.next,
@@ -216,7 +216,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                 ],
               ),
               SizedBox(height: $(40)),
-              TitleTextWidget(StringConstant.sign_in, ColorConstant.White, FontWeight.w500, $(16))
+              TitleTextWidget(StringConstant.log_in, ColorConstant.White, FontWeight.w500, $(16))
                   .intoContainer(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: $(10)),

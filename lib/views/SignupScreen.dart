@@ -468,7 +468,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 margin: EdgeInsets.only(top: $(70), bottom: $(24)),
               ),
               iconInput(
-                title: StringConstant.emailAddress,
+                title: StringConstant.email,
                 iconRes: Images.ic_email,
                 controller: emailController,
                 inputAction: TextInputAction.next,

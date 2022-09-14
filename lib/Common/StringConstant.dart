@@ -14,6 +14,7 @@ class StringConstant {
   static const c_password = "Confirm Password";
   static const forgot_password = "Forgot Password?";
   static const sign_in = "Sign In";
+  static const log_in = "Log In";
   static const or = "Or";
   static const google = "Continue with Google";
   static const apple = "Continue with Apple";
