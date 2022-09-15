@@ -70,6 +70,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '480445344807',
     projectId: 'socialbook-v2',
     storageBucket: 'socialbook-v2.appspot.com',
+    androidClientId: '480445344807-gv5ts4npn7c6j5jrcf1tos6i4puddlir.apps.googleusercontent.com',
     iosClientId: '480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com',
     iosBundleId: 'io.socialbook.cartoonizer',
   );

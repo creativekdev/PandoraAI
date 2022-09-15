@@ -1,12 +1,8 @@
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sizer/sizer.dart';
 
 import 'connector_platform.dart';
 
@@ -16,7 +12,7 @@ class Auth {
     ConnectorPlatform.instagram,
     ConnectorPlatform.tiktok,
   ];
-  static const platform = MethodChannel('io.socialbook/linkone');
+  static const platform = MethodChannel('io.socialbook/cartoonizer');
 
   Future<AuthResult> signInWithGoogle() async {
     try {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -121,36 +122,71 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late double imgContainerSize;
 
   Widget get cachedImage {
-    if (_cachedImage != null) {
-      return _cachedImage!;
-    }
+    // if (_cachedImage != null) {
+    //   return _cachedImage!;
+    // }
     var imageUint8List = base64Decode(image);
     if (lastBuildType == _BuildType.waterMark) {
       _cachedImage = Stack(
         children: [
           Image.memory(
             imageUint8List,
-            width: double.maxFinite,
-            height: imageSize?.height ?? imgContainerSize,
+            width: imgContainerSize,
+            height: imgContainerSize - 12,
+            fit: BoxFit.fill,
           ),
+          BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                width: imgContainerSize,
+                height: imgContainerSize,
+              )),
           Align(
-            child: Image.asset(
-              Images.ic_watermark,
-              width: (imageSize?.width ?? imgContainerSize) * 0.56,
-            ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
-            alignment: Alignment.bottomCenter,
-          ).visibility(visible: imageSize != null),
+            alignment: Alignment.center,
+            child: Stack(
+              children: [
+                Image.memory(
+                  imageUint8List,
+                  width: double.maxFinite,
+                  height: imageSize?.height ?? imgContainerSize,
+                ),
+                Align(
+                  child: Image.asset(
+                    Images.ic_watermark,
+                    width: (imageSize?.width ?? imgContainerSize) * 0.56,
+                  ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
+                  alignment: Alignment.bottomCenter,
+                ).visibility(visible: imageSize != null),
+              ],
+            ).intoContainer(width: double.maxFinite, height: imageSize?.height ?? imgContainerSize),
+          ),
         ],
-      ).intoContainer(width: imageSize?.width ?? imgContainerSize, height: imageSize?.height ?? imgContainerSize);
+      ).intoContainer(width: imgContainerSize, height: imgContainerSize);
       if (imageSize == null) {
         asyncRefreshImageSize(imageUint8List);
       }
     } else {
-      _cachedImage = Image.memory(
-        imageUint8List,
-        width: imgContainerSize,
-        height: imgContainerSize,
-      );
+      _cachedImage = Stack(
+        children: [
+          Image.memory(
+            imageUint8List,
+            width: imgContainerSize,
+            height: imgContainerSize - 12,
+            fit: BoxFit.fill,
+          ),
+          BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                width: imgContainerSize,
+                height: imgContainerSize,
+              )),
+          Image.memory(
+            imageUint8List,
+            width: imgContainerSize,
+            height: imgContainerSize,
+          )
+        ],
+      ).intoContainer(width: imgContainerSize, height: imgContainerSize);
     }
     return _cachedImage!;
   }
@@ -204,7 +240,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     logEvent(Events.upload_page_loading);
     itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
-    imgContainerSize = ScreenUtil.screenSize.width - $(60);
+    imgContainerSize = ScreenUtil.screenSize.width;
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
     });
@@ -623,18 +659,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           ? SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(height: $(44)),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 4),
+                                    padding: EdgeInsets.only(bottom: 4),
                                     child: (controller.isVideo.value)
                                         ? AspectRatio(
                                             aspectRatio: _videoPlayerController!.value.aspectRatio,
                                             child: VideoPlayer(_videoPlayerController!),
-                                          ).intoContainer(height: imgContainerSize)
+                                          ).intoContainer(height: imgContainerSize, width: imgContainerSize)
                                         : Column(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [cachedImage],
-                                          ).intoContainer(height: imgContainerSize),
+                                          ).intoContainer(height: imgContainerSize, width: imgContainerSize),
                                   ),
                                   Obx(() => Row(
                                         mainAxisAlignment: MainAxisAlignment.center,

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "480445344807-gv5ts4npn7c6j5jrcf1tos6i4puddlir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "ebbcbe9997d264cc033b1befa5fccf1f0d7911af"
+          }
+        },
+        {
           "client_id": "480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com",
           "client_type": 3
         }
