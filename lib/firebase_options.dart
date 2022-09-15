@@ -48,17 +48,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAcUdLaHARvG_iEL6kDpwCrpToTYwaZjB8',
-    appId: '1:480445344807:web:6c264e5c7b38b0a6db7202',
+    appId: '1:480445344807:web:d428872cf1d311c1db7202',
     messagingSenderId: '480445344807',
     projectId: 'socialbook-v2',
     authDomain: 'socialbook-v2.firebaseapp.com',
     storageBucket: 'socialbook-v2.appspot.com',
-    measurementId: 'G-H84NPVRHDZ',
+    measurementId: 'G-Y4K8P3S5W5',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w',
-    appId: '1:480445344807:android:c4b6131ec560c7e3db7202',
+    appId: '1:480445344807:android:ba78d3d26112c7dedb7202',
     messagingSenderId: '480445344807',
     projectId: 'socialbook-v2',
     storageBucket: 'socialbook-v2.appspot.com',
@@ -70,7 +70,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '480445344807',
     projectId: 'socialbook-v2',
     storageBucket: 'socialbook-v2.appspot.com',
-    androidClientId: '480445344807-gv5ts4npn7c6j5jrcf1tos6i4puddlir.apps.googleusercontent.com',
+    androidClientId: '480445344807-ujpe6ae0psmalrg037ba24mt0hb877hc.apps.googleusercontent.com',
     iosClientId: '480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com',
     iosBundleId: 'io.socialbook.cartoonizer',
   );

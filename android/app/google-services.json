@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:480445344807:android:c4b6131ec560c7e3db7202",
+        "mobilesdk_app_id": "1:480445344807:android:ba78d3d26112c7dedb7202",
         "android_client_info": {
           "package_name": "io.socialbook.cartoonizer"
         }
       },
       "oauth_client": [
         {
-          "client_id": "480445344807-gv5ts4npn7c6j5jrcf1tos6i4puddlir.apps.googleusercontent.com",
+          "client_id": "480445344807-ujpe6ae0psmalrg037ba24mt0hb877hc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.socialbook.cartoonizer",
-            "certificate_hash": "ebbcbe9997d264cc033b1befa5fccf1f0d7911af"
+            "certificate_hash": "23262efacf6c8fe7a58c38133d601ce4368ab5e3"
           }
         },
         {
@@ -39,10 +39,46 @@
               "client_type": 3
             },
             {
-              "client_id": "480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com",
+              "client_id": "480445344807-04ted2kam307pp6m6uten9p7rnpvicn6.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.cartoonizer"
+                "bundle_id": "io.socialbook.linkone"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480445344807:android:8b1a48179547eecbdb7202",
+        "android_client_info": {
+          "package_name": "io.socialbook.linkone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "480445344807-04ted2kam307pp6m6uten9p7rnpvicn6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
               }
             }
           ]
