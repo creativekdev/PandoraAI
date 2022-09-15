@@ -19,16 +19,16 @@ class Auth {
   static const platform = MethodChannel('io.socialbook/linkone');
 
   Future<AuthResult> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    String? token = googleAuth?.accessToken;
-    String? tokenId = googleAuth?.idToken;
-
-    var credential;
     try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      String? token = googleAuth?.accessToken;
+      String? tokenId = googleAuth?.idToken;
+
+      var credential;
       if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,
@@ -41,7 +41,7 @@ class Auth {
       }
     } catch (error) {
       print(error);
-      return AuthResult(token: token, tokenId: tokenId);
+      return AuthResult(token: null, tokenId: null, errorMsg: "Oops! Something went wrong");
     }
   }
 
@@ -153,11 +153,13 @@ class AuthResult {
   UserCredential? credential;
   String? token;
   String? tokenId;
+  String? errorMsg;
 
   AuthResult({
     this.credential,
     this.token,
     this.tokenId,
+    this.errorMsg,
   });
 }
 

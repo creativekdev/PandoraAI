@@ -13,6 +13,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
@@ -116,6 +117,9 @@ class _LoginScreenState extends AppState<LoginScreen> {
     showLoading().whenComplete(() {
       Auth().signInWithGoogle().then((userCredential) {
         if (userCredential.credential == null) {
+          if (!TextUtil.isEmpty(userCredential.errorMsg)) {
+            CommonExtension().showToast(userCredential.errorMsg!);
+          }
           hideLoading();
         } else {
           AuthApi().signUpWithGoogle(userCredential.token!).then((value) {
