@@ -69,6 +69,7 @@ class StringConstant {
   static const rate_us1 = "Rate us on the play store";
   static const share_app = "Share App";
   static const share = "Share";
+  static const download = "Download";
   static const help = "Help";
   static const term_condition = "Terms and conditions";
   static const privacy_policy1 = "Privacy policy";
