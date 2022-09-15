@@ -47,31 +47,31 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBTxc7n2xfG9Mw7VB6AuEY_lP68I7BNFtM',
-    appId: '1:761058819999:web:f014635a6a6acd875407aa',
-    messagingSenderId: '761058819999',
-    projectId: 'fair-terminus-266600',
+    apiKey: 'AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w',
+    appId: '1:480445344807:web:c4b6131ec560c7e3db7202',
+    messagingSenderId: '480445344807',
+    projectId: 'socialbook-v2',
     authDomain: 'fair-terminus-266600.firebaseapp.com',
     storageBucket: 'fair-terminus-266600.appspot.com',
     measurementId: 'G-7K6EPMQNJQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io',
-    appId: '1:761058819999:android:752125b532f9a9ea5407aa',
-    messagingSenderId: '761058819999',
-    projectId: 'fair-terminus-266600',
-    storageBucket: 'fair-terminus-266600.appspot.com',
+    apiKey: 'AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w',
+    appId: '1:480445344807:android:c4b6131ec560c7e3db7202',
+    messagingSenderId: '480445344807',
+    projectId: 'socialbook-v2',
+    storageBucket: 'socialbook-v2.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB6clMfdKAphkQ5Qu1Hr3JYDFu2N0WEKoY',
-    appId: '1:761058819999:ios:a6e06dc89268600f5407aa',
-    messagingSenderId: '761058819999',
-    projectId: 'fair-terminus-266600',
-    storageBucket: 'fair-terminus-266600.appspot.com',
-    androidClientId: '761058819999-2viib809svl78lvc6atg33kmmck0h8od.apps.googleusercontent.com',
-    iosClientId: '761058819999-jfnuq5esusufkm9naikrfk7bbg4qiapb.apps.googleusercontent.com',
+    apiKey: 'AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w',
+    appId: '1:480445344807:ios:1aa76525f92df934db7202',
+    messagingSenderId: '480445344807',
+    projectId: 'socialbook-v2',
+    storageBucket: 'socialbook-v2.appspot.com',
+    androidClientId: '480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com',
+    iosClientId: '480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com',
     iosBundleId: 'io.socialbook.cartoonizer',
   );
 }

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0.apps.googleusercontent.com</string>
+	<string>480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0</string>
+	<string>com.googleusercontent.apps.480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav</string>
 	<key>API_KEY</key>
-	<string>AIzaSyB6clMfdKAphkQ5Qu1Hr3JYDFu2N0WEKoY</string>
+	<string>AIzaSyCH5G9ObNcqAI9pHOO5HHlP5_8vDJg8l8I</string>
 	<key>GCM_SENDER_ID</key>
-	<string>761058819999</string>
+	<string>480445344807</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>io.socialbook.cartoonizer</string>
 	<key>PROJECT_ID</key>
-	<string>fair-terminus-266600</string>
+	<string>socialbook-v2</string>
 	<key>STORAGE_BUCKET</key>
-	<string>fair-terminus-266600.appspot.com</string>
+	<string>socialbook-v2.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:761058819999:ios:a6e06dc89268600f5407aa</string>
+	<string>1:480445344807:ios:1aa76525f92df934db7202</string>
 </dict>
 </plist>
