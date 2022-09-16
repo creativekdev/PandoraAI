@@ -170,8 +170,8 @@ class _TiktokRequester extends BaseRequester {
   Future<BaseEntity?> auth(String tempData) async {
     return await get('/oauth/access_token',
         params: {
-          'client_key': 'aw9iospxikqd2qsx',
-          'client_secret': 'eec8b87abbbb43f7d43aaf4a66155a2d',
+          'client_key': 'aw8f6wug7ikpq914',
+          'client_secret': '3af5476c9f0fa9f2853828a1ab3e1aaa',
           'code': tempData,
           'grant_type': 'authorization_code',
         },

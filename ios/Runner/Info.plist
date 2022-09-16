@@ -28,7 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb1043807369586450</string>
-				<string>aw9iospxikqd2qsx</string>
+				<string>aw8f6wug7ikpq914</string>
 			</array>
 		</dict>
 		<dict>
@@ -45,7 +45,7 @@
 	<key>FacebookAppID</key>
 	<string>1043807369586450</string>
 	<key>FacebookClientToken</key>
-	<string>04c886707467a9eaa9c66ad95ffdb4bb</string>
+	<string>31823da957485a30fea58f83049d5778</string>
 	<key>FacebookDisplayName</key>
 	<string>ProfilePicMaker</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -407,7 +407,7 @@
 		</dict>
 	</array>
 	<key>TikTokAppID</key>
-	<string>aw9iospxikqd2qsx</string>
+	<string>aw8f6wug7ikpq914</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

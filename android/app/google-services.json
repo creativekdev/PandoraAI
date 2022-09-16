@@ -1,54 +1,54 @@
 {
-  "project_info": {
-    "project_number": "480445344807",
-    "project_id": "socialbook-v2",
-    "storage_bucket": "socialbook-v2.appspot.com"
-  },
-  "client": [
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:480445344807:android:c4b6131ec560c7e3db7202",
-        "android_client_info": {
-          "package_name": "io.socialbook.cartoonizer"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "480445344807-gv5ts4npn7c6j5jrcf1tos6i4puddlir.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "io.socialbook.cartoonizer",
-            "certificate_hash": "ebbcbe9997d264cc033b1befa5fccf1f0d7911af"
+    "project_info": {
+      "project_number": "761058819999",
+      "project_id": "fair-terminus-266600",
+      "storage_bucket": "fair-terminus-266600.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:761058819999:android:752125b532f9a9ea5407aa",
+          "android_client_info": {
+            "package_name": "io.socialbook.cartoonizer"
           }
         },
-        {
-          "client_id": "480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyB40Pkh8-4g74wtX3PJi9OHeGic1XskB6w"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "480445344807-j6ovkpj1qlhikldvaubfb1t8timi6ckr.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "480445344807-rf0eqjks97qatv7m090rsu6hmc34uuav.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "io.socialbook.cartoonizer"
-              }
+        "oauth_client": [
+          {
+            "client_id": "761058819999-2viib809svl78lvc6atg33kmmck0h8od.apps.googleusercontent.com",
+            "client_type": 1,
+            "android_info": {
+              "package_name": "io.socialbook.cartoonizer",
+              "certificate_hash": "f817a7cc524aa4d4cd54bb5f333fc2f6f589ea97"
             }
-          ]
+          },
+          {
+            "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+                "client_type": 3
+              },
+              {
+                "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+                "client_type": 2,
+                "ios_info": {
+                  "bundle_id": "io.socialbook.linkone"
+                }
+              }
+            ]
+          }
         }
       }
-    }
-  ],
-  "configuration_version": "1"
-}
+    ],
+    "configuration_version": "1"
+  }
