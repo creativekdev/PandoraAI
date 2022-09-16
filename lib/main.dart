@@ -42,7 +42,7 @@ void main() async {
   // init firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-    name: 'PPM',
+    name: 'cartoonizer',
   );
   if (kReleaseMode) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
