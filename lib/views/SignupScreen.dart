@@ -394,7 +394,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
       try {
         await showLoading();
         final codeResponse = await get(Uri.parse(
-            "https://open-api.tiktok.com/oauth/access_token?client_key=aw8f6wug7ikpq914&client_secret=3af5476c9f0fa9f2853828a1ab3e1aaa&code=${tempData}&grant_type=authorization_code"));
+            "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${tempData}&grant_type=authorization_code"));
         print(codeResponse.statusCode);
         print(codeResponse.body);
         if (codeResponse.statusCode == 200) {

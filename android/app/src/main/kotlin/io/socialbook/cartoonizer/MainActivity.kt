@@ -24,7 +24,7 @@ class MainActivity : FlutterFragmentActivity() {
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         
-        val clientKey = "aw8f6wug7ikpq914"
+        val clientKey = "aw9iospxikqd2qsx"
         val tiktokOpenConfig = TikTokOpenConfig(clientKey)
         TikTokOpenApiFactory.init(tiktokOpenConfig)
         tiktokOpenApi = TikTokOpenApiFactory.create(this@MainActivity)

@@ -28,7 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb1043807369586450</string>
-				<string>aw8f6wug7ikpq914</string>
+				<string>aw9iospxikqd2qsx</string>
 			</array>
 		</dict>
 		<dict>
@@ -407,7 +407,7 @@
 		</dict>
 	</array>
 	<key>TikTokAppID</key>
-	<string>aw8f6wug7ikpq914</string>
+	<string>aw9iospxikqd2qsx</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
