@@ -39,6 +39,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
   EffectManager effectManager = AppDelegate.instance.getManager();
   late DiscoveryListEntity data;
   Size? imageSize;
+  late double imageListWidth;
   late CartoonizerApi api;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
@@ -87,6 +88,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
         }
       }
     });
+    imageListWidth = ScreenUtil.screenSize.width - $(30);
     delay(() {
       if (widget.autoToComments) {
         Navigator.push(
@@ -168,37 +170,44 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
               alignment: Alignment.centerLeft,
               padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(15)),
             ),
-            Row(
-              children: [
-                Expanded(
-                    child: buildResourceItem(resources[0]).listenSizeChanged(onSizeChanged: (size) {
-                  setState(() {
-                    imageSize = size;
-                  });
-                }).intoGestureDetector(onTap: () {
-                  if (resources[0].type == 'image') {
-                    open(context, 0);
-                  }
-                })),
-                SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
-                resources.length > 1
-                    ? Expanded(
-                        child: (imageSize != null)
-                            ? buildResourceItem(resources[1])
-                                .intoContainer(
-                                width: imageSize!.width,
-                                height: imageSize!.height,
-                              )
-                                .intoGestureDetector(onTap: () {
-                                if (resources[1].type == 'image') {
-                                  open(context, 1);
-                                }
-                              })
-                            : Container(),
+            resources.length > 1
+                ? Row(
+                    children: [
+                      buildResourceItem(resources[0])
+                          .intoContainer(
+                        width: (imageListWidth - $(2)) / 2,
                       )
-                    : Container(),
-              ],
-            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100))),
+                          .listenSizeChanged(onSizeChanged: (size) {
+                        if (size.height < 1920) {
+                          setState(() {
+                            imageSize = size;
+                          });
+                        }
+                      }).intoGestureDetector(onTap: () {
+                        if (resources[0].type == 'image') {
+                          open(context, 0);
+                        }
+                      }),
+                      SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
+                      imageSize != null
+                          ? buildResourceItem(resources[1])
+                              .intoContainer(
+                              width: (imageListWidth - $(2)) / 2,
+                              height: imageSize!.height,
+                            )
+                              .intoGestureDetector(onTap: () {
+                              if (resources[1].type == 'image') {
+                                open(context, 1);
+                              }
+                            })
+                          : Container(),
+                    ],
+                  ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100)))
+                : buildResourceItem(resources[0]).intoContainer(width: imageListWidth).intoGestureDetector(onTap: () {
+                    if (resources[0].type == 'image') {
+                      open(context, 0);
+                    }
+                  }),
             Row(
               children: [
                 buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
@@ -261,7 +270,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                 .intoContainer(
                   margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
                 )
-                .visibility(visible: imageSize != null),
+                .visibility(visible: imageSize != null || resources.length == 1),
           ],
         ),
       ),
@@ -283,13 +292,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
     }
   }
 
-  Widget loadingWidget(BuildContext context) => Container(
-        width: double.maxFinite,
-        height: double.maxFinite,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+  Widget loadingWidget(BuildContext context) => Center(child: CircularProgressIndicator());
 
   void open(BuildContext context, final int index) {
     List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();

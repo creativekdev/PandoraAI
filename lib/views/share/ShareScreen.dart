@@ -5,6 +5,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -104,7 +105,7 @@ class ShareScreen extends StatefulWidget {
 }
 
 class _ShareScreenState extends State<ShareScreen> {
-  static const platform = MethodChannel('io.socialbook/cartoonizer');
+  static const platform = MethodChannel(PLATFORM_CHANNEL);
   Size? cancelSize;
 
   List<ShareType> typeList = [

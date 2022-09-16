@@ -36,7 +36,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.761058819999-n5pl08h9hu8nda1ass58n789sl6quhe0</string>
+				<string>com.googleusercontent.apps.761058819999-jfnuq5esusufkm9naikrfk7bbg4qiapb</string>
 			</array>
 		</dict>
 	</array>
@@ -45,7 +45,7 @@
 	<key>FacebookAppID</key>
 	<string>1043807369586450</string>
 	<key>FacebookClientToken</key>
-	<string>04c886707467a9eaa9c66ad95ffdb4bb</string>
+	<string>31823da957485a30fea58f83049d5778</string>
 	<key>FacebookDisplayName</key>
 	<string>ProfilePicMaker</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>

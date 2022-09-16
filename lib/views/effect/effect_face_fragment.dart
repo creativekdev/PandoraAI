@@ -111,7 +111,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
               margin: EdgeInsets.only(
                 left: $(15),
                 right: $(15),
-                top: index == 0 ? marginTop : 0,
+                top: index == 0 ? marginTop : 6,
                 bottom: index == dataList.length - 1 ? ($(15) + AppTabBarHeight) : $(8),
               ),
             )
@@ -130,7 +130,8 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     double parentWidth,
   ) {
     var data = list[index];
-    if (index == 2) {
+    int adIndex = widget.tabString == 'face' ? 1 : 2;
+    if (index == adIndex) {
       return Column(
         children: [
           _buildMERCAd(),

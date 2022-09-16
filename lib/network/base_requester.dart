@@ -106,7 +106,12 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
 
     /// pre handle header
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    headers['cookie'] = "sb.connect.sid=${sharedPreferences.getString("login_cookie")}";
+    var sid = sharedPreferences.getString("login_cookie");
+    if (headers['cookie'] != null) {
+      headers['cookie'] = headers['cookie']! + ";sb.connect.sid=$sid";
+    } else {
+      headers['cookie'] = "sb.connect.sid=$sid";
+    }
     options.headers.addAll(headers);
     _client.options.headers.addAll(options.headers);
   }

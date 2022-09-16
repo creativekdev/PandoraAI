@@ -13,7 +13,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
-import 'package:cartoonizer/views/LoginScreen.dart';
+import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -161,8 +161,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
                   logEvent(Events.rate_us);
-                  var url = Config.getStoreLink();
-                  launchURL(url);
+                  rateApp();
+                  // var url = Config.getStoreLink(toRate: true);
+                  // launchURL(url);
                 },
               ),
               Container(
@@ -236,7 +237,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/SocialBook.io");
+                        launchURL("https://www.facebook.com/Profilepicmaker-113908154648795/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_facebook,
@@ -247,7 +248,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/socialbook.io/");
+                        launchURL("https://www.instagram.com/profilepicmaker.app/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_instagram,
@@ -258,7 +259,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/SocialBookdotio");
+                        launchURL("https://twitter.com/profilepicmak3r");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_twitter,
@@ -269,7 +270,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://tiktok.com/@socialbook.io");
+                        launchURL("https://www.tiktok.com/@profilepicmakerapp");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_tiktok,

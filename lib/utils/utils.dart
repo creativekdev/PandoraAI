@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
@@ -87,7 +88,9 @@ Future<File> imageCompressAndGetFile(File file) async {
   }
 
   var quality = 100;
-  if (length > 4 * 1024 * 1024) {
+  if (length > 8 * 1024 * 1024) {
+    quality = (((2 * 1024 * 1024) / length) * 100).toInt();
+  } else if (length > 4 * 1024 * 1024) {
     quality = 50;
   } else if (length > 2 * 1024 * 1024) {
     quality = 60;
@@ -120,7 +123,9 @@ Future<Uint8List> imageCompressWithList(Uint8List image) async {
   }
 
   var quality = 100;
-  if (length > 4 * 1024 * 1024) {
+  if (length > 8 * 1024 * 1024) {
+    quality = (((2 * 1024 * 1024) / length) * 100).toInt();
+  } else if (length > 4 * 1024 * 1024) {
     quality = 50;
   } else if (length > 2 * 1024 * 1024) {
     quality = 60;
@@ -171,4 +176,12 @@ Future<Uint8List> addWaterMark({
   final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
   // var outBytes = await img.toByteData();
   return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
+}
+
+Future<void> rateApp() async {
+  if (Platform.isIOS) {
+    launchURL(Config.getStoreLink(toRate: true));
+  } else {
+    launchURL(Config.getStoreLink());
+  }
 }

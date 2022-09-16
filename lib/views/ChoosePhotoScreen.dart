@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -10,6 +11,7 @@ import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
@@ -23,6 +25,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
@@ -128,27 +131,62 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         children: [
           Image.memory(
             imageUint8List,
-            width: double.maxFinite,
-            height: imageSize?.height ?? imgContainerSize,
-          ),
+            width: imgContainerSize,
+            height: imgContainerSize - 24,
+            fit: BoxFit.fill,
+          ).marginSymmetric(vertical: 12),
+          BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                width: imgContainerSize,
+                height: imgContainerSize,
+              )),
           Align(
-            child: Image.asset(
-              Images.ic_watermark,
-              width: (imageSize?.width ?? imgContainerSize) * 0.56,
-            ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
-            alignment: Alignment.bottomCenter,
-          ).visibility(visible: imageSize != null),
+            alignment: Alignment.center,
+            child: Stack(
+              children: [
+                Image.memory(
+                  imageUint8List,
+                  width: double.maxFinite,
+                  height: imageSize?.height ?? imgContainerSize,
+                ),
+                Align(
+                  child: Image.asset(
+                    Images.ic_watermark,
+                    width: (imageSize?.width ?? imgContainerSize) * 0.56,
+                  ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
+                  alignment: Alignment.bottomCenter,
+                ).visibility(visible: imageSize != null),
+              ],
+            ).intoContainer(width: double.maxFinite, height: imageSize?.height ?? imgContainerSize),
+          ),
         ],
-      ).intoContainer(width: imageSize?.width ?? imgContainerSize, height: imageSize?.height ?? imgContainerSize);
+      ).intoContainer(width: imgContainerSize, height: imgContainerSize);
       if (imageSize == null) {
         asyncRefreshImageSize(imageUint8List);
       }
     } else {
-      _cachedImage = Image.memory(
-        imageUint8List,
-        width: imgContainerSize,
-        height: imgContainerSize,
-      );
+      _cachedImage = Stack(
+        children: [
+          Image.memory(
+            imageUint8List,
+            width: imgContainerSize,
+            height: imgContainerSize - 12,
+            fit: BoxFit.fill,
+          ),
+          BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Container(
+                width: imgContainerSize,
+                height: imgContainerSize,
+              )),
+          Image.memory(
+            imageUint8List,
+            width: imgContainerSize,
+            height: imgContainerSize,
+          )
+        ],
+      ).intoContainer(width: imgContainerSize, height: imgContainerSize);
     }
     return _cachedImage!;
   }
@@ -202,7 +240,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     logEvent(Events.upload_page_loading);
     itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
-    imgContainerSize = ScreenUtil.screenSize.width - $(60);
+    imgContainerSize = ScreenUtil.screenSize.width;
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
     });
@@ -529,7 +567,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
-      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true);
+      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, true);
       controller.changeIsLoading(false);
       videoPath = result as String;
       if (result != '') {
@@ -574,7 +612,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   }
                 },
                 backgroundColor: ColorConstant.BackgroundColor,
-                middle: TitleTextWidget(StringConstant.cartoonize, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
                 trailing: Image.asset(
                   Images.ic_share,
                   width: $(24),
@@ -583,7 +620,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   if (controller.isVideo.value) {
                     controller.changeIsLoading(true);
-                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
+                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, false).then((value) async {
                       controller.changeIsLoading(false);
                       videoPath = value as String;
                       if (value != "") {
@@ -618,206 +655,211 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Obx(
                     () => Expanded(
                       child: (controller.isPhotoDone.value)
-                          ? SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  SizedBox(height: $(44)),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 4),
-                                    child: (controller.isVideo.value)
-                                        ? AspectRatio(
-                                            aspectRatio: _videoPlayerController!.value.aspectRatio,
-                                            child: VideoPlayer(_videoPlayerController!),
-                                          ).intoContainer(height: imgContainerSize)
-                                        : Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [cachedImage],
-                                          ).intoContainer(height: imgContainerSize),
-                                  ),
-                                  Obx(() => Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                                            width: 20,
-                                            height: 20,
-                                          ).intoInkWell(onTap: () async {
-                                            print(controller.isChecked.value);
-                                            if (controller.isChecked.value) {
-                                              controller.changeIsChecked(false);
-                                            } else {
-                                              controller.changeIsChecked(true);
-                                            }
-                                          }),
-                                          SizedBox(width: 1.5.w),
-                                          TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                                          SizedBox(width: 2.w),
-                                        ],
-                                      )).intoContainer(margin: EdgeInsets.only(bottom: $(4))).offstage(offstage: !widget.hasOriginalCheck),
-                                  buildSuccessFunctions(context),
-                                  SizedBox(height: 1.5.h),
-                                ],
-                              ),
-                            )
-                          : Stack(
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Obx(() => Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          controller.isPhotoSelect.value
-                                              ? ClipRRect(
-                                                  child: Image.file(
-                                                    controller.image.value as File,
-                                                    fit: BoxFit.cover,
-                                                    width: imgContainerSize,
-                                                    height: imgContainerSize,
-                                                  ),
-                                                  borderRadius: BorderRadius.circular($(8)),
-                                                ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
-                                              : Image.asset(
-                                                  ImagesConstant.ic_man,
-                                                  height: imgContainerSize,
-                                                  width: imgContainerSize,
-                                                ),
-                                          Text(
-                                            StringConstant.choose_photo,
-                                            style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
-                                          )
-                                              .intoContainer(
-                                                  width: double.maxFinite,
-                                                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                                                  margin: EdgeInsets.symmetric(horizontal: $(30)),
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color: ColorConstant.DiscoveryBtn,
-                                                    borderRadius: BorderRadius.circular($(8)),
-                                                  ))
-                                              .intoGestureDetector(onTap: () {
-                                            pickImageFromGallery(context, from: "center");
-                                          }),
-                                          SizedBox(height: 1.h),
-                                          GestureDetector(
-                                            onTap: () {
-                                              pickImageFromCamera(context, from: "center");
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(vertical: 1.h),
-                                              child: TitleTextWidget(StringConstant.take_selfie, ColorConstant.White, FontWeight.w400, 14),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ).visibility(visible: !controller.isPhotoDone.value)),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 4),
+                                  child: (controller.isVideo.value)
+                                      ? AspectRatio(
+                                          aspectRatio: _videoPlayerController!.value.aspectRatio,
+                                          child: VideoPlayer(_videoPlayerController!),
+                                        ).intoContainer(height: imgContainerSize, width: imgContainerSize)
+                                      : Center(child: cachedImage).intoContainer(
+                                          height: imgContainerSize,
+                                          width: imgContainerSize,
+                                        ),
+                                ),
+                                Obx(() => Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                                          width: 20,
+                                          height: 20,
+                                        ).intoInkWell(onTap: () async {
+                                          print(controller.isChecked.value);
+                                          if (controller.isChecked.value) {
+                                            controller.changeIsChecked(false);
+                                          } else {
+                                            controller.changeIsChecked(true);
+                                          }
+                                          if (controller.isPhotoSelect.value) {
+                                            controller.changeIsLoading(true);
+                                            getCartoon(context);
+                                          }
+                                        }),
+                                        SizedBox(width: 1.5.w),
+                                        TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                                        SizedBox(width: 2.w),
+                                      ],
+                                    )).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !widget.hasOriginalCheck),
                               ],
-                            ),
+                            )
+                          : Obx(() => Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    controller.isPhotoSelect.value
+                                        ? ClipRRect(
+                                            child: Image.file(
+                                              controller.image.value as File,
+                                              fit: BoxFit.cover,
+                                              width: imgContainerSize,
+                                              height: imgContainerSize,
+                                            ),
+                                            borderRadius: BorderRadius.circular($(8)),
+                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
+                                        : Image.asset(
+                                            Images.ic_choose_photo_initial_header,
+                                            height: imgContainerSize - 52,
+                                            width: imgContainerSize - 52,
+                                          ),
+                                    controller.isPhotoSelect.value
+                                        ? Container()
+                                        : Image.asset(
+                                            Images.ic_choose_photo_initial_text,
+                                          ).intoContainer(margin: EdgeInsets.only(top: $(10))),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(Images.ic_camera, width: $(24)),
+                                        SizedBox(width: $(8)),
+                                        Text(
+                                          StringConstant.choose_photo,
+                                          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    )
+                                        .intoContainer(
+                                            width: double.maxFinite,
+                                            padding: EdgeInsets.symmetric(vertical: $(10)),
+                                            margin: EdgeInsets.symmetric(horizontal: $(30)),
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: ColorConstant.DiscoveryBtn,
+                                              borderRadius: BorderRadius.circular($(8)),
+                                            ))
+                                        .intoGestureDetector(onTap: () {
+                                      showPickPhotoDialog(context);
+                                    }),
+                                  ],
+                                ),
+                              ).visibility(visible: !controller.isPhotoDone.value)),
                     ),
                   ),
-                  SizedBox(height: 1.h),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabTitleList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: titleScrollController,
-                    itemPositionsListener: titleScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var checked = currentTitleIndex == index;
-                      return Column(
-                        children: [
-                          Text(
-                            tabTitleList[index],
-                            style: TextStyle(
-                              color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                              fontSize: $(16),
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          Container(
-                            height: 4,
-                            margin: EdgeInsets.only(top: 4),
-                            width: tabTitleList[index].length * 4,
-                            color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
-                          ),
-                        ],
-                      ).intoGestureDetector(onTap: () {
-                        if (checked) {
-                          return;
-                        }
-                        lastChangeByTap = true;
-                        setState(() {
-                          currentTitleIndex = index;
-                          var scrollPos;
-                          if (flatTitle) {
-                            scrollPos = index;
-                            if (!controller.isPhotoSelect.value) {
-                              currentItemIndex = index;
+                  Obx(() => buildSuccessFunctions(context).visibility(visible: controller.isPhotoDone.value)),
+                  SizedBox(height: $(25)),
+                  Column(
+                    children: [
+                      ScrollablePositionedList.separated(
+                        initialScrollIndex: 0,
+                        itemCount: tabTitleList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemScrollController: titleScrollController,
+                        itemPositionsListener: titleScrollPositionsListener,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var checked = currentTitleIndex == index;
+                          return Column(
+                            children: [
+                              Text(
+                                tabTitleList[index],
+                                style: TextStyle(
+                                  color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                  fontSize: $(16),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Container(
+                                height: 4,
+                                margin: EdgeInsets.only(top: 4),
+                                width: tabTitleList[index].length * 4,
+                                color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                              ),
+                            ],
+                          ).intoGestureDetector(onTap: () {
+                            if (checked) {
+                              return;
                             }
+                            lastChangeByTap = true;
+                            setState(() {
+                              currentTitleIndex = index;
+                              var scrollPos;
+                              if (flatTitle) {
+                                scrollPos = index;
+                                if (!controller.isPhotoSelect.value) {
+                                  currentItemIndex = index;
+                                }
+                              } else {
+                                var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
+                                var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
+                                scrollPos = findPosition;
+                              }
+                              if (scrollPos > tabItemList.length - 4) {
+                                itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                                // itemScrollController.scrollTo(index: tabItemList.length - 4, duration: Duration(milliseconds: 200));
+                              } else {
+                                itemScrollController.jumpTo(index: scrollPos);
+                                // itemScrollController.scrollTo(index: scrollPos, duration: Duration(milliseconds: 200));
+                              }
+                            });
+                            delay(() {
+                              lastChangeByTap = false;
+                            }, milliseconds: 32);
+                          }).intoContainer(
+                              margin: EdgeInsets.only(
+                            left: index == 0 ? $(30) : $(12),
+                            right: index == tabItemList.length - 1 ? $(30) : $(12),
+                          ));
+                        },
+                        separatorBuilder: (context, index) => Container(),
+                      ).intoContainer(
+                        height: $(36),
+                        margin: EdgeInsets.only(bottom: $(10)),
+                      ),
+                      ScrollablePositionedList.separated(
+                        initialScrollIndex: 0,
+                        itemCount: tabItemList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemScrollController: itemScrollController,
+                        itemPositionsListener: itemScrollPositionsListener,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return _buildTabItem(context, index).intoContainer(
+                              margin: EdgeInsets.only(
+                            left: index == 0 ? $(30) : 0,
+                            right: index == tabItemList.length - 1 ? $(30) : 0,
+                          ));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
+                            return Container();
                           } else {
-                            var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
-                            var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
-                            scrollPos = findPosition;
+                            var current = tabItemList[index];
+                            var next = tabItemList[index + 1];
+                            if (next.categoryIndex == current.categoryIndex) {
+                              return Container();
+                            } else {
+                              return VerticalDivider(
+                                color: ColorConstant.HintColor,
+                                width: $(6),
+                                indent: $(12),
+                                endIndent: $(12),
+                                thickness: 2,
+                              );
+                            }
                           }
-                          if (scrollPos > tabItemList.length - 4) {
-                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                          } else {
-                            itemScrollController.jumpTo(index: scrollPos);
-                          }
-                        });
-                        delay(() {
-                          lastChangeByTap = false;
-                        }, milliseconds: 32);
-                      }).intoContainer(
-                          margin: EdgeInsets.only(
-                        left: index == 0 ? $(30) : $(12),
-                        right: index == tabItemList.length - 1 ? $(30) : $(12),
-                      ));
-                    },
-                    separatorBuilder: (context, index) => Container(),
-                  ).intoContainer(
-                    height: $(36),
-                    margin: EdgeInsets.only(bottom: $(10)),
+                        },
+                      ).intoContainer(
+                        height: itemWidth + (8),
+                        margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                      ),
+                    ],
                   ),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabItemList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: itemScrollController,
-                    itemPositionsListener: itemScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return _buildTabItem(context, index).intoContainer(
-                          margin: EdgeInsets.only(
-                        left: index == 0 ? $(30) : 0,
-                        right: index == tabItemList.length - 1 ? $(30) : 0,
-                      ));
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
-                        return Container();
-                      } else {
-                        var current = tabItemList[index];
-                        var next = tabItemList[index + 1];
-                        if (next.categoryIndex == current.categoryIndex) {
-                          return Container();
-                        } else {
-                          return VerticalDivider(
-                            color: ColorConstant.HintColor,
-                            width: $(6),
-                            indent: $(12),
-                            endIndent: $(12),
-                            thickness: 2,
-                          );
-                        }
-                      }
-                    },
-                  ).intoContainer(
-                    height: itemWidth + (8),
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                  ),
-                  SizedBox(height: Platform.isAndroid ? $(12) : 0),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom < $(25) ? $(25) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),
             )),
@@ -923,77 +965,98 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       children: [
         Obx(
           () => Expanded(
-            child: Image.asset(
-              Images.ic_camera,
-              height: $(24),
-              width: $(24),
-            )
-                .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(12)),
-                  decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+            child: Column(
+              children: [
+                Image.asset(
+                  Images.ic_camera,
+                  height: $(24),
+                  width: $(24),
                 )
-                .intoGestureDetector(
-                  onTap: () => showPickPhotoDialog(context),
-                )
-                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7)), constraints: BoxConstraints(maxWidth: ScreenUtil.screenSize.width / 3)),
+                    .intoContainer(
+                      width: double.maxFinite,
+                      padding: EdgeInsets.symmetric(vertical: $(12)),
+                      decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+                    )
+                    .intoGestureDetector(
+                      onTap: () => showPickPhotoDialog(context),
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7)), constraints: BoxConstraints(maxWidth: ScreenUtil.screenSize.width / 3)),
+                SizedBox(height: $(4)),
+                TitleTextWidget(StringConstant.choose_photo, ColorConstant.White, FontWeight.w400, $(12)),
+              ],
+            ),
           ).visibility(visible: controller.isPhotoSelect.value),
         ),
         Obx(
           () => Expanded(
-            child: Image.asset(
-              Images.ic_download,
-              height: $(24),
-              width: $(24),
-            )
-                .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(12)),
-                  decoration: BoxDecoration(color: ColorConstant.EffectFunctionBlue, borderRadius: BorderRadius.circular($(6))),
+            child: Column(
+              children: [
+                Image.asset(
+                  Images.ic_download,
+                  height: $(24),
+                  width: $(24),
                 )
-                .intoGestureDetector(
-                  onTap: () => showSavePhotoDialog(context),
-                )
-                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+                    .intoContainer(
+                      width: double.maxFinite,
+                      padding: EdgeInsets.symmetric(vertical: $(12)),
+                      decoration: BoxDecoration(color: ColorConstant.EffectFunctionBlue, borderRadius: BorderRadius.circular($(6))),
+                    )
+                    .intoGestureDetector(
+                      onTap: () => showSavePhotoDialog(context),
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+                SizedBox(height: $(4)),
+                TitleTextWidget(StringConstant.download, ColorConstant.White, FontWeight.w400, $(12)),
+              ],
+            ),
           ).visibility(visible: controller.isPhotoDone.value),
         ),
         Obx(() => Expanded(
-              child: Image.asset(
-                Images.ic_share_discovery,
-                height: $(24),
-                width: $(24),
-              )
-                  .intoContainer(
-                padding: EdgeInsets.symmetric(vertical: $(12)),
-                decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
-              )
-                  .intoGestureDetector(
-                onTap: () async {
-                  var selectedEffect = tabItemList[currentItemIndex].data;
-                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-                  AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
-                    if (controller.isVideo.value) {
-                      var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
-                      ShareDiscoveryScreen.push(
-                        context,
-                        effectKey: selectedEffect.key,
-                        originalUrl: urlFinal,
-                        image: videoUrl,
-                        isVideo: controller.isVideo.value,
-                      );
-                    } else {
-                      ShareDiscoveryScreen.push(
-                        context,
-                        effectKey: selectedEffect.key,
-                        originalUrl: urlFinal,
-                        image: image,
-                        isVideo: controller.isVideo.value,
-                      );
-                    }
-                  });
-                },
-              ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+              child: Column(
+                children: [
+                  Image.asset(
+                    Images.ic_share_discovery,
+                    height: $(24),
+                    width: $(24),
+                  )
+                      .intoContainer(
+                    width: double.maxFinite,
+                    padding: EdgeInsets.symmetric(vertical: $(12)),
+                    decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+                  )
+                      .intoGestureDetector(
+                    onTap: () async {
+                      var selectedEffect = tabItemList[currentItemIndex].data;
+                      logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
+                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
+                        if (controller.isVideo.value) {
+                          var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
+                          ShareDiscoveryScreen.push(
+                            context,
+                            effectKey: selectedEffect.key,
+                            originalUrl: urlFinal,
+                            image: videoUrl,
+                            isVideo: controller.isVideo.value,
+                          );
+                        } else {
+                          ShareDiscoveryScreen.push(
+                            context,
+                            effectKey: selectedEffect.key,
+                            originalUrl: urlFinal,
+                            image: image,
+                            isVideo: controller.isVideo.value,
+                          );
+                        }
+                      });
+                    },
+                  ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
+                  SizedBox(height: $(4)),
+                  TitleTextWidget(StringConstant.share, ColorConstant.White, FontWeight.w400, $(12)),
+                ],
+              ),
             ).visibility(visible: controller.isPhotoDone.value)),
       ],
-    ).intoContainer(margin: EdgeInsets.only(top: $(25), left: $(23), right: $(23))).visibility(visible: controller.isPhotoSelect.value);
+    ).intoContainer(margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23))).visibility(visible: controller.isPhotoSelect.value);
   }
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
@@ -1022,7 +1085,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
-    return CachedNetworkImage(
+    return CachedNetworkImageUtils.custom(
+      context: context,
       imageUrl: imageUrl,
       fit: BoxFit.fill,
       height: itemWidth,
@@ -1196,6 +1260,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (connectivityResult == ConnectivityResult.none) {
       controller.changeIsLoading(false);
       CommonExtension().showToast(StringConstant.no_internet_msg);
+      return;
     }
 
     var selectedEffect = tabItemList[currentItemIndex].data;
@@ -1203,6 +1268,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     if (category == null) {
       controller.changeIsLoading(false);
       CommonExtension().showToast(StringConstant.commonFailedToast);
+      return;
     }
     String aiHost = _getAiHostByStyle(selectedEffect);
 
@@ -1218,7 +1284,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().endsWith(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
@@ -1252,7 +1318,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             "success": 2,
             "effect": selectedEffect.key,
             "sticker_name": selectedEffect.stickerName,
-            "category": category!.key,
+            "category": category.key,
             "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
           });
         },
@@ -1266,7 +1332,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           imageUrl = await uploadCompressedImage();
         }
 
-        if (imageUrl == "") return;
+        if (imageUrl == "") {
+          controller.changeIsLoading(false);
+          EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
+          return;
+        }
 
         var sharedPrefs = await SharedPreferences.getInstance();
         final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
@@ -1289,7 +1359,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'hide_watermark': 1,
             };
             selectedEffect.handleApiParams(dataBody);
-            final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize", body: dataBody);
+            final cartoonizeResponse = await API.post(aiHost.cartoonizeApi, body: dataBody);
             if (ignoreResult) {
               controller.changeIsLoading(false);
               return;
@@ -1313,7 +1383,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1385,7 +1455,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
@@ -1442,7 +1512,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "success": resultSuccess,
           "effect": selectedEffect.key,
           "sticker_name": selectedEffect.stickerName,
-          "category": category!.key,
+          "category": category.key,
           "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
         });
         if (widget.entrySource != EntrySource.fromRecent) {
@@ -1466,7 +1536,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   String _getAiHostByStyle(EffectItem effect) {
     var server = effect.server;
-    return userManager.aiServers[server] ?? Config.instance.apiHost;
+    return userManager.aiServers[server] ?? Config.instance.host;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {

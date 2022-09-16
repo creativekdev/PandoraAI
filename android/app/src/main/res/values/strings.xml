@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Catoonizer</string>
     <string name="facebook_app_id">1043807369586450</string>
-    <string name="facebook_client_token">04c886707467a9eaa9c66ad95ffdb4bb</string>
+    <string name="facebook_client_token">31823da957485a30fea58f83049d5778</string>
     <string name="fb_login_protocol_scheme">fb1043807369586450</string>
     <string name="admob_app_key">ca-app-pub-8401689731796078~6409248025</string>
 </resources>

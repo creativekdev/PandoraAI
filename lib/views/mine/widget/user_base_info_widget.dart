@@ -41,7 +41,7 @@ class UserBaseInfoWidget extends StatelessWidget {
                   },
                 )
               : Image.asset(
-                  Images.ic_default_user_icon,
+                  Images.ic_demo1,
                   width: $(56),
                   height: $(56),
                 ),
@@ -79,7 +79,7 @@ class UserBaseInfoWidget extends StatelessWidget {
       return [
         Row(
           children: [
-            TitleTextWidget('Sign in / Sign up', Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
+            TitleTextWidget('Login / Sign up', Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
             SizedBox(width: $(16)),
             Image.asset(
               Images.ic_right_arrow,

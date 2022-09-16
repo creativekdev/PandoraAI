@@ -22,7 +22,7 @@
           }
         },
         {
-          "client_id": "761058819999-6lqlps3agecvv8a4gks9eg3uf4fol78f.apps.googleusercontent.com",
+          "client_id": "761058819999-am4r1pmih2icq27jggce3siidgtemhgv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.socialbook.cartoonizer",
@@ -36,7 +36,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
         }
       ],
       "services": {
@@ -47,11 +47,62 @@
               "client_type": 3
             },
             {
-              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.videostudio",
-                "app_store_id": "1637403919"
+                "bundle_id": "io.socialbook.linkone"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:e0b05f1350332a825407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.linkone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-82dc6hbjskq4rlb438jgcbhs7k4uvn64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.linkone",
+            "certificate_hash": "9faf2fe62582e8c3b6d4f97db12b68de5bebe6e8"
+          }
+        },
+        {
+          "client_id": "761058819999-uij1htd8uugj60cv2ig89unahgmtpvgc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.linkone",
+            "certificate_hash": "9b8d3c6fddfc3d70a14254a2e2c3cacee2825cd7"
+          }
+        },
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
               }
             }
           ]
@@ -81,7 +132,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
         }
       ],
       "services": {
@@ -92,11 +143,10 @@
               "client_type": 3
             },
             {
-              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.videostudio",
-                "app_store_id": "1637403919"
+                "bundle_id": "io.socialbook.linkone"
               }
             }
           ]
@@ -118,7 +168,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io"
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
         }
       ],
       "services": {
@@ -129,11 +179,10 @@
               "client_type": 3
             },
             {
-              "client_id": "761058819999-7qd6fg3bkutja9b0nf1jocsk4m6mbh52.apps.googleusercontent.com",
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.socialbook.videostudio",
-                "app_store_id": "1637403919"
+                "bundle_id": "io.socialbook.linkone"
               }
             }
           ]

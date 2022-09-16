@@ -41,6 +41,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   late String title;
   late String emptyText;
   late double imgWidth;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -140,8 +141,10 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(title, ColorConstant.White, FontWeight.w600, $(18)),
+        scrollController: scrollController,
       ),
       body: EasyRefresh.custom(
+        scrollController: scrollController,
         onRefresh: () async => loadFirstPage(),
         onLoad: () async => loadMorePage(),
         controller: _refreshController,

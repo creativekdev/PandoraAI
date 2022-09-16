@@ -107,15 +107,15 @@ class CardAdsHolder extends WidgetAdsHolder {
     if (!_isLoaded || closeAds) {
       return null;
     }
-    if (adWidget == null) {
-      adWidget = AdWidget(ad: _inlineAdaptiveAd!);
-    }
+    // if (adWidget == null) {
+    //   adWidget = AdWidget(ad: _inlineAdaptiveAd!);
+    // }
     return Stack(
       children: [
         Container(
           width: width,
           height: (_adSize?.height ?? $(80)).toDouble(),
-          child: adWidget,
+          child: AdWidget(ad: _inlineAdaptiveAd!),
         ),
         Align(
           child: Icon(

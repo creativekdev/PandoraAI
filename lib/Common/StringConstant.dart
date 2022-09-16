@@ -4,14 +4,18 @@ class StringConstant {
   static const insta_login = "Instagram";
   static const tiktok_login = "TikTok";
   static const welcome = "Welcome Back!";
+  static const welcomeBack = "Welcome\nBack";
+  static const createAccount = "Create\nAccount";
   static const welcome1 = "Welcome";
   static const set_password = "Setup Password";
   static const email = "Email";
+  static const emailAddress = "Email Address";
   static const password = "Password";
   static const c_password = "Confirm Password";
   static const forgot_password = "Forgot Password?";
   static const sign_in = "Sign In";
-  static const or = "OR";
+  static const log_in = "Log In";
+  static const or = "Or";
   static const google = "Continue with Google";
   static const apple = "Continue with Apple";
   static const youtube = "Continue with You Tube";
@@ -65,6 +69,7 @@ class StringConstant {
   static const rate_us1 = "Rate us on the play store";
   static const share_app = "Share App";
   static const share = "Share";
+  static const download = "Download";
   static const help = "Help";
   static const term_condition = "Terms and conditions";
   static const privacy_policy1 = "Privacy policy";

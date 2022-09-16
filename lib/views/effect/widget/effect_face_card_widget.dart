@@ -87,6 +87,6 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                 tag.image(),
               ).intoContainer(width: $(44), padding: EdgeInsets.all($(6))),
       ],
-    );
+    ).intoMaterial(color: ColorConstant.CardColor, borderRadius: BorderRadius.circular(8));
   }
 }

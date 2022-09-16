@@ -42,6 +42,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   late StreamSubscription onDiscoveryLikeEventListener;
   late StreamSubscription onDiscoveryUnlikeEventListener;
   late StreamSubscription onCreateCommentListener;
+  late ScrollController scrollController;
 
   DiscoveryCommentsListState() : super(canCancelOnLoading: false);
 
@@ -49,6 +50,7 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
   void initState() {
     super.initState();
     logEvent(Events.discovery_comment_loading);
+    scrollController = ScrollController();
     api = CartoonizerApi().bindState(this);
     discoveryEntity = widget.discoveryEntity.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
@@ -233,12 +235,14 @@ class DiscoveryCommentsListState extends AppState<DiscoveryCommentsListScreen> {
         heroTag: "comments_app_bar",
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(StringConstant.discoveryComments, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        scrollController: scrollController,
       ),
       body: Column(
         children: [
           Expanded(
               child: EasyRefresh.custom(
             controller: _refreshController,
+            scrollController: scrollController,
             enableControlFinishRefresh: true,
             enableControlFinishLoad: false,
             emptyWidget: dataList.isEmpty

@@ -6,7 +6,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/UserModel.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'LoginScreen.dart';
+import 'account/LoginScreen.dart';
 import 'StripePaymentScreen.dart';
 
 class StripeSubscriptionScreen extends StatefulWidget {

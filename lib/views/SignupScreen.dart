@@ -2,15 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/input_text.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
+import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
@@ -21,7 +25,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'InstaLoginScreen.dart';
 import 'SocialSignUpScreen.dart';
-import 'LoginScreen.dart';
+import 'account/LoginScreen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -30,11 +34,10 @@ class SignupScreen extends StatefulWidget {
   _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends AppState<SignupScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
 
   late CartoonizerApi api;
-  late ScrollController scrollController;
   double blueAreaHeight = 100;
 
   @override
@@ -42,18 +45,6 @@ class _SignupScreenState extends State<SignupScreen> {
     logEvent(Events.signup_page_loading);
     super.initState();
     api = CartoonizerApi().bindState(this);
-    scrollController = ScrollController();
-    scrollController.addListener(() {
-      if (scrollController.offset < 0) {
-        setState(() {
-          blueAreaHeight = 100 + scrollController.offset.abs();
-        });
-      } else {
-        setState(() {
-          blueAreaHeight = 0;
-        });
-      }
-    });
   }
 
   bool isShow = true;
@@ -62,10 +53,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final nameController = TextEditingController();
   final passController = TextEditingController();
   final cPassController = TextEditingController();
-  bool isLoading = false;
+
   var token;
   var tokenId;
-  static const platform = MethodChannel('io.socialbook/cartoonizer');
+  static const platform = MethodChannel(PLATFORM_CHANNEL);
 
   Future<dynamic> signInWithGoogle() async {
     // Trigger the authentication flow
@@ -137,9 +128,10 @@ class _SignupScreenState extends State<SignupScreen> {
     return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
-  signUpNormal() {
+  signUpNormal() async {
     var email = emailController.text.trim();
     var pass = passController.text.trim();
+    var cpass = cPassController.text.trim();
     if (!email.contains('@')) {
       CommonExtension().showToast("Please input valid email!");
       return;
@@ -148,18 +140,18 @@ class _SignupScreenState extends State<SignupScreen> {
       CommonExtension().showToast("Please input password!");
       return;
     }
-    setState(() {
-      isLoading = true;
-    });
+    if (pass != cpass) {
+      CommonExtension().showToast("Please confirm password!");
+      return;
+    }
+    await showLoading();
     var split = email.split('@');
     String name = '';
     if (split.length > 0) {
       name = split[0];
     }
     api.signUp(name: name, email: email, password: pass).then((value) async {
-      setState(() {
-        isLoading = false;
-      });
+      await hideLoading();
       if (value != null) {
         userManager.refreshUser(context: context).then((value) {
           logEvent(Events.signup, eventValues: {"method": 'email', "signup_through": GetStorage().read('signup_through') ?? ""});
@@ -175,543 +167,438 @@ class _SignupScreenState extends State<SignupScreen> {
     passController.dispose();
     cPassController.dispose();
     api.unbind();
-    scrollController.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var prefixPage = ModalRoute.of(context)!.settings.arguments;
+  onAppleClick() {
+    showLoading().whenComplete(() async {
+      try {
+        var result = await signInWithApple();
+        if (result) {
+          userManager.refreshUser();
+          await loginBack(context);
+          logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
+        } else {
+          CommonExtension().showToast("Oops! Something went wrong");
+        }
+      } on SignInWithAppleAuthorizationException catch (e) {
+        switch (e.code) {
+          case AuthorizationErrorCode.canceled:
+          case AuthorizationErrorCode.unknown:
+            // do nothing
+            break;
+          default:
+            CommonExtension().showToast("Oops! Something went wrong");
+            break;
+        }
+      } catch (e) {
+        CommonExtension().showToast("Oops! Something went wrong");
+      } finally {
+        hideLoading();
+      }
+    });
+  }
 
-    return LoadingOverlay(
-      isLoading: isLoading,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Column(
-            children: [
-              Container(
-                height: blueAreaHeight,
-                width: double.maxFinite,
-                color: ColorConstant.BlueColor,
+  onGoogleClick() {
+    showLoading().whenComplete(() async {
+      try {
+        var temp = await signInWithGoogle();
+        if (temp == null) {
+          return;
+        }
+        var tokenBody = jsonEncode(<String, dynamic>{
+          "access_token": token,
+          "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
+          "token_type": "Bearer",
+          "access_type": "offline",
+          "type": "google_signup"
+        });
+        final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
+        if (tokenResponse.statusCode == 200) {
+          final Map parsed = json.decode(tokenResponse.body.toString());
+          // print(parsed);
+          if (parsed.containsKey("data")) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: "/SocialSignUpScreen"),
+                builder: (context) => SocialSignUpScreen(
+                  additionalUserInfo: temp.additionalUserInfo!,
+                  token: parsed['data']['token'],
+                  tokenId: tokenId,
+                  channel: "google",
+                ),
               ),
-              Expanded(
-                  child: Container(
-                color: ColorConstant.BackgroundColor,
-              ))
-            ],
-          ),
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppNavigationBar(
-                blurAble: false,
-                backgroundColor: ColorConstant.BlueColor,
-                middle: TitleTextWidget(
-                  StringConstant.sign_up,
-                  ColorConstant.BtnTextColor,
-                  FontWeight.w600,
-                  $(18),
-                )),
-            body: Container(
-              color: Colors.transparent,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    Container(
-                      height: 45.h,
-                      width: 100.w,
-                      child: Stack(
-                        children: [
-                          Image.asset(
-                            ImagesConstant.ic_round_top,
-                            width: 100.w,
-                            height: 40.h,
-                            fit: BoxFit.fill,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 14.h),
-                            child: Center(
-                              child: SimpleShadow(
-                                child: Image.asset(
-                                  ImagesConstant.ic_signup_cartoon,
-                                  width: 100.w,
-                                  height: 30.h,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    TitleTextWidget(StringConstant.welcome1, ColorConstant.White, FontWeight.w600, 20),
-                    Container(
-                      width: 20.w,
-                      height: 0.3.h,
-                      margin: EdgeInsets.only(top: 0.5.h),
+            ).then((value) async {
+              if (!value) {
+                Navigator.pop(context, value);
+              }
+            });
+          } else {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String cookie = tokenResponse.headers.toString();
+            var str = cookie.split(";");
+            String id = "";
+            for (int j = 0; j < str.length; j++) {
+              if (str[j].contains("sb.connect.sid")) {
+                id = str[j];
+                j = str.length;
+              }
+            }
+            var finalId = id.split(",");
+            if (finalId.length > 1) {
+              for (int j = 0; j < finalId.length; j++) {
+                if (finalId[j].contains("sb.connect.sid")) {
+                  id = finalId[j];
+                  j = finalId.length;
+                }
+              }
+            }
+            prefs.setBool("isLogin", true);
+            prefs.setString("login_cookie", id.split("=")[1]);
+            userManager.refreshUser();
+            await loginBack(context);
+            logEvent(Events.login, eventValues: {"method": "google"});
+          }
+        } else {
+          CommonExtension().showToast("Oops! Something went wrong");
+        }
+      } finally {
+        hideLoading();
+      }
+    });
+  }
+
+  onYoutubeClick() {
+    showLoading().whenComplete(() async {
+      FirebaseAnalytics.instance.logSignUp(signUpMethod: "youtube");
+      try {
+        var temp = await signInWithYoutube();
+        if (temp == null) {
+          return;
+        }
+        var tokenBody = jsonEncode(<String, dynamic>{
+          "access_token": token,
+          "scope": "https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly",
+          "token_type": "Bearer",
+          "access_type": "offline",
+        });
+
+        var tempStamp = DateTime.now().millisecondsSinceEpoch;
+        final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+        final tokenResponse = await API.get("/signup/oauth/youtube/callback", params: {"tokens": tokenBody}, headers: headers);
+        await hideLoading();
+        if (tokenResponse.statusCode == 200) {
+          final Map parsed = json.decode(tokenResponse.body.toString());
+          print(parsed);
+          if (parsed.containsKey("data")) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: "/SocialSignUpScreen"),
+                builder: (context) => SocialSignUpScreen(
+                  additionalUserInfo: temp.additionalUserInfo!,
+                  token: parsed['data']['token'],
+                  tokenId: tempStamp,
+                  channel: "youtube",
+                ),
+              ),
+            ).then((value) async {
+              if (!value) {
+                Navigator.pop(context, value);
+              }
+            });
+          } else {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            String cookie = tokenResponse.headers.toString();
+            var str = cookie.split(";");
+            String id = "";
+            for (int j = 0; j < str.length; j++) {
+              if (str[j].contains("sb.connect.sid")) {
+                id = str[j];
+                j = str.length;
+              }
+            }
+            var finalId = id.split(",");
+            if (finalId.length > 1) {
+              for (int j = 0; j < finalId.length; j++) {
+                if (finalId[j].contains("sb.connect.sid")) {
+                  id = finalId[j];
+                  j = finalId.length;
+                }
+              }
+            }
+            prefs.setBool("isLogin", true);
+            prefs.setString("login_cookie", id.split("=")[1]);
+            userManager.refreshUser();
+            await loginBack(context);
+            logEvent(Events.login, eventValues: {"method": "youtube"});
+          }
+        } else {
+          CommonExtension().showToast("Oops! Something went wrong");
+        }
+      } finally {
+        hideLoading();
+      }
+    });
+  }
+
+  onInstagramClick() {
+    FirebaseAnalytics.instance.logSignUp(signUpMethod: "instagram");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(name: "/InstaLoginScreen"),
+        builder: (context) => InstaLoginScreen(),
+      ),
+    ).then((value) async {
+      if (value != null) {
+        await showLoading();
+        var tempStamp = DateTime.now().millisecondsSinceEpoch;
+        final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+        final access_response = await API.get("/signup/oauth/instagram_v2/callback", params: {"access_token": value['accessToken']}, headers: headers);
+        hideLoading();
+        print(access_response.body);
+        if (access_response.statusCode == 200) {
+          final Map parsed = json.decode(access_response.body.toString());
+          if (parsed["data"]["result"] as bool) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: "/SocialSignUpScreen"),
+                builder: (context) => SocialSignUpScreen(
+                  additionalUserInfo: null,
+                  token: parsed["data"]["name"],
+                  tokenId: tempStamp,
+                  channel: "instagram",
+                ),
+              ),
+            ).then((value) async {
+              if (!value) {
+                Navigator.pop(context, value);
+              }
+            });
+          }
+        } else {
+          CommonExtension().showToast("Oops! Something went wrong");
+        }
+      }
+      print(value);
+    });
+  }
+
+  onTiktokClick() async {
+    FirebaseAnalytics.instance.logSignUp(signUpMethod: "tiktok");
+    var tempData = await platform.invokeMethod("OpenTiktok");
+    if (tempData != null) {
+      try {
+        await showLoading();
+        final codeResponse = await get(Uri.parse(
+            "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${tempData}&grant_type=authorization_code"));
+        print(codeResponse.statusCode);
+        print(codeResponse.body);
+        if (codeResponse.statusCode == 200) {
+          final Map parsed = json.decode(codeResponse.body.toString());
+          var tokenBody = jsonEncode(<String, dynamic>{
+            "access_token": parsed['data']['access_token'],
+            "open_id": parsed['data']['open_id'],
+            // "refresh_token": parsed['data']['refresh_token'],
+          });
+          var tempStamp = DateTime.now().millisecondsSinceEpoch;
+          final headers = {"cookie": "bst_social_signup=${tempStamp}"};
+          final tiktokResponse = await API.get("/oauth/tiktok/callback", headers: headers, params: {"tokens": tokenBody, "code": tempData});
+          hideLoading();
+          if (tiktokResponse.statusCode == 200) {
+            final Map parsed = json.decode(tiktokResponse.body.toString());
+            if (parsed["data"]["result"] as bool) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  settings: RouteSettings(name: "/SocialSignUpScreen"),
+                  builder: (context) => SocialSignUpScreen(
+                    additionalUserInfo: parsed["data"],
+                    token: parsed["data"]["name"],
+                    tokenId: tempStamp,
+                    channel: "tiktok",
+                  ),
+                ),
+              ).then((value) async {
+                if (!value) {
+                  Navigator.pop(context, value);
+                }
+              });
+            }
+          } else {
+            CommonExtension().showToast("Oops! Something went wrong");
+          }
+        } else {
+          hideLoading();
+          CommonExtension().showToast("Oops! Something went wrong");
+        }
+      } catch (error) {}
+    }
+  }
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    var prefixPage = ModalRoute.of(context)!.settings.arguments;
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppNavigationBar(
+        backgroundColor: Colors.black,
+        visible: false,
+      ),
+      body: Container(
+        color: Colors.transparent,
+        padding: EdgeInsets.only(bottom: 2.h, left: $(30), right: $(30)),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                StringConstant.createAccount,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: $(32),
+                ),
+                textAlign: TextAlign.start,
+              ).intoContainer(
+                width: double.maxFinite,
+                margin: EdgeInsets.only(top: $(70), bottom: $(24)),
+              ),
+              iconInput(
+                title: StringConstant.email,
+                iconRes: Images.ic_email,
+                controller: emailController,
+                inputAction: TextInputAction.next,
+                showClear: true,
+              ),
+              SizedBox(height: $(16)),
+              iconInput(
+                title: StringConstant.password,
+                iconRes: Images.ic_password,
+                passwordIcon: Images.ic_password_hide,
+                plainIcon: Images.ic_password_show,
+                controller: passController,
+                inputAction: TextInputAction.next,
+                passwordInput: true,
+              ),
+              SizedBox(height: $(16)),
+              iconInput(
+                title: StringConstant.c_password,
+                iconRes: Images.ic_password,
+                passwordIcon: Images.ic_password_hide,
+                plainIcon: Images.ic_password_show,
+                controller: cPassController,
+                inputAction: TextInputAction.done,
+                passwordInput: true,
+              ),
+              SizedBox(height: $(40)),
+              TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w500, $(16))
+                  .intoContainer(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: $(10)),
                       decoration: BoxDecoration(
-                        gradient: RadialGradient(
-                          colors: [
-                            ColorConstant.RadialColor1,
-                            ColorConstant.RadialColor2,
-                          ],
-                          radius: 4.w,
-                        ),
+                        color: ColorConstant.DiscoveryBtn,
+                        borderRadius: BorderRadius.circular($(8)),
+                      ))
+                  .intoGestureDetector(onTap: () {
+                signUpNormal();
+              }),
+              Container(
+                margin: EdgeInsets.only(
+                  left: $(20),
+                  right: $(20),
+                  top: $(45),
+                  bottom: $(30),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: ColorConstant.DividerColor,
+                        thickness: 0.1.h,
                       ),
                     ),
-                    SizedBox(height: 3.h),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          Images.ic_email,
-                          height: $(28),
-                        ),
-                        Container(
-                          width: 2,
-                          height: $(30),
-                          color: ColorConstant.BorderColor,
-                          margin: EdgeInsets.only(left: 10, right: 12, top: 10, bottom: 10),
-                        ),
-                        Expanded(
-                          child: InputText(
-                            controller: emailController,
-                            showClear: true,
-                            decoration: InputDecoration(hintText: StringConstant.email, border: InputBorder.none),
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                      ],
-                    ).intoContainer(
-                      padding: EdgeInsets.only(left: 16, right: 10),
-                      margin: EdgeInsets.symmetric(horizontal: $(24)),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+                    SizedBox(
+                      width: 3.w,
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          Images.ic_password,
-                          height: $(28),
-                        ),
-                        Container(
-                          width: 2,
-                          height: $(30),
-                          color: ColorConstant.BorderColor,
-                          margin: EdgeInsets.only(left: 10, right: 12, top: 10, bottom: 10),
-                        ),
-                        Expanded(
-                          child: InputText(
-                            controller: passController,
-                            passwordInput: true,
-                            passwordIcon: Image.asset(Images.ic_eye, height: $(20)).intoContainer(padding: const EdgeInsets.all(10)),
-                            plainIcon: Image.asset(Images.ic_eye_close, height: $(20)).intoContainer(padding: const EdgeInsets.all(10)),
-                            decoration: InputDecoration(hintText: StringConstant.password, border: InputBorder.none),
-                          ),
-                        ),
-                      ],
-                    ).intoContainer(
-                      padding: EdgeInsets.only(left: 16, right: 10),
-                      margin: EdgeInsets.symmetric(horizontal: $(24), vertical: $(20)),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(32)),
+                    TitleTextWidget(StringConstant.or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
+                    SizedBox(
+                      width: 3.w,
                     ),
-                    ButtonWidget(StringConstant.sign_up).intoGestureDetector(onTap: () {
-                      signUpNormal();
-                    }),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: ColorConstant.DividerColor,
-                              thickness: 0.1.h,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          TitleTextWidget(StringConstant.or, ColorConstant.PrimaryColor, FontWeight.w500, 12),
-                          SizedBox(
-                            width: 3.w,
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: ColorConstant.DividerColor,
-                              thickness: 0.1.h,
-                            ),
-                          ),
-                        ],
+                    Expanded(
+                      child: Divider(
+                        color: ColorConstant.DividerColor,
+                        thickness: 0.1.h,
                       ),
-                    ),
-                    if (Platform.isIOS)
-                      GestureDetector(
-                        onTap: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          try {
-                            var result = await signInWithApple();
-                            if (result) {
-                              userManager.refreshUser();
-                              await loginBack(context);
-                              logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
-                            } else {
-                              CommonExtension().showToast("Oops! Something went wrong");
-                            }
-                          } on SignInWithAppleAuthorizationException catch (e) {
-                            switch (e.code) {
-                              case AuthorizationErrorCode.canceled:
-                              case AuthorizationErrorCode.unknown:
-                                // do nothing
-                                break;
-                              default:
-                                CommonExtension().showToast("Oops! Something went wrong");
-                                break;
-                            }
-                          } catch (e) {
-                            CommonExtension().showToast("Oops! Something went wrong");
-                          } finally {
-                            if (isLoading) {
-                              setState(() {
-                                isLoading = false;
-                              });
-                            }
-                          }
-                        },
-                        child: IconifiedButtonWidget(StringConstant.apple, ImagesConstant.ic_signup_apple),
-                      ),
-                    if (Platform.isIOS)
-                      SizedBox(
-                        height: 2.h,
-                      ),
-                    GestureDetector(
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        try {
-                          var temp = await signInWithGoogle();
-                          if (temp == null) {
-                            return;
-                          }
-                          var tokenBody = jsonEncode(<String, dynamic>{
-                            "access_token": token,
-                            "scope": "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email openid",
-                            "token_type": "Bearer",
-                            "access_type": "offline",
-                            "type": "google_signup"
-                          });
-                          final tokenResponse = await API.get("/signup/oauth/google/callback", params: {"tokens": tokenBody});
-                          if (tokenResponse.statusCode == 200) {
-                            final Map parsed = json.decode(tokenResponse.body.toString());
-                            // print(parsed);
-                            if (parsed.containsKey("data")) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(
-                                    additionalUserInfo: temp.additionalUserInfo!,
-                                    token: parsed['data']['token'],
-                                    tokenId: tokenId,
-                                    channel: "google",
-                                  ),
-                                ),
-                              ).then((value) async {
-                                if (!value) {
-                                  Navigator.pop(context, value);
-                                }
-                              });
-                            } else {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String cookie = tokenResponse.headers.toString();
-                              var str = cookie.split(";");
-                              String id = "";
-                              for (int j = 0; j < str.length; j++) {
-                                if (str[j].contains("sb.connect.sid")) {
-                                  id = str[j];
-                                  j = str.length;
-                                }
-                              }
-                              var finalId = id.split(",");
-                              if (finalId.length > 1) {
-                                for (int j = 0; j < finalId.length; j++) {
-                                  if (finalId[j].contains("sb.connect.sid")) {
-                                    id = finalId[j];
-                                    j = finalId.length;
-                                  }
-                                }
-                              }
-                              prefs.setBool("isLogin", true);
-                              prefs.setString("login_cookie", id.split("=")[1]);
-                              userManager.refreshUser();
-                              await loginBack(context);
-                              logEvent(Events.login, eventValues: {"method": "google"});
-                            }
-                          } else {
-                            CommonExtension().showToast("Oops! Something went wrong");
-                          }
-                        } finally {
-                          if (isLoading)
-                            setState(() {
-                              isLoading = false;
-                            });
-                        }
-                        ;
-                      },
-                      child: IconifiedButtonWidget(StringConstant.google, ImagesConstant.ic_google),
-                    ),
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "youtube");
-
-                        setState(() {
-                          isLoading = true;
-                        });
-                        try {
-                          var temp = await signInWithYoutube();
-                          if (temp == null) {
-                            return;
-                          }
-                          var tokenBody = jsonEncode(<String, dynamic>{
-                            "access_token": token,
-                            "scope": "https://www.googleapis.com/auth/yt-analytics.readonly https://www.googleapis.com/auth/youtube.readonly",
-                            "token_type": "Bearer",
-                            "access_type": "offline",
-                          });
-
-                          var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                          final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                          final tokenResponse = await API.get("/signup/oauth/youtube/callback", params: {"tokens": tokenBody}, headers: headers);
-                          setState(() {
-                            isLoading = false;
-                          });
-                          if (tokenResponse.statusCode == 200) {
-                            final Map parsed = json.decode(tokenResponse.body.toString());
-                            print(parsed);
-                            if (parsed.containsKey("data")) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                  builder: (context) => SocialSignUpScreen(
-                                    additionalUserInfo: temp.additionalUserInfo!,
-                                    token: parsed['data']['token'],
-                                    tokenId: tempStamp,
-                                    channel: "youtube",
-                                  ),
-                                ),
-                              ).then((value) async {
-                                if (!value) {
-                                  Navigator.pop(context, value);
-                                }
-                              });
-                            } else {
-                              SharedPreferences prefs = await SharedPreferences.getInstance();
-                              String cookie = tokenResponse.headers.toString();
-                              var str = cookie.split(";");
-                              String id = "";
-                              for (int j = 0; j < str.length; j++) {
-                                if (str[j].contains("sb.connect.sid")) {
-                                  id = str[j];
-                                  j = str.length;
-                                }
-                              }
-                              var finalId = id.split(",");
-                              if (finalId.length > 1) {
-                                for (int j = 0; j < finalId.length; j++) {
-                                  if (finalId[j].contains("sb.connect.sid")) {
-                                    id = finalId[j];
-                                    j = finalId.length;
-                                  }
-                                }
-                              }
-                              prefs.setBool("isLogin", true);
-                              prefs.setString("login_cookie", id.split("=")[1]);
-                              userManager.refreshUser();
-                              await loginBack(context);
-                              logEvent(Events.login, eventValues: {"method": "youtube"});
-                            }
-                          } else {
-                            CommonExtension().showToast("Oops! Something went wrong");
-                          }
-                        } finally {
-                          if (isLoading)
-                            setState(() {
-                              isLoading = false;
-                            });
-                        }
-                        ;
-                      },
-                      child: IconifiedButtonWidget(StringConstant.youtube, ImagesConstant.ic_youtube),
-                    ),
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "instagram");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/InstaLoginScreen"),
-                            builder: (context) => InstaLoginScreen(),
-                          ),
-                        ).then((value) async {
-                          if (value != null) {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                            final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                            final access_response = await API.get("/signup/oauth/instagram_v2/callback", params: {"access_token": value['accessToken']}, headers: headers);
-                            setState(() {
-                              isLoading = false;
-                            });
-                            print(access_response.body);
-                            if (access_response.statusCode == 200) {
-                              final Map parsed = json.decode(access_response.body.toString());
-                              if (parsed["data"]["result"] as bool) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                    builder: (context) => SocialSignUpScreen(
-                                      additionalUserInfo: null,
-                                      token: parsed["data"]["name"],
-                                      tokenId: tempStamp,
-                                      channel: "instagram",
-                                    ),
-                                  ),
-                                ).then((value) async {
-                                  if (!value) {
-                                    Navigator.pop(context, value);
-                                  }
-                                });
-                              }
-                            } else {
-                              CommonExtension().showToast("Oops! Something went wrong");
-                            }
-                          }
-                          print(value);
-                        });
-                      },
-                      child: IconifiedButtonWidget(StringConstant.instagram, ImagesConstant.ic_instagram),
-                    ),
-                    SizedBox(
-                      height: 1.5.h,
-                    ),
-                    GestureDetector(
-                      onTap: () async {
-                        FirebaseAnalytics.instance.logSignUp(signUpMethod: "tiktok");
-                        var tempData = await platform.invokeMethod("OpenTiktok");
-                        if (tempData != null) {
-                          try {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            final codeResponse = await get(Uri.parse(
-                                "https://open-api.tiktok.com/oauth/access_token?client_key=aw9iospxikqd2qsx&client_secret=eec8b87abbbb43f7d43aaf4a66155a2d&code=${tempData}&grant_type=authorization_code"));
-                            print(codeResponse.statusCode);
-                            print(codeResponse.body);
-                            if (codeResponse.statusCode == 200) {
-                              final Map parsed = json.decode(codeResponse.body.toString());
-                              var tokenBody = jsonEncode(<String, dynamic>{
-                                "access_token": parsed['data']['access_token'],
-                                "open_id": parsed['data']['open_id'],
-                                // "refresh_token": parsed['data']['refresh_token'],
-                              });
-                              var tempStamp = DateTime.now().millisecondsSinceEpoch;
-                              final headers = {"cookie": "bst_social_signup=${tempStamp}"};
-                              final tiktokResponse = await API.get("/oauth/tiktok/callback", headers: headers, params: {"tokens": tokenBody, "code": tempData});
-                              setState(() {
-                                isLoading = false;
-                              });
-                              if (tiktokResponse.statusCode == 200) {
-                                final Map parsed = json.decode(tiktokResponse.body.toString());
-                                if (parsed["data"]["result"] as bool) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      settings: RouteSettings(name: "/SocialSignUpScreen"),
-                                      builder: (context) => SocialSignUpScreen(
-                                        additionalUserInfo: parsed["data"],
-                                        token: parsed["data"]["name"],
-                                        tokenId: tempStamp,
-                                        channel: "tiktok",
-                                      ),
-                                    ),
-                                  ).then((value) async {
-                                    if (!value) {
-                                      Navigator.pop(context, value);
-                                    }
-                                  });
-                                }
-                              } else {
-                                CommonExtension().showToast("Oops! Something went wrong");
-                              }
-                            } else {
-                              setState(() {
-                                isLoading = false;
-                              });
-                              CommonExtension().showToast("Oops! Something went wrong");
-                            }
-                          } catch (error) {}
-                        }
-                      },
-                      child: IconifiedButtonWidget(StringConstant.tiktok, ImagesConstant.ic_tiktok),
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TitleTextWidget(StringConstant.already_account, ColorConstant.White, FontWeight.w400, 12),
-                        GestureDetector(
-                          onTap: () => {
-                            if (prefixPage != null)
-                              {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    settings: RouteSettings(name: "/LoginScreen", arguments: "signup"),
-                                    builder: (context) => LoginScreen(),
-                                  ),
-                                )
-                              }
-                            else
-                              {Navigator.pop(context)}
-                          },
-                          child: Text(
-                            StringConstant.sign_in,
-                            textAlign: TextAlign.center,
-                            style:
-                                TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
-                    Container(
-                      color: ColorConstant.BackgroundColor,
-                      height: 6.h,
                     ),
                   ],
                 ),
               ),
-            ),
+              SignListWidget(
+                onTap: (account) {
+                  switch (account) {
+                    case ThirdPartAccount.apple:
+                      onAppleClick();
+                      break;
+                    case ThirdPartAccount.google:
+                      onGoogleClick();
+                      break;
+                    case ThirdPartAccount.youtube:
+                      onYoutubeClick();
+                      break;
+                    case ThirdPartAccount.instagram:
+                      onInstagramClick();
+                      break;
+                    case ThirdPartAccount.tiktok:
+                      onTiktokClick();
+                      break;
+                  }
+                },
+                thirdPart: [
+                  ThirdPartAccount.google,
+                  ThirdPartAccount.youtube,
+                  ThirdPartAccount.apple,
+                  ThirdPartAccount.instagram,
+                  ThirdPartAccount.tiktok,
+                ],
+              ),
+              SizedBox(height: $(30)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TitleTextWidget(StringConstant.already_account, ColorConstant.White, FontWeight.w400, 12),
+                  GestureDetector(
+                    onTap: () => {
+                      if (prefixPage != null)
+                        {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/LoginScreen", arguments: "signup"),
+                              builder: (context) => LoginScreen(),
+                            ),
+                          )
+                        }
+                      else
+                        {Navigator.pop(context)}
+                    },
+                    child: Text(
+                      StringConstant.log_in,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
+                    ),
+                  )
+                ],
+              ),
+              Container(height: MediaQuery.of(context).padding.bottom),
+            ],
           ),
-        ],
+        ),
       ),
     ).blankAreaIntercept();
   }

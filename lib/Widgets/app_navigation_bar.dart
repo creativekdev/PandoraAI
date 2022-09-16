@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,6 +58,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
   Widget? statusBar;
   Decoration? decoration;
   bool blurAble;
+  ScrollController? scrollController;
 
   AppNavigationBar({
     this.key,
@@ -80,6 +83,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
     this.statusBar,
     this.decoration,
     this.blurAble = false,
+    this.scrollController,
   }) {
     this.backIcon ??= Image.asset(
       Images.ic_back,
@@ -136,7 +140,12 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
           ),
           Offstage(offstage: child == null, child: child),
         ],
-      ).intoContainer(decoration: decoration),
+      ).intoContainer(decoration: decoration).intoGestureDetector(
+          onDoubleTap: (Platform.isIOS && scrollController != null)
+              ? () {
+                  scrollController!.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+                }
+              : null),
       elevation: elevation,
       color: backgroundColor,
     );

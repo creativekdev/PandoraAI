@@ -47,7 +47,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBTxc7n2xfG9Mw7VB6AuEY_lP68I7BNFtM',
+    apiKey: 'AIzaSyCotAqsou5mP9XZ69ayn0EEW7jzvOPT6cE',
     appId: '1:761058819999:web:f014635a6a6acd875407aa',
     messagingSenderId: '761058819999',
     projectId: 'fair-terminus-266600',
@@ -57,7 +57,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB01usFl2-r6GlzE_CdymQkNA6_YN_y9io',
+    apiKey: 'AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4',
     appId: '1:761058819999:android:752125b532f9a9ea5407aa',
     messagingSenderId: '761058819999',
     projectId: 'fair-terminus-266600',
@@ -65,7 +65,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB6clMfdKAphkQ5Qu1Hr3JYDFu2N0WEKoY',
+    apiKey: 'AIzaSyAwbn9Pkv2gvQlJ8QxKGDAI0_3CyWoqJHQ',
     appId: '1:761058819999:ios:a6e06dc89268600f5407aa',
     messagingSenderId: '761058819999',
     projectId: 'fair-terminus-266600',
