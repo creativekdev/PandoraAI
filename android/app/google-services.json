@@ -1,54 +1,186 @@
 {
-    "project_info": {
-      "project_number": "761058819999",
-      "project_id": "fair-terminus-266600",
-      "storage_bucket": "fair-terminus-266600.appspot.com"
-    },
-    "client": [
-      {
-        "client_info": {
-          "mobilesdk_app_id": "1:761058819999:android:752125b532f9a9ea5407aa",
-          "android_client_info": {
-            "package_name": "io.socialbook.cartoonizer"
+  "project_info": {
+    "project_number": "761058819999",
+    "project_id": "fair-terminus-266600",
+    "storage_bucket": "fair-terminus-266600.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:752125b532f9a9ea5407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.cartoonizer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-2viib809svl78lvc6atg33kmmck0h8od.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "f817a7cc524aa4d4cd54bb5f333fc2f6f589ea97"
           }
         },
-        "oauth_client": [
-          {
-            "client_id": "761058819999-2viib809svl78lvc6atg33kmmck0h8od.apps.googleusercontent.com",
-            "client_type": 1,
-            "android_info": {
-              "package_name": "io.socialbook.cartoonizer",
-              "certificate_hash": "f817a7cc524aa4d4cd54bb5f333fc2f6f589ea97"
-            }
-          },
-          {
-            "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
-            "client_type": 3
-          }
-        ],
-        "api_key": [
-          {
-            "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
-          }
-        ],
-        "services": {
-          "appinvite_service": {
-            "other_platform_oauth_client": [
-              {
-                "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
-                "client_type": 3
-              },
-              {
-                "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
-                "client_type": 2,
-                "ios_info": {
-                  "bundle_id": "io.socialbook.linkone"
-                }
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
               }
-            ]
-          }
+            }
+          ]
         }
       }
-    ],
-    "configuration_version": "1"
-  }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:e0b05f1350332a825407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.linkone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-82dc6hbjskq4rlb438jgcbhs7k4uvn64.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.linkone",
+            "certificate_hash": "9faf2fe62582e8c3b6d4f97db12b68de5bebe6e8"
+          }
+        },
+        {
+          "client_id": "761058819999-uij1htd8uugj60cv2ig89unahgmtpvgc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.linkone",
+            "certificate_hash": "9b8d3c6fddfc3d70a14254a2e2c3cacee2825cd7"
+          }
+        },
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:8a08e3ad476260545407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.photostudio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-kbhkmls9lik9qakqq17npgl7v3qke487.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.photostudio",
+            "certificate_hash": "9846d85a1b179297b24563cd374cfa0f966906fd"
+          }
+        },
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:761058819999:android:3c9b4d0c94d661e05407aa",
+        "android_client_info": {
+          "package_name": "io.socialbook.videostudio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyMl3lVLLjhHr079ayX_cr2n3YCoZ1KR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "761058819999-41qjjnat201nm9n2c7kqnn4ol422hnnf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "761058819999-0artgud1dp5hdaitjfcte7u1dvfo7gun.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.socialbook.linkone"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
