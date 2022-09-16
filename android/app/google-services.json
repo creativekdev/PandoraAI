@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "761058819999-am4r1pmih2icq27jggce3siidgtemhgv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.socialbook.cartoonizer",
+            "certificate_hash": "23262efacf6c8fe7a58c38133d601ce4368ab5e3"
+          }
+        },
+        {
           "client_id": "761058819999-ujr0gcid7lvovdcou017v2qhktmah1mp.apps.googleusercontent.com",
           "client_type": 3
         }
