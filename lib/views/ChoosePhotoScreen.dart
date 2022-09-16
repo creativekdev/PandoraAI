@@ -122,9 +122,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late double imgContainerSize;
 
   Widget get cachedImage {
-    // if (_cachedImage != null) {
-    //   return _cachedImage!;
-    // }
+    if (_cachedImage != null) {
+      return _cachedImage!;
+    }
     var imageUint8List = base64Decode(image);
     if (lastBuildType == _BuildType.waterMark) {
       _cachedImage = Stack(
@@ -665,10 +665,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           aspectRatio: _videoPlayerController!.value.aspectRatio,
                                           child: VideoPlayer(_videoPlayerController!),
                                         ).intoContainer(height: imgContainerSize, width: imgContainerSize)
-                                      : Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [cachedImage],
-                                        ).intoContainer(height: imgContainerSize, width: imgContainerSize),
+                                      : Center(child: cachedImage).intoContainer(
+                                          height: imgContainerSize,
+                                          width: imgContainerSize,
+                                        ),
                                 ),
                                 Obx(() => Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -696,175 +696,169 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                     )).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !widget.hasOriginalCheck),
                               ],
                             )
-                          : Stack(
-                              children: [
-                                Obx(() => Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          controller.isPhotoSelect.value
-                                              ? ClipRRect(
-                                                  child: Image.file(
-                                                    controller.image.value as File,
-                                                    fit: BoxFit.cover,
-                                                    width: imgContainerSize,
-                                                    height: imgContainerSize,
-                                                  ),
-                                                  borderRadius: BorderRadius.circular($(8)),
-                                                ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
-                                              : Image.asset(
-                                                  Images.ic_choose_photo_initial_header,
-                                                  height: imgContainerSize,
-                                                  width: imgContainerSize,
-                                                ),
-                                          controller.isPhotoSelect.value
-                                              ? Container()
-                                              : Image.asset(
-                                                  Images.ic_choose_photo_initial_text,
-                                                ).intoContainer(margin: EdgeInsets.only(top: $(10))),
-                                          SizedBox(height: $(26)),
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Image.asset(Images.ic_camera, width: $(24)),
-                                              SizedBox(width: $(8)),
-                                              Text(
-                                                StringConstant.choose_photo,
-                                                style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
-                                              ),
-                                            ],
-                                          )
-                                              .intoContainer(
-                                                  width: double.maxFinite,
-                                                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                                                  margin: EdgeInsets.symmetric(horizontal: $(30)),
-                                                  alignment: Alignment.center,
-                                                  decoration: BoxDecoration(
-                                                    color: ColorConstant.DiscoveryBtn,
-                                                    borderRadius: BorderRadius.circular($(8)),
-                                                  ))
-                                              .intoGestureDetector(onTap: () {
-                                            showPickPhotoDialog(context);
-                                          }),
-                                          SizedBox(height: $(40)),
-                                        ],
-                                      ),
-                                    ).visibility(visible: !controller.isPhotoDone.value)),
-                              ],
-                            ),
+                          : Obx(() => Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    controller.isPhotoSelect.value
+                                        ? ClipRRect(
+                                            child: Image.file(
+                                              controller.image.value as File,
+                                              fit: BoxFit.cover,
+                                              width: imgContainerSize,
+                                              height: imgContainerSize,
+                                            ),
+                                            borderRadius: BorderRadius.circular($(8)),
+                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
+                                        : Image.asset(
+                                            Images.ic_choose_photo_initial_header,
+                                            height: imgContainerSize - 52,
+                                            width: imgContainerSize - 52,
+                                          ),
+                                    controller.isPhotoSelect.value
+                                        ? Container()
+                                        : Image.asset(
+                                            Images.ic_choose_photo_initial_text,
+                                          ).intoContainer(margin: EdgeInsets.only(top: $(10))),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Image.asset(Images.ic_camera, width: $(24)),
+                                        SizedBox(width: $(8)),
+                                        Text(
+                                          StringConstant.choose_photo,
+                                          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    )
+                                        .intoContainer(
+                                            width: double.maxFinite,
+                                            padding: EdgeInsets.symmetric(vertical: $(10)),
+                                            margin: EdgeInsets.symmetric(horizontal: $(30)),
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: ColorConstant.DiscoveryBtn,
+                                              borderRadius: BorderRadius.circular($(8)),
+                                            ))
+                                        .intoGestureDetector(onTap: () {
+                                      showPickPhotoDialog(context);
+                                    }),
+                                  ],
+                                ),
+                              ).visibility(visible: !controller.isPhotoDone.value)),
                     ),
                   ),
                   Obx(() => buildSuccessFunctions(context).visibility(visible: controller.isPhotoDone.value)),
                   SizedBox(height: $(25)),
-                  Obx(() => Column(
-                        children: [
-                          ScrollablePositionedList.separated(
-                            initialScrollIndex: 0,
-                            itemCount: tabTitleList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemScrollController: titleScrollController,
-                            itemPositionsListener: titleScrollPositionsListener,
-                            physics: ClampingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              var checked = currentTitleIndex == index;
-                              return Column(
-                                children: [
-                                  Text(
-                                    tabTitleList[index],
-                                    style: TextStyle(
-                                      color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                                      fontSize: $(16),
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 4,
-                                    margin: EdgeInsets.only(top: 4),
-                                    width: tabTitleList[index].length * 4,
-                                    color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
-                                  ),
-                                ],
-                              ).intoGestureDetector(onTap: () {
-                                if (checked) {
-                                  return;
+                  Column(
+                    children: [
+                      ScrollablePositionedList.separated(
+                        initialScrollIndex: 0,
+                        itemCount: tabTitleList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemScrollController: titleScrollController,
+                        itemPositionsListener: titleScrollPositionsListener,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          var checked = currentTitleIndex == index;
+                          return Column(
+                            children: [
+                              Text(
+                                tabTitleList[index],
+                                style: TextStyle(
+                                  color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                  fontSize: $(16),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ),
+                              Container(
+                                height: 4,
+                                margin: EdgeInsets.only(top: 4),
+                                width: tabTitleList[index].length * 4,
+                                color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                              ),
+                            ],
+                          ).intoGestureDetector(onTap: () {
+                            if (checked) {
+                              return;
+                            }
+                            lastChangeByTap = true;
+                            setState(() {
+                              currentTitleIndex = index;
+                              var scrollPos;
+                              if (flatTitle) {
+                                scrollPos = index;
+                                if (!controller.isPhotoSelect.value) {
+                                  currentItemIndex = index;
                                 }
-                                lastChangeByTap = true;
-                                setState(() {
-                                  currentTitleIndex = index;
-                                  var scrollPos;
-                                  if (flatTitle) {
-                                    scrollPos = index;
-                                    if (!controller.isPhotoSelect.value) {
-                                      currentItemIndex = index;
-                                    }
-                                  } else {
-                                    var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
-                                    var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
-                                    scrollPos = findPosition;
-                                  }
-                                  if (scrollPos > tabItemList.length - 4) {
-                                    itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                                    // itemScrollController.scrollTo(index: tabItemList.length - 4, duration: Duration(milliseconds: 200));
-                                  } else {
-                                    itemScrollController.jumpTo(index: scrollPos);
-                                    // itemScrollController.scrollTo(index: scrollPos, duration: Duration(milliseconds: 200));
-                                  }
-                                });
-                                delay(() {
-                                  lastChangeByTap = false;
-                                }, milliseconds: 32);
-                              }).intoContainer(
-                                  margin: EdgeInsets.only(
-                                left: index == 0 ? $(30) : $(12),
-                                right: index == tabItemList.length - 1 ? $(30) : $(12),
-                              ));
-                            },
-                            separatorBuilder: (context, index) => Container(),
-                          ).intoContainer(
-                            height: $(36),
-                            margin: EdgeInsets.only(bottom: $(10)),
-                          ),
-                          ScrollablePositionedList.separated(
-                            initialScrollIndex: 0,
-                            itemCount: tabItemList.length,
-                            scrollDirection: Axis.horizontal,
-                            itemScrollController: itemScrollController,
-                            itemPositionsListener: itemScrollPositionsListener,
-                            physics: ClampingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              return _buildTabItem(context, index).intoContainer(
-                                  margin: EdgeInsets.only(
-                                left: index == 0 ? $(30) : 0,
-                                right: index == tabItemList.length - 1 ? $(30) : 0,
-                              ));
-                            },
-                            separatorBuilder: (BuildContext context, int index) {
-                              if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
-                                return Container();
                               } else {
-                                var current = tabItemList[index];
-                                var next = tabItemList[index + 1];
-                                if (next.categoryIndex == current.categoryIndex) {
-                                  return Container();
-                                } else {
-                                  return VerticalDivider(
-                                    color: ColorConstant.HintColor,
-                                    width: $(6),
-                                    indent: $(12),
-                                    endIndent: $(12),
-                                    thickness: 2,
-                                  );
-                                }
+                                var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
+                                var findPosition = tabItemList.findPosition((data) => data.data == effectItem)!;
+                                scrollPos = findPosition;
                               }
-                            },
-                          ).intoContainer(
-                            height: itemWidth + (8),
-                            margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                          ),
-                        ],
-                      ).offstage(offstage: !controller.isPhotoSelect.value)),
+                              if (scrollPos > tabItemList.length - 4) {
+                                itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                                // itemScrollController.scrollTo(index: tabItemList.length - 4, duration: Duration(milliseconds: 200));
+                              } else {
+                                itemScrollController.jumpTo(index: scrollPos);
+                                // itemScrollController.scrollTo(index: scrollPos, duration: Duration(milliseconds: 200));
+                              }
+                            });
+                            delay(() {
+                              lastChangeByTap = false;
+                            }, milliseconds: 32);
+                          }).intoContainer(
+                              margin: EdgeInsets.only(
+                            left: index == 0 ? $(30) : $(12),
+                            right: index == tabItemList.length - 1 ? $(30) : $(12),
+                          ));
+                        },
+                        separatorBuilder: (context, index) => Container(),
+                      ).intoContainer(
+                        height: $(36),
+                        margin: EdgeInsets.only(bottom: $(10)),
+                      ),
+                      ScrollablePositionedList.separated(
+                        initialScrollIndex: 0,
+                        itemCount: tabItemList.length,
+                        scrollDirection: Axis.horizontal,
+                        itemScrollController: itemScrollController,
+                        itemPositionsListener: itemScrollPositionsListener,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return _buildTabItem(context, index).intoContainer(
+                              margin: EdgeInsets.only(
+                            left: index == 0 ? $(30) : 0,
+                            right: index == tabItemList.length - 1 ? $(30) : 0,
+                          ));
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          if (index == tabItemList.length - 1 || widget.tabString == 'face' || widget.entrySource == EntrySource.fromRecent) {
+                            return Container();
+                          } else {
+                            var current = tabItemList[index];
+                            var next = tabItemList[index + 1];
+                            if (next.categoryIndex == current.categoryIndex) {
+                              return Container();
+                            } else {
+                              return VerticalDivider(
+                                color: ColorConstant.HintColor,
+                                width: $(6),
+                                indent: $(12),
+                                endIndent: $(12),
+                                thickness: 2,
+                              );
+                            }
+                          }
+                        },
+                      ).intoContainer(
+                        height: itemWidth + (8),
+                        margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: MediaQuery.of(context).padding.bottom < $(25) ? $(25) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),

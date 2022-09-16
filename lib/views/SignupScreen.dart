@@ -588,7 +588,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                         {Navigator.pop(context)}
                     },
                     child: Text(
-                      StringConstant.sign_in,
+                      StringConstant.log_in,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                     ),
