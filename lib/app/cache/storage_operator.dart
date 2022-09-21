@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 const _appDir = '/cartoonizer/';
 const _videoDir = 'video/';
+const _imageDir = 'image/';
 const _tempDir = 'temp/';
 
 class StorageOperator {
@@ -12,6 +13,8 @@ class StorageOperator {
 
   /// videoDir
   Directory get videoDir => Directory('$_mainPath$_videoDir');
+
+  Directory get imageDir => Directory('$_mainPath$_imageDir');
 
   Directory get tempDir => Directory('$_mainPath$_tempDir');
 
@@ -22,6 +25,7 @@ class StorageOperator {
     _mainPath = '${directory.path}$_appDir';
     await _mkdirs(_mainPath, [
       _videoDir,
+      _imageDir,
       _tempDir,
     ]);
     return true;
@@ -36,8 +40,9 @@ class StorageOperator {
 
   Future<int> totalSize() async {
     var tempSize = await _getFileSize(tempDir);
+    var imageSize = await _getFileSize(imageDir);
     var videoSize = await _getFileSize(videoDir);
-    return videoSize + tempSize;
+    return videoSize + imageSize + tempSize;
   }
 
   Future<int> _getFileSize(dynamic target) async {

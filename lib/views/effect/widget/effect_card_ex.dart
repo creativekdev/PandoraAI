@@ -40,13 +40,18 @@ class EffectCardEx {
         fit: BoxFit.fill,
         width: width,
         height: height,
-        placeholder: (context, url) => loadingWidget(context),
-        errorWidget: (context, url, error) => loadingWidget(context),
+        placeholder: (context, url) => loadingWidget(context, width: width, height: height),
+        errorWidget: (context, url, error) => loadingWidget(context, width: width, height: height),
       );
 
-  Widget loadingWidget(BuildContext context) => Container(
-        width: double.maxFinite,
-        height: double.maxFinite,
+  Widget loadingWidget(
+    BuildContext context, {
+    required double width,
+    required double height,
+  }) =>
+      Container(
+        width: width,
+        height: height,
         color: ColorConstant.CardColor,
         child: Center(
           child: CircularProgressIndicator(),
