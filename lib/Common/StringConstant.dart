@@ -153,4 +153,5 @@ class StringConstant {
   static const settingsClearCache = "Clear cache";
   static const accountCancelled = 'PPM User';
   static const feedback = 'Feedback';
+  static const recently = 'Recently';
 }

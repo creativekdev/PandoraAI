@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:cartoonizer/Common/dialog.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
@@ -87,9 +89,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  late StreamSubscription onSplashAdLoadingListener;
+
   @override
   void initState() {
     super.initState();
+    onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
+      if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
+        openApp();
+      }
+    });
 
     waitAppInitialize();
 
@@ -102,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.dispose();
     //3. 页面销毁时，移出监听者
     WidgetsBinding.instance.removeObserver(this);
+    onSplashAdLoadingListener.cancel();
   }
 
   Future<void> _checkAppVersion() async {
@@ -169,14 +179,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion();
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (BuildContext context) => HomeScreen(),
-          settings: RouteSettings(name: "/HomeScreen"),
-        ),
-        ModalRoute.withName('/HomeScreen'),
-      );
+      var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
+      thirdpartManager.adsHolder.initHolder();
+      delay(() => openApp(force: true), milliseconds: 2000);
     } else {
       Navigator.pushAndRemoveUntil(
         context,
@@ -186,24 +191,42 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  void openApp({bool force = false}) {
+    var forward = () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => HomeScreen(),
+          settings: RouteSettings(name: "/HomeScreen"),
+        ),
+        ModalRoute.withName('/HomeScreen'),
+      );
+    };
+    if (force) {
+      forward.call();
+    } else {
+      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.showIfAvailable(callback: () {
+        forward.call();
+      });
+    }
+  }
+
   //监听程序进入前后台的状态改变的方法
+  /// dead code。
+  /// 此方法不生效，因为push到homescreen的时候当前页面就被销毁了。所以之前的adContainer报错也是一直没有得到fix。
+  /// 新实现在ThirdpartManager里，使用了google ads的AppStateEventNotifier
+  /// 如果要使用此段代码，可以搬到home screen中，但是home screen在使用过程中还是会被重启，所以放在了ThirdpartManager中。
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    ThirdpartManager? manager;
-    if (AppDelegate.instance.exists<ThirdpartManager>()) {
-      manager = AppDelegate.instance.getManager<ThirdpartManager>();
-    }
     switch (state) {
       //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
       case AppLifecycleState.resumed:
-        manager?.appBackground = false;
         print("didChangeAppLifecycleState-------> 应用进入前台======");
         break;
       //应用状态处于闲置状态，并且没有用户的输入事件，
       // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
       case AppLifecycleState.inactive:
-        manager?.appBackground = true;
         print("didChangeAppLifecycleState-------> 应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
         break;
       //当前页面即将退出
@@ -220,11 +243,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Container(
-          color: ColorConstant.BackgroundColor,
-        ),
-      ),
+      backgroundColor: ColorConstant.BackgroundColor,
+      body: Platform.isIOS
+          ? Image.asset(
+              Images.ic_launcher_bg,
+              height: double.maxFinite,
+            ).intoCenter()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                    child: Image.asset(
+                  Images.launch_icon,
+                  width: ScreenUtil.screenSize.width * 0.4,
+                )),
+                Image.asset(
+                  Images.launch_branding,
+                  width: ScreenUtil.screenSize.width * 0.42,
+                ),
+              ],
+            ).intoContainer(width: double.maxFinite, height: double.maxFinite),
     );
   }
 }

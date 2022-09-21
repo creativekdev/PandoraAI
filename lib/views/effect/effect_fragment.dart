@@ -20,7 +20,7 @@ import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
-import 'package:cartoonizer/views/effect/effect_recent_fragment.dart';
+import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
 class EffectFragment extends StatefulWidget {
@@ -192,15 +192,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 );
               }
             }
-            var key = GlobalKey<EffectRecentFragmentState>();
-            tabConfig.add(HomeTabConfig(
-              item: EffectRecentFragment(
-                key: key,
-                tabId: tabId.id(),
-                controller: recentController,
-              ),
-              title: 'Recent',
-            ));
             _pageController = PageController(initialPage: currentIndex);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
             return Stack(

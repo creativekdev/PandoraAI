@@ -293,11 +293,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   height: $(25),
                 )
                 .intoCenter()
-                .intoContainer(
-                  width: width,
-                  height: height ?? $(25),
-                  constraints: BoxConstraints(minHeight: $(50)),
-                );
+                .intoContainer(width: width, height: height ?? width);
           },
           errorWidget: (context, url, error) {
             return CircularProgressIndicator()
@@ -306,7 +302,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                   height: $(25),
                 )
                 .intoCenter()
-                .intoContainer(width: width, height: width);
+                .intoContainer(width: width, height: height ?? width);
           });
     }
   }

@@ -17,6 +17,7 @@ import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
+import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -116,6 +117,19 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 }
               }),
               Container(height: $(12)),
+              ImageTextBarWidget(
+                StringConstant.recently,
+                Images.ic_recently,
+                true,
+              ).intoGestureDetector(onTap: () {
+                logEvent(Events.recent_loading);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/EffectRecentScreen"),
+                      builder: (context) => EffectRecentScreen(),
+                    ));
+              }),
               ImageTextBarWidget(
                 StringConstant.setting_my_discovery,
                 Images.ic_setting_my_discovery,

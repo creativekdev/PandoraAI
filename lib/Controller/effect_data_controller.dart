@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 
@@ -9,10 +10,13 @@ class EffectDataController extends GetxController {
   EffectMap? data = null;
   bool loading = true;
   EffectManager effectManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
+  int lastRandomTime = 0;
 
   @override
   void onInit() {
     super.onInit();
+    lastRandomTime = cacheManager.getInt(CacheManager.effectLastRandomTime);
   }
 
   @override
