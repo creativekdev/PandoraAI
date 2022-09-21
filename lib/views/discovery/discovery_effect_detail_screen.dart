@@ -280,13 +280,34 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
     } else {
       return CachedNetworkImageUtils.custom(
-        context: context,
-        imageUrl: resource.url ?? '',
-        fit: BoxFit.cover,
-        width: width,
-        height: height,
-        cacheManager: CachedImageCacheManager(),
-      );
+          context: context,
+          imageUrl: resource.url ?? '',
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
+          cacheManager: CachedImageCacheManager(),
+          placeholder: (context, url) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(
+                  width: width,
+                  height: height ?? $(25),
+                  constraints: BoxConstraints(minHeight: $(50)),
+                );
+          },
+          errorWidget: (context, url, error) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(width: width, height: width);
+          });
     }
   }
 
