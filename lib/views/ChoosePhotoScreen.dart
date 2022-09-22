@@ -19,6 +19,7 @@ import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -92,7 +93,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var videoPath = "";
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
-
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
 
@@ -226,6 +227,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void dispose() {
     super.dispose();
+    thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
     adsHolder.onDispose();
     rewardAdsHolder.onDispose();
@@ -237,8 +239,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-
     logEvent(Events.upload_page_loading);
+    thirdpartManager.adsHolder.ignore = true;
     itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
     imgContainerSize = ScreenUtil.screenSize.width;
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
@@ -703,24 +705,52 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                   children: [
                                     controller.isPhotoSelect.value
                                         ? ClipRRect(
-                                            child: Image.file(
-                                              controller.image.value as File,
-                                              fit: BoxFit.cover,
-                                              width: imgContainerSize,
-                                              height: imgContainerSize,
-                                            ),
-                                            borderRadius: BorderRadius.circular($(8)),
-                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
+                                            child: Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                Image.file(
+                                                  controller.image.value as File,
+                                                  fit: BoxFit.cover,
+                                                  width: imgContainerSize,
+                                                  height: imgContainerSize,
+                                                ),
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Image.asset(
+                                                    Images.ic_loading_filled,
+                                                    color: ColorConstant.White,
+                                                  )
+                                                      .intoContainer(
+                                                          padding: EdgeInsets.all(12),
+                                                          height: imgContainerSize / 5.2,
+                                                          width: imgContainerSize / 5.2,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(8),
+                                                            color: Color(0x66000000),
+                                                          ))
+                                                      .intoGestureDetector(onTap: () {
+                                                    controller.changeIsLoading(true);
+                                                    getCartoon(context);
+                                                  }),
+                                                ),
+                                              ],
+                                            ).intoContainer(width: imgContainerSize, height: imgContainerSize),
+                                            borderRadius: BorderRadius.circular($(0)),
+                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(tabItemList.length == 1 ? 100 : 15)))
                                         : Image.asset(
                                             Images.ic_choose_photo_initial_header,
-                                            height: imgContainerSize - 52,
-                                            width: imgContainerSize - 52,
+                                            height: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
+                                            width: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
                                           ),
                                     controller.isPhotoSelect.value
                                         ? Container()
                                         : Image.asset(
                                             Images.ic_choose_photo_initial_text,
-                                          ).intoContainer(margin: EdgeInsets.only(top: $(10))),
+                                          ).intoContainer(
+                                            margin: EdgeInsets.only(
+                                            top: $(10) + (tabItemList.length == 1 ? 15 : 0),
+                                            bottom: (tabItemList.length == 1 ? 15 : 0),
+                                          )),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -858,7 +888,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                       ),
                     ],
-                  ),
+                  ).offstage(offstage: tabItemList.length == 1),
                   SizedBox(height: MediaQuery.of(context).padding.bottom < $(25) ? $(25) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),

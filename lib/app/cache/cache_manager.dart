@@ -19,6 +19,7 @@ class CacheManager extends BaseManager {
   static const _rateConfig = 'rate_config';
   static const openToMsg = 'open_to_msg';
   static const effectLastRandomTime = 'effect_last_random_time';
+  static const effectLastRandomList = 'effect_last_random_list';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

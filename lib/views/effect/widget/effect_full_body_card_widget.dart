@@ -32,7 +32,7 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
   }
 
   Widget buildItem(BuildContext context, {required EffectItemListData data}) {
-    var tag = EffectTagUtils.build(data.item.tag);
+    var tag = EffectTagUtils.build(data.item!.tag);
     return Stack(
       children: [
         Column(
@@ -44,11 +44,11 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
                 context,
                 width: imageSize,
                 height: imageSize,
-                url: data.item.imageUrl,
+                url: data.item!.imageUrl,
               ),
             ),
             Text(
-              data.item.displayName,
+              data.item!.displayName,
               style: TextStyle(
                 color: ColorConstant.White,
                 fontWeight: FontWeight.w400,

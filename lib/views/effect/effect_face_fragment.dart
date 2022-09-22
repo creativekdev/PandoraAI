@@ -37,7 +37,7 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
@@ -59,7 +59,9 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       this,
       closeable: false,
       onUpdated: () {
-        setState(() {});
+        if (mounted) {
+          setState(() {});
+        }
       },
       adId: AdMobConfig.BANNER_AD_ID,
       horizontalPadding: $(50),
@@ -68,7 +70,9 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       bannerAdsHolder.initHolder();
     });
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (event.data == widget.tabId) {

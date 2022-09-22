@@ -48,6 +48,7 @@ class Images {
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
    static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.jpg';
+   static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';
    static const String ic_man = 'assets/images/ic_man.png';

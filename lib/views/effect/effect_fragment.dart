@@ -20,6 +20,7 @@ import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
+import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
@@ -76,12 +77,19 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void onAttached() {
     super.onAttached();
+    tabConfig[currentIndex].key.currentState?.onAttached();
     var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     if (currentTime - lastTime > 5000) {
       logEvent(Events.tab_effect_loading);
     }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
+  }
+
+  @override
+  void onDetached() {
+    super.onDetached();
+    tabConfig[currentIndex].key.currentState?.onDetached();
   }
 
   refreshProVisible() {
@@ -107,6 +115,14 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
       if (currentIndex != index) {
         currentIndex = index;
         _tabController.index = currentIndex;
+        for (var i = 0; i < tabConfig.length; i++) {
+          var key = tabConfig[i].key;
+          if (i == currentIndex) {
+            key.currentState?.onAttached();
+          } else {
+            key.currentState?.onDetached();
+          }
+        }
       }
     });
     var title = tabConfig[index].title;
@@ -154,10 +170,13 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
             recentController.updateOriginData(_.data!.allEffectList());
             tabConfig.clear();
             for (var value in _.data!.data.keys) {
+              var key = GlobalKey<AppTabState>();
               if (value == 'face') {
                 tabConfig.add(
                   HomeTabConfig(
+                    key: key,
                     item: EffectFaceFragment(
+                      key: key,
                       tabId: tabId.id(),
                       dataList: _.data!.effectList(value),
                       recentController: recentController,
@@ -169,7 +188,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
               } else if (value == 'full_body') {
                 tabConfig.add(
                   HomeTabConfig(
+                      key: key,
                       item: EffectFullBodyFragment(
+                        key: key,
                         tabId: tabId.id(),
                         dataList: _.data!.effectList(value),
                         recentController: recentController,
@@ -177,10 +198,23 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       ),
                       title: _.data!.localeName(value)),
                 );
+              } else if (value == 'template') {
+                tabConfig.add(HomeTabConfig(
+                    key: key,
+                    item: EffectRandomFragment(
+                      key: key,
+                      tabString: value,
+                      tabId: tabId.id(),
+                      recentController: recentController,
+                      dataController: dataController,
+                    ),
+                    title: _.data!.localeName(value)));
               } else {
                 tabConfig.add(
                   HomeTabConfig(
+                    key: key,
                     item: EffectFaceFragment(
+                      key: key,
                       tabId: tabId.id(),
                       dataList: _.data!.effectList(value),
                       recentController: recentController,

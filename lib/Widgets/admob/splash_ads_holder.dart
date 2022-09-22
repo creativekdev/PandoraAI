@@ -1,6 +1,8 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SplashAdsHolder extends PageAdsHolder {
@@ -12,6 +14,7 @@ class SplashAdsHolder extends PageAdsHolder {
 
   bool _isShowingAd = false;
   bool _isLoadingAd = false;
+  bool ignore = false;
 
   bool get isLoadingAd => _isLoadingAd;
 
@@ -55,6 +58,13 @@ class SplashAdsHolder extends PageAdsHolder {
           _appOpenLoadTime = DateTime.now();
           _appOpenAd = ad;
           isLoadingAd = false;
+          var mediationAdapterClassName = _appOpenAd?.responseInfo?.mediationAdapterClassName;
+          if (!TextUtil.isEmpty(mediationAdapterClassName)) {
+            logEvent(Events.admob_source_data, eventValues: {
+              'id': _appOpenAd?.responseInfo?.responseId,
+              'mediationClassName': mediationAdapterClassName,
+            });
+          }
         },
         onAdFailedToLoad: (error) {
           print('AppOpenAd failed to load: $error');
@@ -70,6 +80,9 @@ class SplashAdsHolder extends PageAdsHolder {
   }
 
   showIfAvailable({Function? callback}) {
+    if (ignore) {
+      return;
+    }
     if (!isAdAvailable) {
       print('Tried to show ad before available.');
       loadAd();

@@ -52,6 +52,7 @@ class EffectItem {
   late String key;
   late String algoname;
   late String stickerName;
+  late String templateName;
   late String category;
   late String type;
   late String server;
@@ -77,6 +78,7 @@ class EffectItem {
     this.stickerName = '',
     this.displayName = '',
     this.tag = '',
+    this.templateName = '',
   });
 
   EffectItem.fromJson(Map<String, dynamic> json) {
@@ -91,6 +93,7 @@ class EffectItem {
     originalFace = (json['original_face'] ?? false);
     server = (json['server'] ?? '').toString();
     stickerName = (json['sticker_name'] ?? '').toString();
+    templateName = (json['template_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
   }
@@ -108,6 +111,7 @@ class EffectItem {
     data['original_face'] = originalFace;
     data['server'] = server;
     data['sticker_name'] = stickerName;
+    data['template_name'] = templateName;
     data['display_name'] = displayName;
     data['tag'] = tag;
     return data;
@@ -115,17 +119,36 @@ class EffectItem {
 }
 
 class EffectItemListData {
-  String key;
-  String uniqueKey;
-  int pos;
-  EffectItem item;
+  String key = '';
+  String uniqueKey = '';
+  int pos = 0;
+  EffectItem? item = null;
 
   EffectItemListData({
-    required this.key,
-    required this.pos,
-    required this.item,
-    required this.uniqueKey,
+    this.key = '',
+    this.pos = 0,
+    this.item,
+    this.uniqueKey = '',
   });
+
+  EffectItemListData.fromJson(Map<String, dynamic> json) {
+    key = json['key'] ?? '';
+    pos = json['pos'] ?? 0;
+    uniqueKey = json['uniqueKey'] ?? '';
+    var jsonItem = json['item'] as Map<String, dynamic>?;
+    if (jsonItem != null) {
+      item = EffectItem.fromJson(jsonItem);
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{};
+    data['key'] = key;
+    data['pos'] = pos;
+    data['uniqueKey'] = uniqueKey;
+    data['item'] = item?.toJson();
+    return data;
+  }
 }
 
 class RecentEffectModel {
@@ -154,6 +177,8 @@ extension EffectItemEx on EffectItem {
   handleApiParams(Map<String, dynamic> params) {
     if (type == 'sticker') {
       params['sticker_name'] = stickerName;
+    } else if (type == 'template') {
+      params['template_name'] = templateName;
     }
   }
 }

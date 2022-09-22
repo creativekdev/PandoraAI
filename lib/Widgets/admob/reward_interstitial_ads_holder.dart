@@ -1,4 +1,6 @@
+import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RewardInterstitialAdsHolder extends PageAdsHolder {
@@ -30,6 +32,13 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
             print('$ad loaded.');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
+            var mediationAdapterClassName = _interstitialAd?.responseInfo?.mediationAdapterClassName;
+            if (!TextUtil.isEmpty(mediationAdapterClassName)) {
+              logEvent(Events.admob_source_data, eventValues: {
+                'id': _interstitialAd?.responseInfo?.responseId,
+                'mediationClassName': mediationAdapterClassName,
+              });
+            }
             onReady();
           },
           onAdFailedToLoad: (LoadAdError error) {

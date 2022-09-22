@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 ///
@@ -97,6 +98,13 @@ class BannerAdsHolder extends WidgetAdsHolder {
           }
 
           _inlineAdaptiveAd = bannerAd;
+          var mediationAdapterClassName = _inlineAdaptiveAd?.responseInfo?.mediationAdapterClassName;
+          if (!TextUtil.isEmpty(mediationAdapterClassName)) {
+            logEvent(Events.admob_source_data, eventValues: {
+              'id': _inlineAdaptiveAd?.responseInfo?.responseId,
+              'mediationClassName': mediationAdapterClassName,
+            });
+          }
           delay(() {
             _isLoaded = true;
             _adSize = size;
@@ -124,15 +132,15 @@ class BannerAdsHolder extends WidgetAdsHolder {
     if (!_isLoaded || closeAds) {
       return Container();
     }
-    // if (adWidget == null) {
-    //   adWidget = AdWidget(ad: _inlineAdaptiveAd!);
-    // }
+    if (adWidget == null) {
+      adWidget = AdWidget(ad: _inlineAdaptiveAd!);
+    }
     return Stack(
       children: [
         Container(
           width: _adWidth,
           height: (_adSize?.height ?? $(80)).toDouble(),
-          child: AdWidget(ad: _inlineAdaptiveAd!),
+          child: adWidget,
         ),
         Align(
           child: Icon(
