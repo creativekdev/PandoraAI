@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -12,13 +11,11 @@ import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -640,6 +637,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       }
                     });
                   } else {
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                     ShareScreen.startShare(
                       context,
                       backgroundColor: Color(0x77000000),
@@ -648,7 +646,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       isVideo: controller.isVideo.value,
                       originalUrl: urlFinal,
                       effectKey: selectedEffect.key,
-                    );
+                    ).then((value) {
+                      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                    });
                   }
                 }).offstage(offstage: !controller.isPhotoDone.value),
               ),
@@ -731,7 +731,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                                       .intoGestureDetector(onTap: () {
                                                     controller.changeIsLoading(true);
                                                     getCartoon(context);
-                                                  }),
+                                                  }).visibility(visible: !controller.isLoading.value),
                                                 ),
                                               ],
                                             ).intoContainer(width: imgContainerSize, height: imgContainerSize),
@@ -748,8 +748,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                             Images.ic_choose_photo_initial_text,
                                           ).intoContainer(
                                             margin: EdgeInsets.only(
-                                            top: $(10) + (tabItemList.length == 1 ? 15 : 0),
-                                            bottom: (tabItemList.length == 1 ? 15 : 0),
+                                            top: $(10),
+                                            bottom: 0,
                                           )),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1119,7 +1119,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       useOld: true,
       context: context,
       imageUrl: imageUrl,
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       height: itemWidth,
       width: itemWidth,
       placeholder: (context, url) {
@@ -1398,19 +1398,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
-              if (parsed['data'].toString().startsWith('<')) {
+              var dataString = parsed['data'].toString();
+              if (TextUtil.isEmpty(dataString)) {
+                logEvent(Events.transform_img_failed, eventValues: {
+                  'code': parsed['code'],
+                  'message': parsed['message'],
+                });
+              }
+              if (dataString.startsWith('<')) {
                 successForward = () {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                  CommonExtension().showToast(dataString.substring(dataString.indexOf('<p>') + 3, dataString.indexOf('</p>')));
                 };
-              } else if (parsed['data'].toString() == "") {
+              } else if (dataString == "") {
                 successForward = () {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 };
-              } else if (parsed['data'].toString().endsWith(".mp4")) {
+              } else if (dataString.endsWith(".mp4")) {
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);

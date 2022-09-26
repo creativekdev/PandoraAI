@@ -25,7 +25,7 @@ class EffectDataController extends GetxController {
   EffectManager effectManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   int lastRandomTime = 0;
-  List<EffectItemListData> randomList = [];
+  RxList<EffectItemListData> randomList = <EffectItemListData>[].obs;
   bool randomTabViewing = false;
 
   @override
@@ -34,13 +34,13 @@ class EffectDataController extends GetxController {
     lastRandomTime = cacheManager.getInt(CacheManager.effectLastRandomTime);
     List<dynamic>? json = cacheManager.getJson(CacheManager.effectLastRandomList);
     if (json != null) {
-      randomList = json.map((e) => EffectItemListData.fromJson(e)).toList();
+      randomList.value = json.map((e) => EffectItemListData.fromJson(e)).toList();
     }
     loopRefreshData();
   }
 
   loopRefreshData() {
-    buildRandomList(up: true);
+    buildRandomList();
     delay(() => loopRefreshData(), milliseconds: loopDuration);
   }
 
@@ -66,7 +66,7 @@ class EffectDataController extends GetxController {
   /// if old list not equals new list -> rebuild
   /// if time duration great than a half hour -> rebuild
   /// delay reload page when user is checking random list
-  buildRandomList({up = false}) {
+  buildRandomList() {
     if (data == null) {
       return;
     }
@@ -76,9 +76,6 @@ class EffectDataController extends GetxController {
           refreshRandomList(flatApiRandomList(key));
         }
       });
-      if (up) {
-        update();
-      }
     };
     if (randomList.isEmpty) {
       forward.call();
@@ -114,19 +111,20 @@ class EffectDataController extends GetxController {
 
   changeRandomTabViewing(bool state) {
     this.randomTabViewing = state;
-    update();
   }
 
   refreshRandomList(List<EffectItemListData> allItemList) {
-    randomList.clear();
+    List<EffectItemListData> result = [];
     for (int i = 0; i < allItemList.length; i++) {
       var value = allItemList[i];
       if (i == 0) {
-        randomList.add(value);
+        result.add(value);
       } else {
-        randomList.insert(math.Random().nextInt(randomList.length), value);
+        result.insert(math.Random().nextInt(result.length), value);
       }
     }
+    randomList.clear();
+    randomList.addAll(result);
     lastRandomTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt(CacheManager.effectLastRandomTime, lastRandomTime);
     cacheManager.setJson(CacheManager.effectLastRandomList, randomList.map((e) => e.toJson()).toList());

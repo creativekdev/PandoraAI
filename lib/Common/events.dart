@@ -57,6 +57,7 @@ class Events {
   static String recent_loading = "recent_loading";
   static String rate_no_thanks = "rate_no_thanks";
   static String admob_source_data = 'admob_source_data';
+  static String transform_img_failed = 'transform_img_failed';
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {

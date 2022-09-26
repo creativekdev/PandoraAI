@@ -47,7 +47,9 @@ void main() async {
     name: 'cartoonizer',
   );
   if (kReleaseMode) {
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+    };
   }
 
   // init firebase analytics
@@ -243,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: Colors.black,
       body: Platform.isIOS
           ? Image.asset(
               Images.ic_launcher_bg,

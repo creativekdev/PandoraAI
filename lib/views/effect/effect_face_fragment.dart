@@ -57,7 +57,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     dataList = widget.dataList;
     bannerAdsHolder = BannerAdsHolder(
       this,
-      closeable: false,
       onUpdated: () {
         if (mounted) {
           setState(() {});

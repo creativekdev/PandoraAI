@@ -14,7 +14,7 @@ class RecentController extends GetxController {
   List<RecentEffectModel> recentList = [];
   List<EffectModel> originList = [];
   List<EffectModel> recentModelList = [];
-  List<List<EffectItemListData>> dataList = [];
+  List<EffectItemListData> dataList = [];
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
   @override
@@ -48,13 +48,7 @@ class RecentController extends GetxController {
       });
     });
     dataList.clear();
-    allItemList.forEach((element) {
-      if (dataList.isNotEmpty && dataList.last.length < 2) {
-        dataList.last.add(element);
-      } else {
-        dataList.add([element]);
-      }
-    });
+    dataList.addAll(allItemList);
     update();
   }
 

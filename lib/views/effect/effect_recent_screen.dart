@@ -2,10 +2,12 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'effect_fragment.dart';
 import 'widget/effect_full_body_card_widget.dart';
@@ -26,7 +28,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
+    var cardWidth = (ScreenUtil.getCurrentWidgetSize(context).width - $(38)) / 2;
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
@@ -55,30 +57,74 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                 : MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
-                    child: ListView.builder(
+                    child: WaterfallFlow.builder(
+                      cacheExtent: ScreenUtil.screenSize.height,
                       controller: scrollController,
-                      itemCount: _.dataList.length,
-                      itemBuilder: (context, index) => EffectFullBodyCardWidget(
-                        parentWidth: width,
-                        data: _.dataList[index],
-                        onTap: (data) {
-                          _onEffectCategoryTap(_.recentModelList, _.dataList, data);
-                        },
-                      ).intoContainer(
-                        margin: EdgeInsets.only(
-                          left: $(15),
-                          right: $(15),
-                          top: $(8),
-                          bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
-                        ),
+                      gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: $(8),
                       ),
-                    ),
+                      itemBuilder: (context, index) {
+                        var data = _.dataList[index];
+                        return CachedNetworkImageUtils.custom(
+                                context: context,
+                                // useOld: true,
+                                imageUrl: data.item!.imageUrl,
+                                width: cardWidth,
+                                placeholder: (context, url) {
+                                  return CircularProgressIndicator()
+                                      .intoContainer(
+                                        width: $(25),
+                                        height: $(25),
+                                      )
+                                      .intoCenter()
+                                      .intoContainer(width: cardWidth, height: cardWidth);
+                                },
+                                errorWidget: (context, url, error) {
+                                  return CircularProgressIndicator()
+                                      .intoContainer(
+                                        width: $(25),
+                                        height: $(25),
+                                      )
+                                      .intoCenter()
+                                      .intoContainer(width: cardWidth, height: cardWidth);
+                                })
+                            .intoContainer(
+                          margin: EdgeInsets.only(
+                            top: $(8),
+                            bottom: index == _.dataList.length - 1 ? AppTabBarHeight : $(0),
+                          ),
+                        )
+                            .intoGestureDetector(onTap: () {
+                          _onEffectCategoryTap(_.recentModelList, data);
+                        });
+                      },
+                      itemCount: _.dataList.length,
+                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                    // child: ListView.builder(
+                    //   controller: scrollController,
+                    //   itemCount: _.dataList.length,
+                    //   itemBuilder: (context, index) => EffectFullBodyCardWidget(
+                    //     parentWidth: width,
+                    //     data: _.dataList[index],
+                    //     onTap: (data) {
+                    //       _onEffectCategoryTap(_.recentModelList, _.dataList, data);
+                    //     },
+                    //   ).intoContainer(
+                    //     margin: EdgeInsets.only(
+                    //       left: $(15),
+                    //       right: $(15),
+                    //       top: $(8),
+                    //       bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+                    //     ),
+                    //   ),
+                    // ),
                   );
           }),
     );
   }
 
-  _onEffectCategoryTap(List<EffectModel> originList, List<List<EffectItemListData>> dataList, EffectItemListData data) {
+  _onEffectCategoryTap(List<EffectModel> originList, EffectItemListData data) {
     EffectModel? effectModel;
     int index = 0;
     for (int i = 0; i < originList.length; i++) {

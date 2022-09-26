@@ -45,8 +45,8 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   late AppTabId tabId;
 
   int currentIndex = 0;
-  late PageController _pageController;
-  late TabController _tabController;
+  PageController? _pageController;
+  TabController? _tabController;
   List<HomeTabConfig> tabConfig = [];
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
@@ -107,24 +107,24 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void dispose() {
     super.dispose();
+    _pageController?.dispose();
+    _tabController?.dispose();
     onUserStateChangeListener.cancel();
   }
 
   void _pageChange(int index) {
-    setState(() {
-      if (currentIndex != index) {
-        currentIndex = index;
-        _tabController.index = currentIndex;
-        for (var i = 0; i < tabConfig.length; i++) {
-          var key = tabConfig[i].key;
-          if (i == currentIndex) {
-            key.currentState?.onAttached();
-          } else {
-            key.currentState?.onDetached();
-          }
+    if (currentIndex != index) {
+      currentIndex = index;
+      for (var i = 0; i < tabConfig.length; i++) {
+        var key = tabConfig[i].key;
+        if (i == currentIndex) {
+          key.currentState?.onAttached();
+        } else {
+          key.currentState?.onDetached();
         }
       }
-    });
+    }
+    _tabController?.index = currentIndex;
     var title = tabConfig[index].title;
     var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${title}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
@@ -137,13 +137,15 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   }
 
   void setIndex(int index) {
-    _pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    if (currentIndex != index) {
+      _pageController?.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return super.build2(context);
+    return build2(context);
   }
 
   @override
@@ -226,17 +228,14 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                 );
               }
             }
-            _pageController = PageController(initialPage: currentIndex);
+            _pageController = PageController(initialPage: currentIndex, keepPage: true);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
             return Stack(
               children: [
-                PageView.builder(
+                PageView(
                   onPageChanged: _pageChange,
                   controller: _pageController,
-                  itemBuilder: (BuildContext context, int index) {
-                    return tabConfig[index].item;
-                  },
-                  itemCount: tabConfig.length,
+                  children: tabConfig.map((e) => e.item).toList(),
                 ),
                 header(context),
               ],
@@ -266,7 +265,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   ),
                   isScrollable: tabConfig.length < 4,
                   labelColor: ColorConstant.PrimaryColor,
-                  labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+                  labelPadding: EdgeInsets.only(left: $(0), right: $(0)),
                   labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
                   unselectedLabelColor: ColorConstant.PrimaryColor,
                   unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
@@ -274,7 +273,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   onTap: (index) {
                     setIndex(index);
                   },
-                  tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(4)))).toList(),
+                  tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0)))).toList(),
                 ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
             SizedBox(height: $(8)),
           ],

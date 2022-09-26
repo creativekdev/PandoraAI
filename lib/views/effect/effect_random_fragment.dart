@@ -42,7 +42,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   double marginTop = $(110);
   late CardAdsMap adsMap;
   late double cardWidth;
-  final double adScale = 1.55;
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
@@ -56,13 +55,14 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
     adsMap = CardAdsMap(
-        width: cardWidth,
-        onUpdated: () {
-          if (mounted) {
-            setState(() {});
-          }
-        },
-        scale: adScale);
+      width: cardWidth,
+      onUpdated: () {
+        if (mounted) {
+          setState(() {});
+        }
+      },
+      autoHeight: true,
+    );
     adsMap.init();
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
@@ -84,7 +84,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   onDetached() {
     super.onDetached();
     dataController.changeRandomTabViewing(false);
-    dataController.buildRandomList(up: true);
+    dataController.buildRandomList();
   }
 
   @override
@@ -119,60 +119,58 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     return MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        child: GetBuilder<EffectDataController>(
-          init: dataController,
-          builder: (_) {
-            List<_ListData> dataList = addToDataList(_.randomList);
-            return WaterfallFlow.builder(
-              cacheExtent: ScreenUtil.screenSize.height,
-              controller: scrollController,
-              gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: $(8),
+      context: context,
+      removeTop: true,
+      child: Obx(() {
+        List<_ListData> dataList = addToDataList(dataController.randomList);
+        return WaterfallFlow.builder(
+          cacheExtent: ScreenUtil.screenSize.height,
+          controller: scrollController,
+          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: $(8),
+          ),
+          itemBuilder: (context, index) {
+            var data = dataList[index];
+            if (data.isAd) {
+              return _buildMERCAd(index ~/ 10);
+            }
+            return CachedNetworkImageUtils.custom(
+                    context: context,
+                    imageUrl: data.data!.item!.imageUrl,
+                    width: cardWidth,
+                    placeholder: (context, url) {
+                      return CircularProgressIndicator()
+                          .intoContainer(
+                            width: $(25),
+                            height: $(25),
+                          )
+                          .intoCenter()
+                          .intoContainer(width: cardWidth, height: cardWidth);
+                    },
+                    errorWidget: (context, url, error) {
+                      return CircularProgressIndicator()
+                          .intoContainer(
+                            width: $(25),
+                            height: $(25),
+                          )
+                          .intoCenter()
+                          .intoContainer(width: cardWidth, height: cardWidth);
+                    })
+                .intoContainer(
+              margin: EdgeInsets.only(
+                top: index < 2 ? marginTop : $(8),
+                bottom: index == dataList.length - 1 ? AppTabBarHeight : $(0),
               ),
-              itemBuilder: (context, index) {
-                var data = dataList[index];
-                if (data.isAd) {
-                  return _buildMERCAd(index ~/ 10);
-                }
-                return CachedNetworkImageUtils.custom(
-                        context: context,
-                        imageUrl: data.data!.item!.imageUrl,
-                        width: cardWidth,
-                        placeholder: (context, url) {
-                          return CircularProgressIndicator()
-                              .intoContainer(
-                                width: $(25),
-                                height: $(25),
-                              )
-                              .intoCenter()
-                              .intoContainer(width: cardWidth, height: cardWidth);
-                        },
-                        errorWidget: (context, url, error) {
-                          return CircularProgressIndicator()
-                              .intoContainer(
-                                width: $(25),
-                                height: $(25),
-                              )
-                              .intoCenter()
-                              .intoContainer(width: cardWidth, height: cardWidth);
-                        })
-                    .intoContainer(
-                  margin: EdgeInsets.only(
-                    top: index < 2 ? marginTop : $(8),
-                    bottom: index == dataList.length - 1 ? AppTabBarHeight : $(0),
-                  ),
-                )
-                    .intoGestureDetector(onTap: () {
-                  _onEffectCategoryTap(data.data!, _);
-                });
-              },
-              itemCount: dataList.length,
-            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+            )
+                .intoGestureDetector(onTap: () {
+              _onEffectCategoryTap(data.data!, dataController);
+            });
           },
-        ));
+          itemCount: dataList.length,
+        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+      }),
+    );
   }
 
   @override
@@ -191,7 +189,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
           return result.intoContainer(
             margin: EdgeInsets.only(top: $(8), bottom: $(8)),
             width: cardWidth,
-            height: cardWidth * adScale,
           );
         }
       }

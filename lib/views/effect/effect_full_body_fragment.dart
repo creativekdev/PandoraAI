@@ -56,7 +56,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     recentController = widget.recentController;
     bannerAdsHolder = BannerAdsHolder(
       this,
-      closeable: false,
       onUpdated: () {
         setState(() {});
       },

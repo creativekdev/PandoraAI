@@ -59,7 +59,7 @@ extension ShareTypeEx on ShareType {
 }
 
 class ShareScreen extends StatefulWidget {
-  static startShare(
+  static Future startShare(
     BuildContext context, {
     Color backgroundColor = Colors.transparent,
     required String style,
@@ -68,7 +68,7 @@ class ShareScreen extends StatefulWidget {
     required String originalUrl,
     required String effectKey,
   }) {
-    showModalBottomSheet(
+    return showModalBottomSheet(
         context: context,
         builder: (context) {
           return ShareScreen(
