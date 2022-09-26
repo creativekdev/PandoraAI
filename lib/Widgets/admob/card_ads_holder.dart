@@ -113,13 +113,13 @@ class CardAdsHolder extends WidgetAdsHolder {
     if (!_isLoaded) {
       return null;
     }
-    if (adWidget == null) {
-      adWidget = AdWidget(ad: _bannerAd!);
-    }
+    // if (adWidget == null) {
+    //   adWidget = AdWidget(ad: _bannerAd!);
+    // }
     return Container(
       width: width,
       height: (_adSize?.height ?? $(80)).toDouble(),
-      child: adWidget,
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }

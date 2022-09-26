@@ -265,10 +265,10 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                   ),
                   isScrollable: tabConfig.length < 4,
                   labelColor: ColorConstant.PrimaryColor,
-                  labelPadding: EdgeInsets.only(left: $(0), right: $(0)),
-                  labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+                  labelPadding: EdgeInsets.symmetric(horizontal: 0),
+                  labelStyle: TextStyle(fontSize: $(13), fontWeight: FontWeight.bold),
                   unselectedLabelColor: ColorConstant.PrimaryColor,
-                  unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+                  unselectedLabelStyle: TextStyle(fontSize: $(13), fontWeight: FontWeight.w500),
                   controller: _tabController,
                   onTap: (index) {
                     setIndex(index);

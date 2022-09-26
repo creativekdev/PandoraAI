@@ -1,10 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/image_scale_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
