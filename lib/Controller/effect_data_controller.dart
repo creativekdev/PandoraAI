@@ -10,12 +10,12 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 
 // dev
-const loopDuration = 30 * second;
-const refreshDuration = 1 * minute;
+// const loopDuration = 30 * second;
+// const refreshDuration = 1 * minute;
 
 // prod
-// const loopDuration = 1 * minute;
-// const refreshDuration = 30 * minute;
+const loopDuration = 1 * minute;
+const refreshDuration = 30 * minute;
 
 typedef ItemRender = Widget Function();
 
