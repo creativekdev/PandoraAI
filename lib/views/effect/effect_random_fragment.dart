@@ -223,7 +223,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
           list: [effectModel!],
           pos: 0,
           itemPos: 0,
-          hasOriginalCheck: false,
           tabString: widget.tabString,
         ),
       ),

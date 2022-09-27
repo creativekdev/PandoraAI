@@ -166,7 +166,6 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
         builder: (context) => ChoosePhotoScreen(
           list: list,
           pos: index,
-          hasOriginalCheck: widget.hasOriginalFace,
           tabString: widget.tabString,
         ),
       ),

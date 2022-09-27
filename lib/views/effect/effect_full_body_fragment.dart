@@ -196,7 +196,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
           list: effectModelList,
           pos: index,
           itemPos: data.pos,
-          hasOriginalCheck: false,
           tabString: widget.tabString,
         ),
       ),

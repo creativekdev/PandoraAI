@@ -58,7 +58,8 @@ class ChoosePhotoScreen extends StatefulWidget {
   int pos;
   int? itemPos;
   EntrySource entrySource;
-  bool hasOriginalCheck;
+
+  // bool hasOriginalCheck;
   String tabString;
 
   ChoosePhotoScreen({
@@ -68,7 +69,7 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.pos,
     this.itemPos,
     this.entrySource = EntrySource.fromEffect,
-    this.hasOriginalCheck = true,
+    // this.hasOriginalCheck = true,
   }) : super(key: key);
 
   @override
@@ -98,7 +99,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   final ItemPositionsListener titleScrollPositionsListener = ItemPositionsListener.create();
   List<String> tabTitleList = [];
   int currentTitleIndex = 0;
-  int currentItemIndex = 0;
+  var currentItemIndex = 0.obs;
   List<TabItemInfo> tabItemList = [];
   late double itemWidth;
   late ItemScrollController itemScrollController;
@@ -340,7 +341,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       } else {
         currentTitleIndex = widget.pos;
       }
-      currentItemIndex = position;
+      currentItemIndex.value = position;
     }
   }
 
@@ -348,9 +349,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void autoScrollToSelectedIndex() {
     int pos;
     if (widget.entrySource == EntrySource.fromDiscovery) {
-      pos = currentItemIndex;
+      pos = currentItemIndex.value;
     } else {
-      pos = currentItemIndex - tabItemList[currentItemIndex].childIndex;
+      pos = currentItemIndex.value - tabItemList[currentItemIndex.value].childIndex;
     }
     delay(() {
       titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
@@ -561,7 +562,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> saveToAlbum() async {
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     logEvent(Events.result_download, eventValues: {"effect": selectedEffect.key});
 
     if (controller.isVideo.value) {
@@ -615,7 +616,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Images.ic_share,
                   width: $(24),
                 ).intoGestureDetector(onTap: () async {
-                  var selectedEffect = tabItemList[currentItemIndex].data;
+                  var selectedEffect = tabItemList[currentItemIndex.value].data;
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   if (controller.isVideo.value) {
                     controller.changeIsLoading(true);
@@ -672,30 +673,32 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           width: imgContainerSize,
                                         ),
                                 ),
-                                Obx(() => Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                                          width: 20,
-                                          height: 20,
-                                        ).intoInkWell(onTap: () async {
-                                          print(controller.isChecked.value);
-                                          if (controller.isChecked.value) {
-                                            controller.changeIsChecked(false);
-                                          } else {
-                                            controller.changeIsChecked(true);
-                                          }
-                                          if (controller.isPhotoSelect.value) {
-                                            controller.changeIsLoading(true);
-                                            getCartoon(context);
-                                          }
-                                        }),
-                                        SizedBox(width: 1.5.w),
-                                        TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                                        SizedBox(width: 2.w),
-                                      ],
-                                    )).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !widget.hasOriginalCheck),
+                                Obx(
+                                  () => Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                                        width: 20,
+                                        height: 20,
+                                      ).intoInkWell(onTap: () async {
+                                        print(controller.isChecked.value);
+                                        if (controller.isChecked.value) {
+                                          controller.changeIsChecked(false);
+                                        } else {
+                                          controller.changeIsChecked(true);
+                                        }
+                                        if (controller.isPhotoSelect.value) {
+                                          controller.changeIsLoading(true);
+                                          getCartoon(context);
+                                        }
+                                      }),
+                                      SizedBox(width: 1.5.w),
+                                      TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                                      SizedBox(width: 2.w),
+                                    ],
+                                  ).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
+                                ),
                               ],
                             )
                           : Obx(() => Center(
@@ -821,7 +824,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                               if (flatTitle) {
                                 scrollPos = index;
                                 if (!controller.isPhotoSelect.value) {
-                                  currentItemIndex = index;
+                                  currentItemIndex.value = index;
                                 }
                               } else {
                                 var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
@@ -954,12 +957,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       int lastTitlePos = currentTitleIndex;
       if (flatTitle) {
         setState(() {
-          currentItemIndex = index;
-          currentTitleIndex = currentItemIndex;
+          currentItemIndex.value = index;
+          currentTitleIndex = currentItemIndex.value;
         });
       } else {
         setState(() {
-          currentItemIndex = index;
+          currentItemIndex.value = index;
           currentTitleIndex = effect.categoryIndex;
         });
       }
@@ -985,7 +988,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   correctItemPosition(int lastPos) {
     if (!(lastPos > tabItemList.length - 5 && currentItemIndex > tabItemList.length - 5)) {
-      itemScrollController.jumpTo(index: currentItemIndex);
+      itemScrollController.jumpTo(index: currentItemIndex.value);
     }
   }
 
@@ -1056,7 +1059,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   )
                       .intoGestureDetector(
                     onTap: () async {
-                      var selectedEffect = tabItemList[currentItemIndex].data;
+                      var selectedEffect = tabItemList[currentItemIndex.value].data;
                       logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                       AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
                         if (controller.isVideo.value) {
@@ -1238,7 +1241,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var url = (parsed['data'] ?? '').toString();
     var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
     if (baseEntity != null) {
-      // String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
       var imageUrl = url.split("?")[0];
       controller.updateImageUrl(imageUrl);
       return imageUrl;
@@ -1268,7 +1270,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   EffectModel? findCategory(EffectItem effectItem) {
     EffectModel? category;
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     bool find = false;
     for (var element in widget.list) {
       if (find) {
@@ -1294,7 +1296,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       return;
     }
 
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     EffectModel? category = findCategory(selectedEffect);
     if (category == null) {
       controller.changeIsLoading(false);

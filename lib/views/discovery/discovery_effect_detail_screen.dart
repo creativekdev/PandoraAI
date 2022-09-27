@@ -383,7 +383,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                 pos: index,
                 itemPos: itemIndex,
                 entrySource: EntrySource.fromDiscovery,
-                hasOriginalCheck: false,
+                // hasOriginalCheck: false,
                 tabString: targetSeries.key,
               ),
             ),
