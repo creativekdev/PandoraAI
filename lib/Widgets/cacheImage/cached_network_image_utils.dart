@@ -56,7 +56,7 @@ class CachedNetworkImageUtils {
       };
     }
     if (TextUtil.isEmpty(imageUrl.trim())) {
-      errorWidget.call(context, imageUrl, Exception('image url is empty'));
+      return errorWidget.call(context, imageUrl, Exception('image url is empty'));
     }
     return !useOld
         ? FutureLoadingImage(
