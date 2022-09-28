@@ -7,6 +7,7 @@ const _appDir = '/cartoonizer/';
 const _videoDir = 'video/';
 const _imageDir = 'image/';
 const _tempDir = 'temp/';
+const _pushDir = 'push/';
 
 class StorageOperator {
   var _mainPath = '';
@@ -18,6 +19,8 @@ class StorageOperator {
 
   Directory get tempDir => Directory('$_mainPath$_tempDir');
 
+  Directory get pushDir => Directory('$_mainPath$_pushDir');
+
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (directory == null) return false;
@@ -27,6 +30,7 @@ class StorageOperator {
       _videoDir,
       _imageDir,
       _tempDir,
+      _pushDir,
     ]);
     return true;
   }
@@ -42,7 +46,8 @@ class StorageOperator {
     var tempSize = await _getFileSize(tempDir);
     var imageSize = await _getFileSize(imageDir);
     var videoSize = await _getFileSize(videoDir);
-    return videoSize + imageSize + tempSize;
+    var pushSize = await _getFileSize(pushDir);
+    return videoSize + imageSize + tempSize + pushSize;
   }
 
   Future<int> _getFileSize(dynamic target) async {

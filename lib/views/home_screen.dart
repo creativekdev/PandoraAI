@@ -44,15 +44,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           } else {
             delay(() {
               userManager.rateNoticeOperator.judgeAndShowNotice(context);
-              AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
-              if (cacheManager.getBool(CacheManager.openToMsg)) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-              }
+              // judgePushEvents();
             });
           }
         }
       });
     });
+  }
+
+  void judgePushEvents() {
+    AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
+    if (cacheManager.getBool(CacheManager.openToMsg)) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
+      cacheManager.setBool(CacheManager.openToMsg, false);
+    }
+  }
+
+  @override
+  didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    delay(() => judgePushEvents());
   }
 
   @override

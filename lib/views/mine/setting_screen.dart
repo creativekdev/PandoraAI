@@ -119,6 +119,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                           cacheManager.storageOperator.videoDir,
                           cacheManager.storageOperator.imageDir,
                           cacheManager.storageOperator.tempDir,
+                          cacheManager.storageOperator.pushDir,
                         ]).whenComplete(() {
                           hideLoading().whenComplete(() {
                             CommonExtension().showToast('Clear Success');

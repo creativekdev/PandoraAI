@@ -4,6 +4,7 @@ import 'package:cartoonizer/Widgets/admob/splash_ads_holder.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';

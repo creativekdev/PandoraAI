@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -81,6 +82,9 @@ class SplashAdsHolder extends PageAdsHolder {
 
   showIfAvailable({Function? callback}) {
     if (ignore) {
+      return;
+    }
+    if(!isShowAdsNew()) {
       return;
     }
     if (!isAdAvailable) {
