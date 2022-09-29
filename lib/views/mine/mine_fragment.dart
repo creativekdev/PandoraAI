@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -17,6 +18,7 @@ import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
+import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -117,6 +119,27 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               }),
               Container(height: $(12)),
               ImageTextBarWidget(
+                StringConstant.recently,
+                Images.ic_recently,
+                true,
+              ).intoGestureDetector(onTap: () {
+                logEvent(Events.recent_loading);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/EffectRecentScreen"),
+                      builder: (context) => EffectRecentScreen(),
+                    ));
+              }),
+              Container(
+                width: double.maxFinite,
+                height: 1,
+                color: Color(0xff323232),
+              ).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
+              ImageTextBarWidget(
                 StringConstant.setting_my_discovery,
                 Images.ic_setting_my_discovery,
                 true,
@@ -148,7 +171,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 logEvent(Events.share_app);
                 final box = context.findRenderObject() as RenderBox?;
                 var appLink = Config.getStoreLink();
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               Container(
                 width: double.maxFinite,
@@ -161,7 +186,10 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
                   logEvent(Events.rate_us);
-                  rateApp();
+                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                  rateApp().then((value) {
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                  });
                   // var url = Config.getStoreLink(toRate: true);
                   // launchURL(url);
                 },
@@ -175,6 +203,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 color: ColorConstant.BackgroundColor,
               ),
               ImageTextBarWidget(StringConstant.premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 if (Platform.isIOS) {
                   Navigator.push(
                     context,
@@ -182,7 +211,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       settings: RouteSettings(name: "/PurchaseScreen"),
                       builder: (context) => PurchaseScreen(),
                     ),
-                  );
+                  ).then((value) {
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                  });
                 } else {
                   Navigator.push(
                     context,
@@ -190,7 +221,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       settings: RouteSettings(name: "/StripeSubscriptionScreen"),
                       builder: (context) => StripeSubscriptionScreen(),
                     ),
-                  );
+                  ).then((value) {
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                  });
                 }
               }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),

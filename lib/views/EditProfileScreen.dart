@@ -8,6 +8,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -31,19 +32,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final nameController = TextEditingController();
 
   UserManager userManager = AppDelegate.instance.getManager();
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
+
+  @override
+  void initState() {
+    super.initState();
+    logEvent(Events.edit_profile_page_loading);
+    thirdpartManager.adsHolder.ignore = true;
+    imagePicker = new ImagePicker();
+  }
 
   @override
   void dispose() {
     nameController.dispose();
+    thirdpartManager.adsHolder.ignore = false;
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    logEvent(Events.edit_profile_page_loading);
-
-    super.initState();
-    imagePicker = new ImagePicker();
   }
 
   @override

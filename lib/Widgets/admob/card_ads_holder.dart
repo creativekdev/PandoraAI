@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ads_holder.dart';
@@ -8,23 +9,21 @@ import 'ads_holder.dart';
 /// @Author: wangyu
 /// @Date: 2022/7/7
 class CardAdsHolder extends WidgetAdsHolder {
-  AdManagerBannerAd? _inlineAdaptiveAd;
+  BannerAd? _bannerAd;
   double scale = 0.75;
   bool _isLoaded = false;
   AdSize? _adSize;
   Function? onUpdated;
   AdWidget? adWidget;
-  final bool closeable;
-  bool closeAds = false;
   late String adId;
   final double width;
   double? height;
   bool autoHeight;
+  int maxRetryCount = 3;
 
   CardAdsHolder({
     required this.width,
     this.onUpdated, // call widget to call setState
-    this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
     this.height,
@@ -48,12 +47,10 @@ class CardAdsHolder extends WidgetAdsHolder {
     onUpdated?.call();
   }
 
-  loadAd() async {
-    await _inlineAdaptiveAd?.dispose();
-    _inlineAdaptiveAd = null;
+  Future<void> loadAd() async {
+    await _bannerAd?.dispose();
+    _bannerAd = null;
     _isLoaded = false;
-    closeAds = false;
-    onReset();
 
     AdSize adSize;
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
@@ -67,79 +64,62 @@ class CardAdsHolder extends WidgetAdsHolder {
     } else {
       adSize = AdSize(width: width.toInt(), height: height!.toInt());
     }
-    _inlineAdaptiveAd = AdManagerBannerAd(
-      adUnitId: adId,
-      sizes: [adSize],
-      request: AdManagerAdRequest(),
-      listener: AdManagerBannerAdListener(
-        onAdLoaded: (Ad ad) async {
-          print('Inline adaptive banner loaded: ${ad.responseInfo}');
-
-          AdManagerBannerAd bannerAd = (ad as AdManagerBannerAd);
-          final AdSize? size = await bannerAd.getPlatformAdSize();
-          if (size == null) {
-            print('Error: getPlatformAdSize() returned null for $bannerAd');
-            return;
-          }
-
-          _inlineAdaptiveAd = bannerAd;
-          _isLoaded = true;
-          _adSize = size;
-          onReady();
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          print('Inline adaptive banner failedToLoad: $error');
-          ad.dispose();
-          onReset();
-        },
-      ),
-    );
-    await _inlineAdaptiveAd!.load();
+    await BannerAd(
+            adUnitId: adId,
+            size: adSize,
+            listener: BannerAdListener(onAdLoaded: (Ad ad) async {
+              print('Inline adaptive banner loaded: ${ad.responseInfo}');
+              BannerAd bannerAd = (ad as BannerAd);
+              final AdSize? size = await bannerAd.getPlatformAdSize();
+              if (size == null) {
+                print('Error: getPlatformAdSize() returned null for $bannerAd');
+                return;
+              }
+              _bannerAd = bannerAd;
+              _isLoaded = true;
+              _adSize = size;
+              var mediationAdapterClassName = _bannerAd?.responseInfo?.mediationAdapterClassName;
+              if (!TextUtil.isEmpty(mediationAdapterClassName)) {
+                logEvent(Events.admob_source_data, eventValues: {
+                  'id': _bannerAd?.responseInfo?.responseId,
+                  'mediationClassName': mediationAdapterClassName,
+                });
+              }
+              onReady();
+            }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
+              print('Inline adaptive banner failedToLoad: $error');
+              ad.dispose();
+              onReset();
+              if(maxRetryCount == 0) {
+                return;
+              }
+              maxRetryCount--;
+              loadAd();
+            }),
+            request: AdRequest())
+        .load();
   }
 
   @override
   onDispose() {
-    _inlineAdaptiveAd?.dispose();
+    _bannerAd?.dispose();
   }
 
   @override
   Widget? buildAdWidget() {
-    if (!_isLoaded || closeAds) {
+    if (_adSize == null) {
+      return null;
+    }
+    if (!_isLoaded) {
       return null;
     }
     // if (adWidget == null) {
-    //   adWidget = AdWidget(ad: _inlineAdaptiveAd!);
+    //   adWidget = AdWidget(ad: _bannerAd!);
     // }
-    return Stack(
-      children: [
-        Container(
-          width: width,
-          height: (_adSize?.height ?? $(80)).toDouble(),
-          child: AdWidget(ad: _inlineAdaptiveAd!),
-        ),
-        Align(
-          child: Icon(
-            Icons.close,
-            size: $(18),
-            color: Colors.white,
-          )
-              .intoContainer(
-            padding: EdgeInsets.all($(4)),
-            margin: EdgeInsets.all($(4)),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32), color: Color(0x33ffffff)),
-          )
-              .intoGestureDetector(onTap: () {
-            if (closeable) {
-              closeAds = true;
-              onReady();
-            }
-          }),
-          alignment: Alignment.topRight,
-        ).offstage(offstage: !closeable),
-      ],
-    ).intoContainer(
+    return Container(
       width: width,
       height: (_adSize?.height ?? $(80)).toDouble(),
+      child: AdWidget(ad: _bannerAd!),
     );
   }
 }
@@ -149,8 +129,14 @@ class CardAdsMap {
   final double width;
   final Function() onUpdated;
   final double scale;
+  bool autoHeight;
 
-  CardAdsMap({required this.width, required this.onUpdated, this.scale = 0.6});
+  CardAdsMap({
+    required this.width,
+    required this.onUpdated,
+    this.scale = 0.6,
+    this.autoHeight = false,
+  });
 
   ///先初始化两个广告
   init() {
@@ -168,6 +154,7 @@ class CardAdsMap {
       _holderMap[page] = CardAdsHolder(
         width: width,
         onUpdated: onUpdated,
+        autoHeight: autoHeight,
         adId: AdMobConfig.DISCOVERY_AD_ID,
         scale: scale,
       );

@@ -173,11 +173,10 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
             resources.length > 1
                 ? Row(
                     children: [
-                      buildResourceItem(resources[0])
-                          .intoContainer(
+                      buildResourceItem(
+                        resources[0],
                         width: (imageListWidth - $(2)) / 2,
-                      )
-                          .listenSizeChanged(onSizeChanged: (size) {
+                      ).listenSizeChanged(onSizeChanged: (size) {
                         if (size.height < 1920) {
                           setState(() {
                             imageSize = size;
@@ -190,12 +189,11 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                       }),
                       SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
                       imageSize != null
-                          ? buildResourceItem(resources[1])
-                              .intoContainer(
+                          ? buildResourceItem(
+                              resources[1],
                               width: (imageListWidth - $(2)) / 2,
                               height: imageSize!.height,
-                            )
-                              .intoGestureDetector(onTap: () {
+                            ).intoGestureDetector(onTap: () {
                               if (resources[1].type == 'image') {
                                 open(context, 1);
                               }
@@ -203,7 +201,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                           : Container(),
                     ],
                   ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100)))
-                : buildResourceItem(resources[0]).intoContainer(width: imageListWidth).intoGestureDetector(onTap: () {
+                : buildResourceItem(resources[0], width: imageListWidth).intoGestureDetector(onTap: () {
                     if (resources[0].type == 'image') {
                       open(context, 0);
                     }
@@ -277,22 +275,37 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
     );
   }
 
-  Widget buildResourceItem(DiscoveryResource resource) {
+  Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height}) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
     } else {
       return CachedNetworkImageUtils.custom(
-        context: context,
-        imageUrl: resource.url ?? '',
-        fit: BoxFit.cover,
-        cacheManager: CachedImageCacheManager(),
-        placeholder: (context, url) => loadingWidget(context),
-        errorWidget: (context, url, error) => loadingWidget(context),
-      );
+          context: context,
+          imageUrl: resource.url ?? '',
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
+          cacheManager: CachedImageCacheManager(),
+          placeholder: (context, url) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(width: width, height: height ?? width);
+          },
+          errorWidget: (context, url, error) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(width: width, height: height ?? width);
+          });
     }
   }
-
-  Widget loadingWidget(BuildContext context) => Center(child: CircularProgressIndicator());
 
   void open(BuildContext context, final int index) {
     List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
@@ -370,7 +383,7 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                 pos: index,
                 itemPos: itemIndex,
                 entrySource: EntrySource.fromDiscovery,
-                hasOriginalCheck: false,
+                // hasOriginalCheck: false,
                 tabString: targetSeries.key,
               ),
             ),

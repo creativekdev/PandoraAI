@@ -8,6 +8,7 @@ import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/input_text.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -40,11 +41,13 @@ class _LoginScreenState extends AppState<LoginScreen> {
   // var token;
   // var tokenId;
   UserManager userManager = AppDelegate.instance.getManager();
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
     super.initState();
     logEvent(Events.login_page_loading);
+    thirdpartManager.adsHolder.ignore = true;
   }
 
   Future<void> goBack() async {
@@ -77,6 +80,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
   void dispose() {
     emailController.dispose();
     passController.dispose();
+    thirdpartManager.adsHolder.ignore = false;
     super.dispose();
   }
 

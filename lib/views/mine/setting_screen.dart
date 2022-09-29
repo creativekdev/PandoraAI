@@ -117,7 +117,9 @@ class _SettingScreenState extends AppState<SettingScreen> {
                       showLoading().whenComplete(() {
                         cacheManager.storageOperator.clearDirectories([
                           cacheManager.storageOperator.videoDir,
+                          cacheManager.storageOperator.imageDir,
                           cacheManager.storageOperator.tempDir,
+                          cacheManager.storageOperator.pushDir,
                         ]).whenComplete(() {
                           hideLoading().whenComplete(() {
                             CommonExtension().showToast('Clear Success');

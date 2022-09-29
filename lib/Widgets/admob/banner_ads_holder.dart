@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 ///
@@ -40,14 +41,11 @@ class BannerAdsHolder extends WidgetAdsHolder {
   State? state;
   Function? onUpdated;
   AdWidget? adWidget;
-  final bool closeable;
-  bool closeAds = false;
   late String adId;
 
   BannerAdsHolder(
     this.state, {
     this.onUpdated, // call widget to call setState
-    this.closeable = false, // set true to open close ads
     this.scale = 0.6, // widget's height / width
     required this.adId,
     double horizontalPadding = 0,
@@ -76,7 +74,6 @@ class BannerAdsHolder extends WidgetAdsHolder {
     await _inlineAdaptiveAd?.dispose();
     _inlineAdaptiveAd = null;
     _isLoaded = false;
-    closeAds = false;
     onReset();
 
     // AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(_adWidth.truncate());
@@ -97,6 +94,13 @@ class BannerAdsHolder extends WidgetAdsHolder {
           }
 
           _inlineAdaptiveAd = bannerAd;
+          var mediationAdapterClassName = _inlineAdaptiveAd?.responseInfo?.mediationAdapterClassName;
+          if (!TextUtil.isEmpty(mediationAdapterClassName)) {
+            logEvent(Events.admob_source_data, eventValues: {
+              'id': _inlineAdaptiveAd?.responseInfo?.responseId,
+              'mediationClassName': mediationAdapterClassName,
+            });
+          }
           delay(() {
             _isLoaded = true;
             _adSize = size;
@@ -121,42 +125,16 @@ class BannerAdsHolder extends WidgetAdsHolder {
 
   @override
   Widget? buildAdWidget() {
-    if (!_isLoaded || closeAds) {
-      return Container();
+    if (!_isLoaded) {
+      return const SizedBox();
     }
-    // if (adWidget == null) {
-    //   adWidget = AdWidget(ad: _inlineAdaptiveAd!);
-    // }
-    return Stack(
-      children: [
-        Container(
-          width: _adWidth,
-          height: (_adSize?.height ?? $(80)).toDouble(),
-          child: AdWidget(ad: _inlineAdaptiveAd!),
-        ),
-        Align(
-          child: Icon(
-            Icons.close,
-            size: $(18),
-            color: Colors.white,
-          )
-              .intoContainer(
-            padding: EdgeInsets.all($(4)),
-            margin: EdgeInsets.all($(4)),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(32), color: Color(0x33ffffff)),
-          )
-              .intoGestureDetector(onTap: () {
-            if (closeable) {
-              closeAds = true;
-              onReady();
-            }
-          }),
-          alignment: Alignment.topRight,
-        ).offstage(offstage: !closeable),
-      ],
-    ).intoContainer(
+    if (adWidget == null) {
+      adWidget = AdWidget(ad: _inlineAdaptiveAd!);
+    }
+    return Container(
       width: _adWidth,
       height: (_adSize?.height ?? $(80)).toDouble(),
+      child: adWidget,
       margin: EdgeInsets.only(bottom: $(12)),
     );
   }

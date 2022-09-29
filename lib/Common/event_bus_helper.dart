@@ -107,3 +107,5 @@ class OnNewMsgReceivedEvent extends BaseEvent<String> {
 class OnDeleteDiscoveryEvent extends BaseEvent<int> {
   OnDeleteDiscoveryEvent({required int id}) : super(data: id);
 }
+
+class OnSplashAdLoadingChangeEvent extends BaseEvent {}

@@ -29,7 +29,6 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   void initState() {
     super.initState();
-    cacheManager.setBool(CacheManager.openToMsg, false);
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
   }

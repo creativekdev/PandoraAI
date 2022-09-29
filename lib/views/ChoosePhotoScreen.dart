@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -12,13 +11,12 @@ import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -60,7 +58,8 @@ class ChoosePhotoScreen extends StatefulWidget {
   int pos;
   int? itemPos;
   EntrySource entrySource;
-  bool hasOriginalCheck;
+
+  // bool hasOriginalCheck;
   String tabString;
 
   ChoosePhotoScreen({
@@ -70,7 +69,7 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.pos,
     this.itemPos,
     this.entrySource = EntrySource.fromEffect,
-    this.hasOriginalCheck = true,
+    // this.hasOriginalCheck = true,
   }) : super(key: key);
 
   @override
@@ -92,7 +91,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var videoPath = "";
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
-
+  ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
 
@@ -100,7 +99,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   final ItemPositionsListener titleScrollPositionsListener = ItemPositionsListener.create();
   List<String> tabTitleList = [];
   int currentTitleIndex = 0;
-  int currentItemIndex = 0;
+  var currentItemIndex = 0.obs;
   List<TabItemInfo> tabItemList = [];
   late double itemWidth;
   late ItemScrollController itemScrollController;
@@ -226,6 +225,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void dispose() {
     super.dispose();
+    thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
     adsHolder.onDispose();
     rewardAdsHolder.onDispose();
@@ -237,8 +237,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-
     logEvent(Events.upload_page_loading);
+    thirdpartManager.adsHolder.ignore = true;
     itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
     imgContainerSize = ScreenUtil.screenSize.width;
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
@@ -341,7 +341,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       } else {
         currentTitleIndex = widget.pos;
       }
-      currentItemIndex = position;
+      currentItemIndex.value = position;
     }
   }
 
@@ -349,9 +349,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void autoScrollToSelectedIndex() {
     int pos;
     if (widget.entrySource == EntrySource.fromDiscovery) {
-      pos = currentItemIndex;
+      pos = currentItemIndex.value;
     } else {
-      pos = currentItemIndex - tabItemList[currentItemIndex].childIndex;
+      pos = currentItemIndex.value - tabItemList[currentItemIndex.value].childIndex;
     }
     delay(() {
       titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
@@ -562,7 +562,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> saveToAlbum() async {
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     logEvent(Events.result_download, eventValues: {"effect": selectedEffect.key});
 
     if (controller.isVideo.value) {
@@ -616,7 +616,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Images.ic_share,
                   width: $(24),
                 ).intoGestureDetector(onTap: () async {
-                  var selectedEffect = tabItemList[currentItemIndex].data;
+                  var selectedEffect = tabItemList[currentItemIndex.value].data;
                   logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                   if (controller.isVideo.value) {
                     controller.changeIsLoading(true);
@@ -638,6 +638,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       }
                     });
                   } else {
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                     ShareScreen.startShare(
                       context,
                       backgroundColor: Color(0x77000000),
@@ -646,7 +647,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       isVideo: controller.isVideo.value,
                       originalUrl: urlFinal,
                       effectKey: selectedEffect.key,
-                    );
+                    ).then((value) {
+                      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                    });
                   }
                 }).offstage(offstage: !controller.isPhotoDone.value),
               ),
@@ -670,30 +673,32 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           width: imgContainerSize,
                                         ),
                                 ),
-                                Obx(() => Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                                          width: 20,
-                                          height: 20,
-                                        ).intoInkWell(onTap: () async {
-                                          print(controller.isChecked.value);
-                                          if (controller.isChecked.value) {
-                                            controller.changeIsChecked(false);
-                                          } else {
-                                            controller.changeIsChecked(true);
-                                          }
-                                          if (controller.isPhotoSelect.value) {
-                                            controller.changeIsLoading(true);
-                                            getCartoon(context);
-                                          }
-                                        }),
-                                        SizedBox(width: 1.5.w),
-                                        TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                                        SizedBox(width: 2.w),
-                                      ],
-                                    )).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !widget.hasOriginalCheck),
+                                Obx(
+                                  () => Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                                        width: 20,
+                                        height: 20,
+                                      ).intoInkWell(onTap: () async {
+                                        print(controller.isChecked.value);
+                                        if (controller.isChecked.value) {
+                                          controller.changeIsChecked(false);
+                                        } else {
+                                          controller.changeIsChecked(true);
+                                        }
+                                        if (controller.isPhotoSelect.value) {
+                                          controller.changeIsLoading(true);
+                                          getCartoon(context);
+                                        }
+                                      }),
+                                      SizedBox(width: 1.5.w),
+                                      TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                                      SizedBox(width: 2.w),
+                                    ],
+                                  ).intoContainer(margin: EdgeInsets.only(bottom: $(15), top: $(12))).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
+                                ),
                               ],
                             )
                           : Obx(() => Center(
@@ -703,24 +708,52 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                   children: [
                                     controller.isPhotoSelect.value
                                         ? ClipRRect(
-                                            child: Image.file(
-                                              controller.image.value as File,
-                                              fit: BoxFit.cover,
-                                              width: imgContainerSize,
-                                              height: imgContainerSize,
-                                            ),
-                                            borderRadius: BorderRadius.circular($(8)),
-                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(15)))
+                                            child: Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                Image.file(
+                                                  controller.image.value as File,
+                                                  fit: BoxFit.cover,
+                                                  width: imgContainerSize,
+                                                  height: imgContainerSize,
+                                                ),
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Image.asset(
+                                                    Images.ic_loading_filled,
+                                                    color: ColorConstant.White,
+                                                  )
+                                                      .intoContainer(
+                                                          padding: EdgeInsets.all(12),
+                                                          height: imgContainerSize / 5.2,
+                                                          width: imgContainerSize / 5.2,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(8),
+                                                            color: Color(0x66000000),
+                                                          ))
+                                                      .intoGestureDetector(onTap: () {
+                                                    controller.changeIsLoading(true);
+                                                    getCartoon(context);
+                                                  }).visibility(visible: !controller.isLoading.value),
+                                                ),
+                                              ],
+                                            ).intoContainer(width: imgContainerSize, height: imgContainerSize),
+                                            borderRadius: BorderRadius.circular($(0)),
+                                          ).intoContainer(margin: EdgeInsets.only(bottom: $(tabItemList.length == 1 ? 100 : 15)))
                                         : Image.asset(
                                             Images.ic_choose_photo_initial_header,
-                                            height: imgContainerSize - 52,
-                                            width: imgContainerSize - 52,
+                                            height: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
+                                            width: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
                                           ),
                                     controller.isPhotoSelect.value
                                         ? Container()
                                         : Image.asset(
                                             Images.ic_choose_photo_initial_text,
-                                          ).intoContainer(margin: EdgeInsets.only(top: $(10))),
+                                          ).intoContainer(
+                                            margin: EdgeInsets.only(
+                                            top: $(10),
+                                            bottom: 0,
+                                          )),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -791,7 +824,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                               if (flatTitle) {
                                 scrollPos = index;
                                 if (!controller.isPhotoSelect.value) {
-                                  currentItemIndex = index;
+                                  currentItemIndex.value = index;
                                 }
                               } else {
                                 var effectItem = widget.list[currentTitleIndex].effects.values.toList()[0];
@@ -858,7 +891,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                       ),
                     ],
-                  ),
+                  ).offstage(offstage: tabItemList.length == 1),
                   SizedBox(height: MediaQuery.of(context).padding.bottom < $(25) ? $(25) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),
@@ -924,12 +957,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       int lastTitlePos = currentTitleIndex;
       if (flatTitle) {
         setState(() {
-          currentItemIndex = index;
-          currentTitleIndex = currentItemIndex;
+          currentItemIndex.value = index;
+          currentTitleIndex = currentItemIndex.value;
         });
       } else {
         setState(() {
-          currentItemIndex = index;
+          currentItemIndex.value = index;
           currentTitleIndex = effect.categoryIndex;
         });
       }
@@ -955,7 +988,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   correctItemPosition(int lastPos) {
     if (!(lastPos > tabItemList.length - 5 && currentItemIndex > tabItemList.length - 5)) {
-      itemScrollController.jumpTo(index: currentItemIndex);
+      itemScrollController.jumpTo(index: currentItemIndex.value);
     }
   }
 
@@ -1026,7 +1059,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   )
                       .intoGestureDetector(
                     onTap: () async {
-                      var selectedEffect = tabItemList[currentItemIndex].data;
+                      var selectedEffect = tabItemList[currentItemIndex.value].data;
                       logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
                       AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
                         if (controller.isVideo.value) {
@@ -1086,9 +1119,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
+      useOld: true,
       context: context,
       imageUrl: imageUrl,
-      fit: BoxFit.fill,
+      fit: BoxFit.cover,
       height: itemWidth,
       width: itemWidth,
       placeholder: (context, url) {
@@ -1207,7 +1241,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var url = (parsed['data'] ?? '').toString();
     var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
     if (baseEntity != null) {
-      // String imageUrl = "https://free-socialbook.s3.us-west-2.amazonaws.com/$f_name";
       var imageUrl = url.split("?")[0];
       controller.updateImageUrl(imageUrl);
       return imageUrl;
@@ -1237,7 +1270,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   EffectModel? findCategory(EffectItem effectItem) {
     EffectModel? category;
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     bool find = false;
     for (var element in widget.list) {
       if (find) {
@@ -1263,11 +1296,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       return;
     }
 
-    var selectedEffect = tabItemList[currentItemIndex].data;
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
     EffectModel? category = findCategory(selectedEffect);
     if (category == null) {
       controller.changeIsLoading(false);
-      CommonExtension().showToast(StringConstant.commonFailedToast);
+      // CommonExtension().showToast(StringConstant.commonFailedToast);
+      CommonExtension().showToast('cannot find category');
       return;
     }
     String aiHost = _getAiHostByStyle(selectedEffect);
@@ -1367,19 +1401,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
 
-              if (parsed['data'].toString().startsWith('<')) {
+              var dataString = parsed['data'].toString();
+              if (TextUtil.isEmpty(dataString)) {
+                logEvent(Events.transform_img_failed, eventValues: {
+                  'code': parsed['code'],
+                  'message': parsed['message'],
+                });
+              }
+              if (dataString.startsWith('<')) {
                 successForward = () {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
-                  CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
+                  CommonExtension().showToast(dataString.substring(dataString.indexOf('<p>') + 3, dataString.indexOf('</p>')));
                 };
-              } else if (parsed['data'].toString() == "") {
+              } else if (dataString == "") {
                 successForward = () {
                   controller.changeIsLoading(false);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 };
-              } else if (parsed['data'].toString().endsWith(".mp4")) {
+              } else if (dataString.endsWith(".mp4")) {
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
@@ -1415,7 +1456,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               resultSuccess = 1;
             } else {
               controller.changeIsLoading(false);
-              CommonExtension().showToast('Error while processing image');
+              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           } else {
             var token = tokenParsed['data'];
@@ -1487,7 +1528,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               resultSuccess = 1;
             } else {
               controller.changeIsLoading(false);
-              CommonExtension().showToast('Error while processing image');
+              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           }
           userManager.refreshUser(context: context);
@@ -1524,7 +1565,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
-        CommonExtension().showToast("Error while uploading image");
+        CommonExtension().showToast("Error while uploading image, e: ${e.toString()}");
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
     }

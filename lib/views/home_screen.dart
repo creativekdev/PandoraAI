@@ -18,7 +18,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   int currentIndex = 0;
   List<AppRoleTabItem> tabItems = [];
 
@@ -44,15 +44,26 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           } else {
             delay(() {
               userManager.rateNoticeOperator.judgeAndShowNotice(context);
-              AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
-              if (cacheManager.getBool(CacheManager.openToMsg)) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-              }
+              // judgePushEvents();
             });
           }
         }
       });
     });
+  }
+
+  void judgePushEvents() {
+    AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
+    if (cacheManager.getBool(CacheManager.openToMsg)) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
+      cacheManager.setBool(CacheManager.openToMsg, false);
+    }
+  }
+
+  @override
+  didUpdateWidget(HomeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    delay(() => judgePushEvents());
   }
 
   @override
@@ -96,7 +107,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
@@ -152,7 +162,4 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     }
     return result;
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

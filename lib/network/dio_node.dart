@@ -4,8 +4,8 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-const _receiveTimeout = 10000;
-const _connectTimeout = 15000;
+const _receiveTimeout = 15000;
+const _connectTimeout = 60000;
 const _responseType = ResponseType.json;
 const String _TAG = "WEB";
 const int logMaxLength = 10240;

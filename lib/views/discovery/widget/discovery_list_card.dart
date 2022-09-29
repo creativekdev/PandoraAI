@@ -1,9 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/image_scale_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
@@ -14,8 +11,9 @@ const double higherImageScale = 0.64; //170/265
 const double lowerImageScale = 1.56; //365/170
 const double squareImageScale = 1;
 
-class DiscoveryListCard extends StatefulWidget {
+class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late DiscoveryListEntity data;
+  late List<DiscoveryResource> resources;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
   GestureLongPressCallback? onLongPress;
@@ -28,47 +26,7 @@ class DiscoveryListCard extends StatefulWidget {
     this.onLongPress,
     this.onLikeTap,
     required this.width,
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return DiscoveryListCardState();
-  }
-}
-
-class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttrHolder {
-  late DiscoveryListEntity data;
-  late List<DiscoveryResource> resources;
-  GestureTapCallback? onTap;
-  GestureTapCallback? onLikeTap;
-  GestureLongPressCallback? onLongPress;
-  late double width;
-  bool loading = true;
-
-  ImageScaleManager scaleManager = AppDelegate.instance.getManager();
-
-  @override
-  void initState() {
-    super.initState();
-    data = widget.data;
-    resources = data.resourceList();
-    onTap = widget.onTap;
-    onLikeTap = widget.onLikeTap;
-    onLongPress = widget.onLongPress;
-    width = widget.width;
-    loading = true;
-  }
-
-  @override
-  void didUpdateWidget(DiscoveryListCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.data.id != data.id) {
-      onTap = widget.onTap;
-      onLikeTap = widget.onLikeTap;
-      width = widget.width;
-      loading = true;
-    }
-    data = widget.data;
+  }) : super(key: key) {
     resources = data.resourceList();
   }
 
@@ -79,7 +37,7 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
         ClipRRect(
           clipBehavior: Clip.antiAliasWithSaveLayer,
           borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: resources.length > 0 ? buildResourceItem(resources[0]) : Container(),
+          child: resources.length > 0 ? buildResourceItem(context, resources[0]) : Container(),
         ),
         Row(
           children: [
@@ -107,49 +65,34 @@ class DiscoveryListCardState extends State<DiscoveryListCard> with DiscoveryAttr
     ).intoGestureDetector(onTap: onTap, onLongPress: onLongPress);
   }
 
-  Widget buildResourceItem(DiscoveryResource resource) {
+  Widget buildResourceItem(BuildContext context, DiscoveryResource resource) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
       ).intoContainer(height: width);
     } else {
-      double? scale = scaleManager.getScale(resource.url ?? '');
-      if (scale == null) {
-        scale = squareImageScale;
-      }
-      var cachedNetworkImageProvider = CachedNetworkImageProvider(
-        resource.url ?? '',
-        cacheManager: CachedImageCacheManager(),
-        errorListener: () {
-          resource.url ?? '';
-        },
-      );
-      var resolve = cachedNetworkImageProvider.resolve(ImageConfiguration.empty);
-      resolve.addListener(ImageStreamListener((image, synchronousCall) {
-        var imageScale = image.image.width / image.image.height;
-        if (imageScale < 0.9) {
-          imageScale = lowerImageScale;
-        } else if (imageScale > 1.1) {
-          imageScale = higherImageScale;
-        } else {
-          imageScale = squareImageScale;
-        }
-        if (scale != imageScale) {
-          scaleManager.setScale(resource.url ?? '', imageScale);
-        }
-        if (mounted) {
-          setState(() {
-            loading = false;
+      return CachedNetworkImageUtils.custom(
+          context: context,
+          imageUrl: resource.url ?? '',
+          width: width,
+          placeholder: (context, url) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(width: width, height: width);
+          },
+          errorWidget: (context, url, error) {
+            return CircularProgressIndicator()
+                .intoContainer(
+                  width: $(25),
+                  height: $(25),
+                )
+                .intoCenter()
+                .intoContainer(width: width, height: width);
           });
-        }
-      }));
-      double height = width * scale;
-      return Stack(
-        children: [
-          Image(image: cachedNetworkImageProvider, fit: BoxFit.cover, width: width, height: height),
-          Center(child: CircularProgressIndicator()).intoContainer(width: width, height: height).offstage(offstage: !loading),
-        ],
-      );
     }
   }
 }

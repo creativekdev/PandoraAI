@@ -124,7 +124,14 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                 automaticallyImplyLeading: automaticallyImplyLeading,
                 automaticallyImplyMiddle: automaticallyImplyMiddle,
                 previousPageTitle: previousPageTitle,
-                middle: middle,
+                middle: middle != null
+                    ? middle!.intoGestureDetector(
+                        onDoubleTap: (Platform.isIOS && scrollController != null)
+                            ? () {
+                                scrollController!.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+                              }
+                            : null)
+                    : null,
                 trailing: trailing,
                 padding: padding,
                 transitionBetweenRoutes: transitionBetweenRoutes,

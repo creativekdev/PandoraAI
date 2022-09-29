@@ -47,6 +47,8 @@ class Images {
    static const String ic_instagram = 'assets/images/ic_instagram.png';
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
+   static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.jpg';
+   static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';
    static const String ic_man = 'assets/images/ic_man.png';
@@ -64,6 +66,7 @@ class Images {
    static const String ic_radio_off = 'assets/images/ic_radio_off.png';
    static const String ic_radio_on = 'assets/images/ic_radio_on.png';
    static const String ic_rate_us = 'assets/images/ic_rate_us.png';
+   static const String ic_recently = 'assets/images/ic_recently.png';
    static const String ic_refresh_header = 'assets/images/ic_refresh_header.svg';
    static const String ic_right_arrow = 'assets/images/ic_right_arrow.png';
    static const String ic_ring = 'assets/images/ic_ring.png';

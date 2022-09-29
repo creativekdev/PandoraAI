@@ -73,11 +73,16 @@ class Downloader {
       }
     }
     CancelToken cancelToken = CancelToken();
+    String tempPath = savePath + ".tmp";
+    var tmpFile = File(tempPath);
+    if (tmpFile.existsSync()) {
+      tmpFile.deleteSync();
+    }
     _taskMap[key] = cancelToken;
     try {
       client.download(
         url,
-        savePath,
+        tempPath,
         cancelToken: cancelToken,
         onReceiveProgress: (count, total) {
           onReceiveProgress?.call(count, total);
@@ -85,8 +90,9 @@ class Downloader {
             element.onChanged.call(count, total);
           });
         },
-      ).then((value) {
+      ).then((value) async {
         if (value.statusCode == 200) {
+          await File(tempPath).rename(savePath);
           _listenerMap[key]?.forEach((element) {
             element.onFinished.call(File(savePath));
           });

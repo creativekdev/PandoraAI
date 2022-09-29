@@ -54,7 +54,10 @@ class Events {
   static String effect_child_tab_switch = "effect_child_tab_switch";
   static String feed_back_loading = "feed_back_loading";
   static String rate_dialog_loading = "rate_dialog_loading";
-  static String rate_no_thanks= "rate_no_thanks";
+  static String recent_loading = "recent_loading";
+  static String rate_no_thanks = "rate_no_thanks";
+  static String admob_source_data = 'admob_source_data';
+  static String transform_img_failed = 'transform_img_failed';
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
@@ -65,7 +68,9 @@ logEvent(String eventName, {Map<String, dynamic>? eventValues}) {
 }
 
 logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
-  SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
+  SocialUserInfo? user = AppDelegate()
+      .getManager<UserManager>()
+      .user;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};

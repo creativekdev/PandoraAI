@@ -28,7 +28,6 @@ class EffectManager extends BaseManager {
       return _data;
     }
     var data = await api.getHomeConfig();
-    // var data = await API.getHomeConfig();
     if (data != null) {
       _data = data;
     }

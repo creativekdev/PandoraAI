@@ -26,6 +26,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular($(64)),
           child: CachedNetworkImageUtils.custom(
+            useOld: true,
             context: context,
             imageUrl: avatar.avatar(),
             fit: BoxFit.cover,
