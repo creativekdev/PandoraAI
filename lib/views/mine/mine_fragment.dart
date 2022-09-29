@@ -131,6 +131,14 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       builder: (context) => EffectRecentScreen(),
                     ));
               }),
+              Container(
+                width: double.maxFinite,
+                height: 1,
+                color: Color(0xff323232),
+              ).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
               ImageTextBarWidget(
                 StringConstant.setting_my_discovery,
                 Images.ic_setting_my_discovery,

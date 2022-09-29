@@ -1,15 +1,21 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class SplashAdsHolder extends PageAdsHolder {
+  /// 广告重载间隔
   late Duration maxCacheDuration;
 
+  /// 广告展示间隔
+  late Duration shownDuration;
+
   DateTime? _appOpenLoadTime;
+  DateTime? _lastShownTime;
 
   AppOpenAd? _appOpenAd;
 
@@ -26,7 +32,7 @@ class SplashAdsHolder extends PageAdsHolder {
     }
   }
 
-  SplashAdsHolder({required this.maxCacheDuration});
+  SplashAdsHolder({required this.maxCacheDuration, required this.shownDuration});
 
   @override
   initHolder() {
@@ -84,7 +90,7 @@ class SplashAdsHolder extends PageAdsHolder {
     if (ignore) {
       return;
     }
-    if(!isShowAdsNew()) {
+    if (!isShowAdsNew()) {
       return;
     }
     if (!isAdAvailable) {
@@ -104,6 +110,9 @@ class SplashAdsHolder extends PageAdsHolder {
       _appOpenAd = null;
       loadAd();
       callback?.call();
+      return;
+    }
+    if (_lastShownTime != null && DateTime.now().subtract(shownDuration).isAfter(_lastShownTime!)) {
       return;
     }
     // Set the fullScreenContentCallback and show the ad.
@@ -129,5 +138,6 @@ class SplashAdsHolder extends PageAdsHolder {
       },
     );
     _appOpenAd!.show();
+    _lastShownTime = DateTime.now();
   }
 }

@@ -28,7 +28,7 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
   ///   return build2(context);
   /// }
   Widget build2(BuildContext context) {
-    if (canCancelOnLoading || !loading) {
+    if (canCancelOnLoading) {
       return _pageWidget(context);
     }
     return WillPopScope(
