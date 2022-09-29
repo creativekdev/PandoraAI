@@ -1300,7 +1300,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     EffectModel? category = findCategory(selectedEffect);
     if (category == null) {
       controller.changeIsLoading(false);
-      CommonExtension().showToast(StringConstant.commonFailedToast);
+      // CommonExtension().showToast(StringConstant.commonFailedToast);
+      CommonExtension().showToast('cannot find category');
       return;
     }
     String aiHost = _getAiHostByStyle(selectedEffect);
@@ -1455,7 +1456,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               resultSuccess = 1;
             } else {
               controller.changeIsLoading(false);
-              CommonExtension().showToast('Error while processing image');
+              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           } else {
             var token = tokenParsed['data'];
@@ -1527,7 +1528,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               resultSuccess = 1;
             } else {
               controller.changeIsLoading(false);
-              CommonExtension().showToast('Error while processing image');
+              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           }
           userManager.refreshUser(context: context);
@@ -1564,7 +1565,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
-        CommonExtension().showToast("Error while uploading image");
+        CommonExtension().showToast("Error while uploading image, e: ${e.toString()}");
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
     }

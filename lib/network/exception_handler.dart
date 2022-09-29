@@ -12,11 +12,11 @@ import 'package:flutter/foundation.dart';
 class ExceptionHandler {
   onError(Exception e, {bool toastOnFailed = true}) {
     if (toastOnFailed) {
-      if (!kReleaseMode) {
+      // if (!kReleaseMode) {
         CommonExtension().showToast(e.toString());
-      } else {
-        CommonExtension().showToast(StringConstant.commonFailedToast);
-      }
+      // } else {
+      //   CommonExtension().showToast(StringConstant.commonFailedToast);
+      // }
     }
   }
 
