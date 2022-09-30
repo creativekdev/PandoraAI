@@ -89,7 +89,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void onDetached() {
     super.onDetached();
-    tabConfig[currentIndex].key.currentState?.onDetached();
+    if (tabConfig.isNotEmpty) {
+      tabConfig[currentIndex].key.currentState?.onDetached();
+    }
   }
 
   refreshProVisible() {
