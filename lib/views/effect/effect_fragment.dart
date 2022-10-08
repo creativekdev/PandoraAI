@@ -77,7 +77,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   void onAttached() {
     super.onAttached();
-    tabConfig[currentIndex].key.currentState?.onAttached();
+    if (tabConfig.isNotEmpty) {
+      tabConfig[currentIndex].key.currentState?.onAttached();
+    }
     var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     if (currentTime - lastTime > 5000) {
