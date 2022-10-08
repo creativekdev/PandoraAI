@@ -29,6 +29,7 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   void initState() {
     super.initState();
+    AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, false);
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
   }
@@ -109,7 +110,7 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: ColorConstant.CardColor,
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.CardColor,
         blurAble: false,

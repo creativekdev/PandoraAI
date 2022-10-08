@@ -145,11 +145,13 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
-        width: cardWidth,
-        onUpdated: () {
-          setState(() {});
-        },
-        scale: adScale);
+      width: cardWidth,
+      onUpdated: () {
+        setState(() {});
+      },
+      scale: adScale,
+      autoHeight: true,
+    );
     cardAdsMap.init();
     scrollController = ScrollController();
     headerScrollController = ScrollController();
@@ -236,6 +238,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   onLoadFirstPage() {
     setState(() => listLoading = true);
+    cardAdsMap.init();
     api
         .listDiscovery(
       from: 0,
@@ -450,7 +453,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           return result.intoContainer(
             margin: EdgeInsets.only(top: $(8), bottom: $(8)),
             width: cardWidth,
-            height: cardWidth * adScale,
+            // height: cardWidth * adScale,
           );
         }
       }

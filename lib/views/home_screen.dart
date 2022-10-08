@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           } else {
             delay(() {
               userManager.rateNoticeOperator.judgeAndShowNotice(context);
-              // judgePushEvents();
+              judgePushEvents();
             });
           }
         }
@@ -53,10 +53,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void judgePushEvents() {
-    AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
     if (cacheManager.getBool(CacheManager.openToMsg)) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-      cacheManager.setBool(CacheManager.openToMsg, false);
     }
   }
 

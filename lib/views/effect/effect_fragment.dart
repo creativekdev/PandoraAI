@@ -358,7 +358,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       builder: (context) => MsgListScreen(),
                     ),
                   );
-                  AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, false);
                 }, autoExec: true);
               }),
             ),

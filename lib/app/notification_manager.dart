@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:cartoonizer/app/app.dart';
-
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -25,6 +24,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     name: 'cartoonizer',
   );
   await setupFlutterNotifications();
+  SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
+  _sharedPreferences.setBool(CacheManager.openToMsg, true);
   _showNotification(message);
   print('Handling a background message ${message.data}');
 }
@@ -46,6 +47,7 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       debugPrint('onNewMessageOpenedApp: ${message.data.toString()}');
       AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
+      Get.to(MsgListScreen());
     });
 
     FirebaseMessaging.instance.getAPNSToken().then((value) {
@@ -94,10 +96,7 @@ class NotificationManager extends BaseManager {
 }
 
 Future<void> onSelectNotification(String? payload) async {
-  if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-    Get.to(MsgListScreen());
-    AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, false);
-  }
+  Get.to(MsgListScreen());
 }
 
 Future<void> setupFlutterNotifications() async {
@@ -136,7 +135,6 @@ Future<void> setupFlutterNotifications() async {
 }
 
 Future<void> _showNotification(RemoteMessage message) async {
-  AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
   if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
     AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
   }

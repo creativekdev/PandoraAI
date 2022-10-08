@@ -172,7 +172,6 @@ class UserManager extends BaseManager {
   Future<void> logout() async {
     user = null;
     sid = null;
-    cacheManager.setBool(CacheManager.openToMsg, false);
     lastLauncherLoginStatus = false;
   }
 }
