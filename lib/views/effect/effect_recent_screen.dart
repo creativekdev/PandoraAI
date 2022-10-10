@@ -68,7 +68,6 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                         var data = _.dataList[index];
                         return CachedNetworkImageUtils.custom(
                                 context: context,
-                                useOld: false,
                                 imageUrl: data.item!.imageUrl,
                                 width: cardWidth,
                                 placeholder: (context, url) {

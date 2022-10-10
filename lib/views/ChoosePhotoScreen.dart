@@ -509,7 +509,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       refreshLastBuildType();
                     }
                   });
-                }).visibility(visible: !userManager.isNeedLogin && userManager.user!.userSubscription.isEmpty),
+                }).visibility(visible: userManager.isNeedLogin || userManager.user!.userSubscription.isEmpty),
+                Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
+                  margin: EdgeInsets.symmetric(horizontal: $(25)),
+                ).visibility(visible: userManager.isNeedLogin),
                 TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),
@@ -1119,7 +1122,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: false,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,

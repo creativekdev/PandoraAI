@@ -11,8 +11,10 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 class EffectRandomFragment extends StatefulWidget {
@@ -35,7 +37,7 @@ class EffectRandomFragment extends StatefulWidget {
   }
 }
 
-class EffectRandomFragmentState extends State<EffectRandomFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectRandomFragmentState extends State<EffectRandomFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   late RecentController recentController;
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
@@ -113,6 +115,16 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       }
     }
     return result;
+  }
+
+  @override
+  onEffectClick(PushExtraEntity pushExtraEntity) {
+    for (var value in dataController.randomList) {
+      if (value.key == pushExtraEntity.category && value.item!.key == pushExtraEntity.effect) {
+        _onEffectCategoryTap(value, dataController);
+        break;
+      }
+    }
   }
 
   @override

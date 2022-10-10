@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -24,13 +28,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     name: 'cartoonizer',
   );
   await setupFlutterNotifications();
-  SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
-  _sharedPreferences.setBool(CacheManager.openToMsg, true);
   _showNotification(message);
   print('Handling a background message ${message.data}');
 }
 
 class NotificationManager extends BaseManager {
+  BuildContext? _context;
+
+  syncContext(BuildContext context) {
+    this._context = _context;
+  }
+
   @override
   Future<void> onCreate() async {
     await super.onCreate();
@@ -44,12 +52,10 @@ class NotificationManager extends BaseManager {
       debugPrint('onNewMessage: ${message.data.toString()}');
       _showNotification(message);
     });
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint('onNewMessageOpenedApp: ${message.data.toString()}');
-      AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, true);
-      Get.to(MsgListScreen());
+      onHandleNotificationClick(message);
     });
-
     FirebaseMessaging.instance.getAPNSToken().then((value) {
       debugPrint('APNS------------------$value');
     });
@@ -93,9 +99,21 @@ class NotificationManager extends BaseManager {
       platform,
     );
   }
+
+  Future<void> onHandleNotificationClick(RemoteMessage message) async {
+    if (message.data.containsKey('tab')) {
+      var pushExtraEntity = PushExtraEntity.fromJson(message.data);
+      EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
+      EventBusHelper().eventBus.fire(OnEffectPushClickEvent(data: pushExtraEntity));
+    } else {
+      Get.to(MsgListScreen());
+    }
+    return null;
+  }
 }
 
 Future<void> onSelectNotification(String? payload) async {
+  LogUtil.d(payload, tag: 'notify-payload');
   Get.to(MsgListScreen());
 }
 

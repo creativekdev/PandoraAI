@@ -10,8 +10,11 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
+import 'package:common_utils/common_utils.dart';
 import 'effect_fragment.dart';
 import 'widget/effect_face_card_widget.dart';
 
@@ -37,7 +40,7 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
@@ -101,6 +104,27 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   }
 
   @override
+  onEffectClick(PushExtraEntity pushExtraEntity) {
+    for (int i = 0; i < dataList.length; i++) {
+      var value = dataList[i];
+      if (value.key == pushExtraEntity.category) {
+        if (TextUtil.isEmpty(pushExtraEntity.effect)) {
+          _onEffectCategoryTap(dataList, i);
+        } else {
+          var effectList = value.effects.values.toList();
+          for (int j = 0; j < effectList.length; j++) {
+            if (pushExtraEntity.effect == effectList[j].key) {
+              _onEffectCategoryTap(dataList, i, itemPos: j);
+              break;
+            }
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
@@ -152,7 +176,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     }
   }
 
-  _onEffectCategoryTap(List<EffectModel> list, int index) async {
+  _onEffectCategoryTap(List<EffectModel> list, int index, {int? itemPos}) async {
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": list[index].key,
       "style": list[index].style,
@@ -167,6 +191,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
           list: list,
           pos: index,
           tabString: widget.tabString,
+          itemPos: itemPos,
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 
 ///app state
 ///features:

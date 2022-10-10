@@ -5,13 +5,14 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'image_cache_manager.dart';
 
 class CachedNetworkImageUtils {
   static Widget custom({
-    bool useOld = false,
+    // bool useOld = false,
     required BuildContext context,
     Key? key,
     required String imageUrl,
@@ -58,7 +59,7 @@ class CachedNetworkImageUtils {
     if (TextUtil.isEmpty(imageUrl.trim())) {
       return errorWidget.call(context, imageUrl, Exception('image url is empty'));
     }
-    return !useOld
+    return !imageUrl.isGoogleAccount
         ? FutureLoadingImage(
             key: key,
             url: imageUrl,

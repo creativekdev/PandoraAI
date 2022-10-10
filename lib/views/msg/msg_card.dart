@@ -65,7 +65,6 @@ class MsgCard extends StatelessWidget {
                             ))
                         : CachedNetworkImageUtils.custom(
                             context: context,
-                            useOld: false,
                             imageUrl: avatar.avatar(),
                             width: $(50),
                             height: $(50),

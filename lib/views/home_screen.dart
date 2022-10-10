@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -6,8 +7,11 @@ import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'home_tab.dart';
 
@@ -25,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StreamSubscription onPaySuccessListener;
+  late StreamSubscription onTabSwitchListener;
 
   @override
   void initState() {
@@ -33,6 +38,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     initialTab(false);
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
+    });
+    onTabSwitchListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
+      var data = event.data![0];
+      for (int i = 0; i < tabItems.length; i++) {
+        var tabItem = tabItems[i];
+        if (tabItem.id == data) {
+          _setIndex(i);
+        }
+      }
     });
     delay(() {
       userManager.refreshUser(context: context).then((value) {
@@ -53,9 +67,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void judgePushEvents() {
-    if (cacheManager.getBool(CacheManager.openToMsg)) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-    }
+    FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if (value != null) {
+        AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
+      }
+    });
   }
 
   @override
@@ -68,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
     onPaySuccessListener.cancel();
+    onTabSwitchListener.cancel();
   }
 
   initialTab(bool needSetState) {
@@ -105,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    AppDelegate.instance.getManager<NotificationManager>().syncContext(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(

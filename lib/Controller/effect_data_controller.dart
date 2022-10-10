@@ -135,10 +135,12 @@ class HomeTabConfig {
   String title;
   Widget item;
   GlobalKey<AppTabState> key;
+  String tabString;
 
   HomeTabConfig({
     required this.key,
     required this.item,
     required this.title,
+    required this.tabString,
   });
 }

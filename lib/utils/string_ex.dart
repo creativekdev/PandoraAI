@@ -1,4 +1,3 @@
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -19,5 +18,12 @@ extension StringEx on String {
     } else {
       return '$this/api/image/cartoonize';
     }
+  }
+
+  bool get isGoogleAccount {
+    if(TextUtil.isEmpty(this.trim())) {
+      return false;
+    }
+    return this.contains('googleusercontent.com');
   }
 }

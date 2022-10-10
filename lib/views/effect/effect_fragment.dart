@@ -22,6 +22,7 @@ import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
 class EffectFragment extends StatefulWidget {
@@ -50,6 +51,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   List<HomeTabConfig> tabConfig = [];
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
+  late StreamSubscription onPushDataListener;
   bool proVisible = false;
 
   @override
@@ -70,6 +72,17 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
     onUserLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       refreshProVisible();
       setState(() {});
+    });
+    onPushDataListener = EventBusHelper().eventBus.on<OnEffectPushClickEvent>().listen((event) {
+      var pushExtraEntity = event.data!;
+      for (int i = 0; i < tabConfig.length; i++) {
+        var config = tabConfig[i];
+        if (config.tabString == pushExtraEntity.tab) {
+          _tabController?.index = i;
+          setIndex(i);
+          (config.key.currentState as EffectTabState?)?.onEffectClick(pushExtraEntity);
+        }
+      }
     });
     refreshProVisible();
   }
@@ -189,32 +202,37 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       tabString: value,
                     ),
                     title: _.data!.localeName(value),
+                    tabString: value,
                   ),
                 );
               } else if (value == 'full_body') {
                 tabConfig.add(
                   HomeTabConfig(
+                    key: key,
+                    item: EffectFullBodyFragment(
                       key: key,
-                      item: EffectFullBodyFragment(
-                        key: key,
-                        tabId: tabId.id(),
-                        dataList: _.data!.effectList(value),
-                        recentController: recentController,
-                        tabString: value,
-                      ),
-                      title: _.data!.localeName(value)),
+                      tabId: tabId.id(),
+                      dataList: _.data!.effectList(value),
+                      recentController: recentController,
+                      tabString: value,
+                    ),
+                    title: _.data!.localeName(value),
+                    tabString: value,
+                  ),
                 );
               } else if (value == 'template') {
                 tabConfig.add(HomeTabConfig(
+                  key: key,
+                  item: EffectRandomFragment(
                     key: key,
-                    item: EffectRandomFragment(
-                      key: key,
-                      tabString: value,
-                      tabId: tabId.id(),
-                      recentController: recentController,
-                      dataController: dataController,
-                    ),
-                    title: _.data!.localeName(value)));
+                    tabString: value,
+                    tabId: tabId.id(),
+                    recentController: recentController,
+                    dataController: dataController,
+                  ),
+                  title: _.data!.localeName(value),
+                  tabString: value,
+                ));
               } else {
                 tabConfig.add(
                   HomeTabConfig(
@@ -228,6 +246,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       tabString: value,
                     ),
                     title: _.data!.localeName(value),
+                    tabString: value,
                   ),
                 );
               }

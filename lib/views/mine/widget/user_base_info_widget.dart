@@ -22,7 +22,6 @@ class UserBaseInfoWidget extends StatelessWidget {
         ClipRRect(
           child: userInfo != null && !TextUtil.isEmpty(avatar)
               ? CachedNetworkImageUtils.custom(
-                  useOld: false,
                   context: context,
                   imageUrl: avatar.avatar(),
                   height: $(56),

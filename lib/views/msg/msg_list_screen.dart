@@ -5,6 +5,7 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
@@ -29,7 +30,6 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   void initState() {
     super.initState();
-    AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, false);
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
   }

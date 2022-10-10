@@ -10,8 +10,10 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 
 import 'widget/effect_full_body_card_widget.dart';
 
@@ -35,7 +37,7 @@ class EffectFullBodyFragment extends StatefulWidget {
   }
 }
 
-class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
@@ -112,6 +114,25 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     bannerAdsHolder.onDispose();
     appStateListener.cancel();
     tabOnDoubleClickListener.cancel();
+  }
+
+  @override
+  onEffectClick(PushExtraEntity pushExtraEntity) {
+    EffectItemListData? data;
+    for (var list in dataList) {
+      if (data != null) {
+        break;
+      }
+      for (var value in list) {
+        if (value.key == pushExtraEntity.category && value.item!.key == pushExtraEntity.effect) {
+          data = value;
+          break;
+        }
+      }
+    }
+    if (data != null) {
+      _onEffectCategoryTap(data);
+    }
   }
 
   @override

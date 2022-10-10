@@ -44,7 +44,6 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
         ClipRRect(
           borderRadius: BorderRadius.circular($(64)),
           child: CachedNetworkImageUtils.custom(
-            useOld: false,
             imageUrl: data.userAvatar.avatar(),
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
