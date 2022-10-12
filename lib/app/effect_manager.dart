@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -18,7 +20,7 @@ class EffectManager extends BaseManager {
   Future<void> onAllManagerCreate() async {
     cacheManager = getManager();
     var json = cacheManager.getJson(CacheManager.effectAllData);
-    if(json != null) {
+    if (json != null) {
       _data = EffectMap.fromJson(json);
     }
     loadData();

@@ -140,7 +140,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
           controller: scrollController,
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: $(8),
+            crossAxisSpacing: $(6),
           ),
           itemBuilder: (context, index) {
             var data = dataList[index];
@@ -171,7 +171,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                     })
                 .intoContainer(
               margin: EdgeInsets.only(
-                top: index < 2 ? marginTop : $(8),
+                top: index < 2 ? marginTop : $(6),
                 bottom: index == dataList.length - 1 ? AppTabBarHeight : $(0),
               ),
             )
@@ -211,16 +211,26 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   _onEffectCategoryTap(EffectItemListData data, EffectDataController effectDataController) async {
     EffectModel? effectModel;
     var effectList = effectDataController.data!.effectList('template');
-    for (var value in effectList) {
+    int pos = 0;
+    int? itemPos = null;
+    for (int i = 0; i < effectList.length; i++) {
+      var value = effectList[i];
       if (data.key == value.key) {
         effectModel = EffectModel.fromJson(value.toJson());
+        pos = i;
         break;
       }
     }
     if (effectModel == null) {
       return;
     }
-    effectModel.effects = {'${data.item!.key}': data.item!};
+    var effectItems = effectModel.effects.values.toList();
+    for (var i = 0; i < effectItems.length; i++) {
+      if (data.item!.key == effectItems[i].key) {
+        itemPos = i;
+        break;
+      }
+    }
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": effectModel.key,
       "style": effectModel.style,
@@ -232,9 +242,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: [effectModel!],
-          pos: 0,
-          itemPos: 0,
+          list: effectList,
+          pos: pos,
+          itemPos: itemPos,
           tabString: widget.tabString,
         ),
       ),

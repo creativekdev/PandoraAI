@@ -17,7 +17,7 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
     required this.parentWidth,
     required this.onTap,
   }) : super(key: key) {
-    imageSize = (parentWidth - $(24)) / 2;
+    imageSize = (parentWidth - $(6)) / 2;
   }
 
   @override
@@ -25,10 +25,10 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
     return Row(
       children: [
         Expanded(child: buildItem(context, data: data[0])),
-        SizedBox(width: $(12)),
+        SizedBox(width: $(6)),
         Expanded(child: data.length > 1 ? buildItem(context, data: data[1]) : Container()),
       ],
-    ).paddingOnly(left: $(6), right: $(6));
+    );
   }
 
   Widget buildItem(BuildContext context, {required EffectItemListData data}) {
@@ -65,7 +65,7 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
             ? Container()
             : Image.asset(
                 tag.image(),
-              ).intoContainer(width: $(32)),
+              ).intoContainer(width: $(28)),
       ],
     ).intoGestureDetector(onTap: () {
       onTap(data);

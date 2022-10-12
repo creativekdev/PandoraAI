@@ -26,20 +26,28 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
 
   @override
   Widget build(BuildContext context) {
-    var size = (parentWidth - $(12)) / 2;
+    var size = (parentWidth - $(6)) / 2;
     return Stack(
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextUtil.isEmpty(data.thumbnail)
                 ? Wrap(
-                    spacing: $(12),
+                    spacing: $(6),
+                    runSpacing: $(6),
                     direction: Axis.horizontal,
-                    children: data.thumbnails.map((e) {
+                    children: data.thumbnails.transfer((e, index) {
+                      BorderRadius radius;
+                      if (index % 2 == 0) {
+                        radius = BorderRadius.only(topLeft: Radius.circular($(8)));
+                      } else {
+                        radius = BorderRadius.only(topRight: Radius.circular($(8)));
+                      }
                       var effect = data.effects[e]!;
                       return ClipRRect(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                        borderRadius: BorderRadius.all(Radius.circular($(8))),
+                        borderRadius: radius,
                         child: urlWidget(
                           context,
                           width: size,
@@ -47,9 +55,9 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                           url: effect.imageUrl,
                         ),
                       );
-                    }).toList(),
+                    }),
                   ).intoContainer(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                   )
                 : ClipRRect(
                     child: CachedNetworkImageUtils.custom(
@@ -83,6 +91,6 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                 tag.image(),
               ).intoContainer(width: $(28)),
       ],
-    ).intoMaterial(color: ColorConstant.EffectCardColor, borderRadius: BorderRadius.circular(8));
+    ).intoMaterial(color: ColorConstant.BackgroundColor, borderRadius: BorderRadius.circular(8));
   }
 }

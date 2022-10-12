@@ -32,10 +32,6 @@ class EffectDataController extends GetxController {
   void onInit() {
     super.onInit();
     lastRandomTime = cacheManager.getInt(CacheManager.effectLastRandomTime);
-    List<dynamic>? json = cacheManager.getJson(CacheManager.effectLastRandomList);
-    if (json != null) {
-      randomList.value = json.map((e) => EffectItemListData.fromJson(e)).toList();
-    }
     loopRefreshData();
   }
 
@@ -80,7 +76,7 @@ class EffectDataController extends GetxController {
       return;
     }
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastRandomTime < refreshDuration) {
+    if (currentTime - lastRandomTime < refreshDuration && randomList.isNotEmpty) {
       return;
     }
     if (randomTabViewing) {
@@ -116,7 +112,7 @@ class EffectDataController extends GetxController {
     List<EffectItemListData> otherList = [];
     for (int i = 0; i < allItemList.length; i++) {
       var value = allItemList[i];
-      if (value.item?.top ?? false) {
+      if (value.item?.featured != 0) {
         topList.add(value);
       } else {
         if (i == 0) {
@@ -127,11 +123,11 @@ class EffectDataController extends GetxController {
       }
     }
     randomList.clear();
+    topList.sort((a, b) => b.item!.featured.compareTo(a.item!.featured));
     randomList.addAll(topList);
     randomList.addAll(otherList);
     lastRandomTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt(CacheManager.effectLastRandomTime, lastRandomTime);
-    cacheManager.setJson(CacheManager.effectLastRandomList, randomList.map((e) => e.toJson()).toList());
   }
 }
 
