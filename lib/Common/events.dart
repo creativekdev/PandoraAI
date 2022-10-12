@@ -47,7 +47,7 @@ class Events {
   static String tab_me_loading = "tab_me_loading";
   static String user_discovery_loading = "user_discovery_loading";
   static String discovery_detail_loading = "discovery_detail_loading";
-  static String discovery_comment_loading = "discovery_comment_loading";
+  // static String discovery_comment_loading = "discovery_comment_loading";
   static String discovery_secondary_comment_loading = "discovery_secondary_comment_loading";
   static String create_discovery_share = "create_discovery_share";
   static String reward_advertisement_loading = "reward_advertisement_loading";

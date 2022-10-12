@@ -7,10 +7,10 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
-import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
+import 'discovery_effect_detail_screen.dart';
 import 'widget/my_discovery_list_card.dart';
 
 class MyDiscoveryScreen extends StatefulWidget {
@@ -172,7 +172,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: data),
+                        builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: data),
                         settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                       ),
                     );

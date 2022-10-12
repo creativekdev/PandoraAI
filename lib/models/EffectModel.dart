@@ -63,6 +63,7 @@ class EffectItem {
   late String id;
   late String displayName;
   late String tag;
+  late bool top;
 
   EffectItem({
     this.key = '',
@@ -79,6 +80,7 @@ class EffectItem {
     this.displayName = '',
     this.tag = '',
     this.templateName = '',
+    this.top = false,
   });
 
   EffectItem.fromJson(Map<String, dynamic> json) {
@@ -96,6 +98,7 @@ class EffectItem {
     templateName = (json['template_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
+    top = (json['top'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -114,6 +117,7 @@ class EffectItem {
     data['template_name'] = templateName;
     data['display_name'] = displayName;
     data['tag'] = tag;
+    data['top'] = top;
     return data;
   }
 }

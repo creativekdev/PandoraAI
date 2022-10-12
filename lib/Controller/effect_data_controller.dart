@@ -51,8 +51,6 @@ class EffectDataController extends GetxController {
   }
 
   loadData() {
-    loading = true;
-    update();
     effectManager.loadData().then((value) {
       loading = false;
       if (value != null) {
@@ -114,17 +112,23 @@ class EffectDataController extends GetxController {
   }
 
   refreshRandomList(List<EffectItemListData> allItemList) {
-    List<EffectItemListData> result = [];
+    List<EffectItemListData> topList = [];
+    List<EffectItemListData> otherList = [];
     for (int i = 0; i < allItemList.length; i++) {
       var value = allItemList[i];
-      if (i == 0) {
-        result.add(value);
+      if (value.item?.top ?? false) {
+        topList.add(value);
       } else {
-        result.insert(math.Random().nextInt(result.length), value);
+        if (i == 0) {
+          otherList.add(value);
+        } else {
+          otherList.insert(math.Random().nextInt(otherList.length), value);
+        }
       }
     }
     randomList.clear();
-    randomList.addAll(result);
+    randomList.addAll(topList);
+    randomList.addAll(otherList);
     lastRandomTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt(CacheManager.effectLastRandomTime, lastRandomTime);
     cacheManager.setJson(CacheManager.effectLastRandomList, randomList.map((e) => e.toJson()).toList());

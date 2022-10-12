@@ -36,7 +36,7 @@ class NotificationManager extends BaseManager {
   BuildContext? _context;
 
   syncContext(BuildContext context) {
-    this._context = _context;
+    this._context = context;
   }
 
   @override
@@ -102,10 +102,16 @@ class NotificationManager extends BaseManager {
 
   Future<void> onHandleNotificationClick(RemoteMessage message) async {
     if (message.data.containsKey('tab')) {
+      if (_context != null) {
+        Navigator.popUntil(_context!, ModalRoute.withName('/HomeScreen'));
+      }
       var pushExtraEntity = PushExtraEntity.fromJson(message.data);
       EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
       EventBusHelper().eventBus.fire(OnEffectPushClickEvent(data: pushExtraEntity));
     } else {
+      if (_context != null) {
+        Navigator.popUntil(_context!, ModalRoute.withName('/HomeScreen'));
+      }
       Get.to(MsgListScreen());
     }
     return null;

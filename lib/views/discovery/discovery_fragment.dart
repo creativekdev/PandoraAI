@@ -14,6 +14,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widget.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -413,7 +414,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index].data!),
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: dataList[index].data!),
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),

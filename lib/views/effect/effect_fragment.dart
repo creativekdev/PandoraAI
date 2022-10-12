@@ -80,7 +80,12 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
         if (config.tabString == pushExtraEntity.tab) {
           _tabController?.index = i;
           setIndex(i);
-          (config.key.currentState as EffectTabState?)?.onEffectClick(pushExtraEntity);
+          var state = (config.key.currentState as EffectTabState?);
+          if (state == null) {
+            delay(() => (config.key.currentState as EffectTabState?)?.onEffectClick(pushExtraEntity), milliseconds: 500);
+          } else {
+            state.onEffectClick(pushExtraEntity);
+          }
         }
       }
     });
@@ -358,7 +363,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                     });
                   }),
                 ],
-              ).intoContainer(margin: EdgeInsets.only(left: $(4))).offstage(offstage: !proVisible),
+              ).intoContainer(margin: EdgeInsets.only(left: $(1))).offstage(offstage: !proVisible),
               middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,

@@ -3,7 +3,6 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 
 import 'discovery_attr_holder.dart';
 
@@ -41,17 +40,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         ),
         Row(
           children: [
-            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryCommentsListScreen(
-                    discoveryEntity: data,
-                  ),
-                  settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
-                ),
-              );
-            }),
+            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments),
             buildAttr(
               context,
               iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,

@@ -1,6 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/tag/tag_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/enums/effect_tag.dart';
@@ -27,27 +26,26 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
 
   @override
   Widget build(BuildContext context) {
-    var size = (parentWidth - $(28)) / 2;
+    var size = (parentWidth - $(12)) / 2;
     return Stack(
       children: [
         Column(
           children: [
             TextUtil.isEmpty(data.thumbnail)
                 ? Wrap(
+                    spacing: $(12),
                     direction: Axis.horizontal,
                     children: data.thumbnails.map((e) {
                       var effect = data.effects[e]!;
                       return ClipRRect(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
-                        borderRadius: BorderRadius.all(Radius.circular($(6))),
+                        borderRadius: BorderRadius.all(Radius.circular($(8))),
                         child: urlWidget(
                           context,
                           width: size,
                           height: size,
                           url: effect.imageUrl,
                         ),
-                      ).intoContainer(
-                        padding: EdgeInsets.all($(6)),
                       );
                     }).toList(),
                   ).intoContainer(
@@ -61,11 +59,9 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                       height: parentWidth,
                     ),
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-                  ).intoContainer(
-                    padding: EdgeInsets.all($(6)),
                   ),
             Padding(
-              padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(20), top: $(12)),
+              padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(12), top: $(12)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,8 +81,8 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
             ? Container()
             : Image.asset(
                 tag.image(),
-              ).intoContainer(width: $(44), padding: EdgeInsets.all($(6))),
+              ).intoContainer(width: $(28)),
       ],
-    ).intoMaterial(color: ColorConstant.CardColor, borderRadius: BorderRadius.circular(8));
+    ).intoMaterial(color: ColorConstant.EffectCardColor, borderRadius: BorderRadius.circular(8));
   }
 }
