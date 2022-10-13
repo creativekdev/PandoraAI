@@ -17,7 +17,41 @@ import 'package:cartoonizer/models/effect_map.dart';
 const loopDuration = 1 * minute;
 const refreshDuration = 30 * minute;
 
-typedef ItemRender = Widget Function();
+class ChooseTabInfo {
+  String title;
+  String key;
+
+  ChooseTabInfo({
+    required this.title,
+    required this.key,
+  });
+}
+
+class ChooseTitleInfo {
+  String title;
+  String categoryKey;
+  String tabKey;
+
+  ChooseTitleInfo({
+    required this.title,
+    required this.categoryKey,
+    required this.tabKey,
+  });
+}
+
+class ChooseTabItemInfo {
+  EffectItem data;
+  String tabKey;
+  int categoryIndex;
+  int childIndex;
+
+  ChooseTabItemInfo({
+    required this.data,
+    required this.tabKey,
+    required this.categoryIndex,
+    required this.childIndex,
+  });
+}
 
 class EffectDataController extends GetxController {
   EffectMap? data = null;
@@ -27,6 +61,10 @@ class EffectDataController extends GetxController {
   int lastRandomTime = 0;
   RxList<EffectItemListData> randomList = <EffectItemListData>[].obs;
   bool randomTabViewing = false;
+
+  List<ChooseTabInfo> tabList = [];
+  List<ChooseTitleInfo> tabTitleList = [];
+  List<ChooseTabItemInfo> tabItemList = [];
 
   @override
   void onInit() {
@@ -51,10 +89,64 @@ class EffectDataController extends GetxController {
       loading = false;
       if (value != null) {
         this.data = value;
+        buildChooseDataList();
         buildRandomList();
       }
       update();
     });
+  }
+
+  buildChooseDataList() {
+    tabList.clear();
+    tabTitleList.clear();
+    tabItemList.clear();
+    var keyList = data!.data.keys.toList();
+    for (int i = 0; i < keyList.length; i++) {
+      var key = keyList[i];
+      tabList.add(ChooseTabInfo(title: data!.localeName(key), key: key));
+      List<EffectModel> effectList = data!.effectList(key);
+      if (key == 'face') {
+        // flat tow-level data
+        for (int j = 0; j < effectList.length; j++) {
+          EffectModel effectModel = effectList[j];
+          List<EffectItem> effectItems = effectModel.effects.values.toList();
+          for (int k = 0; k < effectItems.length; k++) {
+            int categoryIndex = tabTitleList.length;
+            tabTitleList.add(ChooseTitleInfo(
+              title: effectItems[k].displayName,
+              categoryKey: effectModel.key,
+              tabKey: key,
+            ));
+            tabItemList.add(ChooseTabItemInfo(
+              data: effectItems[k],
+              tabKey: key,
+              categoryIndex: categoryIndex,
+              childIndex: k,
+            ));
+          }
+        }
+      } else {
+        //others
+        for (int j = 0; j < effectList.length; j++) {
+          EffectModel effectModel = effectList[j];
+          int categoryIndex = tabTitleList.length;
+          tabTitleList.add(ChooseTitleInfo(
+            title: effectModel.displayName,
+            categoryKey: effectModel.key,
+            tabKey: key,
+          ));
+          List<EffectItem> effectItems = effectModel.effects.values.toList();
+          for (int k = 0; k < effectItems.length; k++) {
+            tabItemList.add(ChooseTabItemInfo(
+              data: effectItems[k],
+              tabKey: key,
+              categoryIndex: categoryIndex,
+              childIndex: k,
+            ));
+          }
+        }
+      }
+    }
   }
 
   /// if old list not equals new list -> rebuild

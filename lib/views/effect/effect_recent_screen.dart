@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'effect_fragment.dart';
@@ -157,11 +157,10 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: originList,
+          tabPos: 0,
           pos: index,
           itemPos: 0,
           entrySource: EntrySource.fromRecent,
-          tabString: 'recent',
         ),
       ),
     );

@@ -17,6 +17,19 @@ class RecentController extends GetxController {
   List<EffectItemListData> dataList = [];
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
+  List<EffectModel> getBuildList() {
+    List<EffectModel> result = [];
+    for (var value in recentModelList) {
+      var pick = result.pick((t) => t.key == value.key);
+      if(pick != null) {
+        pick.effects.addAll(value.effects);
+      } else {
+        result.add(value);
+      }
+    }
+    return result;
+  }
+
   @override
   void onInit() async {
     super.onInit();

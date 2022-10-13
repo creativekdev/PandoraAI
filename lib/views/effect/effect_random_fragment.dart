@@ -13,7 +13,7 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -211,26 +211,20 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   _onEffectCategoryTap(EffectItemListData data, EffectDataController effectDataController) async {
     EffectModel? effectModel;
     var effectList = effectDataController.data!.effectList('template');
-    int pos = 0;
-    int? itemPos = null;
     for (int i = 0; i < effectList.length; i++) {
       var value = effectList[i];
       if (data.key == value.key) {
         effectModel = EffectModel.fromJson(value.toJson());
-        pos = i;
         break;
       }
     }
     if (effectModel == null) {
       return;
     }
-    var effectItems = effectModel.effects.values.toList();
-    for (var i = 0; i < effectItems.length; i++) {
-      if (data.item!.key == effectItems[i].key) {
-        itemPos = i;
-        break;
-      }
-    }
+    var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((d) => d.data.key == data.item!.key)!;
+
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": effectModel.key,
       "style": effectModel.style,
@@ -242,10 +236,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: effectList,
-          pos: pos,
-          itemPos: itemPos,
-          tabString: widget.tabString,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
         ),
       ),
     );

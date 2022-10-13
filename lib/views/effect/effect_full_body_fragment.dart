@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -12,7 +13,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 
 import 'widget/effect_full_body_card_widget.dart';
@@ -189,19 +190,22 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   }
 
   _onEffectCategoryTap(EffectItemListData data) async {
+    EffectDataController effectDataController = Get.find();
     EffectModel? effectModel;
-    int index = 0;
     for (int i = 0; i < effectModelList.length; i++) {
       var model = effectModelList[i];
       if (model.key == data.key) {
         effectModel = model;
-        index = i;
         break;
       }
     }
     if (effectModel == null) {
       return;
     }
+    var effectItem = data.item!;
+    var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
 
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": effectModel.key,
@@ -214,10 +218,9 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: effectModelList,
-          pos: index,
-          itemPos: data.pos,
-          tabString: widget.tabString,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
         ),
       ),
     );

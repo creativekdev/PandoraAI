@@ -22,6 +22,22 @@ class EffectMap {
 }
 
 extension EffectMapEx on EffectMap {
+
+  int tabPos(String childKey) {
+    var keys = data.keys.toList();
+    for (int i = 0; i < keys.length; i++) {
+      var list = effectList(keys[i]);
+      var pick = list.pick((e) {
+        var item = e.effects.values.toList().pick((t) => t.key == childKey);
+        return item != null;
+      });
+      if (pick != null) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   MapEntry<String, List<EffectModel>>? targetSeries(String childKey) {
     for (var key in data.keys) {
       var list = effectList(key);
@@ -74,4 +90,12 @@ extension EffectMapEx on EffectMap {
     }
     return locale['key']?[key] ?? locale['key']?[dn] ?? dn;
   }
+}
+
+class EffectPosHolder {
+  int tabPos;
+  int categoryPos;
+  int itemPos;
+
+  EffectPosHolder({required this.tabPos, required this.categoryPos, required this.itemPos});
 }

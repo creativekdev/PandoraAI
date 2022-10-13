@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -14,7 +15,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
@@ -48,6 +49,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   late StreamSubscription onUnlikeEventListener;
   late StreamSubscription onCreateCommentListener;
   List<DiscoveryResource> resources = [];
+  EffectDataController effectDataController = Get.find();
 
   @override
   void initState() {
@@ -295,57 +297,55 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
 
   toChoosePage() {
     String key = data.cartoonizeKey;
-    loadingAction.showLoadingBar().whenComplete(() {
-      effectManager.loadData().then((value) {
-        loadingAction.hideLoadingBar().whenComplete(() {
-          if (value == null) {
-            return;
-          }
-          var targetSeries = value.targetSeries(key);
-          if (targetSeries == null) {
-            CommonExtension().showToast("This template is not available now");
-            return;
-          }
-          EffectItem? effectItem;
-          int index = 0;
-          int itemIndex = 0;
-          for (int i = 0; i < targetSeries.value.length; i++) {
-            var model = targetSeries.value[i];
-            var list = model.effects.values.toList();
-            for (int j = 0; j < list.length; j++) {
-              var item = list[j];
-              if (item.key == key) {
-                effectItem = item;
-                index = i;
-                itemIndex = j;
-                break;
-              }
-            }
-          }
-          if (effectItem == null) {
-            return;
-          }
-          logEvent(Events.choose_home_cartoon_type, eventValues: {
-            "category": targetSeries.value[index].key,
-            "style": targetSeries.value[index].style,
-            "page": 'discovery',
-          });
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              settings: RouteSettings(name: "/ChoosePhotoScreen"),
-              builder: (context) => ChoosePhotoScreen(
-                list: targetSeries.value,
-                pos: index,
-                itemPos: itemIndex,
-                entrySource: EntrySource.fromDiscovery,
-                // hasOriginalCheck: false,
-                tabString: targetSeries.key,
-              ),
-            ),
-          );
-        });
-      });
+    int tabPos = effectDataController.data!.tabPos(key);
+    int categoryPos = 0;
+    int itemPos = 0;
+    if (tabPos == -1) {
+      CommonExtension().showToast("This template is not available now");
+      return;
+    }
+    var targetSeries = effectDataController.data!.targetSeries(key)!;
+    EffectModel? effectModel;
+    EffectItem? effectItem;
+    int index = 0;
+    for (int i = 0; i < targetSeries.value.length; i++) {
+      if (effectModel != null) {
+        break;
+      }
+      var model = targetSeries.value[i];
+      var list = model.effects.values.toList();
+      for (int j = 0; j < list.length; j++) {
+        var item = list[j];
+        if (item.key == key) {
+          effectModel = model;
+          effectItem = item;
+          index = i;
+          break;
+        }
+      }
+    }
+    if (effectItem == null) {
+      CommonExtension().showToast("This template is not available now");
+      return;
+    }
+    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
+    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
+    logEvent(Events.choose_home_cartoon_type, eventValues: {
+      "category": targetSeries.value[index].key,
+      "style": targetSeries.value[index].style,
+      "page": 'discovery',
     });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        settings: RouteSettings(name: "/ChoosePhotoScreen"),
+        builder: (context) => ChoosePhotoScreen(
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemPos,
+          entrySource: EntrySource.fromDiscovery,
+        ),
+      ),
+    );
   }
 }

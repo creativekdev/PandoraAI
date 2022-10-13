@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -12,7 +13,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:common_utils/common_utils.dart';
 import 'effect_fragment.dart';
@@ -182,16 +183,24 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       "style": list[index].style,
       "page": widget.tabString,
     });
+    EffectDataController effectDataController = Get.find();
 
+    EffectModel effectModel = list[index];
+    if (itemPos == null) {
+      itemPos = effectModel.getDefaultPos();
+    }
+    var effectItem = effectModel.effects.values.toList()[itemPos];
+      var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+      var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+      var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: list,
-          pos: index,
-          tabString: widget.tabString,
-          itemPos: itemPos,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
         ),
       ),
     );
