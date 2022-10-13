@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
@@ -59,7 +60,6 @@ class ChoosePhotoScreen extends StatefulWidget {
   int? itemPos;
   EntrySource entrySource;
 
-  // bool hasOriginalCheck;
   String tabString;
 
   ChoosePhotoScreen({
@@ -69,7 +69,6 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.pos,
     this.itemPos,
     this.entrySource = EntrySource.fromEffect,
-    // this.hasOriginalCheck = true,
   }) : super(key: key);
 
   @override
@@ -92,6 +91,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
+  final EffectDataController effectDataController = Get.find();
   final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
 
@@ -510,9 +510,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     }
                   });
                 }).visibility(visible: userManager.isNeedLogin || userManager.user!.userSubscription.isEmpty),
-                Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
-                  margin: EdgeInsets.symmetric(horizontal: $(25)),
-                ).visibility(visible: userManager.isNeedLogin),
+                Divider(height: 0.5, color: ColorConstant.EffectGrey)
+                    .intoContainer(
+                      margin: EdgeInsets.symmetric(horizontal: $(25)),
+                    )
+                    .visibility(visible: userManager.isNeedLogin),
                 TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),

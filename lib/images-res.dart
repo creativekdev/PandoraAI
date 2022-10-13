@@ -109,8 +109,8 @@ class Images {
    static const String ic_video = 'assets/images/ic_video.png';
    static const String ic_watermark = 'assets/images/ic_watermark.png';
    static const String ic_youtube = 'assets/images/ic_youtube.png';
-   static const String introduction_bg1 = 'assets/images/introduction_bg1.jpg';
-   static const String introduction_bg2 = 'assets/images/introduction_bg2.jpg';
+   static const String introduction_bg1 = 'assets/images/introduction_bg1.png';
+   static const String introduction_bg2 = 'assets/images/introduction_bg2.png';
    static const String introduction_bg3 = 'assets/images/introduction_bg3.png';
    static const String launch_branding = 'assets/images/launch_branding.png';
    static const String launch_icon = 'assets/images/launch_icon.png';

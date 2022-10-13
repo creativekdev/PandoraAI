@@ -111,9 +111,9 @@ class StringConstant {
   static const new_update_dialog_content = "A required update is available, the App will not be working until this update is applied.";
   static const zip_code = "Zip Code";
   static const zip_code_validation_message = "Invalid zip code";
-  static const welcome_title1 = "Make your own cartoon avatar";
-  static const welcome_title2 = "Turn photos into art";
-  static const welcome_title3 = "Add stickers to your cartoon";
+  static const welcome_title1 = "Make a cartoon profile picture";
+  static const welcome_title2 = "Add artistic touch to your photo";
+  static const welcome_title3 = "Create cartoon stickers for yourself";
   static const setting_my_discovery = "My Discovery";
   static const setting_my_delete_account = "Delete Account";
   static const pro = "Pro";
