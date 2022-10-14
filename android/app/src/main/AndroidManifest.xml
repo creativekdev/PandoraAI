@@ -23,7 +23,7 @@
 		<package android:name="com.zhiliaoapp.musically" />
 		<package android:name="com.ss.android.ugc.trill" />
 	</queries>
-	<application android:label="ProfilePicMaker" android:name="${applicationName}" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round">
+	<application android:label="ProfilePicMaker" android:name="${applicationName}" android:icon="@mipmap/ic_launcher_h" android:roundIcon="@mipmap/ic_launcher_h_round">
 		<meta-data
 			android:name="com.google.android.gms.ads.APPLICATION_ID"
 			android:value="@string/admob_app_key"/>

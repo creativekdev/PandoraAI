@@ -159,11 +159,11 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
                     loadingColors: [Color(0xff3E60FF), Color(0xffffd718)],
                     borderRadius: BorderRadius.circular(32),
                   ),
-                  SizedBox(height: $(6)),
-                  Text(
-                    '${progress / 10}%',
-                    style: TextStyle(color: ColorConstant.EffectFunctionBlue, fontFamily: 'Poppins'),
-                  ),
+                  // SizedBox(height: $(6)),
+                  // Text(
+                  //   '${progress / 10}%',
+                  //   style: TextStyle(color: ColorConstant.EffectFunctionBlue, fontFamily: 'Poppins'),
+                  // ),
                   SizedBox(height: $(6)),
                 ],
               ).intoContainer(height: $(100), padding: EdgeInsets.symmetric(horizontal: $(100)), alignment: Alignment.center),

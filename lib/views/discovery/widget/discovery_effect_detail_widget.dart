@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
@@ -19,6 +21,7 @@ import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
+import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 import 'discovery_attr_holder.dart';
 
@@ -266,6 +269,9 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   }
 
   void openImage(BuildContext context, final int index) {
+    if(Platform.isAndroid) {
+      FlutterForbidshot.setAndroidForbidOn();
+    }
     List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
     Navigator.push(
       context,
@@ -280,7 +286,11 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
           scrollDirection: Axis.horizontal,
         ),
       ),
-    );
+    ).then((value) {
+      if(Platform.isAndroid) {
+        FlutterForbidshot.setAndroidForbidOff();
+      }
+    });
   }
 
   onLikeTap() => loadingAction.showLoadingBar().whenComplete(() {

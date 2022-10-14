@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
@@ -320,7 +321,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
     delay(() {
       titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
-      itemScrollController.scrollTo(index: pos, duration: Duration(milliseconds: 400));
+      itemScrollController.scrollTo(index: currentItemIndex.value, duration: Duration(milliseconds: 400));
     }, milliseconds: 32);
   }
 
@@ -710,20 +711,40 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                             ).intoContainer(width: imgContainerSize, height: imgContainerSize),
                                             borderRadius: BorderRadius.circular($(0)),
                                           ).intoContainer(margin: EdgeInsets.only(bottom: $(tabItemList.length == 1 ? 100 : 15)))
-                                        : Image.asset(
-                                            Images.ic_choose_photo_initial_header,
-                                            height: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
-                                            width: imgContainerSize - (tabItemList.length == 1 ? 0 : 52),
+                                        : ClipRRect(
+                                            child: Image.asset(
+                                              (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['image']!,
+                                              height: imgContainerSize - 60,
+                                              width: imgContainerSize - 60,
+                                            ),
+                                            borderRadius: BorderRadius.circular(8),
                                           ),
                                     controller.isPhotoSelect.value
                                         ? Container()
-                                        : Image.asset(
-                                            Images.ic_choose_photo_initial_text,
+                                        : Text(
+                                            (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['text']!,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              shadows: [
+                                                Shadow(
+                                                  color: Color(0xffc4400c),
+                                                  blurRadius: 6,
+                                                  offset: Offset(4, 0),
+                                                ),
+                                                Shadow(
+                                                  color: Color(0xffc4400c),
+                                                  blurRadius: 6,
+                                                  offset: Offset(-4, 0),
+                                                ),
+                                              ],
+                                            ),
                                           ).intoContainer(
-                                            margin: EdgeInsets.only(
-                                            top: $(10),
-                                            bottom: 0,
-                                          )),
+                                            constraints: BoxConstraints(minHeight: $(140)),
+                                            alignment: Alignment.center,
+                                          ),
                                     Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -755,7 +776,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Obx(() => buildSuccessFunctions(context).visibility(visible: controller.isPhotoDone.value)),
                   SizedBox(height: $(10)),
                   ChooseTabBar(
-                      height: $(36),
+                      height: $(44),
                       tabList: tabList.map((e) => e.title).toList(),
                       currentIndex: currentTabIndex,
                       scrollable: tabList.length > 3,
@@ -776,7 +797,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           } else {
                             itemScrollController.jumpTo(index: categoryPos);
                           }
-                          currentItemIndex.value = tabItemPos;
+                          if (!controller.isPhotoSelect.value) {
+                            currentItemIndex.value = tabItemPos;
+                          }
                         });
                         delay(() {
                           lastChangeByTap = false;
@@ -797,7 +820,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                             tabTitleList[index].title,
                             style: TextStyle(
                               color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                              fontSize: $(16),
+                              fontSize: $(14),
                               fontWeight: FontWeight.w500,
                               fontFamily: 'Poppins',
                             ),
@@ -872,7 +895,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     height: itemWidth + (8),
                     margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
                   ),
-                  SizedBox(height: MediaQuery.of(context).padding.bottom < $(25) ? $(25) : MediaQuery.of(context).padding.bottom - 15),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom < $(20) ? $(20) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),
             )),
@@ -1050,13 +1073,31 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                             isVideo: controller.isVideo.value,
                           );
                         } else {
-                          ShareDiscoveryScreen.push(
-                            context,
-                            effectKey: selectedEffect.key,
-                            originalUrl: urlFinal,
-                            image: image,
-                            isVideo: controller.isVideo.value,
-                          );
+                          if (lastBuildType == _BuildType.waterMark) {
+                            controller.changeIsLoading(true);
+                            var imageData = await decodeImageFromList(base64Decode(image));
+                            var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
+                            assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
+                              var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
+                              var newImage = base64Encode(uint8list);
+                              controller.changeIsLoading(false);
+                              ShareDiscoveryScreen.push(
+                                context,
+                                effectKey: selectedEffect.key,
+                                originalUrl: urlFinal,
+                                image: newImage,
+                                isVideo: controller.isVideo.value,
+                              );
+                            }));
+                          } else {
+                            ShareDiscoveryScreen.push(
+                              context,
+                              effectKey: selectedEffect.key,
+                              originalUrl: urlFinal,
+                              image: image,
+                              isVideo: controller.isVideo.value,
+                            );
+                          }
                         }
                       });
                     },

@@ -41,7 +41,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   late RecentController recentController;
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(110);
+  double marginTop = $(118);
   late CardAdsMap adsMap;
   late double cardWidth;
   late StreamSubscription appStateListener;
@@ -52,7 +52,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   @override
   initState() {
     super.initState();
-    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
+    marginTop = $(118) + ScreenUtil.getStatusBarHeight();
     dataController = widget.dataController;
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;

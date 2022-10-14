@@ -51,12 +51,12 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(110);
+  double marginTop = $(118);
 
   @override
   initState() {
     super.initState();
-    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
+    marginTop = $(118) + ScreenUtil.getStatusBarHeight();
     recentController = widget.recentController;
     dataList = widget.dataList;
     bannerAdsHolder = BannerAdsHolder(
