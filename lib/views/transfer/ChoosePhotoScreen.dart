@@ -792,7 +792,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           }
                           currentTitleIndex = categoryPos;
                           int tabItemPos = tabItemList.findPosition((data) => data.tabKey == tabList[index].key)!;
-                          if (categoryPos > tabItemList.length - 4) {
+                          if (tabItemPos > tabItemList.length - 4) {
                             itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
                           } else {
                             itemScrollController.jumpTo(index: categoryPos);
@@ -805,7 +805,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           lastChangeByTap = false;
                         }, milliseconds: 32);
                       }).visibility(visible: controller.isPhotoDone.value && tabList.length > 1),
-                  SizedBox(height: $(5)),
                   ScrollablePositionedList.separated(
                     initialScrollIndex: 0,
                     itemCount: tabTitleList.length,
@@ -899,7 +898,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   SizedBox(height: MediaQuery.of(context).padding.bottom < $(20) ? $(20) : MediaQuery.of(context).padding.bottom - 15),
                 ],
               ),
-            )),
+            ).ignore(ignoring: controller.isLoading.value)),
       ),
     );
   }
