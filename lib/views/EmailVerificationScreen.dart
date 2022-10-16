@@ -119,7 +119,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
       if (response.statusCode == 200) {
         CommonExtension().showToast("Activate successfully!");
-        loginBack(context);
+        Navigator.of(context).pop(true);
       } else {
         var body = jsonDecode(response.body);
         textEditingController.clear();

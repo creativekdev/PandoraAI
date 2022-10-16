@@ -14,6 +14,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/common/auth.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -153,9 +154,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
     api.signUp(name: name, email: email, password: pass).then((value) async {
       await hideLoading();
       if (value != null) {
-        userManager.refreshUser(context: context).then((value) {
-          logEvent(Events.signup, eventValues: {"method": 'email', "signup_through": GetStorage().read('signup_through') ?? ""});
-        });
+        logEvent(Events.signup, eventValues: {"method": 'email', "signup_through": GetStorage().read('signup_through') ?? ""});
+        onLoginSuccess(context);
       }
     });
   }
@@ -175,9 +175,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
       try {
         var result = await signInWithApple();
         if (result) {
-          userManager.refreshUser();
-          await loginBack(context);
           logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
+          await onLoginSuccess(context);
         } else {
           CommonExtension().showToast("Oops! Something went wrong");
         }
@@ -256,9 +255,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
             }
             prefs.setBool("isLogin", true);
             prefs.setString("login_cookie", id.split("=")[1]);
-            userManager.refreshUser();
-            await loginBack(context);
             logEvent(Events.login, eventValues: {"method": "google"});
+            await onLoginSuccess(context);
           }
         } else {
           CommonExtension().showToast("Oops! Something went wrong");
@@ -330,9 +328,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
             }
             prefs.setBool("isLogin", true);
             prefs.setString("login_cookie", id.split("=")[1]);
-            userManager.refreshUser();
-            await loginBack(context);
             logEvent(Events.login, eventValues: {"method": "youtube"});
+            onLoginSuccess(context);
           }
         } else {
           CommonExtension().showToast("Oops! Something went wrong");
@@ -601,5 +598,24 @@ class _SignupScreenState extends AppState<SignupScreen> {
         ),
       ),
     ).blankAreaIntercept();
+  }
+
+  Future<void> onLoginSuccess(BuildContext context) async {
+    var onlineModel = await userManager.refreshUser();
+    if (onlineModel.user?.status != "activated") {
+      Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
+          settings: RouteSettings(name: "/EmailVerificationScreen"),
+        ),
+      ).then((value) async {
+        if (value ?? false) {
+          await loginBack(context);
+        }
+      });
+    } else {
+      await loginBack(context);
+    }
   }
 }

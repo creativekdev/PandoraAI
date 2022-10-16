@@ -247,19 +247,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            var onlineModel = await userManager.refreshUser();
                             logEvent(Events.signup, eventValues: {"method": "google", "signup_through": GetStorage().read('signup_through') ?? ""});
-
-                            if (onlineModel.user?.status != "activated") {
-                              Navigator.pushReplacement<void, void>(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
-                                ),
-                              );
-                            } else {
-                              await loginBack(context);
-                            }
+                            await onLoginSuccess(context);
                           }
                         } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
                           final headers = {"cookie": "bst_social_signup=${widget.tokenId}"};
@@ -298,19 +287,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            var onlineModel = await userManager.refreshUser();
-
                             logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
-                            if (onlineModel.user?.status != "activated") {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
-                                ),
-                              );
-                            }
-
-                            // await loginBack(context);
+                            await onLoginSuccess(context);
                           } else {
                             final Map parsed = json.decode(access_response.body.toString());
                             CommonExtension().showToast(parsed['message']);
@@ -347,10 +325,8 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
-                            userManager.refreshUser();
-                            await loginBack(context);
-
                             logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
+                            onLoginSuccess(context);
                           } else {
                             final Map parsed = json.decode(appleResponse.body.toString());
                             CommonExtension().showToast(parsed['message']);
@@ -370,5 +346,24 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> onLoginSuccess(BuildContext context) async {
+    var onlineModel = await userManager.refreshUser();
+    if (onlineModel.user?.status != "activated") {
+      Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
+          settings: RouteSettings(name: "/EmailVerificationScreen"),
+        ),
+      ).then((value) async {
+        if (value ?? false) {
+          await loginBack(context);
+        }
+      });
+    } else {
+      await loginBack(context);
+    }
   }
 }

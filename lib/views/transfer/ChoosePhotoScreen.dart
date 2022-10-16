@@ -805,6 +805,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           lastChangeByTap = false;
                         }, milliseconds: 32);
                       }).visibility(visible: controller.isPhotoDone.value && tabList.length > 1),
+                  SizedBox(height: $(5)),
                   ScrollablePositionedList.separated(
                     initialScrollIndex: 0,
                     itemCount: tabTitleList.length,
@@ -1062,7 +1063,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     onTap: () async {
                       var selectedEffect = tabItemList[currentItemIndex.value].data;
                       logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () async {
+                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
                         if (controller.isVideo.value) {
                           var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
                           ShareDiscoveryScreen.push(
