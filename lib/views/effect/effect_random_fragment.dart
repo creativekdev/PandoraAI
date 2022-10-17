@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -147,28 +148,43 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
             if (data.isAd) {
               return _buildMERCAd(index ~/ 10);
             }
-            return CachedNetworkImageUtils.custom(
-                    context: context,
-                    imageUrl: data.data!.item!.imageUrl,
-                    width: cardWidth,
-                    placeholder: (context, url) {
-                      return CircularProgressIndicator()
-                          .intoContainer(
-                            width: $(25),
-                            height: $(25),
-                          )
-                          .intoCenter()
-                          .intoContainer(width: cardWidth, height: cardWidth);
-                    },
-                    errorWidget: (context, url, error) {
-                      return CircularProgressIndicator()
-                          .intoContainer(
-                            width: $(25),
-                            height: $(25),
-                          )
-                          .intoCenter()
-                          .intoContainer(width: cardWidth, height: cardWidth);
-                    })
+            return (data.data!.item!.imageUrl.contains('mp4')
+                    ? Stack(
+                        children: [
+                          EffectVideoPlayer(url: data.data!.item!.imageUrl),
+                          Positioned(
+                            right: $(5),
+                            top: $(5),
+                            child: Image.asset(
+                              ImagesConstant.ic_video,
+                              height: $(24),
+                              width: $(24),
+                            ),
+                          ),
+                        ],
+                      ).intoContainer(width: cardWidth, height: cardWidth)
+                    : CachedNetworkImageUtils.custom(
+                        context: context,
+                        imageUrl: data.data!.item!.imageUrl,
+                        width: cardWidth,
+                        placeholder: (context, url) {
+                          return CircularProgressIndicator()
+                              .intoContainer(
+                                width: $(25),
+                                height: $(25),
+                              )
+                              .intoCenter()
+                              .intoContainer(width: cardWidth, height: cardWidth);
+                        },
+                        errorWidget: (context, url, error) {
+                          return CircularProgressIndicator()
+                              .intoContainer(
+                                width: $(25),
+                                height: $(25),
+                              )
+                              .intoCenter()
+                              .intoContainer(width: cardWidth, height: cardWidth);
+                        }))
                 .intoContainer(
               margin: EdgeInsets.only(
                 top: index < 2 ? marginTop : $(6),

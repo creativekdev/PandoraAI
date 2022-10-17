@@ -60,9 +60,9 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                     alignment: Alignment.center,
                   )
                 : ClipRRect(
-                    child: CachedNetworkImageUtils.custom(
-                      context: context,
-                      imageUrl: data.thumbnail,
+                    child: urlWidget(
+                      context,
+                      url: data.thumbnail,
                       width: parentWidth,
                       height: parentWidth,
                     ),
