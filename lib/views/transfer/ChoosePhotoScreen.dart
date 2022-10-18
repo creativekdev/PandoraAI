@@ -255,8 +255,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     imagePicker = ImagePicker();
     initTabBar();
-    userManager.refreshUser();
     autoScrollToSelectedIndex();
+    if(userManager.aiServers.isEmpty) {
+      delay(() {
+        controller.changeIsLoading(true);
+        userManager.refreshUser().then((value) {
+          if (value.aiServers.isEmpty) {
+            CommonExtension().showToast('Load server config failed');
+            Navigator.of(context).pop();
+          } else {
+            controller.changeIsLoading(false);
+          }
+        });
+      });
+    }
   }
 
   void buildFromRecent() {
@@ -313,15 +325,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   /// calculate scroll offset in child horizontal list
   void autoScrollToSelectedIndex() {
-    int pos;
-    if (widget.entrySource == EntrySource.fromDiscovery) {
-      pos = currentItemIndex.value;
-    } else {
-      pos = currentItemIndex.value - tabItemList[currentItemIndex.value].childIndex;
-    }
     delay(() {
-      titleScrollController.scrollTo(index: currentTitleIndex, duration: Duration(milliseconds: 400));
-      itemScrollController.scrollTo(index: currentItemIndex.value, duration: Duration(milliseconds: 400));
+      titleScrollController.jumpTo(index: currentTitleIndex);
+      itemScrollController.jumpTo(index: currentItemIndex.value);
     }, milliseconds: 32);
   }
 

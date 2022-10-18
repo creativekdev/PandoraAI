@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
+import 'package:worker_manager/worker_manager.dart' as worker;
 
 import '../Widgets/widget_extensions.dart';
 
@@ -56,11 +57,11 @@ class Downloader {
   }
 
   /// download files
-  String download(
+  Future<String> download(
     String url,
     String savePath, {
     ProgressCallback? onReceiveProgress,
-  }) {
+  }) async {
     var key = EncryptUtil.encodeMd5('$url$savePath');
     if (_listenerMap[key] == null) {
       _listenerMap[key] = [];
@@ -79,37 +80,41 @@ class Downloader {
       tmpFile.deleteSync();
     }
     _taskMap[key] = cancelToken;
-    try {
-      client.download(
-        url,
-        tempPath,
-        cancelToken: cancelToken,
-        onReceiveProgress: (count, total) {
-          onReceiveProgress?.call(count, total);
-          _listenerMap[key]?.forEach((element) {
-            element.onChanged.call(count, total);
-          });
-        },
-      ).then((value) async {
-        if (value.statusCode == 200) {
-          await File(tempPath).rename(savePath);
-          _listenerMap[key]?.forEach((element) {
-            element.onFinished.call(File(savePath));
-          });
-        } else {
-          _listenerMap[key]?.forEach((element) {
-            element.onError(Exception(value.statusMessage));
-          });
-        }
-        _taskMap.remove(key);
-      });
-    } on Exception catch (e) {
-      _listenerMap[key]?.forEach((element) {
-        element.onError.call(e);
-      });
-      _taskMap.remove(key);
-    }
-
+    worker.Executor().execute(
+        arg1: client,
+        fun1: (c) {
+          var client = (c as Dio);
+          try {
+            client.download(
+              url,
+              tempPath,
+              cancelToken: cancelToken,
+              onReceiveProgress: (count, total) {
+                onReceiveProgress?.call(count, total);
+                _listenerMap[key]?.forEach((element) {
+                  element.onChanged.call(count, total);
+                });
+              },
+            ).then((value) async {
+              if (value.statusCode == 200) {
+                await File(tempPath).rename(savePath);
+                _listenerMap[key]?.forEach((element) {
+                  element.onFinished.call(File(savePath));
+                });
+              } else {
+                _listenerMap[key]?.forEach((element) {
+                  element.onError(Exception(value.statusMessage));
+                });
+              }
+              _taskMap.remove(key);
+            });
+          } on Exception catch (e) {
+            _listenerMap[key]?.forEach((element) {
+              element.onError.call(e);
+            });
+            _taskMap.remove(key);
+          }
+        });
     return key;
   }
 }

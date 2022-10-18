@@ -223,8 +223,10 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
       downloading = false;
     } else {
       downloading = true;
-      key = Downloader.instance.download(url, savePath);
-      Downloader.instance.subscribe(key!, downloadListener!);
+      Downloader.instance.download(url, savePath).then((value) {
+        key = value;
+        Downloader.instance.subscribe(key!, downloadListener!);
+      });
     }
   }
 

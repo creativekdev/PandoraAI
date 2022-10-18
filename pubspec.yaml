@@ -81,6 +81,7 @@ dependencies:
   kochava_tracker: ^2.0.2
   firebase_in_app_messaging: ^0.6.0+27
   mmoo_forbidshot: ^1.0.3
+  worker_manager: ^4.2.6
 dev_dependencies:
   flutter_test:
     sdk: flutter

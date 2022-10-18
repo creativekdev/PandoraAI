@@ -1,5 +1,4 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/tag/tag_widget.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/enums/effect_tag.dart';
 

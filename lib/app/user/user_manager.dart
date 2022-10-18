@@ -22,7 +22,7 @@ class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
 
-  Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer);
+  Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
   set aiServers(Map<String, dynamic> data) => cacheManager.setJson(CacheManager.keyAiServer, data);
 
@@ -102,7 +102,9 @@ class UserManager extends BaseManager {
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
     var value = await CartoonizerApi().getCurrentUser();
-    aiServers = value.aiServers;
+    if (value.aiServers.isNotEmpty) {
+      aiServers = value.aiServers;
+    }
     if (value.loginSuccess) {
       user = value.user!;
       if (context != null && user!.status != 'activated') {

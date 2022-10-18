@@ -84,8 +84,10 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
           });
       } else {
         downloading = true;
-        key = Downloader.instance.download(url, savePath);
-        Downloader.instance.subscribe(key!, downloadListener!);
+        Downloader.instance.download(url, savePath).then((value) {
+          key = value;
+          Downloader.instance.subscribe(key!, downloadListener!);
+        });
       }
     }
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {

@@ -17,6 +17,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 import 'app/app.dart';
 import 'config.dart';
@@ -61,6 +62,7 @@ void main() async {
 
   // init admob
   MobileAds.instance.initialize();
+  await Executor().warmUp();
   // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
