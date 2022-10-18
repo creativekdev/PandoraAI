@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
-import 'package:worker_manager/worker_manager.dart' as worker;
 
 import '../Widgets/widget_extensions.dart';
 
@@ -80,10 +79,6 @@ class Downloader {
       tmpFile.deleteSync();
     }
     _taskMap[key] = cancelToken;
-    worker.Executor().execute(
-        arg1: client,
-        fun1: (c) {
-          var client = (c as Dio);
           try {
             client.download(
               url,
@@ -114,7 +109,6 @@ class Downloader {
             });
             _taskMap.remove(key);
           }
-        });
     return key;
   }
 }

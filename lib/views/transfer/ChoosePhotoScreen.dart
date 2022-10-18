@@ -256,7 +256,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     imagePicker = ImagePicker();
     initTabBar();
     autoScrollToSelectedIndex();
-    if(userManager.aiServers.isEmpty) {
+    if (userManager.aiServers.isEmpty) {
       delay(() {
         controller.changeIsLoading(true);
         userManager.refreshUser().then((value) {
