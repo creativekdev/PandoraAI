@@ -5,24 +5,60 @@ import 'EffectModel.dart';
 class EffectMap {
   late Map<String, dynamic> data;
   late Map<String, dynamic> locale;
+  CampaignTab? campaignTab;
 
   EffectMap({
     required this.data,
     required this.locale,
+    this.campaignTab,
   });
 
   EffectMap.fromJson(Map<String, dynamic> json) {
     this.data = json['data'];
     this.locale = json['locale'];
+    if (json['campaign_tab'] != null) {
+      campaignTab = CampaignTab.fromJson(json['campaign_tab']);
+    }
   }
 
   Map<String, dynamic> toJson() {
-    return {'data': data, 'locale': locale};
+    var map = {
+      'data': data,
+      'locale': locale,
+    };
+    if (campaignTab != null) {
+      map['campaign_tab'] = campaignTab!.toJson();
+    }
+    return map;
+  }
+}
+
+class CampaignTab {
+  late String title;
+  late String image;
+  late String imageSelected;
+  late String tag;
+
+  CampaignTab({this.title = '', this.image = '', this.imageSelected = '', this.tag = ''});
+
+  CampaignTab.fromJson(Map<String, dynamic> json) {
+    this.title = json['title'] ?? '';
+    this.image = json['image'] ?? '';
+    this.imageSelected = json['image_selected'] ?? '';
+    this.tag = json['tag'] ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'image': image,
+      'image_selected': imageSelected,
+      'tag': tag,
+    };
   }
 }
 
 extension EffectMapEx on EffectMap {
-
   int tabPos(String childKey) {
     var keys = data.keys.toList();
     for (int i = 0; i < keys.length; i++) {

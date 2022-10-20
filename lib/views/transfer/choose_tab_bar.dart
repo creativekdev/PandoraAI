@@ -47,24 +47,21 @@ class ChooseTabBar extends StatelessWidget {
   List<Widget> items(BuildContext context) {
     return tabList.transfer((data, index) {
       if (index == currentIndex) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular(8)),
+        return ShaderMask(
+          shaderCallback: (Rect bounds) => LinearGradient(
+            colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ).createShader(Offset.zero & bounds.size),
+          blendMode: BlendMode.srcATop,
+          child: Text(
+            data,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: ColorConstant.White,
+              fontSize: $(14),
             ),
-            SizedBox(width: 4),
-            Text(
-              data,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                color: ColorConstant.White,
-                fontSize: $(16),
-              ),
-            ),
-          ],
+          ),
         );
       } else {
         return Text(
@@ -72,7 +69,7 @@ class ChooseTabBar extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Poppins',
             color: ColorConstant.HintColor,
-            fontSize: $(15),
+            fontSize: $(14),
           ),
         ).intoGestureDetector(onTap: () {
           onTabClick.call(index);

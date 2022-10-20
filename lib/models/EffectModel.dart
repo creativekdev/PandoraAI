@@ -1,3 +1,5 @@
+import 'package:common_utils/common_utils.dart';
+
 class EffectModel {
   late String key = '';
   late String displayName = '';
@@ -63,7 +65,9 @@ class EffectItem {
   late String id;
   late String displayName;
   late String tag;
+  late List<String> tagList;
   late int featured;
+  late bool nsfw;
 
   EffectItem({
     this.key = '',
@@ -81,7 +85,11 @@ class EffectItem {
     this.tag = '',
     this.templateName = '',
     this.featured = 0,
-  });
+    this.nsfw = false,
+    List<String>? tagList,
+  }) {
+    this.tagList = tagList ?? [];
+  }
 
   EffectItem.fromJson(Map<String, dynamic> json) {
     key = (json['key'] ?? '').toString();
@@ -98,7 +106,13 @@ class EffectItem {
     templateName = (json['template_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
+    if (!TextUtil.isEmpty(tag)) {
+      tagList = tag.split(',');
+    } else {
+      tagList = [];
+    }
     featured = (json['featured'] ?? 0);
+    nsfw = (json['is_nsfw'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +132,7 @@ class EffectItem {
     data['display_name'] = displayName;
     data['tag'] = tag;
     data['featured'] = featured;
+    data['is_nsfw'] = nsfw;
     return data;
   }
 }

@@ -1,13 +1,17 @@
+import 'dart:ui';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/nsfw_card.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
@@ -16,7 +20,8 @@ import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
-import 'package:waterfall_flow/waterfall_flow.dart';
+
+import '../../Widgets/dialog/dialog_widget.dart';
 
 class EffectRandomFragment extends StatefulWidget {
   RecentController recentController;
@@ -42,29 +47,33 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   late RecentController recentController;
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(118);
+  double marginTop = $(115);
   late CardAdsMap adsMap;
   late double cardWidth;
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
+  Map<int, GlobalKey<FutureLoadingImageState>> keyMap = {};
+  late bool nsfwOpen;
 
   @override
   initState() {
     super.initState();
-    marginTop = $(118) + ScreenUtil.getStatusBarHeight();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
+    marginTop = $(115) + ScreenUtil.getStatusBarHeight();
     dataController = widget.dataController;
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
     adsMap = CardAdsMap(
       width: cardWidth,
+      scale: 1,
       onUpdated: () {
         if (mounted) {
           setState(() {});
         }
       },
-      autoHeight: true,
     );
     adsMap.init();
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
@@ -81,6 +90,12 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   onAttached() {
     super.onAttached();
     dataController.changeRandomTabViewing(true);
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
   }
 
   @override
@@ -98,21 +113,35 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     tabOnDoubleClickListener.cancel();
   }
 
-  addToDataList(List<EffectItemListData> list) {
-    List<_ListData> result = [];
+  List<List<_ListData>> addToDataList(EffectDataController dataController) {
+    List<EffectItemListData> list;
+    if (dataController.selectedTag == null) {
+      list = dataController.randomList;
+    } else {
+      list = dataController.randomList.filter((t) => t.item!.tagList.exist((tag) => tag == dataController.selectedTag));
+    }
+    List<List<_ListData>> result = [];
+    List<_ListData> allList = [];
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 10;
       if (!adsMap.hasAdHolder(page + 2)) {
         adsMap.addAdsCard(page + 2);
       }
       var data = list[i];
-      result.add(_ListData(
+      allList.add(_ListData(
         page: page,
         data: data,
         visible: true,
       ));
       if (i == 4 + page * 10) {
-        result.add(_ListData(isAd: true, page: page));
+        allList.add(_ListData(isAd: true, page: page));
+      }
+    }
+    for (var value in allList) {
+      if (result.isEmpty || result.last.length == 2) {
+        result.add([value]);
+      } else {
+        result.last.add(value);
       }
     }
     return result;
@@ -132,73 +161,166 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   Widget build(BuildContext context) {
     super.build(context);
     return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: Obx(() {
-        List<_ListData> dataList = addToDataList(dataController.randomList);
-        return WaterfallFlow.builder(
-          cacheExtent: ScreenUtil.screenSize.height,
-          controller: scrollController,
-          gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: $(6),
-          ),
-          itemBuilder: (context, index) {
-            var data = dataList[index];
-            if (data.isAd) {
-              return _buildMERCAd(index ~/ 10);
-            }
-            return (data.data!.item!.imageUrl.contains('mp4')
-                    ? Stack(
-                        children: [
-                          EffectVideoPlayer(url: data.data!.item!.imageUrl),
-                          Positioned(
-                            right: $(5),
-                            top: $(5),
-                            child: Image.asset(
-                              ImagesConstant.ic_video,
-                              height: $(24),
-                              width: $(24),
-                            ),
-                          ),
-                        ],
-                      ).intoContainer(width: cardWidth, height: cardWidth)
-                    : CachedNetworkImageUtils.custom(
-                        context: context,
-                        imageUrl: data.data!.item!.imageUrl,
-                        width: cardWidth,
-                        placeholder: (context, url) {
-                          return CircularProgressIndicator()
-                              .intoContainer(
-                                width: $(25),
-                                height: $(25),
-                              )
-                              .intoCenter()
-                              .intoContainer(width: cardWidth, height: cardWidth);
-                        },
-                        errorWidget: (context, url, error) {
-                          return CircularProgressIndicator()
-                              .intoContainer(
-                                width: $(25),
-                                height: $(25),
-                              )
-                              .intoCenter()
-                              .intoContainer(width: cardWidth, height: cardWidth);
-                        }))
-                .intoContainer(
-              margin: EdgeInsets.only(
-                top: index < 2 ? marginTop : $(6),
-                bottom: index == dataList.length - 1 ? AppTabBarHeight : $(0),
+        context: context,
+        removeTop: true,
+        child: GetBuilder<EffectDataController>(
+            init: dataController,
+            builder: (dataController) {
+              List<List<_ListData>> dataList = addToDataList(dataController);
+              return ListView.builder(
+                itemBuilder: (context, i) {
+                  if (i < 1) {
+                    return buildHashTagList(dataController);
+                  }
+                  int pos = i - 1;
+                  var list = dataList[pos];
+                  return Row(
+                    children: list.transfer((data, index) {
+                      var data = list[index];
+                      if (data.isAd) {
+                        return _buildMERCAd(pos ~/ 5).intoContainer(
+                            width: cardWidth,
+                            height: cardWidth,
+                            margin: EdgeInsets.only(
+                              left: index % 2 == 0 ? 0 : $(6),
+                              top: $(6),
+                              bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0),
+                            ));
+                      }
+                      if (keyMap[index] == null) {
+                        keyMap[index] = GlobalKey<FutureLoadingImageState>();
+                      }
+                      return (data.data!.item!.imageUrl.contains('mp4')
+                              ? Stack(
+                                  children: [
+                                    EffectVideoPlayer(url: data.data!.item!.imageUrl),
+                                    Positioned(
+                                      right: $(5),
+                                      top: $(5),
+                                      child: Image.asset(
+                                        ImagesConstant.ic_video,
+                                        height: $(24),
+                                        width: $(24),
+                                      ),
+                                    ),
+                                    (data.data!.item!.nsfw && !nsfwOpen) ? Container(width: cardWidth, height: cardWidth).blur() : Container(),
+                                    (data.data!.item!.nsfw && !nsfwOpen)
+                                        ? NsfwCard(
+                                            width: cardWidth,
+                                            height: cardWidth,
+                                            onTap: () {
+                                              showOpenNsfwDialog(context).then((result) {
+                                                if (result ?? false) {
+                                                  setState(() {
+                                                    nsfwOpen = true;
+                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : Container(width: 0, height: 0),
+                                  ],
+                                ).intoContainer(width: cardWidth, height: cardWidth)
+                              : Stack(
+                                  children: [
+                                    CachedNetworkImageUtils.custom(
+                                        key: keyMap[index],
+                                        context: context,
+                                        imageUrl: data.data!.item!.imageUrl,
+                                        width: cardWidth,
+                                        height: cardWidth,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(
+                                                width: $(25),
+                                                height: $(25),
+                                              )
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        },
+                                        errorWidget: (context, url, error) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(
+                                                width: $(25),
+                                                height: $(25),
+                                              )
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        }),
+                                    (data.data!.item!.nsfw && !nsfwOpen) ? Container(width: cardWidth, height: cardWidth).blur() : Container(),
+                                    (data.data!.item!.nsfw && !nsfwOpen)
+                                        ? NsfwCard(
+                                            width: cardWidth,
+                                            height: cardWidth,
+                                            onTap: () {
+                                              showOpenNsfwDialog(context).then((result) {
+                                                if (result ?? false) {
+                                                  setState(() {
+                                                    nsfwOpen = true;
+                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : Container(width: 0, height: 0),
+                                  ],
+                                ).intoContainer(width: cardWidth, height: cardWidth))
+                          .intoContainer(
+                            margin: EdgeInsets.only(left: index % 2 == 0 ? 0 : $(6), top: $(6), bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0)),
+                          )
+                          .intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController));
+                    }),
+                  );
+                },
+                itemCount: dataList.length + 1,
+                controller: scrollController,
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+            }));
+  }
+
+  Widget buildHashTagList(EffectDataController dataController) {
+    if (dataController.tagList.isEmpty) {
+      return Container(height: marginTop);
+    }
+    return SingleChildScrollView(
+      child: Row(
+        children: dataController.tagList.transfer(
+          (e, index) {
+            var selected = e == dataController.selectedTag;
+            return Text(
+              '# ${e}',
+              style: TextStyle(
+                fontSize: $(13),
+                fontFamily: 'Poppins',
+                color: selected ? ColorConstant.BlueColor : ColorConstant.White,
               ),
             )
+                .intoContainer(
+                    margin: EdgeInsets.only(left: index == 0 ? 0 : $(12)),
+                    padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(5)),
+                    decoration: BoxDecoration(
+                        color: selected ? Colors.transparent : ColorConstant.hashTagNormalColor,
+                        border: Border.all(
+                          color: selected ? ColorConstant.BlueColor : Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular($(32))))
                 .intoGestureDetector(onTap: () {
-              _onEffectCategoryTap(data.data!, dataController);
+              if (dataController.selectedTag == e) {
+                dataController.selectedTag = null;
+              } else {
+                dataController.selectedTag = e;
+              }
+              dataController.update();
             });
           },
-          itemCount: dataList.length,
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
-      }),
-    );
+        ),
+      ),
+      scrollDirection: Axis.horizontal,
+    ).intoContainer(margin: EdgeInsets.only(top: marginTop, bottom: $(6)));
   }
 
   @override

@@ -115,3 +115,7 @@ class OnSplashAdLoadingChangeEvent extends BaseEvent {}
 class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
   OnEffectPushClickEvent({required PushExtraEntity data}) : super(data: data);
 }
+
+class OnEffectNsfwChangeEvent extends BaseEvent {}
+
+class OnHomeConfigGetEvent extends BaseEvent {}

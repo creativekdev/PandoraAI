@@ -41,8 +41,8 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  EffectDataController dataController = Get.put(EffectDataController());
-  RecentController recentController = Get.put(RecentController());
+  EffectDataController dataController = Get.find();
+  RecentController recentController = Get.find();
   late AppTabId tabId;
 
   int currentIndex = 0;

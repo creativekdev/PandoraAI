@@ -1,17 +1,18 @@
-import 'dart:io';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'home_tab.dart';
 
@@ -30,6 +31,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StreamSubscription onPaySuccessListener;
   late StreamSubscription onTabSwitchListener;
+  late StreamSubscription onHomeConfigListener;
+  EffectDataController dataController = Get.put(EffectDataController());
+  RecentController recentController = Get.put(RecentController());
 
   @override
   void initState() {
@@ -47,6 +51,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           _setIndex(i);
         }
       }
+    });
+    onHomeConfigListener = EventBusHelper().eventBus.on<OnHomeConfigGetEvent>().listen((event) {
+      initialTab(true);
     });
     delay(() {
       userManager.refreshUser(context: context).then((value) {
@@ -85,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
     onPaySuccessListener.cancel();
     onTabSwitchListener.cancel();
+    onHomeConfigListener.cancel();
   }
 
   initialTab(bool needSetState) {
@@ -98,7 +106,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       tabItems.add(tabItem);
       // }
     }
-    currentIndex = 0;
+    if (!allTabItems.exist((t) => t.id == AppTabId.ACTIVITY.id())) {
+      var tab = dataController.data?.campaignTab;
+      if (tab != null) {
+        var appRoleTabItem = AppRoleTabItem(
+          id: AppTabId.ACTIVITY.id(),
+          titleBuilder: (context) => tab.title,
+          keyBuilder: () => GlobalKey<ActivityFragmentState>(),
+          fragmentBuilder: (key) => ActivityFragment(
+            tabId: AppTabId.ACTIVITY,
+            key: key,
+          ),
+          normalIcon: 'base64:${tab.image}',
+          selectedIcon: 'base64:${tab.imageSelected}',
+        );
+        appRoleTabItem.createFragment();
+        tabItems.insert(1, appRoleTabItem);
+      }
+    }
     if (needSetState) {
       setState(() {});
     }
@@ -111,9 +136,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         for (var i = 0; i < tabItems.length; i++) {
           var key = tabItems[i].key;
           if (i == currentIndex) {
-            key.currentState?.onAttached();
+            key!.currentState?.onAttached();
           } else {
-            key.currentState?.onDetached();
+            key!.currentState?.onDetached();
           }
         }
       });
@@ -127,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()).intoContainer(color: ColorConstant.BackgroundColor),
+          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment!).toList()).intoContainer(color: ColorConstant.BackgroundColor),
           Align(
             alignment: Alignment.bottomCenter,
             child: tabItems.length > 1
@@ -164,15 +189,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List<BottomNavigationBarItem> result = List.empty(growable: true);
     for (int i = 0; i < tabItems.length; i++) {
       var value = tabItems[i];
-      result.add(BottomNavigationBarItem(
-        icon: Image.asset(
+      Image normalIcon;
+      Image selectedIcon;
+      if (value.normalIcon.startsWith('base64:')) {
+        var image = value.normalIcon.replaceAll('base64:', '');
+        var imageUint8List = base64Decode(image);
+        normalIcon = Image.memory(
+          imageUint8List,
+          gaplessPlayback: true,
+        );
+      } else {
+        normalIcon = Image.asset(
           value.normalIcon,
           gaplessPlayback: true,
-        ),
-        activeIcon: Image.asset(
+        );
+      }
+      if (value.selectedIcon.startsWith('base64:')) {
+        var image = value.selectedIcon.replaceAll('base64:', '');
+        var imageUint8List = base64Decode(image);
+        selectedIcon = Image.memory(
+          imageUint8List,
+          gaplessPlayback: true,
+        );
+      } else {
+        selectedIcon = Image.asset(
           value.selectedIcon,
           gaplessPlayback: true,
-        ),
+        );
+      }
+      result.add(BottomNavigationBarItem(
+        icon: normalIcon,
+        activeIcon: selectedIcon,
         label: value.titleBuilder(context),
       ));
     }

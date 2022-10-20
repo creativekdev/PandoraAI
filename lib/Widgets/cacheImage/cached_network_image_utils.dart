@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -61,7 +63,7 @@ class CachedNetworkImageUtils {
     }
     return !imageUrl.isGoogleAccount
         ? FutureLoadingImage(
-            key: key,
+            key: key is GlobalKey<FutureLoadingImageState> ? key : null,
             url: imageUrl,
             errorWidget: errorWidget,
             placeholder: placeholder,
@@ -74,7 +76,7 @@ class CachedNetworkImageUtils {
             scale: 1.0,
           )
         : CachedNetworkImage(
-            key: key,
+            key: key is GlobalKey<FutureLoadingImageState> ? null : key,
             imageUrl: imageUrl,
             httpHeaders: httpHeaders,
             imageBuilder: imageBuilder,
@@ -141,24 +143,27 @@ class FutureLoadingImage extends StatefulWidget {
 }
 
 class FutureLoadingImageState extends State<FutureLoadingImage> {
-  late String url;
+  late String _url;
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  late bool downloading = true;
-  DownloadListener? downloadListener;
-  String? key;
-  late String fileName;
-  late double? width;
-  late double? height;
-  late BoxFit fit;
-  late ImageRepeat repeat;
-  BlendMode? colorBlendMode;
-  Color? color;
-  late AlignmentGeometry alignment;
-  late double scale;
+  EffectManager effectManager = AppDelegate.instance.getManager();
+  late bool _downloading = true;
+  DownloadListener? _downloadListener;
+  String? _key;
+  late String _fileName;
+  late double? _width;
+  late double? _height;
+  late BoxFit _fit;
+  late ImageRepeat _repeat;
+  BlendMode? _colorBlendMode;
+  Color? _color;
+  late AlignmentGeometry _alignment;
+  late double _scale;
 
   late PlaceholderWidgetBuilder placeholder;
   late LoadingErrorWidgetBuilder errorWidget;
-  File? data;
+  File? _data;
+  bool _collectState = false;
+  double? cacheScale;
 
   @override
   initState() {
@@ -176,30 +181,40 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     }
   }
 
+  collectGarbadge() {
+    setState(() {
+      _data = null;
+      _downloading = true;
+      _collectState = true;
+    });
+  }
+
   void initData() {
-    width = widget.width;
-    height = widget.height;
-    fit = widget.fit;
-    color = widget.color;
-    repeat = widget.repeat;
-    colorBlendMode = widget.colorBlendMode;
+    _width = widget.width;
+    _height = widget.height;
+    _fit = widget.fit;
+    _color = widget.color;
+    _repeat = widget.repeat;
+    _colorBlendMode = widget.colorBlendMode;
     placeholder = widget.placeholder;
     errorWidget = widget.errorWidget;
-    scale = widget.scale;
-    width = widget.width;
-    height = widget.height;
-    alignment = widget.alignment;
+    _scale = widget.scale;
+    _width = widget.width;
+    _height = widget.height;
+    _alignment = widget.alignment;
   }
 
   void updateData() {
-    url = widget.url;
-    downloadListener = DownloadListener(
+    _collectState = false;
+    _url = widget.url;
+    cacheScale = effectManager.scale(_url);
+    _downloadListener = DownloadListener(
         onChanged: (count, total) {},
         onError: (error) {
           if (mounted) {
             setState(() {
-              this.data = null;
-              downloading = false;
+              this._data = null;
+              _downloading = false;
             });
           }
         },
@@ -207,72 +222,83 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
           if (mounted) {
             setState(() {
               var imageDir = cacheManager.storageOperator.imageDir;
-              var savePath = imageDir.path + fileName;
-              this.data = File(savePath);
-              downloading = false;
+              var savePath = imageDir.path + _fileName;
+              this._data = File(savePath);
+              _downloading = false;
             });
           }
         });
-    fileName = EncryptUtil.encodeMd5(url);
-    downloading = true;
+    _fileName = EncryptUtil.encodeMd5(_url);
+    _downloading = true;
     var imageDir = cacheManager.storageOperator.imageDir;
-    var savePath = imageDir.path + fileName;
+    var savePath = imageDir.path + _fileName;
     File data = File(savePath);
     if (data.existsSync()) {
-      this.data = data;
-      downloading = false;
+      this._data = data;
+      _downloading = false;
     } else {
-      downloading = true;
-      Downloader.instance.download(url, savePath).then((value) {
-        key = value;
-        Downloader.instance.subscribe(key!, downloadListener!);
+      _downloading = true;
+      Downloader.instance.download(_url, savePath).then((value) {
+        _key = value;
+        Downloader.instance.subscribe(_key!, _downloadListener!);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (downloading) {
-      return placeholder.call(context, url);
+    if (_downloading || _collectState) {
+      return placeholder.call(context, _url);
     }
-    if (data == null || !data!.existsSync()) {
-      return errorWidget.call(context, url, Exception('load image Failed'));
+    if (_data == null || !_data!.existsSync()) {
+      return errorWidget.call(context, _url, Exception('load image Failed'));
     }
-    var resolve = FileImage(data!).resolve(ImageConfiguration.empty);
-    resolve.addListener(ImageStreamListener((image, synchronousCall) {
-      var scale = image.image.width / image.image.height;
-      if (width == null && height == null) {
-        width = image.image.width.toDouble();
-        height = image.image.height.toDouble();
-      } else if (width == null) {
-        width = height! * scale;
-      } else if (height == null) {
-        height = width! / scale;
+    var fileImage = FileImage(_data!, scale: _scale);
+    if (cacheScale == null) {
+      var resolve = fileImage.resolve(ImageConfiguration.empty);
+      resolve.addListener(ImageStreamListener((image, synchronousCall) {
+        var scale = image.image.width / image.image.height;
+        effectManager.setScale(_url, scale);
+        if (_width == null && _height == null) {
+          _width = image.image.width.toDouble();
+          _height = image.image.height.toDouble();
+        } else if (_width == null) {
+          _width = _height! * scale;
+        } else if (_height == null) {
+          _height = _width! / scale;
+        }
+        if (mounted) {
+          setState(() {});
+        }
+      }));
+    } else {
+      if (_width == null && _height == null) {
+        // do nothing
+      } else if (_width == null) {
+        _width = _height! * cacheScale!;
+      } else if (_height == null) {
+        _height = _width! / cacheScale!;
       }
-      if (mounted) {
-        setState(() {});
-      }
-    }));
-    if (width != null && height != null) {
-      return Image.file(
-        data!,
-        width: width,
-        height: height,
-        fit: fit,
-        repeat: repeat,
-        colorBlendMode: colorBlendMode,
-        color: color,
-        alignment: alignment,
-        scale: scale,
+    }
+    if (_width != null && _height != null) {
+      return Image(
+        image: fileImage,
+        width: _width,
+        height: _height,
+        fit: _fit,
+        repeat: _repeat,
+        colorBlendMode: _colorBlendMode,
+        color: _color,
+        alignment: _alignment,
         errorBuilder: (context, error, strace) {
-          data?.deleteSync();
-          this.data = null;
+          _data?.deleteSync();
+          this._data = null;
           updateData();
-          return errorWidget.call(context, url, Exception('load image Failed'));
+          return errorWidget.call(context, _url, Exception('load image Failed'));
         },
       );
     } else {
-      return placeholder.call(context, url);
+      return placeholder.call(context, _url);
     }
   }
 }

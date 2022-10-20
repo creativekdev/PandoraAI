@@ -52,13 +52,13 @@ class AppRoleTabItem {
   String normalIcon;
   String selectedIcon;
   TitleBuilder titleBuilder;
-  late GlobalKey<AppTabState> _key;
+  GlobalKey<AppTabState>? _key;
   int id;
 
-  GlobalKey<AppTabState> get key => _key;
-  late Widget _fragment;
+  GlobalKey<AppTabState>? get key => _key;
+  Widget? _fragment;
 
-  Widget get fragment => _fragment;
+  Widget? get fragment => _fragment;
   KeyBuilder keyBuilder;
   FragmentBuilder fragmentBuilder;
 
@@ -72,8 +72,12 @@ class AppRoleTabItem {
   });
 
   createFragment() {
-    _key = keyBuilder();
-    _fragment = fragmentBuilder(_key);
+    if (_key == null) {
+      _key = keyBuilder();
+    }
+    if (_fragment == null) {
+      _fragment = fragmentBuilder(_key!);
+    }
   }
 }
 

@@ -43,4 +43,5 @@ class ColorConstant {
   static const MineBackgroundColor = Color(0xff080809);
   static const SysMsgIconColor = Color(0xff5856D6);
   static const loginTitleColor = Color(0xff909090);
+  static const hashTagNormalColor = Color(0xff0e0e10);
 }

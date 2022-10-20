@@ -36,6 +36,7 @@ class StringConstant {
   static const send = "Send";
   static const home = app_name;
   static const tabHome = "Home";
+  static const tabHalloween = "Halloween";
   static const tabDiscovery = "Discovery";
   static const tabMine = "My";
   static const view_all = "View All";
@@ -147,6 +148,7 @@ class StringConstant {
   static const ppmPro = 'ProfilePicMaker Pro';
   static const watchAdHint = 'Watch an ad to remove watermark\n(only this time)';
   static const watchAdText = 'Download HD image\nwithout watermark';
+  static const watchAdToShareText = 'Share HD image\nwithout watermark';
   static const effectRecentEmptyHint = 'No record of your usage found\n'
       'Please make your first profile pic to view your history here';
   static const msgTitle = "Messages";

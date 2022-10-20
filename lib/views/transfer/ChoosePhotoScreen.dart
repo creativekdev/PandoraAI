@@ -235,7 +235,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     currentTitleIndex = widget.pos;
     currentItemIndex.value = widget.itemPos;
     thirdpartManager.adsHolder.ignore = true;
-    itemWidth = (ScreenUtil.screenSize.width - $(92)) / 4;
+    itemWidth = (ScreenUtil.screenSize.width - $(90)) / 5;
     imgContainerSize = ScreenUtil.screenSize.width;
     userChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
@@ -283,6 +283,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         tabItemList.add(ChooseTabItemInfo(
           data: effectItems[j],
           tabKey: 'recent',
+          categoryKey: effectModel.key,
           categoryIndex: categoryIndex,
           childIndex: j,
         ));
@@ -437,6 +438,45 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         backgroundColor: Colors.transparent);
   }
 
+  Future<bool?> showShareDiscoveryDialog(BuildContext context) {
+    return showModalBottomSheet<bool>(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TitleTextWidget('Share with HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop(true);
+              }),
+              Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
+              TitleTextWidget('Share with watermark', ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop(false);
+              }),
+            ],
+          ).intoContainer(
+              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              decoration: BoxDecoration(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(24)),
+                    topRight: Radius.circular($(24)),
+                  )));
+        },
+        backgroundColor: Colors.transparent);
+  }
+
   showSavePhotoDialog(BuildContext context) {
     if (lastBuildType == _BuildType.hdImage) {
       saveToAlbum();
@@ -469,7 +509,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     .intoGestureDetector(onTap: () {
                   Navigator.of(context).pop();
                   // to reward or pay
-                  RewardAdvertisementScreen.push(context, adsHolder: rewardAdsHolder).then((value) {
+                  RewardAdvertisementScreen.push(
+                    context,
+                    adsHolder: rewardAdsHolder,
+                    watchAdText: StringConstant.watchAdText,
+                  ).then((value) {
                     if (value ?? false) {
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
@@ -568,6 +612,44 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
+  Future<void> shareOut() async {
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
+    logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
+    if (controller.isVideo.value) {
+      controller.changeIsLoading(true);
+      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, false).then((value) async {
+        controller.changeIsLoading(false);
+        videoPath = value as String;
+        if (value != "") {
+          ShareScreen.startShare(
+            context,
+            backgroundColor: Color(0x77000000),
+            style: selectedEffect.key,
+            image: (controller.isVideo.value) ? videoPath : image,
+            isVideo: controller.isVideo.value,
+            originalUrl: urlFinal,
+            effectKey: selectedEffect.key,
+          );
+        } else {
+          CommonExtension().showToast(StringConstant.commonFailedToast);
+        }
+      });
+    } else {
+      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+      ShareScreen.startShare(
+        context,
+        backgroundColor: Color(0x77000000),
+        style: selectedEffect.key,
+        image: (controller.isVideo.value) ? videoPath : image,
+        isVideo: controller.isVideo.value,
+        originalUrl: urlFinal,
+        effectKey: selectedEffect.key,
+      ).then((value) {
+        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -593,41 +675,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Images.ic_share,
                   width: $(24),
                 ).intoGestureDetector(onTap: () async {
-                  var selectedEffect = tabItemList[currentItemIndex.value].data;
-                  logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-                  if (controller.isVideo.value) {
-                    controller.changeIsLoading(true);
-                    await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, false).then((value) async {
-                      controller.changeIsLoading(false);
-                      videoPath = value as String;
-                      if (value != "") {
-                        ShareScreen.startShare(
-                          context,
-                          backgroundColor: Color(0x77000000),
-                          style: selectedEffect.key,
-                          image: (controller.isVideo.value) ? videoPath : image,
-                          isVideo: controller.isVideo.value,
-                          originalUrl: urlFinal,
-                          effectKey: selectedEffect.key,
-                        );
-                      } else {
-                        CommonExtension().showToast(StringConstant.commonFailedToast);
-                      }
-                    });
-                  } else {
-                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                    ShareScreen.startShare(
-                      context,
-                      backgroundColor: Color(0x77000000),
-                      style: selectedEffect.key,
-                      image: (controller.isVideo.value) ? videoPath : image,
-                      isVideo: controller.isVideo.value,
-                      originalUrl: urlFinal,
-                      effectKey: selectedEffect.key,
-                    ).then((value) {
-                      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                    });
-                  }
+                  shareOut();
                 }).offstage(offstage: !controller.isPhotoDone.value),
               ),
               body: Column(
@@ -649,32 +697,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           height: imgContainerSize,
                                           width: imgContainerSize,
                                         ),
-                                ),
-                                Obx(
-                                  () => Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
-                                        width: 20,
-                                        height: 20,
-                                      ).intoInkWell(onTap: () async {
-                                        print(controller.isChecked.value);
-                                        if (controller.isChecked.value) {
-                                          controller.changeIsChecked(false);
-                                        } else {
-                                          controller.changeIsChecked(true);
-                                        }
-                                        if (controller.isPhotoSelect.value) {
-                                          controller.changeIsLoading(true);
-                                          getCartoon(context);
-                                        }
-                                      }),
-                                      SizedBox(width: 1.5.w),
-                                      TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
-                                      SizedBox(width: 2.w),
-                                    ],
-                                  ).intoContainer(margin: EdgeInsets.only(bottom: $(8), top: $(8))).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
                                 ),
                               ],
                             )
@@ -748,7 +770,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                               ],
                                             ),
                                           ).intoContainer(
-                                            constraints: BoxConstraints(minHeight: $(140)),
+                                            constraints: BoxConstraints(minHeight: $(110)),
                                             alignment: Alignment.center,
                                           ),
                                     Row(
@@ -781,8 +803,110 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   ),
                   Obx(() => buildSuccessFunctions(context).visibility(visible: controller.isPhotoDone.value)),
                   SizedBox(height: $(10)),
+                  ScrollablePositionedList.separated(
+                    initialScrollIndex: 0,
+                    itemCount: tabTitleList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemScrollController: titleScrollController,
+                    itemPositionsListener: titleScrollPositionsListener,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      var checked = currentTitleIndex == index;
+                      return (checked
+                              ? ShaderMask(
+                                  shaderCallback: (Rect bounds) => LinearGradient(
+                                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ).createShader(Offset.zero & bounds.size),
+                                  blendMode: BlendMode.srcATop,
+                                  child: Text(
+                                    tabTitleList[index].title,
+                                    style: TextStyle(
+                                      color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                      fontSize: $(12),
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                    ),
+                                  ))
+                              : Text(
+                                  tabTitleList[index].title,
+                                  style: TextStyle(
+                                    color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                    fontSize: $(12),
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ))
+                          .intoGestureDetector(onTap: () {
+                        if (checked) {
+                          return;
+                        }
+                        lastChangeByTap = true;
+                        setState(() {
+                          currentTitleIndex = index;
+                          int tabPos = tabList.findPosition((data) => data.key == tabTitleList[currentTitleIndex].tabKey)!;
+                          if (currentTabIndex != tabPos) {
+                            currentTabIndex = tabPos;
+                          }
+                          int itemPos = tabItemList.findPosition((data) => data.categoryIndex == currentTitleIndex)!;
+                          if (itemPos > tabItemList.length - 4) {
+                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                          } else {
+                            itemScrollController.jumpTo(index: itemPos);
+                          }
+                        });
+                        delay(() {
+                          lastChangeByTap = false;
+                        }, milliseconds: 32);
+                      }).intoContainer(
+                              margin: EdgeInsets.only(
+                        left: index == 0 ? $(20) : $(12),
+                        right: index == tabItemList.length - 1 ? $(20) : $(12),
+                      ));
+                    },
+                    separatorBuilder: (context, index) => Container(),
+                  ).intoContainer(
+                    height: $(28),
+                  ),
+                  ScrollablePositionedList.separated(
+                    initialScrollIndex: 0,
+                    itemCount: tabItemList.length,
+                    scrollDirection: Axis.horizontal,
+                    itemScrollController: itemScrollController,
+                    itemPositionsListener: itemScrollPositionsListener,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return _buildTabItem(context, index, itemWidth).intoContainer(
+                          margin: EdgeInsets.only(
+                        left: index == 0 ? $(15) : 0,
+                        right: index == tabItemList.length - 1 ? $(15) : 0,
+                      ));
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      if (index == tabItemList.length - 1 || widget.entrySource == EntrySource.fromRecent) {
+                        return Container();
+                      } else {
+                        var current = tabItemList[index];
+                        var next = tabItemList[index + 1];
+                        if (next.categoryKey == current.categoryKey) {
+                          return Container();
+                        } else {
+                          return VerticalDivider(
+                            color: ColorConstant.HintColor,
+                            width: $(3),
+                            indent: $(12),
+                            endIndent: $(12),
+                            thickness: 2,
+                          );
+                        }
+                      }
+                    },
+                  ).intoContainer(
+                    height: itemWidth + $(4),
+                  ),
                   ChooseTabBar(
-                      height: $(44),
+                      height: $(36),
                       tabList: tabList.map((e) => e.title).toList(),
                       currentIndex: currentTabIndex,
                       scrollable: tabList.length > 3,
@@ -811,97 +935,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           lastChangeByTap = false;
                         }, milliseconds: 32);
                       }).visibility(visible: controller.isPhotoDone.value && tabList.length > 1),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabTitleList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: titleScrollController,
-                    itemPositionsListener: titleScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var checked = currentTitleIndex == index;
-                      return Column(
-                        children: [
-                          Text(
-                            tabTitleList[index].title,
-                            style: TextStyle(
-                              color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                              fontSize: $(14),
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ],
-                      ).intoGestureDetector(onTap: () {
-                        if (checked) {
-                          return;
-                        }
-                        lastChangeByTap = true;
-                        setState(() {
-                          currentTitleIndex = index;
-                          int tabPos = tabList.findPosition((data) => data.key == tabTitleList[currentTitleIndex].tabKey)!;
-                          if (currentTabIndex != tabPos) {
-                            currentTabIndex = tabPos;
-                          }
-                          int itemPos = tabItemList.findPosition((data) => data.categoryIndex == currentTitleIndex)!;
-                          if (itemPos > tabItemList.length - 4) {
-                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                          } else {
-                            itemScrollController.jumpTo(index: itemPos);
-                          }
-                        });
-                        delay(() {
-                          lastChangeByTap = false;
-                        }, milliseconds: 32);
-                      }).intoContainer(
-                          margin: EdgeInsets.only(
-                        left: index == 0 ? $(30) : $(12),
-                        right: index == tabItemList.length - 1 ? $(30) : $(12),
-                      ));
-                    },
-                    separatorBuilder: (context, index) => Container(),
-                  ).intoContainer(
-                    height: $(28),
-                    margin: EdgeInsets.only(bottom: $(10)),
-                  ),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabItemList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: itemScrollController,
-                    itemPositionsListener: itemScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return _buildTabItem(context, index).intoContainer(
-                          margin: EdgeInsets.only(
-                        left: index == 0 ? $(30) : 0,
-                        right: index == tabItemList.length - 1 ? $(30) : 0,
-                      ));
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      if (index == tabItemList.length - 1 || widget.entrySource == EntrySource.fromRecent) {
-                        return Container();
-                      } else {
-                        var current = tabItemList[index];
-                        var next = tabItemList[index + 1];
-                        if (next.categoryIndex == current.categoryIndex) {
-                          return Container();
-                        } else {
-                          return VerticalDivider(
-                            color: ColorConstant.HintColor,
-                            width: $(6),
-                            indent: $(12),
-                            endIndent: $(12),
-                            thickness: 2,
-                          );
-                        }
-                      }
-                    },
-                  ).intoContainer(
-                    height: itemWidth + (8),
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).padding.bottom < $(20) ? $(20) : MediaQuery.of(context).padding.bottom - 15),
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + $(15)),
                 ],
               ),
             ).ignore(ignoring: controller.isLoading.value)),
@@ -909,13 +943,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     );
   }
 
-  Widget _buildTabItem(BuildContext context, int index) {
+  Widget _buildTabItem(BuildContext context, int index, double size) {
     var effect = tabItemList[index];
     var effectItem = effect.data;
     var checked = currentItemIndex == index;
     Widget icon = OutlineWidget(
-        radius: $(8),
-        strokeWidth: 4,
+        radius: $(1),
+        strokeWidth: 2,
         gradient: LinearGradient(
           colors: [checked ? Color(0xffE31ECD) : Colors.transparent, checked ? Color(0xff243CFF) : Colors.transparent],
           begin: Alignment.topLeft,
@@ -924,7 +958,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular($(5)),
+              borderRadius: BorderRadius.circular($(1)),
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: _createEffectModelIcon(context, effectItem: effectItem, checked: checked),
             ),
@@ -958,7 +992,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               ),
           ],
         ).intoContainer(
-          padding: EdgeInsets.all($(4)),
+          padding: EdgeInsets.all($(2)),
+          width: size + $(4),
+          height: size + $(4),
         ));
 
     return icon.intoGestureDetector(onTap: () async {
@@ -1002,119 +1038,152 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Widget buildSuccessFunctions(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Obx(
-          () => Expanded(
-            child: Column(
-              children: [
-                Image.asset(
-                  Images.ic_camera,
-                  height: $(24),
-                  width: $(24),
-                )
-                    .intoContainer(
-                      width: double.maxFinite,
-                      padding: EdgeInsets.symmetric(vertical: $(12)),
-                      decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
-                    )
-                    .intoGestureDetector(
-                      onTap: () => showPickPhotoDialog(context),
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7)), constraints: BoxConstraints(maxWidth: ScreenUtil.screenSize.width / 3)),
-                SizedBox(height: $(4)),
-                TitleTextWidget(StringConstant.choose_photo, ColorConstant.White, FontWeight.w400, $(12)),
-              ],
-            ),
-          ).visibility(visible: controller.isPhotoSelect.value),
+          () => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                width: 17,
+                height: 17,
+              ).intoInkWell(onTap: () async {
+                print(controller.isChecked.value);
+                if (controller.isChecked.value) {
+                  controller.changeIsChecked(false);
+                } else {
+                  controller.changeIsChecked(true);
+                }
+                if (controller.isPhotoSelect.value) {
+                  controller.changeIsLoading(true);
+                  getCartoon(context);
+                }
+              }),
+              SizedBox(width: $(6)),
+              TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+              SizedBox(width: $(20)),
+            ],
+          ).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
         ),
         Obx(
-          () => Expanded(
-            child: Column(
-              children: [
-                Image.asset(
-                  Images.ic_download,
-                  height: $(24),
-                  width: $(24),
-                )
-                    .intoContainer(
-                      width: double.maxFinite,
-                      padding: EdgeInsets.symmetric(vertical: $(12)),
-                      decoration: BoxDecoration(color: ColorConstant.EffectFunctionBlue, borderRadius: BorderRadius.circular($(6))),
-                    )
-                    .intoGestureDetector(
-                      onTap: () => showSavePhotoDialog(context),
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
-                SizedBox(height: $(4)),
-                TitleTextWidget(StringConstant.download, ColorConstant.White, FontWeight.w400, $(12)),
-              ],
-            ),
-          ).visibility(visible: controller.isPhotoDone.value),
+          () => Container(
+            height: $(16),
+            width: $(2),
+            color: ColorConstant.White,
+          ).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
         ),
-        Obx(() => Expanded(
-              child: Column(
-                children: [
-                  Image.asset(
-                    Images.ic_share_discovery,
-                    height: $(24),
-                    width: $(24),
+        Expanded(
+            child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Obx(
+              () => Image.asset(Images.ic_camera, height: $(24), width: $(24))
+                  .intoGestureDetector(
+                    onTap: () => showPickPhotoDialog(context),
                   )
-                      .intoContainer(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(vertical: $(12)),
-                    decoration: BoxDecoration(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(6))),
+                  .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
+                  .visibility(visible: controller.isPhotoSelect.value),
+            ),
+            Obx(
+              () => Image.asset(Images.ic_download, height: $(24), width: $(24))
+                  .intoGestureDetector(
+                    onTap: () => showSavePhotoDialog(context),
                   )
-                      .intoGestureDetector(
-                    onTap: () async {
-                      var selectedEffect = tabItemList[currentItemIndex.value].data;
-                      logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
-                        if (controller.isVideo.value) {
-                          var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
-                          ShareDiscoveryScreen.push(
-                            context,
-                            effectKey: selectedEffect.key,
-                            originalUrl: urlFinal,
-                            image: videoUrl,
-                            isVideo: controller.isVideo.value,
-                          );
-                        } else {
-                          if (lastBuildType == _BuildType.waterMark) {
-                            controller.changeIsLoading(true);
-                            var imageData = await decodeImageFromList(base64Decode(image));
-                            var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
-                            assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
-                              var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
-                              var newImage = base64Encode(uint8list);
-                              controller.changeIsLoading(false);
-                              ShareDiscoveryScreen.push(
-                                context,
-                                effectKey: selectedEffect.key,
-                                originalUrl: urlFinal,
-                                image: newImage,
-                                isVideo: controller.isVideo.value,
-                              );
-                            }));
-                          } else {
-                            ShareDiscoveryScreen.push(
-                              context,
-                              effectKey: selectedEffect.key,
-                              originalUrl: urlFinal,
-                              image: image,
-                              isVideo: controller.isVideo.value,
-                            );
-                          }
-                        }
-                      });
-                    },
-                  ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7))),
-                  SizedBox(height: $(4)),
-                  TitleTextWidget(StringConstant.share, ColorConstant.White, FontWeight.w400, $(12)),
-                ],
-              ),
-            ).visibility(visible: controller.isPhotoDone.value)),
+                  .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
+                  .visibility(visible: controller.isPhotoDone.value),
+            ),
+            Obx(() => Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
+                .intoGestureDetector(
+                  onTap: () {
+                    shareToDiscovery(context);
+                  },
+                )
+                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
+                .visibility(visible: controller.isPhotoDone.value)),
+          ],
+        ))
       ],
-    ).intoContainer(margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23))).visibility(visible: controller.isPhotoSelect.value);
+    ).intoContainer(margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23), bottom: $(10))).visibility(visible: controller.isPhotoSelect.value);
+  }
+
+  Future<void> shareToDiscovery(BuildContext context) async {
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
+    logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
+      if (controller.isVideo.value) {
+        var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
+        ShareDiscoveryScreen.push(
+          context,
+          effectKey: selectedEffect.key,
+          originalUrl: urlFinal,
+          image: videoUrl,
+          isVideo: true,
+        );
+      } else {
+        if (lastBuildType == _BuildType.waterMark) {
+          var shareWatermark = () async {
+            //share with watermark
+            controller.changeIsLoading(true);
+            var imageData = await decodeImageFromList(base64Decode(image));
+            var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
+            assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
+              var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
+              var newImage = base64Encode(uint8list);
+              controller.changeIsLoading(false);
+              ShareDiscoveryScreen.push(
+                context,
+                effectKey: selectedEffect.key,
+                originalUrl: urlFinal,
+                image: newImage,
+                isVideo: false,
+              );
+            }));
+          };
+          if (!rewardAdsHolder.adsReady) {
+            // has no admob, just share watermark
+            shareWatermark.call();
+          } else {
+            // get reward to share hd
+            showShareDiscoveryDialog(context).then((value) async {
+              if (value != null) {
+                if (value) {
+                  RewardAdvertisementScreen.push(
+                    context,
+                    adsHolder: rewardAdsHolder,
+                    watchAdText: StringConstant.watchAdToShareText,
+                  ).then((value) {
+                    if (value ?? false) {
+                      setState((){
+                        lastBuildType = _BuildType.hdImage;
+                      });
+                      ShareDiscoveryScreen.push(
+                        context,
+                        effectKey: selectedEffect.key,
+                        originalUrl: urlFinal,
+                        image: image,
+                        isVideo: false,
+                      );
+                    }
+                  });
+                } else {
+                  shareWatermark.call();
+                }
+              }
+            });
+          }
+        } else {
+          ShareDiscoveryScreen.push(
+            context,
+            effectKey: selectedEffect.key,
+            originalUrl: urlFinal,
+            image: image,
+            isVideo: false,
+          );
+        }
+      }
+    });
   }
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
