@@ -14,7 +14,7 @@ import 'image_cache_manager.dart';
 
 class CachedNetworkImageUtils {
   static Widget custom({
-    // bool useOld = false,
+    bool useOld = false,
     required BuildContext context,
     Key? key,
     required String imageUrl,
@@ -60,6 +60,38 @@ class CachedNetworkImageUtils {
     }
     if (TextUtil.isEmpty(imageUrl.trim())) {
       return errorWidget.call(context, imageUrl, Exception('image url is empty'));
+    }
+    if (useOld) {
+      return CachedNetworkImage(
+        key: key is GlobalKey<FutureLoadingImageState> ? null : key,
+        imageUrl: imageUrl,
+        httpHeaders: httpHeaders,
+        imageBuilder: imageBuilder,
+        placeholder: placeholder,
+        placeholderFadeInDuration: placeholderFadeInDuration,
+        progressIndicatorBuilder: progressIndicatorBuilder,
+        errorWidget: errorWidget,
+        fadeOutDuration: fadeOutDuration,
+        fadeOutCurve: fadeOutCurve,
+        fadeInCurve: fadeInCurve,
+        fadeInDuration: fadeInDuration,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        repeat: repeat,
+        matchTextDirection: matchTextDirection,
+        cacheManager: cacheManager,
+        useOldImageOnUrlChange: useOldImageOnUrlChange,
+        color: color,
+        filterQuality: filterQuality,
+        colorBlendMode: colorBlendMode,
+        memCacheWidth: memCacheWidth,
+        memCacheHeight: memCacheHeight,
+        cacheKey: cacheKey,
+        maxHeightDiskCache: maxHeightDiskCache,
+        maxWidthDiskCache: maxWidthDiskCache,
+      );
     }
     return !imageUrl.isGoogleAccount
         ? FutureLoadingImage(
@@ -143,27 +175,24 @@ class FutureLoadingImage extends StatefulWidget {
 }
 
 class FutureLoadingImageState extends State<FutureLoadingImage> {
-  late String _url;
+  late String url;
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  EffectManager effectManager = AppDelegate.instance.getManager();
-  late bool _downloading = true;
-  DownloadListener? _downloadListener;
-  String? _key;
-  late String _fileName;
-  late double? _width;
-  late double? _height;
-  late BoxFit _fit;
-  late ImageRepeat _repeat;
-  BlendMode? _colorBlendMode;
-  Color? _color;
-  late AlignmentGeometry _alignment;
-  late double _scale;
+  late bool downloading = true;
+  DownloadListener? downloadListener;
+  String? key;
+  late String fileName;
+  late double? width;
+  late double? height;
+  late BoxFit fit;
+  late ImageRepeat repeat;
+  BlendMode? colorBlendMode;
+  Color? color;
+  late AlignmentGeometry alignment;
+  late double scale;
 
   late PlaceholderWidgetBuilder placeholder;
   late LoadingErrorWidgetBuilder errorWidget;
-  File? _data;
-  bool _collectState = false;
-  double? cacheScale;
+  File? data;
 
   @override
   initState() {
@@ -181,40 +210,30 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     }
   }
 
-  collectGarbadge() {
-    setState(() {
-      _data = null;
-      _downloading = true;
-      _collectState = true;
-    });
-  }
-
   void initData() {
-    _width = widget.width;
-    _height = widget.height;
-    _fit = widget.fit;
-    _color = widget.color;
-    _repeat = widget.repeat;
-    _colorBlendMode = widget.colorBlendMode;
+    width = widget.width;
+    height = widget.height;
+    fit = widget.fit;
+    color = widget.color;
+    repeat = widget.repeat;
+    colorBlendMode = widget.colorBlendMode;
     placeholder = widget.placeholder;
     errorWidget = widget.errorWidget;
-    _scale = widget.scale;
-    _width = widget.width;
-    _height = widget.height;
-    _alignment = widget.alignment;
+    scale = widget.scale;
+    width = widget.width;
+    height = widget.height;
+    alignment = widget.alignment;
   }
 
   void updateData() {
-    _collectState = false;
-    _url = widget.url;
-    cacheScale = effectManager.scale(_url);
-    _downloadListener = DownloadListener(
+    url = widget.url;
+    downloadListener = DownloadListener(
         onChanged: (count, total) {},
         onError: (error) {
           if (mounted) {
             setState(() {
-              this._data = null;
-              _downloading = false;
+              this.data = null;
+              downloading = false;
             });
           }
         },
@@ -222,83 +241,72 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
           if (mounted) {
             setState(() {
               var imageDir = cacheManager.storageOperator.imageDir;
-              var savePath = imageDir.path + _fileName;
-              this._data = File(savePath);
-              _downloading = false;
+              var savePath = imageDir.path + fileName;
+              this.data = File(savePath);
+              downloading = false;
             });
           }
         });
-    _fileName = EncryptUtil.encodeMd5(_url);
-    _downloading = true;
+    fileName = EncryptUtil.encodeMd5(url);
+    downloading = true;
     var imageDir = cacheManager.storageOperator.imageDir;
-    var savePath = imageDir.path + _fileName;
+    var savePath = imageDir.path + fileName;
     File data = File(savePath);
     if (data.existsSync()) {
-      this._data = data;
-      _downloading = false;
+      this.data = data;
+      downloading = false;
     } else {
-      _downloading = true;
-      Downloader.instance.download(_url, savePath).then((value) {
-        _key = value;
-        Downloader.instance.subscribe(_key!, _downloadListener!);
+      downloading = true;
+      Downloader.instance.download(url, savePath).then((value) {
+        key = value;
+        Downloader.instance.subscribe(key!, downloadListener!);
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_downloading || _collectState) {
-      return placeholder.call(context, _url);
+    if (downloading) {
+      return placeholder.call(context, url);
     }
-    if (_data == null || !_data!.existsSync()) {
-      return errorWidget.call(context, _url, Exception('load image Failed'));
+    if (data == null || !data!.existsSync()) {
+      return errorWidget.call(context, url, Exception('load image Failed'));
     }
-    var fileImage = FileImage(_data!, scale: _scale);
-    if (cacheScale == null) {
-      var resolve = fileImage.resolve(ImageConfiguration.empty);
-      resolve.addListener(ImageStreamListener((image, synchronousCall) {
-        var scale = image.image.width / image.image.height;
-        effectManager.setScale(_url, scale);
-        if (_width == null && _height == null) {
-          _width = image.image.width.toDouble();
-          _height = image.image.height.toDouble();
-        } else if (_width == null) {
-          _width = _height! * scale;
-        } else if (_height == null) {
-          _height = _width! / scale;
-        }
-        if (mounted) {
-          setState(() {});
-        }
-      }));
-    } else {
-      if (_width == null && _height == null) {
-        // do nothing
-      } else if (_width == null) {
-        _width = _height! * cacheScale!;
-      } else if (_height == null) {
-        _height = _width! / cacheScale!;
+    var resolve = FileImage(data!).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      var scale = image.image.width / image.image.height;
+      if (width == null && height == null) {
+        width = image.image.width.toDouble();
+        height = image.image.height.toDouble();
+      } else if (width == null) {
+        width = height! * scale;
+      } else if (height == null) {
+        height = width! / scale;
       }
-    }
-    if (_width != null && _height != null) {
-      return Image(
-        image: fileImage,
-        width: _width,
-        height: _height,
-        fit: _fit,
-        repeat: _repeat,
-        colorBlendMode: _colorBlendMode,
-        color: _color,
-        alignment: _alignment,
+      if (mounted) {
+        setState(() {});
+      }
+    }));
+    if (width != null && height != null) {
+      return Image.file(
+        data!,
+        width: width,
+        height: height,
+        fit: fit,
+        repeat: repeat,
+        colorBlendMode: colorBlendMode,
+        color: color,
+        alignment: alignment,
+        scale: scale,
         errorBuilder: (context, error, strace) {
-          _data?.deleteSync();
-          this._data = null;
+          data?.deleteSync();
+          this.data = null;
           updateData();
-          return errorWidget.call(context, _url, Exception('load image Failed'));
+          return errorWidget.call(context, url, Exception('load image Failed'));
         },
       );
     } else {
-      return placeholder.call(context, _url);
+      return placeholder.call(context, url);
     }
   }
 }

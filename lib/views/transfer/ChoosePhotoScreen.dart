@@ -1155,7 +1155,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     watchAdText: StringConstant.watchAdToShareText,
                   ).then((value) {
                     if (value ?? false) {
-                      setState((){
+                      setState(() {
                         lastBuildType = _BuildType.hdImage;
                       });
                       ShareDiscoveryScreen.push(
@@ -1213,6 +1213,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
+      useOld: true,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,

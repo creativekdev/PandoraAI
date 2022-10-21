@@ -46,6 +46,6 @@ class NsfwCard extends StatelessWidget {
               .intoGestureDetector(onTap: onTap),
         ],
       ),
-    );
+    ).intoGestureDetector(onTap: () {});
   }
 }

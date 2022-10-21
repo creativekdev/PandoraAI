@@ -37,7 +37,7 @@ class EffectFragment extends StatefulWidget {
   State<StatefulWidget> createState() => EffectFragmentState();
 }
 
-class EffectFragmentState extends AppState<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFragmentState extends State<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -167,11 +167,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return build2(context);
-  }
-
-  @override
-  Widget buildWidget(BuildContext context) {
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {

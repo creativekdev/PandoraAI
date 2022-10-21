@@ -426,11 +426,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
-            collectGarbage: (List<int> garbages) {
-              for (var value in garbages) {
-                keyMap[value]?.currentState?.collectGarbadge();
-              }
-            },
           ),
           itemBuilder: (context, index) {
             var data = dataList[index];

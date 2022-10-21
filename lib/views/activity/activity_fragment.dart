@@ -36,7 +36,6 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
   late AppTabId tabId;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   EffectDataController dataController = Get.find();
-  Map<int, GlobalKey<FutureLoadingImageState>> keyMap = {};
   late bool nsfwOpen;
   late double cardWidth;
   late double marginTop;
@@ -71,26 +70,17 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
                 init: dataController,
                 builder: (_) {
                   var dataList = dataController.randomList.filter(
-                    // (t) => t.item!.tagList.contains(dataController.data?.campaignTab?.tag),
-                    (t) => t.item!.tagList.contains('halloween'),
+                    (t) => t.item!.tagList.contains(dataController.data?.campaignTab?.tag),
                   );
                   return WaterfallFlow.builder(
                     padding: EdgeInsets.symmetric(horizontal: $(15)),
                     gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: $(6),
-                        crossAxisSpacing: $(6),
-                        collectGarbage: (List<int> garbages) {
-                          garbages.forEach((element) {
-                            var remove = keyMap.remove(element);
-                            remove?.currentState?.collectGarbadge();
-                          });
-                        }),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: $(6),
+                      crossAxisSpacing: $(6),
+                    ),
                     itemBuilder: (context, index) {
                       var data = dataList[index];
-                      if (keyMap[index] == null) {
-                        keyMap[index] = GlobalKey<FutureLoadingImageState>();
-                      }
                       var nsfwShown = data.item!.nsfw && !nsfwOpen;
                       return (data.item!.imageUrl.contains('mp4')
                               ? Stack(
@@ -127,7 +117,7 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
                               : Stack(
                                   children: [
                                     CachedNetworkImageUtils.custom(
-                                        key: keyMap[index],
+                                        useOld: true,
                                         context: context,
                                         imageUrl: data.item!.imageUrl,
                                         width: cardWidth,

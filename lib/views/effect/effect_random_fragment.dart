@@ -20,6 +20,7 @@ import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 
@@ -55,7 +56,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
-  Map<int, GlobalKey<FutureLoadingImageState>> keyMap = {};
   late bool nsfwOpen;
 
   @override
@@ -167,117 +167,143 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
             init: dataController,
             builder: (dataController) {
               List<List<_ListData>> dataList = addToDataList(dataController);
-              return ListView.builder(
-                itemBuilder: (context, i) {
-                  if (i < 1) {
-                    return buildHashTagList(dataController);
-                  }
-                  int pos = i - 1;
-                  var list = dataList[pos];
-                  return Row(
-                    children: list.transfer((data, index) {
-                      var data = list[index];
-                      if (data.isAd) {
-                        return _buildMERCAd(pos ~/ 5).intoContainer(
+              return Stack(
+                children: [
+                  ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: $(15)),
+                    itemBuilder: (context, i) {
+                      var list = dataList[i];
+                      return Row(
+                        children: list.transfer((data, index) {
+                          var data = list[index];
+                          if (data.isAd) {
+                            return _buildMERCAd((i * 2 + index) ~/ 5).intoContainer(
+                                width: cardWidth,
+                                height: cardWidth,
+                                margin: EdgeInsets.only(
+                                  left: index % 2 == 0 ? 0 : $(6),
+                                  top: $(6),
+                                  bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0),
+                                ));
+                          }
+                          var nfwShown = data.data!.item!.nsfw && !nsfwOpen;
+                          return Container(
                             width: cardWidth,
                             height: cardWidth,
                             margin: EdgeInsets.only(
                               left: index % 2 == 0 ? 0 : $(6),
-                              top: $(6),
-                              bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0),
-                            ));
-                      }
-                      if (keyMap[index] == null) {
-                        keyMap[index] = GlobalKey<FutureLoadingImageState>();
-                      }
-                      return (data.data!.item!.imageUrl.contains('mp4')
-                              ? Stack(
-                                  children: [
-                                    EffectVideoPlayer(url: data.data!.item!.imageUrl),
-                                    Positioned(
-                                      right: $(5),
-                                      top: $(5),
-                                      child: Image.asset(
-                                        ImagesConstant.ic_video,
-                                        height: $(24),
-                                        width: $(24),
+                              top: i == 0 ? marginTop + (dataController.tagList.isNotEmpty ? $(44) : 0) : $(6),
+                            ),
+                            child: data.data!.item!.imageUrl.contains('mp4')
+                                ? Stack(
+                                    children: [
+                                      EffectVideoPlayer(url: data.data!.item!.imageUrl).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                      Positioned(
+                                        right: $(5),
+                                        top: $(5),
+                                        child: Image.asset(
+                                          ImagesConstant.ic_video,
+                                          height: $(24),
+                                          width: $(24),
+                                        ),
                                       ),
-                                    ),
-                                    (data.data!.item!.nsfw && !nsfwOpen) ? Container(width: cardWidth, height: cardWidth).blur() : Container(),
-                                    (data.data!.item!.nsfw && !nsfwOpen)
-                                        ? NsfwCard(
-                                            width: cardWidth,
-                                            height: cardWidth,
-                                            onTap: () {
-                                              showOpenNsfwDialog(context).then((result) {
-                                                if (result ?? false) {
-                                                  setState(() {
-                                                    nsfwOpen = true;
-                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
-                                                  });
-                                                }
-                                              });
-                                            },
-                                          )
-                                        : Container(width: 0, height: 0),
-                                  ],
-                                ).intoContainer(width: cardWidth, height: cardWidth)
-                              : Stack(
-                                  children: [
-                                    CachedNetworkImageUtils.custom(
-                                        key: keyMap[index],
-                                        context: context,
-                                        imageUrl: data.data!.item!.imageUrl,
-                                        width: cardWidth,
-                                        height: cardWidth,
-                                        fit: BoxFit.contain,
-                                        placeholder: (context, url) {
-                                          return CircularProgressIndicator()
-                                              .intoContainer(
-                                                width: $(25),
-                                                height: $(25),
-                                              )
-                                              .intoCenter()
-                                              .intoContainer(width: cardWidth, height: cardWidth);
-                                        },
-                                        errorWidget: (context, url, error) {
-                                          return CircularProgressIndicator()
-                                              .intoContainer(
-                                                width: $(25),
-                                                height: $(25),
-                                              )
-                                              .intoCenter()
-                                              .intoContainer(width: cardWidth, height: cardWidth);
-                                        }),
-                                    (data.data!.item!.nsfw && !nsfwOpen) ? Container(width: cardWidth, height: cardWidth).blur() : Container(),
-                                    (data.data!.item!.nsfw && !nsfwOpen)
-                                        ? NsfwCard(
-                                            width: cardWidth,
-                                            height: cardWidth,
-                                            onTap: () {
-                                              showOpenNsfwDialog(context).then((result) {
-                                                if (result ?? false) {
-                                                  setState(() {
-                                                    nsfwOpen = true;
-                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
-                                                  });
-                                                }
-                                              });
-                                            },
-                                          )
-                                        : Container(width: 0, height: 0),
-                                  ],
-                                ).intoContainer(width: cardWidth, height: cardWidth))
-                          .intoContainer(
-                            margin: EdgeInsets.only(left: index % 2 == 0 ? 0 : $(6), top: $(6), bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0)),
-                          )
-                          .intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController));
-                    }),
-                  );
-                },
-                itemCount: dataList.length + 1,
-                controller: scrollController,
-              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)));
+                                      nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
+                                      nfwShown
+                                          ? NsfwCard(
+                                              width: cardWidth,
+                                              height: cardWidth,
+                                              onTap: () {
+                                                showOpenNsfwDialog(context).then((result) {
+                                                  if (result ?? false) {
+                                                    setState(() {
+                                                      nsfwOpen = true;
+                                                      cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  )
+                                : Stack(
+                                    children: [
+                                      CachedNetworkImageUtils.custom(
+                                        // useOld: true,
+                                          context: context,
+                                          imageUrl: data.data!.item!.imageUrl,
+                                          width: cardWidth,
+                                          height: cardWidth,
+                                          fit: BoxFit.fill,
+                                          placeholder: (context, url) {
+                                            return CircularProgressIndicator()
+                                                .intoContainer(width: $(25), height: $(25))
+                                                .intoCenter()
+                                                .intoContainer(width: cardWidth, height: cardWidth);
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            return CircularProgressIndicator()
+                                                .intoContainer(
+                                              width: $(25),
+                                              height: $(25),
+                                            )
+                                                .intoCenter()
+                                                .intoContainer(width: cardWidth, height: cardWidth);
+                                          }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                      Container().blur(),
+                                      CachedNetworkImageUtils.custom(
+                                          useOld: true,
+                                          context: context,
+                                          imageUrl: data.data!.item!.imageUrl,
+                                          width: cardWidth,
+                                          height: cardWidth,
+                                          fit: BoxFit.contain,
+                                          placeholder: (context, url) {
+                                            return CircularProgressIndicator()
+                                                .intoContainer(width: $(25), height: $(25))
+                                                .intoCenter()
+                                                .intoContainer(width: cardWidth, height: cardWidth);
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            return CircularProgressIndicator()
+                                                .intoContainer(
+                                                  width: $(25),
+                                                  height: $(25),
+                                                )
+                                                .intoCenter()
+                                                .intoContainer(width: cardWidth, height: cardWidth);
+                                          }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                      nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
+                                      nfwShown
+                                          ? NsfwCard(
+                                              width: cardWidth,
+                                              height: cardWidth,
+                                              onTap: () {
+                                                showOpenNsfwDialog(context).then((result) {
+                                                  if (result ?? false) {
+                                                    setState(() {
+                                                      nsfwOpen = true;
+                                                      cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                    });
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
+                          );
+                        }),
+                      ).intoContainer(
+                        margin: EdgeInsets.only(bottom: i == dataList.length - 1 ? (AppTabBarHeight + $(42)) : $(0)),
+                      );
+                    },
+                    itemCount: dataList.length,
+                    controller: scrollController,
+                  ),
+                  buildHashTagList(dataController),
+                ],
+              );
             }));
   }
 
@@ -286,6 +312,8 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       return Container(height: marginTop);
     }
     return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: EdgeInsets.only(top: marginTop, bottom: $(6), left: $(15), right: $(15)),
       child: Row(
         children: dataController.tagList.transfer(
           (e, index) {
@@ -302,7 +330,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                     margin: EdgeInsets.only(left: index == 0 ? 0 : $(12)),
                     padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(5)),
                     decoration: BoxDecoration(
-                        color: selected ? Colors.transparent : ColorConstant.hashTagNormalColor,
+                        color: ColorConstant.hashTagNormalColor,
                         border: Border.all(
                           color: selected ? ColorConstant.BlueColor : Colors.transparent,
                           width: 1,
@@ -314,13 +342,11 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
               } else {
                 dataController.selectedTag = e;
               }
-              dataController.update();
             });
           },
         ),
       ),
-      scrollDirection: Axis.horizontal,
-    ).intoContainer(margin: EdgeInsets.only(top: marginTop, bottom: $(6)));
+    );
   }
 
   @override

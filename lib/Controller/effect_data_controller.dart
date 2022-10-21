@@ -72,7 +72,24 @@ class EffectDataController extends GetxController {
   List<ChooseTabItemInfo> tabItemList = [];
 
   List<String> tagList = [];
-  String? selectedTag;
+  String? _selectedTag;
+
+  String? get selectedTag => _selectedTag;
+
+  set selectedTag(String? tag) {
+    if (tag == null) {
+      selectedTag = null;
+      update();
+    } else {
+      if (!tagList.contains(tag)) {
+        return;
+      }
+      tagList.remove(tag);
+      tagList.insert(0, tag);
+      _selectedTag = tag;
+      update();
+    }
+  }
 
   @override
   void onInit() {
