@@ -16,7 +16,7 @@ class EffectVideoPlayer extends StatefulWidget {
   EffectVideoPlayer({
     Key? key,
     required this.url,
-    this.useCached = true,
+    this.useCached = false,
   }) : super(key: key);
 
   @override
@@ -53,8 +53,12 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
         });
     } else {
       downloadListener = DownloadListener(
-          onChanged: (count, total) {},
-          onError: (error) {},
+          onChanged: (count, total) {
+            total;
+          },
+          onError: (error) {
+            error;
+          },
           onFinished: (File file) {
             controller = VideoPlayerController.file(file)
               ..setLooping(true)

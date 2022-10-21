@@ -90,7 +90,7 @@ class CardAdsHolder extends WidgetAdsHolder {
               print('Inline adaptive banner failedToLoad: $error');
               ad.dispose();
               onReset();
-              if(maxRetryCount == 0) {
+              if (maxRetryCount == 0) {
                 return;
               }
               maxRetryCount--;
