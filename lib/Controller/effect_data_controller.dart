@@ -78,7 +78,7 @@ class EffectDataController extends GetxController {
 
   set selectedTag(String? tag) {
     if (tag == null) {
-      selectedTag = null;
+      _selectedTag = null;
       update();
     } else {
       if (!tagList.contains(tag)) {
