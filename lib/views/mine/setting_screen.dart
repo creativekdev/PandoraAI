@@ -149,7 +149,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              functions('nsfw',
+              functions('Scary content alert!',
                   training: FlutterSwitch(
                     value: nsfwOpen,
                     onToggle: (value) {

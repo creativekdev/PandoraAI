@@ -23,7 +23,7 @@ class NsfwCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'This is marked as\nNSFW',
+            'Scary content alert!',
             style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(12)),
             textAlign: TextAlign.center,
           ),
