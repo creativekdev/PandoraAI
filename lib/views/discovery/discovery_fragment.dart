@@ -65,7 +65,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   late CardAdsMap cardAdsMap;
   double cardWidth = 150;
-  final double adScale = 1.55;
+  final double adScale = 1;
 
   late ScrollController scrollController;
   late ScrollController headerScrollController;
@@ -163,7 +163,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       },
       scale: adScale,
-      autoHeight: true,
     );
     cardAdsMap.init();
     scrollController = ScrollController();
@@ -240,8 +239,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   }
 
   Future<void> addToDataList(int page, List<DiscoveryListEntity> list) async {
-    if (!cardAdsMap.hasAdHolder(page + 2)) {
-      cardAdsMap.addAdsCard(page + 2);
+    if (!cardAdsMap.hasAdHolder(page + 1)) {
+      cardAdsMap.addAdsCard(page + 1);
     }
     for (int i = 0; i < list.length; i++) {
       var data = list[i];
@@ -277,12 +276,16 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         dataList.clear();
         var list = value.getDataList<DiscoveryListEntity>();
         addToDataList(page, list).whenComplete(() {
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
       if (firstLoad) {
-        scrollController.animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
+        if (mounted) {
+          scrollController.animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
+        }
         firstLoad = false;
       }
     });

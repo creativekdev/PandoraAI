@@ -60,9 +60,9 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
-        dataController.loadData();
-        userManager.refreshUser();
-        setState(() {});
+        if (dataController.data == null) {
+          dataController.loadData();
+        }
       }
     });
     onUserStateChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {

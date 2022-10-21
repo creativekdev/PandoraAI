@@ -140,11 +140,13 @@ class SplashAdsHolder extends PageAdsHolder {
         _appOpenAd = null;
         loadAd();
         if (isShowAdsNew()) {
-          if (Platform.isIOS) {
-            Get.to(PurchaseScreen());
-          } else {
-            Get.to(StripeSubscriptionScreen());
-          }
+          delay(() {
+            if (Platform.isIOS) {
+              Get.to(PurchaseScreen());
+            } else {
+              Get.to(StripeSubscriptionScreen());
+            }
+          }, milliseconds: 100);
         }
       },
     );

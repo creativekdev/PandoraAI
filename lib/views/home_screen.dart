@@ -99,12 +99,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     tabItems.clear();
     var allTabItems = buildTabItem();
     for (var tabItem in allTabItems) {
-      // 不做权限校验
-      // if (userManager.hasRole(tabItem.roles)) {
-      //有权限才创建item
       tabItem.createFragment();
       tabItems.add(tabItem);
-      // }
     }
     if (!allTabItems.exist((t) => t.id == AppTabId.ACTIVITY.id())) {
       var tab = dataController.data?.campaignTab;
@@ -123,9 +119,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         appRoleTabItem.createFragment();
         tabItems.insert(1, appRoleTabItem);
       }
-    }
-    if (needSetState) {
-      setState(() {});
+      if (needSetState) {
+        setState(() {});
+      }
     }
   }
 

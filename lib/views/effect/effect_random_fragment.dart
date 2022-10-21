@@ -136,8 +136,8 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     List<_ListData> allList = [];
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 10;
-      if (!adsMap.hasAdHolder(page + 2)) {
-        adsMap.addAdsCard(page + 2);
+      if (!adsMap.hasAdHolder(page + 1)) {
+        adsMap.addAdsCard(page + 1);
       }
       var data = list[i];
       allList.add(_ListData(
@@ -239,36 +239,36 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                 )
                               : Stack(
                                   children: [
-                                    CachedNetworkImageUtils.custom(
-                                        // useOld: true,
-                                        context: context,
-                                        imageUrl: data.data!.item!.imageUrl,
-                                        width: cardWidth,
-                                        height: cardWidth,
-                                        fit: BoxFit.fill,
-                                        placeholder: (context, url) {
-                                          return CircularProgressIndicator()
-                                              .intoContainer(width: $(25), height: $(25))
-                                              .intoCenter()
-                                              .intoContainer(width: cardWidth, height: cardWidth);
-                                        },
-                                        errorWidget: (context, url, error) {
-                                          return CircularProgressIndicator()
-                                              .intoContainer(
-                                                width: $(25),
-                                                height: $(25),
-                                              )
-                                              .intoCenter()
-                                              .intoContainer(width: cardWidth, height: cardWidth);
-                                        }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
-                                    Container().blur(),
+                                    // CachedNetworkImageUtils.custom(
+                                    //     // useOld: true,
+                                    //     context: context,
+                                    //     imageUrl: data.data!.item!.imageUrl,
+                                    //     width: cardWidth,
+                                    //     height: cardWidth,
+                                    //     fit: BoxFit.fill,
+                                    //     placeholder: (context, url) {
+                                    //       return CircularProgressIndicator()
+                                    //           .intoContainer(width: $(25), height: $(25))
+                                    //           .intoCenter()
+                                    //           .intoContainer(width: cardWidth, height: cardWidth);
+                                    //     },
+                                    //     errorWidget: (context, url, error) {
+                                    //       return CircularProgressIndicator()
+                                    //           .intoContainer(
+                                    //             width: $(25),
+                                    //             height: $(25),
+                                    //           )
+                                    //           .intoCenter()
+                                    //           .intoContainer(width: cardWidth, height: cardWidth);
+                                    //     }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                    // Container().blur(),
                                     CachedNetworkImageUtils.custom(
                                         useOld: true,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth,
                                         height: cardWidth,
-                                        fit: BoxFit.contain,
+                                        fit: BoxFit.cover,
                                         placeholder: (context, url) {
                                           return CircularProgressIndicator()
                                               .intoContainer(width: $(25), height: $(25))

@@ -32,7 +32,6 @@ class EffectManager extends BaseManager {
     if (json != null) {
       _data = EffectMap.fromJson(json);
     }
-    loadData();
   }
 
   @override

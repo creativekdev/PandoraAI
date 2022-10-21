@@ -58,7 +58,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
         if (value) {
           hideLoading().whenComplete(() async {
             logEvent(Events.login, eventValues: {"method": "apple"});
-            await onLoginSuccess(context);
+            onLoginSuccess(context);
           });
         } else {
           hideLoading().whenComplete(() {
@@ -117,7 +117,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                   });
                 } else {
                   logEvent(Events.login, eventValues: {"method": "google"});
-                  await onLoginSuccess(context);
+                  onLoginSuccess(context);
                 }
               }
             });
@@ -213,7 +213,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setBool("isLogin", true);
                       logEvent(Events.login, eventValues: {"method": "email"});
-                      await onLoginSuccess(context);
+                      onLoginSuccess(context);
                     }
                     if (mounted) {
                       hideLoading();
@@ -288,7 +288,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                             builder: (context) => SignupScreen(),
                           ),
                         ).then((value) {
-                          if(value??false) {
+                          if (value ?? false) {
                             Navigator.pop(context);
                           }
                         });

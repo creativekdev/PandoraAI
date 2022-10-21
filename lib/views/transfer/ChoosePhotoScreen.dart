@@ -1410,7 +1410,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       } else if (data.data.toString() == "") {
         controller.changeIsLoading(false);
         CommonExtension().showToast(data.message);
-      } else if (data.data.toString().endsWith(".mp4")) {
+      } else if (data.data.toString().contains(".mp4")) {
         controller.updateVideoUrl(data.data);
         _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
           ..setLooping(true)
@@ -1514,7 +1514,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 };
-              } else if (dataString.endsWith(".mp4")) {
+              } else if (dataString.contains(".mp4")) {
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
@@ -1586,7 +1586,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
                   CommonExtension().showToast(parsed['message']);
                 };
-              } else if (parsed['data'].toString().endsWith(".mp4")) {
+              } else if (parsed['data'].toString().contains(".mp4")) {
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
@@ -1625,7 +1625,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           }
-          userManager.refreshUser(context: context);
         } else {
           controller.changeIsLoading(false);
           var responseBody = json.decode(tokenResponse.body);
