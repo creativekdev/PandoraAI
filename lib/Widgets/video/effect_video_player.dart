@@ -53,8 +53,12 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
         });
     } else {
       downloadListener = DownloadListener(
-          onChanged: (count, total) {},
-          onError: (error) {},
+          onChanged: (count, total) {
+            total;
+          },
+          onError: (error) {
+            error;
+          },
           onFinished: (File file) {
             controller = VideoPlayerController.file(file)
               ..setLooping(true)

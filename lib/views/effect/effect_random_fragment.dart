@@ -19,6 +19,7 @@ import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
+import 'package:cartoonizer/views/effect/widget/card_ads_widget.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
@@ -48,7 +49,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
   double marginTop = $(115);
-  late CardAdsMap adsMap;
   late double cardWidth;
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
@@ -78,16 +78,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     dataController = widget.dataController;
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
-    adsMap = CardAdsMap(
-      width: cardWidth,
-      scale: 1,
-      onUpdated: () {
-        if (mounted) {
-          setState(() {});
-        }
-      },
-    );
-    adsMap.init();
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
     });
@@ -120,7 +110,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   @override
   dispose() {
     super.dispose();
-    adsMap.dispose();
     appStateListener.cancel();
     tabOnDoubleClickListener.cancel();
   }
@@ -134,10 +123,12 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     }
     List<List<_ListData>> result = [];
     List<_ListData> allList = [];
+    var showAdsNew = isShowAdsNew();
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 10;
-      if (!adsMap.hasAdHolder(page + 1)) {
-        adsMap.addAdsCard(page + 1);
+      if (showAdsNew && i % 10 == 5) {
+        // todo
+        // allList.add(_ListData(isAd: true, page: page));
       }
       var data = list[i];
       allList.add(_ListData(
@@ -145,9 +136,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
         data: data,
         visible: true,
       ));
-      if (i == 4 + page * 10) {
-        allList.add(_ListData(isAd: true, page: page));
-      }
     }
     for (var value in allList) {
       if (result.isEmpty || result.last.length == 2) {
@@ -188,7 +176,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                       children: list.transfer((data, index) {
                         var data = list[index];
                         if (data.isAd) {
-                          return _buildMERCAd((i * 2 + index) ~/ 5).intoContainer(
+                          return _buildMERCAd(cardWidth, cardWidth).intoContainer(
                               width: cardWidth,
                               height: cardWidth,
                               margin: EdgeInsets.only(
@@ -377,7 +365,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   @override
   bool get wantKeepAlive => true;
 
-  Widget _buildMERCAd(int page) {
+  Widget _buildMERCAd(double width, double height) {
     var showAds = isShowAdsNew();
 
     if (showAds) {
@@ -385,15 +373,13 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
-        var result = adsMap.buildBannerAd(page);
-        if (result != null) {
-          return result.intoContainer(
-            margin: EdgeInsets.only(top: $(8), bottom: $(8)),
-            width: cardWidth,
-          );
-        }
+        return CardAdsWidget(
+          width: width,
+          height: height,
+        );
       }
     }
+
     return Container();
   }
 
