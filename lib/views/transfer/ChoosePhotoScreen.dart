@@ -1412,7 +1412,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().contains(".mp4")) {
         controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
+        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
           ..setLooping(true)
           ..initialize().then((value) async {
             controller.changeIsLoading(false);
