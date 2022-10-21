@@ -1019,7 +1019,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
       delay(() {
         lastChangeByTap = false;
-      }, milliseconds: 32);
+      }, milliseconds: 64);
     });
   }
 

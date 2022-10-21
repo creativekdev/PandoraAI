@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/nsfw_card.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/enums/effect_tag.dart';
 
@@ -10,11 +11,16 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
   double imageSize = 0;
   Function(EffectItemListData data) onTap;
 
+  bool nsfwShown;
+  GestureTapCallback onNsfwTap;
+
   EffectFullBodyCardWidget({
     Key? key,
     required this.data,
     required this.parentWidth,
     required this.onTap,
+    required this.nsfwShown,
+    required this.onNsfwTap,
   }) : super(key: key) {
     imageSize = (parentWidth - $(6)) / 2;
   }
@@ -36,15 +42,27 @@ class EffectFullBodyCardWidget extends StatelessWidget with EffectCardEx {
       children: [
         Column(
           children: [
-            ClipRRect(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              borderRadius: BorderRadius.all(Radius.circular($(8))),
-              child: urlWidget(
-                context,
-                width: imageSize,
-                height: imageSize,
-                url: data.item!.imageUrl,
-              ),
+            Stack(
+              children: [
+                ClipRRect(
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  borderRadius: BorderRadius.all(Radius.circular($(8))),
+                  child: urlWidget(
+                    context,
+                    width: imageSize,
+                    height: imageSize,
+                    url: data.item!.imageUrl,
+                  ),
+                ),
+                nsfwShown && data.item!.nsfw ? Container().blur() : Container(),
+                nsfwShown && data.item!.nsfw
+                    ? NsfwCard(
+                        width: imageSize,
+                        height: imageSize,
+                        onTap: onNsfwTap,
+                      )
+                    : Container(),
+              ],
             ),
             Text(
               data.item!.displayName,

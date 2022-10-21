@@ -16,6 +16,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 
+import '../../Widgets/dialog/dialog_widget.dart';
 import 'widget/effect_full_body_card_widget.dart';
 
 class EffectFullBodyFragment extends StatefulWidget {
@@ -50,10 +51,12 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
   double marginTop = $(110);
+  late bool nsfwOpen;
 
   @override
   initState() {
     super.initState();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     marginTop = $(110) + ScreenUtil.getStatusBarHeight();
     effectModelList = widget.dataList;
     recentController = widget.recentController;
@@ -118,6 +121,17 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   }
 
   @override
+  onAttached() {
+    super.onAttached();
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
+  }
+
+  @override
   onEffectClick(PushExtraEntity pushExtraEntity) {
     EffectItemListData? data;
     for (var list in dataList) {
@@ -170,6 +184,17 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
         children: [
           _buildMERCAd(),
           EffectFullBodyCardWidget(
+            onNsfwTap: () {
+              showOpenNsfwDialog(context).then((result) {
+                if (result ?? false) {
+                  setState(() {
+                    nsfwOpen = true;
+                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                  });
+                }
+              });
+            },
+            nsfwShown: nsfwOpen,
             data: data,
             parentWidth: parentWidth,
             onTap: (item) {
@@ -180,6 +205,17 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       );
     } else {
       return EffectFullBodyCardWidget(
+        onNsfwTap: () {
+          showOpenNsfwDialog(context).then((result) {
+            if (result ?? false) {
+              setState(() {
+                nsfwOpen = true;
+                cacheManager.setBool(CacheManager.nsfwOpen, true);
+              });
+            }
+          });
+        },
+        nsfwShown: nsfwOpen,
         data: data,
         parentWidth: parentWidth,
         onTap: (item) {

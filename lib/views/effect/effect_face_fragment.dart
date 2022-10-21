@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -52,10 +53,12 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
   double marginTop = $(118);
+  late bool nsfwOpen;
 
   @override
   initState() {
     super.initState();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     marginTop = $(118) + ScreenUtil.getStatusBarHeight();
     recentController = widget.recentController;
     dataList = widget.dataList;
@@ -88,6 +91,17 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     userManager.refreshUser(context: context).then((value) {
       setState(() {});
     });
+  }
+
+  @override
+  onAttached() {
+    super.onAttached();
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
   }
 
   @override
@@ -164,6 +178,17 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
         children: [
           _buildMERCAd(),
           EffectFaceCardWidget(
+            nsfwShown: !nsfwOpen && data.nsfw,
+            onNsfwTap: () {
+              showOpenNsfwDialog(context).then((result) {
+                if (result ?? false) {
+                  setState(() {
+                    nsfwOpen = true;
+                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                  });
+                }
+              });
+            },
             data: data,
             parentWidth: parentWidth,
           ),
@@ -171,8 +196,19 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       );
     } else {
       return EffectFaceCardWidget(
+        nsfwShown: !nsfwOpen && data.nsfw,
         data: data,
         parentWidth: parentWidth,
+        onNsfwTap: () {
+          showOpenNsfwDialog(context).then((result) {
+            if (result ?? false) {
+              setState(() {
+                nsfwOpen = true;
+                cacheManager.setBool(CacheManager.nsfwOpen, true);
+              });
+            }
+          });
+        },
       );
     }
   }
@@ -190,9 +226,9 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       itemPos = effectModel.getDefaultPos();
     }
     var effectItem = effectModel.effects.values.toList()[itemPos];
-      var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
-      var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-      var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
+    var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     await Navigator.push(
       context,
       MaterialPageRoute(

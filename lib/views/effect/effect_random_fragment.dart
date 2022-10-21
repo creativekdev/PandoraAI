@@ -18,9 +18,8 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
-import 'package:waterfall_flow/waterfall_flow.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 
@@ -57,6 +56,19 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   CacheManager cacheManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
   late bool nsfwOpen;
+  int? selectedTagIndex;
+
+  String? get selectedTag => selectedTagIndex == null ? null : dataController.tagList[selectedTagIndex!];
+
+  setSelectedTagIndex(int? index) {
+    setState(() {
+      if (index == null) {
+        selectedTagIndex = null;
+      } else {
+        selectedTagIndex = index;
+      }
+    });
+  }
 
   @override
   initState() {
@@ -115,10 +127,10 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
 
   List<List<_ListData>> addToDataList(EffectDataController dataController) {
     List<EffectItemListData> list;
-    if (dataController.selectedTag == null) {
+    if (selectedTag == null) {
       list = dataController.randomList;
     } else {
-      list = dataController.randomList.filter((t) => t.item!.tagList.exist((tag) => tag == dataController.selectedTag));
+      list = dataController.randomList.filter((t) => t.item!.tagList.exist((tag) => tag == selectedTag));
     }
     List<List<_ListData>> result = [];
     List<_ListData> allList = [];
@@ -163,190 +175,203 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     return MediaQuery.removePadding(
         context: context,
         removeTop: true,
-        child: GetBuilder<EffectDataController>(
-            init: dataController,
-            builder: (dataController) {
-              List<List<_ListData>> dataList = addToDataList(dataController);
-              return Stack(
-                children: [
-                  ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: $(15)),
-                    itemBuilder: (context, i) {
-                      var list = dataList[i];
-                      return Row(
-                        children: list.transfer((data, index) {
-                          var data = list[index];
-                          if (data.isAd) {
-                            return _buildMERCAd((i * 2 + index) ~/ 5).intoContainer(
-                                width: cardWidth,
-                                height: cardWidth,
-                                margin: EdgeInsets.only(
-                                  left: index % 2 == 0 ? 0 : $(6),
-                                  top: $(6),
-                                  bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0),
-                                ));
-                          }
-                          var nfwShown = data.data!.item!.nsfw && !nsfwOpen;
-                          return Container(
-                            width: cardWidth,
-                            height: cardWidth,
-                            margin: EdgeInsets.only(
-                              left: index % 2 == 0 ? 0 : $(6),
-                              top: i == 0 ? marginTop + (dataController.tagList.isNotEmpty ? $(44) : 0) : $(6),
-                            ),
-                            child: data.data!.item!.imageUrl.contains('mp4')
-                                ? Stack(
-                                    children: [
-                                      EffectVideoPlayer(url: data.data!.item!.imageUrl).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
-                                      Positioned(
-                                        right: $(5),
-                                        top: $(5),
-                                        child: Image.asset(
-                                          ImagesConstant.ic_video,
-                                          height: $(24),
-                                          width: $(24),
-                                        ),
+        child: Stack(children: [
+          GetBuilder<EffectDataController>(
+              init: dataController,
+              builder: (dataController) {
+                List<List<_ListData>> dataList = addToDataList(dataController);
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: $(15)),
+                  itemBuilder: (context, i) {
+                    var list = dataList[i];
+                    return Row(
+                      children: list.transfer((data, index) {
+                        var data = list[index];
+                        if (data.isAd) {
+                          return _buildMERCAd((i * 2 + index) ~/ 5).intoContainer(
+                              width: cardWidth,
+                              height: cardWidth,
+                              margin: EdgeInsets.only(
+                                left: index % 2 == 0 ? 0 : $(6),
+                                top: $(6),
+                                bottom: i == dataList.length ? (AppTabBarHeight + $(15)) : $(0),
+                              ));
+                        }
+                        var nfwShown = data.data!.item!.nsfw && !nsfwOpen;
+                        return Container(
+                          width: cardWidth,
+                          height: cardWidth,
+                          margin: EdgeInsets.only(
+                            left: index % 2 == 0 ? 0 : $(6),
+                            top: i == 0 ? marginTop + (dataController.tagList.isNotEmpty ? $(40) : 0) : $(6),
+                          ),
+                          child: data.data!.item!.imageUrl.contains('mp4')
+                              ? Stack(
+                                  children: [
+                                    EffectVideoPlayer(url: data.data!.item!.imageUrl).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                    Positioned(
+                                      right: $(5),
+                                      top: $(5),
+                                      child: Image.asset(
+                                        ImagesConstant.ic_video,
+                                        height: $(24),
+                                        width: $(24),
                                       ),
-                                      nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
-                                      nfwShown
-                                          ? NsfwCard(
-                                              width: cardWidth,
-                                              height: cardWidth,
-                                              onTap: () {
-                                                showOpenNsfwDialog(context).then((result) {
-                                                  if (result ?? false) {
-                                                    setState(() {
-                                                      nsfwOpen = true;
-                                                      cacheManager.setBool(CacheManager.nsfwOpen, true);
-                                                    });
-                                                  }
-                                                });
-                                              },
-                                            )
-                                          : SizedBox.shrink(),
-                                    ],
-                                  )
-                                : Stack(
-                                    children: [
-                                      CachedNetworkImageUtils.custom(
+                                    ),
+                                    nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
+                                    nfwShown
+                                        ? NsfwCard(
+                                            width: cardWidth,
+                                            height: cardWidth,
+                                            onTap: () {
+                                              showOpenNsfwDialog(context).then((result) {
+                                                if (result ?? false) {
+                                                  setState(() {
+                                                    nsfwOpen = true;
+                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : SizedBox.shrink(),
+                                  ],
+                                )
+                              : Stack(
+                                  children: [
+                                    CachedNetworkImageUtils.custom(
                                         // useOld: true,
-                                          context: context,
-                                          imageUrl: data.data!.item!.imageUrl,
-                                          width: cardWidth,
-                                          height: cardWidth,
-                                          fit: BoxFit.fill,
-                                          placeholder: (context, url) {
-                                            return CircularProgressIndicator()
-                                                .intoContainer(width: $(25), height: $(25))
-                                                .intoCenter()
-                                                .intoContainer(width: cardWidth, height: cardWidth);
-                                          },
-                                          errorWidget: (context, url, error) {
-                                            return CircularProgressIndicator()
-                                                .intoContainer(
-                                              width: $(25),
-                                              height: $(25),
-                                            )
-                                                .intoCenter()
-                                                .intoContainer(width: cardWidth, height: cardWidth);
-                                          }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
-                                      Container().blur(),
-                                      CachedNetworkImageUtils.custom(
-                                          useOld: true,
-                                          context: context,
-                                          imageUrl: data.data!.item!.imageUrl,
-                                          width: cardWidth,
-                                          height: cardWidth,
-                                          fit: BoxFit.contain,
-                                          placeholder: (context, url) {
-                                            return CircularProgressIndicator()
-                                                .intoContainer(width: $(25), height: $(25))
-                                                .intoCenter()
-                                                .intoContainer(width: cardWidth, height: cardWidth);
-                                          },
-                                          errorWidget: (context, url, error) {
-                                            return CircularProgressIndicator()
-                                                .intoContainer(
-                                                  width: $(25),
-                                                  height: $(25),
-                                                )
-                                                .intoCenter()
-                                                .intoContainer(width: cardWidth, height: cardWidth);
-                                          }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
-                                      nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
-                                      nfwShown
-                                          ? NsfwCard(
-                                              width: cardWidth,
-                                              height: cardWidth,
-                                              onTap: () {
-                                                showOpenNsfwDialog(context).then((result) {
-                                                  if (result ?? false) {
-                                                    setState(() {
-                                                      nsfwOpen = true;
-                                                      cacheManager.setBool(CacheManager.nsfwOpen, true);
-                                                    });
-                                                  }
-                                                });
-                                              },
-                                            )
-                                          : SizedBox.shrink(),
-                                    ],
-                                  ),
-                          );
-                        }),
-                      ).intoContainer(
-                        margin: EdgeInsets.only(bottom: i == dataList.length - 1 ? (AppTabBarHeight + $(42)) : $(0)),
-                      );
-                    },
-                    itemCount: dataList.length,
-                    controller: scrollController,
-                  ),
-                  buildHashTagList(dataController),
-                ],
-              );
-            }));
+                                        context: context,
+                                        imageUrl: data.data!.item!.imageUrl,
+                                        width: cardWidth,
+                                        height: cardWidth,
+                                        fit: BoxFit.fill,
+                                        placeholder: (context, url) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(width: $(25), height: $(25))
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        },
+                                        errorWidget: (context, url, error) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(
+                                                width: $(25),
+                                                height: $(25),
+                                              )
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                    Container().blur(),
+                                    CachedNetworkImageUtils.custom(
+                                        useOld: true,
+                                        context: context,
+                                        imageUrl: data.data!.item!.imageUrl,
+                                        width: cardWidth,
+                                        height: cardWidth,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(width: $(25), height: $(25))
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        },
+                                        errorWidget: (context, url, error) {
+                                          return CircularProgressIndicator()
+                                              .intoContainer(
+                                                width: $(25),
+                                                height: $(25),
+                                              )
+                                              .intoCenter()
+                                              .intoContainer(width: cardWidth, height: cardWidth);
+                                        }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                    nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
+                                    nfwShown
+                                        ? NsfwCard(
+                                            width: cardWidth,
+                                            height: cardWidth,
+                                            onTap: () {
+                                              showOpenNsfwDialog(context).then((result) {
+                                                if (result ?? false) {
+                                                  setState(() {
+                                                    nsfwOpen = true;
+                                                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                                                  });
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : SizedBox.shrink(),
+                                  ],
+                                ),
+                        );
+                      }),
+                    ).intoContainer(
+                      margin: EdgeInsets.only(bottom: i == dataList.length - 1 ? (AppTabBarHeight + $(42)) : $(0)),
+                    );
+                  },
+                  itemCount: dataList.length,
+                  controller: scrollController,
+                );
+              }),
+          buildHashTagList(dataController),
+        ]));
   }
 
   Widget buildHashTagList(EffectDataController dataController) {
     if (dataController.tagList.isEmpty) {
       return Container(height: marginTop);
     }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.only(top: marginTop, bottom: $(6), left: $(15), right: $(15)),
-      child: Row(
-        children: dataController.tagList.transfer(
-          (e, index) {
-            var selected = e == dataController.selectedTag;
-            return Text(
-              '# ${e}',
-              style: TextStyle(
-                fontSize: $(13),
-                fontFamily: 'Poppins',
-                color: selected ? ColorConstant.BlueColor : ColorConstant.White,
-              ),
-            )
-                .intoContainer(
-                    margin: EdgeInsets.only(left: index == 0 ? 0 : $(12)),
-                    padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(5)),
-                    decoration: BoxDecoration(
-                        color: ColorConstant.hashTagNormalColor,
-                        border: Border.all(
-                          color: selected ? ColorConstant.BlueColor : Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular($(32))))
-                .intoGestureDetector(onTap: () {
-              if (dataController.selectedTag == e) {
-                dataController.selectedTag = null;
-              } else {
-                dataController.selectedTag = e;
-              }
-            });
-          },
-        ),
-      ),
-    );
+    return ScrollablePositionedList.builder(
+            scrollDirection: Axis.horizontal,
+            initialScrollIndex: 0,
+            padding: EdgeInsets.only(left: $(8), right: $(8)),
+            physics: ClampingScrollPhysics(),
+            itemCount: dataController.tagList.length,
+            itemBuilder: (context, index) {
+              var selected = index == selectedTagIndex;
+              return (selected
+                      ? ShaderMask(
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                            colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomRight,
+                          ).createShader(Offset.zero & bounds.size),
+                          blendMode: BlendMode.srcATop,
+                          child: Text(
+                            '# ${dataController.tagList[index]}',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              color: ColorConstant.White,
+                              fontSize: $(13),
+                            ),
+                          ),
+                        )
+                      : Text(
+                          '# ${dataController.tagList[index]}',
+                          style: TextStyle(
+                            fontSize: $(13),
+                            fontFamily: 'Poppins',
+                            color: ColorConstant.BlueColor,
+                          ),
+                        ))
+                  .intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)))
+                  .intoGestureDetector(onTap: () {
+                if (selected) {
+                  setSelectedTagIndex(null);
+                } else {
+                  setSelectedTagIndex(index);
+                }
+              });
+            })
+        .intoContainer(
+          height: $(44),
+          alignment: Alignment.center,
+          color: Color(0xdd161719),
+        )
+        .blur()
+        .intoContainer(
+          margin: EdgeInsets.only(top: marginTop - 18),
+        );
   }
 
   @override

@@ -72,24 +72,7 @@ class EffectDataController extends GetxController {
   List<ChooseTabItemInfo> tabItemList = [];
 
   List<String> tagList = [];
-  String? _selectedTag;
 
-  String? get selectedTag => _selectedTag;
-
-  set selectedTag(String? tag) {
-    if (tag == null) {
-      _selectedTag = null;
-      update();
-    } else {
-      if (!tagList.contains(tag)) {
-        return;
-      }
-      tagList.remove(tag);
-      tagList.insert(0, tag);
-      _selectedTag = tag;
-      update();
-    }
-  }
 
   @override
   void onInit() {
@@ -124,18 +107,7 @@ class EffectDataController extends GetxController {
   }
 
   buildTagList() {
-    tagList.clear();
-    var effectList = data!.effectList('template');
-    effectList.forEach((effectModel) {
-      effectModel.effects.forEach((key, effectItem) {
-        for (var tag in effectItem.tagList) {
-          var build = EffectTagUtils.build(tag);
-          if (build == EffectTag.UNDEFINED && !tagList.contains(tag)) {
-            tagList.add(tag);
-          }
-        }
-      });
-    });
+    tagList = data!.tags;
   }
 
   buildChooseDataList() {

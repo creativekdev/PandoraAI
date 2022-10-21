@@ -44,8 +44,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late TabController tabController;
   late List<DiscoveryFilterTab> tabList = [
-    DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
     DiscoveryFilterTab(sort: DiscoverySort.newest, title: 'Newest'),
+    DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
   ];
   late DiscoveryFilterTab currentTab;
   int page = 0;

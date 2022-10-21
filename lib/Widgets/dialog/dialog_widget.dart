@@ -22,7 +22,7 @@ Future<bool?> showOpenNsfwDialog(BuildContext context) async {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Are you sure to open nsfw?',
+          'Scary content alert! Tap to show it',
           style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
           textAlign: TextAlign.center,
         ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
@@ -47,7 +47,7 @@ Future<bool?> showOpenNsfwDialog(BuildContext context) async {
                 })),
             Expanded(
                 child: Text(
-                  'Open',
+                  'Show it',
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
                 )
                     .intoContainer(

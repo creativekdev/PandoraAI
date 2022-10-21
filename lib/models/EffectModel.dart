@@ -1,3 +1,4 @@
+
 import 'package:common_utils/common_utils.dart';
 
 class EffectModel {
@@ -9,6 +10,7 @@ class EffectModel {
   late List<String> thumbnails;
   late String thumbnail;
   late String tag;
+  late bool nsfw;
 
   EffectModel({
     required this.key,
@@ -19,6 +21,7 @@ class EffectModel {
     this.style = '',
     this.tag = '',
     this.thumbnail = '',
+    this.nsfw = false,
   }) {
     this.effects = effects ?? {};
     this.thumbnails = thumbnails ?? [];
@@ -34,6 +37,7 @@ class EffectModel {
     style = (json['style'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
     thumbnail = (json['thumbnail'] ?? '').toString();
+    nsfw = (json['is_nsfw'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +49,7 @@ class EffectModel {
     data['display_name'] = displayName;
     data['style'] = style;
     data['tag'] = tag;
+    data['is_nsfw'] = nsfw;
     data['thumbnail'] = thumbnail;
     return data;
   }

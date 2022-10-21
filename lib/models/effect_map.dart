@@ -6,12 +6,16 @@ class EffectMap {
   late Map<String, dynamic> data;
   late Map<String, dynamic> locale;
   CampaignTab? campaignTab;
+  late List<String> tags;
 
   EffectMap({
     required this.data,
     required this.locale,
     this.campaignTab,
-  });
+    List<String>? tags,
+  }) {
+    this.tags = tags ?? [];
+  }
 
   EffectMap.fromJson(Map<String, dynamic> json) {
     this.data = json['data'];
@@ -19,12 +23,16 @@ class EffectMap {
     if (json['campaign_tab'] != null) {
       campaignTab = CampaignTab.fromJson(json['campaign_tab']);
     }
+    if (json['tags'] != null) {
+      this.tags = (json['tags'] as List).map((e) => e.toString()).toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
     var map = {
       'data': data,
       'locale': locale,
+      'tags': tags,
     };
     if (campaignTab != null) {
       map['campaign_tab'] = campaignTab!.toJson();
