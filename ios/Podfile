@@ -35,6 +35,7 @@ pod 'GoogleUtilities', '~> 7.7.0'
 pod 'GoogleMobileAdsMediationAppLovin'
 pod 'GoogleMobileAdsMediationFacebook'
 pod 'GoogleMobileAdsMediationUnity'
+pod 'GoogleMobileAdsMediationVungle'
 
 target 'Runner' do
   use_frameworks!
