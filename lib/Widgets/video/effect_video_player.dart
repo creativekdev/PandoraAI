@@ -16,7 +16,7 @@ class EffectVideoPlayer extends StatefulWidget {
   EffectVideoPlayer({
     Key? key,
     required this.url,
-    this.useCached = true,
+    this.useCached = false,
   }) : super(key: key);
 
   @override
