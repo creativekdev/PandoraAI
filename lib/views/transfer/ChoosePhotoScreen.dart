@@ -1590,7 +1590,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
