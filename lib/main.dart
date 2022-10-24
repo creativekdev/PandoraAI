@@ -260,6 +260,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 ).visibility(
                   visible: false,
                   maintainState: true,
+                  maintainSize: true,
+                  maintainAnimation: true,
                 ),
                 Expanded(
                     child: Image.asset(

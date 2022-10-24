@@ -443,7 +443,12 @@ class _SignupScreenState extends AppState<SignupScreen> {
       backgroundColor: Colors.black,
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
-        visible: false,
+        // visible: false,
+        backIcon: Icon(
+          Icons.close,
+          size: $(24),
+          color: Colors.white,
+        ).marginOnly(left: $(15)),
       ),
       body: Container(
         color: Colors.transparent,

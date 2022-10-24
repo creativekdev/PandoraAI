@@ -141,7 +141,7 @@ class UserManager extends BaseManager {
     EventBusHelper().eventBus.fire(LoginStateEvent(data: _user != null));
   }
 
-  doOnLogin(BuildContext context, {String? currentPageRoute, Function()? callback, bool autoExec = true}) {
+  doOnLogin(BuildContext context, {String? currentPageRoute, Function()? callback, bool autoExec = true, bool toSignUp = false}) {
     if (!isNeedLogin) {
       callback?.call();
       return;
@@ -154,7 +154,9 @@ class UserManager extends BaseManager {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LoginScreen(),
+          builder: (context) => LoginScreen(
+            toSignUp: toSignUp,
+          ),
           settings: RouteSettings(name: "/LoginScreen"),
         )).then((value) async {
       if (autoExec && !isNeedLogin) {

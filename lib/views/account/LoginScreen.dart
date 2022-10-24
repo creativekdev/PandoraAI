@@ -21,7 +21,9 @@ import '../SignupScreen.dart';
 import '../SocialSignUpScreen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  bool toSignUp;
+
+  LoginScreen({Key? key, this.toSignUp = false}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -42,6 +44,10 @@ class _LoginScreenState extends AppState<LoginScreen> {
     super.initState();
     logEvent(Events.login_page_loading);
     thirdpartManager.adsHolder.ignore = true;
+    if (widget.toSignUp) {
+      var prefixPage = ModalRoute.of(context)!.settings.arguments;
+      delay(() => toSignUp(prefixPage, context), milliseconds: 64);
+    }
   }
 
   @override
@@ -134,7 +140,11 @@ class _LoginScreenState extends AppState<LoginScreen> {
       backgroundColor: Colors.black,
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
-        visible: false,
+        backIcon: Icon(
+          Icons.close,
+          size: $(24),
+          color: Colors.white,
+        ).marginOnly(left: $(15)),
       ),
       body: Container(
         color: Colors.transparent,
@@ -277,22 +287,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                   ).intoGestureDetector(
                     onTap: () {
-                      GetStorage().write('signup_through', '');
-                      if (prefixPage == 'signup') {
-                        Navigator.pop(context);
-                      } else {
-                        Navigator.push<bool>(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/SignupScreen"),
-                            builder: (context) => SignupScreen(),
-                          ),
-                        ).then((value) {
-                          if (value ?? false) {
-                            Navigator.pop(context);
-                          }
-                        });
-                      }
+                      toSignUp(prefixPage, context);
                     },
                   ),
                 ],
@@ -303,6 +298,25 @@ class _LoginScreenState extends AppState<LoginScreen> {
         ),
       ),
     ).blankAreaIntercept();
+  }
+
+  void toSignUp(Object? prefixPage, BuildContext context) {
+    GetStorage().write('signup_through', '');
+    if (prefixPage == 'signup') {
+      Navigator.pop(context);
+    } else {
+      Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/SignupScreen"),
+          builder: (context) => SignupScreen(),
+        ),
+      ).then((value) {
+        if (value ?? false) {
+          Navigator.pop(context);
+        }
+      });
+    }
   }
 
   Future<void> onLoginSuccess(BuildContext context) async {

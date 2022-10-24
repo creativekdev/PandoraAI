@@ -21,6 +21,7 @@ class CacheManager extends BaseManager {
   static const effectAllData = 'effect_all_data';
   static const scaleCacheData = 'scaleCacheData';
   static const nsfwOpen = 'nsfw_open';
+  static const imageUploadHistory = 'image_upload_history';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

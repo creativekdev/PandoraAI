@@ -10,6 +10,7 @@ import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
+import 'package:cartoonizer/models/upload_record_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
 typedef JsonConvertFunction<T> = T Function(Map<String, dynamic> json);
@@ -24,6 +25,7 @@ class JsonConvert {
 		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
+		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
 	};
 
   T? convert<T>(dynamic value) {
@@ -122,6 +124,9 @@ class JsonConvert {
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
+		}
+		if(<UploadRecordEntity>[] is M){
+			return data.map<UploadRecordEntity>((Map<String, dynamic> e) => UploadRecordEntity.fromJson(e)).toList() as M;
 		}
 
 		debugPrint("${M.toString()} not found");

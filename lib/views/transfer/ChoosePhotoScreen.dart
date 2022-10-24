@@ -1111,7 +1111,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Future<void> shareToDiscovery(BuildContext context) async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
     logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, toSignUp: true, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
       if (controller.isVideo.value) {
         var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
         ShareDiscoveryScreen.push(
@@ -1320,6 +1320,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Future<String> uploadCompressedImage() async {
     String b_name = "free-socialbook";
     String f_name = path.basename((controller.image.value as File).path);
+    var checkUploadHistory = controller.checkUploadHistory(fileName: f_name);
     var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
     if (TextUtil.isEmpty(fileType)) {
       fileType = '*';
@@ -1330,16 +1331,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       "file_name": f_name,
       "content_type": c_type,
     };
-    final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
-    final Map parsed = json.decode(response.body.toString());
-    var url = (parsed['data'] ?? '').toString();
-    var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
-    if (baseEntity != null) {
-      var imageUrl = url.split("?")[0];
-      controller.updateImageUrl(imageUrl);
-      return imageUrl;
+    if (checkUploadHistory != null) {
+      return checkUploadHistory;
+    } else {
+      final response = await API.get("https://socialbook.io/api/file/presigned_url", params: params);
+      final Map parsed = json.decode(response.body.toString());
+      String url = (parsed['data'] ?? '').toString();
+      var baseEntity = await Uploader().uploadFile(url, controller.image.value as File, c_type);
+      if (baseEntity != null) {
+        var imageUrl = url.split("?")[0];
+        controller.updateImageUrl(imageUrl);
+        controller.saveUploadHistory(fileName: f_name, url: imageUrl);
+        return imageUrl;
+      }
     }
-
     return '';
   }
 

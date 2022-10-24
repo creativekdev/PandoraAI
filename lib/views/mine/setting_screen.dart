@@ -201,8 +201,11 @@ class _SettingScreenState extends AppState<SettingScreen> {
                       margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
                       padding: EdgeInsets.symmetric(vertical: $(10)))
                   .intoGestureDetector(onTap: () {
-                showLogoutAlertDialog().whenComplete(() {
+                showLogoutAlertDialog().then((value) {
                   setState(() {});
+                  if (value ?? false) {
+                    userManager.doOnLogin(context);
+                  }
                 });
               }).offstage(offstage: userManager.isNeedLogin),
             ],
@@ -229,8 +232,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
         .intoGestureDetector(onTap: onTap);
   }
 
-  Future<void> showLogoutAlertDialog() async {
-    return showDialog(
+  Future<bool?> showLogoutAlertDialog() async {
+    return showDialog<bool>(
       context: context,
       builder: (_) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -258,7 +261,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                       .intoGestureDetector(onTap: () async {
                 logEvent(Events.logout);
                 await userManager.logout();
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               })),
               Expanded(
                   child: Text(
@@ -273,7 +276,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                             top: BorderSide(color: ColorConstant.LineColor, width: 1),
                           )))
                       .intoGestureDetector(onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context, false);
               })),
             ],
           ),
