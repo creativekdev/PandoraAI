@@ -478,7 +478,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   showSavePhotoDialog(BuildContext context) {
-    if (lastBuildType == _BuildType.hdImage) {
+    if (lastBuildType == _BuildType.hdImage || controller.isVideo.value) {
       saveToAlbum();
     } else {
       showModalBottomSheet(
@@ -588,7 +588,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
-      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, true);
+      var result = await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, true);
       controller.changeIsLoading(false);
       videoPath = result as String;
       if (result != '') {
@@ -617,7 +617,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
-      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value, false).then((value) async {
+      await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
         controller.changeIsLoading(false);
         videoPath = value as String;
         if (value != "") {
@@ -1113,7 +1113,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
       if (controller.isVideo.value) {
-        var videoUrl = '${_getAiHostByStyle(selectedEffect)}/api/resource/' + controller.videoUrl.value;
+        var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
         ShareDiscoveryScreen.push(
           context,
           effectKey: selectedEffect.key,
@@ -1518,7 +1518,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 successForward = () {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/api/resource/' + controller.videoUrl.value)
+                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
                     ..initialize().then((value) async {
                       controller.changeIsLoading(false);
