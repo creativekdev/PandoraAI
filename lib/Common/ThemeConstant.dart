@@ -15,6 +15,7 @@ class ColorConstant {
   static const BackgroundColor = Color(0xff161719);
   static const BackgroundColorBlur = Color.fromARGB(204, 22, 23, 25);
   static const CardColor = Color(0xFF070809);
+  static const EffectCardColor = Color(0xFF171819);
   static const ShadowColor = Color.fromRGBO(62, 96, 255, 0.5);
   static const RadialColor1 = Color.fromRGBO(55, 83, 250, 1);
   static const RadialColor2 = Color.fromRGBO(125, 102, 252, 1);
@@ -31,6 +32,7 @@ class ColorConstant {
   static const LightTextColor = Color.fromRGBO(38, 50, 92, 1);
   static const DiscoveryBtn = Color(0xff3E60FF);
   static const DiscoveryCommentGrey = Color(0xff8f8f8f);
+  static const DiscoveryCommentBackground = Color(0xff232528);
   static const EffectGrey = Color(0xff8f8f8f);
   static const EffectFunctionGrey = Color(0xff232528);
   static const EffectFunctionBlue = Color(0xff3E60FF);
@@ -41,4 +43,5 @@ class ColorConstant {
   static const MineBackgroundColor = Color(0xff080809);
   static const SysMsgIconColor = Color(0xff5856D6);
   static const loginTitleColor = Color(0xff909090);
+  static const hashTagNormalColor = Color(0xff0e0e10);
 }

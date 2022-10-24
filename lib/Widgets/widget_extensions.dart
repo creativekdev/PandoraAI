@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
@@ -226,6 +228,14 @@ extension WidgetExtension on Widget {
         key: key,
         interceptType: interceptType,
         child: this,
+      );
+
+  ClipRect blur({Key? key, double x = 12, double y = 12}) => ClipRect(
+        key: key,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
+          child: this,
+        ),
       );
 }
 

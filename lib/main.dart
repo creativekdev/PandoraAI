@@ -254,6 +254,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Image.asset(
+                  Images.launch_branding,
+                  width: ScreenUtil.screenSize.width * 0.42,
+                ).visibility(
+                  visible: false,
+                  maintainState: true,
+                ),
                 Expanded(
                     child: Image.asset(
                   Images.launch_icon,

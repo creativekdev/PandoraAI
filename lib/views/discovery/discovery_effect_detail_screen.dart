@@ -1,409 +1,342 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
-import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
-import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
-
-import 'widget/discovery_attr_holder.dart';
+import 'package:cartoonizer/views/discovery/discovery_secondary_comment_list_screen.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widget.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
+import 'package:cartoonizer/views/input/input_screen.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
-  DiscoveryListEntity data;
-  bool autoToComments;
+  DiscoveryListEntity discoveryEntity;
 
-  DiscoveryEffectDetailScreen({Key? key, required this.data, this.autoToComments = false}) : super(key: key);
+  DiscoveryEffectDetailScreen({
+    Key? key,
+    required this.discoveryEntity,
+  }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => DiscoveryEffectDetailState();
+  State<StatefulWidget> createState() => DiscoveryEffectDetailScreenState();
 }
 
-class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> with DiscoveryAttrHolder {
+class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScreen> with LoadingAction {
   UserManager userManager = AppDelegate.instance.getManager();
-  EffectManager effectManager = AppDelegate.instance.getManager();
-  late DiscoveryListEntity data;
-  Size? imageSize;
-  late double imageListWidth;
+  EasyRefreshController _refreshController = EasyRefreshController();
+  List<DiscoveryCommentListEntity> dataList = [];
+  late DiscoveryListEntity discoveryEntity;
+  int page = 0;
+  int pageSize = 20;
   late CartoonizerApi api;
+
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  late StreamSubscription onDiscoveryLikeEventListener;
+  late StreamSubscription onDiscoveryUnlikeEventListener;
   late StreamSubscription onCreateCommentListener;
-  List<DiscoveryResource> resources = [];
+  late ScrollController scrollController;
+
+  DiscoveryEffectDetailScreenState() : super(canCancelOnLoading: false);
+
+  @override
+  showLoadingBar() => showLoading();
+
+  @override
+  hideLoadingBar() => hideLoading();
 
   @override
   void initState() {
     super.initState();
     logEvent(Events.discovery_detail_loading);
+    scrollController = ScrollController();
     api = CartoonizerApi().bindState(this);
-    data = widget.data.copy();
-    resources = data.resourceList();
-    if (resources.isEmpty) {
-      CommonExtension().showToast(StringConstant.commonFailedToast);
-      Navigator.pop(context);
-    }
+    discoveryEntity = widget.discoveryEntity.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
-        refreshData();
-      } else {}
-    });
-    onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
-      var id = event.data!.key;
-      var likeId = event.data!.value;
-      if (data.id == id) {
-        data.likeId = likeId;
-        data.likes++;
+        _refreshController.callRefresh();
+      } else {
+        for (var value in dataList) {
+          value.likeId = null;
+        }
         setState(() {});
       }
     });
-    onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
-      if (data.id == event.data) {
-        data.likeId = null;
-        data.likes--;
+    onLikeEventListener = EventBusHelper().eventBus.on<OnCommentLikeEvent>().listen((event) {
+      var id = event.data!.key;
+      var likeId = event.data!.value;
+      for (var data in dataList) {
+        if (data.id == id) {
+          data.likeId = likeId;
+          data.likes++;
+          setState(() {});
+        }
+      }
+    });
+    onUnlikeEventListener = EventBusHelper().eventBus.on<OnCommentUnlikeEvent>().listen((event) {
+      for (var data in dataList) {
+        if (data.id == event.data) {
+          data.likeId = null;
+          data.likes--;
+          setState(() {});
+        }
+      }
+    });
+    onDiscoveryLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
+      if (discoveryEntity.id == event.data!.key) {
+        discoveryEntity.likes++;
+        discoveryEntity.likeId = event.data!.value;
+        setState(() {});
+      }
+    });
+    onDiscoveryUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
+      if (discoveryEntity.id == event.data) {
+        discoveryEntity.likes--;
+        discoveryEntity.likeId = null;
         setState(() {});
       }
     });
     onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
-      if (event.data?.length == 1) {
-        if (data.id == event.data![0]) {
-          setState(() {
-            data.comments++;
-          });
+      if ((event.data?.length ?? 0) > 1) {
+        for (var value in dataList) {
+          if (value.id == event.data![1]) {
+            value.comments++;
+            break;
+          }
         }
+        setState(() {});
       }
     });
-    imageListWidth = ScreenUtil.screenSize.width - $(30);
-    delay(() {
-      if (widget.autoToComments) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => DiscoveryCommentsListScreen(
-              discoveryEntity: data,
-            ),
-            settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
-          ),
-        );
-      }
-    });
+    delay(() => _refreshController.callRefresh());
   }
 
   @override
   void dispose() {
     super.dispose();
     api.unbind();
-    onLoginEventListener.cancel();
-    onLikeEventListener.cancel();
+    _refreshController.dispose();
     onUnlikeEventListener.cancel();
+    onLikeEventListener.cancel();
+    onLoginEventListener.cancel();
+    onDiscoveryLikeEventListener.cancel();
+    onDiscoveryUnlikeEventListener.cancel();
     onCreateCommentListener.cancel();
   }
 
-  refreshData() {
-    showLoading().whenComplete(() {
-      api.getDiscoveryDetail(data.id).then((value) {
-        hideLoading().whenComplete(() {
-          if (value != null) {
-            setState(() {
-              data = value;
-            });
-          }
-        });
+  loadFirstPage() => api
+          .listDiscoveryComments(
+        from: 0,
+        pageSize: pageSize,
+        socialPostId: discoveryEntity.id,
+      )
+          .then((value) {
+        _refreshController.finishRefresh();
+        if (value != null) {
+          page = 0;
+          var list = value.getDataList<DiscoveryCommentListEntity>();
+          setState(() {
+            dataList = list;
+          });
+          _refreshController.finishLoad(noMore: dataList.length != pageSize);
+        }
       });
+
+  loadMorePage() => api
+          .listDiscoveryComments(
+        from: (page + 1) * pageSize,
+        pageSize: pageSize,
+        socialPostId: discoveryEntity.id,
+      )
+          .then((value) {
+        if (value == null) {
+          _refreshController.finishLoad(noMore: false);
+        } else {
+          page++;
+          var list = value.getDataList<DiscoveryCommentListEntity>();
+          setState(() {
+            dataList.addAll(list);
+          });
+          _refreshController.finishLoad(noMore: list.length != pageSize);
+        }
+      });
+
+  onCreateCommentClick({int? replySocialPostCommentId, String? userName}) {
+    userManager.doOnLogin(context, callback: () {
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
+              uniqueId: "${discoveryEntity.id}_${replySocialPostCommentId ?? ''}",
+              hint: userName != null ? 'reply $userName' : '',
+              callback: (text) async {
+                return createComment(text, replySocialPostCommentId);
+              },
+            ),
+          ));
     });
+  }
+
+  Future<bool> createComment(String comment, int? replySocialPostCommentId) async {
+    await showLoading();
+    var baseEntity = await api.createDiscoveryComment(
+        comment: comment,
+        socialPostId: discoveryEntity.id,
+        replySocialPostCommentId: replySocialPostCommentId,
+        onUserExpired: () {
+          userManager.doOnLogin(context);
+        });
+    await hideLoading();
+    if (baseEntity != null) {
+      CommonExtension().showToast('Comment posted');
+      delay(() => _refreshController.callRefresh(), milliseconds: 64);
+    }
+    return baseEntity != null;
+  }
+
+  onCommentLikeTap(DiscoveryCommentListEntity entity) {
+    userManager.doOnLogin(context, callback: () {
+      showLoading().whenComplete(() {
+        if (entity.likeId == null) {
+          api.commentLike(entity.id).then((value) {
+            hideLoading();
+          });
+        } else {
+          api.commentUnLike(entity.id, entity.likeId!).then((value) {
+            hideLoading();
+          });
+        }
+      });
+    }, autoExec: false);
+  }
+
+  onDiscoveryLikeTap() {
+    userManager.doOnLogin(context, callback: () {
+      showLoading().whenComplete(() {
+        if (discoveryEntity.likeId == null) {
+          api.discoveryLike(discoveryEntity.id).then((value) {
+            hideLoading();
+          });
+        } else {
+          api.discoveryUnLike(discoveryEntity.id, discoveryEntity.likeId!).then((value) {
+            hideLoading();
+          });
+        }
+      });
+    }, autoExec: false);
   }
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
         middle: TitleTextWidget(StringConstant.discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
         trailing: TitleTextWidget('Delete', ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
           showDeleteDialog();
-        }).visibility(visible: userManager.user?.id == data.userId),
+        }).visibility(visible: userManager.user?.id == discoveryEntity.userId),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            UserInfoHeaderWidget(
-              avatar: data.userAvatar,
-              name: data.userName,
-            ).intoGestureDetector(onTap: () {
-              UserManager userManager = AppDelegate.instance.getManager();
-              bool isMe = userManager.user?.id == data.userId;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MyDiscoveryScreen(
-                    userId: data.userId,
-                    title: isMe ? StringConstant.setting_my_discovery : null,
-                  ),
-                  settings: RouteSettings(name: "/UserDiscoveryScreen"),
-                ),
-              );
-            }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(25), bottom: 0), constraints: BoxConstraints(minHeight: $(30))),
-            Text(
-              data.text,
-              style: TextStyle(
-                color: ColorConstant.White,
-                fontSize: $(15),
-                fontFamily: 'Poppins',
-              ),
-            ).intoContainer(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(15)),
-            ),
-            resources.length > 1
-                ? Row(
-                    children: [
-                      buildResourceItem(
-                        resources[0],
-                        width: (imageListWidth - $(2)) / 2,
-                      ).listenSizeChanged(onSizeChanged: (size) {
-                        if (size.height < 1920) {
-                          setState(() {
-                            imageSize = size;
-                          });
-                        }
-                      }).intoGestureDetector(onTap: () {
-                        if (resources[0].type == 'image') {
-                          open(context, 0);
-                        }
-                      }),
-                      SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
-                      imageSize != null
-                          ? buildResourceItem(
-                              resources[1],
-                              width: (imageListWidth - $(2)) / 2,
-                              height: imageSize!.height,
-                            ).intoGestureDetector(onTap: () {
-                              if (resources[1].type == 'image') {
-                                open(context, 1);
-                              }
-                            })
-                          : Container(),
-                    ],
-                  ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)), constraints: BoxConstraints(minHeight: $(100)))
-                : buildResourceItem(resources[0], width: imageListWidth).intoGestureDetector(onTap: () {
-                    if (resources[0].type == 'image') {
-                      open(context, 0);
+      body: Column(
+        children: [
+          Expanded(
+              child: EasyRefresh.custom(
+            controller: _refreshController,
+            scrollController: scrollController,
+            enableControlFinishRefresh: true,
+            enableControlFinishLoad: false,
+            onRefresh: () async => loadFirstPage(),
+            onLoad: () async => loadMorePage(),
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) {
+                    if (i == 0) {
+                      return DiscoveryEffectDetailWidget(data: discoveryEntity, loadingAction: this);
+                    } else {
+                      var index = i - 1;
+                      return DiscoveryCommentsListCard(
+                        data: dataList[index],
+                        isLast: index == dataList.length - 1,
+                        isTopComments: true,
+                        onTap: () {
+                          onCreateCommentClick(
+                            replySocialPostCommentId: dataList[index].id,
+                            userName: dataList[index].userName,
+                          );
+                        },
+                        onLikeTap: () {
+                          onCommentLikeTap(dataList[index]);
+                        },
+                        onCommentTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => DiscoverySecondaryCommentsListScreen(
+                                parentComment: dataList[index],
+                              ),
+                              settings: RouteSettings(name: "/DiscoverySecondaryCommentsListScreen"),
+                            ),
+                          );
+                        },
+                      ).intoContainer(margin: EdgeInsets.only(top: index == 0 ? $(8) : 0));
                     }
-                  }),
-            Row(
-              children: [
-                buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => DiscoveryCommentsListScreen(
-                        discoveryEntity: data,
-                      ),
-                      settings: RouteSettings(name: "/DiscoveryCommentsListScreen"),
-                    ),
-                  );
-                }),
-                SizedBox(width: $(10)),
-                buildAttr(
-                  context,
-                  iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-                  iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
-                  value: data.likes,
-                  axis: Axis.horizontal,
-                  onTap: () {
-                    userManager.doOnLogin(context, callback: () {
-                      onLikeTap();
-                    }, autoExec: false);
                   },
+                  childCount: dataList.length + 1,
                 ),
-              ],
-            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(6))),
-            OutlineWidget(
-              strokeWidth: $(2),
-              radius: $(6),
-              gradient: LinearGradient(
-                colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              child: ShaderMask(
-                shaderCallback: (Rect bounds) => LinearGradient(
-                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ).createShader(Offset.zero & bounds.size),
-                blendMode: BlendMode.srcATop,
-                child: TitleTextWidget(
-                  StringConstant.discoveryDetailsUseSameTemplate,
-                  Color(0xffffffff),
-                  FontWeight.w700,
-                  $(16),
-                ).intoContainer(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
-                ),
-              ),
-            )
-                .intoGestureDetector(
-                  onTap: () {
-                    toChoosePage();
-                  },
-                )
-                .intoContainer(
-                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(45), bottom: $(20)),
-                )
-                .visibility(visible: imageSize != null || resources.length == 1),
-          ],
-        ),
+              )
+            ],
+          ).intoContainer(color: Colors.black)),
+          footer(context),
+        ],
       ),
     );
   }
 
-  Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height}) {
-    if (resource.type == DiscoveryResourceType.video.value()) {
-      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
-    } else {
-      return CachedNetworkImageUtils.custom(
-          context: context,
-          imageUrl: resource.url ?? '',
-          fit: BoxFit.cover,
-          width: width,
-          height: height,
-          cacheManager: CachedImageCacheManager(),
-          placeholder: (context, url) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: height ?? width);
+  Widget footer(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+            child: _function(context, Images.ic_discovery_comment, StringConstant.discoveryComment, onTap: () {
+          onCreateCommentClick(userName: discoveryEntity.userName);
+        })),
+        Expanded(
+            child: _function(
+          context,
+          discoveryEntity.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
+          discoveryEntity.likeId == null ? StringConstant.discoveryLike : StringConstant.discoveryUnlike,
+          iconColor: discoveryEntity.likeId == null ? ColorConstant.White : ColorConstant.Red,
+          onTap: () {
+            onDiscoveryLikeTap();
           },
-          errorWidget: (context, url, error) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: height ?? width);
-          });
-    }
+        )),
+      ],
+    )
+        .intoContainer(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        )
+        .intoMaterial(elevation: 2, color: ColorConstant.DiscoveryCommentBackground);
   }
 
-  void open(BuildContext context, final int index) {
-    List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (context, animation, secondaryAnimation) => GalleryPhotoViewWrapper(
-          galleryItems: images,
-          backgroundDecoration: const BoxDecoration(
-            color: Colors.black,
-          ),
-          initialIndex: index >= images.length ? 0 : index,
-          scrollDirection: Axis.horizontal,
+  Widget _function(BuildContext context, String imgRes, String text, {GestureTapCallback? onTap, Color iconColor = ColorConstant.White}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          imgRes,
+          width: $(18),
+          color: iconColor,
         ),
-      ),
-    );
-  }
-
-  onLikeTap() => showLoading().whenComplete(() {
-        if (data.likeId == null) {
-          api.discoveryLike(data.id).then((value) {
-            hideLoading();
-          });
-        } else {
-          api.discoveryUnLike(data.id, data.likeId!).then((value) {
-            hideLoading();
-          });
-        }
-      });
-
-  toChoosePage() {
-    String key = data.cartoonizeKey;
-    showLoading().whenComplete(() {
-      effectManager.loadData().then((value) {
-        hideLoading().whenComplete(() {
-          if (value == null) {
-            return;
-          }
-          var targetSeries = value.targetSeries(key);
-          if (targetSeries == null) {
-            CommonExtension().showToast("This template is not available now");
-            return;
-          }
-          EffectItem? effectItem;
-          int index = 0;
-          int itemIndex = 0;
-          for (int i = 0; i < targetSeries.value.length; i++) {
-            var model = targetSeries.value[i];
-            var list = model.effects.values.toList();
-            for (int j = 0; j < list.length; j++) {
-              var item = list[j];
-              if (item.key == key) {
-                effectItem = item;
-                index = i;
-                itemIndex = j;
-                break;
-              }
-            }
-          }
-          if (effectItem == null) {
-            return;
-          }
-          logEvent(Events.choose_home_cartoon_type, eventValues: {
-            "category": targetSeries.value[index].key,
-            "style": targetSeries.value[index].style,
-            "page": 'discovery',
-          });
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              settings: RouteSettings(name: "/ChoosePhotoScreen"),
-              builder: (context) => ChoosePhotoScreen(
-                list: targetSeries.value,
-                pos: index,
-                itemPos: itemIndex,
-                entrySource: EntrySource.fromDiscovery,
-                // hasOriginalCheck: false,
-                tabString: targetSeries.key,
-              ),
-            ),
-          );
-        });
-      });
-    });
-  }
-
-  delete() {
-    showLoading().whenComplete(() {
-      api.deleteDiscovery(data.id).then((value) {
-        hideLoading().whenComplete(() {
-          if (value != null) {
-            CommonExtension().showToast('Delete succeed');
-            Navigator.of(context).pop();
-          }
-        });
-      });
-    });
+        SizedBox(width: $(6)),
+        TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14)),
+      ],
+    ).intoContainer(padding: EdgeInsets.all($(16))).intoGestureDetector(onTap: onTap);
   }
 
   showDeleteDialog() {
@@ -465,4 +398,23 @@ class DiscoveryEffectDetailState extends AppState<DiscoveryEffectDetailScreen> w
                 )
                 .intoCenter());
   }
+
+  delete() {
+    showLoading().whenComplete(() {
+      api.deleteDiscovery(discoveryEntity.id).then((value) {
+        hideLoading().whenComplete(() {
+          if (value != null) {
+            CommonExtension().showToast('Delete succeed');
+            Navigator.of(context).pop();
+          }
+        });
+      });
+    });
+  }
+}
+
+abstract class LoadingAction {
+  Future<void> showLoadingBar();
+
+  Future<void> hideLoadingBar();
 }

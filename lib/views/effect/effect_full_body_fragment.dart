@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -10,9 +11,12 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 
+import '../../Widgets/dialog/dialog_widget.dart';
 import 'widget/effect_full_body_card_widget.dart';
 
 class EffectFullBodyFragment extends StatefulWidget {
@@ -35,7 +39,7 @@ class EffectFullBodyFragment extends StatefulWidget {
   }
 }
 
-class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
@@ -47,10 +51,12 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
   double marginTop = $(110);
+  late bool nsfwOpen;
 
   @override
   initState() {
     super.initState();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     marginTop = $(110) + ScreenUtil.getStatusBarHeight();
     effectModelList = widget.dataList;
     recentController = widget.recentController;
@@ -115,6 +121,36 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   }
 
   @override
+  onAttached() {
+    super.onAttached();
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
+  }
+
+  @override
+  onEffectClick(PushExtraEntity pushExtraEntity) {
+    EffectItemListData? data;
+    for (var list in dataList) {
+      if (data != null) {
+        break;
+      }
+      for (var value in list) {
+        if (value.key == pushExtraEntity.category && value.item!.key == pushExtraEntity.effect) {
+          data = value;
+          break;
+        }
+      }
+    }
+    if (data != null) {
+      _onEffectCategoryTap(data);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     var width = ScreenUtil.getCurrentWidgetSize(context).width - $(30);
@@ -148,6 +184,17 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
         children: [
           _buildMERCAd(),
           EffectFullBodyCardWidget(
+            onNsfwTap: () {
+              showOpenNsfwDialog(context).then((result) {
+                if (result ?? false) {
+                  setState(() {
+                    nsfwOpen = true;
+                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                  });
+                }
+              });
+            },
+            nsfwShown: nsfwOpen,
             data: data,
             parentWidth: parentWidth,
             onTap: (item) {
@@ -158,6 +205,17 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       );
     } else {
       return EffectFullBodyCardWidget(
+        onNsfwTap: () {
+          showOpenNsfwDialog(context).then((result) {
+            if (result ?? false) {
+              setState(() {
+                nsfwOpen = true;
+                cacheManager.setBool(CacheManager.nsfwOpen, true);
+              });
+            }
+          });
+        },
+        nsfwShown: nsfwOpen,
         data: data,
         parentWidth: parentWidth,
         onTap: (item) {
@@ -168,19 +226,22 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   }
 
   _onEffectCategoryTap(EffectItemListData data) async {
+    EffectDataController effectDataController = Get.find();
     EffectModel? effectModel;
-    int index = 0;
     for (int i = 0; i < effectModelList.length; i++) {
       var model = effectModelList[i];
       if (model.key == data.key) {
         effectModel = model;
-        index = i;
         break;
       }
     }
     if (effectModel == null) {
       return;
     }
+    var effectItem = data.item!;
+    var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
 
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": effectModel.key,
@@ -193,10 +254,9 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: effectModelList,
-          pos: index,
-          itemPos: data.pos,
-          tabString: widget.tabString,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
         ),
       ),
     );

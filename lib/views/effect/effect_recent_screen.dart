@@ -5,8 +5,9 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 import 'effect_fragment.dart';
@@ -66,29 +67,43 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                       ),
                       itemBuilder: (context, index) {
                         var data = _.dataList[index];
-                        return CachedNetworkImageUtils.custom(
-                                context: context,
-                                // useOld: true,
-                                imageUrl: data.item!.imageUrl,
-                                width: cardWidth,
-                                placeholder: (context, url) {
-                                  return CircularProgressIndicator()
-                                      .intoContainer(
-                                        width: $(25),
-                                        height: $(25),
-                                      )
-                                      .intoCenter()
-                                      .intoContainer(width: cardWidth, height: cardWidth);
-                                },
-                                errorWidget: (context, url, error) {
-                                  return CircularProgressIndicator()
-                                      .intoContainer(
-                                        width: $(25),
-                                        height: $(25),
-                                      )
-                                      .intoCenter()
-                                      .intoContainer(width: cardWidth, height: cardWidth);
-                                })
+                        return (data.item!.imageUrl.contains('mp4')
+                                ? Stack(
+                                    children: [
+                                      EffectVideoPlayer(url: data.item!.imageUrl),
+                                      Positioned(
+                                        right: $(5),
+                                        top: $(5),
+                                        child: Image.asset(
+                                          ImagesConstant.ic_video,
+                                          height: $(24),
+                                          width: $(24),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : CachedNetworkImageUtils.custom(
+                                    context: context,
+                                    imageUrl: data.item!.imageUrl,
+                                    width: cardWidth,
+                                    placeholder: (context, url) {
+                                      return CircularProgressIndicator()
+                                          .intoContainer(
+                                            width: $(25),
+                                            height: $(25),
+                                          )
+                                          .intoCenter()
+                                          .intoContainer(width: cardWidth, height: cardWidth);
+                                    },
+                                    errorWidget: (context, url, error) {
+                                      return CircularProgressIndicator()
+                                          .intoContainer(
+                                            width: $(25),
+                                            height: $(25),
+                                          )
+                                          .intoCenter()
+                                          .intoContainer(width: cardWidth, height: cardWidth);
+                                    }))
                             .intoContainer(
                           margin: EdgeInsets.only(
                             top: $(8),
@@ -158,11 +173,10 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: originList,
+          tabPos: 0,
           pos: index,
           itemPos: 0,
           entrySource: EntrySource.fromRecent,
-          tabString: 'recent',
         ),
       ),
     );

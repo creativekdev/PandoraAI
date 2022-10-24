@@ -1,3 +1,6 @@
+
+import 'package:common_utils/common_utils.dart';
+
 class EffectModel {
   late String key = '';
   late String displayName = '';
@@ -7,6 +10,7 @@ class EffectModel {
   late List<String> thumbnails;
   late String thumbnail;
   late String tag;
+  late bool nsfw;
 
   EffectModel({
     required this.key,
@@ -17,6 +21,7 @@ class EffectModel {
     this.style = '',
     this.tag = '',
     this.thumbnail = '',
+    this.nsfw = false,
   }) {
     this.effects = effects ?? {};
     this.thumbnails = thumbnails ?? [];
@@ -32,6 +37,7 @@ class EffectModel {
     style = (json['style'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
     thumbnail = (json['thumbnail'] ?? '').toString();
+    nsfw = (json['is_nsfw'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +49,7 @@ class EffectModel {
     data['display_name'] = displayName;
     data['style'] = style;
     data['tag'] = tag;
+    data['is_nsfw'] = nsfw;
     data['thumbnail'] = thumbnail;
     return data;
   }
@@ -63,6 +70,9 @@ class EffectItem {
   late String id;
   late String displayName;
   late String tag;
+  late List<String> tagList;
+  late int featured;
+  late bool nsfw;
 
   EffectItem({
     this.key = '',
@@ -79,7 +89,12 @@ class EffectItem {
     this.displayName = '',
     this.tag = '',
     this.templateName = '',
-  });
+    this.featured = 0,
+    this.nsfw = false,
+    List<String>? tagList,
+  }) {
+    this.tagList = tagList ?? [];
+  }
 
   EffectItem.fromJson(Map<String, dynamic> json) {
     key = (json['key'] ?? '').toString();
@@ -96,6 +111,13 @@ class EffectItem {
     templateName = (json['template_name'] ?? '').toString();
     displayName = (json['display_name'] ?? '').toString();
     tag = (json['tag'] ?? '').toString();
+    if (!TextUtil.isEmpty(tag)) {
+      tagList = tag.split(',');
+    } else {
+      tagList = [];
+    }
+    featured = (json['featured'] ?? 0);
+    nsfw = (json['is_nsfw'] ?? false);
   }
 
   Map<String, dynamic> toJson() {
@@ -114,6 +136,8 @@ class EffectItem {
     data['template_name'] = templateName;
     data['display_name'] = displayName;
     data['tag'] = tag;
+    data['featured'] = featured;
+    data['is_nsfw'] = nsfw;
     return data;
   }
 }

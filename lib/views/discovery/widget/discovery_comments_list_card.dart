@@ -44,7 +44,6 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
         ClipRRect(
           borderRadius: BorderRadius.circular($(64)),
           child: CachedNetworkImageUtils.custom(
-            useOld: true,
             imageUrl: data.userAvatar.avatar(),
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
@@ -91,7 +90,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                 FontWeight.normal,
                 $(14),
               ),
-              SizedBox(height: $(6)),
+              SizedBox(height: $(4)),
               Text(
                 data.text,
                 style: TextStyle(color: ColorConstant.White, fontSize: $(16), fontFamily: 'Poppins'),
@@ -100,14 +99,9 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                   onTap?.call();
                 }
               }),
-              SizedBox(height: $(6)),
+              SizedBox(height: $(4)),
               TitleTextWidget('other ${data.comments} replies >', ColorConstant.BlueColor, FontWeight.normal, $(13))
-                  .intoContainer(
-                      width: double.maxFinite,
-                      color: Colors.black,
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(6)),
-                      margin: EdgeInsets.only(top: $(4), bottom: $(8)))
+                  .intoContainer(width: double.maxFinite, alignment: Alignment.centerLeft, margin: EdgeInsets.only(bottom: $(4)))
                   .intoGestureDetector(onTap: onCommentTap)
                   .offstage(offstage: data.comments == 0 || type == CommentsListCardType.header || !isTopComments),
               Row(
@@ -140,7 +134,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                   ).offstage(offstage: !isTopComments),
                 ],
               ),
-              SizedBox(height: $(12)),
+              SizedBox(height: $(8)),
               !isLast ? Divider(height: 1, color: ColorConstant.DiscoveryCommentGrey) : Container(),
             ],
           ),

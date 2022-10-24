@@ -5,23 +5,83 @@ import 'EffectModel.dart';
 class EffectMap {
   late Map<String, dynamic> data;
   late Map<String, dynamic> locale;
+  CampaignTab? campaignTab;
+  late List<String> tags;
 
   EffectMap({
     required this.data,
     required this.locale,
-  });
+    this.campaignTab,
+    List<String>? tags,
+  }) {
+    this.tags = tags ?? [];
+  }
 
   EffectMap.fromJson(Map<String, dynamic> json) {
     this.data = json['data'];
     this.locale = json['locale'];
+    if (json['campaign_tab'] != null) {
+      campaignTab = CampaignTab.fromJson(json['campaign_tab']);
+    }
+    if (json['tags'] != null) {
+      this.tags = (json['tags'] as List).map((e) => e.toString()).toList();
+    }
   }
 
   Map<String, dynamic> toJson() {
-    return {'data': data, 'locale': locale};
+    var map = {
+      'data': data,
+      'locale': locale,
+      'tags': tags,
+    };
+    if (campaignTab != null) {
+      map['campaign_tab'] = campaignTab!.toJson();
+    }
+    return map;
+  }
+}
+
+class CampaignTab {
+  late String title;
+  late String image;
+  late String imageSelected;
+  late String tag;
+
+  CampaignTab({this.title = '', this.image = '', this.imageSelected = '', this.tag = ''});
+
+  CampaignTab.fromJson(Map<String, dynamic> json) {
+    this.title = json['title'] ?? '';
+    this.image = json['image'] ?? '';
+    this.imageSelected = json['image_selected'] ?? '';
+    this.tag = json['tag'] ?? '';
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'image': image,
+      'image_selected': imageSelected,
+      'tag': tag,
+    };
   }
 }
 
 extension EffectMapEx on EffectMap {
+  int tabPos(String childKey) {
+    var keys = data.keys.toList();
+    for (int i = 0; i < keys.length; i++) {
+      var list = effectList(keys[i]);
+      var pick = list.pick((e) {
+        var item = e.effects.values.toList().pick((t) => t.key == childKey);
+        return item != null;
+      });
+      if (pick != null) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
   MapEntry<String, List<EffectModel>>? targetSeries(String childKey) {
     for (var key in data.keys) {
       var list = effectList(key);
@@ -74,4 +134,12 @@ extension EffectMapEx on EffectMap {
     }
     return locale['key']?[key] ?? locale['key']?[dn] ?? dn;
   }
+}
+
+class EffectPosHolder {
+  int tabPos;
+  int categoryPos;
+  int itemPos;
+
+  EffectPosHolder({required this.tabPos, required this.categoryPos, required this.itemPos});
 }

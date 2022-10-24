@@ -8,6 +8,7 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
@@ -21,6 +22,7 @@ class JsonConvert {
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
 		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
+		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 	};
 
@@ -114,6 +116,9 @@ class JsonConvert {
 		}
 		if(<MsgPageEntity>[] is M){
 			return data.map<MsgPageEntity>((Map<String, dynamic> e) => MsgPageEntity.fromJson(e)).toList() as M;
+		}
+		if(<PushExtraEntity>[] is M){
+			return data.map<PushExtraEntity>((Map<String, dynamic> e) => PushExtraEntity.fromJson(e)).toList() as M;
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;

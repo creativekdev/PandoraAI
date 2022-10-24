@@ -11,14 +11,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
-  if (!isLogout) {
-    var onlineModel = await AppDelegate.instance.getManager<UserManager>().refreshUser(context: context);
-    if (onlineModel.user == null || onlineModel.user!.status != 'activated') {
-      return;
-    }
-  }
-
+Future<void> loginBack(BuildContext context) async {
   final box = GetStorage();
   String? login_back_page = box.read('login_back_page');
   if (login_back_page != null) {
@@ -26,7 +19,7 @@ Future<void> loginBack(BuildContext context, {bool isLogout: false}) async {
     box.remove('login_back_page');
   } else {
     if (Navigator.canPop(context)) {
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } else {
       Navigator.pushReplacement(
         context,

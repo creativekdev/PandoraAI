@@ -1,3 +1,4 @@
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:event_bus/event_bus.dart';
 
@@ -109,3 +110,12 @@ class OnDeleteDiscoveryEvent extends BaseEvent<int> {
 }
 
 class OnSplashAdLoadingChangeEvent extends BaseEvent {}
+
+/// switch home_screen tab
+class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
+  OnEffectPushClickEvent({required PushExtraEntity data}) : super(data: data);
+}
+
+class OnEffectNsfwChangeEvent extends BaseEvent {}
+
+class OnHomeConfigGetEvent extends BaseEvent {}

@@ -1,27 +1,21 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/auth.dart';
 import 'package:cartoonizer/Widgets/auth/auth_api.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
-import 'package:cartoonizer/Widgets/input_text.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/auth.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/common/auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import '../ForgotPasswordScreen.dart';
 import '../SignupScreen.dart';
 import '../SocialSignUpScreen.dart';
@@ -50,32 +44,6 @@ class _LoginScreenState extends AppState<LoginScreen> {
     thirdpartManager.adsHolder.ignore = true;
   }
 
-  Future<void> goBack() async {
-    final box = GetStorage();
-    String? login_back_page = box.read('login_back_page');
-    if (login_back_page != null) {
-      Navigator.popUntil(context, ModalRoute.withName(login_back_page));
-      box.remove('login_back_page');
-    } else {
-      Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-    }
-  }
-
-  // Future<UserCredential> signInWithFacebook() async {
-  //   // Trigger the sign-in flow
-  //   final LoginResult loginResult = await FacebookAuth.instance.login();
-  //
-  //   // Create a credential from the access token
-  //   final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
-  //
-  //   token = facebookAuthCredential.accessToken;
-  //   tokenId = facebookAuthCredential.idToken;
-  //   print(facebookAuthCredential.accessToken);
-  //
-  //   // Once signed in, return the UserCredential
-  //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  // }
-
   @override
   void dispose() {
     emailController.dispose();
@@ -89,9 +57,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
       signInWithApple().then((value) {
         if (value) {
           hideLoading().whenComplete(() async {
-            userManager.refreshUser();
-            await loginBack(context);
             logEvent(Events.login, eventValues: {"method": "apple"});
+            onLoginSuccess(context);
           });
         } else {
           hideLoading().whenComplete(() {
@@ -149,9 +116,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     }
                   });
                 } else {
-                  userManager.refreshUser();
-                  await loginBack(context);
                   logEvent(Events.login, eventValues: {"method": "google"});
+                  onLoginSuccess(context);
                 }
               }
             });
@@ -246,8 +212,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     if (baseEntity != null) {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setBool("isLogin", true);
-                      await loginBack(context);
                       logEvent(Events.login, eventValues: {"method": "email"});
+                      onLoginSuccess(context);
                     }
                     if (mounted) {
                       hideLoading();
@@ -315,13 +281,17 @@ class _LoginScreenState extends AppState<LoginScreen> {
                       if (prefixPage == 'signup') {
                         Navigator.pop(context);
                       } else {
-                        Navigator.push(
+                        Navigator.push<bool>(
                           context,
                           MaterialPageRoute(
                             settings: RouteSettings(name: "/SignupScreen"),
                             builder: (context) => SignupScreen(),
                           ),
-                        );
+                        ).then((value) {
+                          if (value ?? false) {
+                            Navigator.pop(context);
+                          }
+                        });
                       }
                     },
                   ),
@@ -333,5 +303,24 @@ class _LoginScreenState extends AppState<LoginScreen> {
         ),
       ),
     ).blankAreaIntercept();
+  }
+
+  Future<void> onLoginSuccess(BuildContext context) async {
+    var onlineModel = await userManager.refreshUser();
+    if (onlineModel.user?.status != "activated") {
+      Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => EmailVerificationScreen(emailController.text),
+          settings: RouteSettings(name: "/EmailVerificationScreen"),
+        ),
+      ).then((value) async {
+        if (value ?? false) {
+          await loginBack(context);
+        }
+      });
+    } else {
+      await loginBack(context);
+    }
   }
 }

@@ -17,9 +17,10 @@ class CacheManager extends BaseManager {
   static const keyLastTabAttached = "last_tab_attached";
   static const keyLastEffectTabAttached = "last_effect_tab_attached";
   static const _rateConfig = 'rate_config';
-  static const openToMsg = 'open_to_msg';
   static const effectLastRandomTime = 'effect_last_random_time';
-  static const effectLastRandomList = 'effect_last_random_list';
+  static const effectAllData = 'effect_all_data';
+  static const scaleCacheData = 'scaleCacheData';
+  static const nsfwOpen = 'nsfw_open';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

@@ -10,10 +10,12 @@ import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 
 class RewardAdvertisementScreen extends StatefulWidget {
   RewardInterstitialAdsHolder adsHolder;
+  String watchAdText;
 
   static Future<bool?> push(
     BuildContext context, {
     required RewardInterstitialAdsHolder adsHolder,
+    required String watchAdText,
   }) =>
       showModalBottomSheet<bool>(
           context: context,
@@ -22,9 +24,13 @@ class RewardAdvertisementScreen extends StatefulWidget {
           backgroundColor: Colors.transparent,
           builder: (context) => RewardAdvertisementScreen(
                 adsHolder: adsHolder,
+                watchAdText: watchAdText,
               ));
 
-  RewardAdvertisementScreen({required this.adsHolder});
+  RewardAdvertisementScreen({
+    required this.adsHolder,
+    required this.watchAdText,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -188,7 +194,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    StringConstant.watchAdText,
+                    widget.watchAdText,
                     style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(15), height: 1.2),
                     textAlign: TextAlign.center,
                   )

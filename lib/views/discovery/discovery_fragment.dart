@@ -3,10 +3,13 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -36,12 +39,13 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late AppTabId tabId;
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
+  EffectManager effectManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   late TabController tabController;
   late List<DiscoveryFilterTab> tabList = [
-    DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
     DiscoveryFilterTab(sort: DiscoverySort.newest, title: 'Newest'),
+    DiscoveryFilterTab(sort: DiscoverySort.likes, title: 'Popular'),
   ];
   late DiscoveryFilterTab currentTab;
   int page = 0;
@@ -55,12 +59,13 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onTabDoubleClickListener;
   late StreamSubscription onCreateCommentListener;
   late StreamSubscription onDeleteListener;
+  late StreamSubscription onNsfwChangeListener;
 
   bool listLoading = false;
 
   late CardAdsMap cardAdsMap;
   double cardWidth = 150;
-  final double adScale = 1.55;
+  final double adScale = 1;
 
   late ScrollController scrollController;
   late ScrollController headerScrollController;
@@ -69,13 +74,19 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   double lastOffset = 0;
   bool maskVisible = true;
   bool firstLoad = true;
+  Map<int, GlobalKey<FutureLoadingImageState>> keyMap = {};
+  late bool nsfwOpen;
 
   @override
   void initState() {
     super.initState();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     api = CartoonizerApi().bindState(this);
     tabId = widget.tabId;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
+    onNsfwChangeListener = EventBusHelper().eventBus.on<OnEffectNsfwChangeEvent>().listen((event) {
+      setState(() {});
+    });
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
         _easyRefreshController.callRefresh();
@@ -145,11 +156,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
     cardAdsMap = CardAdsMap(
-        width: cardWidth,
-        onUpdated: () {
+      width: cardWidth,
+      onUpdated: () {
+        if (mounted) {
           setState(() {});
-        },
-        scale: adScale);
+        }
+      },
+      scale: adScale,
+    );
     cardAdsMap.init();
     scrollController = ScrollController();
     headerScrollController = ScrollController();
@@ -198,6 +212,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onTabDoubleClickListener.cancel();
     onCreateCommentListener.cancel();
     onDeleteListener.cancel();
+    onNsfwChangeListener.cancel();
   }
 
   @override
@@ -210,6 +225,12 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       logEvent(Events.tab_discovery_loading);
     }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
   }
 
   onTabClick(index) {
@@ -218,8 +239,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   }
 
   Future<void> addToDataList(int page, List<DiscoveryListEntity> list) async {
-    if (!cardAdsMap.hasAdHolder(page + 2)) {
-      cardAdsMap.addAdsCard(page + 2);
+    if (!cardAdsMap.hasAdHolder(page + 1)) {
+      cardAdsMap.addAdsCard(page + 1);
     }
     for (int i = 0; i < list.length; i++) {
       var data = list[i];
@@ -236,6 +257,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   onLoadFirstPage() {
     setState(() => listLoading = true);
+    cardAdsMap.init();
     api
         .listDiscovery(
       from: 0,
@@ -243,19 +265,27 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       sort: currentTab.sort,
     )
         .then((value) {
-      delay(() => setState(() => listLoading = false), milliseconds: 1500);
+      delay(() {
+        if (mounted) {
+          setState(() => listLoading = false);
+        }
+      }, milliseconds: 1500);
       _easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;
         dataList.clear();
         var list = value.getDataList<DiscoveryListEntity>();
         addToDataList(page, list).whenComplete(() {
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         });
         _easyRefreshController.finishLoad(noMore: list.length != pageSize);
       }
       if (firstLoad) {
-        scrollController.animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
+        if (mounted) {
+          scrollController.animateTo(0, duration: Duration(milliseconds: 200), curve: Curves.linear);
+        }
         firstLoad = false;
       }
     });
@@ -395,6 +425,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         onLoad: () async => onLoadMorePage(),
         child: WaterfallFlow.builder(
           cacheExtent: ScreenUtil.screenSize.height,
+          addAutomaticKeepAlives: false,
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
@@ -404,21 +435,32 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
             if (data.isAd) {
               return _buildMERCAd(data.page);
             }
+            if (keyMap[index] == null) {
+              keyMap[index] = GlobalKey<FutureLoadingImageState>();
+            }
             return DiscoveryListCard(
+              nsfwShown: effectManager.effectNsfw(data.data!.cartoonizeKey) && !nsfwOpen,
+              imageKey: keyMap[index],
               data: data.data!,
               width: cardWidth,
+              onNsfwTap: () => showOpenNsfwDialog(context).then((result) {
+                if (result ?? false) {
+                  setState(() {
+                    nsfwOpen = true;
+                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                  });
+                }
+              }),
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(data: dataList[index].data!),
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: dataList[index].data!),
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
-              onLikeTap: () {
-                userManager.doOnLogin(context, callback: () {
-                  onLikeTap(dataList[index].data!);
-                }, autoExec: false);
-              },
+              onLikeTap: () => userManager.doOnLogin(context, callback: () {
+                onLikeTap(dataList[index].data!);
+              }, autoExec: false),
             )
                 .intoContainer(
                   margin: EdgeInsets.only(top: $(8)),
@@ -450,7 +492,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           return result.intoContainer(
             margin: EdgeInsets.only(top: $(8), bottom: $(8)),
             width: cardWidth,
-            height: cardWidth * adScale,
+            // height: cardWidth * adScale,
           );
         }
       }

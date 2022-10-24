@@ -95,25 +95,25 @@ class AppProgressBarState extends State<AppProgressBar> with SingleTickerProvide
       borderRadius: borderRadius,
       child: Row(
         children: [
-          // Expanded(
-          //   child: CustomPaint(
-          //     painter: ProgressPainter(dashSize: dashSize, loadingColors: loadingColors, offset: offset, backgroundColor: backgroundColor),
-          //   ),
-          //   flex: progress,
-          // ),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-                borderRadius: BorderRadius.circular($(32)),
-              ),
+            child: CustomPaint(
+              painter: ProgressPainter(dashSize: dashSize, loadingColors: loadingColors, offset: offset, backgroundColor: backgroundColor),
             ),
             flex: progress,
           ),
+          // Expanded(
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       gradient: LinearGradient(
+          //         colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+          //         begin: Alignment.centerLeft,
+          //         end: Alignment.centerRight,
+          //       ),
+          //       borderRadius: BorderRadius.circular($(32)),
+          //     ),
+          //   ),
+          //   flex: progress,
+          // ),
           Expanded(
             child: Container(
               width: double.maxFinite,

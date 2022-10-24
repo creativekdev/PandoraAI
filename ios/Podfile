@@ -32,6 +32,10 @@ flutter_ios_podfile_setup
 
 pod 'TikTokOpenSDK', '~> 5.0.0'
 pod 'GoogleUtilities', '~> 7.7.0'
+pod 'GoogleMobileAdsMediationAppLovin'
+pod 'GoogleMobileAdsMediationFacebook'
+pod 'GoogleMobileAdsMediationUnity'
+pod 'GoogleMobileAdsMediationVungle'
 
 target 'Runner' do
   use_frameworks!

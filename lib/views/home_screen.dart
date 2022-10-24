@@ -1,13 +1,18 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/activity/activity_fragment.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'home_tab.dart';
 
@@ -25,6 +30,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StreamSubscription onPaySuccessListener;
+  late StreamSubscription onTabSwitchListener;
+  late StreamSubscription onHomeConfigListener;
+  EffectDataController dataController = Get.put(EffectDataController());
+  RecentController recentController = Get.put(RecentController());
 
   @override
   void initState() {
@@ -33,6 +42,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     initialTab(false);
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
+    });
+    onTabSwitchListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
+      var data = event.data![0];
+      for (int i = 0; i < tabItems.length; i++) {
+        var tabItem = tabItems[i];
+        if (tabItem.id == data) {
+          _setIndex(i);
+        }
+      }
+    });
+    onHomeConfigListener = EventBusHelper().eventBus.on<OnHomeConfigGetEvent>().listen((event) {
+      initialTab(true);
     });
     delay(() {
       userManager.refreshUser(context: context).then((value) {
@@ -44,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           } else {
             delay(() {
               userManager.rateNoticeOperator.judgeAndShowNotice(context);
-              // judgePushEvents();
+              judgePushEvents();
             });
           }
         }
@@ -53,11 +74,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void judgePushEvents() {
-    AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
-    if (cacheManager.getBool(CacheManager.openToMsg)) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MsgListScreen()));
-      cacheManager.setBool(CacheManager.openToMsg, false);
-    }
+    FirebaseMessaging.instance.getInitialMessage().then((value) {
+      if (value != null) {
+        AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
+      }
+    });
   }
 
   @override
@@ -70,22 +91,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
     onPaySuccessListener.cancel();
+    onTabSwitchListener.cancel();
+    onHomeConfigListener.cancel();
   }
 
   initialTab(bool needSetState) {
     tabItems.clear();
     var allTabItems = buildTabItem();
     for (var tabItem in allTabItems) {
-      // 不做权限校验
-      // if (userManager.hasRole(tabItem.roles)) {
-      //有权限才创建item
       tabItem.createFragment();
       tabItems.add(tabItem);
-      // }
     }
-    currentIndex = 0;
-    if (needSetState) {
-      setState(() {});
+    if (!allTabItems.exist((t) => t.id == AppTabId.ACTIVITY.id())) {
+      var tab = dataController.data?.campaignTab;
+      if (tab != null) {
+        var appRoleTabItem = AppRoleTabItem(
+          id: AppTabId.ACTIVITY.id(),
+          titleBuilder: (context) => tab.title,
+          keyBuilder: () => GlobalKey<ActivityFragmentState>(),
+          fragmentBuilder: (key) => ActivityFragment(
+            tabId: AppTabId.ACTIVITY,
+            key: key,
+          ),
+          normalIcon: 'base64:${tab.image}',
+          selectedIcon: 'base64:${tab.imageSelected}',
+        );
+        appRoleTabItem.createFragment();
+        tabItems.insert(1, appRoleTabItem);
+      }
+      if (needSetState) {
+        setState(() {});
+      }
     }
   }
 
@@ -96,9 +132,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         for (var i = 0; i < tabItems.length; i++) {
           var key = tabItems[i].key;
           if (i == currentIndex) {
-            key.currentState?.onAttached();
+            key!.currentState?.onAttached();
           } else {
-            key.currentState?.onDetached();
+            key!.currentState?.onDetached();
           }
         }
       });
@@ -107,11 +143,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    AppDelegate.instance.getManager<NotificationManager>().syncContext(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment).toList()).intoContainer(color: ColorConstant.BackgroundColor),
+          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment!).toList()).intoContainer(color: ColorConstant.BackgroundColor),
           Align(
             alignment: Alignment.bottomCenter,
             child: tabItems.length > 1
@@ -148,15 +185,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List<BottomNavigationBarItem> result = List.empty(growable: true);
     for (int i = 0; i < tabItems.length; i++) {
       var value = tabItems[i];
-      result.add(BottomNavigationBarItem(
-        icon: Image.asset(
+      Image normalIcon;
+      Image selectedIcon;
+      if (value.normalIcon.startsWith('base64:')) {
+        var image = value.normalIcon.replaceAll('base64:', '');
+        var imageUint8List = base64Decode(image);
+        normalIcon = Image.memory(
+          imageUint8List,
+          gaplessPlayback: true,
+        );
+      } else {
+        normalIcon = Image.asset(
           value.normalIcon,
           gaplessPlayback: true,
-        ),
-        activeIcon: Image.asset(
+        );
+      }
+      if (value.selectedIcon.startsWith('base64:')) {
+        var image = value.selectedIcon.replaceAll('base64:', '');
+        var imageUint8List = base64Decode(image);
+        selectedIcon = Image.memory(
+          imageUint8List,
+          gaplessPlayback: true,
+        );
+      } else {
+        selectedIcon = Image.asset(
           value.selectedIcon,
           gaplessPlayback: true,
-        ),
+        );
+      }
+      result.add(BottomNavigationBarItem(
+        icon: normalIcon,
+        activeIcon: selectedIcon,
         label: value.titleBuilder(context),
       ));
     }

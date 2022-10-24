@@ -11,7 +11,9 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
+import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -26,6 +28,12 @@ class _SettingScreenState extends AppState<SettingScreen> {
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
   int totalSize = 0;
+
+  bool get nsfwOpen => cacheManager.getBool(CacheManager.nsfwOpen);
+
+  set nsfwOpen(bool value) {
+    cacheManager.setBool(CacheManager.nsfwOpen, value);
+  }
 
   @override
   void initState() {
@@ -137,6 +145,33 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   $(13),
                 ).marginOnly(right: $(15)),
               ),
+              Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
+              functions('Scary content alert!',
+                  training: FlutterSwitch(
+                    value: nsfwOpen,
+                    onToggle: (value) {
+                      if (value) {
+                        showOpenNsfwDialog(context).then((result) {
+                          if (result ?? false) {
+                            setState(() {
+                              nsfwOpen = true;
+                            });
+                          }
+                        });
+                      } else {
+                        setState(() {
+                          nsfwOpen = value;
+                        });
+                      }
+                    },
+                    activeColor: ColorConstant.BlueColor,
+                    inactiveColor: ColorConstant.EffectGrey,
+                    width: $(50),
+                    height: $(24),
+                  ).intoContainer(margin: EdgeInsets.only(right: $(12)))),
               SizedBox(height: $(50)),
               TitleTextWidget(StringConstant.setting_my_delete_account, ColorConstant.White, FontWeight.normal, $(15))
                   .intoContainer(

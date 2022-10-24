@@ -1,7 +1,9 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/admob/banner_ads_holder.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -10,8 +12,11 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
+import 'package:common_utils/common_utils.dart';
 import 'effect_fragment.dart';
 import 'widget/effect_face_card_widget.dart';
 
@@ -37,7 +42,7 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;
@@ -47,12 +52,14 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(110);
+  double marginTop = $(118);
+  late bool nsfwOpen;
 
   @override
   initState() {
     super.initState();
-    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
+    nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
+    marginTop = $(118) + ScreenUtil.getStatusBarHeight();
     recentController = widget.recentController;
     dataList = widget.dataList;
     bannerAdsHolder = BannerAdsHolder(
@@ -87,6 +94,17 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   }
 
   @override
+  onAttached() {
+    super.onAttached();
+    var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
+    if (nsfwOpen != nsfw) {
+      setState(() {
+        nsfwOpen = nsfw;
+      });
+    }
+  }
+
+  @override
   void dispose() {
     super.dispose();
     bannerAdsHolder.onDispose();
@@ -98,6 +116,27 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     setState(() {
       this.dataList = dataList;
     });
+  }
+
+  @override
+  onEffectClick(PushExtraEntity pushExtraEntity) {
+    for (int i = 0; i < dataList.length; i++) {
+      var value = dataList[i];
+      if (value.key == pushExtraEntity.category) {
+        if (TextUtil.isEmpty(pushExtraEntity.effect)) {
+          _onEffectCategoryTap(dataList, i);
+        } else {
+          var effectList = value.effects.values.toList();
+          for (int j = 0; j < effectList.length; j++) {
+            if (pushExtraEntity.effect == effectList[j].key) {
+              _onEffectCategoryTap(dataList, i, itemPos: j);
+              break;
+            }
+          }
+        }
+        break;
+      }
+    }
   }
 
   @override
@@ -139,6 +178,17 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
         children: [
           _buildMERCAd(),
           EffectFaceCardWidget(
+            nsfwShown: !nsfwOpen && data.nsfw,
+            onNsfwTap: () {
+              showOpenNsfwDialog(context).then((result) {
+                if (result ?? false) {
+                  setState(() {
+                    nsfwOpen = true;
+                    cacheManager.setBool(CacheManager.nsfwOpen, true);
+                  });
+                }
+              });
+            },
             data: data,
             parentWidth: parentWidth,
           ),
@@ -146,27 +196,47 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
       );
     } else {
       return EffectFaceCardWidget(
+        nsfwShown: !nsfwOpen && data.nsfw,
         data: data,
         parentWidth: parentWidth,
+        onNsfwTap: () {
+          showOpenNsfwDialog(context).then((result) {
+            if (result ?? false) {
+              setState(() {
+                nsfwOpen = true;
+                cacheManager.setBool(CacheManager.nsfwOpen, true);
+              });
+            }
+          });
+        },
       );
     }
   }
 
-  _onEffectCategoryTap(List<EffectModel> list, int index) async {
+  _onEffectCategoryTap(List<EffectModel> list, int index, {int? itemPos}) async {
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": list[index].key,
       "style": list[index].style,
       "page": widget.tabString,
     });
+    EffectDataController effectDataController = Get.find();
 
+    EffectModel effectModel = list[index];
+    if (itemPos == null) {
+      itemPos = effectModel.getDefaultPos();
+    }
+    var effectItem = effectModel.effects.values.toList()[itemPos];
+    var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          list: list,
-          pos: index,
-          tabString: widget.tabString,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
         ),
       ),
     );

@@ -7,7 +7,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
-import 'package:cartoonizer/views/discovery/discovery_comments_list_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_card.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -69,7 +68,9 @@ class MsgListState extends AppState<MsgListScreen> {
           api.getDiscoveryDetail(entity.targetId).then((value) {
             hideLoading().whenComplete(() {
               if (value != null) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(data: value)));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(discoveryEntity: value)),
+                );
               }
             });
           });
@@ -81,11 +82,9 @@ class MsgListState extends AppState<MsgListScreen> {
           api.getDiscoveryDetail(entity.targetId).then((value) {
             hideLoading().whenComplete(() {
               if (value != null) {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => DiscoveryEffectDetailScreen(
-                          data: value,
-                          autoToComments: true,
-                        )));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(discoveryEntity: value)),
+                );
               }
             });
           });
@@ -109,7 +108,7 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: ColorConstant.CardColor,
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.CardColor,
         blurAble: false,

@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/events.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../../views/StripeSubscriptionScreen.dart';
 
 class SplashAdsHolder extends PageAdsHolder {
   /// 广告重载间隔
@@ -135,6 +139,15 @@ class SplashAdsHolder extends PageAdsHolder {
         ad.dispose();
         _appOpenAd = null;
         loadAd();
+        if (isShowAdsNew()) {
+          delay(() {
+            if (Platform.isIOS) {
+              Get.to(PurchaseScreen());
+            } else {
+              Get.to(StripeSubscriptionScreen());
+            }
+          }, milliseconds: 100);
+        }
       },
     );
     _appOpenAd!.show();

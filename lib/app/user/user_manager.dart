@@ -22,7 +22,7 @@ class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
 
-  Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer);
+  Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
   set aiServers(Map<String, dynamic> data) => cacheManager.setJson(CacheManager.keyAiServer, data);
 
@@ -102,18 +102,19 @@ class UserManager extends BaseManager {
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
     var value = await CartoonizerApi().getCurrentUser();
-    aiServers = value.aiServers;
+    if (value.aiServers.isNotEmpty) {
+      aiServers = value.aiServers;
+    }
     if (value.loginSuccess) {
       user = value.user!;
       if (context != null && user!.status != 'activated') {
         // remove all route and push email verification screen
-        await Navigator.pushAndRemoveUntil(
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => EmailVerificationScreen(user!.getShownEmail()),
             settings: RouteSettings(name: "/EmailVerificationScreen"),
           ),
-          ModalRoute.withName('/HomeScreen'),
         );
       }
     }
@@ -172,7 +173,6 @@ class UserManager extends BaseManager {
   Future<void> logout() async {
     user = null;
     sid = null;
-    cacheManager.setBool(CacheManager.openToMsg, false);
     lastLauncherLoginStatus = false;
   }
 }

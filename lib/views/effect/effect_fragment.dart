@@ -22,6 +22,7 @@ import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
+import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
 class EffectFragment extends StatefulWidget {
@@ -36,12 +37,12 @@ class EffectFragment extends StatefulWidget {
   State<StatefulWidget> createState() => EffectFragmentState();
 }
 
-class EffectFragmentState extends AppState<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFragmentState extends State<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  EffectDataController dataController = Get.put(EffectDataController());
-  RecentController recentController = Get.put(RecentController());
+  EffectDataController dataController = Get.find();
+  RecentController recentController = Get.find();
   late AppTabId tabId;
 
   int currentIndex = 0;
@@ -50,6 +51,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   List<HomeTabConfig> tabConfig = [];
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
+  late StreamSubscription onPushDataListener;
   bool proVisible = false;
 
   @override
@@ -58,9 +60,9 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
-        dataController.loadData();
-        userManager.refreshUser();
-        setState(() {});
+        if (dataController.data == null) {
+          dataController.loadData();
+        }
       }
     });
     onUserStateChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
@@ -70,6 +72,22 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
     onUserLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       refreshProVisible();
       setState(() {});
+    });
+    onPushDataListener = EventBusHelper().eventBus.on<OnEffectPushClickEvent>().listen((event) {
+      var pushExtraEntity = event.data!;
+      for (int i = 0; i < tabConfig.length; i++) {
+        var config = tabConfig[i];
+        if (config.tabString == pushExtraEntity.tab) {
+          _tabController?.index = i;
+          setIndex(i);
+          var state = (config.key.currentState as EffectTabState?);
+          if (state == null) {
+            delay(() => (config.key.currentState as EffectTabState?)?.onEffectClick(pushExtraEntity), milliseconds: 500);
+          } else {
+            state.onEffectClick(pushExtraEntity);
+          }
+        }
+      }
     });
     refreshProVisible();
   }
@@ -149,11 +167,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return build2(context);
-  }
-
-  @override
-  Widget buildWidget(BuildContext context) {
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
@@ -189,32 +202,37 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       tabString: value,
                     ),
                     title: _.data!.localeName(value),
+                    tabString: value,
                   ),
                 );
               } else if (value == 'full_body') {
                 tabConfig.add(
                   HomeTabConfig(
+                    key: key,
+                    item: EffectFullBodyFragment(
                       key: key,
-                      item: EffectFullBodyFragment(
-                        key: key,
-                        tabId: tabId.id(),
-                        dataList: _.data!.effectList(value),
-                        recentController: recentController,
-                        tabString: value,
-                      ),
-                      title: _.data!.localeName(value)),
+                      tabId: tabId.id(),
+                      dataList: _.data!.effectList(value),
+                      recentController: recentController,
+                      tabString: value,
+                    ),
+                    title: _.data!.localeName(value),
+                    tabString: value,
+                  ),
                 );
               } else if (value == 'template') {
                 tabConfig.add(HomeTabConfig(
+                  key: key,
+                  item: EffectRandomFragment(
                     key: key,
-                    item: EffectRandomFragment(
-                      key: key,
-                      tabString: value,
-                      tabId: tabId.id(),
-                      recentController: recentController,
-                      dataController: dataController,
-                    ),
-                    title: _.data!.localeName(value)));
+                    tabString: value,
+                    tabId: tabId.id(),
+                    recentController: recentController,
+                    dataController: dataController,
+                  ),
+                  title: _.data!.localeName(value),
+                  tabString: value,
+                ));
               } else {
                 tabConfig.add(
                   HomeTabConfig(
@@ -228,6 +246,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       tabString: value,
                     ),
                     title: _.data!.localeName(value),
+                    tabString: value,
                   ),
                 );
               }
@@ -267,12 +286,12 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                     strokeCap: StrokeCap.butt,
                     borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
                   ),
-                  isScrollable: tabConfig.length < 4,
+                  isScrollable: tabConfig.length > 4,
                   labelColor: ColorConstant.PrimaryColor,
                   labelPadding: EdgeInsets.symmetric(horizontal: 0),
-                  labelStyle: TextStyle(fontSize: $(13), fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.bold),
                   unselectedLabelColor: ColorConstant.PrimaryColor,
-                  unselectedLabelStyle: TextStyle(fontSize: $(13), fontWeight: FontWeight.w500),
+                  unselectedLabelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.w500),
                   controller: _tabController,
                   onTap: (index) {
                     setIndex(index);
@@ -339,7 +358,7 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                     });
                   }),
                 ],
-              ).intoContainer(margin: EdgeInsets.only(left: $(4))).offstage(offstage: !proVisible),
+              ).intoContainer(margin: EdgeInsets.only(left: $(1))).offstage(offstage: !proVisible),
               middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,
@@ -358,7 +377,6 @@ class EffectFragmentState extends AppState<EffectFragment> with TickerProviderSt
                       builder: (context) => MsgListScreen(),
                     ),
                   );
-                  AppDelegate.instance.getManager<CacheManager>().setBool(CacheManager.openToMsg, false);
                 }, autoExec: true);
               }),
             ),
