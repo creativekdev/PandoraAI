@@ -65,9 +65,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     bannerAdsHolder = BannerAdsHolder(
       this,
       onUpdated: () {
-        if (mounted) {
-          setState(() {});
-        }
+        setState(() {});
       },
       adId: AdMobConfig.BANNER_AD_ID,
       horizontalPadding: $(50),

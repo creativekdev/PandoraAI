@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/upload_record_entity.g.dart';
 
@@ -22,5 +23,11 @@ class UploadRecordEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+}
+
+extension UploadRecordEntityEx on UploadRecordEntity {
+  bool urlExpired() {
+    return DateTime.now().millisecondsSinceEpoch - createDt > 6 * 24 * hour;
   }
 }

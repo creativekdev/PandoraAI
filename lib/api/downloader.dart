@@ -24,7 +24,10 @@ class Downloader {
   Map<String, CancelToken> _taskMap = {};
 
   Downloader._internal() {
-    client = DioNode.instance.build();
+    BaseOptions options = new BaseOptions();
+    options.receiveTimeout = 0;
+    options.connectTimeout = 60000;
+    client = Dio(options);
   }
 
   subscribe(String key, DownloadListener listener) {
@@ -79,36 +82,38 @@ class Downloader {
       tmpFile.deleteSync();
     }
     _taskMap[key] = cancelToken;
-          try {
-            client.download(
-              url,
-              tempPath,
-              cancelToken: cancelToken,
-              onReceiveProgress: (count, total) {
-                onReceiveProgress?.call(count, total);
-                _listenerMap[key]?.forEach((element) {
-                  element.onChanged.call(count, total);
-                });
-              },
-            ).then((value) async {
-              if (value.statusCode == 200) {
-                await File(tempPath).rename(savePath);
-                _listenerMap[key]?.forEach((element) {
-                  element.onFinished.call(File(savePath));
-                });
-              } else {
-                _listenerMap[key]?.forEach((element) {
-                  element.onError(Exception(value.statusMessage));
-                });
-              }
-              _taskMap.remove(key);
-            });
-          } on Exception catch (e) {
-            _listenerMap[key]?.forEach((element) {
-              element.onError.call(e);
-            });
-            _taskMap.remove(key);
-          }
+    try {
+      client.download(
+        url,
+        tempPath,
+        cancelToken: cancelToken,
+        onReceiveProgress: (count, total) {
+          onReceiveProgress?.call(count, total);
+          _listenerMap[key]?.forEach((element) {
+            element.onChanged.call(count, total);
+          });
+        },
+      ).then((value) async {
+        if (value.statusCode == 200) {
+          var file = File(tempPath);
+          await file.copy(savePath);
+          file.delete();
+          _listenerMap[key]?.forEach((element) {
+            element.onFinished.call(File(savePath));
+          });
+        } else {
+          _listenerMap[key]?.forEach((element) {
+            element.onError(Exception(value.statusMessage));
+          });
+        }
+        _taskMap.remove(key);
+      });
+    } on Exception catch (e) {
+      _listenerMap[key]?.forEach((element) {
+        element.onError.call(e);
+      });
+      _taskMap.remove(key);
+    }
     return key;
   }
 }

@@ -1,50 +1,47 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:path/path.dart' as path;
 
 class ChoosePhotoScreenController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  Map<String, UploadRecordEntity> _imageUploadCache = {};
+  late StorageOperator storageOperator;
+  Map<String, UploadRecordEntity> imageUploadCache = {};
 
   @override
   void onInit() async {
     super.onInit();
+    storageOperator = cacheManager.storageOperator;
     Map jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? {};
     jsonString.forEach((key, value) {
       var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
-      _imageUploadCache[key] = uploadRecordEntity;
+      if (File(uploadRecordEntity.fileName).existsSync()) {
+        imageUploadCache[key] = uploadRecordEntity;
+      }
     });
   }
 
-  String? checkUploadHistory({required String fileName}) {
-    var key = EncryptUtil.encodeMd5(fileName);
-    var cache = _imageUploadCache[key];
-    if (cache != null) {
-      var duration = DateTime.now().millisecondsSinceEpoch - cache.createDt;
-      if (duration < 6 * 24 * hour) {
-        return cache.url;
-      }
-    }
-    return null;
-  }
-
   saveUploadHistory({
-    required String fileName,
+    required String key,
+    required File file,
     required String url,
-  }) {
-    var key = EncryptUtil.encodeMd5(url);
-    var cache = _imageUploadCache[key] ?? UploadRecordEntity();
+  }) async {
+    var cache = imageUploadCache[key] ?? UploadRecordEntity();
     cache.url = url;
-    cache.fileName = fileName;
+    cache.fileName = file.path;
     cache.createDt = DateTime.now().millisecondsSinceEpoch;
-    _imageUploadCache[key] = cache;
+    imageUploadCache[key] = cache;
     Map<String, String> map = {};
-    _imageUploadCache.forEach((key, value) {
+    imageUploadCache.forEach((key, value) {
       map[key] = json.encode(value.toJson());
     });
     cacheManager.setJson(CacheManager.imageUploadHistory, map);
@@ -93,4 +90,50 @@ class ChoosePhotoScreenController extends GetxController {
   final imageUrl = "".obs;
 
   updateImageUrl(String str) => imageUrl.value = str;
+
+  Future<bool> uploadCompressedImage() async {
+    if (image.value == null) {
+      return false;
+    }
+    var imageFile = image.value as File;
+    var key = await md5File(imageFile);
+    var cacheFile = imageUploadCache[key];
+    if (cacheFile != null && !cacheFile.urlExpired()) {
+      updateImageUrl(cacheFile.url);
+      return true;
+    }
+    String f_name = path.basename(imageFile.path);
+    var newPath = "${storageOperator.recentDir.path}/$f_name";
+    File? newFile;
+    if (newPath != imageFile.path) {
+      await imageFile.copy(newPath);
+      newFile = File(newPath);
+      if (!newFile.existsSync()) {
+        return false;
+      }
+    }
+    String b_name = "free-socialbook";
+    var fileType = f_name.substring(f_name.lastIndexOf(".") + 1);
+    if (TextUtil.isEmpty(fileType)) {
+      fileType = '*';
+    }
+    String c_type = "image/${fileType}";
+    final params = {
+      "bucket": b_name,
+      "file_name": f_name,
+      "content_type": c_type,
+    };
+    var url = await CartoonizerApi().getPresignedUrl(params);
+    if (url == null) {
+      return false;
+    }
+    var baseEntity = await Uploader().uploadFile(url, imageFile, c_type);
+    if (baseEntity != null) {
+      var imageUrl = url.split("?")[0];
+      updateImageUrl(imageUrl);
+      saveUploadHistory(key:key,file: newFile ?? imageFile, url: imageUrl);
+      return true;
+    }
+    return false;
+  }
 }

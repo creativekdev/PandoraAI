@@ -7,6 +7,8 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/views/home_screen.dart';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -177,4 +179,10 @@ Future<void> rateApp() async {
   } else {
     launchURL(Config.getStoreLink());
   }
+}
+
+Future<String> md5File(File file) async {
+  var uint8list = await file.readAsBytes();
+  var digest = md5.convert(uint8list);
+  return hex.encode(digest.bytes);
 }

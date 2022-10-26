@@ -61,13 +61,17 @@ class BannerAdsHolder extends WidgetAdsHolder {
   @override
   onReady() {
     super.onReady();
-    onUpdated?.call();
+    if (state?.mounted ?? false) {
+      onUpdated?.call();
+    }
   }
 
   @override
   onReset() {
     super.onReset();
-    onUpdated?.call();
+    if (state?.mounted ?? false) {
+      onUpdated?.call();
+    }
   }
 
   loadAd() async {

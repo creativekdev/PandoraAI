@@ -88,7 +88,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       setState(() {});
     });
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
-      if (event.data ?? true) {
+      if (event.data ?? true && !listLoading) {
         _easyRefreshController.callRefresh();
       } else {
         for (var value in dataList) {
@@ -127,7 +127,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       setState(() {});
     });
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
-      if (tabId.id() == event.data) {
+      if (tabId.id() == event.data && !listLoading) {
         _easyRefreshController.callRefresh();
       }
     });
@@ -234,6 +234,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   }
 
   onTabClick(index) {
+    if (listLoading) {
+      return;
+    }
     currentTab = tabList[index];
     _easyRefreshController.callRefresh();
   }
@@ -269,7 +272,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         if (mounted) {
           setState(() => listLoading = false);
         }
-      }, milliseconds: 1500);
+      }, milliseconds: 1000);
       _easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;
@@ -386,32 +389,34 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     );
   }
 
-  Container buildTabBar() {
+  Widget buildTabBar() {
     return Theme(
-        data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-        child: TabBar(
-          indicatorSize: TabBarIndicatorSize.label,
-          indicator: LineTabIndicator(
-            width: $(20),
-            strokeCap: StrokeCap.butt,
-            borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-          ),
-          labelColor: ColorConstant.PrimaryColor,
-          labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
-          labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
-          unselectedLabelColor: ColorConstant.PrimaryColor,
-          unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
-          controller: tabController,
-          tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
-          onTap: (index) {
-            onTabClick(index);
-          },
-          padding: EdgeInsets.zero,
-        )).intoContainer(
-      padding: EdgeInsets.symmetric(vertical: $(4)),
-      height: $(44),
-      color: Colors.transparent,
-    );
+            data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+            child: TabBar(
+              indicatorSize: TabBarIndicatorSize.label,
+              indicator: LineTabIndicator(
+                width: $(20),
+                strokeCap: StrokeCap.butt,
+                borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+              ),
+              labelColor: ColorConstant.PrimaryColor,
+              labelPadding: EdgeInsets.only(left: $(5), right: $(5)),
+              labelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.bold),
+              unselectedLabelColor: ColorConstant.PrimaryColor,
+              unselectedLabelStyle: TextStyle(fontSize: $(14), fontWeight: FontWeight.w500),
+              controller: tabController,
+              tabs: tabList.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6)))).toList(),
+              onTap: (index) {
+                onTabClick(index);
+              },
+              padding: EdgeInsets.zero,
+            ))
+        .intoContainer(
+          padding: EdgeInsets.symmetric(vertical: $(4)),
+          height: $(44),
+          color: Colors.transparent,
+        )
+        .ignore(ignoring: listLoading);
   }
 
   Widget buildRefreshList() {

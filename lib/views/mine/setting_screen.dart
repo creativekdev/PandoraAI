@@ -3,7 +3,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -128,6 +127,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                           cacheManager.storageOperator.imageDir,
                           cacheManager.storageOperator.tempDir,
                           cacheManager.storageOperator.pushDir,
+                          cacheManager.storageOperator.recentDir,
                         ]).whenComplete(() {
                           hideLoading().whenComplete(() {
                             CommonExtension().showToast('Clear Success');
