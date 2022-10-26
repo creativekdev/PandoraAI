@@ -9,11 +9,14 @@ class UploadRecordEntity {
   @JSONField(name: "create_dt")
   late int createDt;
   late String fileName;
+  @JSONField(name: "cached_id")
+  late String cachedId;
 
   UploadRecordEntity({
     this.url = '',
     this.createDt = 0,
     this.fileName = '',
+    this.cachedId = '',
   });
 
   factory UploadRecordEntity.fromJson(Map<String, dynamic> json) => $UploadRecordEntityFromJson(json);

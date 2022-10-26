@@ -15,8 +15,7 @@ import 'package:cartoonizer/main.dart';
 
 void main() {
   test('description', () async {
-    // print(await md5File(File('assets/images/ic_add.png')));
-    print(await md5File(File('test.png')));
+    print(await md5File(File('assets/images/ic_add.png')));
   });
   return;
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

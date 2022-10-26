@@ -17,6 +17,8 @@ class Images {
    static const String ic_camera_upload = 'assets/images/ic_camera_upload.png';
    static const String ic_change_password = 'assets/images/ic_change_password.png';
    static const String ic_checked = 'assets/images/ic_checked.png';
+   static const String ic_choose_camera = 'assets/images/ic_choose_camera.png';
+   static const String ic_choose_photo = 'assets/images/ic_choose_photo.png';
    static const String ic_choose_photo_initial_header = 'assets/images/ic_choose_photo_initial_header.png';
    static const String ic_choose_photo_initial_text = 'assets/images/ic_choose_photo_initial_text.png';
    static const String ic_close = 'assets/images/ic_close.png';

@@ -67,7 +67,11 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
               downloading = false;
             });
           });
-      fileName = getFileName(url);
+      if(url.contains('?')) {
+        fileName = getFileName(url.split('?')[0]);
+      } else {
+        fileName = getFileName(url);
+      }
       downloading = true;
       var videoDir = cacheManager.storageOperator.videoDir;
       var savePath = videoDir.path + fileName;

@@ -248,7 +248,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                     //     }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
                                     // Container().blur(),
                                     CachedNetworkImageUtils.custom(
-                                        useOld: true,
+                                        // useOld: false,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth,

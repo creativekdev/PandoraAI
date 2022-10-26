@@ -85,7 +85,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   final EffectDataController effectDataController = Get.find();
-  final ChoosePhotoScreenController controller = ChoosePhotoScreenController();
+  ChoosePhotoScreenController controller = ChoosePhotoScreenController();
   late RecentController recentController;
 
   late ItemScrollController titleScrollController;
@@ -269,10 +269,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             Navigator.of(context).pop();
           } else {
             controller.changeIsLoading(false);
+            judgeAndOpenRecentDialog();
           }
         });
       });
+    } else {
+      judgeAndOpenRecentDialog();
     }
+  }
+
+  judgeAndOpenRecentDialog() {
+    delay(() {
+      if (!controller.isPhotoSelect.value) {
+        pickFromRecent(context);
+      }
+    });
   }
 
   void buildFromRecent() {
@@ -1034,7 +1045,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     });
   }
 
-  Widget buildSuccessFunctions(BuildContext context) => controller.isPhotoDone.value
+  Widget buildSuccessFunctions(BuildContext context) => controller.isPhotoSelect.value
       ? Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1132,7 +1143,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               ))
           .intoGestureDetector(onTap: () {
           pickFromRecent(context);
-        });
+        }).visibility(
+          visible: false,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+        );
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
     if (effectItem.imageUrl.contains("-transform")) {
@@ -1161,7 +1177,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: true,
+      useOld: false,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,
@@ -1211,7 +1227,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     return true;
   }
 
-  Future<void> pickImageFromGallery(BuildContext context, {String from = "center", UploadRecordEntity? entity}) async {
+  Future<bool> pickImageFromGallery(BuildContext context, {String from = "center", UploadRecordEntity? entity}) async {
     logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": from});
     var source = ImageSource.gallery;
     try {
@@ -1220,7 +1236,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
         if (image == null) {
           CommonExtension().showToast("cancelled");
-          return;
+          return false;
         }
         compressedImage = await imageCompressAndGetFile(File(image.path));
         controller.updateImageFile(compressedImage);
@@ -1234,6 +1250,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       controller.changeIsPhotoSelect(true);
       controller.changeIsPhotoDone(false);
       getCartoon(context);
+      return true;
     } on PlatformException catch (error) {
       if (error.code == "photo_access_denied") {
         showPhotoLibraryPermissionDialog(context);
@@ -1241,16 +1258,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     } catch (error) {
       CommonExtension().showToast("Try to select valid image");
     }
+    return false;
   }
 
-  Future<void> pickImageFromCamera(BuildContext context, {String from = "center"}) async {
+  Future<bool> pickImageFromCamera(BuildContext context, {String from = "center"}) async {
     logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": from});
     var source = ImageSource.camera;
     try {
       XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
       if (image == null) {
         CommonExtension().showToast("cancelled");
-        return;
+        return false;
       }
       controller.changeIsLoading(true);
       File compressedImage = await imageCompressAndGetFile(File(image.path));
@@ -1261,6 +1279,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       controller.changeIsPhotoSelect(true);
       controller.changeIsPhotoDone(false);
       getCartoon(context);
+      return true;
     } on PlatformException catch (error) {
       if (error.code == "camera_access_denied") {
         showCameraPermissionDialog(context);
@@ -1268,6 +1287,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     } catch (error) {
       CommonExtension().showToast("Try to select valid image");
     }
+    return false;
   }
 
   refreshLastBuildType() {
@@ -1407,6 +1427,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         if (tokenResponse.statusCode == 200) {
           if (tokenParsed['data'] == null) {
             List<String> imageArray = ["$imageUrl"];
+            String? cachedId = await controller.getCachedId();
             var dataBody = {
               'querypics': imageArray,
               'is_data': 0,
@@ -1414,6 +1435,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'direct': 1,
               'hide_watermark': 1,
             };
+            if (!TextUtil.isEmpty(cachedId)) {
+              dataBody['cache_id'] = cachedId!;
+            }
             selectedEffect.handleApiParams(dataBody);
             final cartoonizeResponse = await API.post(aiHost.cartoonizeApi, body: dataBody);
             if (ignoreResult) {
@@ -1422,7 +1446,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             }
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
-
+              var cachedId = parsed['cache_id']?.toString();
+              if (!TextUtil.isEmpty(cachedId)) {
+                controller.updateCachedId(cachedId!);
+              }
               var dataString = parsed['data'].toString();
               if (TextUtil.isEmpty(dataString)) {
                 logEvent(Events.transform_img_failed, eventValues: {
@@ -1631,7 +1658,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   ),
                   GestureDetector(
                     onTap: () async {
-                      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
                       Navigator.pop(context);
                       GetStorage().write('login_back_page', '/ChoosePhotoScreen');
                       await Navigator.push(
@@ -1657,7 +1683,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     userManager.rateNoticeOperator.onSwitch(context);
   }
 
-  Future<String?> pickFromRecent(BuildContext context) async {
+  Future<void> pickFromRecent(BuildContext context) async {
     var list = controller.imageUploadCache.values.toList();
     double height;
     if (list.length > 6) {
@@ -1670,50 +1696,89 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
       height = ScreenUtil.screenSize.width / 4 * line + MediaQuery.of(context).padding.bottom + $(10);
     }
-    return showModalBottomSheet(
+    showModalBottomSheet<bool>(
         context: context,
         backgroundColor: Colors.transparent,
-        builder: (_) => GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisSpacing: $(6),
-                crossAxisSpacing: $(6),
-              ),
-              itemBuilder: (context, pos) {
-                if (pos == 0) {
-                  return Icon(Icons.camera).intoContainer(color: ColorConstant.White).intoGestureDetector(onTap: () {
-                    Navigator.of(context).pop();
-                    pickImageFromCamera(context, from: "result");
-                  });
-                } else if (pos == 1) {
-                  return Icon(Icons.photo).intoContainer(color: ColorConstant.White).intoGestureDetector(onTap: () {
-                    Navigator.of(context).pop();
-                    pickImageFromGallery(context, from: "result");
-                  });
-                }
-                var index = pos - 2;
-                return Image(
-                  image: FileImage(File(list[index].fileName)),
-                  fit: BoxFit.cover,
-                ).intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop();
-                  pickImageFromGallery(
-                    context,
-                    entity: list[index],
-                    from: "result",
-                  );
-                });
-              },
-              itemCount: list.length + 2,
-            )
-                .intoContainer(
-                  padding: EdgeInsets.all($(8)),
-                  height: height,
-                )
-                .intoMaterial(
-                  color: ColorConstant.BackgroundColor,
-                  borderRadius: BorderRadius.circular($(8)),
-                ));
+        isDismissible: controller.isPhotoSelect.value,
+        builder: (_) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TitleTextWidget("Choose Photo", ColorConstant.White, FontWeight.w400, $(15)).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(12))),
+                GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: $(2),
+                    crossAxisSpacing: $(2),
+                  ),
+                  itemBuilder: (context, pos) {
+                    if (pos == 0) {
+                      return Image.asset(
+                        Images.ic_choose_camera,
+                        color: ColorConstant.White,
+                      )
+                          .intoContainer(
+                        color: ColorConstant.LineColor,
+                        padding: EdgeInsets.symmetric(vertical: $(24)),
+                      )
+                          .intoGestureDetector(onTap: () {
+                        pickImageFromCamera(context, from: "result").then((value) {
+                          if (value) {
+                            Navigator.of(context).pop(true);
+                          }
+                        });
+                      });
+                    } else if (pos == 1) {
+                      return Image.asset(
+                        Images.ic_choose_photo,
+                        color: ColorConstant.White,
+                      )
+                          .intoContainer(
+                        color: ColorConstant.LineColor,
+                        padding: EdgeInsets.symmetric(vertical: $(24)),
+                      )
+                          .intoGestureDetector(onTap: () {
+                        pickImageFromGallery(context, from: "result").then((value) {
+                          if (value) {
+                            Navigator.of(context).pop(true);
+                          }
+                        });
+                      });
+                    }
+                    var index = pos - 2;
+                    return Image(
+                      image: FileImage(File(list[index].fileName)),
+                      fit: BoxFit.cover,
+                    ).intoGestureDetector(onTap: () {
+                      var entity = list[index];
+                      if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
+                        CommonExtension().showToast("You've chosen this photo already");
+                        return;
+                      }
+                      pickImageFromGallery(
+                        context,
+                        entity: entity,
+                        from: "result",
+                      ).then((value) {
+                        if (value) {
+                          Navigator.of(context).pop(true);
+                        }
+                      });
+                    });
+                  },
+                  itemCount: list.length + 2,
+                ).intoContainer(padding: EdgeInsets.all($(8)), height: height, margin: EdgeInsets.only(bottom: $(25))),
+              ],
+            ).intoMaterial(
+              color: ColorConstant.BackgroundColor,
+              borderRadius: BorderRadius.circular($(8)),
+            )).then((value) {
+      if (value == null) {
+        if (!controller.isPhotoSelect.value) {
+          Navigator.of(context).pop();
+        }
+      }
+    });
   }
 }
 

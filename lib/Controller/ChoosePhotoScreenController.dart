@@ -40,6 +40,10 @@ class ChoosePhotoScreenController extends GetxController {
     cache.fileName = file.path;
     cache.createDt = DateTime.now().millisecondsSinceEpoch;
     imageUploadCache[key] = cache;
+    _saveUploadCacheMap();
+  }
+
+  void _saveUploadCacheMap() {
     Map<String, String> map = {};
     imageUploadCache.forEach((key, value) {
       map[key] = json.encode(value.toJson());
@@ -131,9 +135,35 @@ class ChoosePhotoScreenController extends GetxController {
     if (baseEntity != null) {
       var imageUrl = url.split("?")[0];
       updateImageUrl(imageUrl);
-      saveUploadHistory(key:key,file: newFile ?? imageFile, url: imageUrl);
+      saveUploadHistory(key: key, file: newFile ?? imageFile, url: imageUrl);
       return true;
     }
     return false;
+  }
+
+  Future<void> updateCachedId(String cachedId) async {
+    if (image.value == null) {
+      return;
+    }
+    var imageFile = image.value as File;
+    var key = await md5File(imageFile);
+    var cacheFile = imageUploadCache[key];
+    if (cacheFile != null) {
+      cacheFile.cachedId = cachedId;
+    }
+    _saveUploadCacheMap();
+  }
+
+  Future<String?> getCachedId() async {
+    if (image.value == null) {
+      return null;
+    }
+    var imageFile = image.value as File;
+    var key = await md5File(imageFile);
+    var cacheFile = imageUploadCache[key];
+    if (cacheFile != null) {
+      return cacheFile.cachedId;
+    }
+    return null;
   }
 }
