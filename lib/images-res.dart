@@ -24,6 +24,7 @@ class Images {
    static const String ic_close = 'assets/images/ic_close.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delete = 'assets/images/ic_delete.png';
+   static const String ic_recent_delete = 'assets/images/ic_recent_delete.png';
    static const String ic_demo = 'assets/images/ic_demo.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
    static const String ic_demo2 = 'assets/images/ic_demo2.png';
@@ -44,6 +45,7 @@ class Images {
    static const String ic_hd = 'assets/images/ic_hd.png';
    static const String ic_help = 'assets/images/ic_help.png';
    static const String ic_home = 'assets/images/ic_home.png';
+   static const String ic_recent_checked = 'assets/images/ic_recent_checked.png';
    static const String ic_image_failed = 'assets/images/ic_image_failed.png';
    static const String ic_image_saved = 'assets/images/ic_image_saved.png';
    static const String ic_instagram = 'assets/images/ic_instagram.png';

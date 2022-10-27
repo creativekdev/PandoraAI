@@ -32,6 +32,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
@@ -821,6 +822,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     setState(() {
                       imgContainerWidth = size.width;
                       imgContainerHeight = size.height - 20;
+                      EventBusHelper().eventBus.fire(OnPickPhotoHeightChangeEvent(data: imgContainerHeight + 20));
                     });
                   })),
                   Obx(() => buildSuccessFunctions(context)),
@@ -1684,95 +1686,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> pickFromRecent(BuildContext context) async {
-    var list = controller.imageUploadCache.values.toList();
-    double height;
-    if (list.length > 6) {
-      height = ScreenUtil.screenSize.width * 0.75 + MediaQuery.of(context).padding.bottom + $(10);
-    } else {
-      var totalLength = list.length + 2;
-      int line = (totalLength) ~/ 4;
-      if (totalLength % 4 != 0) {
-        line++;
-      }
-      height = ScreenUtil.screenSize.width / 4 * line + MediaQuery.of(context).padding.bottom + $(10);
-    }
-    showModalBottomSheet<bool>(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isDismissible: controller.isPhotoSelect.value,
-        builder: (_) => Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TitleTextWidget("Choose Photo", ColorConstant.White, FontWeight.w400, $(15)).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(12))),
-                GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: $(2),
-                    crossAxisSpacing: $(2),
-                  ),
-                  itemBuilder: (context, pos) {
-                    if (pos == 0) {
-                      return Image.asset(
-                        Images.ic_choose_camera,
-                        color: ColorConstant.White,
-                      )
-                          .intoContainer(
-                        color: ColorConstant.LineColor,
-                        padding: EdgeInsets.symmetric(vertical: $(24)),
-                      )
-                          .intoGestureDetector(onTap: () {
-                        pickImageFromCamera(context, from: "result").then((value) {
-                          if (value) {
-                            Navigator.of(context).pop(true);
-                          }
-                        });
-                      });
-                    } else if (pos == 1) {
-                      return Image.asset(
-                        Images.ic_choose_photo,
-                        color: ColorConstant.White,
-                      )
-                          .intoContainer(
-                        color: ColorConstant.LineColor,
-                        padding: EdgeInsets.symmetric(vertical: $(24)),
-                      )
-                          .intoGestureDetector(onTap: () {
-                        pickImageFromGallery(context, from: "result").then((value) {
-                          if (value) {
-                            Navigator.of(context).pop(true);
-                          }
-                        });
-                      });
-                    }
-                    var index = pos - 2;
-                    return Image(
-                      image: FileImage(File(list[index].fileName)),
-                      fit: BoxFit.cover,
-                    ).intoGestureDetector(onTap: () {
-                      var entity = list[index];
-                      if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
-                        CommonExtension().showToast("You've chosen this photo already");
-                        return;
-                      }
-                      pickImageFromGallery(
-                        context,
-                        entity: entity,
-                        from: "result",
-                      ).then((value) {
-                        if (value) {
-                          Navigator.of(context).pop(true);
-                        }
-                      });
-                    });
-                  },
-                  itemCount: list.length + 2,
-                ).intoContainer(padding: EdgeInsets.all($(8)), height: height, margin: EdgeInsets.only(bottom: $(25))),
-              ],
-            ).intoMaterial(
-              color: ColorConstant.BackgroundColor,
-              borderRadius: BorderRadius.circular($(8)),
-            )).then((value) {
+    PickPhotoScreen.push(
+      context,
+      controller: controller,
+      imageContainerHeight: imgContainerHeight,
+      onPickFromSystem: (takePhoto) async {
+        if (takePhoto) {
+          return await pickImageFromCamera(context, from: "result");
+        } else {
+          return await pickImageFromGallery(context, from: "result");
+        }
+      },
+      onPickFromRecent: (entity) async {
+        return await pickImageFromGallery(context, from: "result", entity: entity);
+      },
+    ).then((value) {
       if (value == null) {
         if (!controller.isPhotoSelect.value) {
           Navigator.of(context).pop();

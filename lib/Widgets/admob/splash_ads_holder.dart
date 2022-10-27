@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
@@ -139,14 +141,16 @@ class SplashAdsHolder extends PageAdsHolder {
         ad.dispose();
         _appOpenAd = null;
         loadAd();
-        if (isShowAdsNew()) {
-          delay(() {
-            if (Platform.isIOS) {
-              Get.to(PurchaseScreen());
-            } else {
-              Get.to(StripeSubscriptionScreen());
-            }
-          }, milliseconds: 100);
+        if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+          if (isShowAdsNew()) {
+            delay(() {
+              if (Platform.isIOS) {
+                Get.to(PurchaseScreen());
+              } else {
+                Get.to(StripeSubscriptionScreen());
+              }
+            }, milliseconds: 100);
+          }
         }
       },
     );

@@ -5,6 +5,10 @@ import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 
 UploadRecordEntity $UploadRecordEntityFromJson(Map<String, dynamic> json) {
 	final UploadRecordEntity uploadRecordEntity = UploadRecordEntity();
+	final String? key = jsonConvert.convert<String>(json['key']);
+	if (key != null) {
+		uploadRecordEntity.key = key;
+	}
 	final String? url = jsonConvert.convert<String>(json['url']);
 	if (url != null) {
 		uploadRecordEntity.url = url;
@@ -21,14 +25,20 @@ UploadRecordEntity $UploadRecordEntityFromJson(Map<String, dynamic> json) {
 	if (cachedId != null) {
 		uploadRecordEntity.cachedId = cachedId;
 	}
+	final bool? checked = jsonConvert.convert<bool>(json['checked']);
+	if (checked != null) {
+		uploadRecordEntity.checked = checked;
+	}
 	return uploadRecordEntity;
 }
 
 Map<String, dynamic> $UploadRecordEntityToJson(UploadRecordEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
+	data['key'] = entity.key;
 	data['url'] = entity.url;
 	data['create_dt'] = entity.createDt;
 	data['fileName'] = entity.fileName;
 	data['cached_id'] = entity.cachedId;
+	data['checked'] = entity.checked;
 	return data;
 }

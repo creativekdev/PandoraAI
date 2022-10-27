@@ -15,19 +15,31 @@ import 'package:path/path.dart' as path;
 class ChoosePhotoScreenController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StorageOperator storageOperator;
-  Map<String, UploadRecordEntity> imageUploadCache = {};
+  List<UploadRecordEntity> imageUploadCache = [];
 
   @override
   void onInit() async {
     super.onInit();
     storageOperator = cacheManager.storageOperator;
-    Map jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? {};
-    jsonString.forEach((key, value) {
-      var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
-      if (File(uploadRecordEntity.fileName).existsSync()) {
-        imageUploadCache[key] = uploadRecordEntity;
-      }
-    });
+    dynamic jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? [];
+    if (jsonString is List) {
+      jsonString.forEach((value) {
+        var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
+        if (File(uploadRecordEntity.fileName).existsSync()) {
+          uploadRecordEntity.checked = false;
+          imageUploadCache.add(uploadRecordEntity);
+        }
+      });
+    } else if (jsonString is Map) {
+      jsonString.forEach((key, value) async {
+        var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
+        if (File(uploadRecordEntity.fileName).existsSync()) {
+          uploadRecordEntity.key = await md5File(File(uploadRecordEntity.fileName));
+          uploadRecordEntity.checked = false;
+          imageUploadCache.add(uploadRecordEntity);
+        }
+      });
+    }
   }
 
   saveUploadHistory({
@@ -35,20 +47,25 @@ class ChoosePhotoScreenController extends GetxController {
     required File file,
     required String url,
   }) async {
-    var cache = imageUploadCache[key] ?? UploadRecordEntity();
-    cache.url = url;
-    cache.fileName = file.path;
-    cache.createDt = DateTime.now().millisecondsSinceEpoch;
-    imageUploadCache[key] = cache;
+    var cache = imageUploadCache.pick((t) => t.key == key);
+    if (cache != null) {
+      cache.url = url;
+      cache.fileName = file.path;
+      cache.createDt = DateTime.now().millisecondsSinceEpoch;
+    } else {
+      cache = UploadRecordEntity();
+      cache.key = key;
+      cache.url = url;
+      cache.fileName = file.path;
+      cache.createDt = DateTime.now().millisecondsSinceEpoch;
+      imageUploadCache.insert(0, cache);
+    }
     _saveUploadCacheMap();
   }
 
   void _saveUploadCacheMap() {
-    Map<String, String> map = {};
-    imageUploadCache.forEach((key, value) {
-      map[key] = json.encode(value.toJson());
-    });
-    cacheManager.setJson(CacheManager.imageUploadHistory, map);
+    List<String> cache = imageUploadCache.map((e) => jsonEncode(e.toJson())).toList();
+    cacheManager.setJson(CacheManager.imageUploadHistory, cache);
   }
 
   final isPhotoSelect = false.obs;
@@ -101,7 +118,7 @@ class ChoosePhotoScreenController extends GetxController {
     }
     var imageFile = image.value as File;
     var key = await md5File(imageFile);
-    var cacheFile = imageUploadCache[key];
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null && !cacheFile.urlExpired()) {
       updateImageUrl(cacheFile.url);
       return true;
@@ -147,7 +164,7 @@ class ChoosePhotoScreenController extends GetxController {
     }
     var imageFile = image.value as File;
     var key = await md5File(imageFile);
-    var cacheFile = imageUploadCache[key];
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       cacheFile.cachedId = cachedId;
     }
@@ -160,10 +177,15 @@ class ChoosePhotoScreenController extends GetxController {
     }
     var imageFile = image.value as File;
     var key = await md5File(imageFile);
-    var cacheFile = imageUploadCache[key];
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       return cacheFile.cachedId;
     }
     return null;
+  }
+
+  deleteAllCheckedPhotos() {
+    imageUploadCache = imageUploadCache.filter((t) => !t.checked);
+    _saveUploadCacheMap();
   }
 }

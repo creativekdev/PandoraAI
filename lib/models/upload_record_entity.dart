@@ -5,18 +5,22 @@ import 'package:cartoonizer/generated/json/upload_record_entity.g.dart';
 
 @JsonSerializable()
 class UploadRecordEntity {
+  late String key;
   late String url;
   @JSONField(name: "create_dt")
   late int createDt;
   late String fileName;
   @JSONField(name: "cached_id")
   late String cachedId;
+  bool checked = false;
 
   UploadRecordEntity({
+    this.key = '',
     this.url = '',
     this.createDt = 0,
     this.fileName = '',
     this.cachedId = '',
+    this.checked = false,
   });
 
   factory UploadRecordEntity.fromJson(Map<String, dynamic> json) => $UploadRecordEntityFromJson(json);

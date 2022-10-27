@@ -373,9 +373,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                           ),
                         ))
                   .listenSizeChanged(onSizeChanged: (size) {
-                setState(() {
-                  tabBarHeight = size.height;
-                });
+                if (mounted) {
+                  setState(() {
+                    tabBarHeight = size.height;
+                  });
+                }
               }),
               SizedBox(height: headerHeight, width: 0),
             ]),

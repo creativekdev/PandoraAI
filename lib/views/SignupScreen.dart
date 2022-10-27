@@ -448,7 +448,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
           Icons.close,
           size: $(24),
           color: Colors.white,
-        ).marginOnly(left: $(15)),
+        ).marginOnly(left: $(5)),
       ),
       body: Container(
         color: Colors.transparent,

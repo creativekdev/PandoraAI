@@ -119,3 +119,7 @@ class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
 class OnEffectNsfwChangeEvent extends BaseEvent {}
 
 class OnHomeConfigGetEvent extends BaseEvent {}
+
+class OnPickPhotoHeightChangeEvent extends BaseEvent<double> {
+  OnPickPhotoHeightChangeEvent({required double data}) : super(data: data);
+}
