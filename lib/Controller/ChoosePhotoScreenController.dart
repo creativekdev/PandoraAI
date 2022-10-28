@@ -18,25 +18,22 @@ class ChoosePhotoScreenController extends GetxController {
   List<UploadRecordEntity> imageUploadCache = [];
 
   @override
-  void onInit() async {
+  Future<void> onInit() async {
     super.onInit();
+  }
+
+  Future<void> loadImageUploadCache() async {
+    imageUploadCache.clear();
     storageOperator = cacheManager.storageOperator;
     dynamic jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? [];
     if (jsonString is List) {
-      jsonString.forEach((value) {
+      jsonString.forEach((value) async {
         var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
         if (File(uploadRecordEntity.fileName).existsSync()) {
           uploadRecordEntity.checked = false;
-          imageUploadCache.add(uploadRecordEntity);
-        }
-      });
-    } else if (jsonString is Map) {
-      jsonString.forEach((key, value) async {
-        var uploadRecordEntity = UploadRecordEntity.fromJson(json.decode(value));
-        if (File(uploadRecordEntity.fileName).existsSync()) {
-          uploadRecordEntity.key = await md5File(File(uploadRecordEntity.fileName));
-          uploadRecordEntity.checked = false;
-          imageUploadCache.add(uploadRecordEntity);
+          if (!imageUploadCache.exist((t) => t.key == uploadRecordEntity.key)) {
+            imageUploadCache.add(uploadRecordEntity);
+          }
         }
       });
     }
@@ -52,14 +49,16 @@ class ChoosePhotoScreenController extends GetxController {
       cache.url = url;
       cache.fileName = file.path;
       cache.createDt = DateTime.now().millisecondsSinceEpoch;
+      imageUploadCache.remove(cache);
     } else {
       cache = UploadRecordEntity();
       cache.key = key;
       cache.url = url;
       cache.fileName = file.path;
       cache.createDt = DateTime.now().millisecondsSinceEpoch;
-      imageUploadCache.insert(0, cache);
     }
+    imageUploadCache.insert(0, cache);
+    update();
     _saveUploadCacheMap();
   }
 

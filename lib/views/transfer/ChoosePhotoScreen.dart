@@ -16,6 +16,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -34,6 +35,7 @@ import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:crypto/crypto.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -210,9 +212,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   bool lastChangeByTap = false;
 
+  late Uploader api;
+
   @override
   void dispose() {
     super.dispose();
+    api.unbind();
+    controller.dispose();
     thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
     adsHolder.onDispose();
@@ -227,7 +233,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     super.initState();
     logEvent(Events.upload_page_loading);
     recentController = Get.find();
-    controller.onInit();
+    api = Uploader().bindState(this);
     if (widget.entrySource != EntrySource.fromRecent) {
       tabList = effectDataController.tabList;
       tabTitleList = effectDataController.tabTitleList;
@@ -279,11 +285,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  judgeAndOpenRecentDialog() {
-    delay(() {
-      if (!controller.isPhotoSelect.value) {
-        pickFromRecent(context);
-      }
+  judgeAndOpenRecentDialog() async {
+    delay(() async {
+      controller.loadImageUploadCache().then((value) {
+        if (!controller.isPhotoSelect.value) {
+          pickFromRecent(context);
+        }
+      });
     });
   }
 
@@ -627,7 +635,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  Future<void> shareToDiscovery(BuildContext context) async {
+  Future<void> shareToDiscovery() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
     logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, toSignUp: true, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
@@ -639,7 +647,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: videoUrl,
           isVideo: true,
-        );
+        ).then((value) {
+          if (value ?? false) {
+            showShareSuccessDialog();
+          }
+        });
       } else {
         if (lastBuildType == _BuildType.waterMark) {
           var shareWatermark = () async {
@@ -657,7 +669,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 originalUrl: urlFinal,
                 image: newImage,
                 isVideo: false,
-              );
+              ).then((value) {
+                if (value ?? false) {
+                  showShareSuccessDialog();
+                }
+              });
             }));
           };
           if (!rewardAdsHolder.adsReady) {
@@ -683,7 +699,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         originalUrl: urlFinal,
                         image: image,
                         isVideo: false,
-                      );
+                      ).then((value) {
+                        if (value ?? false) {
+                          showShareSuccessDialog();
+                        }
+                      });
                     }
                   });
                 } else {
@@ -699,10 +719,53 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             originalUrl: urlFinal,
             image: image,
             isVideo: false,
-          );
+          ).then((value) {
+            if (value ?? false) {
+              showShareSuccessDialog();
+            }
+          });
         }
       }
     });
+  }
+
+  showShareSuccessDialog() {
+    showDialog<bool>(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Your post has been submitted successfully',
+            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+            textAlign: TextAlign.center,
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+          Text(
+            'Ok',
+            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+          )
+              .intoContainer(
+                  padding: EdgeInsets.all(10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      border: Border(
+                    top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                  )))
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      )
+          .intoMaterial(
+            color: ColorConstant.EffectFunctionGrey,
+            borderRadius: BorderRadius.circular($(16)),
+          )
+          .intoContainer(
+            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+            margin: EdgeInsets.symmetric(horizontal: $(35)),
+          )
+          .intoCenter(),
+    );
   }
 
   @override
@@ -745,7 +808,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                   ? AspectRatio(
                                       aspectRatio: _videoPlayerController!.value.aspectRatio,
                                       child: VideoPlayer(_videoPlayerController!),
-                                    ).intoContainer(height: imgContainerWidth, width: imgContainerWidth)
+                                    ).intoContainer(height: imgContainerWidth, width: imgContainerWidth).intoGestureDetector(onTap: () {
+                                      _videoPlayerController?.play();
+                                    })
                                   : Center(child: cachedImage),
                             )
                           : controller.isPhotoSelect.value
@@ -822,7 +887,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     setState(() {
                       imgContainerWidth = size.width;
                       imgContainerHeight = size.height - 20;
-                      EventBusHelper().eventBus.fire(OnPickPhotoHeightChangeEvent(data: imgContainerHeight + 20));
                     });
                   })),
                   Obx(() => buildSuccessFunctions(context)),
@@ -1110,7 +1174,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 Obx(() => Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
                     .intoGestureDetector(
                       onTap: () {
-                        shareToDiscovery(context);
+                        shareToDiscovery();
                       },
                     )
                     .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
@@ -1241,6 +1305,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           return false;
         }
         compressedImage = await imageCompressAndGetFile(File(image.path));
+        if (controller.image.value != null) {
+          File oldFile = controller.image.value as File;
+          if ((await md5File(oldFile)) == (await md5File(compressedImage))) {
+            CommonExtension().showToast("You've chosen this photo already");
+            return false;
+          }
+        }
         controller.updateImageFile(compressedImage);
         controller.updateImageUrl("");
       } else {
@@ -1441,13 +1512,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               dataBody['cache_id'] = cachedId!;
             }
             selectedEffect.handleApiParams(dataBody);
-            final cartoonizeResponse = await API.post(aiHost.cartoonizeApi, body: dataBody);
+            var baseEntity = await api.post(aiHost.cartoonizeApi, params: dataBody);
             if (ignoreResult) {
               controller.changeIsLoading(false);
               return;
             }
-            if (cartoonizeResponse.statusCode == 200) {
-              final Map parsed = json.decode(cartoonizeResponse.body.toString());
+            if (baseEntity != null) {
+              final Map parsed = baseEntity.data;
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
                 controller.updateCachedId(cachedId!);
@@ -1507,7 +1578,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               resultSuccess = 1;
             } else {
               controller.changeIsLoading(false);
-              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
+              // CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           } else {
             var token = tokenParsed['data'];
@@ -1689,7 +1760,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     PickPhotoScreen.push(
       context,
       controller: controller,
-      imageContainerHeight: imgContainerHeight,
+      floatWidget: _createEffectModelIcon(context, effectItem: tabItemList[currentItemIndex.value].data, checked: true),
       onPickFromSystem: (takePhoto) async {
         if (takePhoto) {
           return await pickImageFromCamera(context, from: "result");
@@ -1701,7 +1772,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         return await pickImageFromGallery(context, from: "result", entity: entity);
       },
     ).then((value) {
-      if (value == null) {
+      if (!(value ?? false)) {
         if (!controller.isPhotoSelect.value) {
           Navigator.of(context).pop();
         }

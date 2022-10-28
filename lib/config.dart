@@ -31,6 +31,12 @@ class AdMobConfig {
 
   // static String get SPLASH_AD_ID=>'ca-app-pub-3940256099942544/3419835294'; // 测试开屏广告id
   static String get SPLASH_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/5951671113' : 'ca-app-pub-8401689731796078/2274729104';
+
+  // static String get INSPIRED_BANNER_AD1_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用卡片广告id
+  static String get INSPIRED_BANNER_AD1_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/5614223173' : 'ca-app-pub-8401689731796078/9297483160';
+
+  // static String get INSPIRED_BANNER_AD2_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用卡片广告id
+  static String get INSPIRED_BANNER_AD2_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6529571798' : 'ca-app-pub-8401689731796078/6161018086';
 }
 
 abstract class BaseConfig {

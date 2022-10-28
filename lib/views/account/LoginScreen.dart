@@ -44,10 +44,12 @@ class _LoginScreenState extends AppState<LoginScreen> {
     super.initState();
     logEvent(Events.login_page_loading);
     thirdpartManager.adsHolder.ignore = true;
-    if (widget.toSignUp) {
-      var prefixPage = ModalRoute.of(context)!.settings.arguments;
-      delay(() => toSignUp(prefixPage, context), milliseconds: 64);
-    }
+    delay(() {
+      if (widget.toSignUp) {
+        var prefixPage = ModalRoute.of(context)!.settings.arguments;
+        toSignUp(prefixPage, context);
+      }
+    }, milliseconds: 64);
   }
 
   @override
@@ -312,7 +314,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
           builder: (context) => SignupScreen(),
         ),
       ).then((value) {
-        if (value ?? false) {
+        if (value == null || value) {
           Navigator.pop(context);
         }
       });

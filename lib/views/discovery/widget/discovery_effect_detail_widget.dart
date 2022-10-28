@@ -170,6 +170,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                   imageSize != null
                       ? buildResourceItem(
                           resources[1],
+                          fit: BoxFit.contain,
                           width: (imageListWidth - $(2)) / 2,
                           height: imageSize!.height,
                         ).intoGestureDetector(onTap: () {
@@ -236,40 +237,98 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     );
   }
 
-  Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height}) {
+  Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height, BoxFit fit = BoxFit.cover}) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
     } else {
-      return CachedNetworkImageUtils.custom(
-          context: context,
-          imageUrl: resource.url ?? '',
-          fit: BoxFit.cover,
-          width: width,
-          height: height,
-          cacheManager: CachedImageCacheManager(),
-          placeholder: (context, url) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: height ?? width);
-          },
-          errorWidget: (context, url, error) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: height ?? width);
-          });
+      if (fit == BoxFit.contain) {
+        return Stack(
+          children: [
+            CachedNetworkImageUtils.custom(
+                context: context,
+                imageUrl: resource.url ?? '',
+                fit: BoxFit.fill,
+                width: width,
+                height: height,
+                cacheManager: CachedImageCacheManager(),
+                placeholder: (context, url) {
+                  return CircularProgressIndicator()
+                      .intoContainer(
+                        width: $(25),
+                        height: $(25),
+                      )
+                      .intoCenter()
+                      .intoContainer(width: width, height: height ?? width);
+                },
+                errorWidget: (context, url, error) {
+                  return CircularProgressIndicator()
+                      .intoContainer(
+                        width: $(25),
+                        height: $(25),
+                      )
+                      .intoCenter()
+                      .intoContainer(width: width, height: height ?? width);
+                }),
+            Container().blur(),
+            CachedNetworkImageUtils.custom(
+                context: context,
+                imageUrl: resource.url ?? '',
+                fit: fit,
+                width: width,
+                height: height,
+                cacheManager: CachedImageCacheManager(),
+                placeholder: (context, url) {
+                  return CircularProgressIndicator()
+                      .intoContainer(
+                        width: $(25),
+                        height: $(25),
+                      )
+                      .intoCenter()
+                      .intoContainer(width: width, height: height ?? width);
+                },
+                errorWidget: (context, url, error) {
+                  return CircularProgressIndicator()
+                      .intoContainer(
+                        width: $(25),
+                        height: $(25),
+                      )
+                      .intoCenter()
+                      .intoContainer(width: width, height: height ?? width);
+                })
+          ],
+        ).intoContainer(width: width, height: height);
+      } else {
+        return CachedNetworkImageUtils.custom(
+            context: context,
+            imageUrl: resource.url ?? '',
+            fit: fit,
+            width: width,
+            height: height,
+            cacheManager: CachedImageCacheManager(),
+            placeholder: (context, url) {
+              return CircularProgressIndicator()
+                  .intoContainer(
+                    width: $(25),
+                    height: $(25),
+                  )
+                  .intoCenter()
+                  .intoContainer(width: width, height: height ?? width);
+            },
+            errorWidget: (context, url, error) {
+              return CircularProgressIndicator()
+                  .intoContainer(
+                    width: $(25),
+                    height: $(25),
+                  )
+                  .intoCenter()
+                  .intoContainer(width: width, height: height ?? width);
+            });
+      }
     }
   }
 
   void openImage(BuildContext context, final int index) {
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       FlutterForbidshot.setAndroidForbidOn();
     }
     List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
@@ -287,7 +346,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
         ),
       ),
     ).then((value) {
-      if(Platform.isAndroid) {
+      if (Platform.isAndroid) {
         FlutterForbidshot.setAndroidForbidOff();
       }
     });

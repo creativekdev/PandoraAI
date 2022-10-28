@@ -173,7 +173,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                       children: list.transfer((data, index) {
                         var data = list[index];
                         if (data.isAd) {
-                          return _buildMERCAd(cardWidth, cardWidth).intoContainer(
+                          return _buildMERCAd(cardWidth, cardWidth, data.page).intoContainer(
                               width: cardWidth,
                               height: cardWidth,
                               margin: EdgeInsets.only(
@@ -362,7 +362,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   @override
   bool get wantKeepAlive => true;
 
-  Widget _buildMERCAd(double width, double height) {
+  Widget _buildMERCAd(double width, double height, int page) {
     var showAds = isShowAdsNew();
 
     if (showAds) {
@@ -370,15 +370,26 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
+        if(adMap[page] == null) {
+          adMap[page] = CardAdsWidget(
+            width: width,
+            height: height,
+            page: page,
+          );
+        }
+        return adMap[page]!;
         return CardAdsWidget(
           width: width,
           height: height,
+          page: page,
         );
       }
     }
 
     return Container();
   }
+
+  Map<int, Widget> adMap = {};
 
   _onEffectCategoryTap(EffectItemListData data, EffectDataController effectDataController) async {
     EffectModel? effectModel;

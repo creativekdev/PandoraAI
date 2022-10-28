@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -18,7 +19,7 @@ class PickPhotoScreen {
     required ChoosePhotoScreenController controller,
     required OnPickFromSystem onPickFromSystem,
     required OnPickFromRecent onPickFromRecent,
-    required double imageContainerHeight,
+    required Widget floatWidget,
   }) {
     return Navigator.of(context).push<bool>(NoAnimRouter(
       _PickPhotoScreen(
@@ -26,7 +27,7 @@ class PickPhotoScreen {
         controller: controller,
         onPickFromSystem: onPickFromSystem,
         onPickFromRecent: onPickFromRecent,
-        imageContainerHeight: imageContainerHeight,
+        floatWidget: floatWidget,
       ),
     ));
   }
@@ -39,14 +40,14 @@ class _PickPhotoScreen extends StatefulWidget {
   ChoosePhotoScreenController controller;
   OnPickFromSystem onPickFromSystem;
   OnPickFromRecent onPickFromRecent;
-  double imageContainerHeight;
+  Widget floatWidget;
 
   _PickPhotoScreen({
     Key? key,
     required this.controller,
     required this.onPickFromSystem,
     required this.onPickFromRecent,
-    required this.imageContainerHeight,
+    required this.floatWidget,
   }) : super(key: key);
 
   @override
@@ -68,28 +69,27 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   final double dragWidgetHeight = 44;
   final double deleteContainerHeight = 40;
   late bool lastDragDirection = true;
-  late StreamSubscription containerHeightListener;
-  late double imageContainerHeight;
   late double lineHeight;
+  late Widget floatWidget;
 
   bool selectedMode = false;
+
+  bool result = false;
+  MyVerticalDragGestureRecognizer dragGestureRecognizer = MyVerticalDragGestureRecognizer();
 
   @override
   dispose() {
     super.dispose();
-    containerHeightListener.cancel();
   }
 
   @override
   initState() {
     super.initState();
+    floatWidget = widget.floatWidget;
     controller = widget.controller;
-    imageContainerHeight = widget.imageContainerHeight;
-    containerHeightListener = EventBusHelper().eventBus.on<OnPickPhotoHeightChangeEvent>().listen((event) {
-      setState(() {
-        imageContainerHeight = ((event.data! ~/ lineHeight) + 0.4) * lineHeight;
-      });
-    });
+    dragGestureRecognizer.onDragStart = onDragStart;
+    dragGestureRecognizer.onDragUpdate = onDragUpdate;
+    dragGestureRecognizer.onDragEnd = onDragEnd;
     calculateListHeight();
     dragAnimController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     entryAnimController = AnimationController(
@@ -98,7 +98,24 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           milliseconds: controller.isPhotoSelect.value ? 300 : 200,
         ));
     entryAnimController.forward();
+    entryAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.reverse) {
+        Navigator.of(context).pop(result);
+      }
+    });
+    dragAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.reverse) {
+        setState(() {
+          selectedMode = false;
+        });
+      }
+    });
     delay(() => entryAnimController.duration = Duration(milliseconds: 300), milliseconds: 600);
+  }
+
+  onBackClick(bool result) {
+    this.result = result;
+    entryAnimController.reverse();
   }
 
   void calculateListHeight() {
@@ -106,7 +123,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     var width = ScreenUtil.screenSize.width - 24;
     lineHeight = width / 4;
     if (controller.imageUploadCache.length > 6) {
-      listHeight = width * 0.5 + $(50);
+      listHeight = width * 0.5 + $(70);
     } else {
       var totalLength = controller.imageUploadCache.length + 2;
       int line = (totalLength) ~/ 4;
@@ -116,13 +133,13 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       if (line > 2) {
         line = 2;
       }
-      listHeight = width / 4 * line + $(50);
+      listHeight = lineHeight * line + $(70);
     }
-    maxSlide = ScreenUtil.screenSize.height - listHeight - dragWidgetHeight + 10;
+    listHeight += ScreenUtil.getBottomBarHeight();
+    maxSlide = ScreenUtil.screenSize.height - listHeight - dragWidgetHeight;
   }
 
   toggle() => dragAnimController.isDismissed ? dragAnimController.forward() : dragAnimController.reverse();
-  MyVerticalDragGestureRecognizer dragGestureRecognizer = MyVerticalDragGestureRecognizer();
 
   @override
   Widget build(BuildContext context) {
@@ -131,168 +148,212 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           init: controller,
           builder: (_) => SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
-            child: AnimatedBuilder(
-              animation: dragAnimController,
-              builder: (context, child) {
-                double offsetY = -maxSlide * dragAnimController.value;
-                double alpha = 0;
-                if (dragAnimController.value > 0.5) {
-                  alpha = (dragAnimController.value - 0.5) * 2;
-                }
-                double titleAlpha = 1;
-                if (dragAnimController.value < 0.5) {
-                  titleAlpha = (dragAnimController.value - 0.5) * 2;
-                }
-                return Stack(
-                  children: [
-                    FadeTransition(
-                      opacity: entryAnimController,
-                      child: Container(
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        color: Color(0x77000000),
-                      ),
-                    ),
-                    Transform.translate(
-                      offset: Offset(0, offsetY),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (dragAnimController.isDismissed && controller.isPhotoSelect.value) {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: Container(
-                          width: double.maxFinite,
-                          height: double.maxFinite,
-                          child: AnimatedBuilder(
-                              animation: entryAnimController,
-                              builder: (context, child) {
-                                return Transform.translate(
-                                    offset: Offset(0, ScreenUtil.screenSize.height - listHeight * entryAnimController.value),
-                                    child: NotificationListener<ScrollStartNotification>(
-                                      onNotification: (notification) {
-                                        dragGestureRecognizer.needDrag = false; // 内部开始滑动时关闭开关
-                                        return false;
-                                      },
-                                      child: NotificationListener<OverscrollNotification>(
+            child: Stack(
+              children: [
+                FadeTransition(
+                  opacity: entryAnimController,
+                  child: Container(
+                    width: ScreenUtil.screenSize.width,
+                    height: ScreenUtil.screenSize.height,
+                    color: Color(0x77000000),
+                  ).intoGestureDetector(onTap: () {
+                    if (dragAnimController.isDismissed && controller.isPhotoSelect.value) {
+                      if (selectedMode) {
+                        setState(() {
+                          selectedMode = false;
+                        });
+                      } else {
+                        onBackClick(false);
+                      }
+                    }
+                  }),
+                ),
+                AnimatedBuilder(
+                  animation: dragAnimController,
+                  builder: (context, child) {
+                    double offsetY = -maxSlide * dragAnimController.value;
+                    double alpha = 0;
+                    if (dragAnimController.value > 0.5) {
+                      alpha = (dragAnimController.value - 0.5) * 2;
+                    }
+                    double titleAlpha = 1;
+                    if (dragAnimController.value < 0.5) {
+                      titleAlpha = (dragAnimController.value - 0.5) * 2;
+                    }
+                    return Stack(
+                      children: [
+                        Transform.translate(
+                          offset: Offset(0, offsetY),
+                          child: Container(
+                            width: double.maxFinite,
+                            height: double.maxFinite,
+                            child: AnimatedBuilder(
+                                animation: entryAnimController,
+                                builder: (context, child) {
+                                  return Transform.translate(
+                                      offset: Offset(0, ScreenUtil.screenSize.height - listHeight * entryAnimController.value),
+                                      child: NotificationListener<ScrollStartNotification>(
                                         onNotification: (notification) {
-                                          if (notification.metrics.axis == Axis.vertical) {
-                                            if (notification.dragDetails!.delta.dy > 0) {
-                                              dragGestureRecognizer.needDrag = true;
-                                            } else {
-                                              dragGestureRecognizer.needDrag = false;
-                                            }
-                                          }
+                                          dragGestureRecognizer.needDrag = false; // 内部开始滑动时关闭开关
                                           return false;
                                         },
-                                        child: Listener(
-                                          onPointerDown: (pointer) {
-                                            dragGestureRecognizer.addPointer(pointer);
-                                            dragGestureRecognizer.onDragStart = onDragStart;
-                                            dragGestureRecognizer.onDragUpdate = onDragUpdate;
-                                            dragGestureRecognizer.onDragEnd = onDragEnd;
+                                        child: NotificationListener<OverscrollNotification>(
+                                          onNotification: (notification) {
+                                            if (notification.metrics.axis == Axis.vertical) {
+                                              if ((notification.dragDetails?.delta.dy ?? 1) > 0) {
+                                                dragGestureRecognizer.needDrag = true;
+                                              } else {
+                                                dragGestureRecognizer.needDrag = false;
+                                              }
+                                            }
+                                            return false;
                                           },
-                                          child: GestureDetector(
-                                            onTap: () {},
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w400, $(14)).intoContainer(
-                                                  height: dragWidgetHeight,
-                                                  width: double.maxFinite,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                                          child: Listener(
+                                            onPointerDown: (pointer) {
+                                              dragGestureRecognizer.addPointer(pointer);
+                                            },
+                                            child: GestureDetector(
+                                              onTap: () {},
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w400, $(14)).intoContainer(
+                                                    height: dragWidgetHeight,
+                                                    width: double.maxFinite,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                                                      color: ColorConstant.BackgroundColor,
+                                                    ),
+                                                    alignment: Alignment.centerLeft,
+                                                    padding: EdgeInsets.symmetric(horizontal: 12),
+                                                  ),
+                                                  GridView.builder(
+                                                    physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
+                                                    padding: EdgeInsets.only(left: 12, right: 12),
+                                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                      crossAxisCount: 4,
+                                                      mainAxisSpacing: $(2),
+                                                      crossAxisSpacing: $(2),
+                                                    ),
+                                                    itemBuilder: (context, pos) {
+                                                      return buildListItem(pos, context);
+                                                    },
+                                                    itemCount: controller.imageUploadCache.length + 2,
+                                                  ).intoContainer(
+                                                    width: double.maxFinite,
+                                                    height: dragAnimController.isDismissed ? listHeight : ScreenUtil.screenSize.height - appBarHeight - dragWidgetHeight,
                                                     color: ColorConstant.BackgroundColor,
                                                   ),
-                                                  alignment: Alignment.centerLeft,
-                                                  padding: EdgeInsets.symmetric(horizontal: 12),
-                                                ),
-                                                GridView.builder(
-                                                  physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
-                                                  padding:
-                                                      EdgeInsets.only(left: 12, right: 12, top: dragAnimController.isCompleted ? (selectedMode ? deleteContainerHeight : 0) : 0),
-                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 4,
-                                                    mainAxisSpacing: $(2),
-                                                    crossAxisSpacing: $(2),
-                                                  ),
-                                                  itemBuilder: (context, pos) {
-                                                    return buildListItem(pos, context);
-                                                  },
-                                                  itemCount: controller.imageUploadCache.length + 2,
-                                                ).intoContainer(
-                                                  width: double.maxFinite,
-                                                  height: dragAnimController.isDismissed ? listHeight : imageContainerHeight,
-                                                  color: ColorConstant.BackgroundColor,
-                                                ),
-                                              ],
+                                                  Container(height: MediaQuery.of(context).padding.bottom + 20, color: ColorConstant.BackgroundColor),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ));
-                              }),
+                                      ));
+                                }),
+                          ),
                         ),
-                      ),
-                    ),
-                    Opacity(
-                      opacity: alpha,
-                      child: AppNavigationBar(
-                          backgroundColor: ColorConstant.BackgroundColor,
-                          backAction: () {
-                            if (dragAnimController.isCompleted) {
-                              dragAnimController.reverse();
-                            } else {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          middle: Text(
-                            "Choose Photo",
-                            style: TextStyle(color: Colors.white),
-                          )).intoContainer(height: appBarHeight),
-                    ),
-                    Row(
-                      children: [
-                        TitleTextWidget("Select All", Colors.red, FontWeight.normal, $(15)).paddingSymmetric(vertical: 6, horizontal: 15).intoGestureDetector(onTap: () {
-                          controller.imageUploadCache.forEach((element) {
-                            element.checked = true;
-                          });
-                          setState(() {});
-                        }),
-                        Expanded(
-                            child: Container(
-                          child: Image.asset(
-                            Images.ic_recent_delete,
-                            height: $(22),
-                          ).intoGestureDetector(onTap: () {
-                            showDeleteDialog(context).then((value) {
-                              if (value ?? false) {
-                                controller.deleteAllCheckedPhotos();
-                                setState(() {});
+                        Opacity(
+                          opacity: alpha,
+                          child: AppNavigationBar(
+                            backgroundColor: ColorConstant.BackgroundColor,
+                            backAction: () {
+                              if (dragAnimController.isCompleted) {
+                                dragAnimController.reverse();
+                              } else {
+                                onBackClick(false);
                               }
-                            });
-                          }),
-                        )),
-                        TitleTextWidget("  Cancel  ", Colors.white, FontWeight.normal, $(15)).paddingSymmetric(vertical: 6, horizontal: 15).intoGestureDetector(onTap: () {
-                          if (controller.imageUploadCache.exist((t) => t.checked)) {
-                            controller.imageUploadCache.forEach((element) {
-                              element.checked = false;
-                            });
-                          } else {
-                            selectedMode = false;
-                          }
-                          setState(() {});
-                        }),
+                            },
+                            middle: Text(
+                              "Choose Photo",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            trailing: TitleTextWidget(selectedMode ? 'Cancel' : 'Edit', Colors.white, FontWeight.w400, $(15)).intoGestureDetector(
+                              onTap: () {
+                                if (!dragAnimController.isCompleted) {
+                                  return;
+                                }
+                                if (!selectedMode) {
+                                  setState(() {
+                                    selectedMode = true;
+                                  });
+                                  Vibration.hasVibrator().then((value) {
+                                    if (value ?? false) {
+                                      Vibration.vibrate(duration: 50);
+                                    }
+                                  });
+                                } else {
+                                  setState(() {
+                                    selectedMode = false;
+                                  });
+                                }
+                              },
+                            ),
+                          ).intoContainer(height: appBarHeight),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TitleTextWidget(controller.imageUploadCache.exist((t) => !t.checked) ? "Select All" : "Unselect", Colors.red, FontWeight.normal, $(15))
+                                .paddingSymmetric(vertical: 6, horizontal: 15)
+                                .intoGestureDetector(onTap: () {
+                              if (controller.imageUploadCache.exist((t) => !t.checked)) {
+                                controller.imageUploadCache.forEach((element) {
+                                  element.checked = true;
+                                });
+                              } else {
+                                controller.imageUploadCache.forEach((element) {
+                                  element.checked = false;
+                                });
+                              }
+                              setState(() {});
+                            }),
+                            TitleTextWidget("Delete", controller.imageUploadCache.exist((t) => t.checked) ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, $(15))
+                                .paddingSymmetric(vertical: 6, horizontal: 15)
+                                .intoGestureDetector(onTap: () {
+                              if (!controller.imageUploadCache.exist((t) => t.checked)) {
+                                return;
+                              }
+                              showDeleteDialog(context).then((value) {
+                                if (value ?? false) {
+                                  controller.deleteAllCheckedPhotos();
+                                  setState(() {});
+                                }
+                              });
+                            }),
+                          ],
+                        )
+                            .intoContainer(
+                                height: deleteContainerHeight,
+                                color: ColorConstant.BackgroundColor,
+                                margin: EdgeInsets.only(top: ScreenUtil.screenSize.height - deleteContainerHeight - ScreenUtil.getBottomBarHeight()))
+                            .visibility(visible: selectedMode && !dragAnimController.isAnimating),
                       ],
-                    )
-                        .intoContainer(
-                            height: deleteContainerHeight,
-                            color: ColorConstant.BackgroundColor,
-                            margin: EdgeInsets.only(top: dragAnimController.isDismissed ? ScreenUtil.screenSize.height - deleteContainerHeight : appBarHeight))
-                        .visibility(visible: selectedMode && !dragAnimController.isAnimating),
-                  ],
-                );
-              },
+                    );
+                  },
+                ),
+                Positioned(
+                  child: Container(
+                    width: lineHeight,
+                    height: lineHeight,
+                    child: OutlineWidget(
+                        radius: $(6),
+                        strokeWidth: 3,
+                        gradient: LinearGradient(
+                          colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all($(3)),
+                          child: ClipRRect(child: floatWidget,borderRadius: BorderRadius.circular(3),),
+                        )),
+                  ),
+                  top: appBarHeight + 18,
+                  right: 12,
+                ),
+              ],
             ),
           ),
         ).intoMaterial(color: Colors.transparent),
@@ -307,7 +368,8 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
             dragAnimController.reverse();
             return false;
           }
-          return true;
+          onBackClick(false);
+          return false;
         });
   }
 
@@ -324,7 +386,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           .intoGestureDetector(onTap: () {
         widget.onPickFromSystem.call(true).then((value) {
           if (value) {
-            Navigator.of(context).pop(true);
+            onBackClick(true);
           }
         });
       });
@@ -340,7 +402,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           .intoGestureDetector(onTap: () {
         widget.onPickFromSystem.call(false).then((value) {
           if (value) {
-            Navigator.of(context).pop(true);
+            onBackClick(true);
           }
         });
       });
@@ -377,35 +439,26 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                 image: FileImage(File(controller.imageUploadCache[index].fileName)),
                 fit: BoxFit.cover,
               ).intoContainer(width: double.maxFinite, height: double.maxFinite))
-        .intoGestureDetector(onLongPress: () {
-      if (!selectedMode) {
-        setState(() {
-          selectedMode = true;
-        });
-        Vibration.hasVibrator().then((value) {
-          if (value ?? false) {
-            Vibration.vibrate(duration: 100);
+        .intoGestureDetector(
+      onTap: () {
+        if (selectedMode) {
+          setState(() {
+            data.checked = !data.checked;
+          });
+        } else {
+          var entity = data;
+          if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
+            CommonExtension().showToast("You've chosen this photo already");
+            return;
           }
-        });
-      }
-    }, onTap: () {
-      if (selectedMode) {
-        setState(() {
-          data.checked = !data.checked;
-        });
-      } else {
-        var entity = data;
-        if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
-          CommonExtension().showToast("You've chosen this photo already");
-          return;
+          widget.onPickFromRecent(entity).then((value) {
+            if (value) {
+              onBackClick(true);
+            }
+          });
         }
-        widget.onPickFromRecent(entity).then((value) {
-          if (value) {
-            Navigator.of(context).pop(true);
-          }
-        });
-      }
-    });
+      },
+    );
   }
 
   onDragStart(DragStartDetails details) {
@@ -426,10 +479,15 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     if (dragAnimController.isDismissed || dragAnimController.isCompleted) {
       return;
     }
-    if (lastDragDirection) {
-      dragAnimController.reverse();
+    if (details.velocity.pixelsPerSecond.dy.abs() > 200) {
+      double visualVelocity = details.velocity.pixelsPerSecond.dy / ScreenUtil.screenSize.height;
+      dragAnimController.fling(velocity: -visualVelocity);
     } else {
-      dragAnimController.forward();
+      if (lastDragDirection) {
+        dragAnimController.reverse();
+      } else {
+        dragAnimController.forward();
+      }
     }
   }
 

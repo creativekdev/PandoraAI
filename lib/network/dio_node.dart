@@ -4,7 +4,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-const _receiveTimeout = 15000;
+const _receiveTimeout = 60000;
 const _connectTimeout = 60000;
 const _responseType = ResponseType.json;
 const String _TAG = "WEB";
@@ -55,7 +55,7 @@ class DioNode {
       }
       return handler.next(options);
     }, onResponse: (Response response, handler) {
-      if (kReleaseMode) {
+      if (!kReleaseMode) {
         return handler.next(response);
       }
       String url = response.requestOptions.baseUrl + response.requestOptions.path;
@@ -69,7 +69,7 @@ class DioNode {
       LogUtil.v('response: $url  response: $result', tag: tag);
       return handler.next(response);
     }, onError: (e, handler) {
-      if (kReleaseMode) {
+      if (!kReleaseMode) {
         return handler.next(e);
       }
       String url = e.requestOptions.baseUrl + e.requestOptions.path;

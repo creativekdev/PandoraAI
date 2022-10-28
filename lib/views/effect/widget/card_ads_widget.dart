@@ -6,11 +6,13 @@ import 'package:cartoonizer/config.dart';
 class CardAdsWidget extends StatefulWidget {
   double width;
   double height;
+  int page;
 
   CardAdsWidget({
     Key? key,
     required this.width,
     required this.height,
+    required this.page,
   }) : super(key: key);
 
   @override
@@ -27,9 +29,9 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
     super.initState();
     cardAdsHolder = CardAdsHolder(
         width: widget.width,
-        adId: AdMobConfig.BANNER_AD_ID,
+        adId: widget.page % 2 == 0 ? AdMobConfig.INSPIRED_BANNER_AD1_ID : AdMobConfig.INSPIRED_BANNER_AD2_ID,
         onUpdated: () {
-          if(mounted) {
+          if (mounted) {
             setState(() {});
           }
         },

@@ -43,8 +43,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
 
   @override
   void initState() {
-    logEvent(Events.signup_page_loading);
     super.initState();
+    logEvent(Events.signup_page_loading);
     api = CartoonizerApi().bindState(this);
   }
 
@@ -587,7 +587,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                           )
                         }
                       else
-                        {Navigator.pop(context)}
+                        {Navigator.pop(context, false)}
                     },
                     child: Text(
                       StringConstant.log_in,
