@@ -249,9 +249,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         data: data,
         visible: dataList.pick((t) => t.data?.id == data.id) == null,
       ));
-      if (i == 4) {
-        dataList.add(_ListData(isAd: true, page: page));
-      }
+      // if (i == 4) {
+      //   dataList.add(_ListData(isAd: true, page: page));
+      // }
     }
   }
 
