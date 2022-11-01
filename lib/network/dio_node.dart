@@ -55,7 +55,7 @@ class DioNode {
       }
       return handler.next(options);
     }, onResponse: (Response response, handler) {
-      if (!kReleaseMode) {
+      if (kReleaseMode) {
         return handler.next(response);
       }
       String url = response.requestOptions.baseUrl + response.requestOptions.path;

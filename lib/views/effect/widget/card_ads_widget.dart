@@ -50,7 +50,7 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
     if (cardAdsHolder.adsReady) {
       return cardAdsHolder.buildAdWidget() ?? Container();
     } else {
-      return Container();
+      return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter();
     }
   }
 }

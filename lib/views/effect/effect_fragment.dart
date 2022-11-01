@@ -54,6 +54,22 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   late StreamSubscription onPushDataListener;
   bool proVisible = false;
   double headerHeight = 0;
+  bool hasHashTag = false;
+  bool hashTagBlurOpen = false;
+  int? selectedTagIndex;
+
+  String? get selectedTag => selectedTagIndex == null ? null : dataController.tagList[selectedTagIndex!];
+
+  setSelectedTagIndex(int? index) {
+    setState(() {
+      if (index == null) {
+        selectedTagIndex = null;
+      } else {
+        selectedTagIndex = index;
+      }
+    });
+    EventBusHelper().eventBus.fire(OnHashTagChangeEvent(data: selectedTag));
+  }
 
   @override
   void initState() {
@@ -147,8 +163,14 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
       for (var i = 0; i < tabConfig.length; i++) {
         var key = tabConfig[i].key;
         if (i == currentIndex) {
+          if (tabConfig[i].tabString == 'template') {
+            openHashTagBlur();
+          }
           key.currentState?.onAttached();
         } else {
+          if (tabConfig[i].tabString == 'template') {
+            hideHashTagBlur();
+          }
           key.currentState?.onDetached();
         }
       }
@@ -168,6 +190,22 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   void setIndex(int index) {
     if (currentIndex != index) {
       _pageController?.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    }
+  }
+
+  openHashTagBlur() {
+    if (hasHashTag && !hashTagBlurOpen) {
+      setState(() {
+        hashTagBlurOpen = true;
+      });
+    }
+  }
+
+  hideHashTagBlur() {
+    if (hashTagBlurOpen) {
+      setState(() {
+        hashTagBlurOpen = false;
+      });
     }
   }
 
@@ -195,6 +233,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
           } else {
             recentController.updateOriginData(_.data!.allEffectList());
             tabConfig.clear();
+            hasHashTag = !dataController.tagList.isEmpty;
             for (var value in _.data!.data.keys) {
               var key = GlobalKey<AppTabState>();
               if (value == 'face') {
@@ -239,6 +278,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                     recentController: recentController,
                     dataController: dataController,
                     headerHeight: headerHeight,
+                    selectedTag: selectedTag,
                   ),
                   title: _.data!.localeName(value),
                   tabString: value,
@@ -264,6 +304,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
             }
             _pageController = PageController(initialPage: currentIndex, keepPage: true);
             _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
+            hashTagBlurOpen = tabConfig[currentIndex].tabString == 'template';
             return Stack(
               children: [
                 PageView(
@@ -271,11 +312,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   controller: _pageController,
                   children: tabConfig.map((e) => e.item).toList(),
                 ),
-                header(context).listenSizeChanged(onSizeChanged: (size) {
-                  setState((){
-                    headerHeight = size.height;
-                  });
-                }),
+                header(context),
               ],
             );
           }
@@ -290,30 +327,39 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            navbar(context),
-            SizedBox(height: $(10)),
-            Theme(
-                data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                child: TabBar(
-                  indicatorSize: TabBarIndicatorSize.label,
-                  indicator: LineTabIndicator(
-                    width: $(20),
-                    strokeCap: StrokeCap.butt,
-                    borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                  ),
-                  isScrollable: tabConfig.length > 4,
-                  labelColor: ColorConstant.PrimaryColor,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 0),
-                  labelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.bold),
-                  unselectedLabelColor: ColorConstant.PrimaryColor,
-                  unselectedLabelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.w500),
-                  controller: _tabController,
-                  onTap: (index) {
-                    setIndex(index);
-                  },
-                  tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0)))).toList(),
-                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
-            SizedBox(height: $(8)),
+            Column(
+              children: [
+                navbar(context),
+                SizedBox(height: $(10)),
+                Theme(
+                    data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
+                    child: TabBar(
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicator: LineTabIndicator(
+                        width: $(20),
+                        strokeCap: StrokeCap.butt,
+                        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
+                      ),
+                      isScrollable: tabConfig.length > 4,
+                      labelColor: ColorConstant.PrimaryColor,
+                      labelPadding: EdgeInsets.symmetric(horizontal: 0),
+                      labelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.bold),
+                      unselectedLabelColor: ColorConstant.PrimaryColor,
+                      unselectedLabelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.w500),
+                      controller: _tabController,
+                      onTap: (index) {
+                        setIndex(index);
+                      },
+                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0)))).toList(),
+                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
+                SizedBox(height: $(8))
+              ],
+            ).listenSizeChanged(onSizeChanged: (size) {
+              setState(() {
+                headerHeight = size.height;
+              });
+            }),
+            Container(width: double.maxFinite, height: hashTagBlurOpen ? $(44) : $(0), child: buildHashTagList(dataController)),
           ],
         ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(
             onTap: () {},
@@ -323,6 +369,58 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   }
                 : null),
       ));
+
+  Widget buildHashTagList(EffectDataController dataController) {
+    if (dataController.tagList.isEmpty) {
+      return Container(height: 0);
+    }
+    return ScrollablePositionedList.builder(
+        scrollDirection: Axis.horizontal,
+        initialScrollIndex: 0,
+        padding: EdgeInsets.only(left: $(8), right: $(8)),
+        physics: ClampingScrollPhysics(),
+        itemCount: dataController.tagList.length,
+        itemBuilder: (context, index) {
+          var selected = index == selectedTagIndex;
+          return (selected
+                  ? ShaderMask(
+                      shaderCallback: (Rect bounds) => LinearGradient(
+                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomRight,
+                      ).createShader(Offset.zero & bounds.size),
+                      blendMode: BlendMode.srcATop,
+                      child: Text(
+                        '# ${dataController.tagList[index]}',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: ColorConstant.White,
+                          fontSize: $(13),
+                        ),
+                      ),
+                    )
+                  : Text(
+                      '# ${dataController.tagList[index]}',
+                      style: TextStyle(
+                        fontSize: $(13),
+                        fontFamily: 'Poppins',
+                        color: ColorConstant.BlueColor,
+                      ),
+                    ))
+              .intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)))
+              .intoGestureDetector(onTap: () {
+            if (selected) {
+              setSelectedTagIndex(null);
+            } else {
+              setSelectedTagIndex(index);
+            }
+          });
+        }).intoContainer(
+      height: $(44),
+      alignment: Alignment.center,
+      color: Colors.transparent,
+    );
+  }
 
   Widget navbar(BuildContext context) => Container(
         // margin: EdgeInsets.only(top: $(10)),

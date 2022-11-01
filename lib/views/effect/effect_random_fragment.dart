@@ -27,6 +27,7 @@ class EffectRandomFragment extends StatefulWidget {
   String tabString;
   int tabId;
   double headerHeight;
+  String? selectedTag;
 
   EffectRandomFragment({
     Key? key,
@@ -35,6 +36,7 @@ class EffectRandomFragment extends StatefulWidget {
     required this.tabString,
     required this.dataController,
     required this.headerHeight,
+    required this.selectedTag,
   }) : super(key: key);
 
   @override
@@ -51,27 +53,23 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   late double cardWidth;
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
+  late StreamSubscription hashTagListener;
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
   late bool nsfwOpen;
-  int? selectedTagIndex;
+  String? selectedTag;
 
-  String? get selectedTag => selectedTagIndex == null ? null : dataController.tagList[selectedTagIndex!];
-
-  setSelectedTagIndex(int? index) {
+  void setSelectedTag(String? tag) {
     setState(() {
-      if (index == null) {
-        selectedTagIndex = null;
-      } else {
-        selectedTagIndex = index;
-      }
+      selectedTag = tag;
     });
   }
 
   @override
   initState() {
     super.initState();
+    selectedTag = widget.selectedTag;
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     if (widget.headerHeight != 0) {
       marginTop = widget.headerHeight;
@@ -85,6 +83,11 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (event.data == widget.tabId) {
         scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.linear);
+      }
+    });
+    hashTagListener = EventBusHelper().eventBus.on<OnHashTagChangeEvent>().listen((event) {
+      if (mounted) {
+        setSelectedTag(event.data);
       }
     });
   }
@@ -113,6 +116,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     super.dispose();
     appStateListener.cancel();
     tabOnDoubleClickListener.cancel();
+    hashTagListener.cancel();
   }
 
   List<List<_ListData>> addToDataList(EffectDataController dataController) {
@@ -126,17 +130,17 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     List<_ListData> allList = [];
     var showAdsNew = isShowAdsNew();
     for (int i = 0; i < list.length; i++) {
-      int page = i ~/ 10;
-      if (showAdsNew && i % 10 == 5) {
-        /// todo
-        allList.add(_ListData(isAd: true, page: page));
-      }
+      int page = i ~/ 20;
       var data = list[i];
       allList.add(_ListData(
         page: page,
         data: data,
         visible: true,
       ));
+      if (showAdsNew && i % 20 == 4 && page == 0) {
+        /// to do
+        allList.add(_ListData(isAd: true, page: page));
+      }
     }
     for (var value in allList) {
       if (result.isEmpty || result.last.length == 2) {
@@ -170,6 +174,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
               builder: (dataController) {
                 List<List<_ListData>> dataList = addToDataList(dataController);
                 return ListView.builder(
+                  cacheExtent: 300,
                   padding: EdgeInsets.symmetric(horizontal: $(15)),
                   itemBuilder: (context, i) {
                     var list = dataList[i];
@@ -252,7 +257,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                     //     }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
                                     // Container().blur(),
                                     CachedNetworkImageUtils.custom(
-                                        useOld: true,
+                                        // useOld: true,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth - (nfwShown ? 2 : 0),
@@ -302,63 +307,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                   controller: scrollController,
                 );
               }),
-          buildHashTagList(dataController),
         ]));
-  }
-
-  Widget buildHashTagList(EffectDataController dataController) {
-    if (dataController.tagList.isEmpty) {
-      return Container(height: marginTop);
-    }
-    return ScrollablePositionedList.builder(
-            scrollDirection: Axis.horizontal,
-            initialScrollIndex: 0,
-            padding: EdgeInsets.only(left: $(8), right: $(8)),
-            physics: ClampingScrollPhysics(),
-            itemCount: dataController.tagList.length,
-            itemBuilder: (context, index) {
-              var selected = index == selectedTagIndex;
-              return (selected
-                      ? ShaderMask(
-                          shaderCallback: (Rect bounds) => LinearGradient(
-                            colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomRight,
-                          ).createShader(Offset.zero & bounds.size),
-                          blendMode: BlendMode.srcATop,
-                          child: Text(
-                            '# ${dataController.tagList[index]}',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              color: ColorConstant.White,
-                              fontSize: $(13),
-                            ),
-                          ),
-                        )
-                      : Text(
-                          '# ${dataController.tagList[index]}',
-                          style: TextStyle(
-                            fontSize: $(13),
-                            fontFamily: 'Poppins',
-                            color: ColorConstant.BlueColor,
-                          ),
-                        ))
-                  .intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)))
-                  .intoGestureDetector(onTap: () {
-                if (selected) {
-                  setSelectedTagIndex(null);
-                } else {
-                  setSelectedTagIndex(index);
-                }
-              });
-            })
-        .intoContainer(
-          height: $(44),
-          alignment: Alignment.center,
-          margin: EdgeInsets.only(top: marginTop - 1),
-          color: Color(0xdd161719),
-        )
-        .blur();
   }
 
   @override
@@ -372,14 +321,14 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
-        // if (adMap[page] == null) {
-        //   adMap[page] = CardAdsWidget(
-        //     width: width,
-        //     height: height,
-        //     page: page,
-        //   );
-        // }
-        // return adMap[page]!;
+        if (adMap[page] == null) {
+          adMap[page] = CardAdsWidget(
+            width: width,
+            height: height,
+            page: page,
+          );
+        }
+        return adMap[page]!;
         return CardAdsWidget(
           width: width,
           height: height,

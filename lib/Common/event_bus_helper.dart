@@ -121,3 +121,7 @@ class OnEffectNsfwChangeEvent extends BaseEvent {}
 class OnHomeConfigGetEvent extends BaseEvent {}
 
 class OnNewPostEvent extends BaseEvent {}
+
+class OnHashTagChangeEvent extends BaseEvent<String> {
+  OnHashTagChangeEvent({String? data}) : super(data: data);
+}
