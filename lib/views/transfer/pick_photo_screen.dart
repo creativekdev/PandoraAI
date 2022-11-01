@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -95,7 +94,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     entryAnimController = AnimationController(
         vsync: this,
         duration: Duration(
-          milliseconds: controller.isPhotoSelect.value ? 300 : 200,
+          milliseconds: controller.isPhotoSelect.value ? 300 : 300,
         ));
     entryAnimController.forward();
     entryAnimController.addStatusListener((status) {
@@ -143,234 +142,253 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: GetBuilder(
-          init: controller,
-          builder: (_) => SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            child: Stack(
-              children: [
-                FadeTransition(
-                  opacity: entryAnimController,
-                  child: Container(
-                    width: ScreenUtil.screenSize.width,
-                    height: ScreenUtil.screenSize.height,
-                    color: Color(0x77000000),
-                  ).intoGestureDetector(onTap: () {
-                    if (dragAnimController.isDismissed && controller.isPhotoSelect.value) {
-                      if (selectedMode) {
-                        setState(() {
-                          selectedMode = false;
-                        });
-                      } else {
-                        onBackClick(false);
+    return MediaQuery.removePadding(
+      context: context,
+      child: WillPopScope(
+          child: GetBuilder(
+            init: controller,
+            builder: (_) => SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              child: Stack(
+                children: [
+                  FadeTransition(
+                    opacity: entryAnimController,
+                    child: Container(
+                      width: ScreenUtil.screenSize.width,
+                      height: ScreenUtil.screenSize.height,
+                      color: Color(0x77000000),
+                    ).intoGestureDetector(onTap: () {
+                      if (dragAnimController.isDismissed) {
+                        if (selectedMode) {
+                          setState(() {
+                            selectedMode = false;
+                          });
+                        } else {
+                          onBackClick(false);
+                        }
                       }
-                    }
-                  }),
-                ),
-                AnimatedBuilder(
-                  animation: dragAnimController,
-                  builder: (context, child) {
-                    double offsetY = -maxSlide * dragAnimController.value;
-                    double alpha = 0;
-                    if (dragAnimController.value > 0.5) {
-                      alpha = (dragAnimController.value - 0.5) * 2;
-                    }
-                    double titleAlpha = 1;
-                    if (dragAnimController.value < 0.5) {
-                      titleAlpha = (dragAnimController.value - 0.5) * 2;
-                    }
-                    return Stack(
-                      children: [
-                        Transform.translate(
-                          offset: Offset(0, offsetY),
-                          child: Container(
-                            width: double.maxFinite,
-                            height: double.maxFinite,
-                            child: AnimatedBuilder(
-                                animation: entryAnimController,
-                                builder: (context, child) {
-                                  return Transform.translate(
-                                      offset: Offset(0, ScreenUtil.screenSize.height - listHeight * entryAnimController.value),
-                                      child: NotificationListener<ScrollStartNotification>(
-                                        onNotification: (notification) {
-                                          dragGestureRecognizer.needDrag = false; // 内部开始滑动时关闭开关
-                                          return false;
-                                        },
-                                        child: NotificationListener<OverscrollNotification>(
+                    }),
+                  ),
+                  AnimatedBuilder(
+                    animation: dragAnimController,
+                    builder: (context, child) {
+                      double offsetY = -maxSlide * dragAnimController.value;
+                      double alpha = 0;
+                      if (dragAnimController.value > 0.5) {
+                        alpha = (dragAnimController.value - 0.5) * 2;
+                      }
+                      double titleAlpha = 1;
+                      if (dragAnimController.value < 0.5) {
+                        titleAlpha = (dragAnimController.value - 0.5) * 2;
+                      }
+                      return Stack(
+                        children: [
+                          Transform.translate(
+                            offset: Offset(0, offsetY),
+                            child: Container(
+                              width: double.maxFinite,
+                              height: double.maxFinite,
+                              child: AnimatedBuilder(
+                                  animation: entryAnimController,
+                                  builder: (context, child) {
+                                    return Transform.translate(
+                                        offset: Offset(0, ScreenUtil.screenSize.height - listHeight * entryAnimController.value),
+                                        child: NotificationListener<ScrollStartNotification>(
                                           onNotification: (notification) {
-                                            if (notification.metrics.axis == Axis.vertical) {
-                                              if ((notification.dragDetails?.delta.dy ?? 1) > 0) {
-                                                dragGestureRecognizer.needDrag = true;
-                                              } else {
-                                                dragGestureRecognizer.needDrag = false;
-                                              }
-                                            }
+                                            dragGestureRecognizer.needDrag = false; // 内部开始滑动时关闭开关
                                             return false;
                                           },
-                                          child: Listener(
-                                            onPointerDown: (pointer) {
-                                              dragGestureRecognizer.addPointer(pointer);
+                                          child: NotificationListener<OverscrollNotification>(
+                                            onNotification: (notification) {
+                                              if (notification.metrics.axis == Axis.vertical) {
+                                                if ((notification.dragDetails?.delta.dy ?? 1) > 0) {
+                                                  dragGestureRecognizer.needDrag = true;
+                                                } else {
+                                                  dragGestureRecognizer.needDrag = false;
+                                                }
+                                              }
+                                              return false;
                                             },
-                                            child: GestureDetector(
-                                              onTap: () {},
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w400, $(14)).intoContainer(
-                                                    height: dragWidgetHeight,
-                                                    width: double.maxFinite,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                                            child: Listener(
+                                              onPointerDown: (pointer) {
+                                                dragGestureRecognizer.addPointer(pointer);
+                                              },
+                                              child: GestureDetector(
+                                                onTap: () {},
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w400, $(14)).intoContainer(
+                                                      height: dragWidgetHeight,
+                                                      width: double.maxFinite,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                                                        color: ColorConstant.BackgroundColor,
+                                                      ),
+                                                      alignment: Alignment.centerLeft,
+                                                      padding: EdgeInsets.symmetric(horizontal: 12),
+                                                    ),
+                                                    GridView.builder(
+                                                      physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
+                                                      padding: EdgeInsets.only(left: 12, right: 12),
+                                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                        crossAxisCount: 4,
+                                                        mainAxisSpacing: $(2),
+                                                        crossAxisSpacing: $(2),
+                                                      ),
+                                                      itemBuilder: (context, pos) {
+                                                        return buildListItem(pos, context);
+                                                      },
+                                                      itemCount: controller.imageUploadCache.length + 2,
+                                                    ).intoContainer(
+                                                      width: double.maxFinite,
+                                                      height: dragAnimController.isDismissed ? listHeight : ScreenUtil.screenSize.height - appBarHeight - dragWidgetHeight,
                                                       color: ColorConstant.BackgroundColor,
                                                     ),
-                                                    alignment: Alignment.centerLeft,
-                                                    padding: EdgeInsets.symmetric(horizontal: 12),
-                                                  ),
-                                                  GridView.builder(
-                                                    physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
-                                                    padding: EdgeInsets.only(left: 12, right: 12),
-                                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                      crossAxisCount: 4,
-                                                      mainAxisSpacing: $(2),
-                                                      crossAxisSpacing: $(2),
-                                                    ),
-                                                    itemBuilder: (context, pos) {
-                                                      return buildListItem(pos, context);
-                                                    },
-                                                    itemCount: controller.imageUploadCache.length + 2,
-                                                  ).intoContainer(
-                                                    width: double.maxFinite,
-                                                    height: dragAnimController.isDismissed ? listHeight : ScreenUtil.screenSize.height - appBarHeight - dragWidgetHeight,
-                                                    color: ColorConstant.BackgroundColor,
-                                                  ),
-                                                  Container(height: MediaQuery.of(context).padding.bottom + 20, color: ColorConstant.BackgroundColor),
-                                                ],
+                                                    Container(height: MediaQuery.of(context).padding.bottom + 20, color: ColorConstant.BackgroundColor),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ));
-                                }),
-                          ),
-                        ),
-                        Opacity(
-                          opacity: alpha,
-                          child: AppNavigationBar(
-                            backgroundColor: ColorConstant.BackgroundColor,
-                            backAction: () {
-                              if (dragAnimController.isCompleted) {
-                                dragAnimController.reverse();
-                              } else {
-                                onBackClick(false);
-                              }
-                            },
-                            middle: Text(
-                              "Choose Photo",
-                              style: TextStyle(color: Colors.white),
+                                        ));
+                                  }),
                             ),
-                            trailing: TitleTextWidget(selectedMode ? 'Cancel' : 'Edit', Colors.white, FontWeight.w400, $(15)).intoGestureDetector(
-                              onTap: () {
-                                if (!dragAnimController.isCompleted) {
-                                  return;
-                                }
-                                if (!selectedMode) {
-                                  setState(() {
-                                    selectedMode = true;
-                                  });
-                                  Vibration.hasVibrator().then((value) {
-                                    if (value ?? false) {
-                                      Vibration.vibrate(duration: 50);
-                                    }
-                                  });
+                          ),
+                          Opacity(
+                            opacity: alpha,
+                            child: AppNavigationBar(
+                              backgroundColor: ColorConstant.BackgroundColor,
+                              backAction: () {
+                                if (dragAnimController.isCompleted) {
+                                  dragAnimController.reverse();
                                 } else {
-                                  setState(() {
-                                    selectedMode = false;
-                                  });
+                                  onBackClick(false);
                                 }
                               },
-                            ),
-                          ).intoContainer(height: appBarHeight),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            TitleTextWidget(controller.imageUploadCache.exist((t) => !t.checked) ? "Select All" : "Unselect", Colors.red, FontWeight.normal, $(15))
-                                .paddingSymmetric(vertical: 6, horizontal: 15)
-                                .intoGestureDetector(onTap: () {
-                              if (controller.imageUploadCache.exist((t) => !t.checked)) {
-                                controller.imageUploadCache.forEach((element) {
-                                  element.checked = true;
-                                });
-                              } else {
-                                controller.imageUploadCache.forEach((element) {
-                                  element.checked = false;
-                                });
-                              }
-                              setState(() {});
-                            }),
-                            TitleTextWidget("Delete", controller.imageUploadCache.exist((t) => t.checked) ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, $(15))
-                                .paddingSymmetric(vertical: 6, horizontal: 15)
-                                .intoGestureDetector(onTap: () {
-                              if (!controller.imageUploadCache.exist((t) => t.checked)) {
-                                return;
-                              }
-                              showDeleteDialog(context).then((value) {
-                                if (value ?? false) {
-                                  controller.deleteAllCheckedPhotos();
-                                  setState(() {});
+                              middle: Text(
+                                "Choose Photo",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              trailing: TitleTextWidget(selectedMode ? 'Cancel' : 'Edit', Colors.white, FontWeight.w400, $(15)).intoGestureDetector(
+                                onTap: () {
+                                  if (!dragAnimController.isCompleted) {
+                                    return;
+                                  }
+                                  if (!selectedMode) {
+                                    setState(() {
+                                      selectedMode = true;
+                                    });
+                                    Vibration.hasVibrator().then((value) {
+                                      if (value ?? false) {
+                                        Vibration.vibrate(duration: 50);
+                                      }
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedMode = false;
+                                    });
+                                  }
+                                },
+                              ),
+                            ).intoContainer(height: appBarHeight),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TitleTextWidget(controller.imageUploadCache.exist((t) => !t.checked) ? "Select All" : "Unselect", ColorConstant.BlueColor, FontWeight.normal, $(15))
+                                  .paddingSymmetric(vertical: 6, horizontal: 15)
+                                  .intoGestureDetector(onTap: () {
+                                if (controller.imageUploadCache.exist((t) => !t.checked)) {
+                                  controller.imageUploadCache.forEach((element) {
+                                    element.checked = true;
+                                  });
+                                } else {
+                                  controller.imageUploadCache.forEach((element) {
+                                    element.checked = false;
+                                  });
                                 }
-                              });
-                            }),
-                          ],
-                        )
-                            .intoContainer(
-                                height: deleteContainerHeight,
-                                color: ColorConstant.BackgroundColor,
-                                margin: EdgeInsets.only(top: ScreenUtil.screenSize.height - deleteContainerHeight - ScreenUtil.getBottomBarHeight()))
-                            .visibility(visible: selectedMode && !dragAnimController.isAnimating),
-                      ],
-                    );
-                  },
-                ),
-                Positioned(
-                  child: Container(
-                    width: lineHeight,
-                    height: lineHeight,
-                    child: OutlineWidget(
-                        radius: $(6),
-                        strokeWidth: 3,
-                        gradient: LinearGradient(
-                          colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all($(3)),
-                          child: ClipRRect(child: floatWidget,borderRadius: BorderRadius.circular(3),),
-                        )),
+                                setState(() {});
+                              }),
+                              TitleTextWidget("Delete", controller.imageUploadCache.exist((t) => t.checked) ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, $(15))
+                                  .paddingSymmetric(vertical: 6, horizontal: 15)
+                                  .intoGestureDetector(onTap: () {
+                                if (!controller.imageUploadCache.exist((t) => t.checked)) {
+                                  return;
+                                }
+                                showDeleteDialog(context).then((value) {
+                                  if (value ?? false) {
+                                    controller.deleteAllCheckedPhotos();
+                                    setState(() {});
+                                  }
+                                });
+                              }),
+                            ],
+                          )
+                              .intoContainer(
+                                  height: deleteContainerHeight,
+                                  color: ColorConstant.BackgroundColor,
+                                  margin: EdgeInsets.only(top: ScreenUtil.screenSize.height - deleteContainerHeight - ScreenUtil.getBottomBarHeight()))
+                              .visibility(visible: selectedMode && !dragAnimController.isAnimating),
+                        ],
+                      );
+                    },
                   ),
-                  top: appBarHeight + 18,
-                  right: 12,
-                ),
-              ],
+                  Positioned(
+                    child: AnimatedBuilder(
+                      animation: dragAnimController,
+                      builder: (context, child) {
+                        double alpha = 0;
+                        if (dragAnimController.value > 0.5) {
+                          alpha = (dragAnimController.value - 0.5) * 2;
+                        }
+                        return Opacity(
+                          opacity: alpha,
+                          child: Container(
+                            width: lineHeight,
+                            height: lineHeight,
+                            child: OutlineWidget(
+                                radius: $(6),
+                                strokeWidth: 3,
+                                gradient: LinearGradient(
+                                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                child: Container(
+                                  padding: EdgeInsets.all($(3)),
+                                  child: ClipRRect(
+                                    child: floatWidget,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                )),
+                          ),
+                        );
+                      },
+                    ),
+                    top: appBarHeight + (Platform.isIOS ? 0 : 18),
+                    right: 12,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ).intoMaterial(color: Colors.transparent),
-        onWillPop: () async {
-          if (selectedMode) {
-            setState(() {
-              selectedMode = false;
-            });
+          ).intoMaterial(color: Colors.transparent),
+          onWillPop: () async {
+            if (selectedMode) {
+              setState(() {
+                selectedMode = false;
+              });
+              return false;
+            }
+            if (dragAnimController.isCompleted) {
+              dragAnimController.reverse();
+              return false;
+            }
+            onBackClick(false);
             return false;
-          }
-          if (dragAnimController.isCompleted) {
-            dragAnimController.reverse();
-            return false;
-          }
-          onBackClick(false);
-          return false;
-        });
+          }),
+      removeTop: true,
+    );
   }
 
   Widget buildListItem(int pos, BuildContext context) {

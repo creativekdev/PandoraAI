@@ -119,3 +119,5 @@ class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
 class OnEffectNsfwChangeEvent extends BaseEvent {}
 
 class OnHomeConfigGetEvent extends BaseEvent {}
+
+class OnNewPostEvent extends BaseEvent {}

@@ -20,6 +20,7 @@ class ChoosePhotoScreenController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
+    loadImageUploadCache();
   }
 
   Future<void> loadImageUploadCache() async {

@@ -53,12 +53,14 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   late StreamSubscription onUserLoginListener;
   late StreamSubscription onPushDataListener;
   bool proVisible = false;
+  double headerHeight = 0;
 
   @override
   void initState() {
     super.initState();
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
+      if (!mounted) return;
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
         if (dataController.data == null) {
           dataController.loadData();
@@ -66,14 +68,19 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
       }
     });
     onUserStateChangeListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
-      refreshProVisible();
-      setState(() {});
+      if (!mounted) return;
+      setState(() {
+        refreshProVisible();
+      });
     });
     onUserLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
-      refreshProVisible();
-      setState(() {});
+      if (!mounted) return;
+      setState(() {
+        refreshProVisible();
+      });
     });
     onPushDataListener = EventBusHelper().eventBus.on<OnEffectPushClickEvent>().listen((event) {
+      if (!mounted) return;
       var pushExtraEntity = event.data!;
       for (int i = 0; i < tabConfig.length; i++) {
         var config = tabConfig[i];
@@ -200,6 +207,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                       dataList: _.data!.effectList(value),
                       recentController: recentController,
                       tabString: value,
+                      headerHeight: headerHeight,
                     ),
                     title: _.data!.localeName(value),
                     tabString: value,
@@ -215,6 +223,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                       dataList: _.data!.effectList(value),
                       recentController: recentController,
                       tabString: value,
+                      headerHeight: headerHeight,
                     ),
                     title: _.data!.localeName(value),
                     tabString: value,
@@ -229,6 +238,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                     tabId: tabId.id(),
                     recentController: recentController,
                     dataController: dataController,
+                    headerHeight: headerHeight,
                   ),
                   title: _.data!.localeName(value),
                   tabString: value,
@@ -244,6 +254,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                       recentController: recentController,
                       hasOriginalFace: false,
                       tabString: value,
+                      headerHeight: headerHeight,
                     ),
                     title: _.data!.localeName(value),
                     tabString: value,
@@ -260,7 +271,11 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   controller: _pageController,
                   children: tabConfig.map((e) => e.item).toList(),
                 ),
-                header(context),
+                header(context).listenSizeChanged(onSizeChanged: (size) {
+                  setState((){
+                    headerHeight = size.height;
+                  });
+                }),
               ],
             );
           }

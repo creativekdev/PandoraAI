@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/selected_button.dart';
@@ -166,7 +167,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                     .then((value) {
                   hideLoading();
                   if (value != null) {
-                    CommonExtension().showToast("Your post has been submitted successfully");
+                    EventBusHelper().eventBus.fire(OnNewPostEvent());
                     Navigator.pop(context, true);
                   }
                 });

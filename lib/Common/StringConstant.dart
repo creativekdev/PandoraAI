@@ -1,5 +1,5 @@
 class StringConstant {
-  static const app_name = "ProfilePicMaker";
+  static const app_name = "Pic2Cartoon";
   static const login = "Sign In";
   static const insta_login = "Instagram";
   static const tiktok_login = "TikTok";
@@ -126,7 +126,7 @@ class StringConstant {
   static const discoveryUnlike = "Unlike";
   static const discoveryShareSubmit = 'Submit';
   static const discoveryShareInputTitle = 'Add some text';
-  static const discoveryShareInputHint = 'I created this using #ProfilePicMaker';
+  static const discoveryShareInputHint = 'I created this using #Pic2Cartoon';
   static const cartoonize = 'Cartoonize';
   static const shareIncludeOriginal = "Also share the original image";
   static const cartoonizeCancelTitle = "Closing the page will stop the transforming process. Are you sure to continue?";
@@ -145,7 +145,7 @@ class StringConstant {
   static const buyAttrHDImages = 'High resolution images';
   static const buyAttrFasterSpeed = 'Faster speed';
   static const buyNow = 'Buy now';
-  static const ppmPro = 'ProfilePicMaker Pro';
+  static const ppmPro = 'Pic2Cartoon Pro';
   static const watchAdHint = 'Watch an ad to remove watermark\n(only this time)';
   static const watchAdText = 'Download HD image\nwithout watermark';
   static const watchAdToShareText = 'Share HD image\nwithout watermark';

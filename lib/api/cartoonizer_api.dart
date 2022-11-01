@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
@@ -27,7 +28,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   /// login normal
-  Future<BaseEntity?> login(Map<String, dynamic> params) => post('/user/login', params: params);
+  Future<BaseEntity?> login(Map<String, dynamic> params) async => await post('/user/login', params: params);
 
   Future<BaseEntity?> signUp({
     required String name,
@@ -43,13 +44,7 @@ class CartoonizerApi extends BaseRequester {
 
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
-    String? token = '';
-    try {
-      token = await FirebaseMessaging.instance.getToken();
-    } catch (e) {
-      LogUtil.e(e.toString(), tag: 'tokenError');
-      token = '';
-    }
+    String? token = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.pushToken);
     var baseEntity = await get('/user/get_login', params: {
       'device_id': token,
     });

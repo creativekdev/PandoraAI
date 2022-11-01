@@ -28,11 +28,13 @@ import 'discovery_attr_holder.dart';
 class DiscoveryEffectDetailWidget extends StatefulWidget {
   DiscoveryListEntity data;
   LoadingAction loadingAction;
+  Function() onCommentTap;
 
   DiscoveryEffectDetailWidget({
     Key? key,
     required this.data,
     required this.loadingAction,
+    required this.onCommentTap,
   }) : super(key: key);
 
   @override
@@ -188,7 +190,9 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               }),
         Row(
           children: [
-            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal),
+            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: (){
+              widget.onCommentTap.call();
+            }),
             SizedBox(width: $(10)),
             buildAttr(
               context,

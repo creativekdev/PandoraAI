@@ -258,7 +258,13 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                 delegate: SliverChildBuilderDelegate(
                   (context, i) {
                     if (i == 0) {
-                      return DiscoveryEffectDetailWidget(data: discoveryEntity, loadingAction: this);
+                      return DiscoveryEffectDetailWidget(
+                        data: discoveryEntity,
+                        loadingAction: this,
+                        onCommentTap: () {
+                          onCreateCommentClick();
+                        },
+                      );
                     } else {
                       var index = i - 1;
                       return DiscoveryCommentsListCard(

@@ -60,6 +60,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onCreateCommentListener;
   late StreamSubscription onDeleteListener;
   late StreamSubscription onNsfwChangeListener;
+  late StreamSubscription onNewPostEventListener;
 
   bool listLoading = false;
 
@@ -85,9 +86,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     tabId = widget.tabId;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
     onNsfwChangeListener = EventBusHelper().eventBus.on<OnEffectNsfwChangeEvent>().listen((event) {
+      if (!mounted) return;
       setState(() {});
     });
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      if (!mounted) return;
       if (event.data ?? true && !listLoading) {
         _easyRefreshController.callRefresh();
       } else {
@@ -100,6 +103,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     });
     onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
+      if (!mounted) return;
       var id = event.data!.key;
       var likeId = event.data!.value;
       for (var data in dataList) {
@@ -113,6 +117,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     });
     onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
+      if (!mounted) return;
       for (var data in dataList) {
         if (!data.isAd) {
           if (data.data!.id == event.data) {
@@ -124,14 +129,17 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     });
     onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      if (!mounted) return;
       setState(() {});
     });
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
+      if (!mounted) return;
       if (tabId.id() == event.data && !listLoading) {
         _easyRefreshController.callRefresh();
       }
     });
     onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      if (!mounted) return;
       if (event.data?.length == 1) {
         for (var value in dataList) {
           if (!value.isAd) {
@@ -145,6 +153,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     });
     onDeleteListener = EventBusHelper().eventBus.on<OnDeleteDiscoveryEvent>().listen((event) {
+      if (!mounted) return;
       for (var value in dataList) {
         if (value.isAd && value.data!.id == event.data) {
           value.data!.removed = true;
@@ -152,6 +161,10 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       }
       setState(() {});
+    });
+    onNewPostEventListener = EventBusHelper().eventBus.on<OnNewPostEvent>().listen((event) {
+      if (!mounted) return;
+      _easyRefreshController.callRefresh();
     });
     currentTab = tabList[0];
     tabController = TabController(length: tabList.length, vsync: this);
@@ -213,6 +226,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onCreateCommentListener.cancel();
     onDeleteListener.cancel();
     onNsfwChangeListener.cancel();
+    onNewPostEventListener.cancel();
   }
 
   @override
@@ -252,9 +266,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         data: data,
         visible: dataList.pick((t) => t.data?.id == data.id) == null,
       ));
-      // if (i == 4) {
-      //   dataList.add(_ListData(isAd: true, page: page));
-      // }
+      if (i == 4) {
+        dataList.add(_ListData(isAd: true, page: page));
+      }
     }
   }
 

@@ -26,6 +26,7 @@ class EffectRandomFragment extends StatefulWidget {
   EffectDataController dataController;
   String tabString;
   int tabId;
+  double headerHeight;
 
   EffectRandomFragment({
     Key? key,
@@ -33,6 +34,7 @@ class EffectRandomFragment extends StatefulWidget {
     required this.recentController,
     required this.tabString,
     required this.dataController,
+    required this.headerHeight,
   }) : super(key: key);
 
   @override
@@ -45,7 +47,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   late RecentController recentController;
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
-  double marginTop = $(115);
+  double marginTop = $(120);
   late double cardWidth;
   late StreamSubscription appStateListener;
   late StreamSubscription tabOnDoubleClickListener;
@@ -71,7 +73,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   initState() {
     super.initState();
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
-    marginTop = $(115) + ScreenUtil.getStatusBarHeight();
+    if (widget.headerHeight != 0) {
+      marginTop = widget.headerHeight;
+    }
     dataController = widget.dataController;
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
@@ -188,7 +192,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                           height: cardWidth,
                           margin: EdgeInsets.only(
                             left: index % 2 == 0 ? 0 : $(6),
-                            top: i == 0 ? marginTop + (dataController.tagList.isNotEmpty ? $(40) : 0) : $(6),
+                            top: i == 0 ? marginTop + (dataController.tagList.isNotEmpty ? $(60) : 0) : $(6),
                           ),
                           child: data.data!.item!.imageUrl.contains('mp4')
                               ? Stack(
@@ -251,8 +255,8 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                         // useOld: false,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
-                                        width: cardWidth,
-                                        height: cardWidth,
+                                        width: cardWidth - (nfwShown ? 2 : 0),
+                                        height: cardWidth - (nfwShown ? 2 : 0),
                                         fit: BoxFit.cover,
                                         placeholder: (context, url) {
                                           return CircularProgressIndicator()
@@ -268,7 +272,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                               )
                                               .intoCenter()
                                               .intoContainer(width: cardWidth, height: cardWidth);
-                                        }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
+                                        }).intoContainer(alignment: Alignment.center).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
                                     nfwShown ? Container(width: cardWidth, height: cardWidth).blur() : SizedBox.shrink(),
                                     nfwShown
                                         ? NsfwCard(
@@ -351,12 +355,10 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
         .intoContainer(
           height: $(44),
           alignment: Alignment.center,
+          margin: EdgeInsets.only(top: marginTop - 1),
           color: Color(0xdd161719),
         )
-        .blur()
-        .intoContainer(
-          margin: EdgeInsets.only(top: marginTop - 22),
-        );
+        .blur();
   }
 
   @override
@@ -370,7 +372,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
-        if(adMap[page] == null) {
+        if (adMap[page] == null) {
           adMap[page] = CardAdsWidget(
             width: width,
             height: height,

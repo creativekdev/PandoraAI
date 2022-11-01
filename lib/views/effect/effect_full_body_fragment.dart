@@ -24,6 +24,7 @@ class EffectFullBodyFragment extends StatefulWidget {
   RecentController recentController;
   String tabString;
   int tabId;
+  double headerHeight;
 
   EffectFullBodyFragment({
     Key? key,
@@ -31,6 +32,7 @@ class EffectFullBodyFragment extends StatefulWidget {
     required this.recentController,
     required this.dataList,
     required this.tabString,
+    required this.headerHeight,
   }) : super(key: key);
 
   @override
@@ -57,7 +59,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   initState() {
     super.initState();
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
-    marginTop = $(110) + ScreenUtil.getStatusBarHeight();
+    marginTop = widget.headerHeight + $(8);
     effectModelList = widget.dataList;
     recentController = widget.recentController;
     bannerAdsHolder = BannerAdsHolder(

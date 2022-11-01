@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.7+94
+version: 1.2.7+97
 
 environment:
   sdk: ">=2.15.0 <3.0.0"
@@ -64,13 +64,13 @@ dependencies:
   flutter_credit_card: 3.0.1
   package_info_plus: ^1.4.2
   app_tracking_transparency: ^2.0.3
-  firebase_analytics: ^9.3.2
+  firebase_analytics: 9.3.8
   google_mobile_ads: 2.0.0
 #    git:
 #      url: https://github.com/googleads/googleads-mobile-flutter
 #      path: packages/google_mobile_ads
   flutter_image_compress: ^1.1.0
-  flutter_local_notifications: ^9.6.1
+  flutter_local_notifications: 9.6.1
   common_utils: ^2.1.0
   flutter_easyrefresh: ^2.2.1
   waterfall_flow: ^3.0.1

@@ -692,6 +692,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     if (value ?? false) {
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
+                        _cachedImage = null;
                       });
                       ShareDiscoveryScreen.push(
                         context,
@@ -741,7 +742,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             textAlign: TextAlign.center,
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
           Text(
-            'Ok',
+            'OK',
             style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
           )
               .intoContainer(
@@ -855,13 +856,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         width: imgContainerWidth - $(60),
                                       ),
                                       borderRadius: BorderRadius.circular(8),
-                                    ).intoContainer(margin: EdgeInsets.only(top: $(30))),
+                                    ).intoContainer(margin: EdgeInsets.only(top: $(25))),
                                     Expanded(
                                         child: Text(
                                       (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['text']!,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        fontSize: 22,
+                                        height: 1,
+                                        fontSize: 21,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
                                         shadows: [
@@ -890,7 +892,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     });
                   })),
                   Obx(() => buildSuccessFunctions(context)),
-                  SizedBox(height: $(10)),
+                  SizedBox(height: $(8)),
                   ScrollablePositionedList.separated(
                     initialScrollIndex: 0,
                     itemCount: tabTitleList.length,
@@ -1124,23 +1126,23 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     controller.isChecked.value ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
                     width: 17,
                     height: 17,
-                  ).intoInkWell(onTap: () async {
-                    print(controller.isChecked.value);
-                    if (controller.isChecked.value) {
-                      controller.changeIsChecked(false);
-                    } else {
-                      controller.changeIsChecked(true);
-                    }
-                    if (controller.isPhotoSelect.value) {
-                      controller.changeIsLoading(true);
-                      getCartoon(context);
-                    }
-                  }),
+                  ),
                   SizedBox(width: $(6)),
                   TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
                   SizedBox(width: $(20)),
                 ],
-              ).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
+              ).intoGestureDetector(onTap: () async {
+                print(controller.isChecked.value);
+                if (controller.isChecked.value) {
+                  controller.changeIsChecked(false);
+                } else {
+                  controller.changeIsChecked(true);
+                }
+                if (controller.isPhotoSelect.value) {
+                  controller.changeIsLoading(true);
+                  getCartoon(context);
+                }
+              }).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
             ),
             Obx(
               () => Container(
@@ -1201,7 +1203,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           .intoContainer(
               width: double.maxFinite,
               padding: EdgeInsets.symmetric(vertical: $(10)),
-              margin: EdgeInsets.only(top: $(15), bottom: $(15), left: $(30), right: $(30)),
+              margin: EdgeInsets.only(bottom: $(10), left: $(30), right: $(30)),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: ColorConstant.DiscoveryBtn,
@@ -1210,7 +1212,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           .intoGestureDetector(onTap: () {
           pickFromRecent(context);
         }).visibility(
-          visible: false,
+          visible: true,
           maintainSize: true,
           maintainAnimation: true,
           maintainState: true,
@@ -1771,13 +1773,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       onPickFromRecent: (entity) async {
         return await pickImageFromGallery(context, from: "result", entity: entity);
       },
-    ).then((value) {
-      if (!(value ?? false)) {
-        if (!controller.isPhotoSelect.value) {
-          Navigator.of(context).pop();
-        }
-      }
-    });
+    );
   }
 }
 

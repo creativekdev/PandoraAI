@@ -37,40 +37,40 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
       children: [
         TextUtil.isEmpty(data.thumbnail)
             ? Wrap(
-          spacing: $(6),
-          runSpacing: $(6),
-          direction: Axis.horizontal,
-          children: data.thumbnails.transfer((e, index) {
-            BorderRadius radius;
-            if (index % 2 == 0) {
-              radius = BorderRadius.only(topLeft: Radius.circular($(8)));
-            } else {
-              radius = BorderRadius.only(topRight: Radius.circular($(8)));
-            }
-            var effect = data.effects[e]!;
-            return ClipRRect(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              borderRadius: radius,
-              child: urlWidget(
-                context,
-                width: size,
-                height: size,
-                url: effect.imageUrl,
-              ),
-            );
-          }),
-        ).intoContainer(
-          alignment: Alignment.center,
-        )
+                spacing: $(6),
+                runSpacing: $(6),
+                direction: Axis.horizontal,
+                children: data.thumbnails.transfer((e, index) {
+                  BorderRadius radius;
+                  if (index % 2 == 0) {
+                    radius = BorderRadius.only(topLeft: Radius.circular($(8)));
+                  } else {
+                    radius = BorderRadius.only(topRight: Radius.circular($(8)));
+                  }
+                  var effect = data.effects[e]!;
+                  return ClipRRect(
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    borderRadius: radius,
+                    child: urlWidget(
+                      context,
+                      width: size,
+                      height: size,
+                      url: effect.imageUrl,
+                    ),
+                  );
+                }),
+              ).intoContainer(
+                alignment: Alignment.center,
+              )
             : ClipRRect(
-          child: urlWidget(
-            context,
-            url: data.thumbnail,
-            width: parentWidth,
-            height: parentWidth,
-          ),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
-        ),
+                child: urlWidget(
+                  context,
+                  url: data.thumbnail,
+                  width: parentWidth - 10,
+                  height: parentWidth - 10,
+                ),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+              ),
         Padding(
           padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(12), top: $(12)),
           child: Row(
@@ -88,20 +88,22 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
         ),
       ],
     );
-    if(nsfwShown) {
-      return Stack(children: [
-        ClipRRect(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: child,
-        ),
-        Container(width: parentWidth, height: parentWidth).blur(),
-        NsfwCard(
-          width: parentWidth,
-          height: parentWidth,
-          onTap: onNsfwTap,
-        ),
-      ],).intoMaterial(color: ColorConstant.BackgroundColor, borderRadius: BorderRadius.circular(8));
+    if (nsfwShown) {
+      return Stack(
+        children: [
+          ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            borderRadius: BorderRadius.all(Radius.circular($(6))),
+            child: child,
+          ),
+          Container(width: parentWidth, height: parentWidth).blur(),
+          NsfwCard(
+            width: parentWidth,
+            height: parentWidth,
+            onTap: onNsfwTap,
+          ),
+        ],
+      ).intoMaterial(color: ColorConstant.BackgroundColor, borderRadius: BorderRadius.circular(8));
     }
     return Stack(
       children: [

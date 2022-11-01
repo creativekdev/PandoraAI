@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>ProfilePicMaker</string>
+	<string>Pic2Cartoon</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -47,7 +47,7 @@
 	<key>FacebookClientToken</key>
 	<string>31823da957485a30fea58f83049d5778</string>
 	<key>FacebookDisplayName</key>
-	<string>ProfilePicMaker</string>
+	<string>Pic2Cartoon</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>

@@ -270,7 +270,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/Profilepicmaker-113908154648795/");
+                        launchURL("https://www.facebook.com/app.pic2cartoon/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_facebook,
@@ -281,7 +281,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/profilepicmaker.app/");
+                        launchURL("https://www.instagram.com/pic2cartoon.app/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_instagram,
@@ -292,7 +292,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/profilepicmak3r");
+                        launchURL("https://twitter.com/pic2cartoon");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_twitter,
@@ -303,7 +303,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://www.tiktok.com/@profilepicmakerapp");
+                        launchURL("https://www.tiktok.com/@pic2cartoon");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_tiktok,

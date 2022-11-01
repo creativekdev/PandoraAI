@@ -34,6 +34,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationManager extends BaseManager {
   BuildContext? _context;
+  late CacheManager cacheManager;
 
   syncContext(BuildContext context) {
     this._context = context;
@@ -59,8 +60,14 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.instance.getAPNSToken().then((value) {
       debugPrint('APNS------------------$value');
     });
+  }
+
+  @override
+  Future<void> onAllManagerCreate() async {
+    cacheManager = getManager();
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint('Token------------------$value');
+      cacheManager.setString(CacheManager.pushToken, value);
     });
   }
 

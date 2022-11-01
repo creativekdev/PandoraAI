@@ -26,6 +26,7 @@ class EffectFaceFragment extends StatefulWidget {
   bool hasOriginalFace;
   String tabString;
   int tabId;
+  double headerHeight;
 
   EffectFaceFragment({
     Key? key,
@@ -34,6 +35,7 @@ class EffectFaceFragment extends StatefulWidget {
     required this.recentController,
     this.hasOriginalFace = true,
     required this.tabString,
+    required this.headerHeight,
   }) : super(key: key);
 
   @override
@@ -59,7 +61,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
   initState() {
     super.initState();
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
-    marginTop = $(118) + ScreenUtil.getStatusBarHeight();
+    marginTop = widget.headerHeight + $(8);
     recentController = widget.recentController;
     dataList = widget.dataList;
     bannerAdsHolder = BannerAdsHolder(
@@ -151,7 +153,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
               margin: EdgeInsets.only(
                 left: $(15),
                 right: $(15),
-                top: index == 0 ? marginTop : 6,
+                top: index == 0 ? (marginTop + $(8)) : 6,
                 bottom: index == dataList.length - 1 ? ($(15) + AppTabBarHeight) : $(8),
               ),
             )
