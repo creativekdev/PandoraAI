@@ -88,7 +88,7 @@ class BannerAdsHolder extends WidgetAdsHolder {
       request: AdManagerAdRequest(),
       listener: AdManagerBannerAdListener(
         onAdLoaded: (Ad ad) async {
-          print('Inline adaptive banner loaded: ${ad.responseInfo}');
+          print('Inline adaptive banner loaded: ${ad.responseInfo?.responseId}');
 
           AdManagerBannerAd bannerAd = (ad as AdManagerBannerAd);
           final AdSize? size = await bannerAd.getPlatformAdSize();

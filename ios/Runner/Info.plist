@@ -432,5 +432,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+        <dict>
+            <!--Not a recommended way, there are better solutions available-->
+            <key>NSAllowsArbitraryLoads</key>
+            <true/>
+        </dict>
 </dict>
 </plist>

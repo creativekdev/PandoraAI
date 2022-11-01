@@ -58,7 +58,6 @@ void main() async {
   // init appsflyer
   // Appsflyer.instance;
   KoChaVa.instance.init();
-
   // init admob
   MobileAds.instance.initialize();
   // run app

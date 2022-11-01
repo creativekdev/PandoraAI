@@ -68,7 +68,7 @@ class CardAdsHolder extends WidgetAdsHolder {
             adUnitId: adId,
             size: adSize,
             listener: BannerAdListener(onAdLoaded: (Ad ad) async {
-              print('Inline adaptive banner loaded: ${ad.responseInfo}');
+              print('Inline adaptive banner loaded: ${ad.responseInfo?.responseId}');
               BannerAd bannerAd = (ad as BannerAd);
               final AdSize? size = await bannerAd.getPlatformAdSize();
               if (size == null) {

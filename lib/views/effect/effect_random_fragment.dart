@@ -128,7 +128,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 10;
       if (showAdsNew && i % 10 == 5) {
-        /// t odo
+        /// todo
         allList.add(_ListData(isAd: true, page: page));
       }
       var data = list[i];
@@ -252,7 +252,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                     //     }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
                                     // Container().blur(),
                                     CachedNetworkImageUtils.custom(
-                                        // useOld: false,
+                                        useOld: true,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth - (nfwShown ? 2 : 0),
@@ -372,14 +372,14 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
-        if (adMap[page] == null) {
-          adMap[page] = CardAdsWidget(
-            width: width,
-            height: height,
-            page: page,
-          );
-        }
-        return adMap[page]!;
+        // if (adMap[page] == null) {
+        //   adMap[page] = CardAdsWidget(
+        //     width: width,
+        //     height: height,
+        //     page: page,
+        //   );
+        // }
+        // return adMap[page]!;
         return CardAdsWidget(
           width: width,
           height: height,

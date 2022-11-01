@@ -67,7 +67,7 @@ class SplashAdsHolder extends PageAdsHolder {
       request: AdRequest(),
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
-          print('$ad loaded');
+          print('AppOpenId loaded: ${ad.responseInfo?.responseId}');
           _appOpenLoadTime = DateTime.now();
           _appOpenAd = ad;
           isLoadingAd = false;

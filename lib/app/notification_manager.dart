@@ -68,6 +68,8 @@ class NotificationManager extends BaseManager {
     FirebaseMessaging.instance.getToken().then((value) {
       debugPrint('Token------------------$value');
       cacheManager.setString(CacheManager.pushToken, value);
+    }).onError((error, stackTrace) {
+      LogUtil.e("Token get failed: ${error}");
     });
   }
 

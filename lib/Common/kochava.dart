@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:cartoonizer/config.dart';
@@ -10,7 +9,6 @@ class KoChaVa {
   static KoChaVa get instance => _getInstance();
   static KoChaVa? _instance;
 
-
   KoChaVa._internal();
 
   static KoChaVa _getInstance() {
@@ -21,12 +19,12 @@ class KoChaVa {
   }
 
   init() {
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       KochavaTracker.instance.registerAndroidAppGuid(KOCHAVA_ANDROID_ID);
-    } else if(Platform.isIOS) {
+    } else if (Platform.isIOS) {
       KochavaTracker.instance.registerIosAppGuid(KOCHAVA_IOS_ID);
     }
+    KochavaTracker.instance.setLogLevel(KochavaTrackerLogLevel.Error);
     KochavaTracker.instance.start();
   }
-
 }

@@ -29,7 +29,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
         request: AdManagerAdRequest(),
         rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
           onAdLoaded: (RewardedInterstitialAd ad) {
-            print('$ad loaded.');
+            print('RewardedInterstitialAd loaded: ${ad.responseInfo?.responseId}');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             var mediationAdapterClassName = _interstitialAd?.responseInfo?.mediationAdapterClassName;

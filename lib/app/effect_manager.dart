@@ -12,6 +12,7 @@ class EffectManager extends BaseManager {
   late CartoonizerApi api;
   late Map<String, double> _scaleCachedMap = {};
   Map<String, bool> nsfwStateMap = {};
+  bool loaded = false;
 
   @override
   Future<void> onCreate() async {
@@ -42,20 +43,23 @@ class EffectManager extends BaseManager {
     api.unbind();
   }
 
-  Future<EffectMap?> loadData() async {
-    var data = await api.getHomeConfig();
-    if (data != null) {
-      _data = data;
-      nsfwStateMap.clear();
-      for (var value in data.allEffectList()) {
-        value.effects.forEach((key, effect) {
-          if (effect.nsfw) {
-            nsfwStateMap[effect.key] = true;
-          }
-        });
+  Future<EffectMap?> loadData({bool ignoreCache = false}) async {
+    if (ignoreCache || !loaded) {
+      var data = await api.getHomeConfig();
+      if (data != null) {
+        _data = data;
+        loaded = true;
+        nsfwStateMap.clear();
+        for (var value in data.allEffectList()) {
+          value.effects.forEach((key, effect) {
+            if (effect.nsfw) {
+              nsfwStateMap[effect.key] = true;
+            }
+          });
+        }
+        EventBusHelper().eventBus.fire(OnEffectNsfwChangeEvent());
+        cacheManager.setJson(CacheManager.effectAllData, data.toJson());
       }
-      EventBusHelper().eventBus.fire(OnEffectNsfwChangeEvent());
-      cacheManager.setJson(CacheManager.effectAllData, data.toJson());
     }
     return _data;
   }

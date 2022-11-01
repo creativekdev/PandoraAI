@@ -66,8 +66,8 @@ class EffectFaceCardWidget extends StatelessWidget with EffectCardEx {
                 child: urlWidget(
                   context,
                   url: data.thumbnail,
-                  width: parentWidth - 10,
-                  height: parentWidth - 10,
+                  width: parentWidth,
+                  height: parentWidth,
                 ),
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
               ),

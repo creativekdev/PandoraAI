@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment!).toList()).intoContainer(color: ColorConstant.BackgroundColor),
+          IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment!).toList()),
           Align(
             alignment: Alignment.bottomCenter,
             child: tabItems.length > 1

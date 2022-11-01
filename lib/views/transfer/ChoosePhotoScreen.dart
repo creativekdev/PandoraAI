@@ -88,7 +88,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   final EffectDataController effectDataController = Get.find();
-  ChoosePhotoScreenController controller = ChoosePhotoScreenController();
+  ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
   late RecentController recentController;
 
   late ItemScrollController titleScrollController;
@@ -217,8 +217,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void dispose() {
     super.dispose();
+    Get.delete<ChoosePhotoScreenController>();
     api.unbind();
-    controller.dispose();
     thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
     adsHolder.onDispose();

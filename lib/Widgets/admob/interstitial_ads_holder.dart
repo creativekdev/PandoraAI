@@ -50,7 +50,7 @@ class InterstitialAdsHolder extends PageAdsHolder {
         request: AdManagerAdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
+            print('InterstitialAd loaded: ${ad.responseInfo?.responseId}');
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             _interstitialAd!.setImmersiveMode(true);
