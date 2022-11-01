@@ -128,8 +128,8 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 10;
       if (showAdsNew && i % 10 == 5) {
-        // todo
-        // allList.add(_ListData(isAd: true, page: page));
+        /// t odo
+        allList.add(_ListData(isAd: true, page: page));
       }
       var data = list[i];
       allList.add(_ListData(

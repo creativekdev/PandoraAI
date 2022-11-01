@@ -272,7 +272,8 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (data == null || !data!.existsSync()) {
       return errorWidget.call(context, url, Exception('load image Failed'));
     }
-    var resolve = FileImage(data!).resolve(ImageConfiguration.empty);
+    var fileImage = FileImage(data!);
+    var resolve = fileImage.resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var scale = image.image.width / image.image.height;
       if (width == null && height == null) {
@@ -287,7 +288,22 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
         setState(() {});
       }
     }));
-    if (width != null && height != null) {
+      return Image(
+        image: fileImage,
+        width: width,
+        height: height,
+        fit: fit,
+        repeat: repeat,
+        colorBlendMode: colorBlendMode,
+        color: color,
+        alignment: alignment,
+        errorBuilder: (context, error, strace) {
+          data?.deleteSync();
+          this.data = null;
+          updateData();
+          return errorWidget.call(context, url, Exception('load image Failed'));
+        },
+      );
       return Image.file(
         data!,
         width: width,
@@ -305,8 +321,5 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
           return errorWidget.call(context, url, Exception('load image Failed'));
         },
       );
-    } else {
-      return placeholder.call(context, url);
-    }
   }
 }
