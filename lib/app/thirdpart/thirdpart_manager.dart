@@ -33,7 +33,6 @@ class ThirdpartManager extends BaseManager {
   }
 
   void _onAppStateChanged(AppState appState) {
-    print('New AppState state: $appState');
     if (appState == AppState.foreground) {
       adsHolder.show();
       appBackground = false;
