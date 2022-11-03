@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
@@ -17,6 +16,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -35,7 +35,7 @@ class DiscoveryFragment extends StatefulWidget {
   State<StatefulWidget> createState() => DiscoveryFragmentState();
 }
 
-class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticKeepAliveClientMixin, AppTabState, SingleTickerProviderStateMixin {
+class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticKeepAliveClientMixin, AppTabState, TickerProviderStateMixin {
   late AppTabId tabId;
   EasyRefreshController _easyRefreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
@@ -66,21 +66,23 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   late CardAdsMap cardAdsMap;
   double cardWidth = 150;
-  final double adScale = 1;
 
   late ScrollController scrollController;
-  late ScrollController headerScrollController;
   double headerHeight = 0;
   double tabBarHeight = 0;
-  double lastOffset = 0;
-  bool maskVisible = true;
+  double titleHeight = 0;
   bool firstLoad = true;
-  Map<int, GlobalKey<FutureLoadingImageState>> keyMap = {};
   late bool nsfwOpen;
+
+  late AnimationController animationController;
+  MyVerticalDragGestureRecognizer dragGestureRecognizer = MyVerticalDragGestureRecognizer();
+  bool canBeDragged = true;
+  late bool lastDragDirection = true;
 
   @override
   void initState() {
     super.initState();
+    initAnimator();
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     api = CartoonizerApi().bindState(this);
     tabId = widget.tabId;
@@ -175,41 +177,20 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           setState(() {});
         }
       },
-      scale: adScale,
+      scale: 1,
     );
     cardAdsMap.init();
     scrollController = ScrollController();
-    headerScrollController = ScrollController();
-    scrollController.addListener(() {
-      if (scrollController.offset > 0) {
-        var range = headerHeight - MediaQuery.of(context).padding.top;
-        if (scrollController.offset < range) {
-          lastOffset = scrollController.offset;
-          headerScrollController.jumpTo(scrollController.offset);
-          if (!maskVisible) {
-            maskVisible = true;
-          }
-          setState(() {});
-        } else {
-          if (lastOffset != range) {
-            lastOffset = range;
-            headerScrollController.jumpTo(lastOffset);
-            setState(() {
-              maskVisible = false;
-            });
-          }
-        }
-      } else {
-        if (lastOffset != 0) {
-          lastOffset = 0;
-          headerScrollController.jumpTo(lastOffset);
-          setState(() {
-            maskVisible = true;
-          });
-        }
-      }
-    });
     delay(() => _easyRefreshController.callRefresh());
+  }
+
+  void initAnimator() {
+    titleHeight = $(36);
+    headerHeight = ScreenUtil.getStatusBarHeight() + $(80);
+    dragGestureRecognizer.onDragStart = onDragStart;
+    dragGestureRecognizer.onDragUpdate = onDragUpdate;
+    dragGestureRecognizer.onDragEnd = onDragEnd;
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
   }
 
   @override
@@ -343,6 +324,36 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         }
       });
 
+  onDragStart(DragStartDetails details) {
+    canBeDragged = animationController.isDismissed || animationController.isCompleted;
+  }
+
+  onDragUpdate(DragUpdateDetails details) {
+    if (canBeDragged) {
+      double value = -details.primaryDelta! / titleHeight;
+      if (value != 0) {
+        lastDragDirection = value < 0;
+      }
+      animationController.value += value;
+    }
+  }
+
+  onDragEnd(DragEndDetails details) {
+    if (animationController.isDismissed || animationController.isCompleted) {
+      return;
+    }
+    if (details.velocity.pixelsPerSecond.dy.abs() > 200) {
+      double visualVelocity = details.velocity.pixelsPerSecond.dy / ScreenUtil.screenSize.height;
+      animationController.fling(velocity: -visualVelocity);
+    } else {
+      if (lastDragDirection) {
+        animationController.reverse();
+      } else {
+        animationController.forward();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -353,56 +364,52 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Stack(
-        children: [
-          buildRefreshList().intoContainer(margin: EdgeInsets.only(top: headerHeight)),
-          SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            controller: headerScrollController,
-            child: Column(children: [
-              TitleTextWidget(
-                StringConstant.tabDiscovery,
-                ColorConstant.BtnTextColor,
-                FontWeight.w600,
-                $(18),
-              )
-                  .visibility(
-                    visible: maskVisible,
-                    maintainState: true,
-                    maintainSize: true,
-                    maintainAnimation: true,
-                  )
-                  .intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()))
-                  .listenSizeChanged(onSizeChanged: (size) {
-                setState(() {
-                  headerHeight = size.height;
-                });
-              }),
-              (maskVisible
-                      ? buildTabBar()
-                      : ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                            child: buildTabBar(),
-                          ),
-                        ))
-                  .listenSizeChanged(onSizeChanged: (size) {
-                if (mounted) {
-                  setState(() {
-                    tabBarHeight = size.height;
-                  });
-                }
-              }),
-              SizedBox(height: headerHeight, width: 0),
-            ]),
-          ).intoContainer(height: headerHeight + tabBarHeight, color: Colors.transparent),
-          Container(
-            height: MediaQuery.of(context).padding.top,
-            color: ColorConstant.BackgroundColor,
-          ).visibility(visible: maskVisible),
-        ],
+      body: SingleChildScrollView(
+        physics: NeverScrollableScrollPhysics(),
+        child: Listener(
+          onPointerDown: (pointer) {
+            dragGestureRecognizer.addPointer(pointer);
+          },
+          child: AnimatedBuilder(
+            animation: animationController,
+            builder: (context, child) {
+              double dy = titleHeight * animationController.value;
+              return Transform.translate(
+                  offset: Offset(0, -dy),
+                  child: Stack(
+                    children: [
+                      Transform.translate(offset: Offset(0, -dy), child: buildRefreshList()),
+                      buildHeader(),
+                    ],
+                  ));
+            },
+          ),
+        ).intoContainer(height: ScreenUtil.screenSize.height + titleHeight),
       ),
     );
+  }
+
+  Widget buildHeader() {
+    return ClipRect(
+        child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Column(
+              children: [
+                AnimatedBuilder(
+                  animation: animationController,
+                  builder: (context, child) {
+                    return Opacity(opacity: 1 - animationController.value, child: child);
+                  },
+                  child: TitleTextWidget(
+                    StringConstant.tabDiscovery,
+                    ColorConstant.BtnTextColor,
+                    FontWeight.w600,
+                    $(18),
+                  ).intoContainer(height: titleHeight, padding: EdgeInsets.only(top: $(8))),
+                ),
+                buildTabBar(),
+              ],
+            ).intoContainer(padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()), height: headerHeight, color: ColorConstant.BackgroundColorBlur)));
   }
 
   Widget buildTabBar() {
@@ -430,7 +437,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         .intoContainer(
           padding: EdgeInsets.symmetric(vertical: $(4)),
           height: $(44),
-          color: Colors.transparent,
         )
         .ignore(ignoring: listLoading);
   }
@@ -450,18 +456,22 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: $(8),
+            collectGarbage: (List<int> list) {
+              for (var value in list) {
+                var data = dataList[value];
+                if (data.isAd) {
+                  cardAdsMap.disposeOne(data.page);
+                }
+              }
+            },
           ),
           itemBuilder: (context, index) {
             var data = dataList[index];
             if (data.isAd) {
               return _buildMERCAd(data.page);
             }
-            if (keyMap[index] == null) {
-              keyMap[index] = GlobalKey<FutureLoadingImageState>();
-            }
             return DiscoveryListCard(
               nsfwShown: effectManager.effectNsfw(data.data!.cartoonizeKey) && !nsfwOpen,
-              imageKey: keyMap[index],
               data: data.data!,
               width: cardWidth,
               onNsfwTap: () => showOpenNsfwDialog(context).then((result) {
@@ -484,7 +494,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               }, autoExec: false),
             )
                 .intoContainer(
-                  margin: EdgeInsets.only(top: $(8)),
+                  margin: EdgeInsets.only(top: index < 2 ? $(16) : $(8)),
                 )
                 .offstage(offstage: !data.visible);
           },
@@ -493,7 +503,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         margin: EdgeInsets.only(
       left: $(15),
       right: $(15),
-      top: lastOffset != 0 ? tabBarHeight - lastOffset : tabBarHeight,
+      top: headerHeight,
+      bottom: $(30),
     ));
   }
 
@@ -579,4 +590,34 @@ class _ListData {
     required this.page,
     this.visible = true,
   });
+}
+
+class MyVerticalDragGestureRecognizer extends VerticalDragGestureRecognizer {
+  bool needDrag = true;
+  GestureDragStartCallback? onDragStart;
+  GestureDragUpdateCallback? onDragUpdate;
+  GestureDragEndCallback? onDragEnd;
+
+  MyVerticalDragGestureRecognizer() {
+    this.onStart = (details) {
+      if (needDrag) {
+        onDragStart?.call(details);
+      }
+    };
+    this.onUpdate = (details) {
+      if (needDrag) {
+        onDragUpdate?.call(details);
+      }
+    };
+    this.onEnd = (details) {
+      if (needDrag) {
+        onDragEnd?.call(details);
+      }
+    };
+  }
+
+  @override
+  rejectGesture(int pointer) {
+    acceptGesture(pointer);
+  }
 }

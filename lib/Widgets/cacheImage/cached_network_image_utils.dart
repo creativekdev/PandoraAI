@@ -190,8 +190,8 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   late AlignmentGeometry alignment;
   late double scale;
 
-  late PlaceholderWidgetBuilder placeholder;
-  late LoadingErrorWidgetBuilder errorWidget;
+  PlaceholderWidgetBuilder? placeholder;
+  LoadingErrorWidgetBuilder? errorWidget;
   File? data;
 
   @override
@@ -208,6 +208,14 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (widget.url != oldWidget.url) {
       updateData();
     }
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    data = null;
+    placeholder = null;
+    errorWidget = null;
   }
 
   void initData() {
@@ -267,10 +275,10 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   @override
   Widget build(BuildContext context) {
     if (downloading) {
-      return placeholder.call(context, url);
+      return placeholder!.call(context, url);
     }
     if (data == null || !data!.existsSync()) {
-      return errorWidget.call(context, url, Exception('load image Failed'));
+      return errorWidget!.call(context, url, Exception('load image Failed'));
     }
     var fileImage = FileImage(data!);
     var resolve = fileImage.resolve(ImageConfiguration.empty);
@@ -288,38 +296,21 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
         setState(() {});
       }
     }));
-      return Image(
-        image: fileImage,
-        width: width,
-        height: height,
-        fit: fit,
-        repeat: repeat,
-        colorBlendMode: colorBlendMode,
-        color: color,
-        alignment: alignment,
-        errorBuilder: (context, error, strace) {
-          data?.deleteSync();
-          this.data = null;
-          updateData();
-          return errorWidget.call(context, url, Exception('load image Failed'));
-        },
-      );
-      return Image.file(
-        data!,
-        width: width,
-        height: height,
-        fit: fit,
-        repeat: repeat,
-        colorBlendMode: colorBlendMode,
-        color: color,
-        alignment: alignment,
-        scale: scale,
-        errorBuilder: (context, error, strace) {
-          data?.deleteSync();
-          this.data = null;
-          updateData();
-          return errorWidget.call(context, url, Exception('load image Failed'));
-        },
-      );
+    return Image(
+      image: fileImage,
+      width: width,
+      height: height,
+      fit: fit,
+      repeat: repeat,
+      colorBlendMode: colorBlendMode,
+      color: color,
+      alignment: alignment,
+      errorBuilder: (context, error, strace) {
+        data?.deleteSync();
+        this.data = null;
+        updateData();
+        return errorWidget!.call(context, url, Exception('load image Failed'));
+      },
+    ).intoContainer(width: width, height: height ?? width);
   }
 }

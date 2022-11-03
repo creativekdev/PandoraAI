@@ -102,6 +102,7 @@ class CardAdsHolder extends WidgetAdsHolder {
 
   @override
   onDispose() {
+    _isLoaded = false;
     _bannerAd?.dispose();
   }
 
@@ -164,10 +165,17 @@ class CardAdsMap {
 
   Widget? buildBannerAd(int page) {
     if (_holderMap.containsKey(page)) {
-      return _holderMap[page]!.buildAdWidget();
-    } else {
-      return null;
+      var holderMap = _holderMap[page];
+      if (holderMap!._isLoaded) {
+        return holderMap.buildAdWidget();
+      }
+      holderMap.loadAd();
     }
+    return null;
+  }
+
+  disposeOne(int page) {
+    _holderMap[page]?.onDispose();
   }
 
   dispose() {

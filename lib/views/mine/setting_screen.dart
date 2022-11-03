@@ -95,7 +95,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
               ),
               functions(StringConstant.privacy_policy1, onTap: () {
                 logEvent(Events.open_privacy);
-                launchURL("https://socialbook.io/privacy");
+                launchURL("https://socialbook.io/privacy/cartoonizer");
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),

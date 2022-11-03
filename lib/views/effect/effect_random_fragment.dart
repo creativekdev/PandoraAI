@@ -174,7 +174,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
               builder: (dataController) {
                 List<List<_ListData>> dataList = addToDataList(dataController);
                 return ListView.builder(
-                  cacheExtent: 300,
+                  cacheExtent: ScreenUtil.screenSize.height,
                   padding: EdgeInsets.symmetric(horizontal: $(15)),
                   itemBuilder: (context, i) {
                     var list = dataList[i];

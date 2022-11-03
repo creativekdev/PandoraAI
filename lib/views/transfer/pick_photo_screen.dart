@@ -79,6 +79,8 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   @override
   dispose() {
     super.dispose();
+    entryAnimController.dispose();
+    dragAnimController.dispose();
   }
 
   @override

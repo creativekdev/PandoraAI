@@ -38,20 +38,22 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
 
   @override
   Widget build(BuildContext context) {
-    if(nsfwShown) {
-      return Stack(children: [
-        ClipRRect(
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          borderRadius: BorderRadius.all(Radius.circular($(6))),
-          child: resources.length > 0 ? buildResourceItem(context, resources[0], height: width) : Container(),
-        ),
-        Container(width: width, height: width).blur(),
-        NsfwCard(
-          width: width,
-          height: width,
-          onTap: onNsfwTap,
-        ),
-      ],);
+    if (nsfwShown) {
+      return Stack(
+        children: [
+          ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            borderRadius: BorderRadius.all(Radius.circular($(6))),
+            child: resources.length > 0 ? buildResourceItem(context, resources[0], height: width) : Container(),
+          ),
+          Container(width: width, height: width).blur(),
+          NsfwCard(
+            width: width,
+            height: width,
+            onTap: onNsfwTap,
+          ),
+        ],
+      );
     }
     return Column(
       children: [
@@ -80,7 +82,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
-      ).intoContainer(height: width,);
+      ).intoContainer(height: width);
     } else {
       return CachedNetworkImageUtils.custom(
           key: imageKey,
