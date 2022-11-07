@@ -1,17 +1,12 @@
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
-
-import 'effect_fragment.dart';
-import 'widget/effect_full_body_card_widget.dart';
 
 class EffectRecentScreen extends StatefulWidget {
   EffectRecentScreen({
