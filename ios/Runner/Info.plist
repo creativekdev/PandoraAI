@@ -73,6 +73,11 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow access to camera to convert your photo into cartoon.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -432,11 +437,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-        <dict>
-            <!--Not a recommended way, there are better solutions available-->
-            <key>NSAllowsArbitraryLoads</key>
-            <true/>
-        </dict>
 </dict>
 </plist>

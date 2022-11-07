@@ -4,12 +4,11 @@ import 'package:cartoonizer/generated/json/push_extra_entity.g.dart';
 
 @JsonSerializable()
 class PushExtraEntity {
+  String tab;
+  String category;
+  String effect;
 
-	late String tab;
-	late String category;
-	late String effect;
-  
-  PushExtraEntity();
+  PushExtraEntity({this.effect = '', this.category = '', this.tab = ''});
 
   factory PushExtraEntity.fromJson(Map<String, dynamic> json) => $PushExtraEntityFromJson(json);
 
