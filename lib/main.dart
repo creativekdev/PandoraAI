@@ -182,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       _checkAppVersion();
       var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
       thirdpartManager.adsHolder.initHolder();
-      delay(() => openApp(force: true), milliseconds: 2000);
+      delay(() => openApp(force: true), milliseconds: 5000);
     } else {
       Navigator.pushAndRemoveUntil(
         context,

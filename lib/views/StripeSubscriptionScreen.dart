@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:flutter/material.dart' as material;
@@ -133,7 +135,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     );
   }
 
-  Column _buildProductList() {
+  Widget _buildProductList() {
     if (_loading) return Column();
 
     if (_showPurchasePlan) {
@@ -177,6 +179,23 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     var monthly = subscriptions["monthly"];
     var yearly = subscriptions["yearly"];
 
+    if (monthly == null && yearly == null) {
+      return TitleTextWidget("Load Data Failed\n Click to reload", ColorConstant.White, FontWeight.normal, $(16), maxLines: 2)
+          .intoContainer(
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular($(8)),
+                color: ColorConstant.CardColor,
+              ),
+              margin: EdgeInsets.symmetric(horizontal: 11.w),
+              padding: EdgeInsets.symmetric(vertical: $(25)))
+          .intoGestureDetector(onTap: () {
+        Navigator.of(context).pop();
+        if (Platform.isAndroid) {
+          Get.to(StripeSubscriptionScreen());
+        }
+      });
+    }
     return Column(
       children: [
         Column(

@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:http/http.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -49,7 +50,11 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   @override
   void initState() {
     logEvent(Events.premium_page_loading);
+    loadPurchase();
+    super.initState();
+  }
 
+  void loadPurchase() {
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
@@ -59,7 +64,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       print("error");
     }, cancelOnError: true);
     initStoreInfo();
-    super.initState();
   }
 
   void showPendingUI() {
@@ -285,9 +289,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     );
   }
 
-  Column _buildProductList() {
+  Widget _buildProductList() {
     if (!_isAvailable) {
-      return Column();
+      return Container();
     }
 
     for (int i = 0; i < _purchases.length; i++) {
@@ -305,6 +309,23 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       }
     }
 
+    if (month == null && year == null) {
+      return TitleTextWidget("Load Data Failed\n Click to reload", ColorConstant.White, FontWeight.normal, $(16), maxLines: 2)
+          .intoContainer(
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular($(8)),
+                color: ColorConstant.CardColor,
+              ),
+              margin: EdgeInsets.symmetric(horizontal: 11.w),
+              padding: EdgeInsets.symmetric(vertical: $(25)))
+          .intoGestureDetector(onTap: () {
+        Navigator.of(context).pop();
+        if (Platform.isIOS) {
+          Get.to(PurchaseScreen());
+        }
+      });
+    }
     var currentPlan;
     if (_showPurchasePlan) {
       var user = userManager.user!;
