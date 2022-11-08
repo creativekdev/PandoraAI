@@ -6,8 +6,6 @@ import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../../Controller/ChoosePhotoScreenController.dart';
-
 mixin EffectTabState<T extends StatefulWidget> on State<T> {
   onEffectClick(PushExtraEntity pushExtraEntity) async {
     if(TextUtil.isEmpty(pushExtraEntity.tab)) return;

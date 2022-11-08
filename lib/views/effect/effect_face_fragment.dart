@@ -13,7 +13,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import 'widget/effect_face_card_widget.dart';
@@ -42,7 +41,7 @@ class EffectFaceFragment extends StatefulWidget {
   }
 }
 
-class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
+class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   List<EffectModel> dataList = [];
   late RecentController recentController;
   late BannerAdsHolder bannerAdsHolder;

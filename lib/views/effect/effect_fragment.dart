@@ -21,7 +21,6 @@ import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
-import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 
@@ -37,7 +36,7 @@ class EffectFragment extends StatefulWidget {
   State<StatefulWidget> createState() => EffectFragmentState();
 }
 
-class EffectFragmentState extends State<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState {
+class EffectFragmentState extends State<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -103,12 +102,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
         if (config.tabString == pushExtraEntity.tab) {
           _tabController?.index = i;
           setIndex(i);
-          var state = (config.key.currentState as EffectTabState?);
-          if (state == null) {
-            delay(() => (config.key.currentState as EffectTabState?)?.onEffectClick(pushExtraEntity), milliseconds: 500);
-          } else {
-            state.onEffectClick(pushExtraEntity);
-          }
+          onEffectClick(pushExtraEntity);
         }
       }
     });

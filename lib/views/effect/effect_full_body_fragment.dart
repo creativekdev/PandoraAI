@@ -12,7 +12,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
@@ -40,7 +39,7 @@ class EffectFullBodyFragment extends StatefulWidget {
   }
 }
 
-class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
+class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   List<EffectModel> effectModelList = [];
   List<List<EffectItemListData>> dataList = [];
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();

@@ -244,8 +244,7 @@ typedef DelayCallback<T> = T Function();
 Future<T> delay<T>(
   DelayCallback<T> callback, {
   int milliseconds = 16,
-}) =>
-    Future<T>.delayed(
-      Duration(milliseconds: milliseconds),
-      () => callback.call(),
-    );
+}) async {
+  await Future.delayed(Duration(milliseconds: milliseconds), () => () {});
+  return callback.call();
+}

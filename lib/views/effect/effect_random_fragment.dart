@@ -44,7 +44,7 @@ class EffectRandomFragment extends StatefulWidget {
   }
 }
 
-class EffectRandomFragmentState extends State<EffectRandomFragment> with AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
+class EffectRandomFragmentState extends State<EffectRandomFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   late RecentController recentController;
   late EffectDataController dataController;
   ScrollController scrollController = ScrollController();
