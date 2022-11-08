@@ -233,7 +233,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   .then((value) {
                 hideLoading();
                 if (value != null) {
-                  CommonExtension().showToast("Your post has been submitted successfully");
+                  EventBusHelper().eventBus.fire(OnNewPostEvent());
                   Navigator.pop(context, true);
                 }
               });

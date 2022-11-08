@@ -15,6 +15,7 @@ import 'image_cache_manager.dart';
 class CachedNetworkImageUtils {
   static Widget custom({
     bool useOld = false,
+    bool useCachedScale = false,
     required BuildContext context,
     Key? key,
     required String imageUrl,
@@ -97,6 +98,7 @@ class CachedNetworkImageUtils {
         ? FutureLoadingImage(
             key: key is GlobalKey<FutureLoadingImageState> ? key : null,
             url: imageUrl,
+            useCachedScale: useCachedScale,
             errorWidget: errorWidget,
             placeholder: placeholder,
             width: width,
@@ -105,7 +107,6 @@ class CachedNetworkImageUtils {
             repeat: repeat,
             color: color,
             alignment: alignment,
-            scale: 1.0,
           )
         : CachedNetworkImage(
             key: key is GlobalKey<FutureLoadingImageState> ? null : key,
@@ -151,7 +152,7 @@ class FutureLoadingImage extends StatefulWidget {
   BlendMode? colorBlendMode;
   Color? color;
   AlignmentGeometry alignment;
-  double scale;
+  bool useCachedScale;
 
   FutureLoadingImage({
     Key? key,
@@ -165,7 +166,7 @@ class FutureLoadingImage extends StatefulWidget {
     this.colorBlendMode,
     this.color,
     required this.alignment,
-    required this.scale,
+    this.useCachedScale = false,
   });
 
   @override
@@ -175,6 +176,7 @@ class FutureLoadingImage extends StatefulWidget {
 }
 
 class FutureLoadingImageState extends State<FutureLoadingImage> {
+  late bool useCachedScale;
   late String url;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late bool downloading = true;
@@ -188,7 +190,6 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   BlendMode? colorBlendMode;
   Color? color;
   late AlignmentGeometry alignment;
-  late double scale;
 
   PlaceholderWidgetBuilder? placeholder;
   LoadingErrorWidgetBuilder? errorWidget;
@@ -227,10 +228,8 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     colorBlendMode = widget.colorBlendMode;
     placeholder = widget.placeholder;
     errorWidget = widget.errorWidget;
-    scale = widget.scale;
-    width = widget.width;
-    height = widget.height;
     alignment = widget.alignment;
+    useCachedScale = widget.useCachedScale;
   }
 
   void updateData() {
@@ -284,13 +283,28 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     var resolve = fileImage.resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var scale = image.image.width / image.image.height;
+      var cacheScale = cacheManager.imageScaleOperator.getScale(url);
+      if (cacheScale == null) {
+        if (scale > 1.05) {
+          cacheScale = 1.25;
+        } else if (scale < 0.95) {
+          cacheScale = 0.75;
+        } else {
+          cacheScale = 1;
+        }
+        cacheManager.imageScaleOperator.setScale(url, cacheScale);
+      }
       if (width == null && height == null) {
         width = image.image.width.toDouble();
-        height = image.image.height.toDouble();
+        if (useCachedScale) {
+          height = width! / cacheScale;
+        } else {
+          height = image.image.height.toDouble();
+        }
       } else if (width == null) {
-        width = height! * scale;
+        width = height! * (useCachedScale ? cacheScale : scale);
       } else if (height == null) {
-        height = width! / scale;
+        height = width! / (useCachedScale ? cacheScale : scale);
       }
       if (mounted) {
         setState(() {});

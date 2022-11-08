@@ -16,7 +16,6 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -33,12 +32,11 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:crypto/crypto.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'package:video_player/video_player.dart';
 
 import '../../gallery_saver.dart';
@@ -806,12 +804,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       controller.isPhotoDone.value
                           ? Container(
                               child: (controller.isVideo.value)
-                                  ? AspectRatio(
-                                      aspectRatio: _videoPlayerController!.value.aspectRatio,
-                                      child: VideoPlayer(_videoPlayerController!),
-                                    ).intoContainer(height: imgContainerWidth, width: imgContainerWidth).intoGestureDetector(onTap: () {
-                                      _videoPlayerController?.play();
-                                    })
+                                  ? ChooseVideoContainer(videoPlayerController: _videoPlayerController!, width: imgContainerWidth, height: imgContainerWidth)
                                   : Center(child: cachedImage),
                             )
                           : controller.isPhotoSelect.value

@@ -89,6 +89,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           context: context,
           imageUrl: resource.url ?? '',
           width: width,
+          useCachedScale: true,
           height: height,
           placeholder: (context, url) {
             return CircularProgressIndicator()

@@ -64,9 +64,12 @@ import 'response_handler.dart';
 abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   late Dio _client;
 
-  BaseRequester({bool newInstance = false}) {
+  BaseRequester({
+    bool newInstance = false,
+    bool logResponseEnable = true,
+  }) {
     if (newInstance) {
-      _client = DioNode.instance.build();
+      _client = DioNode.instance.build(logResponseEnable: logResponseEnable);
     } else {
       _client = DioNode.instance.client;
     }

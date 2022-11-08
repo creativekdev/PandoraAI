@@ -5,7 +5,8 @@ import 'package:cartoonizer/network/base_requester.dart';
 import 'package:dio/dio.dart';
 
 class Uploader extends BaseRequester {
-  Uploader() : super(newInstance: true);
+  /// upload don't need log response data
+  Uploader() : super(newInstance: true, logResponseEnable: false);
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {

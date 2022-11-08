@@ -104,7 +104,10 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       }
     });
     onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
-      if ((event.data?.length ?? 0) > 1) {
+      if (event.data![0] == discoveryEntity.id) {
+        discoveryEntity.comments++;
+        setState(() {});
+      } else if ((event.data?.length ?? 0) > 1) {
         for (var value in dataList) {
           if (value.id == event.data![1]) {
             value.comments++;

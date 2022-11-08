@@ -26,7 +26,9 @@ class DioNode {
     client = build();
   }
 
-  Dio build() {
+  Dio build({
+    bool logResponseEnable = true,
+  }) {
     BaseOptions options = new BaseOptions();
     options.receiveTimeout = _receiveTimeout;
     options.connectTimeout = _connectTimeout;
@@ -55,7 +57,7 @@ class DioNode {
       }
       return handler.next(options);
     }, onResponse: (Response response, handler) {
-      if (kReleaseMode) {
+      if (kReleaseMode || !logResponseEnable) {
         return handler.next(response);
       }
       String url = response.requestOptions.baseUrl + response.requestOptions.path;
@@ -69,7 +71,7 @@ class DioNode {
       LogUtil.v('response: $url  response: $result', tag: tag);
       return handler.next(response);
     }, onError: (e, handler) {
-      if (!kReleaseMode) {
+      if (!kReleaseMode || !logResponseEnable) {
         return handler.next(e);
       }
       String url = e.requestOptions.baseUrl + e.requestOptions.path;

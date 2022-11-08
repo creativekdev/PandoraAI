@@ -31,11 +31,13 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
         width: widget.width,
         adId: widget.page % 2 == 0 ? AdMobConfig.INSPIRED_BANNER_AD1_ID : AdMobConfig.INSPIRED_BANNER_AD2_ID,
         onUpdated: () {
-          if (mounted) {
-            setState(() {});
-          }
+          delay(() {
+            if (mounted) {
+              setState(() {});
+            }
+          }, milliseconds: 100);
         },
-        scale: 1);
+        scale: widget.height / widget.width);
     cardAdsHolder.initHolder();
   }
 
@@ -50,7 +52,7 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
     if (cardAdsHolder.adsReady) {
       return cardAdsHolder.buildAdWidget() ?? Container();
     } else {
-      return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter();
+      return Container(height: 0);
     }
   }
 }

@@ -6,6 +6,8 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'image_scale_operator.dart';
+
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
   static const keyRecentEffects = "RECENT_EFFECTS";
@@ -23,11 +25,14 @@ class CacheManager extends BaseManager {
   static const nsfwOpen = 'nsfw_open';
   static const imageUploadHistory = 'image_upload_history';
   static const pushToken = 'push_token';
+  static const imageScaled = 'image_scaled';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
+  late ImageScaleOperator _imageScaleOperator;
 
   StorageOperator get storageOperator => _storageOperator;
+  ImageScaleOperator get imageScaleOperator => _imageScaleOperator;
 
   @override
   Future<void> onCreate() async {
@@ -35,6 +40,8 @@ class CacheManager extends BaseManager {
     _sharedPreferences = await SharedPreferences.getInstance();
     _storageOperator = StorageOperator();
     _storageOperator.initializeDir();
+    _imageScaleOperator = ImageScaleOperator(cacheManager: this);
+    _imageScaleOperator.loadCache();
   }
 
   String rateConfigKey() {
