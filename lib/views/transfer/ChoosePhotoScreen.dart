@@ -323,6 +323,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       if (lastChangeByTap) {
         return;
       }
+      int? min;
+      int? max;
+      var positions = itemScrollPositionsListener.itemPositions.value;
+      if (positions.isNotEmpty) {
+        min = positions
+            .where((ItemPosition position) => position.itemTrailingEdge > 0)
+            .reduce((ItemPosition min, ItemPosition position) => position.itemTrailingEdge < min.itemTrailingEdge ? position : min)
+            .index;
+        max = positions
+            .where((ItemPosition position) => position.itemLeadingEdge < 1)
+            .reduce((ItemPosition max, ItemPosition position) => position.itemLeadingEdge > max.itemLeadingEdge ? position : max)
+            .index;
+      }
+      if (currentItemIndex.value >= min! && currentItemIndex.value <= max!) {
+        return;
+      }
       int first = itemScrollPositionsListener.itemPositions.value.first.index;
       int last = itemScrollPositionsListener.itemPositions.value.last.index;
       int scrollPos;

@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/src/dio_error.dart';
 import 'package:flutter/foundation.dart';
 
@@ -12,11 +13,19 @@ import 'package:flutter/foundation.dart';
 class ExceptionHandler {
   onError(Exception e, {bool toastOnFailed = true}) {
     if (toastOnFailed) {
-      // if (!kReleaseMode) {
+      if (e is DioError) {
+        if (e.type == DioErrorType.other) {
+          if (kReleaseMode) {
+            CommonExtension().showToast(StringConstant.commonFailedToast);
+          } else {
+            CommonExtension().showToast(e.toString());
+          }
+        } else {
+          CommonExtension().showToast(e.toString());
+        }
+      } else {
         CommonExtension().showToast(e.toString());
-      // } else {
-      //   CommonExtension().showToast(StringConstant.commonFailedToast);
-      // }
+      }
     }
   }
 
