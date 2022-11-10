@@ -164,7 +164,7 @@ Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) a
 Future<Uint8List> addWaterMark({
   required ui.Image image,
   ui.Image? watermark,
-  double widthRate = 0.2,
+  double widthRate = 0.22,
   double bottomRate = 0.07,
   ui.Image? originalImage,
 }) async {

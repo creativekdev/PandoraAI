@@ -220,6 +220,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               : Container(),
         ],
       ).intoContainer(width: imgContainerWidth, height: imgContainerHeight);
+      if (imageSize == null) {
+        asyncRefreshImageSize(imageUint8List);
+      }
     }
     return _cachedImage!;
   }
@@ -546,6 +549,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
                         _cachedImage = null;
+                        imageSize = null;
                       });
                       saveToAlbum();
                     }
@@ -630,7 +634,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           if ((controller.cropImage.value != null && includeOriginalFace())) {
             cropImage = await getBitmapFromContext(cropKey.currentContext!);
           }
-          var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22, originalImage: cropImage);
+          var uint8list = await addWaterMark(image: imageData, watermark: image.image, originalImage: cropImage);
           await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
           CommonExtension().showImageSavedOkToast(context);
         }));
@@ -640,7 +644,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         if ((controller.cropImage.value != null && includeOriginalFace())) {
           cropImage = await getBitmapFromContext(cropKey.currentContext!);
         }
-        var uint8list = await addWaterMark(image: imageData, widthRate: 0.22, originalImage: cropImage);
+        var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
         await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
         CommonExtension().showImageSavedOkToast(context);
       }
@@ -726,7 +730,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             var imageData = await decodeImageFromList(base64Decode(image));
             var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
             assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
-              var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: image.image, widthRate: 0.22);
+              var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: image.image);
               var newImage = base64Encode(uint8list);
               controller.changeIsLoading(false);
               ShareDiscoveryScreen.push(
@@ -763,6 +767,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
                         _cachedImage = null;
+                        imageSize = null;
                       });
                       controller.changeIsLoading(true);
                       var imageData = await decodeImageFromList(base64Decode(image));
@@ -770,7 +775,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       if ((controller.cropImage.value != null && includeOriginalFace())) {
                         cropImage = await getBitmapFromContext(cropKey.currentContext!);
                       }
-                      var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, widthRate: 0.22);
+                      var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
                       var newImage = base64Encode(uint8list);
                       controller.changeIsLoading(false);
                       ShareDiscoveryScreen.push(
@@ -799,7 +804,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           if ((controller.cropImage.value != null && includeOriginalFace())) {
             cropImage = await getBitmapFromContext(cropKey.currentContext!);
           }
-          var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, widthRate: 0.22);
+          var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
           var newImage = base64Encode(uint8list);
           controller.changeIsLoading(false);
           ShareDiscoveryScreen.push(
