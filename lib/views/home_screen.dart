@@ -40,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     logEvent(Events.homepage_loading);
     super.initState();
     initialTab(false);
-    AppDelegate.instance.getManager<NotificationManager>().showCustomNotification();
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
     });
