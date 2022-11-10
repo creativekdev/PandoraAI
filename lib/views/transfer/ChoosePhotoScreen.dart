@@ -1228,7 +1228,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         );
 
   Widget _createEffectModelIcon(BuildContext context, {required EffectItem effectItem, required bool checked}) {
-    if (effectItem.imageUrl.contains("-transform")) {
+    if (effectItem.imageUrl.contains("mp4")) {
       var key = videoKeys[effectItem.imageUrl];
       if (key == null) {
         key = GlobalKey<EffectVideoPlayerState>();
