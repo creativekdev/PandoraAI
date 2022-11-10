@@ -223,7 +223,7 @@ class EffectDataController extends GetxController {
       if (value.item?.featured != 0) {
         topList.add(value);
       } else {
-        if (i == 0) {
+        if (otherList.isEmpty) {
           otherList.add(value);
         } else {
           otherList.insert(math.Random().nextInt(otherList.length), value);

@@ -9,6 +9,7 @@ const _imageDir = 'image/';
 const _tempDir = 'temp/';
 const _pushDir = 'push/';
 const _recentDir = 'recent/';
+const _cropDir = 'cropDir/';
 
 class StorageOperator {
   var _mainPath = '';
@@ -24,6 +25,8 @@ class StorageOperator {
 
   Directory get recentDir => Directory('$_mainPath$_recentDir');
 
+  Directory get cropDir => Directory('$_mainPath$_cropDir');
+
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (directory == null) return false;
@@ -35,6 +38,7 @@ class StorageOperator {
       _tempDir,
       _pushDir,
       _recentDir,
+      _cropDir,
     ]);
     return true;
   }
@@ -52,7 +56,8 @@ class StorageOperator {
     var videoSize = await _getFileSize(videoDir);
     var pushSize = await _getFileSize(pushDir);
     var recentSize = await _getFileSize(recentDir);
-    return videoSize + imageSize + tempSize + pushSize + recentSize;
+    var cropSize = await _getFileSize(cropDir);
+    return videoSize + imageSize + tempSize + pushSize + recentSize + cropSize;
   }
 
   Future<int> _getFileSize(dynamic target) async {

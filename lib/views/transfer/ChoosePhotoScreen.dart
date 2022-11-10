@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
@@ -852,6 +853,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         getCartoon(context);
                                       }).visibility(visible: !controller.isLoading.value),
                                     ),
+                                    (controller.cropImage.value != null && controller.isChecked.value) ? Image.file(controller.cropImage.value!) : Container(),
                                   ],
                                 ).intoContainer(width: imgContainerWidth, height: imgContainerHeight)
                               : Expanded(
@@ -1073,7 +1075,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 ),
               ),
             ),
-            if (controller.isChecked.value && isSupportOriginalFace(effectItem))
+            if (includeOriginalFace())
               Positioned(
                 bottom: $(1),
                 left: $(3.6),
@@ -1141,7 +1143,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   SizedBox(width: $(20)),
                 ],
               ).intoGestureDetector(onTap: () async {
-                print(controller.isChecked.value);
                 if (controller.isChecked.value) {
                   controller.changeIsChecked(false);
                 } else {
@@ -1149,7 +1150,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 }
                 if (controller.isPhotoSelect.value) {
                   controller.changeIsLoading(true);
-                  getCartoon(context);
+                  if (controller.cropImage.value == null) {
+                    getCartoon(context);
+                  }
                 }
               }).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
             ),
@@ -1431,7 +1434,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
     String aiHost = _getAiHostByStyle(selectedEffect);
 
-    var key = controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.key + "-original_face" : selectedEffect.key;
+    // var key = includeOriginalFace() ? selectedEffect.key + "-original_face" : selectedEffect.key;
+    var key = selectedEffect.key;
 
     if (offlineEffect.containsKey(key) && !rebuild) {
       var data = offlineEffect[key] as OfflineEffectModel;
@@ -1478,7 +1482,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             "effect": selectedEffect.key,
             "sticker_name": selectedEffect.stickerName,
             "category": category.key,
-            "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
+            "original_face": includeOriginalFace() ? 1 : 0,
           });
         },
         onFail: () {
@@ -1515,7 +1519,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             var dataBody = {
               'querypics': imageArray,
               'is_data': 0,
-              'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
+              // 'algoname': includeOriginalFace() ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
+              'algoname': selectedEffect.algoname,
               'direct': 1,
               'hide_watermark': 1,
             };
@@ -1533,6 +1538,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
                 controller.updateCachedId(cachedId!);
+              }
+              List<int> cropList = ((parsed['crop'] ?? []) as List).map((e) => int.parse(e.toString())).toList();
+              if (cropList.length == 4) {
+                controller.buildCropFile(cropList);
               }
               var dataString = parsed['data'].toString();
               if (TextUtil.isEmpty(dataString)) {
@@ -1598,7 +1607,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             var dataBody = {
               'querypics': imageArray,
               'is_data': 0,
-              'algoname': controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
+              // 'algoname': includeOriginalFace() ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
+              'algoname': selectedEffect.algoname,
               'direct': 1,
               'token': token,
               'hide_watermark': 1,
@@ -1686,7 +1696,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "effect": selectedEffect.key,
           "sticker_name": selectedEffect.stickerName,
           "category": category.key,
-          "original_face": controller.isChecked.value && isSupportOriginalFace(selectedEffect) ? 1 : 0,
+          "original_face": includeOriginalFace() ? 1 : 0,
         });
         if (widget.entrySource != EntrySource.fromRecent) {
           recentController.onEffectUsed(selectedEffect);
@@ -1701,6 +1711,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
     }
+  }
+
+  bool includeOriginalFace() {
+    var selectedEffect = tabItemList[currentItemIndex.value].data;
+    return controller.isChecked.value && isSupportOriginalFace(selectedEffect);
   }
 
   bool isSupportOriginalFace(EffectItem effect) {

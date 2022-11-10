@@ -5,8 +5,8 @@ import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
-import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
@@ -16,16 +16,25 @@ class ChoosePhotoScreenController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StorageOperator storageOperator;
   List<UploadRecordEntity> imageUploadCache = [];
+  Map<String, CropRecordEntity> cropRecordCache = {};
 
   @override
   Future<void> onInit() async {
     super.onInit();
+    storageOperator = cacheManager.storageOperator;
     loadImageUploadCache();
+    loadCropCache();
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    _saveUploadCacheMap();
+    _saveCropCacheMap();
   }
 
   Future<void> loadImageUploadCache() async {
     imageUploadCache.clear();
-    storageOperator = cacheManager.storageOperator;
     dynamic jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? [];
     if (jsonString is List) {
       jsonString.forEach((value) async {
@@ -35,6 +44,20 @@ class ChoosePhotoScreenController extends GetxController {
           if (!imageUploadCache.exist((t) => t.key == uploadRecordEntity.key)) {
             imageUploadCache.add(uploadRecordEntity);
           }
+        }
+      });
+    }
+  }
+
+  Future<void> loadCropCache() async {
+    cropRecordCache.clear();
+    dynamic jsonString = cacheManager.getJson(CacheManager.imageCropHistory) ?? [];
+    if (jsonString is Map) {
+      jsonString.forEach((key, value) async {
+        var cropRecordEntity = CropRecordEntity.fromJson(json.decode(value));
+        var file = File(cropRecordEntity.fileName);
+        if (file.existsSync()) {
+          cropRecordCache[key] = cropRecordEntity;
         }
       });
     }
@@ -60,12 +83,19 @@ class ChoosePhotoScreenController extends GetxController {
     }
     imageUploadCache.insert(0, cache);
     update();
-    _saveUploadCacheMap();
   }
 
   void _saveUploadCacheMap() {
     List<String> cache = imageUploadCache.map((e) => jsonEncode(e.toJson())).toList();
     cacheManager.setJson(CacheManager.imageUploadHistory, cache);
+  }
+
+  void _saveCropCacheMap() {
+    Map<String, String> cache = {};
+    cropRecordCache.forEach((key, value) {
+      cache[key] = json.encode(value.toJson());
+    });
+    cacheManager.setJson(CacheManager.imageCropHistory, cache);
   }
 
   final isPhotoSelect = false.obs;
@@ -102,7 +132,11 @@ class ChoosePhotoScreenController extends GetxController {
 
   final Rx<File?> image = (null as File?).obs;
 
-  updateImageFile(dynamic lFile) => image.value = lFile;
+  updateImageFile(File lFile) => image.value = lFile;
+
+  final Rx<File?> cropImage = (null as File?).obs;
+
+  updateCropImageFile(File cFile) => cropImage.value = cFile;
 
   final videoUrl = "".obs;
 
@@ -168,7 +202,6 @@ class ChoosePhotoScreenController extends GetxController {
     if (cacheFile != null) {
       cacheFile.cachedId = cachedId;
     }
-    _saveUploadCacheMap();
   }
 
   Future<String?> getCachedId() async {
@@ -186,6 +219,39 @@ class ChoosePhotoScreenController extends GetxController {
 
   deleteAllCheckedPhotos() {
     imageUploadCache = imageUploadCache.filter((t) => !t.checked);
-    _saveUploadCacheMap();
+  }
+
+  buildCropFile(List<int> cropList) async {
+    var file = image.value;
+    if (file == null) {
+      return;
+    }
+    var key = await md5File(file);
+    var cache = cropRecordCache[key];
+    if (cache != null) {
+      if (cropEquals(cache.cropList, cropList)) {
+        updateCropImageFile(File(cache.fileName));
+        return;
+      }
+    }
+    String f_name = path.basename(file.path);
+    var newPath = "${storageOperator.cropDir.path}/$f_name";
+    var resolve = FileImage(file).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      cropFileToTarget(image.image, Rect.fromLTRB(cropList[0].toDouble(), cropList[1].toDouble(), cropList[2].toDouble(), cropList[3].toDouble()), newPath).then((file) {
+        updateCropImageFile(file);
+        cropRecordCache[key] = CropRecordEntity(fileName: newPath, cropList: cropList);
+      });
+    }));
+  }
+
+  bool cropEquals(List<int> oldList, List<int> newList) {
+    if (newList.length != 4) {
+      return false;
+    }
+    if (newList[0] == oldList[0] && newList[1] == oldList[1] && newList[2] == oldList[2] && newList[3] == oldList[3]) {
+      return true;
+    }
+    return false;
   }
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:image/image.dart' as im;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -76,7 +77,6 @@ Future<bool> mkdir(Directory file) async {
 }
 
 Future<File> imageCompressAndGetFile(File file) async {
-  var user = AppDelegate.instance.getManager<UserManager>().user;
   var length = await file.length();
   if (length < 200 * 1024) {
     return file;
@@ -97,18 +97,25 @@ Future<File> imageCompressAndGetFile(File file) async {
 
   var dir = await getTemporaryDirectory();
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
-
-  var minSize = (user?.cartoonizeCredit ?? 0) > 0 ? 1024 : 512;
-
-  var result = await FlutterImageCompress.compressAndGetFile(
-    file.absolute.path,
-    targetPath,
-    minWidth: minSize,
-    minHeight: minSize,
-    quality: quality,
-  );
-
-  return result!;
+  var readAsBytes = await file.readAsBytes();
+  im.Image decodeImage = im.decodeImage(readAsBytes)!;
+  var shortSide = decodeImage.width > decodeImage.height ? decodeImage.height : decodeImage.width;
+  File result;
+  if (shortSide > 1024) {
+    var scale = 1024 / shortSide;
+    int width = (decodeImage.width * scale).toInt();
+    int height = (decodeImage.height * scale).toInt();
+    result = (await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: width,
+      minHeight: height,
+      quality: quality,
+    ))!;
+  } else {
+    result = await file.copy(targetPath);
+  }
+  return result;
 }
 
 Future<Uint8List> imageCompressWithList(Uint8List image) async {
@@ -134,6 +141,23 @@ Future<Uint8List> imageCompressWithList(Uint8List image) async {
     quality: quality,
   );
   return Uint8List.fromList(uint8list.toList());
+}
+
+Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) async {
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(rect.width, rect.height)));
+
+  final paint = Paint()
+    ..color = Colors.white
+    ..style = PaintingStyle.fill;
+
+  canvas.drawImageRect(srcImage, rect, Rect.fromLTRB(0, 0, rect.width, rect.height), paint);
+  final picture = recorder.endRecording();
+  final img = await picture.toImage(rect.width.toInt(), rect.height.toInt());
+  final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+  var result = File(targetPath);
+  await result.writeAsBytes(Uint8List.fromList(byteData!.buffer.asUint8List().toList()));
+  return result;
 }
 
 Future<Uint8List> addWaterMark({

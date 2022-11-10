@@ -24,6 +24,7 @@ class CacheManager extends BaseManager {
   static const scaleCacheData = 'scaleCacheData';
   static const nsfwOpen = 'nsfw_open';
   static const imageUploadHistory = 'image_upload_history';
+  static const imageCropHistory = 'image_crop_history';
   static const pushToken = 'push_token';
   static const imageScaled = 'image_scaled';
 
