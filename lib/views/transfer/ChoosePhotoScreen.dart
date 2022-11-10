@@ -539,14 +539,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     watchAdText: StringConstant.watchAdText,
                   ).then((value) {
                     if (value ?? false) {
+                      var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
+                      if(currentEffect != null) {
+                        currentEffect.hasWatermark = false;
+                      }
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
                         _cachedImage = null;
-                        imageSize = null;
                       });
                       saveToAlbum();
-                    } else {
-                      refreshLastBuildType();
                     }
                   });
                 }).visibility(visible: userManager.isNeedLogin || userManager.user!.userSubscription.isEmpty),
@@ -755,6 +756,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     watchAdText: StringConstant.watchAdToShareText,
                   ).then((value) async {
                     if (value ?? false) {
+                      var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
+                      if(currentEffect != null) {
+                        currentEffect.hasWatermark = false;
+                      }
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
                         _cachedImage = null;
