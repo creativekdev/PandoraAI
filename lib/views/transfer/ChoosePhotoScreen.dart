@@ -1537,6 +1537,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(false);
       }
+      lastBuildType = data.hasWatermark ? _BuildType.waterMark : _BuildType.hdImage;
+      setState(() {});
     } else {
       bool ignoreResult = false;
       Function? successForward;
@@ -1624,18 +1626,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               if (dataString.startsWith('<')) {
                 successForward = () {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(dataString.substring(dataString.indexOf('<p>') + 3, dataString.indexOf('</p>')));
                 };
               } else if (dataString == "") {
                 successForward = () {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message'], hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['message']);
                 };
               } else if (dataString.contains(".mp4")) {
                 successForward = () {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.updateVideoUrl(parsed['data']);
                   _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
@@ -1651,7 +1656,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 };
               } else {
                 successForward = () {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
@@ -1697,18 +1703,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               if (parsed['data'].toString().startsWith('<')) {
                 successForward = () {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
                 };
               } else if (parsed['data'].toString() == "") {
                 successForward = () {
                   controller.changeIsLoading(false);
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message']));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message'], hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['message']);
                 };
               } else if (parsed['data'].toString().contains(".mp4")) {
                 successForward = () {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.updateVideoUrl(parsed['data']);
                   _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
                     ..setLooping(true)
@@ -1724,7 +1733,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 };
               } else {
                 successForward = () {
-                  offlineEffect.addIf(!offlineEffect.containsKey(key), key, OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: ""));
+                  offlineEffect.addIf(!offlineEffect.containsKey(key), key,
+                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
@@ -1774,7 +1784,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         } else {
           recentController.onEffectUsedToCache(selectedEffect);
         }
-        userManager.refreshUser();
       } catch (e) {
         print(e);
         controller.changeIsLoading(false);
@@ -1848,6 +1857,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   void onSwitchOnce() {
+    var user = userManager.user;
+    if (user != null) {
+      user.cartoonizeCredit--;
+      userManager.user = user;
+      refreshLastBuildType();
+    }
     userManager.rateNoticeOperator.onSwitch(context);
   }
 

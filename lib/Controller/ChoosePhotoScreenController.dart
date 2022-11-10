@@ -233,7 +233,16 @@ class ChoosePhotoScreenController extends GetxController {
     var newPath = "${storageOperator.cropDir.path}/$f_name";
     var resolve = FileImage(file).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
-      cropFileToTarget(image.image, Rect.fromLTRB(cropList[0].toDouble(), cropList[1].toDouble(), cropList[2].toDouble(), cropList[3].toDouble()), newPath).then((file) {
+      var imageInfo = image.image;
+      List<int> crops = cropList;
+      if ((imageInfo.width - (cropList[2] - cropList[0])).abs() < 5 && (imageInfo.height - (cropList[3] - cropList[1])).abs() < 5) {
+        if (imageInfo.width < imageInfo.height) {
+          crops = [0, (imageInfo.height - imageInfo.width) ~/ 2, imageInfo.width, imageInfo.height - (imageInfo.height - imageInfo.width) ~/ 2];
+        } else {
+          crops = [(imageInfo.width - imageInfo.height) ~/ 2, 0, imageInfo.width - (imageInfo.width - imageInfo.height) ~/ 2, imageInfo.height];
+        }
+      }
+      cropFileToTarget(imageInfo, Rect.fromLTRB(crops[0].toDouble(), crops[1].toDouble(), crops[2].toDouble(), crops[3].toDouble()), newPath).then((file) {
         updateCropImageFile(file);
         cropRecordCache[key] = CropRecordEntity(fileName: newPath, cropList: cropList);
         _saveCropCacheMap();

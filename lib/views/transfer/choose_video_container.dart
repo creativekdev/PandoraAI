@@ -45,10 +45,14 @@ class ChooseVideoContainerState extends State<ChooseVideoContainer> {
           child: VideoPlayer(_videoPlayerController),
         ),
         Icon(
-          _videoPlayerController.value.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
-          size: $(55),
+          _videoPlayerController.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+          size: $(24),
           color: Colors.white,
         )
+            .intoContainer(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(64), color: Color(0x66000000)),
+              padding: EdgeInsets.all(16),
+            )
             .intoGestureDetector(onTap: () {
               extendTime = true;
               if (_videoPlayerController.value.isPlaying) {
