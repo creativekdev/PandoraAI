@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/generated/json/base/json_field.dart';
+import 'package:cartoonizer/generated/json/crop_record_entity.g.dart';
 
 @JsonSerializable()
 class CropRecordEntity {
