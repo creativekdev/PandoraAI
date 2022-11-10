@@ -73,7 +73,6 @@ class EffectDataController extends GetxController {
 
   List<String> tagList = [];
 
-
   @override
   void onInit() {
     super.onInit();

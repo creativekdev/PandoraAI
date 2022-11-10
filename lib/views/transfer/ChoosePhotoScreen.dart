@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -36,6 +37,7 @@ import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
@@ -82,6 +84,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   String get image => _image;
+  GlobalKey cropKey = GlobalKey();
   var videoPath = "";
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
@@ -148,6 +151,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   width: double.maxFinite,
                   height: imageSize?.height ?? imgContainerHeight,
                 ),
+                imageSize != null
+                    ? (controller.cropImage.value != null && includeOriginalFace())
+                        ? Positioned(
+                            child: RepaintBoundary(
+                              key: cropKey,
+                              child: ClipOval(
+                                  child: Image.file(
+                                controller.cropImage.value!,
+                                width: imageSize!.width / 5,
+                              )),
+                            ),
+                            bottom: (imageSize!.height / 20),
+                            left: ((imgContainerWidth - imageSize!.width) / 2) + (imageSize!.width / 20),
+                          )
+                        : Container()
+                    : Container(),
                 Align(
                   child: Image.asset(
                     Images.ic_watermark,
@@ -182,7 +201,23 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             imageUint8List,
             width: imgContainerWidth,
             height: imgContainerHeight,
-          )
+          ),
+          imageSize != null
+              ? (controller.cropImage.value != null && includeOriginalFace())
+                  ? Positioned(
+                      child: RepaintBoundary(
+                        key: cropKey,
+                        child: ClipOval(
+                            child: Image.file(
+                          controller.cropImage.value!,
+                          width: imageSize!.width / 5,
+                        )),
+                      ),
+                      bottom: ((imgContainerHeight - imageSize!.height) / 2) + (imageSize!.height / 20),
+                      left: ((imgContainerWidth - imageSize!.width) / 2) + (imageSize!.width / 20),
+                    )
+                  : Container()
+              : Container(),
         ],
       ).intoContainer(width: imgContainerWidth, height: imgContainerHeight);
     }
@@ -265,7 +300,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     imagePicker = ImagePicker();
     initTabBar();
-    autoScrollToSelectedIndex();
     if (userManager.aiServers.isEmpty) {
       delay(() {
         controller.changeIsLoading(true);
@@ -286,6 +320,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   judgeAndOpenRecentDialog() async {
     delay(() async {
+      autoScrollToSelectedIndex();
       controller.loadImageUploadCache().then((value) {
         if (!controller.isPhotoSelect.value) {
           pickFromRecent(context);
@@ -365,10 +400,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   /// calculate scroll offset in child horizontal list
   void autoScrollToSelectedIndex() {
-    delay(() {
-      titleScrollController.jumpTo(index: currentTitleIndex);
-      itemScrollController.jumpTo(index: currentItemIndex.value);
-    }, milliseconds: 32);
+    currentTabIndex = widget.tabPos;
+    currentTitleIndex = widget.pos;
+    currentItemIndex.value = widget.itemPos;
+    titleScrollController.jumpTo(index: currentTitleIndex);
+    itemScrollController.jumpTo(index: currentItemIndex.value);
   }
 
   Future<bool> _willPopCallback(BuildContext context) async {
@@ -589,12 +625,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         var imageData = await decodeImageFromList(base64Decode(image));
         var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
         assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
-          var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
+          ui.Image? cropImage;
+          if ((controller.cropImage.value != null && includeOriginalFace())) {
+            cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          }
+          var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22, originalImage: cropImage);
           await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
           CommonExtension().showImageSavedOkToast(context);
         }));
       } else {
-        await ImageGallerySaver.saveImage(base64Decode(image), quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+        var imageData = await decodeImageFromList(base64Decode(image));
+        ui.Image? cropImage;
+        if ((controller.cropImage.value != null && includeOriginalFace())) {
+          cropImage = await getBitmapFromContext(cropKey.currentContext!);
+        }
+        var uint8list = await addWaterMark(image: imageData, widthRate: 0.22, originalImage: cropImage);
+        await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
         CommonExtension().showImageSavedOkToast(context);
       }
     }
@@ -653,7 +699,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Future<void> shareToDiscovery() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
     logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, toSignUp: true, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
       if (controller.isVideo.value) {
         var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
         ShareDiscoveryScreen.push(
@@ -672,10 +718,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           var shareWatermark = () async {
             //share with watermark
             controller.changeIsLoading(true);
+            ui.Image? cropImage;
+            if ((controller.cropImage.value != null && includeOriginalFace())) {
+              cropImage = await getBitmapFromContext(cropKey.currentContext!);
+            }
             var imageData = await decodeImageFromList(base64Decode(image));
             var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
             assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
-              var uint8list = await addWaterMark(image: imageData, watermark: image.image, widthRate: 0.22);
+              var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: image.image, widthRate: 0.22);
               var newImage = base64Encode(uint8list);
               controller.changeIsLoading(false);
               ShareDiscoveryScreen.push(
@@ -703,17 +753,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     context,
                     adsHolder: rewardAdsHolder,
                     watchAdText: StringConstant.watchAdToShareText,
-                  ).then((value) {
+                  ).then((value) async {
                     if (value ?? false) {
                       setState(() {
                         lastBuildType = _BuildType.hdImage;
                         _cachedImage = null;
                       });
+                      controller.changeIsLoading(true);
+                      var imageData = await decodeImageFromList(base64Decode(image));
+                      ui.Image? cropImage;
+                      if ((controller.cropImage.value != null && includeOriginalFace())) {
+                        cropImage = await getBitmapFromContext(cropKey.currentContext!);
+                      }
+                      var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, widthRate: 0.22);
+                      var newImage = base64Encode(uint8list);
+                      controller.changeIsLoading(false);
                       ShareDiscoveryScreen.push(
                         context,
                         effectKey: selectedEffect.key,
                         originalUrl: urlFinal,
-                        image: image,
+                        image: newImage,
                         isVideo: false,
                       ).then((value) {
                         if (value ?? false) {
@@ -729,11 +788,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             });
           }
         } else {
+          controller.changeIsLoading(true);
+          var imageData = await decodeImageFromList(base64Decode(image));
+          ui.Image? cropImage;
+          if ((controller.cropImage.value != null && includeOriginalFace())) {
+            cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          }
+          var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, widthRate: 0.22);
+          var newImage = base64Encode(uint8list);
+          controller.changeIsLoading(false);
           ShareDiscoveryScreen.push(
             context,
             effectKey: selectedEffect.key,
             originalUrl: urlFinal,
-            image: image,
+            image: newImage,
             isVideo: false,
           ).then((value) {
             if (value ?? false) {
@@ -853,7 +921,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                         getCartoon(context);
                                       }).visibility(visible: !controller.isLoading.value),
                                     ),
-                                    (controller.cropImage.value != null && controller.isChecked.value) ? Image.file(controller.cropImage.value!) : Container(),
                                   ],
                                 ).intoContainer(width: imgContainerWidth, height: imgContainerHeight)
                               : Expanded(
@@ -1075,7 +1142,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 ),
               ),
             ),
-            if (includeOriginalFace())
+            if (includeOriginalFace(effect: effectItem))
               Positioned(
                 bottom: $(1),
                 left: $(3.6),
@@ -1083,7 +1150,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular($(36)),
                         child: Image.file(
-                          controller.image.value as File,
+                          controller.cropImage.value as File,
                           fit: BoxFit.fill,
                           height: $(18),
                           width: $(18),
@@ -1149,9 +1216,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   controller.changeIsChecked(true);
                 }
                 if (controller.isPhotoSelect.value) {
-                  controller.changeIsLoading(true);
                   if (controller.cropImage.value == null) {
+                    controller.changeIsLoading(true);
                     getCartoon(context);
+                  } else {
+                    setState(() {
+                      _cachedImage = null;
+                    });
                   }
                 }
               }).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
@@ -1713,13 +1784,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  bool includeOriginalFace() {
-    var selectedEffect = tabItemList[currentItemIndex.value].data;
-    return controller.isChecked.value && isSupportOriginalFace(selectedEffect);
-  }
-
-  bool isSupportOriginalFace(EffectItem effect) {
-    return effect.originalFace;
+  bool includeOriginalFace({EffectItem? effect}) {
+    if (effect == null) {
+      effect = tabItemList[currentItemIndex.value].data;
+    }
+    return controller.isChecked.value && effect.originalFace;
   }
 
   String _getAiHostByStyle(EffectItem effect) {

@@ -26,13 +26,6 @@ class ChoosePhotoScreenController extends GetxController {
     loadCropCache();
   }
 
-  @override
-  dispose() {
-    super.dispose();
-    _saveUploadCacheMap();
-    _saveCropCacheMap();
-  }
-
   Future<void> loadImageUploadCache() async {
     imageUploadCache.clear();
     dynamic jsonString = cacheManager.getJson(CacheManager.imageUploadHistory) ?? [];
@@ -82,6 +75,7 @@ class ChoosePhotoScreenController extends GetxController {
       cache.createDt = DateTime.now().millisecondsSinceEpoch;
     }
     imageUploadCache.insert(0, cache);
+    _saveUploadCacheMap();
     update();
   }
 
@@ -219,6 +213,7 @@ class ChoosePhotoScreenController extends GetxController {
 
   deleteAllCheckedPhotos() {
     imageUploadCache = imageUploadCache.filter((t) => !t.checked);
+    _saveUploadCacheMap();
   }
 
   buildCropFile(List<int> cropList) async {
@@ -241,6 +236,7 @@ class ChoosePhotoScreenController extends GetxController {
       cropFileToTarget(image.image, Rect.fromLTRB(cropList[0].toDouble(), cropList[1].toDouble(), cropList[2].toDouble(), cropList[3].toDouble()), newPath).then((file) {
         updateCropImageFile(file);
         cropRecordCache[key] = CropRecordEntity(fileName: newPath, cropList: cropList);
+        _saveCropCacheMap();
       });
     }));
   }

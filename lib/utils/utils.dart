@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/rendering.dart';
 import 'package:image/image.dart' as im;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -162,39 +163,109 @@ Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) a
 
 Future<Uint8List> addWaterMark({
   required ui.Image image,
-  required ui.Image watermark,
+  ui.Image? watermark,
   double widthRate = 0.2,
   double bottomRate = 0.07,
+  ui.Image? originalImage,
 }) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(image.width.toDouble(), image.height.toDouble())));
-
-  double targetWatermarkWidth = image.width * (1 - widthRate * 2);
-  var scale = watermark.width / watermark.height;
-  double targetWatermarkHeight = targetWatermarkWidth / scale;
 
   final paint = Paint()
     ..color = Colors.black
     ..style = PaintingStyle.fill;
 
   canvas.drawImage(image, Offset.zero, paint);
-  canvas.drawImageRect(
-    watermark,
-    Rect.fromLTWH(0, 0, watermark.width.toDouble(), watermark.height.toDouble()),
-    Rect.fromLTWH(
-      (image.width - targetWatermarkWidth) / 2,
-      image.height * (1 - bottomRate) - targetWatermarkHeight,
-      targetWatermarkWidth,
-      targetWatermarkHeight,
-    ),
-    paint,
-  );
+
+  if (originalImage != null) {
+    double targetWatermarkWidth = image.width / 5;
+    double targetWatermarkHeight = targetWatermarkWidth;
+
+    canvas.drawImageRect(
+      originalImage,
+      Rect.fromLTWH(0, 0, originalImage.width.toDouble(), originalImage.height.toDouble()),
+      Rect.fromLTWH(
+        image.width / 20,
+        image.height / 20 * 19 - targetWatermarkHeight,
+        targetWatermarkWidth,
+        targetWatermarkHeight,
+      ),
+      paint,
+    );
+  }
+  if (watermark != null) {
+    double targetWatermarkWidth = image.width * (1 - widthRate * 2);
+    var scale = watermark.width / watermark.height;
+    double targetWatermarkHeight = targetWatermarkWidth / scale;
+
+    canvas.drawImageRect(
+      watermark,
+      Rect.fromLTWH(0, 0, watermark.width.toDouble(), watermark.height.toDouble()),
+      Rect.fromLTWH(
+        (image.width - targetWatermarkWidth) / 2,
+        image.height * (1 - bottomRate) - targetWatermarkHeight,
+        targetWatermarkWidth,
+        targetWatermarkHeight,
+      ),
+      paint,
+    );
+  }
 
   final picture = recorder.endRecording();
   final img = await picture.toImage(image.width, image.height);
   final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
   // var outBytes = await img.toByteData();
   return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
+}
+
+Future<ui.Image?> createImageFromWidget(Widget widget, {Duration? wait, required Size imageSize}) async {
+  var devicePixelRatio = ui.window.devicePixelRatio;
+  final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
+  final RenderView renderView = RenderView(
+    window: ui.PlatformDispatcher.instance.views.single,
+    child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
+    configuration: ViewConfiguration(
+      size: imageSize,
+      devicePixelRatio: devicePixelRatio,
+    ),
+  );
+
+  final PipelineOwner pipelineOwner = PipelineOwner();
+  final BuildOwner buildOwner = BuildOwner();
+
+  pipelineOwner.rootNode = renderView;
+  renderView.prepareInitialFrame();
+  final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+      container: repaintBoundary,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: widget,
+      )).attachToRenderTree(buildOwner);
+  if (wait != null) {
+    await Future.delayed(wait);
+  }
+  buildOwner.buildScope(rootElement);
+  buildOwner.finalizeTree();
+
+  pipelineOwner.flushLayout();
+  pipelineOwner.flushCompositingBits();
+  pipelineOwner.flushPaint();
+  final ui.Image image = await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
+  return image;
+}
+
+///从组件获取位图
+///@param: context:组件上下文
+///@param: pixelRatio:根据分辨率展示倍图
+Future<ui.Image?> getBitmapFromContext(BuildContext context, {double pixelRatio = 1.0}) async {
+  try {
+    RenderRepaintBoundary boundary = context.findRenderObject() as RenderRepaintBoundary;
+    var image = await boundary.toImage(pixelRatio: pixelRatio);
+    return image;
+  } catch (e) {
+    print(e);
+  }
+  return null;
 }
 
 Future<void> rateApp() async {
