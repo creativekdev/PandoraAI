@@ -235,12 +235,15 @@ class ChoosePhotoScreenController extends GetxController {
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var imageInfo = image.image;
       List<int> crops = cropList;
-      if ((imageInfo.width - (cropList[2] - cropList[0])).abs() < 5 && (imageInfo.height - (cropList[3] - cropList[1])).abs() < 5) {
-        if (imageInfo.width < imageInfo.height) {
-          crops = [0, (imageInfo.height - imageInfo.width) ~/ 2, imageInfo.width, imageInfo.height - (imageInfo.height - imageInfo.width) ~/ 2];
-        } else {
-          crops = [(imageInfo.width - imageInfo.height) ~/ 2, 0, imageInfo.width - (imageInfo.width - imageInfo.height) ~/ 2, imageInfo.height];
-        }
+      int width = cropList[2] - cropList[0];
+      int height = cropList[3] - cropList[1];
+      var i = width - height;
+      if ((i) > 20) {
+        crops[0] = cropList[0] + i ~/ 2;
+        crops[2] = cropList[2] - i ~/ 2;
+      } else if (i < -20) {
+        crops[1] = cropList[1] - i ~/ 2;
+        crops[3] = cropList[3] + i ~/ 2;
       }
       cropFileToTarget(imageInfo, Rect.fromLTRB(crops[0].toDouble(), crops[1].toDouble(), crops[2].toDouble(), crops[3].toDouble()), newPath).then((file) {
         updateCropImageFile(file);

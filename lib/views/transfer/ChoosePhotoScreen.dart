@@ -543,7 +543,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   ).then((value) {
                     if (value ?? false) {
                       var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
-                      if(currentEffect != null) {
+                      if (currentEffect != null) {
                         currentEffect.hasWatermark = false;
                       }
                       setState(() {
@@ -761,7 +761,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   ).then((value) async {
                     if (value ?? false) {
                       var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
-                      if(currentEffect != null) {
+                      if (currentEffect != null) {
                         currentEffect.hasWatermark = false;
                       }
                       setState(() {
@@ -769,26 +769,28 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         _cachedImage = null;
                         imageSize = null;
                       });
-                      controller.changeIsLoading(true);
-                      var imageData = await decodeImageFromList(base64Decode(image));
-                      ui.Image? cropImage;
-                      if ((controller.cropImage.value != null && includeOriginalFace())) {
-                        cropImage = await getBitmapFromContext(cropKey.currentContext!);
-                      }
-                      var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
-                      var newImage = base64Encode(uint8list);
-                      controller.changeIsLoading(false);
-                      ShareDiscoveryScreen.push(
-                        context,
-                        effectKey: selectedEffect.key,
-                        originalUrl: urlFinal,
-                        image: newImage,
-                        isVideo: false,
-                      ).then((value) {
-                        if (value ?? false) {
-                          showShareSuccessDialog();
+                      delay(() async {
+                        controller.changeIsLoading(true);
+                        var imageData = await decodeImageFromList(base64Decode(image));
+                        ui.Image? cropImage;
+                        if ((controller.cropImage.value != null && includeOriginalFace())) {
+                          cropImage = await getBitmapFromContext(cropKey.currentContext!);
                         }
-                      });
+                        var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
+                        var newImage = base64Encode(uint8list);
+                        controller.changeIsLoading(false);
+                        ShareDiscoveryScreen.push(
+                          context,
+                          effectKey: selectedEffect.key,
+                          originalUrl: urlFinal,
+                          image: newImage,
+                          isVideo: false,
+                        ).then((value) {
+                          if (value ?? false) {
+                            showShareSuccessDialog();
+                          }
+                        });
+                      }, milliseconds: 64);
                     }
                   });
                 } else {
