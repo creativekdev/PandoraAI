@@ -26,8 +26,8 @@ class AdMobConfig {
   // static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用转换进度广告id
   static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
 
-  static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用激励广告id
-  // static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582' : 'ca-app-pub-8401689731796078/4291918781';
+  // static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用激励广告id
+  static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582' : 'ca-app-pub-8401689731796078/4291918781';
 
   // static String get SPLASH_AD_ID=>'ca-app-pub-3940256099942544/3419835294'; // 测试开屏广告id
   static String get SPLASH_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/5951671113' : 'ca-app-pub-8401689731796078/2274729104';
