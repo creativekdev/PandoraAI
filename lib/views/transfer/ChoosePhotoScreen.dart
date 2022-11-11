@@ -145,19 +145,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             alignment: Alignment.center,
             child: Stack(
               children: [
-                RepaintBoundary(
-                  key: cropKey,
-                  child: ClipOval(
-                      child: Image.file(
-                    controller.cropImage.value!,
-                    width: ScreenUtil.screenSize.width - 50,
-                  )),
-                ).visibility(
-                  visible: false,
-                  maintainState: true,
-                  maintainSize: true,
-                  maintainAnimation: true,
-                ),
+                controller.cropImage.value != null
+                    ? RepaintBoundary(
+                        key: cropKey,
+                        child: ClipOval(
+                            child: Image.file(
+                          controller.cropImage.value!,
+                          width: ScreenUtil.screenSize.width - 50,
+                        )),
+                      ).visibility(
+                        visible: false,
+                        maintainState: true,
+                        maintainSize: true,
+                        maintainAnimation: true,
+                      )
+                    : Container(),
                 Image.memory(
                   imageUint8List,
                   width: double.maxFinite,
@@ -168,12 +170,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   child: Image.asset(
                     Images.ic_watermark,
                     width: (imageSize?.width ?? imgContainerWidth) * 0.56,
-                  ).intoContainer(
-                      margin: EdgeInsets.only(bottom: 7.w),
-                      decoration: BoxDecoration(
-                        color: Color(0x66000000),
-                        borderRadius: BorderRadius.circular(8)
-                      )),
+                  ).intoContainer(margin: EdgeInsets.only(bottom: 7.w), decoration: BoxDecoration(color: Color(0x66000000), borderRadius: BorderRadius.circular(8))),
                   alignment: Alignment.bottomCenter,
                 ).visibility(visible: imageSize != null),
               ],
@@ -199,19 +196,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 width: imgContainerWidth,
                 height: imgContainerHeight,
               )),
-          RepaintBoundary(
-            key: cropKey,
-            child: ClipOval(
-                child: Image.file(
-              controller.cropImage.value!,
-              width: ScreenUtil.screenSize.width - 50,
-            )),
-          ).visibility(
-            visible: false,
-            maintainState: true,
-            maintainSize: true,
-            maintainAnimation: true,
-          ),
+          controller.cropImage.value != null
+              ? RepaintBoundary(
+                  key: cropKey,
+                  child: ClipOval(
+                      child: Image.file(
+                    controller.cropImage.value!,
+                    width: ScreenUtil.screenSize.width - 50,
+                  )),
+                ).visibility(
+                  visible: false,
+                  maintainState: true,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                )
+              : Container(),
           Image.memory(
             imageUint8List,
             width: imgContainerWidth,
@@ -650,7 +649,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
           ui.Image? cropImage;
           if ((controller.cropImage.value != null && includeOriginalFace())) {
-            cropImage = await getBitmapFromContext(cropKey.currentContext!);
+            if (cropKey.currentContext != null) {
+              cropImage = await getBitmapFromContext(cropKey.currentContext!);
+            }
           }
           var uint8list = await addWaterMark(image: imageData, watermark: image.image, originalImage: cropImage);
           await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
@@ -660,7 +661,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         var imageData = await decodeImageFromList(base64Decode(image));
         ui.Image? cropImage;
         if ((controller.cropImage.value != null && includeOriginalFace())) {
-          cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          if (cropKey.currentContext != null) {
+            cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          }
         }
         var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
         await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
@@ -741,7 +744,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         var imageData = await decodeImageFromList(base64Decode(image));
         ui.Image? cropImage;
         if ((controller.cropImage.value != null && includeOriginalFace())) {
-          cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          if (cropKey.currentContext != null) {
+            cropImage = await getBitmapFromContext(cropKey.currentContext!);
+          }
         }
         var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
         var newImage = base64Encode(uint8list);
