@@ -198,6 +198,18 @@ Future<Uint8List> addWaterMark({
     var scale = watermark.width / watermark.height;
     double targetWatermarkHeight = targetWatermarkWidth / scale;
 
+    canvas.drawRect(
+      Rect.fromLTWH(
+        (image.width - targetWatermarkWidth) / 2 + 7,
+        image.height * (1 - bottomRate) - targetWatermarkHeight + 7,
+        targetWatermarkWidth - 14,
+        targetWatermarkHeight - 14,
+      ),
+      Paint()
+        ..color = Color(0x66000000)
+        ..style = PaintingStyle.fill,
+    );
+
     canvas.drawImageRect(
       watermark,
       Rect.fromLTWH(0, 0, watermark.width.toDouble(), watermark.height.toDouble()),

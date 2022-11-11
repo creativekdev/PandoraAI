@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
@@ -60,6 +61,12 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
     payListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       hasReward = true;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    adsHolder.onDispose();
   }
 
   @override

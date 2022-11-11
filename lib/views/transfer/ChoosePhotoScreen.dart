@@ -37,7 +37,6 @@ import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:flutter/rendering.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
@@ -146,32 +145,35 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             alignment: Alignment.center,
             child: Stack(
               children: [
+                RepaintBoundary(
+                  key: cropKey,
+                  child: ClipOval(
+                      child: Image.file(
+                    controller.cropImage.value!,
+                    width: ScreenUtil.screenSize.width - 50,
+                  )),
+                ).visibility(
+                  visible: false,
+                  maintainState: true,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                ),
                 Image.memory(
                   imageUint8List,
                   width: double.maxFinite,
                   height: imageSize?.height ?? imgContainerHeight,
                 ),
-                imageSize != null
-                    ? (controller.cropImage.value != null && includeOriginalFace())
-                        ? Positioned(
-                            child: RepaintBoundary(
-                              key: cropKey,
-                              child: ClipOval(
-                                  child: Image.file(
-                                controller.cropImage.value!,
-                                width: imageSize!.width / 5,
-                              )),
-                            ),
-                            bottom: (imageSize!.height / 20),
-                            left: ((imgContainerWidth - imageSize!.width) / 2) + (imageSize!.width / 20),
-                          )
-                        : Container()
-                    : Container(),
+                buildCropContainer(),
                 Align(
                   child: Image.asset(
                     Images.ic_watermark,
                     width: (imageSize?.width ?? imgContainerWidth) * 0.56,
-                  ).intoContainer(margin: EdgeInsets.only(bottom: 7.w)),
+                  ).intoContainer(
+                      margin: EdgeInsets.only(bottom: 7.w),
+                      decoration: BoxDecoration(
+                        color: Color(0x66000000),
+                        borderRadius: BorderRadius.circular(8)
+                      )),
                   alignment: Alignment.bottomCenter,
                 ).visibility(visible: imageSize != null),
               ],
@@ -197,27 +199,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 width: imgContainerWidth,
                 height: imgContainerHeight,
               )),
+          RepaintBoundary(
+            key: cropKey,
+            child: ClipOval(
+                child: Image.file(
+              controller.cropImage.value!,
+              width: ScreenUtil.screenSize.width - 50,
+            )),
+          ).visibility(
+            visible: false,
+            maintainState: true,
+            maintainSize: true,
+            maintainAnimation: true,
+          ),
           Image.memory(
             imageUint8List,
             width: imgContainerWidth,
             height: imgContainerHeight,
           ),
-          imageSize != null
-              ? (controller.cropImage.value != null && includeOriginalFace())
-                  ? Positioned(
-                      child: RepaintBoundary(
-                        key: cropKey,
-                        child: ClipOval(
-                            child: Image.file(
-                          controller.cropImage.value!,
-                          width: imageSize!.width / 5,
-                        )),
-                      ),
-                      bottom: ((imgContainerHeight - imageSize!.height) / 2) + (imageSize!.height / 20),
-                      left: ((imgContainerWidth - imageSize!.width) / 2) + (imageSize!.width / 20),
-                    )
-                  : Container()
-              : Container(),
+          buildCropContainer(),
         ],
       ).intoContainer(width: imgContainerWidth, height: imgContainerHeight);
       if (imageSize == null) {
@@ -225,6 +225,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       }
     }
     return _cachedImage!;
+  }
+
+  Widget buildCropContainer() {
+    return imageSize != null
+        ? (controller.cropImage.value != null && includeOriginalFace())
+            ? Positioned(
+                child: RepaintBoundary(
+                  child: ClipOval(
+                      child: Image.file(
+                    controller.cropImage.value!,
+                    width: imageSize!.width / 5,
+                  )),
+                ),
+                bottom: lastBuildType == _BuildType.waterMark ? (imageSize!.height / 20) : ((imgContainerHeight - imageSize!.height) / 2) + (imageSize!.height / 20),
+                left: ((imgContainerWidth - imageSize!.width) / 2) + (imageSize!.width / 20),
+              )
+            : Container()
+        : Container();
   }
 
   asyncRefreshImageSize(Uint8List imageUint8List) {
@@ -719,108 +737,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           }
         });
       } else {
-        if (lastBuildType == _BuildType.waterMark) {
-          var shareWatermark = () async {
-            //share with watermark
-            controller.changeIsLoading(true);
-            ui.Image? cropImage;
-            if ((controller.cropImage.value != null && includeOriginalFace())) {
-              cropImage = await getBitmapFromContext(cropKey.currentContext!);
-            }
-            var imageData = await decodeImageFromList(base64Decode(image));
-            var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
-            assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
-              var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: image.image);
-              var newImage = base64Encode(uint8list);
-              controller.changeIsLoading(false);
-              ShareDiscoveryScreen.push(
-                context,
-                effectKey: selectedEffect.key,
-                originalUrl: urlFinal,
-                image: newImage,
-                isVideo: false,
-              ).then((value) {
-                if (value ?? false) {
-                  showShareSuccessDialog();
-                }
-              });
-            }));
-          };
-          if (!rewardAdsHolder.adsReady) {
-            // has no admob, just share watermark
-            shareWatermark.call();
-          } else {
-            // get reward to share hd
-            showShareDiscoveryDialog(context).then((value) async {
-              if (value != null) {
-                if (value) {
-                  RewardAdvertisementScreen.push(
-                    context,
-                    adsHolder: rewardAdsHolder,
-                    watchAdText: StringConstant.watchAdToShareText,
-                  ).then((value) async {
-                    if (value ?? false) {
-                      var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
-                      if (currentEffect != null) {
-                        currentEffect.hasWatermark = false;
-                      }
-                      setState(() {
-                        lastBuildType = _BuildType.hdImage;
-                        _cachedImage = null;
-                        imageSize = null;
-                      });
-                      delay(() async {
-                        controller.changeIsLoading(true);
-                        var imageData = await decodeImageFromList(base64Decode(image));
-                        ui.Image? cropImage;
-                        if ((controller.cropImage.value != null && includeOriginalFace())) {
-                          cropImage = await getBitmapFromContext(cropKey.currentContext!);
-                        }
-                        var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
-                        var newImage = base64Encode(uint8list);
-                        controller.changeIsLoading(false);
-                        ShareDiscoveryScreen.push(
-                          context,
-                          effectKey: selectedEffect.key,
-                          originalUrl: urlFinal,
-                          image: newImage,
-                          isVideo: false,
-                        ).then((value) {
-                          if (value ?? false) {
-                            showShareSuccessDialog();
-                          }
-                        });
-                      }, milliseconds: 64);
-                    }
-                  });
-                } else {
-                  shareWatermark.call();
-                }
-              }
-            });
-          }
-        } else {
-          controller.changeIsLoading(true);
-          var imageData = await decodeImageFromList(base64Decode(image));
-          ui.Image? cropImage;
-          if ((controller.cropImage.value != null && includeOriginalFace())) {
-            cropImage = await getBitmapFromContext(cropKey.currentContext!);
-          }
-          var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
-          var newImage = base64Encode(uint8list);
-          controller.changeIsLoading(false);
-          ShareDiscoveryScreen.push(
-            context,
-            effectKey: selectedEffect.key,
-            originalUrl: urlFinal,
-            image: newImage,
-            isVideo: false,
-          ).then((value) {
-            if (value ?? false) {
-              showShareSuccessDialog();
-            }
-          });
+        controller.changeIsLoading(true);
+        var imageData = await decodeImageFromList(base64Decode(image));
+        ui.Image? cropImage;
+        if ((controller.cropImage.value != null && includeOriginalFace())) {
+          cropImage = await getBitmapFromContext(cropKey.currentContext!);
         }
+        var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
+        var newImage = base64Encode(uint8list);
+        controller.changeIsLoading(false);
+        ShareDiscoveryScreen.push(
+          context,
+          effectKey: selectedEffect.key,
+          originalUrl: urlFinal,
+          image: newImage,
+          isVideo: false,
+        ).then((value) {
+          if (value ?? false) {
+            showShareSuccessDialog();
+          }
+        });
       }
     });
   }

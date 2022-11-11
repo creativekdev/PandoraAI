@@ -10,16 +10,24 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
   String adId;
   Function? onRewardCall;
   Function? onDismiss;
+  Function? onAdReady;
 
   RewardInterstitialAdsHolder({
     required this.adId,
     this.onRewardCall,
     this.onDismiss,
+    this.onAdReady,
   });
 
   @override
   initHolder() {
     _createRewardedInterstitialAd();
+  }
+
+  @override
+  onReady() {
+    super.onReady();
+    onAdReady?.call();
   }
 
   _createRewardedInterstitialAd() {

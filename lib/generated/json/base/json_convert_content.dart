@@ -62,6 +62,9 @@ class JsonConvert {
   }
 
   T? asT<T extends Object?>(dynamic value) {
+    if(value == null){
+      return null;
+    }
     if (value is T) {
       return value;
     }

@@ -310,14 +310,14 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
       if (appBackground) {
         return const SizedBox();
       } else {
-        if (adMap[page] == null) {
-          adMap[page] = CardAdsWidget(
-            width: width,
-            height: height,
-            page: page,
-          );
-        }
-        return adMap[page]!;
+        // if (adMap[page] == null) {
+        //   adMap[page] = CardAdsWidget(
+        //     width: width,
+        //     height: height,
+        //     page: page,
+        //   );
+        // }
+        // return adMap[page]!;
         return CardAdsWidget(
           width: width,
           height: height,
