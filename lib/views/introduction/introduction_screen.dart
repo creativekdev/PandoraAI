@@ -27,11 +27,11 @@ class IntroductionScreenState extends State<IntroductionScreen> {
       'title': StringConstant.app_name,
       'subTitle': StringConstant.welcome_title2,
     },
-    {
-      'image': Images.introduction_bg3,
-      'title': StringConstant.app_name,
-      'subTitle': StringConstant.welcome_title3,
-    }
+    // {
+    //   'image': Images.introduction_bg3,
+    //   'title': StringConstant.app_name,
+    //   'subTitle': StringConstant.welcome_title3,
+    // }
   ];
 
   late PageController pageController;

@@ -35,6 +35,6 @@ class UploadRecordEntity {
 
 extension UploadRecordEntityEx on UploadRecordEntity {
   bool urlExpired() {
-    return DateTime.now().millisecondsSinceEpoch - createDt > 6 * 24 * hour;
+    return DateTime.now().millisecondsSinceEpoch - createDt > 3 * 24 * hour;
   }
 }
