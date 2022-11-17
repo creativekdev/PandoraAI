@@ -15,14 +15,14 @@ class PhotoSourceOperator {
     var faceJson = cacheManager.getJson(CacheManager.photoSourceFace) ?? [];
     if (faceJson is List) {
       faceList = faceJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      faceList = faceList.filter((e) => File(e.originalPath!).existsSync());
+      faceList = faceList.filter((e) => File(e.thumbPath!).existsSync());
     } else {
       faceList = [];
     }
     var otherJson = cacheManager.getJson(CacheManager.photoSourceOther) ?? [];
     if (otherJson is List) {
       otherList = otherJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      otherList = otherList.filter((e) => File(e.originalPath!).existsSync());
+      otherList = otherList.filter((e) => File(e.thumbPath!).existsSync());
     } else {
       otherList = [];
     }

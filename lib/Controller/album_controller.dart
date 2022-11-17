@@ -53,9 +53,9 @@ class AlbumController extends GetxController {
     if (firstLoad) {
       // first load, just add to list
       for (AlbumModelEntity entity in list) {
-        if (!TextUtil.isEmpty(entity.originalPath)) {
+        if (!TextUtil.isEmpty(entity.thumbPath)) {
           try {
-            File file = File(entity.originalPath!);
+            File file = File(entity.thumbPath!);
             var inputImage = InputImage.fromFile(file);
             FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
             List<Face> faces = await faceDetector.processImage(inputImage);
@@ -85,14 +85,14 @@ class AlbumController extends GetxController {
       // increase load, loop from last to first, and insert to top at list
       for (int i = list.length - 1; i >= 0; i--) {
         var entity = list[i];
-        if (TextUtil.isEmpty(entity.originalPath)) {
+        if (TextUtil.isEmpty(entity.thumbPath)) {
           continue;
         }
-        if (faceList.exist((t) => t.originalPath == entity.originalPath) || otherList.exist((t) => t.originalPath == entity.originalPath)) {
+        if (faceList.exist((t) => t.thumbPath == entity.thumbPath) || otherList.exist((t) => t.thumbPath == entity.thumbPath)) {
           continue;
         }
         try {
-          File file = File(entity.originalPath!);
+          File file = File(entity.thumbPath!);
           var inputImage = InputImage.fromFile(file);
           FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
           List<Face> faces = await faceDetector.processImage(inputImage);

@@ -148,7 +148,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       listHeight = lineHeight * line + $(70);
     }
     listHeight += ScreenUtil.getBottomBarHeight();
-    maxSlide = ScreenUtil.screenSize.height - listHeight - 20;
+    maxSlide = ScreenUtil.screenSize.height - listHeight - (Platform.isIOS ? 38 : 20);
   }
 
   toggle() => dragAnimController.isDismissed ? dragAnimController.forward() : dragAnimController.reverse();
@@ -413,7 +413,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
             );
           },
         ),
-        top: appBarHeight + (Platform.isIOS ? 12 : 30),
+        top: appBarHeight + 30,
         right: 12,
       );
 
