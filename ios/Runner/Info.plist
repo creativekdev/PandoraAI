@@ -437,5 +437,21 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSContactsUsageDescription</key>
+    <string>contacts</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Calendars</string>
+    <key>NSBluetoothPeripheralUsageDescription</key>
+    <string>bluetooth</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>bluetooth</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Music!</string>
+    <key>NSMotionUsageDescription</key>
+    <string>motion</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>speech</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Need location when in use</string>
 </dict>
 </plist>
