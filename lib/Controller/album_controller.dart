@@ -7,7 +7,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:photo_album_manager/photo_album_manager.dart';
-import 'package:worker_manager/worker_manager.dart';
 
 class AlbumController extends GetxController {
   late CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -54,30 +53,22 @@ class AlbumController extends GetxController {
       // first load, just add to list
       for (AlbumModelEntity entity in list) {
         if (!TextUtil.isEmpty(entity.thumbPath)) {
-          try {
-            File file = File(entity.thumbPath!);
-            var inputImage = InputImage.fromFile(file);
-            FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
-            List<Face> faces = await faceDetector.processImage(inputImage);
-            bool needUpdate = false;
-            if (faces.isNotEmpty) {
-              faceList.add(entity);
-              if (faceList.length % 20 == 0) {
-                needUpdate = true;
-              }
-            } else {
-              otherList.add(entity);
-              if (otherList.length % 20 == 0) {
-                needUpdate = true;
-              }
+          bool needUpdate = false;
+          var faceImage = await hasFace(entity);
+          if (faceImage) {
+            faceList.add(entity);
+            if (faceList.length % 20 == 0) {
+              needUpdate = true;
             }
-            if (needUpdate) {
-              update();
-              await cacheManager.photoSourceOperator.saveData(faceList, otherList);
+          } else {
+            otherList.add(entity);
+            if (otherList.length % 20 == 0) {
+              needUpdate = true;
             }
-            faceDetector.close();
-          } on PlatformException catch (e) {
-            LogUtil.e(e.toString(), tag: 'face-detector');
+          }
+          if (needUpdate) {
+            update();
+            await cacheManager.photoSourceOperator.saveData(faceList, otherList);
           }
         }
       }
@@ -91,26 +82,35 @@ class AlbumController extends GetxController {
         if (faceList.exist((t) => t.thumbPath == entity.thumbPath) || otherList.exist((t) => t.thumbPath == entity.thumbPath)) {
           continue;
         }
-        try {
-          File file = File(entity.thumbPath!);
-          var inputImage = InputImage.fromFile(file);
-          FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
-          List<Face> faces = await faceDetector.processImage(inputImage);
-          if (faces.isNotEmpty) {
-            faceList.insert(0, entity);
-          } else {
-            otherList.insert(0, entity);
-          }
-          update();
-          faceDetector.close();
-        } on PlatformException catch (e) {
-          LogUtil.e(e.toString(), tag: 'face-detector');
+        var faceImage = await hasFace(entity);
+        if (faceImage) {
+          faceList.insert(0, entity);
+        } else {
+          otherList.insert(0, entity);
         }
+        update();
       }
     }
     loading = false;
     update();
     cacheManager.photoSourceOperator.saveData(faceList, otherList);
     return true;
+  }
+
+  Future<bool> hasFace(AlbumModelEntity entity) async {
+    try {
+      File file = File(entity.thumbPath!);
+      var inputImage = InputImage.fromFile(file);
+      FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
+      List<Face> faces = await faceDetector.processImage(inputImage);
+      faceDetector.close();
+      return faces.isNotEmpty;
+    } on PlatformException catch (e) {
+      LogUtil.e(e.toString(), tag: 'face-detector');
+      return false;
+    } catch (e) {
+      LogUtil.e(e.toString(), tag: 'face-detector');
+      return false;
+    }
   }
 }

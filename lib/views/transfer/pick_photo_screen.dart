@@ -135,7 +135,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     var width = ScreenUtil.screenSize.width - 24;
     lineHeight = width / 4;
     if (controller.imageUploadCache.length > 6) {
-      listHeight = width * 0.5 + $(70);
+      listHeight = width * 0.5 + $(95);
     } else {
       var totalLength = controller.imageUploadCache.length + 2;
       int line = (totalLength) ~/ 4;
@@ -145,7 +145,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       if (line > 2) {
         line = 2;
       }
-      listHeight = lineHeight * line + $(70);
+      listHeight = lineHeight * line + $(95);
     }
     listHeight += ScreenUtil.getBottomBarHeight();
     maxSlide = ScreenUtil.screenSize.height - listHeight - (Platform.isIOS ? 38 : 20);
@@ -314,7 +314,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                     });
                                   }
                                 },
-                              ),
+                              ).visibility(visible: !tabs[currentIndex].isAiSource() && controller.imageUploadCache.isNotEmpty),
                             ).intoContainer(height: appBarHeight),
                           ),
                           Row(
@@ -419,7 +419,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
 
   Widget buildFromAiSource() => GetBuilder<AlbumController>(
         builder: (albumController) {
-          var itemCount = (tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length) + 2 + (albumController.loading ? 1 : 0);
+          var itemCount = (tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length) + (albumController.loading ? 1 : 0);
           return GridView.builder(
             physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
             padding: EdgeInsets.only(left: 12, right: 12),
@@ -429,19 +429,16 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
               crossAxisSpacing: $(2),
             ),
             itemBuilder: (context, index) {
-              if (index < 2) {
-                return buildSystemAlbumItem(index, context)!;
-              }
               if (albumController.loading) {
-                if (index == 2) {
+                if (index == 0) {
                   return FrameAnimatedSvg(
                     child: SvgPicture.asset(Images.ic_refresh_header),
                   ).intoContainer(width: $(20), height: $(20)).intoCenter();
                 } else {
-                  return buildAiSourceItem(index - 3, context, albumController);
+                  return buildAiSourceItem(index - 1, context, albumController);
                 }
               } else {
-                return buildAiSourceItem(index - 2, context, albumController);
+                return buildAiSourceItem(index, context, albumController);
               }
             },
             itemCount: itemCount,
