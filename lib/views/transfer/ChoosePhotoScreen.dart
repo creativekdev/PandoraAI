@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:ui' as ui;
 
@@ -19,6 +18,7 @@ import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
+import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -151,6 +151,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         child: ClipOval(
                             child: Image.file(
                           controller.cropImage.value!,
+                          fit: BoxFit.cover,
                           width: ScreenUtil.screenSize.width - 50,
                         )),
                       ).visibility(
@@ -202,6 +203,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   child: ClipOval(
                       child: Image.file(
                     controller.cropImage.value!,
+                    fit: BoxFit.cover,
                     width: ScreenUtil.screenSize.width - 50,
                   )),
                 ).visibility(
@@ -320,6 +322,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
     imagePicker = ImagePicker();
     initTabBar();
+    judgeAiServers();
+  }
+
+  void judgeAiServers() {
     if (userManager.aiServers.isEmpty) {
       delay(() {
         controller.changeIsLoading(true);
@@ -329,17 +335,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             Navigator.of(context).pop();
           } else {
             controller.changeIsLoading(false);
-            judgeAndOpenRecentDialog();
+            judgeAndOpenPickPhotoDialog();
           }
         });
       });
     } else {
-      judgeAndOpenRecentDialog();
+      judgeAndOpenPickPhotoDialog();
     }
   }
 
-  judgeAndOpenRecentDialog() async {
-    delay(() async {
+  judgeAndOpenPickPhotoDialog() {
+    delay(() {
       autoScrollToSelectedIndex();
       controller.loadImageUploadCache().then((value) {
         if (!controller.isPhotoSelect.value) {
@@ -1517,6 +1523,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       );
       try {
         var imageUrl = controller.imageUrl.value;
+        await controller.buildCropFile();
         if (imageUrl == "") {
           await controller.uploadCompressedImage();
           imageUrl = controller.imageUrl.value;
@@ -1564,10 +1571,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
                 controller.updateCachedId(cachedId!);
-              }
-              List<int> cropList = ((parsed['crop'] ?? []) as List).map((e) => int.parse(e.toString())).toList();
-              if (cropList.length == 4) {
-                controller.buildCropFile(cropList);
               }
               var dataString = parsed['data'].toString();
               if (TextUtil.isEmpty(dataString)) {

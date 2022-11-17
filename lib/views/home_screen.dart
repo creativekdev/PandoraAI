@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late StreamSubscription onHomeConfigListener;
   EffectDataController dataController = Get.put(EffectDataController());
   RecentController recentController = Get.put(RecentController());
+  AlbumController albumController = Get.put(AlbumController());
 
   @override
   void initState() {
@@ -64,8 +66,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             });
           } else {
             delay(() {
-              userManager.rateNoticeOperator.judgeAndShowNotice(context);
-              judgePushEvents();
+              onLogin();
             });
           }
         }
@@ -73,10 +74,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
-  void judgePushEvents() {
+  void onLogin() {
+    userManager.rateNoticeOperator.judgeAndShowNotice(context);
     FirebaseMessaging.instance.getInitialMessage().then((value) {
       if (value != null) {
         AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
+      }
+    });
+    albumController.checkPermissions().then((value) {
+      if (value.isGranted) {
+        albumController.syncFromAlbum();
       }
     });
   }
@@ -84,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   didUpdateWidget(HomeScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    delay(() => judgePushEvents());
+    delay(() => onLogin());
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -10,13 +11,18 @@ import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:path/path.dart' as path;
+
+const int axisOffset = 20;
+const double expandPercent = 0.20;
 
 class ChoosePhotoScreenController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StorageOperator storageOperator;
   List<UploadRecordEntity> imageUploadCache = [];
   Map<String, CropRecordEntity> cropRecordCache = {};
+  var faceDetector = FaceDetector(options: FaceDetectorOptions());
 
   @override
   Future<void> onInit() async {
@@ -24,6 +30,12 @@ class ChoosePhotoScreenController extends GetxController {
     storageOperator = cacheManager.storageOperator;
     loadImageUploadCache();
     loadCropCache();
+  }
+
+  @override
+  dispose() {
+    faceDetector.close();
+    super.dispose();
   }
 
   Future<void> loadImageUploadCache() async {
@@ -216,21 +228,35 @@ class ChoosePhotoScreenController extends GetxController {
     _saveUploadCacheMap();
   }
 
-  buildCropFile(List<int> cropList) async {
+  buildCropFile() async {
     var file = image.value;
     if (file == null) {
       return;
     }
     var key = await md5File(file);
-    var cache = cropRecordCache[key];
-    if (cache != null) {
-      if (cropEquals(cache.cropList, cropList)) {
-        updateCropImageFile(File(cache.fileName));
-        return;
-      }
+    var inputImage = InputImage.fromFile(file);
+    List<Face> faceList = await faceDetector.processImage(inputImage);
+    if (faceList.isEmpty) {
+      return;
     }
+    var first = faceList.first;
+    List<int> cropList = [
+      first.boundingBox.left.toInt(),
+      first.boundingBox.top.toInt(),
+      first.boundingBox.right.toInt(),
+      first.boundingBox.bottom.toInt(),
+    ];
     String f_name = path.basename(file.path);
     var newPath = "${storageOperator.cropDir.path}/$f_name";
+    if (File(newPath).existsSync()) {
+      var cache = cropRecordCache[key];
+      if (cache != null) {
+        if (cropEquals(cache.cropList, cropList)) {
+          updateCropImageFile(File(cache.fileName));
+          return;
+        }
+      }
+    }
     var resolve = FileImage(file).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var imageInfo = image.image;
@@ -238,19 +264,39 @@ class ChoosePhotoScreenController extends GetxController {
       int width = cropList[2] - cropList[0];
       int height = cropList[3] - cropList[1];
       var i = width - height;
-      if ((i) > 20) {
+      if ((i) > axisOffset) {
         crops[0] = cropList[0] + i ~/ 2;
         crops[2] = cropList[2] - i ~/ 2;
-      } else if (i < -20) {
+      } else if (i < -axisOffset) {
         crops[1] = cropList[1] - i ~/ 2;
         crops[3] = cropList[3] + i ~/ 2;
       }
-      cropFileToTarget(imageInfo, Rect.fromLTRB(crops[0].toDouble(), crops[1].toDouble(), crops[2].toDouble(), crops[3].toDouble()), newPath).then((file) {
-        updateCropImageFile(file);
-        cropRecordCache[key] = CropRecordEntity(fileName: newPath, cropList: cropList);
-        _saveCropCacheMap();
-      });
+      execCropFile([...crops], imageInfo, newPath, key, cropList, expandPercent);
     }));
+  }
+
+  void execCropFile(List<int> crops, ui.Image imageInfo, String newPath, String key, List<int> cropList, double percent) {
+    int correctWidth = crops[2] - crops[0];
+    int correctHeight = crops[3] - crops[1];
+    int expandVerticalSize = (correctWidth * percent).toInt();
+    int expandHorizontalSize = (correctHeight * percent).toInt();
+    crops[0] = crops[0] - (crops[0] > expandVerticalSize ? expandVerticalSize : crops[0]);
+    crops[1] = crops[1] - (crops[1] > expandHorizontalSize ? expandHorizontalSize : crops[1]);
+    if (crops[2] < imageInfo.width - expandVerticalSize) {
+      crops[2] += expandVerticalSize;
+    } else {
+      crops[2] = imageInfo.width;
+    }
+    if (crops[3] < imageInfo.height - expandHorizontalSize) {
+      crops[3] += expandHorizontalSize;
+    } else {
+      crops[3] = imageInfo.height;
+    }
+    cropFileToTarget(imageInfo, Rect.fromLTRB(crops[0].toDouble(), crops[1].toDouble(), crops[2].toDouble(), crops[3].toDouble()), newPath).then((file) {
+      updateCropImageFile(file);
+      cropRecordCache[key] = CropRecordEntity(fileName: newPath, cropList: cropList);
+      _saveCropCacheMap();
+    });
   }
 
   bool cropEquals(List<int> oldList, List<int> newList) {

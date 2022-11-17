@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/photo_source_operator.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,13 +28,19 @@ class CacheManager extends BaseManager {
   static const imageCropHistory = 'image_crop_history';
   static const pushToken = 'push_token';
   static const imageScaled = 'image_scaled';
+  static const photoSourceFace = 'photo_source_face';
+  static const photoSourceOther = 'photo_source_other';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
   late ImageScaleOperator _imageScaleOperator;
+  late PhotoSourceOperator _photoSourceOperator;
 
   StorageOperator get storageOperator => _storageOperator;
+
   ImageScaleOperator get imageScaleOperator => _imageScaleOperator;
+
+  PhotoSourceOperator get photoSourceOperator => _photoSourceOperator;
 
   @override
   Future<void> onCreate() async {
@@ -43,6 +50,8 @@ class CacheManager extends BaseManager {
     _storageOperator.initializeDir();
     _imageScaleOperator = ImageScaleOperator(cacheManager: this);
     _imageScaleOperator.loadCache();
+    _photoSourceOperator = PhotoSourceOperator(cacheManager: this);
+    _photoSourceOperator.init();
   }
 
   String rateConfigKey() {

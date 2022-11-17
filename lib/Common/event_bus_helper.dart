@@ -125,3 +125,5 @@ class OnNewPostEvent extends BaseEvent {}
 class OnHashTagChangeEvent extends BaseEvent<String> {
   OnHashTagChangeEvent({String? data}) : super(data: data);
 }
+
+class OnClearCacheEvent extends BaseEvent {}

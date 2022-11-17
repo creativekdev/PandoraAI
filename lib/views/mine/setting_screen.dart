@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -122,6 +123,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   showClearCacheDialog().then((value) {
                     if (value ?? false) {
                       showLoading().whenComplete(() {
+                        cacheManager.setJson(CacheManager.photoSourceFace, null);
+                        cacheManager.setJson(CacheManager.photoSourceOther, null);
                         cacheManager.storageOperator.clearDirectories([
                           cacheManager.storageOperator.videoDir,
                           cacheManager.storageOperator.imageDir,
@@ -129,6 +132,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                           cacheManager.storageOperator.pushDir,
                           cacheManager.storageOperator.recentDir,
                         ]).whenComplete(() {
+                          EventBusHelper().eventBus.fire(OnClearCacheEvent());
                           hideLoading().whenComplete(() {
                             CommonExtension().showToast('Clear Success');
                             getCacheSize();

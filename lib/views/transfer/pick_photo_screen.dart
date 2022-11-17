@@ -4,11 +4,17 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/Controller/album_controller.dart';
+import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
+import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:vibration/vibration.dart';
 
 class PickPhotoScreen {
@@ -76,6 +82,11 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   bool result = false;
   MyVerticalDragGestureRecognizer dragGestureRecognizer = MyVerticalDragGestureRecognizer();
 
+  List<PhotoSource> tabs = [PhotoSource.recent, PhotoSource.albumFace, PhotoSource.album];
+  int currentIndex = 0;
+
+  AlbumController albumController = Get.find();
+
   @override
   dispose() {
     super.dispose();
@@ -137,7 +148,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       listHeight = lineHeight * line + $(70);
     }
     listHeight += ScreenUtil.getBottomBarHeight();
-    maxSlide = ScreenUtil.screenSize.height - listHeight - dragWidgetHeight;
+    maxSlide = ScreenUtil.screenSize.height - listHeight - 20;
   }
 
   toggle() => dragAnimController.isDismissed ? dragAnimController.forward() : dragAnimController.reverse();
@@ -230,19 +241,30 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                       alignment: Alignment.centerLeft,
                                                       padding: EdgeInsets.symmetric(horizontal: 12),
                                                     ),
-                                                    GridView.builder(
-                                                      physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
-                                                      padding: EdgeInsets.only(left: 12, right: 12),
-                                                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                                        crossAxisCount: 4,
-                                                        mainAxisSpacing: $(2),
-                                                        crossAxisSpacing: $(2),
-                                                      ),
-                                                      itemBuilder: (context, pos) {
-                                                        return buildListItem(pos, context);
+                                                    ChooseTabBar(
+                                                      tabList: tabs.map((e) => e.title().toString()).toList(),
+                                                      onTabClick: (index) {
+                                                        if (tabs[index].isAiSource()) {
+                                                          albumController.checkPermissions().then((value) {
+                                                            if (value.isGranted) {
+                                                              albumController.syncFromAlbum();
+                                                              setState(() {
+                                                                currentIndex = index;
+                                                              });
+                                                            } else {
+                                                              CommonExtension().showToast("Please grant permissions");
+                                                            }
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            currentIndex = index;
+                                                          });
+                                                        }
                                                       },
-                                                      itemCount: controller.imageUploadCache.length + 2,
-                                                    ).intoContainer(
+                                                      currentIndex: currentIndex,
+                                                      height: 36,
+                                                    ).intoContainer(color: ColorConstant.BackgroundColor),
+                                                    (tabs[currentIndex].isAiSource() ? buildFromAiSource() : buildFromRecent()).intoContainer(
                                                       width: double.maxFinite,
                                                       height: dragAnimController.isDismissed ? listHeight : ScreenUtil.screenSize.height - appBarHeight - dragWidgetHeight,
                                                       color: ColorConstant.BackgroundColor,
@@ -336,41 +358,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                       );
                     },
                   ),
-                  Positioned(
-                    child: AnimatedBuilder(
-                      animation: dragAnimController,
-                      builder: (context, child) {
-                        double alpha = 0;
-                        if (dragAnimController.value > 0.5) {
-                          alpha = (dragAnimController.value - 0.5) * 2;
-                        }
-                        return Opacity(
-                          opacity: alpha,
-                          child: Container(
-                            width: lineHeight,
-                            height: lineHeight,
-                            child: OutlineWidget(
-                                radius: $(6),
-                                strokeWidth: 3,
-                                gradient: LinearGradient(
-                                  colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.all($(3)),
-                                  child: ClipRRect(
-                                    child: floatWidget,
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                )),
-                          ),
-                        );
-                      },
-                    ),
-                    top: appBarHeight + (Platform.isIOS ? 0 : 18),
-                    right: 12,
-                  ),
+                  floatCurrentItem(),
                 ],
               ),
             ),
@@ -393,41 +381,102 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     );
   }
 
-  Widget buildListItem(int pos, BuildContext context) {
-    if (pos == 0) {
-      return Image.asset(
-        Images.ic_choose_camera,
-        color: ColorConstant.White,
-      )
-          .intoContainer(
-        color: ColorConstant.LineColor,
-        padding: EdgeInsets.symmetric(vertical: $(24)),
-      )
-          .intoGestureDetector(onTap: () {
-        widget.onPickFromSystem.call(true).then((value) {
-          if (value) {
-            onBackClick(true);
+  Positioned floatCurrentItem() => Positioned(
+        child: AnimatedBuilder(
+          animation: dragAnimController,
+          builder: (context, child) {
+            double alpha = 0;
+            if (dragAnimController.value > 0.5) {
+              alpha = (dragAnimController.value - 0.5) * 2;
+            }
+            return Opacity(
+              opacity: alpha,
+              child: Container(
+                width: lineHeight,
+                height: lineHeight,
+                child: OutlineWidget(
+                    radius: $(6),
+                    strokeWidth: 3,
+                    gradient: LinearGradient(
+                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.all($(3)),
+                      child: ClipRRect(
+                        child: floatWidget,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    )),
+              ),
+            );
+          },
+        ),
+        top: appBarHeight + (Platform.isIOS ? 12 : 30),
+        right: 12,
+      );
+
+  Widget buildFromAiSource() => GetBuilder<AlbumController>(
+        builder: (albumController) {
+          var itemCount = (tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length) + 2 + (albumController.loading ? 1 : 0);
+          return GridView.builder(
+            physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
+            padding: EdgeInsets.only(left: 12, right: 12),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: $(2),
+              crossAxisSpacing: $(2),
+            ),
+            itemBuilder: (context, index) {
+              if (index < 2) {
+                return buildSystemAlbumItem(index, context)!;
+              }
+              if (albumController.loading) {
+                if (index == 2) {
+                  return FrameAnimatedSvg(
+                    child: SvgPicture.asset(Images.ic_refresh_header),
+                  ).intoContainer(width: $(20), height: $(20)).intoCenter();
+                } else {
+                  return buildAiSourceItem(index - 3, context, albumController);
+                }
+              } else {
+                return buildAiSourceItem(index - 2, context, albumController);
+              }
+            },
+            itemCount: itemCount,
+          );
+        },
+        init: albumController,
+      );
+
+  Widget buildAiSourceItem(int index, BuildContext context, AlbumController controller) {
+    var dataList = tabs[currentIndex] == PhotoSource.albumFace ? controller.faceList : controller.otherList;
+    var data = dataList[index];
+    return Image(
+      image: FileImage(File(data.thumbPath!)),
+      fit: BoxFit.cover,
+    );
+  }
+
+  Widget buildFromRecent() => GridView.builder(
+        physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
+        padding: EdgeInsets.only(left: 12, right: 12),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          mainAxisSpacing: $(2),
+          crossAxisSpacing: $(2),
+        ),
+        itemBuilder: (context, index) {
+          if (index < 2) {
+            return buildSystemAlbumItem(index, context)!;
           }
-        });
-      });
-    } else if (pos == 1) {
-      return Image.asset(
-        Images.ic_choose_photo,
-        color: ColorConstant.White,
-      )
-          .intoContainer(
-        color: ColorConstant.LineColor,
-        padding: EdgeInsets.symmetric(vertical: $(24)),
-      )
-          .intoGestureDetector(onTap: () {
-        widget.onPickFromSystem.call(false).then((value) {
-          if (value) {
-            onBackClick(true);
-          }
-        });
-      });
-    }
-    var index = pos - 2;
+          return buildRecentListItem(index - 2, context);
+        },
+        itemCount: controller.imageUploadCache.length + 2,
+      );
+
+  Widget buildRecentListItem(int index, BuildContext context) {
     var data = controller.imageUploadCache[index];
     return (selectedMode
             ? Stack(
@@ -479,6 +528,43 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         }
       },
     );
+  }
+
+  Widget? buildSystemAlbumItem(int pos, BuildContext context) {
+    if (pos == 0) {
+      return Image.asset(
+        Images.ic_choose_camera,
+        color: ColorConstant.White,
+      )
+          .intoContainer(
+        color: ColorConstant.LineColor,
+        padding: EdgeInsets.symmetric(vertical: $(24)),
+      )
+          .intoGestureDetector(onTap: () {
+        widget.onPickFromSystem.call(true).then((value) {
+          if (value) {
+            onBackClick(true);
+          }
+        });
+      });
+    } else if (pos == 1) {
+      return Image.asset(
+        Images.ic_choose_photo,
+        color: ColorConstant.White,
+      )
+          .intoContainer(
+        color: ColorConstant.LineColor,
+        padding: EdgeInsets.symmetric(vertical: $(24)),
+      )
+          .intoGestureDetector(onTap: () {
+        widget.onPickFromSystem.call(false).then((value) {
+          if (value) {
+            onBackClick(true);
+          }
+        });
+      });
+    }
+    return null;
   }
 
   onDragStart(DragStartDetails details) {
