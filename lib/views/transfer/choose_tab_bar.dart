@@ -71,7 +71,14 @@ class ChooseTabBar extends StatelessWidget {
             color: ColorConstant.HintColor,
             fontSize: $(14),
           ),
-        ).intoGestureDetector(onTap: () {
+        )
+            .intoContainer(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          color: Colors.transparent,
+          alignment: Alignment.center,
+        )
+            .intoGestureDetector(onTap: () {
           onTabClick.call(index);
         });
       }
