@@ -190,7 +190,7 @@ class DiscoveryListController extends GetxController {
       delay(() {
         listLoading = false;
         update();
-      }, milliseconds: 1000);
+      }, milliseconds: 1500);
       easyRefreshController.finishRefresh();
       if (value != null) {
         page = 0;

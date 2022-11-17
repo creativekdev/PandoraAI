@@ -13,8 +13,10 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:photo_album_manager/photo_album_manager.dart';
 import 'package:vibration/vibration.dart';
 
 class PickPhotoScreen {
@@ -24,6 +26,7 @@ class PickPhotoScreen {
     required ChoosePhotoScreenController controller,
     required OnPickFromSystem onPickFromSystem,
     required OnPickFromRecent onPickFromRecent,
+    required OnPickFromAiSource onPickFromAiSource,
     required Widget floatWidget,
   }) {
     return Navigator.of(context).push<bool>(NoAnimRouter(
@@ -32,6 +35,7 @@ class PickPhotoScreen {
         controller: controller,
         onPickFromSystem: onPickFromSystem,
         onPickFromRecent: onPickFromRecent,
+        onPickFromAiSource: onPickFromAiSource,
         floatWidget: floatWidget,
       ),
     ));
@@ -40,11 +44,13 @@ class PickPhotoScreen {
 
 typedef OnPickFromSystem = Future<bool> Function(bool takePhoto);
 typedef OnPickFromRecent = Future<bool> Function(UploadRecordEntity entity);
+typedef OnPickFromAiSource = Future<bool> Function(File entity);
 
 class _PickPhotoScreen extends StatefulWidget {
   ChoosePhotoScreenController controller;
   OnPickFromSystem onPickFromSystem;
   OnPickFromRecent onPickFromRecent;
+  OnPickFromAiSource onPickFromAiSource;
   Widget floatWidget;
 
   _PickPhotoScreen({
@@ -52,6 +58,7 @@ class _PickPhotoScreen extends StatefulWidget {
     required this.controller,
     required this.onPickFromSystem,
     required this.onPickFromRecent,
+    required this.onPickFromAiSource,
     required this.floatWidget,
   }) : super(key: key);
 
@@ -86,6 +93,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   int currentIndex = 0;
 
   AlbumController albumController = Get.find();
+  var scrollController = ScrollController();
 
   @override
   dispose() {
@@ -117,9 +125,18 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     });
     dragAnimController.addStatusListener((status) {
       if (status == AnimationStatus.reverse) {
-        setState(() {
-          selectedMode = false;
-        });
+        scrollController.jumpTo(0);
+        delay(() {
+          if (!mounted) {
+            return;
+          }
+          scrollController.jumpTo(0);
+          dragGestureRecognizer.needDrag = true;
+          setState(() {
+            canBeDragged = true;
+            selectedMode = false;
+          });
+        }, milliseconds: 200);
       }
     });
     delay(() => entryAnimController.duration = Duration(milliseconds: 300), milliseconds: 600);
@@ -282,6 +299,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                           Opacity(
                             opacity: alpha,
                             child: AppNavigationBar(
+                              scrollController: scrollController,
                               backgroundColor: ColorConstant.BackgroundColor,
                               backAction: () {
                                 if (dragAnimController.isCompleted) {
@@ -421,6 +439,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         builder: (albumController) {
           var itemCount = (tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length) + (albumController.loading ? 1 : 0);
           return GridView.builder(
+            controller: scrollController,
             physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
             padding: EdgeInsets.only(left: 12, right: 12),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -447,16 +466,55 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         init: albumController,
       );
 
-  Widget buildAiSourceItem(int index, BuildContext context, AlbumController controller) {
-    var dataList = tabs[currentIndex] == PhotoSource.albumFace ? controller.faceList : controller.otherList;
+  Widget buildAiSourceItem(int index, BuildContext context, AlbumController albumController) {
+    var dataList = tabs[currentIndex] == PhotoSource.albumFace ? albumController.faceList : albumController.otherList;
     var data = dataList[index];
     return Image(
       image: FileImage(File(data.thumbPath!)),
       fit: BoxFit.cover,
-    );
+    ).intoGestureDetector(onTap: () {
+      if (!TextUtil.isEmpty(data.originalPath)) {
+        if (controller.image.value != null && (controller.image.value as File).path == data.originalPath) {
+          CommonExtension().showToast("You've chosen this photo already");
+          return;
+        }
+        var file = File(data.originalPath!);
+        if (!file.existsSync()) {
+          CommonExtension().showToast("This photo has been deleted already");
+          return;
+        }
+        widget.onPickFromAiSource(file).then((value) {
+          if (value) {
+            onBackClick(true);
+          }
+        });
+      } else {
+        PhotoAlbumManager.getOriginalResource(data.localIdentifier!).then((value) {
+          if (value == null) {
+            CommonExtension().showToast("This photo has been deleted already");
+            return;
+          }
+          if (controller.image.value != null && (controller.image.value as File).path == value.originalPath) {
+            CommonExtension().showToast("You've chosen this photo already");
+            return;
+          }
+          var file = File(value.originalPath!);
+          if (!file.existsSync()) {
+            CommonExtension().showToast("This photo has been deleted already");
+            return;
+          }
+          widget.onPickFromAiSource(file).then((value) {
+            if (value) {
+              onBackClick(true);
+            }
+          });
+        });
+      }
+    });
   }
 
   Widget buildFromRecent() => GridView.builder(
+        controller: scrollController,
         physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
         padding: EdgeInsets.only(left: 12, right: 12),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

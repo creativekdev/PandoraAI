@@ -1337,12 +1337,23 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     return true;
   }
 
-  Future<bool> pickImageFromGallery(BuildContext context, {String from = "center", UploadRecordEntity? entity}) async {
+  Future<bool> pickImageFromGallery(BuildContext context, {String from = "center", File? file, UploadRecordEntity? entity}) async {
     logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": from});
     var source = ImageSource.gallery;
     try {
       File compressedImage;
-      if (entity == null) {
+      if (file != null) {
+        compressedImage = await imageCompressAndGetFile(file);
+        if (controller.image.value != null) {
+          File oldFile = controller.image.value as File;
+          if ((await md5File(oldFile)) == (await md5File(compressedImage))) {
+            CommonExtension().showToast("You've chosen this photo already");
+            return false;
+          }
+        }
+        controller.updateImageFile(compressedImage);
+        controller.updateImageUrl("");
+      } else if (entity == null) {
         XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
         if (image == null) {
           CommonExtension().showToast("cancelled");
@@ -1823,21 +1834,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> pickFromRecent(BuildContext context) async {
-    PickPhotoScreen.push(
-      context,
-      controller: controller,
-      floatWidget: _createEffectModelIcon(context, effectItem: tabItemList[currentItemIndex.value].data, checked: true),
-      onPickFromSystem: (takePhoto) async {
-        if (takePhoto) {
-          return await pickImageFromCamera(context, from: "result");
-        } else {
-          return await pickImageFromGallery(context, from: "result");
-        }
-      },
-      onPickFromRecent: (entity) async {
-        return await pickImageFromGallery(context, from: "result", entity: entity);
-      },
-    );
+    PickPhotoScreen.push(context, controller: controller, floatWidget: _createEffectModelIcon(context, effectItem: tabItemList[currentItemIndex.value].data, checked: true),
+        onPickFromSystem: (takePhoto) async {
+      if (takePhoto) {
+        return await pickImageFromCamera(context, from: "result");
+      } else {
+        return await pickImageFromGallery(context, from: "result");
+      }
+    }, onPickFromRecent: (entity) async {
+      return await pickImageFromGallery(context, from: "result", entity: entity);
+    }, onPickFromAiSource: (file) async {
+      return await pickImageFromGallery(context, from: "result", file: file);
+    });
   }
 }
 
