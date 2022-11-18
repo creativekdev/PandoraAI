@@ -6,7 +6,11 @@ abstract class SyncImageProvider {
   Completer<ImageInfo> _completer = Completer();
 
   Future<ImageInfo> getImage() {
-    _loadImage();
+    try {
+      _loadImage();
+    } catch (e) {
+      _completer.completeError(e);
+    }
     return _completer.future;
   }
 
@@ -20,14 +24,10 @@ class SyncFileImage extends SyncImageProvider {
 
   @override
   void _loadImage() {
-    try {
-      var resolve = FileImage(file).resolve(ImageConfiguration.empty);
-      resolve.addListener(ImageStreamListener((image, synchronousCall) {
-        _completer.complete(image);
-      }));
-    } catch (e) {
-      _completer.completeError(e);
-    }
+    var resolve = FileImage(file).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      _completer.complete(image);
+    }));
   }
 }
 
@@ -38,14 +38,10 @@ class SyncNetworkImage extends SyncImageProvider {
 
   @override
   void _loadImage() {
-    try {
-      var resolve = NetworkImage(url).resolve(ImageConfiguration.empty);
-      resolve.addListener(ImageStreamListener((image, synchronousCall) {
-        _completer.complete(image);
-      }));
-    } catch (e) {
-      _completer.completeError(e);
-    }
+    var resolve = NetworkImage(url).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      _completer.complete(image);
+    }));
   }
 }
 
@@ -56,13 +52,9 @@ class SyncAssetImage extends SyncImageProvider {
 
   @override
   void _loadImage() {
-    try {
-      var resolve = AssetImage(assets).resolve(ImageConfiguration.empty);
-      resolve.addListener(ImageStreamListener((image, synchronousCall) {
-        _completer.complete(image);
-      }));
-    } catch (e) {
-      _completer.completeError(e);
-    }
+    var resolve = AssetImage(assets).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      _completer.complete(image);
+    }));
   }
 }
