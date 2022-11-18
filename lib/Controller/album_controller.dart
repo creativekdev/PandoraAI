@@ -14,6 +14,7 @@ class AlbumController extends GetxController {
   List<AlbumModelEntity> otherList = [];
   bool loading = false;
   late StreamSubscription onClearCacheListener;
+  PermissionStatus? permissionStatus;
 
   @override
   onInit() {
@@ -34,7 +35,10 @@ class AlbumController extends GetxController {
   }
 
   Future<PermissionStatus> checkPermissions() async {
-    return PhotoAlbumManager.checkPermissions();
+    if (permissionStatus == null || permissionStatus != PermissionStatus.granted) {
+      permissionStatus = await PhotoAlbumManager.checkPermissions();
+    }
+    return permissionStatus!;
   }
 
   Future<bool> syncFromAlbum() async {
