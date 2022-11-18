@@ -165,7 +165,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       listHeight = lineHeight * line + $(95);
     }
     listHeight += ScreenUtil.getBottomBarHeight();
-    maxSlide = ScreenUtil.screenSize.height - listHeight - (Platform.isIOS ? 38 : 20);
+    maxSlide = ScreenUtil.screenSize.height - listHeight - (Platform.isIOS ? 40 : 22);
   }
 
   toggle() => dragAnimController.isDismissed ? dragAnimController.forward() : dragAnimController.reverse();
@@ -248,7 +248,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w400, $(14)).intoContainer(
+                                                    TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w500, $(14)).intoContainer(
                                                       height: dragWidgetHeight,
                                                       width: double.maxFinite,
                                                       decoration: BoxDecoration(
@@ -279,7 +279,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                         }
                                                       },
                                                       currentIndex: currentIndex,
-                                                      height: 36,
+                                                      height: 38,
                                                     ).intoContainer(color: ColorConstant.BackgroundColor),
                                                     (tabs[currentIndex].isAiSource() ? buildFromAiSource() : buildFromRecent()).intoContainer(
                                                       width: double.maxFinite,
@@ -431,7 +431,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
             );
           },
         ),
-        top: appBarHeight + 30,
+        top: appBarHeight + 34,
         right: 12,
       );
 
