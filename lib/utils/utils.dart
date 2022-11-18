@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -97,14 +98,14 @@ Future<File> imageCompressAndGetFile(File file) async {
 
   var dir = await getTemporaryDirectory();
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
-  var readAsBytes = await file.readAsBytes();
-  im.Image decodeImage = im.decodeImage(readAsBytes)!;
-  var shortSide = decodeImage.width > decodeImage.height ? decodeImage.height : decodeImage.width;
+  var imageInfo = await SyncFileImage(file: file).getImage();
+  var image = imageInfo.image;
+  var shortSide = image.width > image.height ? image.height : image.width;
   File result;
   if (shortSide > 1024) {
     var scale = 1024 / shortSide;
-    int width = (decodeImage.width * scale).toInt();
-    int height = (decodeImage.height * scale).toInt();
+    int width = (image.width * scale).toInt();
+    int height = (image.height * scale).toInt();
     result = (await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,

@@ -17,7 +17,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
     this.onRewardCall,
     this.onDismiss,
     this.onAdReady,
-  });
+  }) : super();
 
   @override
   initHolder() {
@@ -38,6 +38,7 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
         rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
           onAdLoaded: (RewardedInterstitialAd ad) {
             print('RewardedInterstitialAd loaded: ${ad.responseInfo?.responseId}');
+            cache.putAds(key, ad);
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
             var mediationAdapterClassName = _interstitialAd?.responseInfo?.mediationAdapterClassName;
@@ -69,6 +70,9 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
 
   @override
   show() {
+    if (cache.getAdsCache(key) != null) {
+      return;
+    }
     if (_interstitialAd == null) {
       print('Warning: attempt to show rewarded interstitial before loaded.');
       return;
@@ -77,8 +81,8 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
       onAdShowedFullScreenContent: (RewardedInterstitialAd ad) => print('$ad onAdShowedFullScreenContent.'),
       onAdDismissedFullScreenContent: (RewardedInterstitialAd ad) {
         print('$ad onAdDismissedFullScreenContent.');
-        ad.dispose();
-        _createRewardedInterstitialAd();
+        // ad.dispose();
+        // _createRewardedInterstitialAd();
         onDismiss?.call();
       },
       onAdFailedToShowFullScreenContent: (RewardedInterstitialAd ad, AdError error) {

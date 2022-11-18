@@ -49,7 +49,7 @@ class BannerAdsHolder extends WidgetAdsHolder {
     this.scale = 0.6, // widget's height / width
     required this.adId,
     double horizontalPadding = 0,
-  }) {
+  }) : super() {
     _adWidth = ScreenUtil.getCurrentWidgetSize(state!.context).width - horizontalPadding;
   }
 
@@ -75,6 +75,9 @@ class BannerAdsHolder extends WidgetAdsHolder {
   }
 
   loadAd() async {
+    if(cache.getAdsCache(key) != null) {
+      return;
+    }
     await _inlineAdaptiveAd?.dispose();
     _inlineAdaptiveAd = null;
     _isLoaded = false;
@@ -97,6 +100,7 @@ class BannerAdsHolder extends WidgetAdsHolder {
             return;
           }
 
+          cache.putAds(key, bannerAd);
           _inlineAdaptiveAd = bannerAd;
           var mediationAdapterClassName = _inlineAdaptiveAd?.responseInfo?.mediationAdapterClassName;
           if (!TextUtil.isEmpty(mediationAdapterClassName)) {
@@ -123,7 +127,6 @@ class BannerAdsHolder extends WidgetAdsHolder {
 
   @override
   onDispose() {
-    _inlineAdaptiveAd?.dispose();
     state = null;
   }
 

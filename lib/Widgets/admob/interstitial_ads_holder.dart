@@ -34,7 +34,7 @@ class InterstitialAdsHolder extends PageAdsHolder {
   InterstitialAdsHolder({
     required int maxFailedLoadAttempts,
     required this.adId,
-  }) {
+  }) : super() {
     _maxFailedLoadAttempts = maxFailedLoadAttempts;
   }
 

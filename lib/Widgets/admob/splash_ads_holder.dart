@@ -38,7 +38,7 @@ class SplashAdsHolder extends PageAdsHolder {
     }
   }
 
-  SplashAdsHolder({required this.maxCacheDuration, required this.shownDuration});
+  SplashAdsHolder({required this.maxCacheDuration, required this.shownDuration}) : super();
 
   @override
   initHolder() {

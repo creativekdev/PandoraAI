@@ -28,7 +28,7 @@ class CardAdsHolder extends WidgetAdsHolder {
     required this.adId,
     this.height,
     this.autoHeight = false, // while height was provided, scale will be ignored.
-  });
+  }) : super();
 
   @override
   initHolder() {
@@ -48,6 +48,9 @@ class CardAdsHolder extends WidgetAdsHolder {
   }
 
   Future<void> loadAd() async {
+    if(cache.getAdsCache(key) != null) {
+      return;
+    }
     await _bannerAd?.dispose();
     _bannerAd = null;
     _isLoaded = false;
@@ -75,6 +78,7 @@ class CardAdsHolder extends WidgetAdsHolder {
                 print('Error: getPlatformAdSize() returned null for $bannerAd');
                 return;
               }
+              cache.putAds(key, bannerAd);
               _bannerAd = bannerAd;
               _isLoaded = true;
               _adSize = size;
@@ -88,6 +92,7 @@ class CardAdsHolder extends WidgetAdsHolder {
               onReady();
             }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
               print('Inline adaptive banner failedToLoad: $error');
+              _isLoaded = false;
               ad.dispose();
               onReset();
               if (maxRetryCount == 0) {
@@ -103,7 +108,6 @@ class CardAdsHolder extends WidgetAdsHolder {
   @override
   onDispose() {
     _isLoaded = false;
-    _bannerAd?.dispose();
   }
 
   @override
