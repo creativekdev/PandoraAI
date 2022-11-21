@@ -14,29 +14,39 @@ const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
 const String PLATFORM_CHANNEL = 'io.socialbook/cartoonizer';
 
 class AdMobConfig {
-  // static String get BANNER_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用卡片广告id
-  static String get BANNER_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283';
+  static bool _debug = false;
 
-  // static String get INTERSTITIAL_AD_ID => 'ca-app-pub-3940256099942544/8691691433'; // 测试用全屏广告id;
-  static String get INTERSTITIAL_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626';
+  static String get BANNER_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/6300978111' // 测试用卡片广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/8652267983' : 'ca-app-pub-8401689731796078/5848358283');
 
-  // static String get DISCOVERY_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用发现页广告id
-  static String get DISCOVERY_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6102802285' : 'ca-app-pub-8401689731796078/9945860280';
+  static String get INTERSTITIAL_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/8691691433' // 测试用全屏广告id;
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/4681233383' : 'ca-app-pub-8401689731796078/2693627626');
 
-  // static String get PROCESSING_AD_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用转换进度广告id
-  static String get PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072';
+  static String get DISCOVERY_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/6300978111' // 测试用发现页广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/6102802285' : 'ca-app-pub-8401689731796078/9945860280');
 
-  // static String get REWARD_PROCESSING_AD_ID=> 'ca-app-pub-3940256099942544/5354046379'; // 测试用激励广告id
-  static String get REWARD_PROCESSING_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582' : 'ca-app-pub-8401689731796078/4291918781';
+  static String get PROCESSING_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/6300978111' // 测试用转换进度广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/9839371890' : 'ca-app-pub-8401689731796078/3676454072');
 
-  // static String get SPLASH_AD_ID=>'ca-app-pub-3940256099942544/3419835294'; // 测试开屏广告id
-  static String get SPLASH_AD_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/5951671113' : 'ca-app-pub-8401689731796078/2274729104';
+  static String get REWARD_PROCESSING_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/5354046379' // 测试用激励广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/9280521582' : 'ca-app-pub-8401689731796078/4291918781');
 
-  // static String get INSPIRED_BANNER_AD1_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用卡片广告id
-  static String get INSPIRED_BANNER_AD1_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/5614223173' : 'ca-app-pub-8401689731796078/9297483160';
+  static String get SPLASH_AD_ID => _debug
+      ? 'ca-app-pub-3940256099942544/3419835294' // 测试开屏广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/5951671113' : 'ca-app-pub-8401689731796078/2274729104');
 
-  // static String get INSPIRED_BANNER_AD2_ID => 'ca-app-pub-3940256099942544/6300978111'; // 测试用卡片广告id
-  static String get INSPIRED_BANNER_AD2_ID => Platform.isIOS ? 'ca-app-pub-8401689731796078/6529571798' : 'ca-app-pub-8401689731796078/6161018086';
+  static String get INSPIRED_BANNER_AD1_ID => _debug
+      ? 'ca-app-pub-3940256099942544/6300978111' // 测试用卡片广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/5614223173' : 'ca-app-pub-8401689731796078/9297483160');
+
+  static String get INSPIRED_BANNER_AD2_ID => _debug
+      ? 'ca-app-pub-3940256099942544/6300978111' // 测试用卡片广告id
+      : (Platform.isIOS ? 'ca-app-pub-8401689731796078/6529571798' : 'ca-app-pub-8401689731796078/6161018086');
 }
 
 abstract class BaseConfig {
