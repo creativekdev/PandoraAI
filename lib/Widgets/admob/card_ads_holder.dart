@@ -22,13 +22,14 @@ class CardAdsHolder extends WidgetAdsHolder {
   int maxRetryCount = 3;
 
   CardAdsHolder({
+    String? key,
     required this.width,
     this.onUpdated, // call widget to call setState
     this.scale = 0.6, // widget's height / width
     required this.adId,
     this.height,
     this.autoHeight = false, // while height was provided, scale will be ignored.
-  }) : super();
+  }) : super(key: key);
 
   @override
   initHolder() {
@@ -48,7 +49,11 @@ class CardAdsHolder extends WidgetAdsHolder {
   }
 
   Future<void> loadAd() async {
-    if(cache.getAdsCache(key) != null) {
+    if (cache.getAdsCache(key) != null) {
+      _bannerAd = cache.getAdsCache(key) as BannerAd;
+      _adSize = await _bannerAd!.getPlatformAdSize();
+      _isLoaded = true;
+      onReady();
       return;
     }
     await _bannerAd?.dispose();

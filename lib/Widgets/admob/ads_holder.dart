@@ -9,8 +9,8 @@ abstract class AdsHolder {
 
   bool get adsReady => _adsReady;
 
-  AdsHolder() {
-    key = EncryptUtil.encodeMd5('${DateTime.now().millisecondsSinceEpoch}');
+  AdsHolder({String? key}) {
+    this.key = key ??= EncryptUtil.encodeMd5('${DateTime.now().millisecondsSinceEpoch}');
   }
 
   initHolder();
@@ -27,13 +27,13 @@ abstract class AdsHolder {
 }
 
 abstract class WidgetAdsHolder extends AdsHolder {
-  WidgetAdsHolder() : super();
+  WidgetAdsHolder({String? key}) : super(key: key);
 
   Widget? buildAdWidget();
 }
 
 abstract class PageAdsHolder extends AdsHolder {
-  PageAdsHolder() : super();
+  PageAdsHolder({String? key}) : super(key: key);
 
   show();
 }

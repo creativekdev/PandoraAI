@@ -28,6 +28,7 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
   initState() {
     super.initState();
     cardAdsHolder = CardAdsHolder(
+        key: 'CardAdsWidget:${widget.page}',
         width: widget.width,
         adId: widget.page % 2 == 0 ? AdMobConfig.INSPIRED_BANNER_AD1_ID : AdMobConfig.INSPIRED_BANNER_AD2_ID,
         onUpdated: () {
