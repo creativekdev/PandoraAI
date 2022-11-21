@@ -9,7 +9,7 @@ import 'ads_holder.dart';
 /// @Author: wangyu
 /// @Date: 2022/7/7
 class CardAdsHolder extends WidgetAdsHolder {
-  BannerAd? _bannerAd;
+  AdManagerBannerAd? _bannerAd;
   double scale = 0.75;
   bool _isLoaded = false;
   AdSize? _adSize;
@@ -50,7 +50,7 @@ class CardAdsHolder extends WidgetAdsHolder {
 
   Future<void> loadAd() async {
     if (cache.getAdsCache(key) != null) {
-      _bannerAd = cache.getAdsCache(key) as BannerAd;
+      _bannerAd = cache.getAdsCache(key) as AdManagerBannerAd;
       _adSize = await _bannerAd!.getPlatformAdSize();
       _isLoaded = true;
       onReady();
@@ -72,12 +72,12 @@ class CardAdsHolder extends WidgetAdsHolder {
     } else {
       adSize = AdSize(width: width.toInt(), height: height!.toInt());
     }
-    await BannerAd(
+    await AdManagerBannerAd(
             adUnitId: adId,
-            size: adSize,
-            listener: BannerAdListener(onAdLoaded: (Ad ad) async {
+            sizes: [adSize],
+            listener: AdManagerBannerAdListener(onAdLoaded: (Ad ad) async {
               print('Inline adaptive banner loaded: ${ad.responseInfo?.responseId}');
-              BannerAd bannerAd = (ad as BannerAd);
+              AdManagerBannerAd bannerAd = (ad as AdManagerBannerAd);
               final AdSize? size = await bannerAd.getPlatformAdSize();
               if (size == null) {
                 print('Error: getPlatformAdSize() returned null for $bannerAd');
@@ -106,7 +106,7 @@ class CardAdsHolder extends WidgetAdsHolder {
               maxRetryCount--;
               loadAd();
             }),
-            request: AdRequest())
+            request: AdManagerAdRequest())
         .load();
   }
 
