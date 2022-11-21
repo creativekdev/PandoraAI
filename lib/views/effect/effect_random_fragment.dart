@@ -15,7 +15,7 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
-import 'package:cartoonizer/views/effect/widget/card_ads_widget.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';

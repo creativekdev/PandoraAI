@@ -14,7 +14,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
-import 'package:cartoonizer/views/effect/widget/card_ads_widget.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
