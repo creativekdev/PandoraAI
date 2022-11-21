@@ -7,9 +7,11 @@ class CardAdsWidget extends StatefulWidget {
   double width;
   double height;
   int page;
+  String type;
 
   CardAdsWidget({
     Key? key,
+    required this.type,
     required this.width,
     required this.height,
     required this.page,
@@ -28,7 +30,7 @@ class CardAdsWidgetState extends State<CardAdsWidget> {
   initState() {
     super.initState();
     cardAdsHolder = CardAdsHolder(
-        key: 'CardAdsWidget:${widget.page}',
+        key: 'CardAdsWidget:${widget.type}:${widget.page}',
         width: widget.width,
         adId: widget.page % 2 == 0 ? AdMobConfig.INSPIRED_BANNER_AD1_ID : AdMobConfig.INSPIRED_BANNER_AD2_ID,
         onUpdated: () {

@@ -302,7 +302,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       if (appBackground) {
         return const SizedBox();
       } else {
-        return CardAdsWidget(width: listController.cardWidth, height: listController.cardWidth, page: page);
+        return CardAdsWidget(type: 'discovery', width: listController.cardWidth, height: listController.cardWidth, page: page);
       }
     }
     return Container();

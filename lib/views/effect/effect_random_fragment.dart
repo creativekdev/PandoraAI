@@ -319,6 +319,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
         // }
         // return adMap[page]!;
         return CardAdsWidget(
+          type: 'effect',
           width: width,
           height: height,
           page: page,
