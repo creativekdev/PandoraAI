@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:photo_album_manager/photo_album_manager.dart';
 
 class PhotoSourceOperator {
@@ -16,7 +17,10 @@ class PhotoSourceOperator {
     if (faceJson is List) {
       faceList = faceJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
       faceList = faceList.filter((e) {
-        var startsWith = e.thumbPath!.startsWith(cacheManager.storageOperator.cropDir.path);
+        if (TextUtil.isEmpty(e.thumbPath)) {
+          return false;
+        }
+        var startsWith = e.thumbPath!.contains("cropDir");
         var fileExist = File(e.thumbPath!).existsSync();
         return startsWith && fileExist;
       });
@@ -27,7 +31,10 @@ class PhotoSourceOperator {
     if (otherJson is List) {
       otherList = otherJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
       otherList = otherList.filter((e) {
-        var startsWith = e.thumbPath!.startsWith(cacheManager.storageOperator.cropDir.path);
+        if (TextUtil.isEmpty(e.thumbPath)) {
+          return false;
+        }
+        var startsWith = e.thumbPath!.contains("cropDir");
         var fileExist = File(e.thumbPath!).existsSync();
         return startsWith && fileExist;
       });

@@ -131,15 +131,15 @@ class AlbumController extends GetxController {
       var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(entity.originalPath!) + ".png";
       var newThumbnailFile = File(newThumbnailPath);
       entity.thumbPath = newThumbnailPath;
+      var face = pickAvailableFace(faces);
       if (newThumbnailFile.existsSync()) {
         //has crop already
-        return faces.isNotEmpty;
+        return face != null;
       }
       Uint8List savedImageData;
-      if (faces.isNotEmpty) {
-        var face = faces.first;
+      if (face != null) {
         var boundingBox = face.boundingBox;
-        var centrePos = Offset((boundingBox.bottom + boundingBox.top) / 2, (boundingBox.right + boundingBox.left) / 2);
+        var centrePos = Offset((boundingBox.right + boundingBox.left) / 2, (boundingBox.bottom + boundingBox.top) / 2);
         var targetWidth = boundingBox.width * 1.5;
         var targetHeight = boundingBox.height * 1.5;
         if (centrePos.dx - targetWidth / 2 < 0) {
@@ -165,6 +165,7 @@ class AlbumController extends GetxController {
         } else {
           savedImageData = imageData;
         }
+        await newThumbnailFile.writeAsBytes(savedImageData.toList());
       } else {
         // crop base on centre pos
         Rect rect;
@@ -191,8 +192,7 @@ class AlbumController extends GetxController {
           savedImageData = imageData;
         }
       }
-      await newThumbnailFile.writeAsBytes(savedImageData.toList());
-      return faces.isNotEmpty;
+      return face != null;
     } on PlatformException catch (e) {
       LogUtil.e(e.toString(), tag: 'face-detector');
       return false;
@@ -200,5 +200,19 @@ class AlbumController extends GetxController {
       LogUtil.e(e.toString(), tag: 'face-detector');
       return false;
     }
+  }
+
+  Face? pickAvailableFace(List<Face> list) {
+    Face? result;
+    for (var value in list) {
+      var angleX = (value.headEulerAngleX ?? 0).abs();
+      var angleY = (value.headEulerAngleY ?? 0).abs();
+      var angleZ = (value.headEulerAngleZ ?? 0).abs();
+      if (angleX < 15 && angleY < 15 && angleZ < 15) {
+        result = value;
+        break;
+      }
+    }
+    return result;
   }
 }
