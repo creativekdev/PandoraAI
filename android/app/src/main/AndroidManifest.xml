@@ -23,7 +23,7 @@
 		<package android:name="com.zhiliaoapp.musically" />
 		<package android:name="com.ss.android.ugc.trill" />
 	</queries>
-	<application android:label="Pic2Cartoon" android:name="${applicationName}" android:icon="@mipmap/ic_launcher_c" android:roundIcon="@mipmap/ic_launcher_round" android:requestLegacyExternalStorage="true">
+	<application android:label="Pic2Cartoon" android:name="${applicationName}" android:icon="@mipmap/ic_launcher_c" android:roundIcon="@mipmap/ic_launcher_c_round" android:requestLegacyExternalStorage="true">
 		<meta-data
 			android:name="com.google.android.gms.ads.APPLICATION_ID"
 			android:value="@string/admob_app_key"/>
