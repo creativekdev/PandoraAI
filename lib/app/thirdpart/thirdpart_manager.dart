@@ -7,7 +7,6 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:worker_manager/worker_manager.dart';
 
 class ThirdpartManager extends BaseManager {
   bool _appBackground = false;
@@ -31,7 +30,6 @@ class ThirdpartManager extends BaseManager {
     LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode);
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
-    Executor().warmUp();
   }
 
   void _onAppStateChanged(AppState appState) {

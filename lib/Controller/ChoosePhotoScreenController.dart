@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';

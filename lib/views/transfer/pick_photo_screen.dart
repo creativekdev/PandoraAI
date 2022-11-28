@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
+import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/Controller/album_controller.dart';
-import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';

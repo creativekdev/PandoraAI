@@ -144,7 +144,7 @@ Future<Uint8List> imageCompressWithList(Uint8List image) async {
   return Uint8List.fromList(uint8list.toList());
 }
 
-Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) async {
+Future<Uint8List> cropFile(ui.Image srcImage, Rect rect) async {
   final recorder = ui.PictureRecorder();
   final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(rect.width, rect.height)));
 
@@ -156,8 +156,13 @@ Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) a
   final picture = recorder.endRecording();
   final img = await picture.toImage(rect.width.toInt(), rect.height.toInt());
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+  return byteData!.buffer.asUint8List();
+}
+
+Future<File> cropFileToTarget(ui.Image srcImage, Rect rect, String targetPath) async {
+  var byteData = await cropFile(srcImage, rect);
   var result = File(targetPath);
-  await result.writeAsBytes(Uint8List.fromList(byteData!.buffer.asUint8List().toList()));
+  await result.writeAsBytes(byteData.toList());
   return result;
 }
 

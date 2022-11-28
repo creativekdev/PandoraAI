@@ -15,14 +15,22 @@ class PhotoSourceOperator {
     var faceJson = cacheManager.getJson(CacheManager.photoSourceFace) ?? [];
     if (faceJson is List) {
       faceList = faceJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      faceList = faceList.filter((e) => File(e.thumbPath!).existsSync());
+      faceList = faceList.filter((e) {
+        var startsWith = e.thumbPath!.startsWith(cacheManager.storageOperator.cropDir.path);
+        var fileExist = File(e.thumbPath!).existsSync();
+        return startsWith && fileExist;
+      });
     } else {
       faceList = [];
     }
     var otherJson = cacheManager.getJson(CacheManager.photoSourceOther) ?? [];
     if (otherJson is List) {
       otherList = otherJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      otherList = otherList.filter((e) => File(e.thumbPath!).existsSync());
+      otherList = otherList.filter((e) {
+        var startsWith = e.thumbPath!.startsWith(cacheManager.storageOperator.cropDir.path);
+        var fileExist = File(e.thumbPath!).existsSync();
+        return startsWith && fileExist;
+      });
     } else {
       otherList = [];
     }
