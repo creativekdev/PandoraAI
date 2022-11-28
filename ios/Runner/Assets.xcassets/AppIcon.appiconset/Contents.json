@@ -1,122 +1,116 @@
 {
   "images" : [
     {
-      "filename" : "icon-20@2x.png",
+      "size" : "20x20",
       "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "20x20"
+      "filename" : "icon-christmasiPhoneNotification_20pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-20@3x.png",
+      "size" : "20x20",
       "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "20x20"
+      "filename" : "icon-christmasiPhoneNotification_20pt@3x.png",
+      "scale" : "3x"
     },
     {
-      "filename" : "icon-29.png",
+      "size" : "29x29",
       "idiom" : "iphone",
-      "scale" : "1x",
-      "size" : "29x29"
+      "filename" : "icon-christmasiPhoneSpootlight5_29pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-29@2x.png",
+      "size" : "29x29",
       "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "29x29"
+      "filename" : "icon-christmasiPhoneSpootlight5_29pt@3x.png",
+      "scale" : "3x"
     },
     {
-      "filename" : "icon-29@3x.png",
+      "size" : "40x40",
       "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "29x29"
+      "filename" : "icon-christmasiPhoneSpootlight7_40pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-40@2x.png",
+      "size" : "40x40",
       "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "40x40"
+      "filename" : "icon-christmasiPhoneSpootlight7_40pt@3x.png",
+      "scale" : "3x"
     },
     {
-      "filename" : "icon-40@3x.png",
+      "size" : "60x60",
       "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "40x40"
+      "filename" : "icon-christmasiPhoneApp_60pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-60@2x.png",
+      "size" : "60x60",
       "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "60x60"
+      "filename" : "icon-christmasiPhoneApp_60pt@3x.png",
+      "scale" : "3x"
     },
     {
-      "filename" : "icon-60@3x.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "60x60"
-    },
-    {
-      "filename" : "icon-20-ipad.png",
+      "size" : "20x20",
       "idiom" : "ipad",
-      "scale" : "1x",
-      "size" : "20x20"
+      "filename" : "icon-christmasiPadNotifications_20pt.png",
+      "scale" : "1x"
     },
     {
-      "filename" : "icon-20@2x-ipad.png",
+      "size" : "20x20",
       "idiom" : "ipad",
-      "scale" : "2x",
-      "size" : "20x20"
+      "filename" : "icon-christmasiPadNotifications_20pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-29-ipad.png",
+      "size" : "29x29",
       "idiom" : "ipad",
-      "scale" : "1x",
-      "size" : "29x29"
+      "filename" : "icon-christmasiPadSpootlight5_29pt.png",
+      "scale" : "1x"
     },
     {
-      "filename" : "icon-29@2x-ipad.png",
+      "size" : "29x29",
       "idiom" : "ipad",
-      "scale" : "2x",
-      "size" : "29x29"
+      "filename" : "icon-christmasiPadSpootlight5_29pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-40.png",
+      "size" : "40x40",
       "idiom" : "ipad",
-      "scale" : "1x",
-      "size" : "40x40"
+      "filename" : "icon-christmasiPadSpootlight7_40pt.png",
+      "scale" : "1x"
     },
     {
-      "filename" : "icon-40@2x.png",
+      "size" : "40x40",
       "idiom" : "ipad",
-      "scale" : "2x",
-      "size" : "40x40"
+      "filename" : "icon-christmasiPadSpootlight7_40pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-76.png",
+      "size" : "76x76",
       "idiom" : "ipad",
-      "scale" : "1x",
-      "size" : "76x76"
+      "filename" : "icon-christmasiPadApp_76pt.png",
+      "scale" : "1x"
     },
     {
-      "filename" : "icon-76@2x.png",
+      "size" : "76x76",
       "idiom" : "ipad",
-      "scale" : "2x",
-      "size" : "76x76"
+      "filename" : "icon-christmasiPadApp_76pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-83.5@2x.png",
+      "size" : "83.5x83.5",
       "idiom" : "ipad",
-      "scale" : "2x",
-      "size" : "83.5x83.5"
+      "filename" : "icon-christmasiPadProApp_83.5pt@2x.png",
+      "scale" : "2x"
     },
     {
-      "filename" : "icon-1024.png",
+      "size" : "1024x1024",
       "idiom" : "ios-marketing",
-      "scale" : "1x",
-      "size" : "1024x1024"
+      "filename" : "icon-christmasstore_1024pt.png",
+      "scale" : "1x"
     }
   ],
   "info" : {
-    "author" : "xcode",
-    "version" : 1
+    "version" : 1,
+    "author" : "xcode"
   }
 }
