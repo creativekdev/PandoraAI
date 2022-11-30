@@ -60,9 +60,6 @@ class AlbumController extends GetxController {
     if (firstLoad) {
       // first load, just add to list
       for (AlbumModelEntity entity in list) {
-        if (!TextUtil.isEmpty(entity.thumbPath)) {
-          File(entity.thumbPath!).delete();
-        }
         bool needUpdate = false;
         var faceImage = await hasFace(entity);
         if (faceImage) {
@@ -85,9 +82,6 @@ class AlbumController extends GetxController {
       // increase load, loop from last to first, and insert to top at list
       for (int i = list.length - 1; i >= 0; i--) {
         var entity = list[i];
-        if (!TextUtil.isEmpty(entity.thumbPath)) {
-          File(entity.thumbPath!).delete();
-        }
         var cropHomePath = cacheManager.storageOperator.cropDir.path;
         var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(entity.originalPath!) + '.png';
         if (faceList.exist((t) => t.thumbPath == newThumbnailPath) || otherList.exist((t) => t.thumbPath == newThumbnailPath)) {
@@ -113,6 +107,14 @@ class AlbumController extends GetxController {
   /// crop centre pos base on image if not.
   Future<bool> hasFace(AlbumModelEntity entity) async {
     try {
+      if (Platform.isIOS) {
+        File file = File(entity.thumbPath!);
+        InputImage inputImage = InputImage.fromFile(file);
+        FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
+        List<Face> faces = await faceDetector.processImage(inputImage);
+        faceDetector.close();
+        return pickAvailableFace(faces) != null;
+      }
       if (TextUtil.isEmpty(entity.originalPath)) {
         var albumModelEntity = await PhotoAlbumManager.getOriginalResource(entity.localIdentifier!);
         if (albumModelEntity == null || TextUtil.isEmpty(albumModelEntity.originalPath)) {
@@ -121,10 +123,13 @@ class AlbumController extends GetxController {
         entity.originalPath = albumModelEntity.originalPath;
       }
       File file = File(entity.originalPath!);
-      var inputImage = InputImage.fromFile(file);
+      InputImage inputImage = InputImage.fromFile(file);
       FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
       List<Face> faces = await faceDetector.processImage(inputImage);
       faceDetector.close();
+      if (!TextUtil.isEmpty(entity.thumbPath)) {
+        File(entity.thumbPath!).delete();
+      }
       var imageInfo = await SyncFileImage(file: file).getImage();
       var image = imageInfo.image;
       var cropHomePath = cacheManager.storageOperator.cropDir.path;
@@ -192,6 +197,7 @@ class AlbumController extends GetxController {
           savedImageData = imageData;
         }
       }
+      await newThumbnailFile.writeAsBytes(savedImageData.toList(), flush: true);
       return face != null;
     } on PlatformException catch (e) {
       LogUtil.e(e.toString(), tag: 'face-detector');
