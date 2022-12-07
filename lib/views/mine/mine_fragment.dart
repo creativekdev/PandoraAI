@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -237,6 +239,20 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       ));
                 },
               ),
+              Container(height: $(12)),
+              TitleTextWidget('Test jsbridge method', ColorConstant.Red, FontWeight.normal, $(15))
+                  .intoContainer(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),
+                      margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
+                      padding: EdgeInsets.symmetric(vertical: $(10)))
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).push(Right2LeftRouter(
+                    child: AppWebView(
+                  url: testHtml,
+                  loadType: LoadType.HTML_DATA,
+                )));
+              }),
               SizedBox(height: $(48)),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.w),
