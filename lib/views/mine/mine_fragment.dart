@@ -19,6 +19,7 @@ import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
@@ -204,6 +205,20 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
+              ImageTextBarWidget('Avatar Ai', ImagesConstant.ic_rate_us, true).intoGestureDetector(
+                onTap: () async {
+                  // todo logEvent
+                  Avatar.open(context);
+                },
+              ),
+              Container(
+                width: double.maxFinite,
+                height: 1,
+                color: Color(0xff323232),
+              ).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
               ImageTextBarWidget(StringConstant.premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 if (Platform.isIOS) {
@@ -239,20 +254,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       ));
                 },
               ),
-              Container(height: $(12)),
-              TitleTextWidget('Test jsbridge method', ColorConstant.Red, FontWeight.normal, $(15))
-                  .intoContainer(
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),
-                      margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
-                      padding: EdgeInsets.symmetric(vertical: $(10)))
-                  .intoGestureDetector(onTap: () {
-                Navigator.of(context).push(Right2LeftRouter(
-                    child: AppWebView(
-                  url: testHtml,
-                  loadType: LoadType.HTML_DATA,
-                )));
-              }),
               SizedBox(height: $(48)),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 5.w),

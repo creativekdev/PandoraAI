@@ -237,6 +237,8 @@ extension WidgetExtension on Widget {
           child: this,
         ),
       );
+
+  Hero hero({Key? key, required Object tag}) => Hero(tag: tag, child: this);
 }
 
 typedef DelayCallback<T> = T Function();
