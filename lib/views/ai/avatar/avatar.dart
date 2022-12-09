@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_ai_list.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 
 class Avatar {

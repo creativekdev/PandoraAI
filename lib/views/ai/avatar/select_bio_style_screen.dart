@@ -2,39 +2,42 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 
-enum Gender {
+enum BioStyle {
   male,
   female,
+  dog,
   other,
 }
 
-extension GenderEx on Gender {
+extension BioStyleEx on BioStyle {
   title() {
     switch (this) {
-      case Gender.male:
+      case BioStyle.male:
         return 'Male';
-      case Gender.female:
+      case BioStyle.female:
         return 'Female';
-      case Gender.other:
+      case BioStyle.other:
         return 'Other';
+      case BioStyle.dog:
+        return 'Dog';
     }
   }
 }
 
-class SelectGenderScreen {
-  static Future<Gender?> push(BuildContext context, {Gender? gender}) {
-    return Navigator.of(context).push<Gender>(MaterialPageRoute(
-      builder: (context) => _SelectGenderScreen(gender: gender),
+class SelectStyleScreen {
+  static Future<BioStyle?> push(BuildContext context, {BioStyle? gender}) {
+    return Navigator.of(context).push<BioStyle>(MaterialPageRoute(
+      builder: (context) => _SelectGenderScreen(bioStyle: gender),
     ));
   }
 }
 
 class _SelectGenderScreen extends StatefulWidget {
-  Gender? gender;
+  BioStyle? bioStyle;
 
   _SelectGenderScreen({
     Key? key,
-    this.gender,
+    this.bioStyle,
   }) : super(key: key);
 
   @override
@@ -42,17 +45,18 @@ class _SelectGenderScreen extends StatefulWidget {
 }
 
 class _SelectGenderScreenState extends State<_SelectGenderScreen> {
-  Gender? gender;
-  List<Gender> genders = [
-    Gender.male,
-    Gender.female,
-    Gender.other,
+  BioStyle? bioStyle;
+  List<BioStyle> genders = [
+    BioStyle.male,
+    BioStyle.female,
+    BioStyle.dog,
+    BioStyle.other,
   ];
 
   @override
   void initState() {
     super.initState();
-    gender = widget.gender;
+    bioStyle = widget.bioStyle;
   }
 
   @override
@@ -61,14 +65,14 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
         backgroundColor: ColorConstant.BackgroundColor,
         appBar: AppNavigationBar(
           backgroundColor: ColorConstant.BackgroundColor,
-          middle: TitleTextWidget('Select Gender', ColorConstant.White, FontWeight.w600, $(17)),
+          middle: TitleTextWidget('Select Style', ColorConstant.White, FontWeight.w600, $(17)),
         ),
         body: Column(
           children: [
             Expanded(
               child: Column(
                 children: genders.map((e) {
-                  bool checked = e == gender;
+                  bool checked = e == bioStyle;
                   return Row(
                     children: [
                       Icon(
@@ -86,22 +90,22 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
                     ],
                   )
                       .intoContainer(
-                        padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(25)),
-                      )
+                    padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(25)),
+                  )
                       .intoMaterial(
-                        elevation: 4,
-                        color: checked ? ColorConstant.BlueColor : ColorConstant.CardColor,
-                        borderRadius: BorderRadius.circular($(8)),
-                      )
+                    elevation: 4,
+                    color: checked ? ColorConstant.BlueColor : ColorConstant.CardColor,
+                    borderRadius: BorderRadius.circular($(8)),
+                  )
                       .intoGestureDetector(onTap: () {
                     setState(() {
-                      gender = e;
+                      bioStyle = e;
                     });
                   }).intoContainer(
-                          margin: EdgeInsets.symmetric(
-                    vertical: $(10),
-                    horizontal: $(30),
-                  ));
+                      margin: EdgeInsets.symmetric(
+                        vertical: $(10),
+                        horizontal: $(30),
+                      ));
                 }).toList(),
               ),
             ),
@@ -120,10 +124,10 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
               ),
             )
                 .intoGestureDetector(onTap: () {
-              if (gender == null) {
-                CommonExtension().showToast('Please select your gender');
+              if (bioStyle == null) {
+                CommonExtension().showToast('Please select style');
               } else {
-                Navigator.of(context).pop(gender);
+                Navigator.of(context).pop(bioStyle);
               }
             })
           ],

@@ -30,7 +30,8 @@ dependencies:
   sizer: ^2.0.15
   simple_shadow: ^0.3.0
   dotted_border: ^2.0.0
-  image_picker: ^0.8.2
+  image_picker: 0.8.6
+  images_picker: 1.2.11
   http: ^0.13.4
   dio: ^4.0.4
   crypto: ^3.0.1

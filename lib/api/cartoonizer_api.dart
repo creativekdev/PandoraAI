@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
+import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -15,6 +16,7 @@ import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -276,5 +278,34 @@ class CartoonizerApi extends BaseRequester {
       EventBusHelper().eventBus.fire(OnDeleteDiscoveryEvent(id: id));
     }
     return baseEntity;
+  }
+
+  Future<String?> uploadImageToS3(File file, bool isFree) async {
+    String fileName = getFileName(file.path);
+    String bucket = "${isFree ? 'free' : 'fast'}-socialbook";
+    var fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
+    if (TextUtil.isEmpty(fileType)) {
+      fileType = '*';
+    }
+    String contentType = "image/$fileType";
+    final params = {
+      "bucket": bucket,
+      "file_name": fileName,
+      "content_type": contentType,
+    };
+    var url = await getPresignedUrl(params);
+    if (url == null) {
+      return null;
+    }
+    var baseEntity = await Uploader().uploadFile(url, file, contentType);
+    if (baseEntity != null) {
+      var imageUrl = url.split("?")[0];
+      return imageUrl;
+    }
+    return null;
+  }
+
+  Future<BaseEntity?> submitAvatarAi({required Map<String, dynamic> params}) async {
+    //todo 提交接口
   }
 }

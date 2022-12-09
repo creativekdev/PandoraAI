@@ -119,6 +119,43 @@ Future<File> imageCompressAndGetFile(File file) async {
   return result;
 }
 
+Future<File> imageCompress(File file, String targetPath) async {
+  var length = await file.length();
+  if (length < 200 * 1024) {
+    return file;
+  }
+
+  var quality = 100;
+  if (length > 8 * 1024 * 1024) {
+    quality = (((2 * 1024 * 1024) / length) * 100).toInt();
+  } else if (length > 4 * 1024 * 1024) {
+    quality = 50;
+  } else if (length > 2 * 1024 * 1024) {
+    quality = 60;
+  } else if (length > 1 * 1024 * 1024) {
+    quality = 70;
+  } else if (length > 0.5 * 1024 * 1024) {
+    quality = 80;
+  }
+  var imageInfo = await SyncFileImage(file: file).getImage();
+  var image = imageInfo.image;
+  var shortSide = image.width > image.height ? image.height : image.width;
+  if (shortSide > 1024) {
+    var scale = 1024 / shortSide;
+    int width = (image.width * scale).toInt();
+    int height = (image.height * scale).toInt();
+    return (await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      minWidth: width,
+      minHeight: height,
+      quality: quality,
+    ))!;
+  } else {
+    return await file.copy(targetPath);
+  }
+}
+
 Future<Uint8List> imageCompressWithList(Uint8List image) async {
   var length = image.length;
   if (length < 200 * 1024) {

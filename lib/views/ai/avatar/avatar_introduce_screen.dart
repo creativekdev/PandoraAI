@@ -4,7 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_ai_list.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 
 import 'avatar.dart';
 
