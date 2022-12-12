@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 
 import 'pay_avatar_android.dart';
 import 'pay_avatar_ios.dart';
@@ -24,6 +25,25 @@ class _PayAvatarPage extends StatefulWidget {
 }
 
 class PayAvatarPageState extends AppState<_PayAvatarPage> {
+  late CartoonizerApi api;
+
+  @override
+  void initState() {
+    super.initState();
+    api = CartoonizerApi().bindState(this);
+    api.listAllBuyPlan().then((value) {
+      setState(() {
+
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    api.unbind();
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
@@ -31,7 +51,11 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
       ),
-      body: Platform.isIOS ? PayAvatarIOS() : PayAvatarAndroid(),
+      body: Column(
+        children: [
+          Platform.isIOS ? PayAvatarIOS() : PayAvatarAndroid(),
+        ],
+      ),
     );
   }
 }

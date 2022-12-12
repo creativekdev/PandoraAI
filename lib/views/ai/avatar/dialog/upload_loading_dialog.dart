@@ -19,7 +19,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
   void initState() {
     super.initState();
     animController = AnimationController(vsync: this, duration: Duration(milliseconds: 3500));
-    tweenAnim = Tween<double>(begin: 0, end: 5.9).animate(animController);
+    tweenAnim = Tween<double>(begin: 0, end: 6.9).animate(animController);
     controller = widget.controller;
     animController.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
@@ -30,15 +30,15 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
     });
     animController.forward();
     controller.compressAndUpload().then((value) {
-      Navigator.of(context).pop(value);
+      if (mounted) {
+        Navigator.of(context).pop(value);
+      }
     });
   }
 
   @override
   void dispose() {
     animController.dispose();
-    controller.compressedList.clear();
-    controller.uploadedList.clear();
     super.dispose();
   }
 

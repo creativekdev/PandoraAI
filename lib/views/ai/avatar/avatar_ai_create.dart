@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
@@ -9,6 +10,7 @@ import 'package:cartoonizer/views/ai/avatar/select_bio_style_screen.dart';
 
 import 'dialog/add_photos_dialog.dart';
 import 'avatar.dart';
+import 'dialog/submit_avatar_dialog.dart';
 
 class AvatarAiCreateScreen extends StatefulWidget {
   const AvatarAiCreateScreen({Key? key}) : super(key: key);
@@ -25,8 +27,8 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   @override
   void initState() {
     super.initState();
-    imageWidth = ScreenUtil.screenSize.width / 4;
-    imageHeight = imageWidth * 1.25;
+    imageWidth = ScreenUtil.screenSize.width / 5;
+    imageHeight = imageWidth;
   }
 
   @override
@@ -46,7 +48,6 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
           height: $(24),
           width: $(24),
         ).hero(tag: Avatar.logoBackTag),
-        middle: TitleTextWidget('Upload photos', ColorConstant.White, FontWeight.w500, $(17)),
       ),
       body: GetBuilder<AvatarAiController>(
         builder: (controller) => LoadingOverlay(
@@ -59,7 +60,23 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                   child: Column(
                     children: [
                       SizedBox(height: 20),
-                      buildIconText(context, title: 'Good photo examples', icon: Images.ic_checked),
+                      shaderMask(
+                          context: context,
+                          child: Text(
+                            'Upload photos',
+                            style: TextStyle(
+                              color: ColorConstant.White,
+                              fontSize: $(26),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                          )),
+                      SizedBox(height: 20),
+                      buildIconText(
+                        context,
+                        title: 'Good photo examples',
+                        icon: Images.ic_avatar_good_example,
+                      ),
                       SizedBox(height: 12),
                       TitleTextWidget(
                         'Close-up selfies, same person, adults, '
@@ -76,7 +93,11 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       SizedBox(height: 12),
                       buildExamples(context, good: true),
                       SizedBox(height: 20),
-                      buildIconText(context, title: 'Bad photo examples', icon: Images.ic_checked),
+                      buildIconText(
+                        context,
+                        title: 'Bad photo examples',
+                        icon: Images.ic_avatar_bad_example,
+                      ),
                       SizedBox(height: 12),
                       TitleTextWidget(
                         'Group shots, full-length, kids, covered faces,'
@@ -91,21 +112,49 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       ),
                       SizedBox(height: 12),
                       buildExamples(context, good: false),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: '',
+                          children: [
+                            WidgetSpan(
+                              child: Image.asset(
+                                Images.ic_warning,
+                                width: $(15),
+                                color: Color(0xffFFCC00),
+                              ),
+                            ),
+                            TextSpan(
+                              text: '  Photos will be immediately deleted from our servers '
+                                  'after the Avatars are ready',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: ColorConstant.White,
+                                fontSize: $(14),
+                              ),
+                            )
+                          ],
+                        ),
+                      ).intoContainer(
+                          padding: EdgeInsets.only(
+                            top: $(20),
+                            left: $(20),
+                            right: $(20),
+                            bottom: $(25),
+                          ),
+                          margin: EdgeInsets.only(
+                            top: $(20),
+                            left: $(15),
+                            right: $(15),
+                            bottom: $(10),
+                          ),
+                          decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular($(12)))),
                     ],
                   ),
                 )),
-                TitleTextWidget(
-                  'Group shots, full-length, kids, covered faces,'
-                  ' animals, monotonous pics, nudes',
-                  ColorConstant.White,
-                  FontWeight.normal,
-                  $(14),
-                  align: TextAlign.center,
-                  maxLines: 5,
-                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(30))),
                 Text(
                   controller.pickPhotosText,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: $(17)),
                 )
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(12)),
@@ -113,7 +162,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                   width: double.maxFinite,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular($(32)),
+                    borderRadius: BorderRadius.circular($(8)),
                     color: ColorConstant.BlueColor,
                   ),
                 )
@@ -156,9 +205,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 
   startSubmit(BuildContext context, AvatarAiController controller, BioStyle style) {
-    controller.submit().then((value) {
-      if(value != null) {
-
+    SubmitAvatarDialog.push(context, name: controller.name ?? '').then((value) {
+      controller.name = value;
+      if (value != null) {
+        controller
+            .submit(
+          style: style,
+          name: controller.name!,
+        )
+            .then((value) {
+          if (value != null) {}
+        });
       }
     });
   }
@@ -188,7 +245,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
         );
         return buildListItem(context, index: index, checked: good, child: image);
       },
-      itemCount: 4,
+      itemCount: 5,
     ).intoContainer(height: imageHeight, width: ScreenUtil.screenSize.width);
   }
 
@@ -200,10 +257,9 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }) {
     return Stack(
       children: [
-        child.intoContainer(
-          width: imageWidth,
-          height: imageHeight,
-          margin: EdgeInsets.only(left: index == 0 ? 0 : $(12)),
+        ClipRRect(
+          child: child,
+          borderRadius: BorderRadius.circular($(6)),
         ),
         Positioned(
           child: Icon(
@@ -218,6 +274,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
     ).intoContainer(
       width: imageWidth,
       height: imageHeight,
+      margin: EdgeInsets.only(left: index == 0 ? 0 : $(8)),
     );
   }
 
@@ -232,14 +289,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
           icon,
           width: $(18),
         ),
+        SizedBox(width: $(10)),
         Expanded(
-            child: TitleTextWidget(
-          title,
-          ColorConstant.White,
-          FontWeight.w500,
-          $(17),
-          align: TextAlign.left,
-        ))
+            child: shaderMask(
+                context: context,
+                child: TitleTextWidget(
+                  title,
+                  ColorConstant.White,
+                  FontWeight.w500,
+                  $(17),
+                  align: TextAlign.left,
+                )))
       ],
     ).intoContainer(
       padding: EdgeInsets.symmetric(horizontal: $(15)),

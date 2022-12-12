@@ -22,6 +22,19 @@ extension BioStyleEx on BioStyle {
         return 'Dog';
     }
   }
+
+  value() {
+    switch (this) {
+      case BioStyle.male:
+        return 'male';
+      case BioStyle.female:
+        return 'female';
+      case BioStyle.dog:
+        return 'dog';
+      case BioStyle.other:
+        return 'other';
+    }
+  }
 }
 
 class SelectStyleScreen {
@@ -75,10 +88,36 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
                   bool checked = e == bioStyle;
                   return Row(
                     children: [
-                      Icon(
-                        checked ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                        color: ColorConstant.White,
-                      ),
+                      checked
+                          ? Container(
+                              width: $(22),
+                              height: $(22),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular($(16)),
+                                border: Border.all(
+                                  width: 1,
+                                  color: checked ? ColorConstant.BlueColor : ColorConstant.White,
+                                ),
+                                color: ColorConstant.BlueColor,
+                              ),
+                              child: Icon(
+                                Icons.check,
+                                size: $(16),
+                                color: Colors.white,
+                              ),
+                              padding: EdgeInsets.only(left: 2, right: 4, top: 2, bottom: 4),
+                            )
+                          : Container(
+                              width: $(22),
+                              height: $(22),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular($(16)),
+                                border: Border.all(
+                                  width: 1,
+                                  color: ColorConstant.White,
+                                ),
+                              ),
+                            ),
                       SizedBox(width: $(12)),
                       Text(
                         e.title(),
@@ -90,22 +129,22 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
                     ],
                   )
                       .intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(25)),
-                  )
+                        padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(25)),
+                      )
                       .intoMaterial(
-                    elevation: 4,
-                    color: checked ? ColorConstant.BlueColor : ColorConstant.CardColor,
-                    borderRadius: BorderRadius.circular($(8)),
-                  )
+                        elevation: 4,
+                        color: ColorConstant.CardColor,
+                        borderRadius: BorderRadius.circular($(8)),
+                      )
                       .intoGestureDetector(onTap: () {
                     setState(() {
                       bioStyle = e;
                     });
                   }).intoContainer(
-                      margin: EdgeInsets.symmetric(
-                        vertical: $(10),
-                        horizontal: $(30),
-                      ));
+                          margin: EdgeInsets.symmetric(
+                    vertical: $(10),
+                    horizontal: $(30),
+                  ));
                 }).toList(),
               ),
             ),
@@ -119,7 +158,7 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
               width: double.maxFinite,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular($(32)),
+                borderRadius: BorderRadius.circular($(8)),
                 color: ColorConstant.BlueColor,
               ),
             )

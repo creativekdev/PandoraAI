@@ -10,6 +10,8 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:images_picker/images_picker.dart';
 
+import 'select_bio_style_screen.dart';
+
 class AvatarAiController extends GetxController {
   List<Media> imageList = [];
   List<File> compressedList = [];
@@ -19,6 +21,7 @@ class AvatarAiController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   bool isLoading = false;
+  String? name;
 
   bool get hasChosen => imageList.isNotEmpty;
   bool stop = false;
@@ -32,6 +35,9 @@ class AvatarAiController extends GetxController {
   @override
   void dispose() {
     api.unbind();
+    imageList.clear();
+    compressedList.clear();
+    uploadedList.clear();
     super.dispose();
   }
 
@@ -59,13 +65,12 @@ class AvatarAiController extends GetxController {
   }
 
   Future<bool> compressAndUpload() async {
-    compressedList.clear();
-    uploadedList.clear();
     stop = false;
-    for (var media in imageList) {
+    for (int i = compressedList.length; i < imageList.length; i++) {
       if (stop) {
         return false;
       }
+      var media = imageList[i];
       File file = await imageCompress(File(media.path), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.path) + ".jpg");
       if (stop) {
         return false;
@@ -73,10 +78,11 @@ class AvatarAiController extends GetxController {
       compressedList.add(file);
       update();
     }
-    for (var file in compressedList) {
+    for (int i = uploadedList.length; i < compressedList.length; i++) {
       if (stop) {
         return false;
       }
+      var file = compressedList[i];
       var url = await api.uploadImageToS3(file, true);
       if (stop) {
         return false;
@@ -94,11 +100,13 @@ class AvatarAiController extends GetxController {
     stop = true;
   }
 
-  Future<BaseEntity?> submit() async {
+  Future<BaseEntity?> submit({required BioStyle style, required String name}) async {
     isLoading = true;
     update();
     var baseEntity = await api.submitAvatarAi(params: {
-      'files': json.encode(uploadedList.map((e) => e.imageUrl).toList()),
+      'name': name,
+      'role': style.value(),
+      'train_images': json.encode(uploadedList.map((e) => e.imageUrl).toList().join(',')),
     });
     isLoading = false;
     update();

@@ -30,32 +30,29 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
-        backIcon: Image.asset(
-          Images.ic_back,
-          height: $(24),
-          width: $(24),
+        backIcon: Icon(
+          Icons.close,
+          size: $(24),
+          color: ColorConstant.White,
         ).hero(tag: Avatar.logoBackTag),
-        middle: TitleTextWidget('What to Expect', ColorConstant.White, FontWeight.w500, $(17)),
       ),
-      bottomNavigationBar: TitleTextWidget(StringConstant.txtContinue, ColorConstant.White, FontWeight.normal, $(20))
-          .intoContainer(
-            padding: EdgeInsets.symmetric(vertical: $(8)),
-            margin: EdgeInsets.symmetric(horizontal: $(20)),
-            decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(64))),
-            alignment: Alignment.center,
-          )
-          .intoContainer(
-            width: ScreenUtil.screenSize.width,
-            height: $(50),
-          )
-          .intoGestureDetector(onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => AvatarAiCreateScreen()));
-      }),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: $(30)),
+            SizedBox(height: $(10)),
+            shaderMask(
+                context: context,
+                child: Text(
+                  'What to Expect',
+                  style: TextStyle(
+                    color: ColorConstant.White,
+                    fontSize: $(26),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                  ),
+                )),
+            SizedBox(height: $(15)),
             TitleTextWidget(
                     'The type of AI we utilise for Magic Avatars'
                     ' may generate artefacts, inaccuracies and'
@@ -69,30 +66,45 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                 .intoContainer(
               padding: EdgeInsets.symmetric(horizontal: $(25)),
             ),
-            SizedBox(height: $(30)),
+            Image.asset(
+              Images.ic_avatar_ai_planet,
+              height: $(60),
+            ).intoContainer(
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.symmetric(
+                  horizontal: $(15),
+                ),
+                margin: EdgeInsets.only(bottom: $(6))),
             TitleTextWidget(
                     'The more variations you get, the'
                     ' better chances for great result!',
                     Colors.white,
                     FontWeight.bold,
-                    $(14),
+                    $(17),
                     maxLines: 3)
                 .intoContainer(
               padding: EdgeInsets.symmetric(horizontal: $(35)),
             ),
-            SizedBox(height: $(30)),
-            TitleTextWidget('Good examples', Colors.white, FontWeight.bold, $(14), maxLines: 3).intoContainer(
-              padding: EdgeInsets.symmetric(horizontal: $(15)),
-              alignment: Alignment.centerLeft,
-            ),
+            SizedBox(height: $(35)),
+            shaderMask(
+                context: context,
+                child: Text(
+                  'Good examples',
+                  style: TextStyle(
+                    color: ColorConstant.White,
+                    fontSize: $(18),
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Poppins',
+                  ),
+                )),
             GridView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.all($(12)),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: $(12),
-                crossAxisSpacing: $(12),
+                mainAxisSpacing: $(6),
+                crossAxisSpacing: $(6),
               ),
               itemBuilder: (context, index) => buildItem(context, index),
               itemCount: 20,
@@ -100,15 +112,28 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: TitleTextWidget(StringConstant.txtContinue, ColorConstant.White, FontWeight.normal, $(17))
+          .intoContainer(
+            padding: EdgeInsets.symmetric(vertical: $(8)),
+            decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(8))),
+            alignment: Alignment.center,
+          )
+          .intoContainer(width: ScreenUtil.screenSize.width, height: $(64), padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)))
+          .intoGestureDetector(onTap: () {
+        Avatar.create(context);
+      }),
     );
   }
 
   Widget buildItem(BuildContext context, int index) {
-    return CachedNetworkImageUtils.custom(
-      context: context,
-      imageUrl: imgUrl,
-      width: (ScreenUtil.screenSize.width - $(36)) / 2,
-      height: (ScreenUtil.screenSize.width - $(36)) / 2,
+    return ClipRRect(
+      child: CachedNetworkImageUtils.custom(
+        context: context,
+        imageUrl: imgUrl,
+        width: (ScreenUtil.screenSize.width - $(36)) / 2,
+        height: (ScreenUtil.screenSize.width - $(36)) / 2,
+      ),
+      borderRadius: BorderRadius.circular($(8)),
     );
   }
 }

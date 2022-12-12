@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 
@@ -15,37 +16,47 @@ class AddPhotosDialog extends StatelessWidget {
       builder: (controller) {
         return Column(
           children: [
+            SizedBox(height: $(27)),
+            Image.asset(
+              Images.ic_warning,
+              width: $(28),
+              color: ColorConstant.Red,
+            ).intoContainer(
+                padding: EdgeInsets.all($(10)),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(64),
+                    border: Border.all(
+                      color: ColorConstant.Red,
+                      width: 1.5,
+                    ))),
+            SizedBox(height: $(12)),
             TitleTextWidget(
               'Not enough photos',
-              ColorConstant.TextBlack,
+              ColorConstant.Red,
               FontWeight.w500,
               $(18),
               maxLines: 5,
             ),
-            SizedBox(height: 10),
+            SizedBox(height: $(20)),
             TitleTextWidget(
               'You\'ve selected ${controller.imageList.length} photos of ${controller.minSize} minimum required.',
-              ColorConstant.TextBlack,
+              ColorConstant.White,
               FontWeight.normal,
               $(14),
               maxLines: 5,
-            ),
-            SizedBox(
-              height: 12,
-            ),
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+            SizedBox(height: 12),
             TitleTextWidget(
               'Please select at least ${controller.minSize - controller.imageList.length} more photos.',
-              ColorConstant.TextBlack,
+              ColorConstant.White,
               FontWeight.normal,
               $(14),
               maxLines: 5,
-            ),
-            SizedBox(
-              height: 12,
-            ),
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+            SizedBox(height: 6),
             controller.imageList.isNotEmpty
                 ? GridView.builder(
-                    padding: EdgeInsets.symmetric(vertical: $(10)),
+                    padding: EdgeInsets.symmetric(vertical: $(12), horizontal: $(15)),
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -63,16 +74,17 @@ class AddPhotosDialog extends StatelessWidget {
                     itemCount: controller.imageList.length,
                   )
                 : Container(),
+            SizedBox(height: 6),
             Divider(
               height: 1,
               color: ColorConstant.LineColor,
             ),
             TitleTextWidget(
               'Cancel',
-              ColorConstant.TextBlack,
+              ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),
-            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 6), width: double.maxFinite).intoGestureDetector(onTap: () {
+            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite).intoGestureDetector(onTap: () {
               Navigator.of(context).pop();
             }),
             Divider(
@@ -81,10 +93,10 @@ class AddPhotosDialog extends StatelessWidget {
             ),
             TitleTextWidget(
               'Select more photos',
-              ColorConstant.TextBlack,
+              ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),
-            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 6), width: double.maxFinite).intoGestureDetector(onTap: () {
+            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite).intoGestureDetector(onTap: () {
               showTakePhotoOptDialog(context, controller).then((value) {
                 if (controller.imageList.length >= controller.minSize) {
                   Navigator.of(context).pop();
@@ -98,9 +110,8 @@ class AddPhotosDialog extends StatelessWidget {
       init: controller,
     )
         .intoContainer(
-          padding: EdgeInsets.only(left: $(15), right: $(15), bottom: $(4), top: $(15)),
           margin: EdgeInsets.symmetric(horizontal: $(35), vertical: $(15)),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(color: ColorConstant.BackgroundColor, borderRadius: BorderRadius.circular(8)),
         )
         .intoCenter()
         .intoMaterial(color: Colors.transparent);

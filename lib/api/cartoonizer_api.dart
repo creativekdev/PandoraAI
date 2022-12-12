@@ -306,6 +306,21 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> submitAvatarAi({required Map<String, dynamic> params}) async {
-    //todo 提交接口
+    return post('/ai_avatar/create', params: params);
+  }
+
+  Future<BaseEntity?> listAllAvatarAi() async {
+    return await get('/ai_avatar/all');
+  }
+
+  Future<BaseEntity?> getAvatarAiDetail({required String token}) async {
+    return await get('/ai_avatar/get', params: {
+      'token': token,
+    });
+  }
+
+  Future<BaseEntity?> listAllBuyPlan() async {
+    var baseEntity = await get('/plan/all');
+    return baseEntity;
   }
 }
