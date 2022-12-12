@@ -9,6 +9,7 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
+import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
@@ -25,6 +26,7 @@ class JsonConvert {
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
 		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
+		(PayPlanEntity).toString(): PayPlanEntity.fromJson,
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
@@ -62,9 +64,6 @@ class JsonConvert {
   }
 
   T? asT<T extends Object?>(dynamic value) {
-    if(value == null){
-      return null;
-    }
     if (value is T) {
       return value;
     }
@@ -126,6 +125,9 @@ class JsonConvert {
 		}
 		if(<MsgPageEntity>[] is M){
 			return data.map<MsgPageEntity>((Map<String, dynamic> e) => MsgPageEntity.fromJson(e)).toList() as M;
+		}
+		if(<PayPlanEntity>[] is M){
+			return data.map<PayPlanEntity>((Map<String, dynamic> e) => PayPlanEntity.fromJson(e)).toList() as M;
 		}
 		if(<PushExtraEntity>[] is M){
 			return data.map<PushExtraEntity>((Map<String, dynamic> e) => PushExtraEntity.fromJson(e)).toList() as M;

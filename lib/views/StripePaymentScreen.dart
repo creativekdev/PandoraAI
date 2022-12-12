@@ -36,9 +36,12 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   bool isCvvFocused = false;
 
   UserManager userManager = AppDelegate.instance.getManager();
+
   @override
   void initState() {
-    initStoreInfo();
+    delay(() {
+      initStoreInfo();
+    });
     super.initState();
   }
 
@@ -149,7 +152,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
       };
 
       var baseEntity = await CartoonizerApi().buyPlan(body);
-      if(baseEntity != null) {
+      if (baseEntity != null) {
         _handlePaymentSuccess();
       }
     } catch (e) {

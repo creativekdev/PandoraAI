@@ -14,6 +14,7 @@ import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
+import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -309,8 +310,10 @@ class CartoonizerApi extends BaseRequester {
     return post('/ai_avatar/create', params: params);
   }
 
-  Future<BaseEntity?> listAllAvatarAi() async {
-    return await get('/ai_avatar/all');
+  Future<List<dynamic>?> listAllAvatarAi() async {
+    var baseEntity = await get('/ai_avatar/all');
+    //todo
+    return [];
   }
 
   Future<BaseEntity?> getAvatarAiDetail({required String token}) async {
@@ -319,8 +322,13 @@ class CartoonizerApi extends BaseRequester {
     });
   }
 
-  Future<BaseEntity?> listAllBuyPlan() async {
-    var baseEntity = await get('/plan/all');
-    return baseEntity;
+  Future<List<PayPlanEntity>?> listAllBuyPlan(String category) async {
+    var baseEntity = await get('/plan/all', params: {
+      'category': category,
+    });
+    if (baseEntity != null) {
+      return jsonConvert.convertListNotNull<PayPlanEntity>(baseEntity.data['data']);
+    }
+    return null;
   }
 }

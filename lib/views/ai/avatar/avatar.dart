@@ -24,7 +24,7 @@ class Avatar {
 
   static create(BuildContext context) async {
     UserManager userManager = AppDelegate().getManager();
-    if (userManager.user!.userSubscription.containsKey('avatar_ai')) {
+    if (!userManager.user!.userSubscription.containsKey('avatar_ai')) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => AvatarAiCreateScreen()));
     } else {
       // user not pay yet. to introduce page. and get pay status to edit page.

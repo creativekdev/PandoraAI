@@ -18,6 +18,7 @@ class AvatarAiListScreen extends StatefulWidget {
 class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   late CartoonizerApi api;
+  List<dynamic> dataList = [];
 
   @override
   initState() {
@@ -35,7 +36,11 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
   loadFirstPage() {
     api.listAllAvatarAi().then((value) {
       _refreshController.finishRefresh();
-      if (value != null) {}
+      if (value != null) {
+        setState(() {
+          dataList = value;
+        });
+      }
     });
   }
 
@@ -64,7 +69,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
               SliverList(
                   delegate: SliverChildBuilderDelegate(
                 (context, index) => buildItem(context, index),
-                childCount: 1,
+                childCount: dataList.length,
               ))
             ],
           )),
@@ -89,7 +94,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
             padding: EdgeInsets.symmetric(vertical: $(10)),
           )
               .intoGestureDetector(onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AvatarIntroduceScreen()));
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AvatarIntroduceScreen()));
           })
         ],
       ),
@@ -97,6 +102,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
   }
 
   Widget buildItem(BuildContext context, int index) {
+    var data = dataList[index];
     Widget item;
     bool ready = true;
     if (ready) {
@@ -121,7 +127,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
           .intoGestureDetector(onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AvatarDetailScreen(
-                  token: '',//todo
+                  token: '', //todo
                 )));
       });
     } else {
