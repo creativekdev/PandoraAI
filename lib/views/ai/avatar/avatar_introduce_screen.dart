@@ -15,8 +15,8 @@ class AvatarIntroduceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => AvatarIntroduceScreenState();
 }
 
-const _imgUrl = 'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg@f_auto?token=e8d441ca552a9f0e42a2a01a8d1eb117';
-const _imgUrl2 = 'https://img0.baidu.com/it/u=1578062395,3811784681&fm=253&fmt=auto&app=120&f=JPEG?w=620&h=372';
+const _imgUrl = 'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg';
+const _imgUrl2 = 'https://img0.baidu.com/it/u=1578062395,3811784681&fm=253&fmt=auto&app=120&f=JPEG';
 
 String get imgUrl => Random.secure().nextInt(20) % 2 == 0 ? _imgUrl : _imgUrl2;
 

@@ -77,6 +77,7 @@ class PayPlanEntity {
   int aiAvatarCredit = 0;
   @JSONField(name: "user_id")
   int userId = 0;
+  bool popular = false;
 
   PayPlanEntity();
 

@@ -214,7 +214,16 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
           name: controller.name!,
         )
             .then((value) {
-          if (value != null) {}
+          if (value != null) {
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      backgroundColor: ColorConstant.BackgroundColor,
+                      title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
+                    )).then((value) {
+              Navigator.pop(context, true);
+            });
+          }
         });
       }
     });
@@ -255,22 +264,9 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
     required bool checked,
     required Widget child,
   }) {
-    return Stack(
-      children: [
-        ClipRRect(
-          child: child,
-          borderRadius: BorderRadius.circular($(6)),
-        ),
-        Positioned(
-          child: Icon(
-            checked ? Icons.check_box : Icons.disabled_by_default,
-            size: $(22),
-            color: checked ? ColorConstant.BlueColor : ColorConstant.Red,
-          ),
-          right: 4,
-          bottom: 4,
-        ),
-      ],
+    return ClipRRect(
+      child: child,
+      borderRadius: BorderRadius.circular($(6)),
     ).intoContainer(
       width: imageWidth,
       height: imageHeight,

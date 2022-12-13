@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/webview/js_list.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -14,7 +12,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -133,29 +130,6 @@ class AppWebViewState extends AppState<AppWebView> {
                 print("参数： ${message.message}");
                 CommonExtension().showToast(message.message);
                 _onEventFinished("showToast", "执行结束");
-              }),
-          JavascriptChannel(
-              name: "saveToAlbum",
-              onMessageReceived: (JavascriptMessage message) {
-                print("参数： ${message.message}");
-                showLoading().whenComplete(() {
-                  SyncNetworkImage(url: message.message).getImage().then((value) async {
-                    var byteData = await value.image.toByteData(format: ImageByteFormat.png);
-                    var int8list = byteData!.buffer.asUint8List();
-                    await ImageGallerySaver.saveImage(
-                      int8list,
-                      quality: 100,
-                      name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}",
-                    );
-                    hideLoading();
-                    CommonExtension().showImageSavedOkToast(context);
-                    _controller.runJavascript(JsList.postToWebView("saveToAlbum", {'result': '1'}));
-                  }).onError((error, stackTrace) {
-                    hideLoading();
-                    CommonExtension().showToast(error.toString());
-                    _controller.runJavascript(JsList.postToWebView("saveToAlbum", {'result': '0'}));
-                  });
-                });
               }),
           JavascriptChannel(
               name: 'choosePhoto',

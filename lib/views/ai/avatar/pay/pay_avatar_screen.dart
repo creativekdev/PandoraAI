@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/views/StripePaymentScreen.dart';
+import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_plans_screen.dart';
 
 import 'pay_avatar_android.dart';
 import 'pay_avatar_ios.dart';
@@ -34,27 +35,20 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      // delay(
-      //   () async {
-      //     Navigator.of(context)
-      //         .push(
-      //       MaterialPageRoute(builder: (context) => StripePaymentScreen(planId: '65000')),
-      //     )
-      //         .then((value) {
-      //       Navigator.of(context).pop();
-      //     });
-      //   },
-      // );
-    } else {}
     api = CartoonizerApi().bindState(this);
-    api.listAllBuyPlan('ai_avatar_credit').then((value) {
-      if (value != null) {
-        var pick = value.pick((t) => t.id == 65000);
-        pick?.stripePlanId;
-      }
-      setState(() {
-        this.dataList = value ?? [];
+    delay(() {
+      showLoading().whenComplete(() {
+        api.listAllBuyPlan('ai_avatar_credit').then((value) {
+          hideLoading().whenComplete(() {
+            setState(() {
+              this.dataList = value ?? [];
+              if (dataList.isNotEmpty) {
+                dataList.first.popular = true;
+                selected = dataList.first;
+              }
+            });
+          });
+        });
       });
     });
   }
@@ -87,15 +81,41 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             $(13),
             maxLines: 10,
           ),
-          SizedBox(height: $(35)),
-          Expanded(
-              child: ListView.builder(
-            padding: EdgeInsets.only(top: $(30), bottom: $(15)),
-            itemBuilder: (context, index) {
-              return buildListItem(context, index, dataList[index]);
-            },
-            itemCount: dataList.length,
-          )),
+          SizedBox(height: $(70)),
+          selected != null
+              ? Stack(
+                  children: [
+                    buildListItem(context, 0, selected!),
+                    selected!.popular
+                        ? Positioned(
+                            child: Text(
+                              'MOST POPULAR',
+                              style: TextStyle(color: Colors.black, fontSize: $(9), fontFamily: 'Poppins'),
+                            ).intoContainer(
+                              decoration: BoxDecoration(color: Color(0xffFED700), borderRadius: BorderRadius.circular(4)),
+                              padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(3)),
+                            ),
+                            right: $(40),
+                          )
+                        : Container(),
+                  ],
+                )
+              : Container(),
+          Expanded(child: Container()),
+          TitleTextWidget(
+            'See plans',
+            ColorConstant.BlueColor,
+            FontWeight.normal,
+            $(13),
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () {
+            Navigator.push<PayPlanEntity>(context, MaterialPageRoute(builder: (context) => PayAvatarPlansScreen(dataList: dataList))).then((value) {
+              if (value != null) {
+                setState(() {
+                  selected = value;
+                });
+              }
+            });
+          }),
           TitleTextWidget(
             'Purchase for \$${selected?.price}',
             ColorConstant.White,

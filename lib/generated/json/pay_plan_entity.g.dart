@@ -179,6 +179,10 @@ PayPlanEntity $PayPlanEntityFromJson(Map<String, dynamic> json) {
 	if (userId != null) {
 		payPlanEntity.userId = userId;
 	}
+	final bool? popular = jsonConvert.convert<bool>(json['popular']);
+	if (popular != null) {
+		payPlanEntity.popular = popular;
+	}
 	return payPlanEntity;
 }
 
@@ -228,5 +232,6 @@ Map<String, dynamic> $PayPlanEntityToJson(PayPlanEntity entity) {
 	data['google_play_plan_id'] = entity.googlePlayPlanId;
 	data['ai_avatar_credit'] = entity.aiAvatarCredit;
 	data['user_id'] = entity.userId;
+	data['popular'] = entity.popular;
 	return data;
 }

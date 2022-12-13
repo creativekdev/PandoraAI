@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
@@ -18,6 +19,7 @@ import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -310,10 +312,26 @@ class CartoonizerApi extends BaseRequester {
     return post('/ai_avatar/create', params: params);
   }
 
-  Future<List<dynamic>?> listAllAvatarAi() async {
+  Future<List<AvatarAiListEntity>?> listAllAvatarAi() async {
     var baseEntity = await get('/ai_avatar/all');
-    //todo
-    return [];
+    if (baseEntity == null) {
+      return null;
+    }
+    var list = jsonConvert.convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']) ?? [];
+    //todo 测试代码
+    list.forEach((element) {
+      if (element.outputImages.isEmpty) {
+        element.outputImages = [
+          'https://t14.baidu.com/it/u=1549014775,1328934869&fm=82&w=255&h=255&img.JPEG',
+          'https://img1.baidu.com/it/u=2836646478,2542552528&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=493',
+          'https://img1.baidu.com/it/u=3621198635,64328590&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=729',
+          'https://img2.baidu.com/it/u=585740010,3718850255&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333',
+          'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg',
+          'https://img1.baidu.com/it/u=1205291917,2476925252&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=460',
+        ].map((e) => AvatarChildEntity()..url = e).toList();
+      }
+    });
+    return list;
   }
 
   Future<BaseEntity?> getAvatarAiDetail({required String token}) async {

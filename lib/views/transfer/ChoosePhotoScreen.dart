@@ -18,8 +18,9 @@ import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/uploader.dart';
-import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -37,7 +38,6 @@ import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
@@ -660,7 +660,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             }
           }
           var uint8list = await addWaterMark(image: imageData, watermark: image.image, originalImage: cropImage);
-          await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+          String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+          var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
+          await file.writeAsBytes(uint8list.toList());
+          await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
           CommonExtension().showImageSavedOkToast(context);
         }));
       } else {
@@ -672,7 +675,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           }
         }
         var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
-        await ImageGallerySaver.saveImage(uint8list, quality: 100, name: "Cartoonizer_${DateTime.now().millisecondsSinceEpoch}");
+        String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+        var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
+        await file.writeAsBytes(uint8list.toList());
+        await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
         CommonExtension().showImageSavedOkToast(context);
       }
     }

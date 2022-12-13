@@ -127,3 +127,5 @@ class OnHashTagChangeEvent extends BaseEvent<String> {
 }
 
 class OnClearCacheEvent extends BaseEvent {}
+
+class OnCreateAvatarAiEvent extends BaseEvent {}
