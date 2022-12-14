@@ -27,6 +27,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
   @override
   initState() {
     super.initState();
+    logEvent(Events.avatar_list_loading);
     imageSize = ScreenUtil.screenSize.width / 3;
     listListen = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       _refreshController.callRefresh();

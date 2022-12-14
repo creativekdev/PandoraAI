@@ -3,6 +3,7 @@ enum AppTabId {
   DISCOVERY,
   MINE,
   ACTIVITY,
+  AI,
 }
 
 extension AppTabIdEx on AppTabId {
@@ -16,6 +17,8 @@ extension AppTabIdEx on AppTabId {
         return 3;
       case AppTabId.ACTIVITY:
         return 4;
+      case AppTabId.AI:
+        return 5;
       default:
         return 0;
     }

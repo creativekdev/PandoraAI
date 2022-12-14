@@ -27,6 +27,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.avatar_create_loading);
     imageWidth = ScreenUtil.screenSize.width / 5;
     imageHeight = imageWidth;
   }

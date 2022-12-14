@@ -34,6 +34,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   @override
   void initState() {
     super.initState();
+    logEvent(Events.avatar_detail_loading);
     api = CartoonizerApi().bindState(this);
     entity = widget.entity;
     itemSize = (ScreenUtil.screenSize.width - $(70)) / 2;

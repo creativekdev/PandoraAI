@@ -43,6 +43,7 @@ class Events {
   static String open_user_profile = "open_user_profile";
   static String delete_account = "delete_account";
   static String tab_effect_loading = "tab_effect_loading";
+  static String tab_ai_loading = "tab_ai_loading";
   static String tab_discovery_loading = "tab_discovery_loading";
   static String tab_me_loading = "tab_me_loading";
   static String user_discovery_loading = "user_discovery_loading";
@@ -58,6 +59,12 @@ class Events {
   static String rate_no_thanks = "rate_no_thanks";
   static String admob_source_data = 'admob_source_data';
   static String transform_img_failed = 'transform_img_failed';
+  static String avatar_list_loading = 'avatar_list_loading';
+  static String avatar_detail_loading = 'avatar_detail_loading';
+  static String avatar_create_loading = 'avatar_create_loading';
+  static String avatar_introduce_loading = 'avatar_introduce_loading';
+  static String avatar_submit_photos = 'avatar_submit_photos';
+  static String avatar_cancel_submit_photos = 'avatar_cancel_submit_photos';
 }
 
 logEvent(String eventName, {Map<String, dynamic>? eventValues}) {

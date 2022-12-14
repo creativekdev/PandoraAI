@@ -93,11 +93,13 @@ class AvatarAiController extends GetxController {
       uploadedList.add(UploadFile(imageUrl: url, file: file));
       update();
     }
+    logEvent(Events.avatar_submit_photos);
     return true;
   }
 
   void stopUpload() {
     stop = true;
+    logEvent(Events.avatar_cancel_submit_photos);
   }
 
   Future<BaseEntity?> submit({required BioStyle style, required String name}) async {

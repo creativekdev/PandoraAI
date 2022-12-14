@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/ai/avatar/tab_ai_fragment.dart';
 import 'package:cartoonizer/views/discovery/discovery_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_fragment.dart';
 import 'package:cartoonizer/views/mine/mine_fragment.dart';
@@ -19,6 +20,18 @@ List<AppRoleTabItem> buildTabItem() => [
         fragmentBuilder: (key) => EffectFragment(
           key: key,
           tabId: AppTabId.HOME,
+        ),
+      ),
+      //Home
+      AppRoleTabItem(
+        id: AppTabId.AI.id(),
+        normalIcon: Images.ic_tab_ai_normal,
+        selectedIcon: Images.ic_tab_ai_selected,
+        titleBuilder: (context) => StringConstant.tabAi,
+        keyBuilder: () => GlobalKey<TabAiFragmentState>(),
+        fragmentBuilder: (key) => TabAiFragment(
+          key: key,
+          tabId: AppTabId.AI,
         ),
       ),
       //Discovery

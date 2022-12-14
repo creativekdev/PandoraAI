@@ -3,13 +3,19 @@ import 'dart:math';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 
 import 'avatar.dart';
 
 class AvatarIntroduceScreen extends StatefulWidget {
-  AvatarIntroduceScreen({Key? key}) : super(key: key);
+  bool fromTab = false;
+
+  AvatarIntroduceScreen({
+    Key? key,
+    this.fromTab = false,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AvatarIntroduceScreenState();
@@ -25,22 +31,21 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
   Size? size;
 
   @override
+  void initState() {
+    super.initState();
+    logEvent(Events.avatar_introduce_loading);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backgroundColor: ColorConstant.BackgroundColor,
-        backIcon: Icon(
-          Icons.close,
-          size: $(24),
-          color: ColorConstant.White,
-        ).hero(tag: Avatar.logoBackTag),
-      ),
+      appBar: widget.fromTab ? null : AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: $(10)),
+            SizedBox(height: widget.fromTab ? $(30) : $(10)),
             shaderMask(
                 context: context,
                 child: Text(

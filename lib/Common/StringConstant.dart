@@ -36,6 +36,7 @@ class StringConstant {
   static const send = "Send";
   static const home = app_name;
   static const tabHome = "Home";
+  static const tabAi = "Pandora";
   static const tabHalloween = "Halloween";
   static const tabDiscovery = "Discovery";
   static const tabMine = "My";
