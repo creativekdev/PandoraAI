@@ -27,6 +27,10 @@ AvatarAiListEntity $AvatarAiListEntityFromJson(Map<String, dynamic> json) {
 	if (outputImages != null) {
 		avatarAiListEntity.outputImages = outputImages;
 	}
+	final String? coverImages = jsonConvert.convert<String>(json['cover_images']);
+	if (coverImages != null) {
+		avatarAiListEntity.coverImages = coverImages;
+	}
 	final String? status = jsonConvert.convert<String>(json['status']);
 	if (status != null) {
 		avatarAiListEntity.status = status;
@@ -62,6 +66,7 @@ Map<String, dynamic> $AvatarAiListEntityToJson(AvatarAiListEntity entity) {
 	data['role'] = entity.role;
 	data['train_images'] = entity.trainImages;
 	data['output_images'] =  entity.outputImages.map((v) => v.toJson()).toList();
+	data['cover_images'] = entity.coverImages;
 	data['status'] = entity.status;
 	data['expiry'] = entity.expiry;
 	data['image_count'] = entity.imageCount;

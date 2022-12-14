@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
@@ -17,7 +18,7 @@ class AvatarAiListScreen extends StatefulWidget {
   State<AvatarAiListScreen> createState() => _AvatarAiListScreenState();
 }
 
-class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
+class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   late CartoonizerApi api;
   List<AvatarAiListEntity> dataList = [];
@@ -55,7 +56,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
@@ -113,7 +114,8 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
 
   Widget buildItem(BuildContext context, int index) {
     var data = dataList[index];
-    var list = data.outputImages.length > 6 ? data.outputImages.sublist(0, 6) : data.outputImages;
+    var coverImage = data.coverImage();
+    var list = coverImage.length > 6 ? coverImage.sublist(0, 6) : coverImage;
     Widget item;
     bool ready = data.status == AvatarStatus.completed.value();
     if (ready) {
@@ -121,12 +123,17 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
         children: [
           ...list.reversed.toList().transfer((e, index) => Positioned(
                 child: ClipRRect(
-                  child: CachedNetworkImageUtils.custom(context: context, imageUrl: e.url, width: imageSize, height: imageSize),
+                  child: CachedNetworkImageUtils.custom(context: context, imageUrl: e, width: imageSize, height: imageSize),
                   borderRadius: BorderRadius.circular($(8)),
-                ).hero(tag: e.url),
+                ).hero(tag: e),
                 top: 0,
                 left: index * ((ScreenUtil.screenSize.width - $(30) - imageSize) / (list.length - 1)),
               )),
+          Container(
+            width: ScreenUtil.screenSize.width - $(30),
+            height: imageSize,
+            color: Color(0x37000000),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -147,10 +154,18 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
         decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Colors.grey.shade900),
       )
           .intoGestureDetector(onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AvatarDetailScreen(
-                  entity: data,
-                )));
+        showLoading().whenComplete(() {
+          api.getAvatarAiDetail(token: data.token).then((value) {
+            hideLoading().whenComplete(() {
+              if (value != null) {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AvatarDetailScreen(
+                          entity: value,
+                        )));
+              }
+            });
+          });
+        });
       });
     } else {
       item = Column(

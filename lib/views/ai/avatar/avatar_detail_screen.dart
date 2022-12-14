@@ -39,7 +39,6 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     entity = widget.entity;
     itemSize = (ScreenUtil.screenSize.width - $(70)) / 2;
     initDataList();
-    refreshData();
   }
 
   void initDataList() {
@@ -56,17 +55,6 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
         dataList.add(list);
       }
       list.add(element);
-    });
-  }
-
-  void refreshData() {
-    api.getAvatarAiDetail(token: entity.token).then((value) {
-      if (value != null) {
-        setState(() {
-          entity = value;
-          initDataList();
-        });
-      }
     });
   }
 
