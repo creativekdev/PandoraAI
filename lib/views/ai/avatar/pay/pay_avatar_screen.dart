@@ -80,27 +80,15 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             $(13),
             maxLines: 10,
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))),
-          SizedBox(height: $(70)),
-          selected != null
-              ? Stack(
-                  children: [
-                    buildListItem(context, 0, selected!),
-                    selected!.popular
-                        ? Positioned(
-                            child: Text(
-                              'MOST POPULAR',
-                              style: TextStyle(color: Colors.black, fontSize: $(9), fontFamily: 'Poppins'),
-                            ).intoContainer(
-                              decoration: BoxDecoration(color: Color(0xffFED700), borderRadius: BorderRadius.circular(4)),
-                              padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(3)),
-                            ),
-                            right: $(40),
-                          )
-                        : Container(),
-                  ],
-                )
-              : Container(),
-          Expanded(child: Container()),
+          SizedBox(height: $(50)),
+          Expanded(
+              child: ListView.builder(
+            padding: EdgeInsets.only(top: $(15), bottom: $(15)),
+            itemBuilder: (context, index) {
+              return buildListItem(context, index, dataList[index]);
+            },
+            itemCount: dataList.length,
+          )),
           TitleTextWidget(
             'See plans',
             ColorConstant.BlueColor,
@@ -114,7 +102,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
                 });
               }
             });
-          }),
+          }).visibility(visible: false),
           TitleTextWidget(
             'Purchase for \$${selected?.price}',
             ColorConstant.White,
@@ -162,7 +150,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
 
   Widget buildListItem(BuildContext context, int index, PayPlanEntity entity) {
     bool checked = selected?.id == entity.id;
-    return Row(
+    Widget item = Row(
       children: [
         Container(
           margin: EdgeInsets.symmetric(horizontal: $(15)),
@@ -209,13 +197,32 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
         TitleTextWidget('\$${entity.price}', ColorConstant.White, FontWeight.w500, $(17)),
         SizedBox(width: $(15)),
       ],
-    )
-        .intoContainer(padding: EdgeInsets.symmetric(vertical: $(25)))
-        .intoMaterial(
+    ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(25))).intoMaterial(
           color: Colors.grey.shade900,
           borderRadius: BorderRadius.circular($(8)),
-        )
-        .intoGestureDetector(onTap: () {
+        );
+    Widget result;
+    if (index == 0) {
+      result = Stack(
+        children: [
+          item.marginOnly(top: 10),
+          Positioned(
+            child: Text(
+              'MOST POPULAR',
+              style: TextStyle(color: Colors.black, fontSize: $(9), fontFamily: 'Poppins'),
+            ).intoContainer(
+              decoration: BoxDecoration(color: Color(0xffFED700), borderRadius: BorderRadius.circular(4)),
+              padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(3)),
+            ),
+            right: $(40),
+          )
+        ],
+      );
+    } else {
+      result = item;
+    }
+
+    return result.intoGestureDetector(onTap: () {
       setState(() {
         selected = entity;
       });

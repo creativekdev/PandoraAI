@@ -60,31 +60,33 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
                       init: controller,
                       builder: (controller) => TitleTextWidget(
                             '${controller.uploadedList.isEmpty ? 'Compressing' : 'Uploading'} photos$dot',
-                            ColorConstant.TextBlack,
+                            ColorConstant.White,
                             FontWeight.w500,
                             $(18),
                             maxLines: 5,
                           ));
                 }),
+            SizedBox(height: 6),
             GetBuilder<AvatarAiController>(
                 init: controller,
                 builder: (controller) => TitleTextWidget(
                       '${controller.uploadedList.isEmpty ? controller.compressedList.length : controller.uploadedList.length}/${controller.imageList.length}',
-                      ColorConstant.TextBlack,
+                      ColorConstant.White,
                       FontWeight.normal,
                       $(16),
                       maxLines: 5,
                     )),
+            SizedBox(height: 12),
             Divider(
               height: 1,
               color: ColorConstant.LineColor,
             ),
             TitleTextWidget(
               'Cancel',
-              ColorConstant.TextBlack,
+              ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),
-            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 6), width: double.maxFinite).intoGestureDetector(onTap: () {
+            ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
               controller.stopUpload();
               Navigator.of(context).pop(false);
             }),
@@ -93,7 +95,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
             .intoContainer(
               padding: EdgeInsets.only(left: $(15), right: $(15), bottom: $(4), top: $(15)),
               margin: EdgeInsets.symmetric(horizontal: $(35), vertical: $(15)),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(color: ColorConstant.BackgroundColor, borderRadius: BorderRadius.circular(8)),
             )
             .intoCenter()
             .intoMaterial(color: Colors.transparent),

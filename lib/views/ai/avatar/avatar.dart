@@ -25,7 +25,7 @@ class Avatar {
   static create(BuildContext context) async {
     UserManager userManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () {
-      if (userManager.user!.userAvatarCredit > 0) {
+      if (userManager.user!.aiAvatarCredit > 0) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => AvatarAiCreateScreen())).then((value) {
           if (value ?? false) {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());

@@ -8,7 +8,7 @@ class SocialUserInfo {
   String status = "registered";
   String appleId = "";
   int cartoonizeCredit = 0;
-  int userAvatarCredit = 0;
+  int aiAvatarCredit = 0;
   MemberInfo? member;
 
   Map<String, dynamic> userSubscription = {};
@@ -35,7 +35,7 @@ class SocialUserInfo {
     appleId = json['apple_id'] ?? '';
     cartoonizeCredit = json['cartoonize_credit'] ?? 0;
     creditcards = json['creditcards'] ?? [];
-    userAvatarCredit = json['user_avatar_credit'] ?? 0;
+    aiAvatarCredit = json['ai_avatar_credit'] ?? 0;
     var subscription = json['user_subscription'] ?? [];
 
     for (int i = 0; i < subscription.length; i++) {
@@ -60,7 +60,7 @@ class SocialUserInfo {
       'apple_id': appleId,
       'cartoonize_credit': cartoonizeCredit,
       'creditcards': creditcards,
-      'user_avatar_credit': userAvatarCredit,
+      'ai_avatar_credit': aiAvatarCredit,
     };
     if (userSubscription.keys.isEmpty) {
       map['user_subscription'] = [];
