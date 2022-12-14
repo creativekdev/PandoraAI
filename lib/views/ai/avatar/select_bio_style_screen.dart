@@ -170,6 +170,6 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
               }
             })
           ],
-        ));
+        ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)));
   }
 }

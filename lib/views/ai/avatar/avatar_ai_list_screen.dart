@@ -3,13 +3,11 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
-import 'avatar.dart';
 import 'avatar_detail_screen.dart';
 
 class AvatarAiListScreen extends StatefulWidget {
@@ -108,7 +106,7 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => AvatarIntroduceScreen()));
           })
         ],
-      ),
+      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
     );
   }
 

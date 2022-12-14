@@ -177,7 +177,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             });
           }),
         ],
-      ),
+      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
     );
   }
 

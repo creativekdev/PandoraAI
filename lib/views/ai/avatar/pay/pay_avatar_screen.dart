@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
-import 'package:cartoonizer/views/StripePaymentScreen.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_plans_screen.dart';
 
 import 'pay_avatar_android.dart';
@@ -131,25 +129,34 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
           )
               .intoGestureDetector(onTap: () {
             if (Platform.isAndroid) {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => StripePaymentScreen(
-                            planId: selected!.id.toString(),
-                            buySingle: true,
-                          )))
-                  .then((value) {
-                var paymentResult = GetStorage().read('payment_result');
-                if (paymentResult != null && paymentResult as bool == true) {
-                  GetStorage().remove("payment_result");
-                  Navigator.of(context).pop(true);
-                }
+              showLoading().whenComplete(() {
+                PayAvatarAndroid(planId: selected!.id.toString()).startPay(context, (result) {
+                  hideLoading().whenComplete(() {
+                    if (result) {
+                      Navigator.of(context).pop(true);
+                    }
+                  });
+                });
               });
             } else {
-              Navigator.of(context).push(Right2LeftRouter(child: PayAvatarIOS(planId: selected!.appleStorePlanId,), opaque: true));
+              PayAvatarIOS? avatarIOS;
+              showLoading().whenComplete(() {
+                avatarIOS = PayAvatarIOS(
+                  planId: selected!.appleStorePlanId,
+                );
+                avatarIOS!.startPay((result) {
+                  hideLoading().whenComplete(() {
+                    avatarIOS?.dispose();
+                    if (result) {
+                      Navigator.of(context).pop(true);
+                    }
+                  });
+                });
+              });
             }
           }).visibility(visible: selected != null),
         ],
-      ),
+      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
     );
   }
 

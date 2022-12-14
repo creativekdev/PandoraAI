@@ -122,7 +122,7 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
           .intoGestureDetector(onTap: () {
         Avatar.create(context);
       }),
-    );
+    ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom));
   }
 
   Widget buildItem(BuildContext context, int index) {

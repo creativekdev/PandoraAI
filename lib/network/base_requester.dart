@@ -243,7 +243,8 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return null;
     }
     var headers = response.headers;
-    if (response.statusCode == 200) {
+    var statusCode = response.statusCode ?? 0;
+    if (statusCode >= 200 && statusCode < 300) {
       onPreHandleResult(response);
       var baseEntity = BaseEntity(data: response.data, headers: headers);
       return baseEntity;

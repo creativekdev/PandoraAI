@@ -180,7 +180,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
               ],
             )),
         init: controller,
-      ),
+      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
     );
   }
 

@@ -1,15 +1,26 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/views/StripePaymentScreen.dart';
 
-class PayAvatarAndroid extends StatefulWidget {
-  const PayAvatarAndroid({Key? key}) : super(key: key);
+class PayAvatarAndroid {
+  String planId;
 
-  @override
-  State<PayAvatarAndroid> createState() => _PayAvatarAndroidState();
-}
+  PayAvatarAndroid({required this.planId});
 
-class _PayAvatarAndroidState extends State<PayAvatarAndroid> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  startPay(BuildContext context, Function(bool result) callback) async {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => StripePaymentScreen(
+                  planId: planId,
+                  buySingle: true,
+                )))
+        .then((value) {
+      var paymentResult = GetStorage().read('payment_result');
+      if (paymentResult != null && paymentResult as bool == true) {
+        GetStorage().remove("payment_result");
+        callback.call(true);
+      } else {
+        callback.call(false);
+      }
+    });
   }
 }

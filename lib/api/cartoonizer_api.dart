@@ -249,6 +249,11 @@ class CartoonizerApi extends BaseRequester {
     var baseEntity = await post("/plan/buy_single", params: body);
     return baseEntity;
   }
+  // buy plan with stripe
+  Future<BaseEntity?> buyApple(body) async {
+    var baseEntity = await post("/plan/apple_store/buy", params: body);
+    return baseEntity;
+  }
 
   Future<MsgPageEntity?> listMsg({
     required int from,
