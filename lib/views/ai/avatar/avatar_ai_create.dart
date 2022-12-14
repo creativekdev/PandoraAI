@@ -80,9 +80,8 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       ),
                       SizedBox(height: 12),
                       TitleTextWidget(
-                        'Close-up selfies, same person, adults, '
-                        'variety of backgrounds, facial expressions, '
-                        'head tilts and angles',
+                        'Show your shoulders, close-up selfies, same person in the photos, '
+                        'variety of loation/backgrounds/angels, different facial expressions. ',
                         ColorConstant.White,
                         FontWeight.normal,
                         $(14),
@@ -101,8 +100,8 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       ),
                       SizedBox(height: 12),
                       TitleTextWidget(
-                        'Group shots, full-length, kids, covered faces,'
-                        ' animals, monotonous pics, nudes',
+                        'Group shots, only photos looking INTO the camero, covered faces/sunglasses,'
+                        'monotonous pics, nudes, kids(ONLY 18+ ADULTS)',
                         ColorConstant.White,
                         FontWeight.normal,
                         $(14),
@@ -126,8 +125,9 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: '  Photos will be immediately deleted from our servers '
-                                  'after the Avatars are ready',
+                              text: 'We only use your photos to train the AI model and render your avatars'
+                                  'Both the input photos and the AI model will be deleted from our servers within 24 hours.'
+                                  'You will have the option to keep the AI model as a premium service.',
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: ColorConstant.White,

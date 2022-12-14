@@ -72,9 +72,10 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
           TitleTextWidget('Why it\'s paid?', ColorConstant.White, FontWeight.w600, $(17)),
           SizedBox(height: $(12)),
           TitleTextWidget(
-            'Magic Avatars consume tremendous '
-            'computation power to create amazing avatars for you. '
-            'It\'s expensive, but we made it as affordable as possible',
+            'Pandaro Avatars use state-of-the-art AI technology(DreamBooth) '
+            'to create amazing avatars for you. It consumes lots of  '
+            'computation power (GPU) and is expensive. We have made it '
+            'as affordale as possible (the lowest in the market) ',
             ColorConstant.White,
             FontWeight.w600,
             $(13),
