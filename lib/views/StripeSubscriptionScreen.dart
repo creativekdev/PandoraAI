@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/dialog.dart';
 import 'package:flutter/material.dart' as material;
 
 import 'package:cartoonizer/common/importFile.dart';
@@ -87,13 +88,23 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   void _handleStripePayment() async {
     var subscription = isYear ? subscriptions["yearly"] : subscriptions["monthly"];
 
-    await Navigator.push(
+    bool? result = await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/StripePaymentScreen"),
         builder: (context) => StripePaymentScreen(planId: subscription["plan_id"]),
       ),
     );
+    if (result ?? false) {
+      Get.dialog(
+        CommonDialog(
+          image: ImagesConstant.ic_success,
+          description: StringConstant.payment_successfully,
+          isCancel: false,
+          confirmText: "OK",
+        ),
+      );
+    }
 
     var paymentResult = GetStorage().read('payment_result');
 

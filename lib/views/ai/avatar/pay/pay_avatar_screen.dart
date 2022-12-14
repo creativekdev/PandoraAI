@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
@@ -139,14 +140,14 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
                   .then((value) {
                 var paymentResult = GetStorage().read('payment_result');
                 if (paymentResult != null && paymentResult as bool == true) {
+                  GetStorage().remove("payment_result");
                   Navigator.of(context).pop(true);
                 }
               });
             } else {
-              //todo
+              Navigator.of(context).push(Right2LeftRouter(child: PayAvatarIOS(planId: selected!.appleStorePlanId,), opaque: true));
             }
           }).visibility(visible: selected != null),
-          Platform.isIOS ? PayAvatarIOS() : PayAvatarAndroid(),
         ],
       ),
     );

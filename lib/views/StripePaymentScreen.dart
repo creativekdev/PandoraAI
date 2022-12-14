@@ -178,14 +178,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
     GetStorage().write('payment_result', true);
     EventBusHelper().eventBus.fire(OnPaySuccessEvent());
     Navigator.pop(context, true);
-    Get.dialog(
-      CommonDialog(
-        image: ImagesConstant.ic_success,
-        description: StringConstant.payment_successfully,
-        isCancel: false,
-        confirmText: "OK",
-      ),
-    );
+
   }
 
   void onCreditCardModelChange(CreditCardModel? creditCardModel) {
