@@ -114,18 +114,19 @@ class _AvatarAiListScreenState extends State<AvatarAiListScreen> {
 
   Widget buildItem(BuildContext context, int index) {
     var data = dataList[index];
+    var list = data.outputImages.length > 6 ? data.outputImages.sublist(0, 6) : data.outputImages;
     Widget item;
     bool ready = data.status == AvatarStatus.completed.value();
     if (ready) {
       item = Stack(
         children: [
-          ...data.outputImages.transfer((e, index) => Positioned(
+          ...list.reversed.toList().transfer((e, index) => Positioned(
                 child: ClipRRect(
                   child: CachedNetworkImageUtils.custom(context: context, imageUrl: e.url, width: imageSize, height: imageSize),
                   borderRadius: BorderRadius.circular($(8)),
                 ).hero(tag: e.url),
                 top: 0,
-                left: index * ((ScreenUtil.screenSize.width - $(30) - imageSize) / (data.outputImages.length - 1)),
+                left: index * ((ScreenUtil.screenSize.width - $(30) - imageSize) / (list.length - 1)),
               )),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

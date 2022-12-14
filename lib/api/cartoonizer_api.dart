@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
@@ -243,6 +244,11 @@ class CartoonizerApi extends BaseRequester {
     var baseEntity = await post("/plan/buy", params: body);
     return baseEntity;
   }
+  // buy plan with stripe
+  Future<BaseEntity?> buySingle(body) async {
+    var baseEntity = await post("/plan/buy_single", params: body);
+    return baseEntity;
+  }
 
   Future<MsgPageEntity?> listMsg({
     required int from,
@@ -325,19 +331,24 @@ class CartoonizerApi extends BaseRequester {
           'https://t14.baidu.com/it/u=1549014775,1328934869&fm=82&w=255&h=255&img.JPEG',
           'https://img1.baidu.com/it/u=2836646478,2542552528&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=493',
           'https://img1.baidu.com/it/u=3621198635,64328590&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=729',
-          'https://img2.baidu.com/it/u=585740010,3718850255&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333',
-          'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg',
-          'https://img1.baidu.com/it/u=1205291917,2476925252&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=460',
-        ].map((e) => AvatarChildEntity()..url = e).toList();
+          // 'https://img2.baidu.com/it/u=585740010,3718850255&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333',
+          // 'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg',
+          // 'https://img1.baidu.com/it/u=1205291917,2476925252&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=460',
+        ]
+            .map((e) => AvatarChildEntity()
+              ..url = e
+              ..style = 'Test')
+            .toList();
       }
     });
     return list;
   }
 
-  Future<BaseEntity?> getAvatarAiDetail({required String token}) async {
-    return await get('/ai_avatar/get', params: {
+  Future<AvatarAiListEntity?> getAvatarAiDetail({required String token}) async {
+    var baseEntity = await get('/ai_avatar/get', params: {
       'token': token,
     });
+    return jsonConvert.convert<AvatarAiListEntity>(baseEntity?.data['data']);
   }
 
   Future<List<PayPlanEntity>?> listAllBuyPlan(String category) async {

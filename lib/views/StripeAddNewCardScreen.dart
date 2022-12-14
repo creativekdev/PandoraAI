@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/network/base_requester.dart';
 import 'package:http/http.dart';
 // import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -20,8 +21,13 @@ import 'account/LoginScreen.dart';
 
 class StripeAddNewCardScreen extends StatefulWidget {
   final String planId;
+  final bool buySingle;
 
-  const StripeAddNewCardScreen({Key? key, required this.planId}) : super(key: key);
+  const StripeAddNewCardScreen({
+    Key? key,
+    required this.planId,
+    this.buySingle = false,
+  }) : super(key: key);
 
   @override
   _StripeAddNewCardScreenState createState() => _StripeAddNewCardScreenState();
@@ -40,10 +46,12 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
   String cvvCode = '';
   String zipCode = '';
   bool isCvvFocused = false;
+  late bool buySingle;
 
   @override
   void initState() {
     super.initState();
+    buySingle = widget.buySingle;
   }
 
   @override
@@ -93,7 +101,12 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
         "fundingSource": "",
         "stripeToken": tokenData['id']
       };
-      var baseEntity = await CartoonizerApi().buyPlan(body);
+      BaseEntity? baseEntity;
+      if (buySingle) {
+        baseEntity = await CartoonizerApi().buySingle(body);
+      } else {
+        baseEntity = await CartoonizerApi().buyPlan(body);
+      }
       if (baseEntity != null) {
         _handlePaymentSuccess();
       }

@@ -80,7 +80,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             FontWeight.w600,
             $(13),
             maxLines: 10,
-          ),
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))),
           SizedBox(height: $(70)),
           selected != null
               ? Stack(
@@ -130,7 +130,13 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
           )
               .intoGestureDetector(onTap: () {
             if (Platform.isAndroid) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => StripePaymentScreen(planId: selected!.id.toString()))).then((value) {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                      builder: (context) => StripePaymentScreen(
+                            planId: selected!.id.toString(),
+                            buySingle: true,
+                          )))
+                  .then((value) {
                 var paymentResult = GetStorage().read('payment_result');
                 if (paymentResult != null && paymentResult as bool == true) {
                   Navigator.of(context).pop(true);

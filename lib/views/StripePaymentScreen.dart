@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/network/base_requester.dart';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 
@@ -16,8 +17,13 @@ import 'StripeAddNewCardScreen.dart';
 
 class StripePaymentScreen extends StatefulWidget {
   final String planId;
+  final bool buySingle;
 
-  const StripePaymentScreen({Key? key, required this.planId}) : super(key: key);
+  const StripePaymentScreen({
+    Key? key,
+    required this.planId,
+    this.buySingle = false,
+  }) : super(key: key);
 
   @override
   _StripePaymentScreenState createState() => _StripePaymentScreenState();
@@ -34,11 +40,12 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
   String cardHolderName = '';
   String cvvCode = '';
   bool isCvvFocused = false;
-
+  late bool buySingle;
   UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
+    buySingle = widget.buySingle;
     delay(() {
       initStoreInfo();
     });
@@ -151,7 +158,12 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
         "fundingSource": card["card_id"] != null ? card["card_id"] : "",
       };
 
-      var baseEntity = await CartoonizerApi().buyPlan(body);
+      BaseEntity? baseEntity;
+      if (buySingle) {
+        baseEntity = await CartoonizerApi().buySingle(body);
+      } else {
+        baseEntity = await CartoonizerApi().buyPlan(body);
+      }
       if (baseEntity != null) {
         _handlePaymentSuccess();
       }
@@ -303,7 +315,10 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/StripeAddNewCardScreen"),
-        builder: (context) => StripeAddNewCardScreen(planId: widget.planId),
+        builder: (context) => StripeAddNewCardScreen(
+          planId: widget.planId,
+          buySingle: buySingle,
+        ),
       ),
     );
   }

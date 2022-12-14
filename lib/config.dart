@@ -77,8 +77,8 @@ class DevelopmentConfig implements BaseConfig {
   // String aiHost = 'http://192.168.31.126:3000';
 
   // io
-  String host = 'https://socialbook.io';
-  String aiHost = 'https://ai.socialbook.io';
+  String host = 'https://socialbook.us';
+  String aiHost = 'https://ai.socialbook.us';
 
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
