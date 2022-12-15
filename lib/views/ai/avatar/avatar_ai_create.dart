@@ -108,7 +108,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       ),
                       SizedBox(height: 12),
                       TitleTextWidget(
-                        'Group shots, only photos looking INTO the camero, covered faces/sunglasses,'
+                        'Group shots, only photos looking INTO the camera, covered faces/sunglasses,'
                         'monotonous pics, nudes, kids(ONLY 18+ ADULTS)',
                         ColorConstant.White,
                         FontWeight.normal,
