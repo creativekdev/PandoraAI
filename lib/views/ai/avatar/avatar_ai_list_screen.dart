@@ -62,7 +62,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(
-          'Magic Avatars',
+          'Pandora Avatars',
           ColorConstant.White,
           FontWeight.w600,
           $(18),

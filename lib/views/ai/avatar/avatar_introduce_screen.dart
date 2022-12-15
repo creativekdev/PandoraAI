@@ -56,11 +56,10 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                 )),
             SizedBox(height: $(15)),
             TitleTextWidget(
-                    'The type of AI we utilise for Magic Avatars'
-                    ' may generate artefacts, inaccuracies and'
-                    ' defects in output images-it\'s out of our'
-                    ' control, So please acknowledge and accept'
-                    ' that risk before continue.',
+                    'The type of AI Pandora Avatars use can generate random results'
+                    'and may include artistic nudes, defects or otherwise shocking'
+                    'images. This is out of our countrol. Please acknowledge and accept'
+                    'that risk before continue.',
                     ColorConstant.White,
                     FontWeight.w400,
                     $(13),
@@ -78,8 +77,8 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: $(6))),
             TitleTextWidget(
-                    'The more variations you get, the'
-                    ' better chances for great result!',
+                    'The better you follow these guidelines,'
+                    ' the better chances for great result!',
                     Colors.white,
                     FontWeight.bold,
                     $(17),
