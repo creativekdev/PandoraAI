@@ -30,6 +30,7 @@ class CacheManager extends BaseManager {
   static const imageScaled = 'image_scaled';
   static const photoSourceFace = 'photo_source_face';
   static const photoSourceOther = 'photo_source_other';
+  static const avatarHistory = 'avatar_history';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

@@ -78,6 +78,14 @@ class ScreenUtil {
   static double getKeyboardHeight(BuildContext context) {
     return MediaQuery.of(context).viewInsets.bottom;
   }
+
+  static double getBottomPadding(BuildContext context) {
+    if (MediaQuery.of(context).padding.bottom == 0) {
+      return $(15);
+    } else {
+      return MediaQuery.of(context).padding.bottom;
+    }
+  }
 }
 
 double $(double value) => ScreenUtil.dp(value);

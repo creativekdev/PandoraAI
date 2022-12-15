@@ -31,6 +31,8 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
   List<PayPlanEntity> dataList = [];
   PayPlanEntity? selected;
 
+  PayAvatarPageState() : super(canCancelOnLoading: false);
+
   @override
   void initState() {
     super.initState();
@@ -143,7 +145,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             }
           }).visibility(visible: selected != null),
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 

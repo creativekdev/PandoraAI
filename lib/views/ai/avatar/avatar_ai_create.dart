@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Common/images-res.dart' as exampleRes;
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
@@ -91,7 +92,14 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                         padding: EdgeInsets.symmetric(horizontal: $(15)),
                       ),
                       SizedBox(height: 12),
-                      buildExamples(context, good: true),
+                      buildExamples(context, [
+                        exampleRes.Images.good_1,
+                        exampleRes.Images.good_2,
+                        exampleRes.Images.good_3,
+                        exampleRes.Images.good_4,
+                        exampleRes.Images.good_5,
+                        exampleRes.Images.good_6,
+                      ]),
                       SizedBox(height: 20),
                       buildIconText(
                         context,
@@ -111,7 +119,14 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                         padding: EdgeInsets.symmetric(horizontal: $(15)),
                       ),
                       SizedBox(height: 12),
-                      buildExamples(context, good: false),
+                      buildExamples(context, [
+                        exampleRes.Images.bad_1,
+                        exampleRes.Images.bad_2,
+                        exampleRes.Images.bad_3,
+                        exampleRes.Images.bad_4,
+                        exampleRes.Images.bad_5,
+                        exampleRes.Images.bad_6,
+                      ]),
                       RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
@@ -169,7 +184,15 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                 )
                     .intoGestureDetector(onTap: () {
                   if (controller.imageList.isEmpty) {
-                    showTakePhotoOptDialog(context, controller);
+                    showTakePhotoOptDialog(context, controller).then((value) {
+                      if (value ?? false) {
+                        if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
+                          startUpload(context, controller);
+                        } else {
+                          showChosenDialog(context, controller);
+                        }
+                      }
+                    });
                   } else {
                     if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
                       startUpload(context, controller);
@@ -181,7 +204,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
               ],
             )),
         init: controller,
-      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
@@ -216,11 +239,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
         )
             .then((value) {
           if (value != null) {
-            showDialog(
+            showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
                       backgroundColor: ColorConstant.BackgroundColor,
                       title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
+                      content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                      actions: [
+                        TitleTextWidget('Ok', ColorConstant.BlueColor, FontWeight.w600, $(16)).intoGestureDetector(onTap: () {
+                          Navigator.of(context).pop(true);
+                        }),
+                      ],
                     )).then((value) {
               Navigator.pop(context, true);
             });
@@ -231,38 +260,38 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 
   void showChosenDialog(BuildContext context, AvatarAiController controller) {
-    showDialog(
+    showDialog<bool>(
         context: context,
         builder: (_) {
           return AddPhotosDialog(controller: controller);
-        });
+        }).then((value) {
+      if (value ?? false) {
+        startUpload(context, controller);
+      }
+    });
   }
 
-  Widget buildExamples(
-    BuildContext context, {
-    bool good = true,
-  }) {
+  Widget buildExamples(BuildContext context, List<String> examples) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: $(15)),
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        var image = CachedNetworkImageUtils.custom(
-          context: context,
-          imageUrl: imgUrl,
-          width: imageWidth,
-          height: imageHeight,
-          fit: BoxFit.cover,
-        );
-        return buildListItem(context, index: index, checked: good, child: image);
+        return buildListItem(context,
+            index: index,
+            child: Image.asset(
+              examples[index],
+              width: imageWidth,
+              height: imageHeight,
+              fit: BoxFit.cover,
+            ));
       },
-      itemCount: 5,
+      itemCount: examples.length,
     ).intoContainer(height: imageHeight, width: ScreenUtil.screenSize.width);
   }
 
   Widget buildListItem(
     BuildContext context, {
     required int index,
-    required bool checked,
     required Widget child,
   }) {
     return ClipRRect(
@@ -304,7 +333,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 }
 
-Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controller) async => showModalBottomSheet(
+Future<bool?> showTakePhotoOptDialog(BuildContext context, AvatarAiController controller) async => showModalBottomSheet<bool>(
     context: context,
     builder: (context) {
       return Column(
@@ -318,7 +347,7 @@ Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controlle
           )
               .intoGestureDetector(onTap: () {
             controller.pickImageFromCamera().then((value) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(value);
             });
           }),
           Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
@@ -330,7 +359,7 @@ Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controlle
           )
               .intoGestureDetector(onTap: () {
             controller.pickImageFromGallery().then((value) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(value);
             });
           }),
           SizedBox(height: 10),

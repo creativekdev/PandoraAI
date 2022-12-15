@@ -13,6 +13,8 @@ class AvatarAiListEntity {
   String trainImages = '';
   @JSONField(name: "output_images")
   late List<AvatarChildEntity> outputImages;
+  @JSONField(name: "cover_images")
+  String coverImages = '';
   String status = '';
   int expiry = 0;
   @JSONField(name: "image_count")
@@ -32,6 +34,10 @@ class AvatarAiListEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+
+  List<String> coverImage() {
+    return coverImages.split(',');
   }
 }
 

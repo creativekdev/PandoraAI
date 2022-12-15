@@ -31,6 +31,8 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   late double itemSize;
   late CartoonizerApi api;
 
+  _AvatarDetailScreenState() : super(canCancelOnLoading: false);
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +41,6 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     entity = widget.entity;
     itemSize = (ScreenUtil.screenSize.width - $(70)) / 2;
     initDataList();
-    refreshData();
   }
 
   void initDataList() {
@@ -49,24 +50,13 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
       if (dataList.isEmpty) {
         list = [];
         dataList.add(list);
-      } else if (dataList.last.length < 2) {
+      } else if (dataList.last.length < 2 && dataList.last.first.style == element.style) {
         list = dataList.last;
       } else {
         list = [];
         dataList.add(list);
       }
       list.add(element);
-    });
-  }
-
-  void refreshData() {
-    api.getAvatarAiDetail(token: entity.token).then((value) {
-      if (value != null) {
-        setState(() {
-          entity = value;
-          initDataList();
-        });
-      }
     });
   }
 
@@ -166,10 +156,19 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
               .intoGestureDetector(onTap: () {
             showLoading().whenComplete(() async {
               var saveList = entity.outputImages;
-              for (var item in saveList) {
+              for (int i = 0; i < saveList.length; i++) {
+                var item = saveList[i];
                 var file = await SyncDownloadFile(url: item.url, type: 'png').getImage();
                 if (file != null) {
-                  await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
+                  showLoading(
+                      progressWidget: Text(
+                    '${i}/${entity.outputImages.length}',
+                    style: TextStyle(
+                      color: ColorConstant.White,
+                      fontFamily: 'Poppins',
+                    ),
+                  ));
+                  await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
                 }
               }
               hideLoading().whenComplete(() {
@@ -178,7 +177,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             });
           }),
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
@@ -186,7 +185,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     if (Platform.isAndroid) {
       FlutterForbidshot.setAndroidForbidOn();
     }
-    var pos = entity.outputImages.findPosition((data) => data.url == data.url) ?? 0;
+    var pos = entity.outputImages.findPosition((e) => e.url == data.url) ?? 0;
     List<String> images = entity.outputImages.map((e) => e.url ?? '').toList();
     Navigator.push(
       context,

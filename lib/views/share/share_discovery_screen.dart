@@ -295,7 +295,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               ColorConstant.White,
               FontWeight.normal,
               $(16),
-            ),
+            ).intoContainer(margin: EdgeInsets.only(left: $(10))),
             backAction: () async {
               if (focusNode.hasFocus) {
                 FocusScope.of(context).requestFocus(FocusNode());

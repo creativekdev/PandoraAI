@@ -244,11 +244,13 @@ class CartoonizerApi extends BaseRequester {
     var baseEntity = await post("/plan/buy", params: body);
     return baseEntity;
   }
+
   // buy plan with stripe
   Future<BaseEntity?> buySingle(body) async {
     var baseEntity = await post("/plan/buy_single", params: body);
     return baseEntity;
   }
+
   // buy plan with stripe
   Future<BaseEntity?> buyApple(body) async {
     var baseEntity = await post("/plan/apple_store/buy", params: body);
@@ -328,32 +330,24 @@ class CartoonizerApi extends BaseRequester {
     if (baseEntity == null) {
       return null;
     }
-    var list = jsonConvert.convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']) ?? [];
-    //todo 测试代码
-    list.forEach((element) {
-      if (element.outputImages.isEmpty) {
-        element.outputImages = [
-          'https://t14.baidu.com/it/u=1549014775,1328934869&fm=82&w=255&h=255&img.JPEG',
-          'https://img1.baidu.com/it/u=2836646478,2542552528&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=493',
-          'https://img1.baidu.com/it/u=3621198635,64328590&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=729',
-          // 'https://img2.baidu.com/it/u=585740010,3718850255&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=333',
-          // 'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg',
-          // 'https://img1.baidu.com/it/u=1205291917,2476925252&fm=253&fmt=auto&app=120&f=JPEG?w=690&h=460',
-        ]
-            .map((e) => AvatarChildEntity()
-              ..url = e
-              ..style = 'Test')
-            .toList();
-      }
-    });
-    return list;
+    return jsonConvert.convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']);
   }
 
   Future<AvatarAiListEntity?> getAvatarAiDetail({required String token}) async {
-    var baseEntity = await get('/ai_avatar/get', params: {
-      'token': token,
-    });
-    return jsonConvert.convert<AvatarAiListEntity>(baseEntity?.data['data']);
+    var cacheManager = AppDelegate.instance.getManager<CacheManager>();
+    var json = cacheManager.getJson(CacheManager.avatarHistory + token);
+    if (json == null || json['output_images'] == null || (json['output_images'] as List).isEmpty) {
+      var baseEntity = await get('/ai_avatar/get', params: {
+        'token': token,
+      });
+      var entity = jsonConvert.convert<AvatarAiListEntity>(baseEntity?.data['data']);
+      if (entity != null) {
+        cacheManager.setJson(CacheManager.avatarHistory + token, entity.toJson());
+      }
+      return entity;
+    } else {
+      return jsonConvert.convert<AvatarAiListEntity>(json);
+    }
   }
 
   Future<List<PayPlanEntity>?> listAllBuyPlan(String category) async {

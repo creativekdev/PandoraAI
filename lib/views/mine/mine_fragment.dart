@@ -205,9 +205,8 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              ImageTextBarWidget('Pandora Avatars', ImagesConstant.ic_rate_us, true).intoGestureDetector(
+              ImageTextBarWidget('Pandora Avatars', Images.ic_avatar_ai, true).intoGestureDetector(
                 onTap: () async {
-                  // todo logEvent
                   Avatar.open(context);
                 },
               ),

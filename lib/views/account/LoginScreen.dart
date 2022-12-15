@@ -146,7 +146,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
           Icons.close,
           size: $(24),
           color: Colors.white,
-        ).marginOnly(left: $(5)),
+        ).marginOnly(left: $(15)).hero(tag: 'back'),
       ),
       body: Container(
         color: Colors.transparent,
@@ -173,7 +173,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                 controller: emailController,
                 inputAction: TextInputAction.next,
                 showClear: true,
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'email'),
               SizedBox(height: $(16)),
               iconInput(
                 title: StringConstant.password,
@@ -183,7 +183,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                 controller: passController,
                 inputAction: TextInputAction.done,
                 passwordInput: true,
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'pwd'),
               SizedBox(height: $(16)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -210,6 +210,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
                         color: ColorConstant.DiscoveryBtn,
                         borderRadius: BorderRadius.circular($(8)),
                       ))
+                  .intoMaterial(color: Colors.transparent)
+                  .hero(tag: 'btn')
                   .intoGestureDetector(onTap: () async {
                 if (emailController.text.trim().isEmpty) {
                   CommonExtension().showToast(StringConstant.email_validation);
@@ -261,7 +263,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     ),
                   ],
                 ),
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'line'),
               SignListWidget(
                 onTap: (account) {
                   switch (account) {
@@ -314,7 +316,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
           builder: (context) => SignupScreen(),
         ),
       ).then((value) {
-        if (value == null || value) {
+        if (value ?? false) {
           Navigator.pop(context);
         }
       });

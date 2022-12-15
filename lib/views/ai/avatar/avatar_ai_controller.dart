@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
@@ -45,23 +44,27 @@ class AvatarAiController extends GetxController {
     return 'Select $minSize-$maxSize selfies';
   }
 
-  Future<void> pickImageFromCamera() async {
-    imageList.addAll(await ImagesPicker.openCamera(
+  Future<bool> pickImageFromCamera() async {
+    var photos = await ImagesPicker.openCamera(
           pickType: PickType.image,
         ) ??
-        []);
+        [];
+    imageList.addAll(photos);
     if (imageList.length > maxSize) {
       imageList = imageList.sublist(0, maxSize);
     }
     update();
+    return photos.isNotEmpty;
   }
 
-  Future<void> pickImageFromGallery() async {
-    imageList.addAll(await ImagesPicker.pick(pickType: PickType.image, gif: false, count: maxSize - imageList.length) ?? []);
+  Future<bool> pickImageFromGallery() async {
+    var photos = await ImagesPicker.pick(pickType: PickType.image, gif: false, count: maxSize - imageList.length) ?? [];
+    imageList.addAll(photos);
     if (imageList.length > maxSize) {
       imageList = imageList.sublist(0, maxSize);
     }
     update();
+    return photos.isNotEmpty;
   }
 
   Future<bool> compressAndUpload() async {
@@ -108,8 +111,12 @@ class AvatarAiController extends GetxController {
     var baseEntity = await api.submitAvatarAi(params: {
       'name': name,
       'role': style.value(),
-      'train_images': json.encode(uploadedList.map((e) => e.imageUrl).toList().join(',')),
+      'train_images': uploadedList.map((e) => e.imageUrl).toList().join(','),
     });
+    if (baseEntity != null) {
+      uploadedList.clear();
+      compressedList.clear();
+    }
     isLoading = false;
     update();
     return baseEntity;
