@@ -108,7 +108,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) => AvatarIntroduceScreen()));
           })
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
@@ -173,7 +173,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
         children: [
           SizedBox(height: $(20)),
           TitleTextWidget(
-            'Please waiting, your photos will'
+            'Please waiting, your photos will '
             'be generated in about 2 hours',
             ColorConstant.White,
             FontWeight.bold,

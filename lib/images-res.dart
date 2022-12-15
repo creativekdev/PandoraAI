@@ -4,6 +4,7 @@ class Images {
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
+   static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';
    static const String ic_avatar_bad_example = 'assets/images/ic_avatar_bad_example.png';
    static const String ic_avatar_good_example = 'assets/images/ic_avatar_good_example.png';
@@ -100,8 +101,6 @@ class Images {
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_success = 'assets/images/ic_success.png';
-   static const String ic_tab_ai_normal = 'assets/images/ic_tab_ai_normal.png';
-   static const String ic_tab_ai_selected = 'assets/images/ic_tab_ai_selected.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';
    static const String ic_tab_effect = 'assets/images/ic_tab_effect.png';

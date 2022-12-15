@@ -55,7 +55,7 @@ class SignListWidget extends StatelessWidget {
                 child: Image.asset(
                   e.image(),
                   width: $(28),
-                ).intoGestureDetector(onTap: () {
+                ).hero(tag: e.image()).intoGestureDetector(onTap: () {
                   onTap.call(e);
                 }).intoContainer(alignment: Alignment.center),
               ))

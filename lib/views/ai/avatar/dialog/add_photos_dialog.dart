@@ -85,7 +85,7 @@ class AddPhotosDialog extends StatelessWidget {
               FontWeight.w500,
               $(17),
             ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(false);
             }),
             Divider(
               height: 1,
@@ -99,7 +99,7 @@ class AddPhotosDialog extends StatelessWidget {
             ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
               showTakePhotoOptDialog(context, controller).then((value) {
                 if (controller.imageList.length >= controller.minSize) {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 }
               });
             }),

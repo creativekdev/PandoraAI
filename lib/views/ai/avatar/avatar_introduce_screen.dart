@@ -10,11 +10,8 @@ import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'avatar.dart';
 
 class AvatarIntroduceScreen extends StatefulWidget {
-  bool fromTab = false;
-
   AvatarIntroduceScreen({
     Key? key,
-    this.fromTab = false,
   }) : super(key: key);
 
   @override
@@ -40,12 +37,12 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      appBar: widget.fromTab ? null : AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor),
+      appBar: AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: widget.fromTab ? $(30) : $(10)),
+            SizedBox(height: $(10)),
             shaderMask(
                 context: context,
                 child: Text(
@@ -119,15 +116,19 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
       ),
       bottomNavigationBar: TitleTextWidget(StringConstant.txtContinue, ColorConstant.White, FontWeight.normal, $(17))
           .intoContainer(
-            padding: EdgeInsets.symmetric(vertical: $(8)),
+            margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15)),
             decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(8))),
             alignment: Alignment.center,
           )
-          .intoContainer(width: ScreenUtil.screenSize.width, height: $(64), padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)))
+          .intoContainer(
+            width: ScreenUtil.screenSize.width,
+            alignment: Alignment.center,
+            height: $(72),
+          )
           .intoGestureDetector(onTap: () {
         Avatar.create(context);
-      }),
-    ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom));
+      }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+    );
   }
 
   Widget buildItem(BuildContext context, int index) {

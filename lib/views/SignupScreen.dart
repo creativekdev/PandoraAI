@@ -448,7 +448,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
           Icons.close,
           size: $(24),
           color: Colors.white,
-        ).marginOnly(left: $(5)),
+        ).marginOnly(left: $(15)).hero(tag: 'back'),
       ),
       body: Container(
         color: Colors.transparent,
@@ -475,7 +475,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 controller: emailController,
                 inputAction: TextInputAction.next,
                 showClear: true,
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'email'),
               SizedBox(height: $(16)),
               iconInput(
                 title: StringConstant.password,
@@ -485,7 +485,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 controller: passController,
                 inputAction: TextInputAction.next,
                 passwordInput: true,
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'pwd'),
               SizedBox(height: $(16)),
               iconInput(
                 title: StringConstant.c_password,
@@ -505,6 +505,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
                         color: ColorConstant.DiscoveryBtn,
                         borderRadius: BorderRadius.circular($(8)),
                       ))
+                  .intoMaterial(color: Colors.transparent)
+                  .hero(tag: 'btn')
                   .intoGestureDetector(onTap: () {
                 signUpNormal();
               }),
@@ -540,7 +542,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                     ),
                   ],
                 ),
-              ),
+              ).intoMaterial(color: Colors.transparent).hero(tag: 'line'),
               SignListWidget(
                 onTap: (account) {
                   switch (account) {

@@ -1,15 +1,38 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Avatar {
   static String logoTag = 'avatar_logo';
   static String logoBackTag = 'avatar_back_logo';
   static String aiTag = 'ai_tag';
+
+  static intro(BuildContext context) {
+    UserManager userManager = AppDelegate().getManager();
+    AvatarAiManager aiManager = AppDelegate().getManager();
+    if (!userManager.isNeedLogin && (userManager.user!.aiAvatarCredit > 0 || aiManager.dataList.isNotEmpty)) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(name: "/AvatarAiListScreen"),
+            builder: (context) => AvatarAiListScreen(),
+          ));
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(name: "/AvatarIntroduceScreen"),
+            builder: (context) => AvatarIntroduceScreen(),
+          ));
+    }
+  }
 
   static open(BuildContext context) {
     UserManager userManager = AppDelegate().getManager();
@@ -17,6 +40,7 @@ class Avatar {
       Navigator.push(
           context,
           MaterialPageRoute(
+            settings: RouteSettings(name: "/AvatarAiListScreen"),
             builder: (context) => AvatarAiListScreen(),
           ));
     }, autoExec: true);
@@ -26,9 +50,16 @@ class Avatar {
     UserManager userManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () {
       if (userManager.user!.aiAvatarCredit > 0) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AvatarAiCreateScreen())).then((value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              settings: RouteSettings(name: "/AvatarAiCreateScreen"),
+              builder: (context) => AvatarAiCreateScreen(),
+            )).then((value) {
+          Navigator.of(context).popUntil(ModalRoute.withName('/AvatarAiListScreen'));
           if (value ?? false) {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
+            open(context);
           }
         });
       } else {
@@ -36,9 +67,16 @@ class Avatar {
         PayAvatarPage.push(context).then((payStatus) {
           if (payStatus ?? false) {
             userManager.refreshUser().then((onlineInfo) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AvatarAiCreateScreen())).then((value) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    settings: RouteSettings(name: "/AvatarAiCreateScreen"),
+                    builder: (context) => AvatarAiCreateScreen(),
+                  )).then((value) {
+                Navigator.of(context).popUntil(ModalRoute.withName('/AvatarAiListScreen'));
                 if (value ?? false) {
                   EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
+                  open(context);
                 }
               });
             });

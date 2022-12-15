@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
@@ -18,6 +19,7 @@ import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
@@ -307,6 +309,26 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   children: tabConfig.map((e) => e.item).toList(),
                 ),
                 header(context),
+                Positioned(
+                  child: ClipRect(
+                      child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                          child: TitleTextWidget('Pandora Avatars', ColorConstant.White, FontWeight.w500, $(17))
+                              .intoContainer(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
+                                  height: $(44),
+                                  width: ScreenUtil.screenSize.width - $(30),
+                                  padding: EdgeInsets.symmetric(vertical: $(8)),
+                                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12))).intoGestureDetector(onTap: (){
+                                    Avatar.intro(context);
+                          })
+                              .intoContainer(
+                                  height: $(56),
+                                  margin: EdgeInsets.only(bottom: AppTabBarHeight + MediaQuery.of(context).padding.bottom),
+                                  color: ColorConstant.BackgroundColorBlur))),
+                  bottom: 0,
+                ),
               ],
             );
           }
@@ -465,7 +487,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                     });
                   }),
                 ],
-              ).intoContainer(margin: EdgeInsets.only(left: $(1))).offstage(offstage: !proVisible),
+              ).intoContainer(margin: EdgeInsets.only(left: $(10))).offstage(offstage: !proVisible),
               middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,

@@ -184,7 +184,15 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                 )
                     .intoGestureDetector(onTap: () {
                   if (controller.imageList.isEmpty) {
-                    showTakePhotoOptDialog(context, controller);
+                    showTakePhotoOptDialog(context, controller).then((value) {
+                      if (value ?? false) {
+                        if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
+                          startUpload(context, controller);
+                        } else {
+                          showChosenDialog(context, controller);
+                        }
+                      }
+                    });
                   } else {
                     if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
                       startUpload(context, controller);
@@ -196,7 +204,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
               ],
             )),
         init: controller,
-      ).intoContainer(padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom)),
+      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
@@ -231,11 +239,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
         )
             .then((value) {
           if (value != null) {
-            showDialog(
+            showDialog<bool>(
                 context: context,
                 builder: (context) => AlertDialog(
                       backgroundColor: ColorConstant.BackgroundColor,
                       title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
+                      content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                      actions: [
+                        TitleTextWidget('Ok', ColorConstant.BlueColor, FontWeight.w600, $(16)).intoGestureDetector(onTap: () {
+                          Navigator.of(context).pop(true);
+                        }),
+                      ],
                     )).then((value) {
               Navigator.pop(context, true);
             });
@@ -246,11 +260,15 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 
   void showChosenDialog(BuildContext context, AvatarAiController controller) {
-    showDialog(
+    showDialog<bool>(
         context: context,
         builder: (_) {
           return AddPhotosDialog(controller: controller);
-        });
+        }).then((value) {
+      if (value ?? false) {
+        startUpload(context, controller);
+      }
+    });
   }
 
   Widget buildExamples(BuildContext context, List<String> examples) {
@@ -315,7 +333,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 }
 
-Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controller) async => showModalBottomSheet(
+Future<bool?> showTakePhotoOptDialog(BuildContext context, AvatarAiController controller) async => showModalBottomSheet<bool>(
     context: context,
     builder: (context) {
       return Column(
@@ -329,7 +347,7 @@ Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controlle
           )
               .intoGestureDetector(onTap: () {
             controller.pickImageFromCamera().then((value) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(value);
             });
           }),
           Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
@@ -341,7 +359,7 @@ Future showTakePhotoOptDialog(BuildContext context, AvatarAiController controlle
           )
               .intoGestureDetector(onTap: () {
             controller.pickImageFromGallery().then((value) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(value);
             });
           }),
           SizedBox(height: 10),

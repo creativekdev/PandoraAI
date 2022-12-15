@@ -10,6 +10,7 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
   bool loading = false;
   bool canCancelOnLoading = true;
   KeyboardInterceptType interceptType = KeyboardInterceptType.hideKeyboard;
+  Widget? progressWidget;
 
   AppState({
     this.canCancelOnLoading = true,
@@ -44,21 +45,35 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
           buildWidget(context).blankAreaIntercept(interceptType: interceptType),
           loading
               ? Center(
-                  child: CircularProgressIndicator(),
-                ).intoContainer(color: Color(0x55000000))
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    progressWidget == null
+                        ? Container()
+                        : progressWidget!
+                            .intoContainer(
+                              margin: EdgeInsets.only(top: 6),
+                            )
+                            .intoMaterial(color: Colors.transparent),
+                  ],
+                )).intoContainer(color: Color(0x55000000))
               : Container(),
         ],
         fit: StackFit.expand,
       ).ignore(ignoring: loading);
 
-  Future<void> showLoading() async {
+  Future<void> showLoading({Widget? progressWidget}) async {
     setState(() {
+      this.progressWidget = progressWidget;
       loading = true;
     });
   }
 
   Future<void> hideLoading() async {
     setState(() {
+      progressWidget = null;
       loading = false;
     });
   }
@@ -83,9 +98,11 @@ mixin AppTabState<T extends StatefulWidget> on State<T> {
 
 ///页面状态 显示\隐藏
 enum VisibilityState { hide, show }
+
 mixin WidgetVisibilityStateMixin<T extends StatefulWidget> on State<T> implements WidgetsBindingObserver {
   late FocusNode _ownFocusNode, _oldFocusNode, _newFocusNode;
   VisibilityState visibilityState = VisibilityState.hide;
+
   ///忽略的焦点列表
   List<FocusNode> _ignoreFocusList = [];
 
