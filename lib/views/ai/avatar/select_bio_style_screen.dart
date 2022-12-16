@@ -1,52 +1,19 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-
-enum BioStyle {
-  male,
-  female,
-  dog,
-  other,
-}
-
-extension BioStyleEx on BioStyle {
-  title() {
-    switch (this) {
-      case BioStyle.male:
-        return 'Male';
-      case BioStyle.female:
-        return 'Female';
-      case BioStyle.other:
-        return 'Other';
-      case BioStyle.dog:
-        return 'Dog';
-    }
-  }
-
-  value() {
-    switch (this) {
-      case BioStyle.male:
-        return 'male';
-      case BioStyle.female:
-        return 'female';
-      case BioStyle.dog:
-        return 'dog';
-      case BioStyle.other:
-        return 'other';
-    }
-  }
-}
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 
 class SelectStyleScreen {
-  static Future<BioStyle?> push(BuildContext context, {BioStyle? gender}) {
-    return Navigator.of(context).push<BioStyle>(MaterialPageRoute(
+  static Future<String?> push(BuildContext context, {String? gender}) {
+    return Navigator.of(context).push<String>(MaterialPageRoute(
       builder: (context) => _SelectGenderScreen(bioStyle: gender),
     ));
   }
 }
 
 class _SelectGenderScreen extends StatefulWidget {
-  BioStyle? bioStyle;
+  String? bioStyle;
 
   _SelectGenderScreen({
     Key? key,
@@ -58,13 +25,8 @@ class _SelectGenderScreen extends StatefulWidget {
 }
 
 class _SelectGenderScreenState extends State<_SelectGenderScreen> {
-  BioStyle? bioStyle;
-  List<BioStyle> genders = [
-    BioStyle.male,
-    BioStyle.female,
-    BioStyle.dog,
-    BioStyle.other,
-  ];
+  String? bioStyle;
+  AvatarAiManager aiManager = AppDelegate().getManager();
 
   @override
   void initState() {
@@ -84,7 +46,7 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
           children: [
             Expanded(
               child: Column(
-                children: genders.map((e) {
+                children: aiManager.config!.getRoles().map((e) {
                   bool checked = e == bioStyle;
                   return Row(
                     children: [
@@ -120,7 +82,7 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
                             ),
                       SizedBox(width: $(12)),
                       Text(
-                        e.title(),
+                        e,
                         style: TextStyle(
                           color: ColorConstant.White,
                           fontSize: $(19),

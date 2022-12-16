@@ -3,6 +3,7 @@ enum AvatarStatus {
   pending,
   processing,
   completed,
+  subscribed,
   UNDEFINED,
 }
 
@@ -13,6 +14,8 @@ class AvatarStatusUtils {
         return AvatarStatus.pending;
       case 'processing':
         return AvatarStatus.processing;
+      case 'subscribed':
+        return AvatarStatus.subscribed;
       case 'completed':
         return AvatarStatus.completed;
       default:
@@ -28,6 +31,8 @@ extension AvatarStatusEx on AvatarStatus {
         return 'pending';
       case AvatarStatus.processing:
         return 'processing';
+      case AvatarStatus.subscribed:
+        return 'subscribed';
       case AvatarStatus.completed:
         return 'completed';
       case AvatarStatus.UNDEFINED:

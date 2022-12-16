@@ -11,6 +11,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
+import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
@@ -358,5 +359,12 @@ class CartoonizerApi extends BaseRequester {
       return jsonConvert.convertListNotNull<PayPlanEntity>(baseEntity.data['data']);
     }
     return null;
+  }
+
+  Future<AvatarConfigEntity?> getAvatarAiConfig() async {
+    var baseEntity = await get('/ai_avatar/config/v1', params: {
+      'language': 'en',
+    });
+    return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }
 }

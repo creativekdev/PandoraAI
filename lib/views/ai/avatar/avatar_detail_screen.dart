@@ -39,7 +39,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     logEvent(Events.avatar_detail_loading);
     api = CartoonizerApi().bindState(this);
     entity = widget.entity;
-    itemSize = (ScreenUtil.screenSize.width - $(70)) / 2;
+    itemSize = (ScreenUtil.screenSize.width - $(40)) / 2;
     initDataList();
   }
 
@@ -78,7 +78,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(10)),
+              padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)),
               itemBuilder: (context, index) {
                 var list = dataList[index];
                 if (index == 0 || dataList[index - 1].first.style != list.first.style) {
@@ -92,7 +92,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                         FontWeight.w500,
                         $(16),
                       ),
-                      SizedBox(height: $(10)),
+                      SizedBox(height: $(8)),
                       Wrap(
                         children: list
                             .map((e) => CachedNetworkImageUtils.custom(
@@ -110,7 +110,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                                   openImage(context, e);
                                 }))
                             .toList(),
-                        spacing: $(20),
+                        spacing: $(8),
                       ),
                     ],
                   );
@@ -132,8 +132,8 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                               openImage(context, e);
                             }))
                         .toList(),
-                    spacing: $(20),
-                  ).intoContainer(margin: EdgeInsets.only(top: $(20)));
+                    spacing: $(8),
+                  ).intoContainer(margin: EdgeInsets.only(top: $(8)));
                 }
               },
               itemCount: dataList.length,
@@ -162,7 +162,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                 if (file != null) {
                   showLoading(
                       progressWidget: Text(
-                    '${i}/${entity.outputImages.length}',
+                    '${i+1}/${entity.outputImages.length}',
                     style: TextStyle(
                       color: ColorConstant.White,
                       fontFamily: 'Poppins',

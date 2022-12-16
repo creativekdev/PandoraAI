@@ -3,7 +3,10 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Common/images-res.dart' as exampleRes;
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/upload_loading_dialog.dart';
@@ -11,17 +14,24 @@ import 'package:cartoonizer/views/ai/avatar/select_bio_style_screen.dart';
 
 import 'dialog/add_photos_dialog.dart';
 import 'avatar.dart';
-import 'dialog/submit_avatar_dialog.dart';
 
 class AvatarAiCreateScreen extends StatefulWidget {
-  const AvatarAiCreateScreen({Key? key}) : super(key: key);
+  final String name;
+  final String style;
+
+  const AvatarAiCreateScreen({
+    Key? key,
+    required this.name,
+    required this.style,
+  }) : super(key: key);
 
   @override
   State<AvatarAiCreateScreen> createState() => _AvatarAiCreateScreenState();
 }
 
 class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
-  AvatarAiController controller = Get.put(AvatarAiController());
+  late AvatarAiController controller;
+  AvatarAiManager manager = AppDelegate().getManager();
   late double imageWidth;
   late double imageHeight;
 
@@ -29,6 +39,11 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   void initState() {
     super.initState();
     logEvent(Events.avatar_create_loading);
+    controller = AvatarAiController(
+      name: widget.name,
+      style: widget.style,
+    );
+    Get.put(controller);
     imageWidth = ScreenUtil.screenSize.width / 5;
     imageHeight = imageWidth;
   }
@@ -92,14 +107,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                         padding: EdgeInsets.symmetric(horizontal: $(15)),
                       ),
                       SizedBox(height: 12),
-                      buildExamples(context, [
-                        exampleRes.Images.good_1,
-                        exampleRes.Images.good_2,
-                        exampleRes.Images.good_3,
-                        exampleRes.Images.good_4,
-                        exampleRes.Images.good_5,
-                        exampleRes.Images.good_6,
-                      ]),
+                      FutureBuilder(
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return buildExamples(context, []);
+                          }
+                          var data = snapshot.data as AvatarConfig;
+                          List<String> goodImages = data.goodImages(controller.style);
+                          return buildExamples(context, goodImages);
+                        },
+                        future: manager.getConfig(),
+                      ),
                       SizedBox(height: 20),
                       buildIconText(
                         context,
@@ -119,14 +137,17 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                         padding: EdgeInsets.symmetric(horizontal: $(15)),
                       ),
                       SizedBox(height: 12),
-                      buildExamples(context, [
-                        exampleRes.Images.bad_1,
-                        exampleRes.Images.bad_2,
-                        exampleRes.Images.bad_3,
-                        exampleRes.Images.bad_4,
-                        exampleRes.Images.bad_5,
-                        exampleRes.Images.bad_6,
-                      ]),
+                      FutureBuilder(
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return buildExamples(context, []);
+                          }
+                          var data = snapshot.data as AvatarConfig;
+                          List<String> badImages = data.badImages(controller.style);
+                          return buildExamples(context, badImages);
+                        },
+                        future: manager.getConfig(),
+                      ),
                       RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
@@ -210,50 +231,32 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
 
   startUpload(BuildContext context, AvatarAiController controller) {
     if (controller.uploadedList.length == controller.imageList.length) {
-      SelectStyleScreen.push(context).then((value) {
-        if (value != null) {
-          startSubmit(context, controller, value);
-        }
-      });
+      startSubmit(context, controller);
     } else {
       showDialog<bool>(context: context, barrierDismissible: false, builder: (_) => UploadLoadingDialog(controller: controller)).then((value) {
         if (value ?? false) {
-          SelectStyleScreen.push(context).then((value) {
-            if (value != null) {
-              startSubmit(context, controller, value);
-            }
-          });
+          startSubmit(context, controller);
         }
       });
     }
   }
 
-  startSubmit(BuildContext context, AvatarAiController controller, BioStyle style) {
-    SubmitAvatarDialog.push(context, name: controller.name ?? '').then((value) {
-      controller.name = value;
+  startSubmit(BuildContext context, AvatarAiController controller) {
+    controller.submit().then((value) {
       if (value != null) {
-        controller
-            .submit(
-          style: style,
-          name: controller.name!,
-        )
-            .then((value) {
-          if (value != null) {
-            showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                      backgroundColor: ColorConstant.BackgroundColor,
-                      title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
-                      content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
-                      actions: [
-                        TitleTextWidget('Ok', ColorConstant.BlueColor, FontWeight.w600, $(16)).intoGestureDetector(onTap: () {
-                          Navigator.of(context).pop(true);
-                        }),
-                      ],
-                    )).then((value) {
-              Navigator.pop(context, true);
-            });
-          }
+        showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+                  backgroundColor: ColorConstant.BackgroundColor,
+                  title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
+                  content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                  actions: [
+                    TitleTextWidget('Ok', ColorConstant.BlueColor, FontWeight.w600, $(16)).intoGestureDetector(onTap: () {
+                      Navigator.of(context).pop(true);
+                    }),
+                  ],
+                )).then((value) {
+          Navigator.pop(context, true);
         });
       }
     });
@@ -278,8 +281,9 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
       itemBuilder: (context, index) {
         return buildListItem(context,
             index: index,
-            child: Image.asset(
-              examples[index],
+            child: CachedNetworkImageUtils.custom(
+              context: context,
+              imageUrl: examples[index],
               width: imageWidth,
               height: imageHeight,
               fit: BoxFit.cover,

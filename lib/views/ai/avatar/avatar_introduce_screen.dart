@@ -4,10 +4,17 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
+import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
+import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'avatar.dart';
+import 'select_bio_style_screen.dart';
 
 class AvatarIntroduceScreen extends StatefulWidget {
   AvatarIntroduceScreen({
@@ -18,14 +25,10 @@ class AvatarIntroduceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => AvatarIntroduceScreenState();
 }
 
-const _imgUrl = 'https://pics0.baidu.com/feed/3b292df5e0fe99250125a2e7a61f12d48cb1719b.jpeg';
-const _imgUrl2 = 'https://img0.baidu.com/it/u=1578062395,3811784681&fm=253&fmt=auto&app=120&f=JPEG';
-
-String get imgUrl => Random.secure().nextInt(20) % 2 == 0 ? _imgUrl : _imgUrl2;
-
 class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
   List<String> dataList = [];
   Size? size;
+  int selectedStyleIndex = 0;
 
   @override
   void initState() {
@@ -98,18 +101,45 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                     fontFamily: 'Poppins',
                   ),
                 )),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all($(12)),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: $(6),
-                crossAxisSpacing: $(6),
-              ),
-              itemBuilder: (context, index) => buildItem(context, index),
-              itemCount: 20,
-            ),
+            FutureBuilder(
+              builder: (context, snapShot) {
+                if (snapShot.data == null) {
+                  return Container();
+                }
+                var config = snapShot.data! as AvatarConfig;
+                var roles = config.getRoles();
+                var style = roles[selectedStyleIndex];
+                var examples = config.examples(style);
+                return Column(
+                  children: [
+                    ChooseTabBar(
+                        tabList: roles,
+                        currentIndex: selectedStyleIndex,
+                        onTabClick: (index) {
+                          setState(() {
+                            selectedStyleIndex = index;
+                          });
+                        },
+                        height: $(44)),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.all($(12)),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: $(6),
+                        crossAxisSpacing: $(6),
+                      ),
+                      itemBuilder: (context, index) {
+                        return buildItem(context, index, examples);
+                      },
+                      itemCount: examples.length,
+                    ),
+                  ],
+                );
+              },
+              future: AppDelegate().getManager<AvatarAiManager>().getConfig(),
+            )
           ],
         ),
       ),
@@ -125,16 +155,26 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
             height: $(72),
           )
           .intoGestureDetector(onTap: () {
-        Avatar.create(context);
+        SubmitAvatarDialog.push(context, name: '').then((name) {
+          if (!TextUtil.isEmpty(name)) {
+            SelectStyleScreen.push(
+              context,
+            ).then((style) {
+              if (style != null) {
+                Avatar.create(context, name: name!, style: style);
+              }
+            });
+          }
+        });
       }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
-  Widget buildItem(BuildContext context, int index) {
+  Widget buildItem(BuildContext context, int index, List<String> examples) {
     return ClipRRect(
       child: CachedNetworkImageUtils.custom(
         context: context,
-        imageUrl: imgUrl,
+        imageUrl: examples[index],
         width: (ScreenUtil.screenSize.width - $(36)) / 2,
         height: (ScreenUtil.screenSize.width - $(36)) / 2,
       ),

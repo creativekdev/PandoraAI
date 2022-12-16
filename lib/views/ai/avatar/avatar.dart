@@ -7,6 +7,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_screen.dart';
+import 'package:cartoonizer/views/ai/avatar/select_bio_style_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Avatar {
@@ -46,40 +47,36 @@ class Avatar {
     }, autoExec: true);
   }
 
-  static create(BuildContext context) async {
+  static create(BuildContext context, {required String name, required String style}) async {
     UserManager userManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () {
-      if (userManager.user!.aiAvatarCredit > 0) {
+      var forward = () {
         Navigator.push(
             context,
             MaterialPageRoute(
               settings: RouteSettings(name: "/AvatarAiCreateScreen"),
-              builder: (context) => AvatarAiCreateScreen(),
+              builder: (context) => AvatarAiCreateScreen(
+                name: name,
+                style: style,
+              ),
             )).then((value) {
           Navigator.of(context).popUntil(ModalRoute.withName('/AvatarAiListScreen'));
           if (value ?? false) {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
-            open(context);
+            AvatarAiManager aiManager = AppDelegate().getManager();
+            if (!aiManager.listPageAlive) {
+              open(context);
+            }
           }
         });
+      };
+      if (userManager.user!.aiAvatarCredit > 0) {
+        forward.call();
       } else {
         // user not pay yet. to introduce page. and get pay status to edit page.
         PayAvatarPage.push(context).then((payStatus) {
           if (payStatus ?? false) {
-            userManager.refreshUser().then((onlineInfo) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    settings: RouteSettings(name: "/AvatarAiCreateScreen"),
-                    builder: (context) => AvatarAiCreateScreen(),
-                  )).then((value) {
-                Navigator.of(context).popUntil(ModalRoute.withName('/AvatarAiListScreen'));
-                if (value ?? false) {
-                  EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
-                  open(context);
-                }
-              });
-            });
+            forward.call();
           }
         });
       }

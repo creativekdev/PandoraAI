@@ -9,9 +9,9 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:images_picker/images_picker.dart';
 
-import 'select_bio_style_screen.dart';
-
 class AvatarAiController extends GetxController {
+  final String name;
+  final String style;
   List<Media> imageList = [];
   List<File> compressedList = [];
   List<UploadFile> uploadedList = [];
@@ -20,10 +20,14 @@ class AvatarAiController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   bool isLoading = false;
-  String? name;
 
   bool get hasChosen => imageList.isNotEmpty;
   bool stop = false;
+
+  AvatarAiController({
+    required this.name,
+    required this.style,
+  });
 
   @override
   void onInit() {
@@ -105,12 +109,12 @@ class AvatarAiController extends GetxController {
     logEvent(Events.avatar_cancel_submit_photos);
   }
 
-  Future<BaseEntity?> submit({required BioStyle style, required String name}) async {
+  Future<BaseEntity?> submit() async {
     isLoading = true;
     update();
     var baseEntity = await api.submitAvatarAi(params: {
       'name': name,
-      'role': style.value(),
+      'role': style,
       'train_images': uploadedList.map((e) => e.imageUrl).toList().join(','),
     });
     if (baseEntity != null) {
