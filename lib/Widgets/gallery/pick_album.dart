@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
@@ -197,8 +198,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       child: Stack(
         children: [
           SizedBox(
-            child: _LoadFileImage(
-              medium: data,
+            child: Image(
+              image: MediumImage(data),
+              fit: BoxFit.cover,
             ),
             width: imageSize,
             height: imageSize,
@@ -244,56 +246,5 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         }
       }
     });
-  }
-}
-
-class _LoadFileImage extends StatefulWidget {
-  Medium medium;
-
-  _LoadFileImage({
-    Key? key,
-    required this.medium,
-  }) : super(key: key);
-
-  @override
-  State<_LoadFileImage> createState() => _LoadFileImageState();
-}
-
-class _LoadFileImageState extends State<_LoadFileImage> {
-  late Medium medium;
-  List<int>? data;
-
-  @override
-  void initState() {
-    super.initState();
-    medium = widget.medium;
-    loadData();
-  }
-
-  loadData() => medium.getThumbnail(width: 256, height: 256, highQuality: true).then((value) {
-        if (mounted) {
-          setState(() {
-            data = value;
-          });
-        }
-      });
-
-  @override
-  void didUpdateWidget(covariant _LoadFileImage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (medium.id != widget.medium.id) {
-      medium = widget.medium;
-      loadData();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return data == null
-        ? CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter()
-        : Image(
-            image: MemoryImage(Uint8List.fromList(data!)),
-            fit: BoxFit.cover,
-          );
   }
 }

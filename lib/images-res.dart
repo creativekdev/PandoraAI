@@ -8,6 +8,7 @@ class Images {
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';
    static const String ic_avatar_bad_example = 'assets/images/ic_avatar_bad_example.png';
    static const String ic_avatar_good_example = 'assets/images/ic_avatar_good_example.png';
+   static const String ic_avatar_success = 'assets/images/ic_avatar_success.png';
    static const String ic_back = 'assets/images/ic_back.png';
    static const String ic_back_dark = 'assets/images/ic_back_dark.png';
    static const String ic_background = 'assets/images/ic_background.png';

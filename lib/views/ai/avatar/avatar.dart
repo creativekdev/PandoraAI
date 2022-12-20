@@ -65,12 +65,12 @@ class Avatar {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
             AvatarAiManager aiManager = AppDelegate().getManager();
             if (!aiManager.listPageAlive) {
-              open(context);
+              delay(() => open(context), milliseconds: 64);
             }
           }
         });
       };
-      if (userManager.user!.aiAvatarCredit > 0) {
+      if (userManager.user!.aiAvatarCredit <= 0) {
         forward.call();
       } else {
         // user not pay yet. to introduce page. and get pay status to edit page.

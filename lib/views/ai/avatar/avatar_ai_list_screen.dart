@@ -9,13 +9,10 @@ import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 import 'avatar.dart';
 import 'avatar_detail_screen.dart';
-import 'dialog/submit_avatar_dialog.dart';
-import 'select_bio_style_screen.dart';
 
 class AvatarAiListScreen extends StatefulWidget {
   const AvatarAiListScreen({Key? key}) : super(key: key);

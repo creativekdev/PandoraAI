@@ -1,19 +1,15 @@
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Common/images-res.dart' as exampleRes;
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/upload_loading_dialog.dart';
-import 'package:cartoonizer/views/ai/avatar/select_bio_style_screen.dart';
 
-import 'dialog/add_photos_dialog.dart';
 import 'avatar.dart';
+import 'dialog/add_photos_dialog.dart';
 
 class AvatarAiCreateScreen extends StatefulWidget {
   final String name;
@@ -248,10 +244,39 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
             context: context,
             builder: (context) => AlertDialog(
                   backgroundColor: ColorConstant.BackgroundColor,
-                  title: TitleTextWidget('Successful', ColorConstant.White, FontWeight.w600, $(16)),
+                  title: Column(
+                    children: [
+                      Image.asset(
+                        Images.ic_avatar_success,
+                        width: $(28),
+                        color: Color(0xff34C759),
+                      ).intoContainer(
+                        padding: EdgeInsets.all($(10)),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(64),
+                          border: Border.all(
+                            color: Color(0xff34C759),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      TitleTextWidget('Successful', Color(0xff34C759), FontWeight.w600, $(16)),
+                    ],
+                  ),
                   content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
                   actions: [
-                    TitleTextWidget('Ok', ColorConstant.BlueColor, FontWeight.w600, $(16)).intoGestureDetector(onTap: () {
+                    TitleTextWidget(
+                      'Ok',
+                      ColorConstant.BlueColor,
+                      FontWeight.w600,
+                      $(17),
+                    )
+                        .intoContainer(
+                      width: double.maxFinite,
+                      color: Colors.transparent,
+                    )
+                        .intoGestureDetector(onTap: () {
                       Navigator.of(context).pop(true);
                     }),
                   ],
