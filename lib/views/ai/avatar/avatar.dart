@@ -7,32 +7,33 @@ import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_screen.dart';
-import 'package:cartoonizer/views/ai/avatar/select_bio_style_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class Avatar {
   static String logoTag = 'avatar_logo';
   static String logoBackTag = 'avatar_back_logo';
   static String aiTag = 'ai_tag';
 
-  static intro(BuildContext context) {
-    UserManager userManager = AppDelegate().getManager();
-    AvatarAiManager aiManager = AppDelegate().getManager();
-    if (!userManager.isNeedLogin && (userManager.user!.aiAvatarCredit > 0 || aiManager.dataList.isNotEmpty)) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            settings: RouteSettings(name: "/AvatarAiListScreen"),
-            builder: (context) => AvatarAiListScreen(),
-          ));
+  static openFromHome(BuildContext context) {
+    UserManager userManager = AppDelegate.instance.getManager();
+    if (userManager.isNeedLogin) {
+      intro(context);
     } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            settings: RouteSettings(name: "/AvatarIntroduceScreen"),
-            builder: (context) => AvatarIntroduceScreen(),
-          ));
+      AvatarAiManager aiManager = AppDelegate.instance.getManager();
+      if (aiManager.dataList.isNotEmpty) {
+        open(context);
+      } else {
+        intro(context);
+      }
     }
+  }
+
+  static intro(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/AvatarIntroduceScreen"),
+          builder: (context) => AvatarIntroduceScreen(),
+        ));
   }
 
   static open(BuildContext context) {
@@ -60,7 +61,6 @@ class Avatar {
                 style: style,
               ),
             )).then((value) {
-          Navigator.of(context).popUntil(ModalRoute.withName('/AvatarAiListScreen'));
           if (value ?? false) {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
             AvatarAiManager aiManager = AppDelegate().getManager();

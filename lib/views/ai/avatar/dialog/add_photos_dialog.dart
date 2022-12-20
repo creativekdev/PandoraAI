@@ -54,27 +54,6 @@ class AddPhotosDialog extends StatelessWidget {
               maxLines: 5,
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
             SizedBox(height: 6),
-            controller.imageList.isNotEmpty
-                ? GridView.builder(
-                    padding: EdgeInsets.symmetric(vertical: $(12), horizontal: $(15)),
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      childAspectRatio: 1,
-                      mainAxisSpacing: 6,
-                      crossAxisSpacing: 6,
-                    ),
-                    itemBuilder: (context, index) {
-                      return item(context, File(controller.imageList[index].path), onDeleteTap: () {
-                        controller.imageList.removeAt(index);
-                        controller.update();
-                      });
-                    },
-                    itemCount: controller.imageList.length,
-                  )
-                : Container(),
-            SizedBox(height: 6),
             Divider(
               height: 1,
               color: ColorConstant.LineColor,
@@ -97,7 +76,7 @@ class AddPhotosDialog extends StatelessWidget {
               FontWeight.w500,
               $(17),
             ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
-              showTakePhotoOptDialog(context, controller).then((value) {
+              controller.pickImageFromGallery(context).then((value) {
                 if (controller.imageList.length >= controller.minSize) {
                   Navigator.of(context).pop(true);
                 }

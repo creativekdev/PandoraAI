@@ -59,7 +59,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
                   return GetBuilder<AvatarAiController>(
                       init: controller,
                       builder: (controller) => TitleTextWidget(
-                            '${controller.uploadedList.isEmpty ? 'Compressing' : 'Uploading'} photos$dot',
+                            'Uploading photos$dot',
                             ColorConstant.White,
                             FontWeight.w500,
                             $(18),
@@ -70,7 +70,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
             GetBuilder<AvatarAiController>(
                 init: controller,
                 builder: (controller) => TitleTextWidget(
-                      '${controller.uploadedList.isEmpty ? controller.compressedList.length : controller.uploadedList.length}/${controller.imageList.length}',
+                      '${controller.uploadedList.length}/${controller.imageList.length}',
                       ColorConstant.White,
                       FontWeight.normal,
                       $(16),

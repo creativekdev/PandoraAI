@@ -4,6 +4,7 @@ enum AvatarStatus {
   processing,
   completed,
   subscribed,
+  bought,
   UNDEFINED,
 }
 
@@ -18,6 +19,8 @@ class AvatarStatusUtils {
         return AvatarStatus.subscribed;
       case 'completed':
         return AvatarStatus.completed;
+      case 'bought':
+        return AvatarStatus.bought;
       default:
         return AvatarStatus.UNDEFINED;
     }
@@ -37,7 +40,23 @@ extension AvatarStatusEx on AvatarStatus {
         return 'completed';
       case AvatarStatus.UNDEFINED:
         return null;
+      case AvatarStatus.bought:
+        return 'bought';
+    }
+  }
+
+  title() {
+    switch (this) {
+      case AvatarStatus.pending:
+      case AvatarStatus.processing:
+        return 'Waiting';
+      case AvatarStatus.completed:
+      case AvatarStatus.subscribed:
+        return 'Created';
+      case AvatarStatus.UNDEFINED:
+        return 'All';
+      case AvatarStatus.bought:
+        return 'Bought';
     }
   }
 }
-

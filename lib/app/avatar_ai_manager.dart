@@ -57,9 +57,9 @@ class AvatarAiManager extends BaseManager {
     }
     dataList = list;
     if ((userManager.user?.aiAvatarCredit ?? 0) > 0) {
-      dataList.add(AvatarAiListEntity()..status = 'undefined');
+      dataList.insert(0, AvatarAiListEntity()..status = 'bought');
     }
-    return list;
+    return dataList;
   }
 
   Future<AvatarAiListEntity?> getAvatarAiDetail({

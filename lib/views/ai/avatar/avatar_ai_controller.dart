@@ -1,22 +1,24 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:images_picker/images_picker.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
 class AvatarAiController extends GetxController {
   final String name;
   final String style;
-  List<Media> imageList = [];
+  List<Medium> imageList = [];
   List<File> compressedList = [];
   List<UploadFile> uploadedList = [];
   int minSize = 15;
-  int maxSize = 20;
+  int maxSize = 50;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   bool isLoading = false;
@@ -48,22 +50,29 @@ class AvatarAiController extends GetxController {
     return 'Select $minSize-$maxSize selfies';
   }
 
-  Future<bool> pickImageFromCamera() async {
-    var photos = await ImagesPicker.openCamera(
-          pickType: PickType.image,
-        ) ??
-        [];
-    imageList.addAll(photos);
-    if (imageList.length > maxSize) {
-      imageList = imageList.sublist(0, maxSize);
-    }
-    update();
-    return photos.isNotEmpty;
-  }
+  // Future<bool> pickImageFromCamera() async {
+  //   var photos = await ImagesPicker.openCamera(
+  //         pickType: PickType.image,
+  //       ) ??
+  //       [];
+  //   imageList.addAll(photos);
+  //   if (imageList.length > maxSize) {
+  //     imageList = imageList.sublist(0, maxSize);
+  //   }
+  //   update();
+  //   return photos.isNotEmpty;
+  // }
 
-  Future<bool> pickImageFromGallery() async {
-    var photos = await ImagesPicker.pick(pickType: PickType.image, gif: false, count: maxSize - imageList.length) ?? [];
-    imageList.addAll(photos);
+  Future<bool> pickImageFromGallery(BuildContext context) async {
+    var photos = await PickAlbumScreen.pickImage(
+      context,
+      count: maxSize,
+      selectedList: imageList,
+    );
+    if (photos == null) {
+      return false;
+    }
+    imageList = photos;
     if (imageList.length > maxSize) {
       imageList = imageList.sublist(0, maxSize);
     }
@@ -78,7 +87,8 @@ class AvatarAiController extends GetxController {
         return false;
       }
       var media = imageList[i];
-      File file = await imageCompress(File(media.path), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.path) + ".jpg");
+      var sourceFile = await media.getFile();
+      File file = await imageCompress(sourceFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".jpg");
       if (stop) {
         return false;
       }
@@ -123,6 +133,7 @@ class AvatarAiController extends GetxController {
     }
     isLoading = false;
     update();
+    await AppDelegate.instance.getManager<UserManager>().refreshUser();
     return baseEntity;
   }
 }

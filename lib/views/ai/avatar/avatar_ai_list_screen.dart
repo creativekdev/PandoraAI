@@ -24,22 +24,35 @@ class AvatarAiListScreen extends StatefulWidget {
   State<AvatarAiListScreen> createState() => _AvatarAiListScreenState();
 }
 
-class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
+class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleTickerProviderStateMixin {
   EasyRefreshController _refreshController = EasyRefreshController();
   AvatarAiManager avatarAiManager = AppDelegate().getManager();
   List<AvatarAiListEntity> dataList = [];
   late StreamSubscription listListen;
   late double imageSize;
+  late TabController tabController;
+  List<AvatarStatus> statusList = [
+    AvatarStatus.UNDEFINED,
+    AvatarStatus.pending,
+    AvatarStatus.completed,
+    AvatarStatus.bought,
+  ];
+  int currentIndex = 0;
 
   @override
   initState() {
     super.initState();
     avatarAiManager.listPageAlive = true;
     logEvent(Events.avatar_list_loading);
-    imageSize = ScreenUtil.screenSize.width / 3;
+    imageSize = (ScreenUtil.screenSize.width - $(30)) / 3;
     listListen = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       _refreshController.callRefresh();
     });
+    tabController = TabController(
+      initialIndex: currentIndex,
+      length: statusList.length,
+      vsync: this,
+    );
     delay(() => _refreshController.callRefresh());
   }
 
@@ -67,139 +80,145 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
-        middle: TitleTextWidget(
-          'Pandora Avatars',
-          ColorConstant.White,
-          FontWeight.w600,
-          $(18),
-        ),
+        trailing: Icon(
+          Icons.add,
+          color: Colors.white,
+          size: $(19),
+        )
+            .intoContainer(
+                alignment: Alignment.center,
+                width: $(24),
+                height: $(24),
+                decoration: BoxDecoration(
+                  color: ColorConstant.BlueColor,
+                  borderRadius: BorderRadius.circular(32),
+                ))
+            .intoGestureDetector(onTap: () {
+          Avatar.intro(context);
+        }),
+        child: Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: TabBar(
+              indicatorColor: Colors.transparent,
+              tabs: statusList
+                  .map((e) => Text(e.title()).intoContainer(
+                          padding: EdgeInsets.symmetric(
+                        vertical: 6,
+                      )))
+                  .toList(),
+              controller: tabController,
+              onTap: (index) {
+                setState(() {
+                  currentIndex = index;
+                });
+              },
+            )),
+        childHeight: $(32),
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: EasyRefresh.custom(
-            enableControlFinishRefresh: true,
-            enableControlFinishLoad: false,
-            onRefresh: () async => loadFirstPage(),
-            controller: _refreshController,
-            slivers: [
-              SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                (context, index) => buildItem(context, index),
-                childCount: dataList.length,
-              ))
-            ],
-          )),
-          TitleTextWidget(
-            (AppDelegate().getManager<UserManager>().user?.aiAvatarCredit ?? 0) > 0
-                ? 'You have purchased already, '
-                : 'You will never have the same results!'
-                    ' Every time AI generates unique avatars.',
-            ColorConstant.White,
-            FontWeight.normal,
-            $(15),
-            maxLines: 2,
-          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20))),
-          TitleTextWidget(
-            'Create new avatars',
-            ColorConstant.White,
-            FontWeight.w500,
-            $(16),
-          )
-              .intoContainer(
-            decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(8))),
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(vertical: $(12), horizontal: $(15)),
-            padding: EdgeInsets.symmetric(vertical: $(10)),
-          )
-              .intoGestureDetector(onTap: () {
-            createTap(context);
-          })
+      body: EasyRefresh.custom(
+        enableControlFinishRefresh: true,
+        enableControlFinishLoad: false,
+        onRefresh: () async => loadFirstPage(),
+        controller: _refreshController,
+        slivers: [
+          SliverList(
+              delegate: SliverChildBuilderDelegate(
+            (context, index) => buildItem(context, index),
+            childCount: dataList.length,
+          ))
         ],
       ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
   }
 
-  Future<Null> createTap(BuildContext context) {
-    return SubmitAvatarDialog.push(context, name: '').then((name) {
-      if (!TextUtil.isEmpty(name)) {
-        SelectStyleScreen.push(
-          context,
-        ).then((style) {
-          if (style != null) {
-            Avatar.create(context, name: name!, style: style);
-          }
-        });
-      }
-    });
-  }
-
   Widget buildItem(BuildContext context, int index) {
     var data = dataList[index];
-    var coverImage = data.coverImage();
-    var list = coverImage.length > 6 ? coverImage.sublist(0, 6) : coverImage;
-    Widget item;
     var status = AvatarStatusUtils.build(data.status);
+    var currentStatus = statusList[currentIndex];
+    if (currentStatus != AvatarStatus.UNDEFINED) {
+      if (status == AvatarStatus.subscribed && currentStatus == AvatarStatus.completed) {
+      } else if (status != currentStatus) {
+        return Container();
+      }
+    }
+    Widget item;
     switch (status) {
       case AvatarStatus.pending:
       case AvatarStatus.processing:
-        item = Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: $(20)),
-            TitleTextWidget(
-              'Please waiting, your photos will '
-              'be generated in about 2 hours',
-              ColorConstant.White,
-              FontWeight.bold,
-              $(17),
-              maxLines: 2,
-            ),
-            SizedBox(height: $(20)),
-          ],
-        ).intoContainer(
-          margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-          padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
-          width: double.maxFinite,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular($(8)),
-            color: Colors.grey.shade900,
-          ),
-        );
-        break;
-      case AvatarStatus.completed:
-      case AvatarStatus.subscribed:
+        var trainingImage = data.trainingImage();
+        var trainingList = trainingImage.length > 6 ? trainingImage.sublist(0, 6) : trainingImage;
+
         item = ClipRRect(
           child: Stack(
             children: [
-              ...list.reversed.toList().transfer((e, index) => Positioned(
-                    child: CachedNetworkImageUtils.custom(context: context, imageUrl: e, width: imageSize, height: imageSize),
-                    top: 0,
-                    left: index * ((ScreenUtil.screenSize.width - $(30) - imageSize) / (list.length - 1)),
-                  )),
-              Container(
-                width: ScreenUtil.screenSize.width - $(30),
-                height: imageSize,
-                color: Color(0x37000000),
+              Wrap(
+                children: trainingList.transfer(
+                  (data, index) => CachedNetworkImageUtils.custom(
+                    context: context,
+                    imageUrl: data,
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TitleTextWidget(data.name, ColorConstant.White, FontWeight.w600, $(17)),
-                  TitleTextWidget('${data.imageCount} avatars', ColorConstant.White, FontWeight.normal, $(15)),
-                ],
-              ).intoContainer(
-                margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-                padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
-                width: ScreenUtil.screenSize.width - $(30),
+              Container(
+                color: Color(0xaa000000),
+              ),
+              Align(
+                child: TitleTextWidget(
+                  'Please waiting, your photos will '
+                  'be generated in about 2 hours. We\'ll '
+                  'send you an email with a link to '
+                  'your AI avatars when it\'s done!',
+                  ColorConstant.White,
+                  FontWeight.normal,
+                  $(12),
+                  maxLines: 10,
+                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 40)),
+                alignment: Alignment.center,
               ),
             ],
           ),
           borderRadius: BorderRadius.circular($(8)),
         )
             .intoContainer(
-          height: imageSize,
+              height: imageSize * 1.5,
+            )
+            .intoContainer(
+              margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
+              width: double.maxFinite,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular($(8)),
+                color: Colors.grey.shade900,
+              ),
+            );
+        break;
+      case AvatarStatus.completed:
+      case AvatarStatus.subscribed:
+        var coverImage = data.coverImage();
+        var list = coverImage.length > 6 ? coverImage.sublist(0, 6) : coverImage;
+        item = ClipRRect(
+          child: Stack(
+            children: [
+              Wrap(
+                children: list.transfer(
+                  (data, index) => CachedNetworkImageUtils.custom(
+                    context: context,
+                    imageUrl: data,
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          borderRadius: BorderRadius.circular($(8)),
+        )
+            .intoContainer(
+          height: imageSize * 1.5,
           margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
         )
             .intoGestureDetector(onTap: () {
@@ -214,24 +233,70 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
           });
         });
         break;
-      case AvatarStatus.UNDEFINED:
+      case AvatarStatus.bought:
         item = Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: $(20)),
-            TitleTextWidget(
-              'Thank you for purchasing\n Pandora Avatars. ',
-              ColorConstant.White,
-              FontWeight.bold,
-              $(17),
-              maxLines: 2,
+            Text(
+              'Packages purchased',
+              style: TextStyle(fontSize: $(10)),
+            ).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Color(0xfffed700),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(8)),
+                    bottomRight: Radius.circular($(8)),
+                  ),
+                )),
+            SizedBox(height: $(12)),
+            Row(
+              children: [
+                SizedBox(width: 12),
+                Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${AppDelegate.instance.getManager<UserManager>().user!.aiAvatarCredit}'
+                      ' unique avatars',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: $(17),
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      '10 variations of 10 styles',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: $(13),
+                        color: Color(0xff939398),
+                      ),
+                    ),
+                  ],
+                )),
+                Text(
+                  'Create',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Poppins',
+                    fontSize: $(15),
+                  ),
+                ).intoContainer(
+                    padding: EdgeInsets.symmetric(horizontal: $(32), vertical: $(10)),
+                    decoration: BoxDecoration(
+                      color: ColorConstant.BlueColor,
+                      borderRadius: BorderRadius.circular($(8)),
+                    )),
+                SizedBox(width: 12),
+              ],
             ),
             SizedBox(height: $(20)),
           ],
         )
             .intoContainer(
           margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-          padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
           width: double.maxFinite,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular($(8)),
@@ -239,8 +304,11 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> {
           ),
         )
             .intoGestureDetector(onTap: () {
-          createTap(context);
+          Avatar.intro(context);
         });
+        break;
+      case AvatarStatus.UNDEFINED:
+        item = Container();
         break;
     }
     return item;

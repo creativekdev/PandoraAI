@@ -39,6 +39,10 @@ class AvatarAiListEntity {
   List<String> coverImage() {
     return coverImages.split(',');
   }
+
+  List<String> trainingImage() {
+    return trainImages.split(',');
+  }
 }
 
 @JsonSerializable()

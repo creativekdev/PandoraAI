@@ -205,8 +205,8 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                 )
                     .intoGestureDetector(onTap: () {
                   if (controller.imageList.isEmpty) {
-                    showTakePhotoOptDialog(context, controller).then((value) {
-                      if (value ?? false) {
+                    controller.pickImageFromGallery(context).then((value) {
+                      if (value) {
                         if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
                           startUpload(context, controller);
                         } else {
@@ -350,9 +350,9 @@ Future<bool?> showTakePhotoOptDialog(BuildContext context, AvatarAiController co
             color: Colors.transparent,
           )
               .intoGestureDetector(onTap: () {
-            controller.pickImageFromCamera().then((value) {
-              Navigator.of(context).pop(value);
-            });
+            // controller.pickImageFromCamera().then((value) {
+            //   Navigator.of(context).pop(value);
+            // });
           }),
           Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
           TitleTextWidget('Choose from album', ColorConstant.White, FontWeight.normal, $(17))
@@ -362,7 +362,7 @@ Future<bool?> showTakePhotoOptDialog(BuildContext context, AvatarAiController co
             color: Colors.transparent,
           )
               .intoGestureDetector(onTap: () {
-            controller.pickImageFromGallery().then((value) {
+            controller.pickImageFromGallery(context).then((value) {
               Navigator.of(context).pop(value);
             });
           }),

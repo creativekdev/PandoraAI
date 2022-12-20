@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
@@ -29,11 +30,23 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
   List<String> dataList = [];
   Size? size;
   int selectedStyleIndex = 0;
+  late StreamSubscription streamSubscription;
 
   @override
   void initState() {
     super.initState();
     logEvent(Events.avatar_introduce_loading);
+    streamSubscription = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    streamSubscription.cancel();
   }
 
   @override
@@ -93,7 +106,7 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
             shaderMask(
                 context: context,
                 child: Text(
-                  'Good examples',
+                  'Examples',
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontSize: $(18),
@@ -120,11 +133,11 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                             selectedStyleIndex = index;
                           });
                         },
-                        height: $(44)),
+                        height: $(36)),
                     GridView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all($(12)),
+                      padding: EdgeInsets.only(left: $(12), right: $(12), bottom: $(12)),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         mainAxisSpacing: $(6),
@@ -155,15 +168,9 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
             height: $(72),
           )
           .intoGestureDetector(onTap: () {
-        SubmitAvatarDialog.push(context, name: '').then((name) {
-          if (!TextUtil.isEmpty(name)) {
-            SelectStyleScreen.push(
-              context,
-            ).then((style) {
-              if (style != null) {
-                Avatar.create(context, name: name!, style: style);
-              }
-            });
+        SubmitAvatarDialog.push(context, name: '').then((nameStyle) {
+          if (nameStyle != null) {
+            Avatar.create(context, name: nameStyle.key, style: nameStyle.value);
           }
         });
       }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),

@@ -321,7 +321,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                                   width: ScreenUtil.screenSize.width - $(30),
                                   padding: EdgeInsets.symmetric(vertical: $(8)),
                                   margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12))).intoGestureDetector(onTap: (){
-                                    Avatar.intro(context);
+                                    Avatar.openFromHome(context);
                           })
                               .intoContainer(
                                   height: $(56),
