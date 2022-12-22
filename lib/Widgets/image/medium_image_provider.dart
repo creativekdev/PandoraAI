@@ -7,9 +7,15 @@ class MediumImage extends ImageProvider<MediumImage> {
   final Medium medium;
 
   final double scale;
+  final int width;
+  final int height;
 
-  const MediumImage(this.medium, {this.scale = 1.0})
-      : assert(medium != null),
+  const MediumImage(
+    this.medium, {
+    this.scale = 1.0,
+    required this.height,
+    required this.width,
+  })  : assert(medium != null),
         assert(scale != null);
 
   @override
@@ -45,8 +51,8 @@ class MediumImage extends ImageProvider<MediumImage> {
     assert(key == this);
 
     try {
-      var file = await medium.getFile();
-      final Uint8List bytes = await (file).readAsBytes();
+      var byte = await medium.getThumbnail(width: width, height: height, highQuality: true);
+      final Uint8List bytes = await Uint8List.fromList(byte);
       if (bytes.lengthInBytes == 0) {
         // The file may become available later.
         PaintingBinding.instance.imageCache.evict(key);

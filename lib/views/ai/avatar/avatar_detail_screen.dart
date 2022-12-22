@@ -193,6 +193,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
         opaque: false,
         pageBuilder: (context, animation, secondaryAnimation) => GalleryPhotoViewWrapper(
           galleryItems: images,
+          shareEnable: true,
           backgroundDecoration: const BoxDecoration(
             color: Colors.black,
           ),

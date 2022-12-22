@@ -216,7 +216,11 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         children: [
           SizedBox(
             child: Image(
-              image: MediumImage(data),
+              image: MediumImage(
+                data,
+                width: imageSize.toInt(),
+                height: imageSize.toInt(),
+              ),
               fit: BoxFit.cover,
             ),
             width: imageSize,

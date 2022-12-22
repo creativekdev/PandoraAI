@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -10,7 +11,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum ShareType {
@@ -166,8 +166,8 @@ class _ShareScreenState extends State<ShareScreen> {
 
   Future<void> onShareButtonTap({required ShareType shareType}) async {
     File file;
-    String dir = (await getApplicationDocumentsDirectory()).path;
-    String fullPath = '$dir/${DateTime.now().millisecondsSinceEpoch}.jpeg';
+    var dir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+    String fullPath = '$dir${DateTime.now().millisecondsSinceEpoch}.png';
 
     if (widget.isVideo) {
       file = File(widget.image);
