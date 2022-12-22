@@ -72,7 +72,7 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
                 )),
             SizedBox(height: $(15)),
             TitleTextWidget(
-                    'The AI that Pandora Avatars uses can generate unpredictable results '
+                    'The AI that Pandora Avatar uses can generate unpredictable results '
                     'which may include artistic nudes, defects or shocking'
                     'images. This is not within our countrol. Please acknowledge and accept'
                     'full responsibility and risk before continue.',

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pic2Cartoon</string>
+    <string name="app_name">Pandora AI</string>
     <string name="facebook_app_id">1043807369586450</string>
     <string name="facebook_client_token">31823da957485a30fea58f83049d5778</string>
     <string name="fb_login_protocol_scheme">fb1043807369586450</string>

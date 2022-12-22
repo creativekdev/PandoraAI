@@ -4,6 +4,7 @@ enum MsgType {
   comment_social_post_comment,
   like_social_post,
   like_social_post_comment,
+  ai_avatar_completed,
   UNDEFINED,
 }
 
@@ -18,6 +19,8 @@ class MsgTypeUtils {
         return MsgType.like_social_post;
       case 'like_social_post_comment':
         return MsgType.like_social_post_comment;
+      case 'ai_avatar_completed':
+        return MsgType.ai_avatar_completed;
       default:
         return MsgType.UNDEFINED;
     }
@@ -35,6 +38,8 @@ extension MsgTypeEx on MsgType {
         return 'like_social_post';
       case MsgType.like_social_post_comment:
         return 'like_social_post_comment';
+      case MsgType.ai_avatar_completed:
+        return 'ai_avatar_completed';
       case MsgType.UNDEFINED:
         return null;
     }

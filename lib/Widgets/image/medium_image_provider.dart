@@ -44,17 +44,24 @@ class MediumImage extends ImageProvider<MediumImage> {
   Future<ui.Codec> _loadAsync(MediumImage key, DecoderBufferCallback? decode, DecoderCallback? decodeDeprecated) async {
     assert(key == this);
 
-    final Uint8List bytes = await (await medium.getFile()).readAsBytes();
-    if (bytes.lengthInBytes == 0) {
+    try {
+      var file = await medium.getFile();
+      final Uint8List bytes = await (file).readAsBytes();
+      if (bytes.lengthInBytes == 0) {
+        // The file may become available later.
+        PaintingBinding.instance.imageCache.evict(key);
+        throw StateError('$medium is empty and cannot be loaded as an image.');
+      }
+
+      if (decode != null) {
+        return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
+      }
+      return decodeDeprecated!(bytes);
+    } catch (e) {
       // The file may become available later.
       PaintingBinding.instance.imageCache.evict(key);
       throw StateError('$medium is empty and cannot be loaded as an image.');
     }
-
-    if (decode != null) {
-      return decode(await ui.ImmutableBuffer.fromUint8List(bytes));
-    }
-    return decodeDeprecated!(bytes);
   }
 
   @override

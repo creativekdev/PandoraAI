@@ -127,11 +127,11 @@ class RateNoticeOperator {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TitleTextWidget('Rate Pic2Cartoon', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+        TitleTextWidget('Rate Pandora Avatar', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
           padding: EdgeInsets.only(top: $(20), bottom: $(15), left: $(15), right: $(15)),
         ),
         TitleTextWidget(
-          'If you enjoy using Pic2Cartoon, would you mind taking a moment to rate it?',
+          'If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?',
           ColorConstant.White,
           FontWeight.normal,
           $(14),

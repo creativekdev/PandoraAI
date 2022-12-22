@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
@@ -50,7 +51,9 @@ class Avatar {
 
   static create(BuildContext context, {required String name, required String style}) async {
     UserManager userManager = AppDelegate().getManager();
-    userManager.doOnLogin(context, callback: () {
+    AvatarAiManager aiManager = AppDelegate().getManager();
+    userManager.doOnLogin(context, callback: () async {
+      await aiManager.listAllAvatarAi();
       var forward = () {
         Navigator.push(
             context,
@@ -63,14 +66,13 @@ class Avatar {
             )).then((value) {
           if (value ?? false) {
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
-            AvatarAiManager aiManager = AppDelegate().getManager();
             if (!aiManager.listPageAlive) {
               delay(() => open(context), milliseconds: 64);
             }
           }
         });
       };
-      if (userManager.user!.aiAvatarCredit <= 0) {
+      if (userManager.user!.aiAvatarCredit > 0) {
         forward.call();
       } else {
         // user not pay yet. to introduce page. and get pay status to edit page.

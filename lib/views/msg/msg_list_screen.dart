@@ -3,10 +3,12 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_card.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -86,6 +88,15 @@ class MsgListState extends AppState<MsgListScreen> {
                   MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(discoveryEntity: value)),
                 );
               }
+            });
+          });
+        });
+        break;
+      case MsgType.ai_avatar_completed:
+        showLoading().whenComplete(() {
+          AppDelegate.instance.getManager<AvatarAiManager>().listAllAvatarAi().then((value) {
+            hideLoading().whenComplete(() {
+              Avatar.open(context);
             });
           });
         });

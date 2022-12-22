@@ -313,7 +313,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   child: ClipRect(
                       child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                          child: TitleTextWidget('Pandora Avatars', ColorConstant.White, FontWeight.w500, $(17))
+                          child: TitleTextWidget('Pandora Avatar', ColorConstant.White, FontWeight.w500, $(17))
                               .intoContainer(
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),

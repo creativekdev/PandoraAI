@@ -43,6 +43,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   int pageSize = 40;
   List<Medium> dataList = [];
   bool _isRequesting = false;
+  bool _canLoadMore = false;
   ScrollController scrollController = ScrollController();
   late bool switchAlbum;
   late List<Medium> selectedList;
@@ -63,7 +64,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       if (_isRequesting) {
         return;
       }
-      if (scrollController.position.pixels > scrollController.position.maxScrollExtent - 20) {
+      if (_canLoadMore && scrollController.position.pixels > scrollController.position.maxScrollExtent - 20) {
         loadMore();
       }
     });
@@ -103,18 +104,29 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
 
   void loadData() {
     _isRequesting = true;
-    selectAlbum!.listMedia(skip: 0, take: pageSize).then((value) {
+    selectAlbum!
+        .listMedia(
+      skip: 0,
+      take: pageSize < selectAlbum!.count ? pageSize : selectAlbum!.count,
+    )
+        .then((value) {
       setState(() {
         page = 0;
         dataList = value.items;
       });
       _isRequesting = false;
+      if (dataList.length >= selectAlbum!.count) {
+        _canLoadMore = false;
+      } else {
+        _canLoadMore = true;
+      }
     });
   }
 
   void loadMore() {
     _isRequesting = true;
-    selectAlbum!.listMedia(skip: (page + 1) * pageSize, take: pageSize).then((value) {
+    var skip = (page + 1) * pageSize;
+    selectAlbum!.listMedia(skip: skip, take: pageSize + skip < selectAlbum!.count ? pageSize : selectAlbum!.count - skip).then((value) {
       if (value.items.isNotEmpty) {
         setState(() {
           page++;
@@ -122,6 +134,11 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         });
       }
       _isRequesting = false;
+      if (dataList.length >= selectAlbum!.count) {
+        _canLoadMore = false;
+      } else {
+        _canLoadMore = true;
+      }
     });
   }
 

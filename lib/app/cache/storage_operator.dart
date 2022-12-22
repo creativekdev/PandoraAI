@@ -10,7 +10,7 @@ const _tempDir = 'temp/';
 const _pushDir = 'push/';
 const _recentDir = 'recent/';
 const _cropDir = 'cropDir/';
-const saveAlbumName = 'Pic2Cartoon';
+const saveAlbumName = 'PandoraAI';
 
 class StorageOperator {
   var _mainPath = '';

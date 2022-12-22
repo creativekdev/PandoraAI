@@ -1,5 +1,5 @@
 class StringConstant {
-  static const app_name = "Pic2Cartoon";
+  static const app_name = "Pandora AI";
   static const login = "Sign In";
   static const insta_login = "Instagram";
   static const tiktok_login = "TikTok";
@@ -127,7 +127,7 @@ class StringConstant {
   static const discoveryUnlike = "Unlike";
   static const discoveryShareSubmit = 'Submit';
   static const discoveryShareInputTitle = 'Add some text';
-  static const discoveryShareInputHint = 'I created this using #Pic2Cartoon';
+  static const discoveryShareInputHint = 'I created this using #Pandora Avatar';
   static const cartoonize = 'Cartoonize';
   static const shareIncludeOriginal = "Also share the original image";
   static const cartoonizeCancelTitle = "Closing the page will stop the transforming process. Are you sure to continue?";
@@ -146,7 +146,7 @@ class StringConstant {
   static const buyAttrHDImages = 'High resolution images';
   static const buyAttrFasterSpeed = 'Faster speed';
   static const buyNow = 'Buy now';
-  static const ppmPro = 'Pic2Cartoon Pro';
+  static const ppmPro = 'Pandora AI Pro';
   static const watchAdHint = 'Watch an ad to remove watermark\n(only this time)';
   static const watchAdText = 'Download HD image\nwithout watermark';
   static const watchAdToShareText = 'Share HD image\nwithout watermark';
