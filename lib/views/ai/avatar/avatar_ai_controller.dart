@@ -15,8 +15,8 @@ class AvatarAiController extends GetxController {
   final String name;
   final String style;
   List<Medium> imageList = [];
-  List<File> compressedList = [];
-  List<UploadFile> uploadedList = [];
+  List<String> compressedList = [];
+  List<String> uploadedList = [];
   int minSize = 15;
   int maxSize = 50;
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -41,8 +41,7 @@ class AvatarAiController extends GetxController {
   void dispose() {
     api.unbind();
     imageList.clear();
-    compressedList.clear();
-    uploadedList.clear();
+    clear();
     super.dispose();
   }
 
@@ -92,22 +91,22 @@ class AvatarAiController extends GetxController {
       if (stop) {
         return false;
       }
-      compressedList.add(file);
+      compressedList.add(file.path);
       update();
     }
     for (int i = uploadedList.length; i < compressedList.length; i++) {
       if (stop) {
         return false;
       }
-      var file = compressedList[i];
-      var url = await api.uploadImageToS3(file, true);
+      var filePath = compressedList[i];
+      var url = await api.uploadImageToS3(File(filePath), true);
       if (stop) {
         return false;
       }
       if (url == null) {
         return false;
       }
-      uploadedList.add(UploadFile(imageUrl: url, file: file));
+      uploadedList.add(url);
       update();
     }
     logEvent(Events.avatar_submit_photos);
@@ -125,22 +124,25 @@ class AvatarAiController extends GetxController {
     var baseEntity = await api.submitAvatarAi(params: {
       'name': name,
       'role': style,
-      'train_images': uploadedList.map((e) => e.imageUrl).toList().join(','),
+      'train_images': uploadedList.map((e) => e).toList().join(','),
     });
     if (baseEntity != null) {
-      uploadedList.clear();
-      compressedList.clear();
+      clear();
     }
     isLoading = false;
     update();
     await AppDelegate.instance.getManager<UserManager>().refreshUser();
     return baseEntity;
   }
-}
 
-class UploadFile {
-  String imageUrl;
-  File file;
-
-  UploadFile({required this.imageUrl, required this.file});
+  clear() {
+    uploadedList.clear();
+    compressedList.forEach((element) {
+      var file = File(element);
+      if (file.existsSync()) {
+        file.delete();
+      }
+    });
+    compressedList.clear();
+  }
 }
