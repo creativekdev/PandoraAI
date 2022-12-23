@@ -47,6 +47,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   @override
   void dispose() {
     super.dispose();
+    controller.dispose();
     Get.delete<AvatarAiController>();
   }
 
