@@ -139,21 +139,13 @@ Future<File> imageCompress(File file, String targetPath) async {
   }
   var imageInfo = await SyncFileImage(file: file).getImage();
   var image = imageInfo.image;
-  var shortSide = image.width > image.height ? image.height : image.width;
-  if (shortSide > 1024) {
-    var scale = 1024 / shortSide;
-    int width = (image.width * scale).toInt();
-    int height = (image.height * scale).toInt();
-    return (await FlutterImageCompress.compressAndGetFile(
-      file.absolute.path,
-      targetPath,
-      minWidth: width,
-      minHeight: height,
-      quality: quality,
-    ))!;
-  } else {
-    return await file.copy(targetPath);
-  }
+  return (await FlutterImageCompress.compressAndGetFile(
+    file.absolute.path,
+    targetPath,
+    minWidth: image.width,
+    minHeight: image.height,
+    quality: quality,
+  ))!;
 }
 
 Future<Uint8List> imageCompressWithList(Uint8List image) async {
