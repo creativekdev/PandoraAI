@@ -18,7 +18,7 @@ class AvatarAiController extends GetxController {
   List<String> compressedList = [];
   List<String> uploadedList = [];
   int minSize = 15;
-  int maxSize = 50;
+  int maxSize = 30;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   bool isLoading = false;

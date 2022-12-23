@@ -122,7 +122,7 @@ Future<File> imageCompressAndGetFile(File file) async {
 Future<File> imageCompress(File file, String targetPath) async {
   var length = await file.length();
   if (length < 200 * 1024) {
-    return file;
+    return await file.copy(targetPath);
   }
 
   var quality = 100;

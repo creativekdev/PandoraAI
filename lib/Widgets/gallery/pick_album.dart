@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
@@ -10,14 +11,21 @@ class PickAlbumScreen {
     List<Medium>? selectedList,
     int count = 20,
     bool switchAlbum = false,
-  }) =>
-      Navigator.of(context).push<List<Medium>>(MaterialPageRoute(
+  }) async {
+    var value = await Permission.photos.request();
+    if (value.isDenied || value.isPermanentlyDenied) {
+      CommonExtension().showToast('Please grant photo permission');
+      return [];
+    } else {
+      return Navigator.of(context).push<List<Medium>>(MaterialPageRoute(
         builder: (context) => _PickAlbumScreen(
           switchAlbum: switchAlbum,
           selectedList: selectedList ?? [],
           maxCount: count,
         ),
       ));
+    }
+  }
 }
 
 class _PickAlbumScreen extends StatefulWidget {
