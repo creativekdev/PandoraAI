@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
@@ -26,7 +27,7 @@ class AvatarIntroduceScreen extends StatefulWidget {
   State<StatefulWidget> createState() => AvatarIntroduceScreenState();
 }
 
-class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
+class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
   List<String> dataList = [];
   Size? size;
   int selectedStyleIndex = 0;
@@ -50,7 +51,7 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor),
@@ -170,7 +171,7 @@ class AvatarIntroduceScreenState extends State<AvatarIntroduceScreen> {
           .intoGestureDetector(onTap: () {
         SubmitAvatarDialog.push(context, name: '').then((nameStyle) {
           if (nameStyle != null) {
-            Avatar.create(context, name: nameStyle.key, style: nameStyle.value);
+            Avatar.create(context, name: nameStyle.key, style: nameStyle.value, state: this);
           }
         });
       }).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),

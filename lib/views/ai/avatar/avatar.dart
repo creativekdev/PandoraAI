@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -49,11 +50,13 @@ class Avatar {
     }, autoExec: true);
   }
 
-  static create(BuildContext context, {required String name, required String style}) async {
+  static create(BuildContext context, {required String name, required String style, AppState? state}) async {
     UserManager userManager = AppDelegate().getManager();
     AvatarAiManager aiManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () async {
+      await state?.showLoading();
       await aiManager.listAllAvatarAi();
+      await state?.hideLoading();
       var forward = () {
         Navigator.push(
             context,

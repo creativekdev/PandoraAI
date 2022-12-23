@@ -145,10 +145,12 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
               .intoGestureDetector(onTap: () {
             var name = controller.text.trim();
             if (TextUtil.isEmpty(name)) {
+              FocusScope.of(context).requestFocus(FocusNode());
               CommonExtension().showToast('Please input name');
               return;
             }
             if (selectedStyle == null) {
+              FocusScope.of(context).requestFocus(FocusNode());
               CommonExtension().showToast('Please select style');
               return;
             }
