@@ -190,7 +190,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               }),
         Row(
           children: [
-            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: (){
+            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
               widget.onCommentTap.call();
             }),
             SizedBox(width: $(10)),
@@ -369,6 +369,9 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       });
 
   toChoosePage() {
+    if (effectDataController.data == null) {
+      return;
+    }
     String key = data.cartoonizeKey;
     int tabPos = effectDataController.data!.tabPos(key);
     int categoryPos = 0;

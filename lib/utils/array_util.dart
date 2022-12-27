@@ -30,6 +30,16 @@ extension ArrayExtension<T> on List<T> {
     return null;
   }
 
+  Future<List<T>> filterSync(Future<bool> Function(T t) action) async {
+    List<T> result = [];
+    for (var value in this) {
+      if (await action(value)) {
+        result.add(value);
+      }
+    }
+    return result;
+  }
+
   List<T> filter(bool Function(T t) action) {
     List<T> result = [];
     for (var value in this) {

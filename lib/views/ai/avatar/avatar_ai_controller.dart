@@ -86,8 +86,14 @@ class AvatarAiController extends GetxController {
         return false;
       }
       var media = imageList[i];
-      var sourceFile = await media.getFile();
-      File file = await imageCompress(sourceFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".jpg");
+      File file;
+      if (Platform.isIOS) {
+        var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
+        file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
+      } else {
+        var sourceFile = await media.getFile();
+        file = await imageCompress(sourceFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".png");
+      }
       if (stop) {
         return false;
       }

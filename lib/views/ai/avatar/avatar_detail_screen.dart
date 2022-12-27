@@ -8,6 +8,8 @@ import 'package:cartoonizer/Widgets/cacheImage/sync_download_file.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
@@ -30,6 +32,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   List<List<AvatarChildEntity>> dataList = [];
   late double itemSize;
   late CartoonizerApi api;
+  AvatarAiManager aiManager = AppDelegate.instance.getManager();
 
   _AvatarDetailScreenState() : super(canCancelOnLoading: false);
 
@@ -87,7 +90,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                     children: [
                       SizedBox(height: $(10)),
                       TitleTextWidget(
-                        list.first.style,
+                        aiManager.config!.styleTitle('', list.first.style),
                         ColorConstant.White,
                         FontWeight.w500,
                         $(16),
@@ -140,7 +143,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             ),
           ),
           Text(
-            'Save all to album',
+            'Save Photo',
             style: TextStyle(color: Colors.white, fontSize: $(17)),
           )
               .intoContainer(
@@ -162,7 +165,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                 if (file != null) {
                   showLoading(
                       progressWidget: Text(
-                    '${i+1}/${entity.outputImages.length}',
+                    '${i + 1}/${entity.outputImages.length}',
                     style: TextStyle(
                       color: ColorConstant.White,
                       fontFamily: 'Poppins',

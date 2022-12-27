@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:cartoonizer/files.dart';
 import 'package:http/http.dart' as http;
@@ -92,8 +93,8 @@ class GallerySaver {
 
   static Future<File> _downloadFile(String url,
       {Map<String, String>? headers}) async {
-    print(url);
-    print(headers);
+    LogUtil.v(url);
+    LogUtil.v(headers);
     http.Client _client = new http.Client();
     var req = await _client.get(Uri.parse(url), headers: headers);
     if (req.statusCode >= 400) {

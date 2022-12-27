@@ -1293,7 +1293,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: false,
+      useOld: true,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,

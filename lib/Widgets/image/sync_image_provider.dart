@@ -16,7 +16,19 @@ abstract class SyncImageProvider {
 
   _loadImage();
 }
+class SyncMemoryImage extends SyncImageProvider {
+  Uint8List list;
+  SyncMemoryImage({required this.list});
 
+  @override
+  _loadImage() {
+    var resolve = MemoryImage(list).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      _completer.complete(image);
+    }));
+  }
+
+}
 class SyncFileImage extends SyncImageProvider {
   File file;
 

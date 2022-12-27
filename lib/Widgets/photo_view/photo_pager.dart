@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
@@ -10,6 +11,7 @@ import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:photo_view/photo_view.dart';
@@ -66,32 +68,54 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                 FontWeight.w500,
                 $(18),
               ),
-              trailing: Image.asset(
-                Images.ic_share,
-                color: Colors.white,
-                width: $(24),
-              ).intoGestureDetector(onTap: () {
-                var item = widget.galleryItems[currentIndex];
-                showLoading().whenComplete(() {
-                  SyncDownloadFile(url: item, type: 'png').getImage().then((image) {
-                    hideLoading().whenComplete(() {
-                      var imageString = base64Encode(image!.readAsBytesSync());
-                      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                      ShareScreen.startShare(
-                        context,
-                        backgroundColor: Color(0x77000000),
-                        style: 'Pandora AI',
-                        image: imageString,
-                        isVideo: false,
-                        originalUrl: '',
-                        effectKey: 'Pandora AI',
-                      ).then((value) {
-                        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    Images.ic_download,
+                    width: $(24),
+                  ).intoGestureDetector(onTap: () async {
+                    showLoading().whenComplete(() async {
+                      var file = await SyncDownloadFile(url: widget.galleryItems[currentIndex], type: 'png').getImage();
+                      if (file != null) {
+                        await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
+                        hideLoading().whenComplete(() {
+                          CommonExtension().showImageSavedOkToast(context);
+                        });
+                      } else {
+                        hideLoading();
+                      }
+                    });
+                  }),
+                  SizedBox(width: 8),
+                  Image.asset(
+                    Images.ic_share,
+                    color: Colors.white,
+                    width: $(24),
+                  ).intoGestureDetector(onTap: () {
+                    var item = widget.galleryItems[currentIndex];
+                    showLoading().whenComplete(() {
+                      SyncDownloadFile(url: item, type: 'png').getImage().then((image) {
+                        hideLoading().whenComplete(() {
+                          var imageString = base64Encode(image!.readAsBytesSync());
+                          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                          ShareScreen.startShare(
+                            context,
+                            backgroundColor: Color(0x77000000),
+                            style: 'Pandora AI',
+                            image: imageString,
+                            isVideo: false,
+                            originalUrl: '',
+                            effectKey: 'Pandora AI',
+                          ).then((value) {
+                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                          });
+                        });
                       });
                     });
-                  });
-                });
-              }),
+                  }),
+                ],
+              ),
             )
           : null,
       body: Container(

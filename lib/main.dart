@@ -13,6 +13,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -59,7 +60,8 @@ void main() async {
   // Appsflyer.instance;
   KoChaVa.instance.init();
   // init admob
-  MobileAds.instance.initialize();
+  await MobileAds.instance.initialize();
+  await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['F6236D69A8A84479F17A3C6D0EAB1C53']));
   // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
@@ -89,7 +91,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+class _MyHomePageState extends State<MyHomePage> {
   late StreamSubscription onSplashAdLoadingListener;
 
   @override
@@ -102,16 +104,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
 
     waitAppInitialize();
-
-    //2.页面初始化的时候，添加一个状态的监听者
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     super.dispose();
-    //3. 页面销毁时，移出监听者
-    WidgetsBinding.instance.removeObserver(this);
     onSplashAdLoadingListener.cancel();
   }
 
@@ -209,35 +206,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.showIfAvailable(callback: () {
         forward.call();
       });
-    }
-  }
-
-  //监听程序进入前后台的状态改变的方法
-  /// dead code。
-  /// 此方法不生效，因为push到homescreen的时候当前页面就被销毁了。所以之前的adContainer报错也是一直没有得到fix。
-  /// 新实现在ThirdpartManager里，使用了google ads的AppStateEventNotifier
-  /// 如果要使用此段代码，可以搬到home screen中，但是home screen在使用过程中还是会被重启，所以放在了ThirdpartManager中。
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    switch (state) {
-      //进入应用时候不会触发该状态 应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume
-      case AppLifecycleState.resumed:
-        print("didChangeAppLifecycleState-------> 应用进入前台======");
-        break;
-      //应用状态处于闲置状态，并且没有用户的输入事件，
-      // 注意：这个状态切换到 前后台 会触发，所以流程应该是先冻结窗口，然后停止UI
-      case AppLifecycleState.inactive:
-        print("didChangeAppLifecycleState-------> 应用处于闲置状态，这种状态的应用应该假设他们可能在任何时候暂停 切换到后台会触发======");
-        break;
-      //当前页面即将退出
-      case AppLifecycleState.detached:
-        print("didChangeAppLifecycleState-------> 当前页面即将退出======");
-        break;
-      // 应用程序处于不可见状态
-      case AppLifecycleState.paused:
-        print("didChangeAppLifecycleState-------> 应用处于不可见状态 后台======");
-        break;
     }
   }
 

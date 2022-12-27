@@ -32,6 +32,7 @@ class AdsCache {
   }
 
   void putAds(String key, Ad ad) {
+    return;
     cacheMap[key] = _AdsInfo(ad: ad, overdueDate: DateTime.now());
   }
 }

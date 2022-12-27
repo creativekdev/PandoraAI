@@ -82,8 +82,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     });
     albumController.checkPermissions().then((value) {
-      if (value.isGranted) {
-        albumController.syncFromAlbum();
+      if (value) {
+        albumController.getTotalAlbum();
       }
     });
   }

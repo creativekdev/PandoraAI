@@ -167,7 +167,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
               Align(
                 child: TitleTextWidget(
                   'Please waiting, your photos will '
-                  'be generated in about 2 hours. We\'ll '
+                  'be generated in about ${avatarAiManager.config!.data.pendingTime} minutes. We\'ll '
                   'send you an email with a link to '
                   'your AI avatars when it\'s done!',
                   ColorConstant.White,

@@ -1,6 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
 
@@ -35,6 +33,7 @@ class EffectCardEx {
     required double height,
   }) =>
       CachedNetworkImageUtils.custom(
+        useOld: true,
         context: context,
         imageUrl: url,
         fit: BoxFit.fill,

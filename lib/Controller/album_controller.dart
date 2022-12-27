@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:math';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
@@ -8,23 +8,23 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:photo_album_manager/photo_album_manager.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
 class AlbumController extends GetxController {
   late CacheManager cacheManager = AppDelegate.instance.getManager();
-  List<AlbumModelEntity> faceList = [];
-  List<AlbumModelEntity> otherList = [];
+  List<Medium> faceList = [];
+  List<Medium> otherList = [];
+  int pageSize = 100;
   bool loading = false;
   late StreamSubscription onClearCacheListener;
-  PermissionStatus? permissionStatus;
+  Album? album;
 
   @override
   onInit() {
     super.onInit();
-    faceList = cacheManager.photoSourceOperator.faceList.filter((e) => File(e.thumbPath!).existsSync());
-    otherList = cacheManager.photoSourceOperator.otherList.filter((e) => File(e.thumbPath!).existsSync());
+    faceList = cacheManager.photoSourceOperator.faceList;
+    otherList = cacheManager.photoSourceOperator.otherList;
     onClearCacheListener = EventBusHelper().eventBus.on<OnClearCacheEvent>().listen((event) {
       faceList.clear();
       otherList.clear();
@@ -38,106 +38,89 @@ class AlbumController extends GetxController {
     onClearCacheListener.cancel();
   }
 
-  Future<PermissionStatus> checkPermissions() async {
-    if (permissionStatus == null || permissionStatus != PermissionStatus.granted) {
-      permissionStatus = await PhotoAlbumManager.checkPermissions();
+  Future<bool> checkPermissions() async {
+    var values = await [Permission.photos, Permission.storage].request();
+    for (var result in values.values) {
+      if (result.isDenied || result.isPermanentlyDenied) {
+        CommonExtension().showToast('Please grant all permissions');
+        return false;
+      }
     }
-    return permissionStatus!;
+    return true;
   }
 
-  Future<bool> syncFromAlbum() async {
-    if (loading) {
+  Future<Album?> getTotalAlbum() async {
+    if (album != null) return album;
+    var list = await PhotoGallery.listAlbums(mediumType: MediumType.image);
+    Album? a;
+    for (var value in list) {
+      if (value.count >= (a?.count ?? 0)) {
+        a = value;
+      }
+    }
+    album = a;
+    return a;
+  }
+
+  Future<bool> loadData() async {
+    if (album == null || loading) {
+      return false;
+    }
+    var takenCount = faceList.length + otherList.length;
+    if (takenCount >= album!.count) {
       return false;
     }
     loading = true;
     update();
-    int reqCount = 50;
-    var firstLoad = faceList.isEmpty && otherList.isEmpty;
-    if (firstLoad) {
-      reqCount = 100;
+    MediaPage mediaPage;
+    if (takenCount > album!.count - pageSize) {
+      mediaPage = await album!.listMedia(skip: takenCount, take: album!.count - takenCount);
+    } else {
+      mediaPage = await album!.listMedia(skip: takenCount, take: pageSize);
     }
-    List<AlbumModelEntity> list = await PhotoAlbumManager.getDescAlbumImg(maxCount: reqCount);
-    if (firstLoad) {
-      // first load, just add to list
-      for (AlbumModelEntity entity in list) {
-        bool needUpdate = false;
-        var faceImage = await hasFace(entity);
-        if (faceImage) {
-          faceList.add(entity);
-          if (faceList.length % 20 == 0) {
-            needUpdate = true;
-          }
-        } else {
-          otherList.add(entity);
-          if (otherList.length % 20 == 0) {
-            needUpdate = true;
-          }
+    for (var value in mediaPage.items) {
+      bool needUpdate = false;
+      var faceImage = await hasFace(value);
+      if (faceImage) {
+        faceList.add(value);
+        if (faceList.length % 20 == 0) {
+          needUpdate = true;
         }
-        if (needUpdate) {
-          update();
-          await cacheManager.photoSourceOperator.saveData(faceList, otherList);
+      } else {
+        otherList.add(value);
+        if (otherList.length % 20 == 0) {
+          needUpdate = true;
         }
       }
-    } else {
-      // increase load, loop from last to first, and insert to top at list
-      for (int i = list.length - 1; i >= 0; i--) {
-        var entity = list[i];
-        var cropHomePath = cacheManager.storageOperator.cropDir.path;
-        var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(entity.originalPath!) + '.png';
-        if (faceList.exist((t) => t.thumbPath == newThumbnailPath) || otherList.exist((t) => t.thumbPath == newThumbnailPath)) {
-          continue;
-        }
-        var faceImage = await hasFace(entity);
-        if (faceImage) {
-          faceList.insert(0, entity);
-        } else {
-          otherList.insert(0, entity);
-        }
+      if (needUpdate) {
         update();
+        await cacheManager.photoSourceOperator.saveData(faceList, otherList);
       }
     }
     loading = false;
     update();
-    cacheManager.photoSourceOperator.saveData(faceList, otherList);
     return true;
   }
 
   /// check face image,
   /// crop new thumbnail base on face if has,
   /// crop centre pos base on image if not.
-  Future<bool> hasFace(AlbumModelEntity entity) async {
+  Future<bool> hasFace(Medium entity) async {
     try {
-      if (Platform.isIOS) {
-        File file = File(entity.thumbPath!);
-        InputImage inputImage = InputImage.fromFile(file);
-        FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
-        List<Face> faces = await faceDetector.processImage(inputImage);
-        faceDetector.close();
-        return pickAvailableFace(faces) != null;
+      var bytes = await entity.getThumbnail(width: 512, height: 512, highQuality: true);
+      var tempImage = getTempImage(entity);
+      if (!tempImage.existsSync()) {
+        await tempImage.writeAsBytes(bytes);
       }
-      if (TextUtil.isEmpty(entity.originalPath)) {
-        var albumModelEntity = await PhotoAlbumManager.getOriginalResource(entity.localIdentifier!);
-        if (albumModelEntity == null || TextUtil.isEmpty(albumModelEntity.originalPath)) {
-          throw Exception('has no original image');
-        }
-        entity.originalPath = albumModelEntity.originalPath;
-      }
-      File file = File(entity.originalPath!);
-      InputImage inputImage = InputImage.fromFile(file);
+      InputImage inputImage = InputImage.fromFile(tempImage);
       FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
       List<Face> faces = await faceDetector.processImage(inputImage);
       faceDetector.close();
-      if (!TextUtil.isEmpty(entity.thumbPath)) {
-        File(entity.thumbPath!).delete();
-      }
-      var imageInfo = await SyncFileImage(file: file).getImage();
+      var imageInfo = await SyncFileImage(file: tempImage).getImage();
       var image = imageInfo.image;
-      var cropHomePath = cacheManager.storageOperator.cropDir.path;
-      var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(entity.originalPath!) + ".png";
-      var newThumbnailFile = File(newThumbnailPath);
-      entity.thumbPath = newThumbnailPath;
+      var thumbnail = getThumbnail(entity);
       var face = pickAvailableFace(faces);
-      if (newThumbnailFile.existsSync()) {
+      if (thumbnail.existsSync()) {
         //has crop already
         return face != null;
       }
@@ -159,18 +142,8 @@ class AlbumController extends GetxController {
         }
         Rect rect = Rect.fromLTWH(centrePos.dx - targetWidth / 2, centrePos.dy - targetHeight / 2, targetWidth, targetHeight);
         Uint8List imageData = await cropFile(image, rect);
-        if (min(targetWidth, targetHeight) > 512) {
-          double cropPercent = 512 / min(targetWidth, targetHeight);
-          savedImageData = await FlutterImageCompress.compressWithList(
-            imageData,
-            minWidth: 512,
-            minHeight: 512,
-            quality: (cropPercent * 100).toInt(),
-          );
-        } else {
-          savedImageData = imageData;
-        }
-        await newThumbnailFile.writeAsBytes(savedImageData.toList());
+        savedImageData = imageData;
+        await thumbnail.writeAsBytes(savedImageData.toList());
       } else {
         // crop base on centre pos
         Rect rect;
@@ -184,20 +157,9 @@ class AlbumController extends GetxController {
           rect = Rect.fromLTWH(0, offset, newImageSize.toDouble(), newImageSize.toDouble());
         }
         Uint8List imageData = await cropFile(image, rect);
-        if (min(image.width, image.height) > 512) {
-          //bigger than 512, compress image property
-          double cropPercent = 512 / newImageSize;
-          savedImageData = await FlutterImageCompress.compressWithList(
-            imageData,
-            minWidth: 512,
-            minHeight: 512,
-            quality: (cropPercent * 100).toInt(),
-          );
-        } else {
-          savedImageData = imageData;
-        }
+        savedImageData = imageData;
       }
-      await newThumbnailFile.writeAsBytes(savedImageData.toList(), flush: true);
+      await thumbnail.writeAsBytes(savedImageData.toList(), flush: true);
       return face != null;
     } on PlatformException catch (e) {
       LogUtil.e(e.toString(), tag: 'face-detector');
@@ -220,5 +182,17 @@ class AlbumController extends GetxController {
       }
     }
     return result;
+  }
+
+  File getThumbnail(Medium medium) {
+    var cropHomePath = cacheManager.storageOperator.cropDir.path;
+    var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(medium.filename!) + ".png";
+    return File(newThumbnailPath);
+  }
+
+  File getTempImage(Medium medium) {
+    var tempHomePath = cacheManager.storageOperator.tempDir.path;
+    var newPath = tempHomePath + EncryptUtil.encodeMd5(medium.filename!) + ".png";
+    return File(newPath);
   }
 }

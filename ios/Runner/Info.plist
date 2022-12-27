@@ -92,6 +92,8 @@
 	<string>contacts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Need location when in use</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Need location when in use</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to camera to convert your photo into cartoon.</string>
 	<key>NSMotionUsageDescription</key>

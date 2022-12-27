@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/avatar_config_entity.g.dart';
+import 'package:common_utils/common_utils.dart';
 
 abstract class AvatarConfig {
   List<String> getRoles();
@@ -53,7 +54,18 @@ class AvatarConfigEntity extends AvatarConfig {
 
   @override
   String styleTitle(String role, String style) {
-    return locale[role]['styles'][style];
+    if (!TextUtil.isEmpty(role)) {
+      return locale[role]['styles'][style] ?? style;
+    }
+    String? result;
+    for (var value in locale.values) {
+      var res = value['styles'][style];
+      if (res != null) {
+        result = res;
+        break;
+      }
+    }
+    return result ?? style;
   }
 
   @override
@@ -64,6 +76,8 @@ class AvatarConfigEntity extends AvatarConfig {
 
 @JsonSerializable()
 class AvatarConfigData {
+  @JSONField(name: 'pending_time')
+  late int pendingTime = 120;
   late Map<String, dynamic> roles;
 
   AvatarConfigData();

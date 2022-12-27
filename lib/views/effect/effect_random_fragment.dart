@@ -222,31 +222,8 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                 )
                               : Stack(
                                   children: [
-                                    // CachedNetworkImageUtils.custom(
-                                    //     // useOld: true,
-                                    //     context: context,
-                                    //     imageUrl: data.data!.item!.imageUrl,
-                                    //     width: cardWidth,
-                                    //     height: cardWidth,
-                                    //     fit: BoxFit.fill,
-                                    //     placeholder: (context, url) {
-                                    //       return CircularProgressIndicator()
-                                    //           .intoContainer(width: $(25), height: $(25))
-                                    //           .intoCenter()
-                                    //           .intoContainer(width: cardWidth, height: cardWidth);
-                                    //     },
-                                    //     errorWidget: (context, url, error) {
-                                    //       return CircularProgressIndicator()
-                                    //           .intoContainer(
-                                    //             width: $(25),
-                                    //             height: $(25),
-                                    //           )
-                                    //           .intoCenter()
-                                    //           .intoContainer(width: cardWidth, height: cardWidth);
-                                    //     }).intoGestureDetector(onTap: () => _onEffectCategoryTap(data.data!, dataController)),
-                                    // Container().blur(),
                                     CachedNetworkImageUtils.custom(
-                                        // useOld: true,
+                                        useOld: true,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth - (nfwShown ? 2 : 0),
@@ -289,7 +266,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                         );
                       }),
                     ).intoContainer(
-                      margin: EdgeInsets.only(bottom: i == dataList.length - 1 ? (AppTabBarHeight + $(42)) : $(0)),
+                      margin: EdgeInsets.only(bottom: i == dataList.length - 1 ? (AppTabBarHeight + $(62)) : $(0)),
                     );
                   },
                   itemCount: dataList.length,

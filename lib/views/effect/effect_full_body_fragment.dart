@@ -145,7 +145,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
             right: $(15),
             left: $(15),
             top: index == 0 ? (marginTop + $(8)) : $(8),
-            bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
+            bottom: index == dataList.length - 1 ? ($(8) + AppTabBarHeight + $(56)) : $(8),
           ),
         ),
         itemCount: dataList.length,

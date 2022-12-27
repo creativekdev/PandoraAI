@@ -5,6 +5,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'widget/feedback_dialog.dart';
 
@@ -100,7 +101,7 @@ class RateNoticeOperator {
   }
 
   judgeAndShowNotice(BuildContext context) {
-    print('-----------------------------rateConfig: ${configEntity?.print()}');
+    LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
     if (shouldRate()) {
       logEvent(Events.rate_dialog_loading);
       showDialog<bool>(

@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
@@ -15,7 +16,7 @@ import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:photo_album_manager/photo_album_manager.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 import 'package:vibration/vibration.dart';
 
 class PickPhotoScreen {
@@ -121,6 +122,13 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       if (status == AnimationStatus.reverse) {
         Navigator.of(context).pop(result);
       }
+    });
+    scrollController.addListener(() {
+      // if (tabs[currentIndex] != PhotoSource.recent) {
+      //   if (scrollController.position.pixels > scrollController.position.maxScrollExtent - 20) {
+      //     albumController.loadData();
+      //   }
+      // }
     });
     dragAnimController.addStatusListener((status) {
       if (status == AnimationStatus.reverse) {
@@ -262,13 +270,13 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                       onTabClick: (index) {
                                                         if (tabs[index].isAiSource()) {
                                                           albumController.checkPermissions().then((value) {
-                                                            if (value.isGranted) {
-                                                              albumController.syncFromAlbum();
+                                                            if (value) {
+                                                              albumController.getTotalAlbum().then((value) {
+                                                                albumController.loadData();
+                                                              });
                                                               setState(() {
                                                                 currentIndex = index;
                                                               });
-                                                            } else {
-                                                              CommonExtension().showToast("Please grant permissions");
                                                             }
                                                           });
                                                         } else {
@@ -469,46 +477,23 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     var dataList = tabs[currentIndex] == PhotoSource.albumFace ? albumController.faceList : albumController.otherList;
     var data = dataList[index];
     return Image(
-      image: FileImage(File(data.thumbPath!)),
+      image: FileImage(albumController.getThumbnail(data)),
       fit: BoxFit.cover,
-    ).intoGestureDetector(onTap: () {
-      if (!TextUtil.isEmpty(data.originalPath)) {
-        if (controller.image.value != null && (controller.image.value as File).path == data.originalPath) {
-          CommonExtension().showToast("You've chosen this photo already");
-          return;
-        }
-        var file = File(data.originalPath!);
-        if (!file.existsSync()) {
-          CommonExtension().showToast("This photo has been deleted already");
-          return;
-        }
-        widget.onPickFromAiSource(file).then((value) {
-          if (value) {
-            onBackClick(true);
-          }
-        });
-      } else {
-        PhotoAlbumManager.getOriginalResource(data.localIdentifier!).then((value) {
-          if (value == null) {
-            CommonExtension().showToast("This photo has been deleted already");
-            return;
-          }
-          if (controller.image.value != null && (controller.image.value as File).path == value.originalPath) {
-            CommonExtension().showToast("You've chosen this photo already");
-            return;
-          }
-          var file = File(value.originalPath!);
-          if (!file.existsSync()) {
-            CommonExtension().showToast("This photo has been deleted already");
-            return;
-          }
-          widget.onPickFromAiSource(file).then((value) {
-            if (value) {
-              onBackClick(true);
-            }
-          });
-        });
+    ).intoGestureDetector(onTap: () async {
+      var file = await data.getFile();
+      if (controller.image.value != null && (controller.image.value as File) == file) {
+        CommonExtension().showToast("You've chosen this photo already");
+        return;
       }
+      if (!file.existsSync()) {
+        CommonExtension().showToast("This photo has been deleted already");
+        return;
+      }
+      widget.onPickFromAiSource(file).then((value) {
+        if (value) {
+          onBackClick(true);
+        }
+      });
     });
   }
 

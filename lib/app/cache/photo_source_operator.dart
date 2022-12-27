@@ -1,52 +1,63 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:common_utils/common_utils.dart';
-import 'package:photo_album_manager/photo_album_manager.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
 class PhotoSourceOperator {
   CacheManager cacheManager;
-  List<AlbumModelEntity> faceList = [];
-  List<AlbumModelEntity> otherList = [];
+  List<Medium> faceList = [];
+  List<Medium> otherList = [];
 
   PhotoSourceOperator({required this.cacheManager});
 
-  init() {
+  init() async {
     var faceJson = cacheManager.getJson(CacheManager.photoSourceFace) ?? [];
     if (faceJson is List) {
-      faceList = faceJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      faceList = faceList.filter((e) {
-        if (TextUtil.isEmpty(e.thumbPath)) {
+      faceList = faceJson.map((e) => Medium.fromJson(e)).toList();
+      faceList = await faceList.filterSync((e) async {
+        try {
+          await e.getThumbnail(width: 128, height: 128, highQuality: true);
+          return true;
+        } catch (exception) {
           return false;
         }
-        var startsWith = e.thumbPath!.contains("cropDir");
-        var fileExist = File(e.thumbPath!).existsSync();
-        return startsWith && fileExist;
       });
     } else {
       faceList = [];
     }
     var otherJson = cacheManager.getJson(CacheManager.photoSourceOther) ?? [];
     if (otherJson is List) {
-      otherList = otherJson.map((e) => AlbumModelEntity.fromJson(e)).toList();
-      otherList = otherList.filter((e) {
-        if (TextUtil.isEmpty(e.thumbPath)) {
+      otherList = otherJson.map((e) => Medium.fromJson(e)).toList();
+      otherList = await otherList.filterSync((e) async {
+        try {
+          await e.getThumbnail(width: 128, height: 128, highQuality: true);
+          return true;
+        } catch (exception) {
           return false;
         }
-        var startsWith = e.thumbPath!.contains("cropDir");
-        var fileExist = File(e.thumbPath!).existsSync();
-        return startsWith && fileExist;
       });
     } else {
       otherList = [];
     }
   }
 
-  Future<void> saveData(List<AlbumModelEntity> faceList, List<AlbumModelEntity> otherList) async {
+  Future<void> saveData(List<Medium> faceList, List<Medium> otherList) async {
     this.faceList = faceList;
     this.otherList = otherList;
-    await cacheManager.setJson(CacheManager.photoSourceFace, faceList.map((e) => e.toJson()).toList());
-    await cacheManager.setJson(CacheManager.photoSourceOther, otherList.map((e) => e.toJson()).toList());
+    await cacheManager.setJson(
+        CacheManager.photoSourceFace,
+        faceList.map((e) {
+          var map = e.toMap();
+          map.remove('creationDate');
+          map.remove('modifiedDate');
+          return map;
+        }).toList());
+    await cacheManager.setJson(
+        CacheManager.photoSourceOther,
+        otherList.map((e) {
+          var map = e.toMap();
+          map.remove('creationDate');
+          map.remove('modifiedDate');
+          return map;
+        }).toList());
   }
 }

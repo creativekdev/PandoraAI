@@ -29,7 +29,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   );
   await setupFlutterNotifications();
   _showNotification(message);
-  print('Handling a background message ${message.data}');
+  LogUtil.d('Handling a background message ${message.data}');
 }
 
 class NotificationManager extends BaseManager {
@@ -50,15 +50,15 @@ class NotificationManager extends BaseManager {
     await setupFlutterNotifications();
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('onNewMessage: ${message.data.toString()}');
+      LogUtil.d('onNewMessage: ${message.data.toString()}');
       _showNotification(message);
     });
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('onNewMessageOpenedApp: ${message.data.toString()}');
+      LogUtil.d('onNewMessageOpenedApp: ${message.data.toString()}');
       onHandleNotificationClick(message);
     });
     FirebaseMessaging.instance.getAPNSToken().then((value) {
-      debugPrint('APNS------------------$value');
+      LogUtil.d('APNS------------------$value');
     });
   }
 
@@ -66,7 +66,7 @@ class NotificationManager extends BaseManager {
   Future<void> onAllManagerCreate() async {
     cacheManager = getManager();
     FirebaseMessaging.instance.getToken().then((value) {
-      debugPrint('Token------------------$value');
+      LogUtil.d('Token------------------$value');
       cacheManager.setString(CacheManager.pushToken, value);
     }).onError((error, stackTrace) {
       LogUtil.e("Token get failed: ${error}");

@@ -45,6 +45,7 @@ launchURL(String url) async {
 }
 
 bool isShowAdsNew() {
+  // return false;
   var manager = AppDelegate.instance.getManager<UserManager>();
   if (manager.isNeedLogin) {
     return true;
@@ -121,31 +122,46 @@ Future<File> imageCompressAndGetFile(File file) async {
 
 Future<File> imageCompress(File file, String targetPath) async {
   var length = await file.length();
-  if (length < 200 * 1024) {
+  if (length <= 512 * 512) {
     return await file.copy(targetPath);
   }
 
   var quality = 100;
-  if (length > 8 * 1024 * 1024) {
-    quality = (((2 * 1024 * 1024) / length) * 100).toInt();
-  } else if (length > 4 * 1024 * 1024) {
-    quality = 50;
-  } else if (length > 2 * 1024 * 1024) {
-    quality = 60;
-  } else if (length > 1 * 1024 * 1024) {
-    quality = 70;
-  } else if (length > 0.5 * 1024 * 1024) {
-    quality = 80;
+  if (length > 512 * 512) {
+    quality = (((512 * 512) / length) * 100).toInt();
   }
-  var imageInfo = await SyncFileImage(file: file).getImage();
-  var image = imageInfo.image;
   return (await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
     targetPath,
-    minWidth: image.width,
-    minHeight: image.height,
+    minWidth: 512,
+    minHeight: 512,
     quality: quality,
+    format: CompressFormat.png,
   ))!;
+}
+
+Future<File> imageCompressByte(Uint8List image, String targetPath) async {
+  var length = image.length;
+  if (length <= 512 * 512) {
+    var file = File(targetPath);
+    await file.writeAsBytes(image);
+    return file;
+  }
+
+  var quality = 100;
+  if (length > 512 * 512) {
+    quality = (((512 * 512) / length) * 100).toInt();
+  }
+  var uint8list = await FlutterImageCompress.compressWithList(
+    image,
+    minWidth: 512,
+    minHeight: 512,
+    quality: quality,
+    format: CompressFormat.png,
+  );
+  var file = File(targetPath);
+  await file.writeAsBytes(uint8list);
+  return file;
 }
 
 Future<Uint8List> imageCompressWithList(Uint8List image) async {
