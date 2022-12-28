@@ -78,6 +78,7 @@
   "high_resolution": "High resolution images",
   "home": "Pandora AI",
   "in_original": "Include original",
+  "input_name": "Input name",
   "insta_login": "Instagram",
   "instagram": "Continue with Instagram",
   "login": "Sign In",
@@ -95,6 +96,7 @@
   "no_internet_msg": "Oops! Please check your network connection.",
   "no_watermark": "(No watermark, High-res image)",
   "no_watermark1": "No watermark",
+  "not_enough_photos": "Not enough photos",
   "ok": "Ok",
   "or": "Or",
   "other_replies": "other %d replies >",
@@ -187,5 +189,13 @@
   "why_its_paid": "Why it's paid",
   "youtube": "Continue with You Tube",
   "zip_code": "Zip Code",
-  "zip_code_validation_message": "Invalid zip code"
+  "zip_code_validation_message": "Invalid zip code",
+  "choose_photo_not_enough_desc": "You've selected %selected photos of %minSize minimum required.",
+  "choose_photo_more_photos": "Please select at least %d more photos.",
+  "select_more_photos": "Select more photos",
+  "pandora_create_input_name_hint": "Please input name",
+  "pandora_create_style_hint": "Please select style",
+  "photo_select_already": "You've chosen this photo already",
+  "play_ground": "Play Ground",
+  "login_or_sign_up": "Login / Sign up"
 }

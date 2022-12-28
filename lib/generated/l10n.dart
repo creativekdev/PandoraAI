@@ -840,6 +840,16 @@ class S {
     );
   }
 
+  /// `Input name`
+  String get input_name {
+    return Intl.message(
+      'Input name',
+      name: 'input_name',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Instagram`
   String get insta_login {
     return Intl.message(
@@ -1005,6 +1015,16 @@ class S {
     return Intl.message(
       'No watermark',
       name: 'no_watermark1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not enough photos`
+  String get not_enough_photos {
+    return Intl.message(
+      'Not enough photos',
+      name: 'not_enough_photos',
       desc: '',
       args: [],
     );
@@ -1935,6 +1955,86 @@ class S {
     return Intl.message(
       'Invalid zip code',
       name: 'zip_code_validation_message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You've selected %selected photos of %minSize minimum required.`
+  String get choose_photo_not_enough_desc {
+    return Intl.message(
+      'You\'ve selected %selected photos of %minSize minimum required.',
+      name: 'choose_photo_not_enough_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select at least %d more photos.`
+  String get choose_photo_more_photos {
+    return Intl.message(
+      'Please select at least %d more photos.',
+      name: 'choose_photo_more_photos',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select more photos`
+  String get select_more_photos {
+    return Intl.message(
+      'Select more photos',
+      name: 'select_more_photos',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please input name`
+  String get pandora_create_input_name_hint {
+    return Intl.message(
+      'Please input name',
+      name: 'pandora_create_input_name_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select style`
+  String get pandora_create_style_hint {
+    return Intl.message(
+      'Please select style',
+      name: 'pandora_create_style_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You've chosen this photo already`
+  String get photo_select_already {
+    return Intl.message(
+      'You\'ve chosen this photo already',
+      name: 'photo_select_already',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Play Ground`
+  String get play_ground {
+    return Intl.message(
+      'Play Ground',
+      name: 'play_ground',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Login / Sign up`
+  String get login_or_sign_up {
+    return Intl.message(
+      'Login / Sign up',
+      name: 'login_or_sign_up',
       desc: '',
       args: [],
     );

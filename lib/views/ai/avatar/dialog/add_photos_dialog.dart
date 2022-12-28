@@ -30,7 +30,7 @@ class AddPhotosDialog extends StatelessWidget {
                     ))),
             SizedBox(height: $(12)),
             TitleTextWidget(
-              'Not enough photos',
+              S.of(context).not_enough_photos,
               ColorConstant.Red,
               FontWeight.w500,
               $(18),
@@ -38,7 +38,14 @@ class AddPhotosDialog extends StatelessWidget {
             ),
             SizedBox(height: $(20)),
             TitleTextWidget(
-              'You\'ve selected ${controller.imageList.length} photos of ${controller.minSize} minimum required.',
+              S
+                  .of(context)
+                  .choose_photo_not_enough_desc
+                  .replaceAll(
+                    '%selected',
+                    '${controller.imageList.length}',
+                  )
+                  .replaceAll('%minSize', '${controller.minSize}'),
               ColorConstant.White,
               FontWeight.normal,
               $(14),
@@ -46,7 +53,10 @@ class AddPhotosDialog extends StatelessWidget {
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
             SizedBox(height: 12),
             TitleTextWidget(
-              'Please select at least ${controller.minSize - controller.imageList.length} more photos.',
+              S.of(context).choose_photo_more_photos.replaceAll(
+                    "%d",
+                    '${controller.minSize - controller.imageList.length}',
+                  ),
               ColorConstant.White,
               FontWeight.normal,
               $(14),
@@ -58,7 +68,7 @@ class AddPhotosDialog extends StatelessWidget {
               color: ColorConstant.LineColor,
             ),
             TitleTextWidget(
-              'Cancel',
+              S.of(context).cancel,
               ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),
@@ -70,7 +80,7 @@ class AddPhotosDialog extends StatelessWidget {
               color: ColorConstant.LineColor,
             ),
             TitleTextWidget(
-              'Select more photos',
+              S.of(context).select_more_photos,
               ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),

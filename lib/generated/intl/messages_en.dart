@@ -66,6 +66,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "checkout": MessageLookupByLibrary.simpleMessage("Check out"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("Choose Photo"),
+        "choose_photo_more_photos": MessageLookupByLibrary.simpleMessage(
+            "Please select at least %d more photos."),
+        "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
+            "You\'ve selected %selected photos of %minSize minimum required."),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("Your code was emailed to "),
         "commonFailedToast":
@@ -143,10 +147,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("High resolution images"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "in_original": MessageLookupByLibrary.simpleMessage("Include original"),
+        "input_name": MessageLookupByLibrary.simpleMessage("Input name"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram":
             MessageLookupByLibrary.simpleMessage("Continue with Instagram"),
         "login": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "login_or_sign_up":
+            MessageLookupByLibrary.simpleMessage("Login / Sign up"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("Messages"),
@@ -167,14 +174,20 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_watermark": MessageLookupByLibrary.simpleMessage(
             "(No watermark, High-res image)"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("No watermark"),
+        "not_enough_photos":
+            MessageLookupByLibrary.simpleMessage("Not enough photos"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "or": MessageLookupByLibrary.simpleMessage("Or"),
         "other_replies":
             MessageLookupByLibrary.simpleMessage("other %d replies >"),
         "packages_purchased":
             MessageLookupByLibrary.simpleMessage("Packages purchased"),
+        "pandora_create_input_name_hint":
+            MessageLookupByLibrary.simpleMessage("Please input name"),
         "pandora_create_spend": MessageLookupByLibrary.simpleMessage(
             "Your photos will be generated in about 2 hours"),
+        "pandora_create_style_hint":
+            MessageLookupByLibrary.simpleMessage("Please select style"),
         "pandora_pay_description": MessageLookupByLibrary.simpleMessage(
             "Pandora Avatars use state of the art AI technology to create magnificent avatars for you! Despite requiring a high amount of resources (GPU), we’ve made it as affordable as possible!"),
         "pandora_purchase":
@@ -201,6 +214,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("PhotoLibrary Permission"),
         "permissionPhotoLibraryContent": MessageLookupByLibrary.simpleMessage(
             "This app needs photo library access to choose pictures for upload user profile photo"),
+        "photo_select_already": MessageLookupByLibrary.simpleMessage(
+            "You\'ve chosen this photo already"),
+        "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
         "please_login_first":
@@ -229,6 +245,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
+        "select_more_photos":
+            MessageLookupByLibrary.simpleMessage("Select more photos"),
         "select_style": MessageLookupByLibrary.simpleMessage("Select Style"),
         "selfies": MessageLookupByLibrary.simpleMessage("selfies"),
         "send": MessageLookupByLibrary.simpleMessage("Send"),

@@ -78,6 +78,7 @@
   "high_resolution": "高质量图片",
   "home": "Pandora AI",
   "in_original": "包含原图",
+  "input_name": "输入名称",
   "insta_login": "Instagram",
   "instagram": "使用Instagram账号",
   "login": "登录",
@@ -95,6 +96,7 @@
   "no_internet_msg": "请求失败！请检查您的网络",
   "no_watermark": "（高清、无水印图片）",
   "no_watermark1": "无水印",
+  "not_enough_photos": "照片数目不够",
   "ok": "好的",
   "or": "或",
   "other_replies": "共%d条评论 >",
@@ -187,5 +189,13 @@
   "why_its_paid": "为什么需要付款",
   "youtube": "使用YouTube账号",
   "zip_code": "邮政编码",
-  "zip_code_validation_message": "无效的邮编"
+  "zip_code_validation_message": "无效的邮编",
+  "choose_photo_not_enough_desc": "当前选择了%selected张照片，最少需要%minSize张照片。",
+  "choose_photo_more_photos": "请选择至少%d张照片。",
+  "select_more_photos": "选择更多照片",
+  "pandora_create_input_name_hint": "请输入名称",
+  "pandora_create_style_hint": "请选择风格",
+  "photo_select_already": "该图片已经被选择",
+  "play_ground": "AI画室",
+  "login_or_sign_up": "注册/登录"
 }

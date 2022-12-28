@@ -55,6 +55,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "change_password": MessageLookupByLibrary.simpleMessage("修改密码"),
         "checkout": MessageLookupByLibrary.simpleMessage("支付"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("选择图片"),
+        "choose_photo_more_photos":
+            MessageLookupByLibrary.simpleMessage("请选择至少%d张照片。"),
+        "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
+            "当前选择了%selected张照片，最少需要%minSize张照片。"),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("您的验证码已经发送到"),
         "commonFailedToast": MessageLookupByLibrary.simpleMessage("操作失败"),
@@ -117,9 +121,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "high_resolution": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),
+        "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "login_or_sign_up": MessageLookupByLibrary.simpleMessage("注册/登录"),
         "logout": MessageLookupByLibrary.simpleMessage("登出"),
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
@@ -136,12 +142,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_internet_msg": MessageLookupByLibrary.simpleMessage("请求失败！请检查您的网络"),
         "no_watermark": MessageLookupByLibrary.simpleMessage("（高清、无水印图片）"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("无水印"),
+        "not_enough_photos": MessageLookupByLibrary.simpleMessage("照片数目不够"),
         "ok": MessageLookupByLibrary.simpleMessage("好的"),
         "or": MessageLookupByLibrary.simpleMessage("或"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("已购买"),
+        "pandora_create_input_name_hint":
+            MessageLookupByLibrary.simpleMessage("请输入名称"),
         "pandora_create_spend":
             MessageLookupByLibrary.simpleMessage("您的照片大约要2小时转换完成"),
+        "pandora_create_style_hint":
+            MessageLookupByLibrary.simpleMessage("请选择风格"),
         "pandora_pay_description": MessageLookupByLibrary.simpleMessage(
             "我们使用了最先进的人工智能算法为您创造华丽的画像，这需要极为庞大的算力支撑！"),
         "pandora_purchase": MessageLookupByLibrary.simpleMessage("购买金额"),
@@ -161,6 +172,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "permissionPhotoLibrary": MessageLookupByLibrary.simpleMessage("相册权限"),
         "permissionPhotoLibraryContent":
             MessageLookupByLibrary.simpleMessage("这个应用程序需要访问相册选择图片上传用户资料照片"),
+        "photo_select_already":
+            MessageLookupByLibrary.simpleMessage("该图片已经被选择"),
+        "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
@@ -182,6 +196,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save_share": MessageLookupByLibrary.simpleMessage("保存&分享"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
+        "select_more_photos": MessageLookupByLibrary.simpleMessage("选择更多照片"),
         "select_style": MessageLookupByLibrary.simpleMessage("选择风格"),
         "selfies": MessageLookupByLibrary.simpleMessage("自拍"),
         "send": MessageLookupByLibrary.simpleMessage("发送"),

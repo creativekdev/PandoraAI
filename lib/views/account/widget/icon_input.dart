@@ -21,7 +21,7 @@ Widget iconInput({
           SizedBox(width: $(12)),
           Image.asset(
             iconRes,
-            height: 30,
+            height: 24,
             color: ColorConstant.White,
           ),
           SizedBox(width: $(12)),

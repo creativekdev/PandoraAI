@@ -11,7 +11,9 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 class AvatarDetailScreen extends StatefulWidget {
@@ -75,6 +77,33 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(entity.name, ColorConstant.White, FontWeight.w600, $(17)),
+        trailing: Image.asset(
+          Images.ic_download,
+          color: ColorConstant.White,
+          width: $(24),
+        ).hero(tag: 'download').intoGestureDetector(onTap: () {
+          showLoading().whenComplete(() async {
+            var saveList = entity.outputImages;
+            for (int i = 0; i < saveList.length; i++) {
+              var item = saveList[i];
+              var file = await SyncDownloadFile(url: item.url, type: 'png').getImage();
+              if (file != null) {
+                showLoading(
+                    progressWidget: Text(
+                  '${i + 1}/${entity.outputImages.length}',
+                  style: TextStyle(
+                    color: ColorConstant.White,
+                    fontFamily: 'Poppins',
+                  ),
+                ));
+                await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
+              }
+            }
+            hideLoading().whenComplete(() {
+              CommonExtension().showImageSavedOkToast(context);
+            });
+          });
+        }),
       ),
       body: Column(
         children: [
@@ -142,7 +171,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             ),
           ),
           Text(
-            S.of(context).save_photo,
+            S.of(context).play_ground,
             style: TextStyle(color: Colors.white, fontSize: $(17)),
           )
               .intoContainer(
@@ -156,27 +185,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             ),
           )
               .intoGestureDetector(onTap: () {
-            showLoading().whenComplete(() async {
-              var saveList = entity.outputImages;
-              for (int i = 0; i < saveList.length; i++) {
-                var item = saveList[i];
-                var file = await SyncDownloadFile(url: item.url, type: 'png').getImage();
-                if (file != null) {
-                  showLoading(
-                      progressWidget: Text(
-                    '${i + 1}/${entity.outputImages.length}',
-                    style: TextStyle(
-                      color: ColorConstant.White,
-                      fontFamily: 'Poppins',
-                    ),
-                  ));
-                  await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
-                }
-              }
-              hideLoading().whenComplete(() {
-                CommonExtension().showImageSavedOkToast(context);
-              });
-            });
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => AiGroundScreen()));
           }),
         ],
       ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),

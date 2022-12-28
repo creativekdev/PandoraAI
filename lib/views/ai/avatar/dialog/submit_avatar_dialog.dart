@@ -50,7 +50,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
           Row(
             children: [
               TitleTextWidget(
-                'Input name',
+                S.of(context).input_name,
                 ColorConstant.White,
                 FontWeight.w500,
                 $(15),
@@ -66,68 +66,30 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontFamily: 'Poppins',
+                    fontSize: $(15),
                   ),
                   border: InputBorder.none,
                 ),
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'Poppins',
+                  fontSize: $(15),
                 ),
               )),
             ],
-          ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(25))),
+          ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(20)),
-          Row(
-            children: [
-              TitleTextWidget(
-                S.of(context).select_a_style,
-                ColorConstant.White,
-                FontWeight.w500,
-                $(15),
-                maxLines: 2,
-              ),
-              SizedBox(width: $(12)),
-              Expanded(
-                child: Wrap(
-                  spacing: $(12),
-                  runSpacing: $(12),
-                  alignment: WrapAlignment.start,
-                  children: aiManager.config!
-                      .getRoles()
-                      .map(
-                        (e) => Text(
-                          e,
-                          style: TextStyle(
-                            color: ColorConstant.White,
-                            fontFamily: 'Poppins',
-                            fontSize: $(15),
-                          ),
-                        )
-                            .intoContainer(
-                                padding: EdgeInsets.symmetric(horizontal: $(10), vertical: $(4)),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: ColorConstant.BlueColor,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(32),
-                                  color: selectedStyle == e ? ColorConstant.BlueColor : Colors.transparent,
-                                ))
-                            .intoGestureDetector(onTap: () {
-                          setState(() {
-                            selectedStyle = e;
-                          });
-                        }),
-                      )
-                      .toList(),
-                ),
-              ),
-            ],
-          ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(10))),
+          SelectStyleCard(
+              onSelect: (style) {
+                setState(() {
+                  selectedStyle = style;
+                });
+              },
+              roles: aiManager.config!.getRoles()),
           SizedBox(height: $(10)),
           Expanded(child: Container()),
           TitleTextWidget(
-            'Create',
+            S.of(context).create,
             ColorConstant.White,
             FontWeight.w500,
             $(17),
@@ -146,12 +108,12 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
             var name = controller.text.trim();
             if (TextUtil.isEmpty(name)) {
               FocusScope.of(context).requestFocus(FocusNode());
-              CommonExtension().showToast('Please input name');
+              CommonExtension().showToast(S.of(context).pandora_create_input_name_hint);
               return;
             }
             if (selectedStyle == null) {
               FocusScope.of(context).requestFocus(FocusNode());
-              CommonExtension().showToast('Please select style');
+              CommonExtension().showToast(S.of(context).pandora_create_style_hint);
               return;
             }
             Navigator.of(context).pop(MapEntry(name, selectedStyle!));
@@ -159,5 +121,105 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
         ],
       ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
     );
+  }
+}
+
+class SelectStyleCard extends StatefulWidget {
+  String? style;
+  Function(String style) onSelect;
+  List<String> roles;
+
+  SelectStyleCard({
+    Key? key,
+    required this.onSelect,
+    required this.roles,
+    this.style,
+  }) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return SelectStyleState();
+  }
+}
+
+class SelectStyleState extends State<SelectStyleCard> {
+  String? selectedStyle;
+  late List<String> roles;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedStyle = widget.style;
+    roles = widget.roles;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var title = TitleTextWidget(
+      S.of(context).select_a_style,
+      ColorConstant.White,
+      FontWeight.w500,
+      $(15),
+      maxLines: 2,
+    );
+    var children = Wrap(
+      spacing: $(12),
+      runSpacing: $(12),
+      alignment: WrapAlignment.start,
+      children: roles.map(
+        (e) {
+          var checked = selectedStyle == e;
+          return Text(
+            e,
+            style: TextStyle(
+              color: ColorConstant.White,
+              fontFamily: 'Poppins',
+              fontSize: $(15),
+            ),
+          )
+              .intoContainer(
+                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(1)),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: checked ? ColorConstant.BlueColor : ColorConstant.White,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(32),
+                    color: checked ? ColorConstant.BlueColor : Colors.transparent,
+                  ))
+              .intoGestureDetector(onTap: () {
+            if (checked) {
+              return;
+            }
+            setState(() {
+              selectedStyle = e;
+              widget.onSelect.call(selectedStyle!);
+            });
+          });
+        },
+      ).toList(),
+    );
+    Widget result;
+    if (roles.length > 3) {
+      result = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title,
+          SizedBox(height: $(12)),
+          children,
+        ],
+      );
+    } else {
+      result = Row(
+        children: [
+          title,
+          SizedBox(width: $(12)),
+          Expanded(
+            child: children,
+          ),
+        ],
+      );
+    }
+    return result.intoContainer(width: double.maxFinite, color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)));
   }
 }

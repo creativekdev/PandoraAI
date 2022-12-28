@@ -143,7 +143,7 @@ class RateNoticeOperator {
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
           'Looove it! rate now',
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
+          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(
           width: double.maxFinite,
@@ -161,7 +161,7 @@ class RateNoticeOperator {
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
           'Give feedback',
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
+          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(
           width: double.maxFinite,
@@ -183,7 +183,7 @@ class RateNoticeOperator {
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
           'No, thanks',
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn),
+          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(
           width: double.maxFinite,

@@ -74,7 +74,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                   Image.asset(
                     Images.ic_download,
                     width: $(24),
-                  ).intoGestureDetector(onTap: () async {
+                  ).hero(tag: 'download').intoGestureDetector(onTap: () async {
                     showLoading().whenComplete(() async {
                       var file = await SyncDownloadFile(url: widget.galleryItems[currentIndex], type: 'png').getImage();
                       if (file != null) {

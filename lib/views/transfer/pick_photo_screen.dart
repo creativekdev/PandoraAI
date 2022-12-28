@@ -444,7 +444,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
 
   Widget buildFromAiSource() => GetBuilder<AlbumController>(
         builder: (albumController) {
-          var itemCount = (tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length) + (albumController.loading ? 1 : 0);
+          var itemCount = tabs[currentIndex] == PhotoSource.album ? albumController.otherList.length : albumController.faceList.length;
           return GridView.builder(
             controller: scrollController,
             physics: (dragAnimController.isDismissed) ? NeverScrollableScrollPhysics() : ClampingScrollPhysics(),
@@ -455,17 +455,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
               crossAxisSpacing: $(2),
             ),
             itemBuilder: (context, index) {
-              if (albumController.loading) {
-                if (index == 0) {
-                  return FrameAnimatedSvg(
-                    child: SvgPicture.asset(Images.ic_refresh_header),
-                  ).intoContainer(width: $(20), height: $(20)).intoCenter();
-                } else {
-                  return buildAiSourceItem(index - 1, context, albumController);
-                }
-              } else {
-                return buildAiSourceItem(index, context, albumController);
-              }
+              return buildAiSourceItem(index, context, albumController);
             },
             itemCount: itemCount,
           );
@@ -482,7 +472,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     ).intoGestureDetector(onTap: () async {
       var file = await data.getFile();
       if (controller.image.value != null && (controller.image.value as File) == file) {
-        CommonExtension().showToast("You've chosen this photo already");
+        CommonExtension().showToast(S.of(context).photo_select_already);
         return;
       }
       if (!file.existsSync()) {
@@ -556,7 +546,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         } else {
           var entity = data;
           if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
-            CommonExtension().showToast("You've chosen this photo already");
+            CommonExtension().showToast(S.of(context).photo_select_already);
             return;
           }
           widget.onPickFromRecent(entity).then((value) {
@@ -651,7 +641,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
             children: [
               Expanded(
                   child: Text(
-                'Delete',
+                S.of(context).delete,
                 style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
               )
                       .intoContainer(
@@ -667,7 +657,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
               })),
               Expanded(
                   child: Text(
-                'Cancel',
+                S.of(context).cancel,
                 style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
               )
                       .intoContainer(

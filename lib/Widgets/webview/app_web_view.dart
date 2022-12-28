@@ -185,7 +185,7 @@ class AppWebViewState extends AppState<AppWebView> {
       if (controller.image.value != null) {
         File oldFile = controller.image.value as File;
         if ((await md5File(oldFile)) == (await md5File(compressedImage))) {
-          CommonExtension().showToast("You've chosen this photo already");
+          CommonExtension().showToast(S.of(context).photo_select_already);
           await hideLoading();
           return false;
         }

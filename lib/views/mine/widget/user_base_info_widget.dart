@@ -53,14 +53,14 @@ class UserBaseInfoWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
-          children: children(),
+          children: children(context),
         )),
         SizedBox(width: $(16)),
       ],
     ).intoContainer(padding: EdgeInsets.only(top: $(54), bottom: $(16)), color: ColorConstant.BackgroundColor);
   }
 
-  List<Widget> children() {
+  List<Widget> children(BuildContext context) {
     if (userInfo != null) {
       return [
         TitleTextWidget(userInfo!.getShownEmail(), Colors.white, FontWeight.w500, $(17), align: TextAlign.start),
@@ -79,7 +79,7 @@ class UserBaseInfoWidget extends StatelessWidget {
       return [
         Row(
           children: [
-            TitleTextWidget('Login / Sign up', Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
+            TitleTextWidget(S.of(context).login_or_sign_up, Colors.white, FontWeight.w400, $(15), align: TextAlign.start),
             SizedBox(width: $(16)),
             Image.asset(
               Images.ic_right_arrow,

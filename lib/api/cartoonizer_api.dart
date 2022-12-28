@@ -365,4 +365,8 @@ class CartoonizerApi extends BaseRequester {
     });
     return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }
+
+  Future<BaseEntity?> getInspirationText() async {
+
+  }
 }

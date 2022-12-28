@@ -113,7 +113,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                 });
               },
             )),
-        childHeight: $(32),
+        childHeight: $(34),
       ),
       body: EasyRefresh.custom(
         enableControlFinishRefresh: true,
@@ -167,7 +167,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
               Align(
                 child: TitleTextWidget(
                   'Please waiting, your photos will '
-                  'be generated in about ${avatarAiManager.config!.data.pendingTime} minutes. We\'ll '
+                  'be generated in about ${avatarAiManager.config?.data.pendingTime ?? 120} minutes. We\'ll '
                   'send you an email with a link to '
                   'your AI avatars when it\'s done!',
                   ColorConstant.White,
@@ -197,25 +197,50 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
       case AvatarStatus.subscribed:
         var coverImage = data.coverImage();
         var list = coverImage.length > 6 ? coverImage.sublist(0, 6) : coverImage;
-        item = ClipRRect(
-          child: Stack(
-            children: [
-              Wrap(
+        item = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              child: Row(
                 children: list.transfer(
                   (data, index) => CachedNetworkImageUtils.custom(
                     context: context,
                     imageUrl: data,
-                    width: imageSize,
+                    width: imageSize / 2,
                     height: imageSize,
                   ),
                 ),
               ),
-            ],
-          ),
-          borderRadius: BorderRadius.circular($(8)),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular($(8)),
+                topRight: Radius.circular($(8)),
+              ),
+            ),
+            SizedBox(height: 6),
+            Text(
+              data.name,
+              style: TextStyle(
+                color: ColorConstant.White,
+                fontFamily: 'Poppins',
+                fontSize: $(15),
+              ),
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 10)),
+            Text(
+              '${data.imageCount} avatars',
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontFamily: 'Poppins',
+                fontSize: $(13),
+              ),
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 10)),
+            SizedBox(height: 8),
+          ],
         )
             .intoContainer(
-          height: imageSize * 1.5,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade900,
+            borderRadius: BorderRadius.circular($(8)),
+          ),
           margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
         )
             .intoGestureDetector(onTap: () {
