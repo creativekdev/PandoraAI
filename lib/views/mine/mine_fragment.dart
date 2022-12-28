@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
-import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -16,9 +14,9 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
-import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
@@ -122,7 +120,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               }),
               Container(height: $(12)),
               ImageTextBarWidget(
-                StringConstant.recently,
+                S.of(context).recently,
                 Images.ic_recently,
                 true,
               ).intoGestureDetector(onTap: () {
@@ -143,7 +141,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 color: ColorConstant.BackgroundColor,
               ),
               ImageTextBarWidget(
-                StringConstant.setting_my_discovery,
+                S.of(context).setting_my_discovery,
                 Images.ic_setting_my_discovery,
                 true,
               ).intoGestureDetector(onTap: () {
@@ -154,7 +152,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       settings: RouteSettings(name: "/UserDiscoveryScreen"),
                       builder: (context) => MyDiscoveryScreen(
                         userId: userManager.user!.id,
-                        title: StringConstant.setting_my_discovery,
+                        title: S.of(context).setting_my_discovery,
                       ),
                     )).then((value) async {
                   return;
@@ -170,7 +168,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     color: ColorConstant.BackgroundColor,
                   )
                   .offstage(offstage: userManager.isNeedLogin),
-              ImageTextBarWidget(StringConstant.share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
+              ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 logEvent(Events.share_app);
                 final box = context.findRenderObject() as RenderBox?;
                 var appLink = Config.getStoreLink();
@@ -186,7 +184,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              ImageTextBarWidget(Platform.isAndroid ? StringConstant.rate_us1 : StringConstant.rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
+              ImageTextBarWidget(Platform.isAndroid ? S.of(context).rate_us1 : S.of(context).rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
                   logEvent(Events.rate_us);
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
@@ -218,7 +216,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              ImageTextBarWidget(StringConstant.premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
+              ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 if (Platform.isIOS) {
                   Navigator.push(
@@ -243,7 +241,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 }
               }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
-              ImageTextBarWidget(StringConstant.settings, Images.ic_settings, true).intoGestureDetector(
+              ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
@@ -267,7 +265,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       ),
                     ),
                     SizedBox(width: 3.w),
-                    TitleTextWidget(StringConstant.connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
+                    TitleTextWidget(S.of(context).connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                     SizedBox(width: 3.w),
                     Expanded(
                       child: Divider(

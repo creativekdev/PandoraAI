@@ -40,7 +40,7 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
         backgroundColor: ColorConstant.BackgroundColor,
         appBar: AppNavigationBar(
           backgroundColor: ColorConstant.BackgroundColor,
-          middle: TitleTextWidget('Select Style', ColorConstant.White, FontWeight.w600, $(17)),
+          middle: TitleTextWidget(S.of(context).select_style, ColorConstant.White, FontWeight.w600, $(17)),
         ),
         body: Column(
           children: [

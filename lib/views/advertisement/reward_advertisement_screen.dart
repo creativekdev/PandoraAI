@@ -112,13 +112,13 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                           child: Column(
                             children: [
                               SizedBox(height: $(25)),
-                              buildBuyAttr(context, StringConstant.buyAttrNoAds, Images.ic_bug_no_ad),
-                              buildBuyAttr(context, StringConstant.buyAttrNoWatermark, Images.ic_buy_no_watermark),
-                              buildBuyAttr(context, StringConstant.buyAttrHDImages, Images.ic_buy_hd_image),
-                              buildBuyAttr(context, StringConstant.buyAttrFasterSpeed, Images.ic_buy_faster_convert),
+                              buildBuyAttr(context, S.of(context).buyAttrNoAds, Images.ic_bug_no_ad),
+                              buildBuyAttr(context, S.of(context).buyAttrNoWatermark, Images.ic_buy_no_watermark),
+                              buildBuyAttr(context, S.of(context).buyAttrHDImages, Images.ic_buy_hd_image),
+                              buildBuyAttr(context, S.of(context).buyAttrFasterSpeed, Images.ic_buy_faster_convert),
                               SizedBox(height: $(20)),
                               Text(
-                                StringConstant.buyNow,
+                                S.of(context).buyNow,
                                 style: TextStyle(color: Colors.white, fontSize: $(17)),
                               )
                                   .intoContainer(
@@ -171,7 +171,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                   Align(
                     child: Container(
                       child: Text(
-                        StringConstant.ppmPro,
+                        S.of(context).ppmPro,
                         style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w600, fontSize: $(18), color: Colors.white),
                       ),
                       padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(4)),
@@ -196,7 +196,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
               Column(
                 children: [
                   Text(
-                    StringConstant.watchAdHint,
+                    S.of(context).watchAdHint,
                     style: TextStyle(color: Colors.white, fontSize: $(14), fontFamily: 'Poppins'),
                     textAlign: TextAlign.center,
                   ),

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -17,10 +18,10 @@ class PayAvatarIOS {
 
   PayAvatarIOS({required this.planId});
 
-  startPay(Function(bool result) callback) async {
+  startPay(BuildContext context, Function(bool result) callback) async {
     final bool isAvailable = await _inAppPurchase.isAvailable();
     if (!isAvailable) {
-      CommonExtension().showToast(StringConstant.commonFailedToast);
+      CommonExtension().showToast(S.of(context).commonFailedToast);
       return false;
     }
     final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
@@ -49,7 +50,7 @@ class PayAvatarIOS {
       var purchase = PurchaseParam(productDetails: productDetailResponse.productDetails.first);
       _inAppPurchase.buyNonConsumable(purchaseParam: purchase);
     } else {
-      CommonExtension().showToast(StringConstant.commonFailedToast);
+      CommonExtension().showToast(S.of(context).commonFailedToast);
     }
   }
 

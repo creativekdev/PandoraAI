@@ -10,7 +10,6 @@ import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
@@ -57,7 +56,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         blurAble: false,
         backgroundColor: Colors.transparent,
         middle: TitleTextWidget(
-          StringConstant.edit_profile,
+          S.of(context).edit_profile,
           ColorConstant.BtnTextColor,
           FontWeight.w600,
           FontSizeConstants.topBarTitle,
@@ -177,7 +176,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   SizedBox(
                                     height: 2.h,
                                   ),
-                                  SimpleTextInputWidget(StringConstant.name_hint, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress,
+                                  SimpleTextInputWidget(S.of(context).name_hint, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress,
                                       false, nameController),
                                   SizedBox(
                                     height: 4.h,
@@ -185,7 +184,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                   GestureDetector(
                                     onTap: () async {
                                       if (nameController.text.trim().isEmpty) {
-                                        CommonExtension().showToast(StringConstant.name_validation);
+                                        CommonExtension().showToast(S.of(context).name_validation);
                                       } else {
                                         FocusManager.instance.primaryFocus?.unfocus();
                                         controller.changeIsLoading(true);
@@ -210,7 +209,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         controller.changeIsLoading(false);
                                       }
                                     },
-                                    child: ButtonWidget(StringConstant.update_profile),
+                                    child: ButtonWidget(S.of(context).update_profile),
                                   ),
                                   SizedBox(
                                     height: 4.h,
@@ -300,7 +299,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 }
               }),
               Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
-              TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+              TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(17))
                   .intoContainer(
                 width: double.maxFinite,
                 padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),

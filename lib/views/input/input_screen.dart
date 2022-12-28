@@ -116,7 +116,7 @@ class InputScreenState extends State<InputScreen> {
                   ),
                   SizedBox(width: $(8)),
                   Text(
-                    StringConstant.send,
+                    S.of(context).send,
                     style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins'),
                   )
                       .intoContainer(

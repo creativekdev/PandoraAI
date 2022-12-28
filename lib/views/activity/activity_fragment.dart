@@ -227,7 +227,7 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
             AppNavigationBar(
               backgroundColor: Colors.transparent,
               showBackItem: false,
-              middle: TitleTextWidget(dataController.data?.campaignTab?.title ?? StringConstant.app_name, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+              middle: TitleTextWidget(dataController.data?.campaignTab?.title ?? S.of(context).app_name, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
             ),
           ],
         ).intoContainer(color: Color(0xaa161719)).intoGestureDetector(

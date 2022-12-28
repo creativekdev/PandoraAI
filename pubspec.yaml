@@ -87,6 +87,9 @@ dependencies:
   google_mlkit_commons: 0.2.0
   google_mlkit_face_detection: 0.5.0
   photo_gallery: 1.1.1
+  # intl dependencies
+  flutter_localizations:
+    sdk: flutter
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -132,3 +135,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true

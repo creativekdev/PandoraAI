@@ -62,7 +62,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
                 controller: controller,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'Please enter an avatar name',
+                  hintText: S.of(context).please_enter_an_avatar_name,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontFamily: 'Poppins',
@@ -80,7 +80,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
           Row(
             children: [
               TitleTextWidget(
-                'Select a style',
+                S.of(context).select_a_style,
                 ColorConstant.White,
                 FontWeight.w500,
                 $(15),

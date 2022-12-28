@@ -1,4 +1,4 @@
-import 'importFile.dart';
+import 'package:flutter/material.dart';
 
 class FontSizeConstants {
   static const topBarTitle = 18.0;
@@ -6,6 +6,11 @@ class FontSizeConstants {
 
 class EdgeConstants {
   static const EdgeInsets TopBarEdgeInsets = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
+}
+
+class AppContext {
+  static BuildContext? context;
+  static String currentLocales = 'en';
 }
 
 class ColorConstant {

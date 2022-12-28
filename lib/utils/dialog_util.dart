@@ -7,24 +7,24 @@ showPhotoLibraryPermissionDialog(BuildContext context) {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
             title: Text(
-              StringConstant.permissionPhotoLibrary,
+              S.of(context).permissionPhotoLibrary,
               style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
             ),
             content: Text(
-              StringConstant.permissionPhotoLibraryContent,
+              S.of(context).permissionPhotoLibraryContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  StringConstant.deny,
+                  S.of(context).deny,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               CupertinoDialogAction(
                 child: Text(
-                  StringConstant.settings,
+                  S.of(context).settings,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () async {
@@ -47,24 +47,24 @@ showCameraPermissionDialog(BuildContext context) {
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
             title: Text(
-              StringConstant.permissionCamera,
+              S.of(context).permissionCamera,
               style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
             ),
             content: Text(
-              StringConstant.permissionCameraContent,
+              S.of(context).permissionCameraContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
-                  StringConstant.deny,
+                  S.of(context).deny,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
               CupertinoDialogAction(
                 child: Text(
-                  StringConstant.settings,
+                  S.of(context).settings,
                   style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
                 ),
                 onPressed: () async {

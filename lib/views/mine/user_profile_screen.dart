@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -35,7 +33,7 @@ class UserProfileState extends State<UserProfileScreen> {
         child: Column(
           children: [
             Container(height: $(12)),
-            ImageTextBarWidget(StringConstant.edit_profile, ImagesConstant.ic_edit_profile, true)
+            ImageTextBarWidget(S.of(context).edit_profile, ImagesConstant.ic_edit_profile, true)
                 .intoGestureDetector(
                   onTap: () => Navigator.push(
                       context,
@@ -53,7 +51,6 @@ class UserProfileState extends State<UserProfileScreen> {
               padding: EdgeInsets.symmetric(horizontal: $(15)),
               color: ColorConstant.BackgroundColor,
             ),
-
           ],
         ),
       ),

@@ -1,6 +1,4 @@
-import 'package:cartoonizer/common/importFile.dart';
-
-export 'package:cartoonizer/common/StringConstant.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 
 // Common Dialog
 class CommonDialog extends StatefulWidget {
@@ -85,7 +83,7 @@ class _CommonDialogState extends State<CommonDialog> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(StringConstant.cancel,
+                      child: Text(S.of(context).cancel,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -111,7 +109,7 @@ class _CommonDialogState extends State<CommonDialog> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text(widget.confirmText == null ? StringConstant.confirm : widget.confirmText!,
+                  child: Text(widget.confirmText == null ? S.of(context).confirm : widget.confirmText!,
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,

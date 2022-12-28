@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -124,7 +125,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
   void _openShareAction(BuildContext context, List<String> paths) {
     final box = context.findRenderObject() as RenderBox?;
-    Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: StringConstant.share_title);
+    Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
   }
 
   onShareClick(ShareType shareType) async {
@@ -217,7 +218,7 @@ class _ShareScreenState extends State<ShareScreen> {
         Navigator.of(context).pop();
         break;
       case ShareType.whatsapp:
-        await flutterShareMe.shareToWhatsApp(msg: StringConstant.share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        await flutterShareMe.shareToWhatsApp(msg: S.of(context).share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
         Navigator.of(context).pop();
         break;
       case ShareType.email:
@@ -245,8 +246,8 @@ class _ShareScreenState extends State<ShareScreen> {
         Row(
           children: [
             SizedBox(width: cancelSize?.width ?? 50),
-            Expanded(child: TitleTextWidget(StringConstant.share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
-            TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(15))
+            Expanded(child: TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
+            TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(15))
                 .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)))
                 .intoGestureDetector(onTap: () {
               Navigator.of(context).pop();

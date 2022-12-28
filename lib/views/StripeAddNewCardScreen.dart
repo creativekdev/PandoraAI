@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -125,7 +126,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
     Get.dialog(
       CommonDialog(
         image: ImagesConstant.ic_success,
-        description: StringConstant.payment_successfully,
+        description: S.of(context).payment_successfully,
         isCancel: false,
         confirmText: "OK",
       ),
@@ -180,7 +181,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
               isZipCodeVisible: true,
               isCardNumberVisible: true,
               isExpiryDateVisible: true,
-              cardNumberDecoration: const InputDecoration(
+              cardNumberDecoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
@@ -193,7 +194,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
-                labelText: 'Card Number',
+                labelText: S.of(context).card_number,
                 hintText: 'XXXX XXXX XXXX XXXX',
                 hintStyle: TextStyle(
                   color: ColorConstant.White,
@@ -205,7 +206,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                 ),
                 floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
-              expiryDateDecoration: const InputDecoration(
+              expiryDateDecoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
@@ -218,7 +219,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
-                labelText: 'Expired Date',
+                labelText: S.of(context).expired_date,
                 hintText: 'XX/XX',
                 hintStyle: TextStyle(
                   color: ColorConstant.White,
@@ -255,7 +256,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                 ),
                 floatingLabelStyle: TextStyle(color: ColorConstant.White, fontWeight: FontWeight.w500),
               ),
-              zipCodeDecoration: const InputDecoration(
+              zipCodeDecoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
@@ -268,7 +269,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
                   borderRadius: BorderRadius.all(Radius.circular(8)),
                   borderSide: BorderSide(color: ColorConstant.White, width: 2.0),
                 ),
-                labelText: StringConstant.zip_code,
+                labelText: S.of(context).zip_code,
                 hintText: 'XXXX',
                 hintStyle: TextStyle(
                   color: ColorConstant.White,
@@ -306,7 +307,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
 
         if (userManager.isNeedLogin) {
           hidePendingUI();
-          CommonExtension().showToast(StringConstant.please_login_first);
+          CommonExtension().showToast(S.of(context).please_login_first);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -318,7 +319,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
           _handleStripePayment();
         }
       },
-      child: ButtonWidget(StringConstant.paymentBtn),
+      child: ButtonWidget(S.of(context).paymentBtn),
     );
   }
 
@@ -338,7 +339,7 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
               SizedBox(
                   // height: 5.h,
                   ),
-              TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 24),
+              TitleTextWidget(S.of(context).pay_with_new_card, ColorConstant.BtnTextColor, FontWeight.w500, 24),
               SizedBox(
                 height: 2.h,
               ),

@@ -137,7 +137,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
             opaque: false,
             pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
               uniqueId: "${parentComment.socialPostId}_${replySocialPostCommentId ?? ''}",
-              hint: userName != null ? 'reply $userName' : '',
+              hint: userName != null ? '${S.of(context).reply} $userName' : '',
               callback: (text) async {
                 return createComment(text, replySocialPostCommentId);
               },
@@ -247,14 +247,14 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
     return Row(
       children: [
         Expanded(
-            child: _function(context, Images.ic_discovery_comment, StringConstant.discoveryComment, onTap: () {
+            child: _function(context, Images.ic_discovery_comment, S.of(context).discoveryComment, onTap: () {
           onCreateCommentClick(userName: parentComment.userName, replySocialPostCommentId: parentComment.id);
         })),
         Expanded(
             child: _function(
           context,
           parentComment.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-          parentComment.likeId == null ? StringConstant.discoveryLike : StringConstant.discoveryUnlike,
+          parentComment.likeId == null ? S.of(context).discoveryLike : S.of(context).discoveryUnlike,
           iconColor: parentComment.likeId == null ? ColorConstant.White : ColorConstant.Red,
           onTap: () {
             onCommentLikeTap(parentComment);

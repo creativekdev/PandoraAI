@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:cartoonizer/Common/ThemeConstant.dart' as theme;
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -13,9 +14,9 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -67,6 +68,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  int lastLocaleTime = 0;
+
   @override
   Widget build(BuildContext context) {
     AppDelegate.instance.init();
@@ -74,9 +77,34 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
           theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
-          title: 'Cartoonizer',
-          home: MyHomePage(title: 'Cartoonizer'),
+          title: 'Pandora AI',
+          home: MyHomePage(title: 'Pandora AI'),
           debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          localeResolutionCallback: (deviceLocale, supportedLocales) {
+            var current = DateTime.now().millisecondsSinceEpoch;
+            var duration = current - lastLocaleTime;
+            if (duration > 200) {
+              lastLocaleTime = current;
+              debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
+              theme.AppContext.currentLocales = deviceLocale.languageCode;
+              return deviceLocale;
+            } else {
+              for (var locale in supportedLocales) {
+                if (locale.languageCode == theme.AppContext.currentLocales) {
+                  return locale;
+                }
+              }
+            }
+            return deviceLocale;
+          },
+          locale: const Locale('en', 'US'),
+          supportedLocales: S.delegate.supportedLocales,
         );
       },
     );
@@ -130,14 +158,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: [
                       Text(
-                        StringConstant.new_update_dialog_title,
+                        S.of(context).new_update_dialog_title,
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
                       SizedBox(height: 24),
                       Padding(
                         padding: EdgeInsets.only(left: 20, right: 20),
                         child: Text(
-                          StringConstant.new_update_dialog_content,
+                          S.of(context).new_update_dialog_content,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black, height: 1.3),
                         ),
@@ -146,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   )),
             ]),
           ),
-          confirmText: StringConstant.update_now,
+          confirmText: S.of(context).update_now,
           confirmCallback: () {
             var url = Config.getStoreLink();
             launchURL(url);

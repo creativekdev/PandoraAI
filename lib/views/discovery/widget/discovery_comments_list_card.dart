@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
@@ -48,7 +47,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             fit: BoxFit.cover,
             errorWidget: (context, url, error) {
               return Text(
-                (data.userName == '' ? StringConstant.accountCancelled : data.userName)[0].toUpperCase(),
+                (data.userName == '' ? S.of(context).accountCancelled : data.userName)[0].toUpperCase(),
                 style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
               ).intoContainer(
                   width: $(45),
@@ -72,7 +71,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             MaterialPageRoute(
               builder: (BuildContext context) => MyDiscoveryScreen(
                 userId: data.userId,
-                title: isMe ? StringConstant.setting_my_discovery : null,
+                title: isMe ? S.of(context).setting_my_discovery : null,
               ),
               settings: RouteSettings(name: "/UserDiscoveryScreen"),
             ),
@@ -85,7 +84,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
             children: [
               SizedBox(height: $(3)),
               TitleTextWidget(
-                TextUtil.isEmpty(data.userName) ? StringConstant.accountCancelled : data.userName,
+                TextUtil.isEmpty(data.userName) ? S.of(context).accountCancelled : data.userName,
                 ColorConstant.DiscoveryCommentGrey,
                 FontWeight.normal,
                 $(14),
@@ -100,7 +99,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                 }
               }),
               SizedBox(height: $(4)),
-              TitleTextWidget('other ${data.comments} replies >', ColorConstant.BlueColor, FontWeight.normal, $(13))
+              TitleTextWidget(S.of(context).other_replies.replaceAll("%d", '${data.comments}'), ColorConstant.BlueColor, FontWeight.normal, $(13))
                   .intoContainer(width: double.maxFinite, alignment: Alignment.centerLeft, margin: EdgeInsets.only(bottom: $(4)))
                   .intoGestureDetector(onTap: onCommentTap)
                   .offstage(offstage: data.comments == 0 || type == CommentsListCardType.header || !isTopComments),

@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/ThemeConstant.dart';
+import 'package:cartoonizer/common/events.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
@@ -21,9 +21,7 @@ import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CartoonizerApi extends BaseRequester {
   @override
@@ -363,7 +361,7 @@ class CartoonizerApi extends BaseRequester {
 
   Future<AvatarConfigEntity?> getAvatarAiConfig() async {
     var baseEntity = await get('/ai_avatar/config/v1', params: {
-      'language': 'en',
+      'language': AppContext.currentLocales ?? 'en',
     });
     return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }

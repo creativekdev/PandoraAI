@@ -4,7 +4,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';

@@ -139,7 +139,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
               });
             },
             backIcon: TitleTextWidget(
-              StringConstant.cancel,
+              S.of(context).cancel,
               ColorConstant.White,
               FontWeight.normal,
               $(16),
@@ -185,7 +185,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            StringConstant.cartoonizeCancelTitle,
+            S.of(context).cartoonizeCancelTitle,
             style: TextStyle(
               fontSize: $(17),
               fontFamily: 'Poppins',
@@ -198,7 +198,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
             children: [
               Expanded(
                   child: Text(
-                StringConstant.cartoonizeCancelDismiss,
+                S.of(context).cartoonizeCancelDismiss,
                 style: TextStyle(fontSize: $(16), fontFamily: 'Poppins', color: ColorConstant.White),
               )
                       .intoContainer(
@@ -215,7 +215,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
               })),
               Expanded(
                   child: Text(
-                StringConstant.cartoonizeCancelExit,
+                S.of(context).cartoonizeCancelExit,
                 style: TextStyle(
                   fontSize: $(16),
                   fontFamily: 'Poppins',

@@ -59,7 +59,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
                   return GetBuilder<AvatarAiController>(
                       init: controller,
                       builder: (controller) => TitleTextWidget(
-                            'Uploading photos$dot',
+                            '${S.of(context).uploading_photos}$dot',
                             ColorConstant.White,
                             FontWeight.w500,
                             $(18),
@@ -82,7 +82,7 @@ class _UploadLoadingDialogState extends State<UploadLoadingDialog> with SingleTi
               color: ColorConstant.LineColor,
             ),
             TitleTextWidget(
-              'Cancel',
+              S.of(context).cancel,
               ColorConstant.BlueColor,
               FontWeight.w500,
               $(17),

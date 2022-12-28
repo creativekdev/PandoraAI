@@ -1,22 +1,16 @@
-import 'dart:math';
-
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
-import 'package:common_utils/common_utils.dart';
 
 import 'avatar.dart';
-import 'select_bio_style_screen.dart';
 
 class AvatarIntroduceScreen extends StatefulWidget {
   AvatarIntroduceScreen({
@@ -63,7 +57,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
             shaderMask(
                 context: context,
                 child: Text(
-                  'What to Expect',
+                  S.of(context).what_to_expect,
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontSize: $(26),
@@ -73,10 +67,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                 )),
             SizedBox(height: $(15)),
             TitleTextWidget(
-                    'The AI that Pandora Avatar uses can generate unpredictable results '
-                    'which may include artistic nudes, defects or shocking'
-                    'images. This is not within our countrol. Please acknowledge and accept'
-                    'full responsibility and risk before continue.',
+                    S.of(context).expect_details,
                     ColorConstant.White,
                     FontWeight.w400,
                     $(13),
@@ -94,8 +85,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                 ),
                 margin: EdgeInsets.only(bottom: $(6))),
             TitleTextWidget(
-                    'The better you follow these guidelines,'
-                    ' the better chances for great result!',
+                    S.of(context).guidelines,
                     Colors.white,
                     FontWeight.bold,
                     $(17),
@@ -107,7 +97,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
             shaderMask(
                 context: context,
                 child: Text(
-                  'Examples',
+                  S.of(context).examples,
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontSize: $(18),
@@ -157,7 +147,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: TitleTextWidget(StringConstant.txtContinue, ColorConstant.White, FontWeight.normal, $(17))
+      bottomNavigationBar: TitleTextWidget(S.of(context).txtContinue, ColorConstant.White, FontWeight.normal, $(17))
           .intoContainer(
             margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15)),
             decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(8))),

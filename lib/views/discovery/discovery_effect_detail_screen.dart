@@ -241,8 +241,8 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     return Scaffold(
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
-        middle: TitleTextWidget(StringConstant.discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-        trailing: TitleTextWidget('Delete', ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
+        middle: TitleTextWidget(S.of(context).discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        trailing: TitleTextWidget(S.of(context).delete, ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
           showDeleteDialog();
         }).visibility(visible: userManager.user?.id == discoveryEntity.userId),
       ),
@@ -312,14 +312,14 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     return Row(
       children: [
         Expanded(
-            child: _function(context, Images.ic_discovery_comment, StringConstant.discoveryComment, onTap: () {
+            child: _function(context, Images.ic_discovery_comment, S.of(context).discoveryComment, onTap: () {
           onCreateCommentClick(userName: discoveryEntity.userName);
         })),
         Expanded(
             child: _function(
           context,
           discoveryEntity.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-          discoveryEntity.likeId == null ? StringConstant.discoveryLike : StringConstant.discoveryUnlike,
+          discoveryEntity.likeId == null ? S.of(context).discoveryLike : S.of(context).discoveryUnlike,
           iconColor: discoveryEntity.likeId == null ? ColorConstant.White : ColorConstant.Red,
           onTap: () {
             onDiscoveryLikeTap();
@@ -355,7 +355,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Are you sure to delete this post?',
+                  S.of(context).are_you_sure_to_delete_this_post,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.White),
                 ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
@@ -363,7 +363,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                   children: [
                     Expanded(
                         child: Text(
-                      'Delete',
+                      S.of(context).delete,
                       style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
                     )
                             .intoContainer(
@@ -380,7 +380,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                     })),
                     Expanded(
                         child: Text(
-                      'Cancel',
+                      S.of(context).cancel,
                       style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
                     )
                             .intoContainer(
@@ -413,7 +413,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       api.deleteDiscovery(discoveryEntity.id).then((value) {
         hideLoading().whenComplete(() {
           if (value != null) {
-            CommonExtension().showToast('Delete succeed');
+            CommonExtension().showToast(S.of(context).delete_succeed);
             Navigator.of(context).pop();
           }
         });

@@ -59,12 +59,12 @@ class _SettingScreenState extends AppState<SettingScreen> {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
         backgroundColor: ColorConstant.MineBackgroundColor,
-        appBar: AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor, middle: TitleTextWidget(StringConstant.settings, ColorConstant.White, FontWeight.w600, $(17))),
+        appBar: AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor, middle: TitleTextWidget(S.of(context).settings, ColorConstant.White, FontWeight.w600, $(17))),
         body: SingleChildScrollView(
           child: Column(
             children: [
               Container(height: $(12)),
-              functions(StringConstant.change_password, onTap: () {
+              functions(S.of(context).change_password, onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -78,7 +78,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     color: ColorConstant.BackgroundColor,
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
-              functions(StringConstant.help, onTap: () {
+              functions(S.of(context).help, onTap: () {
                 logEvent(Events.open_help_center);
                 launchURL("https://socialbook.io/help/");
               }),
@@ -86,7 +86,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              functions(StringConstant.term_condition, onTap: () {
+              functions(S.of(context).term_condition, onTap: () {
                 logEvent(Events.open_terms);
                 launchURL("https://socialbook.io/terms");
               }),
@@ -94,7 +94,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              functions(StringConstant.privacy_policy1, onTap: () {
+              functions(S.of(context).privacy_policy1, onTap: () {
                 logEvent(Events.open_privacy);
                 launchURL("https://socialbook.io/privacy/cartoonizer");
               }),
@@ -102,7 +102,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              functions(StringConstant.feedback, onTap: () {
+              functions(S.of(context).feedback, onTap: () {
                 logEvent(Events.feed_back_loading);
                 showDialog<bool>(
                   context: context,
@@ -115,7 +115,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(
-                StringConstant.settingsClearCache,
+                S.of(context).settingsClearCache,
                 onTap: () {
                   if (totalSize == 0) {
                     return;
@@ -177,7 +177,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     height: $(24),
                   ).intoContainer(margin: EdgeInsets.only(right: $(12)))),
               SizedBox(height: $(50)),
-              TitleTextWidget(StringConstant.setting_my_delete_account, ColorConstant.White, FontWeight.normal, $(15))
+              TitleTextWidget(S.of(context).setting_my_delete_account, ColorConstant.White, FontWeight.normal, $(15))
                   .intoContainer(
                       width: double.maxFinite,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),
@@ -198,7 +198,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   }
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              TitleTextWidget(StringConstant.logout, ColorConstant.Red, FontWeight.normal, $(15))
+              TitleTextWidget(S.of(context).logout, ColorConstant.Red, FontWeight.normal, $(15))
                   .intoContainer(
                       width: double.maxFinite,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),

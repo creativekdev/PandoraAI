@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/dialog.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:dio/dio.dart';
@@ -16,7 +16,11 @@ class ExceptionHandler {
       if (e is DioError) {
         if (e.type == DioErrorType.other) {
           if (kReleaseMode) {
-            CommonExtension().showToast(StringConstant.commonFailedToast);
+            if (AppContext.context != null) {
+              CommonExtension().showToast(S.of(AppContext.context!).commonFailedToast);
+            } else {
+              CommonExtension().showToast("Oops failed!");
+            }
           } else {
             CommonExtension().showToast(e.toString());
           }
@@ -43,9 +47,19 @@ class ExceptionHandler {
     } else {
       var data = e.response!.data;
       if (data == null) {
-        CommonExtension().showToast(StringConstant.commonFailedToast);
+        if (AppContext.context != null) {
+          CommonExtension().showToast(S.of(AppContext.context!).commonFailedToast);
+        } else {
+          CommonExtension().showToast("Oops failed!");
+        }
       } else if (data is Map) {
-        CommonExtension().showToast(data['message'] ?? StringConstant.commonFailedToast);
+        var ctoast;
+        if (AppContext.context != null) {
+          ctoast = S.of(AppContext.context!).commonFailedToast;
+        } else {
+          ctoast = "Oops failed!";
+        }
+        CommonExtension().showToast(data['message'] ?? ctoast);
       } else {
         CommonExtension().showToast(data.toString());
       }

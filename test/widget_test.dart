@@ -15,7 +15,7 @@ import 'package:cartoonizer/main.dart';
 
 void main() {
   test('description', () async {
-    print(await md5File(File('assets/images/ic_add.png')));
+    sortLocalConfigJson({});
   });
   return;
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
@@ -34,4 +34,14 @@ void main() {
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
+}
+
+sortLocalConfigJson(Map<String, String> params) {
+  List<String> result = [];
+  List<String> list = params.keys.toList();
+  list.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+  list.forEach((element) {
+    result.add("\"$element\": \"${params[element]}\"");
+  });
+  print("{" + result.join(",") + "}");
 }

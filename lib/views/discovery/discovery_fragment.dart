@@ -189,7 +189,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                     return Opacity(opacity: 1 - animationController.value, child: child);
                   },
                   child: TitleTextWidget(
-                    StringConstant.tabDiscovery,
+                    S.of(context).tabDiscovery,
                     ColorConstant.BtnTextColor,
                     FontWeight.w600,
                     $(18),

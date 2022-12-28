@@ -77,7 +77,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       shaderMask(
                           context: context,
                           child: Text(
-                            'Upload photos',
+                            S.of(context).upload_photos,
                             style: TextStyle(
                               color: ColorConstant.White,
                               fontSize: $(26),
@@ -88,13 +88,12 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       SizedBox(height: 20),
                       buildIconText(
                         context,
-                        title: 'Good photo examples',
+                        title: S.of(context).good_photo_examples,
                         icon: Images.ic_avatar_good_example,
                       ),
                       SizedBox(height: 12),
                       TitleTextWidget(
-                        'Show your shoulders, close-up selfies, same person in the photos, '
-                        'variety of loation/backgrounds/angels, different facial expressions. ',
+                        S.of(context).good_photo_description,
                         ColorConstant.White,
                         FontWeight.normal,
                         $(14),
@@ -118,13 +117,12 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       SizedBox(height: 20),
                       buildIconText(
                         context,
-                        title: 'Bad photo examples',
+                        title: S.of(context).bad_photo_examples,
                         icon: Images.ic_avatar_bad_example,
                       ),
                       SizedBox(height: 12),
                       TitleTextWidget(
-                        'Group shots, only photos looking INTO the camera, covered faces/sunglasses,'
-                        'monotonous pics, nudes, kids(ONLY 12+ ADULTS)',
+                        S.of(context).bad_photo_description,
                         ColorConstant.White,
                         FontWeight.normal,
                         $(14),
@@ -158,9 +156,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: 'We only use your photos to train the AI model and render your avatars'
-                                  'Both the input photos and the AI model will be deleted from our servers within 24 hours.'
-                                  'You will have the option to keep the AI model as a premium service.',
+                              text: S.of(context).pandora_transfer_tips,
                               style: TextStyle(
                                 fontFamily: 'Poppins',
                                 color: ColorConstant.White,
@@ -187,7 +183,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                   ),
                 )),
                 Text(
-                  controller.pickPhotosText,
+                  controller.pickPhotosText(context),
                   style: TextStyle(color: Colors.white, fontSize: $(17)),
                 )
                     .intoContainer(
@@ -262,13 +258,13 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                         ),
                       ),
                       SizedBox(height: 12),
-                      TitleTextWidget('Successful', Color(0xff34C759), FontWeight.w600, $(16)),
+                      TitleTextWidget(S.of(context).successful, Color(0xff34C759), FontWeight.w600, $(16)),
                     ],
                   ),
-                  content: TitleTextWidget('Your photos will be generated in about 2 hours', ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                  content: TitleTextWidget(S.of(context).pandora_create_spend, ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
                   actions: [
                     TitleTextWidget(
-                      'Ok',
+                      S.of(context).ok,
                       ColorConstant.BlueColor,
                       FontWeight.w600,
                       $(17),

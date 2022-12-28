@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
@@ -13,14 +12,13 @@ class UserInfoHeaderWidget extends StatelessWidget {
     Key? key,
     required this.avatar,
     required this.name,
-  }) : super(key: key) {
-    if (TextUtil.isEmpty(name)) {
-      name = StringConstant.accountCancelled;
-    }
-  }
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (TextUtil.isEmpty(name)) {
+      name = S.of(context).accountCancelled;
+    }
     return Row(
       children: [
         ClipRRect(

@@ -22,7 +22,7 @@ class CommonExtension {
     showCustomToast(
         context,
         OkToast(
-            text: StringConstant.toastImageSaved,
+            text: S.of(context).toastImageSaved,
             color: Color.fromARGB(255, 206, 206, 206),
             icon: Image.asset(
               ImagesConstant.ic_image_saved,
@@ -34,7 +34,7 @@ class CommonExtension {
     showCustomToast(
         context,
         OkToast(
-            text: StringConstant.toastVideoSaved,
+            text: S.of(context).toastVideoSaved,
             color: Color.fromARGB(255, 206, 206, 206),
             icon: Image.asset(
               ImagesConstant.ic_image_saved,
@@ -46,7 +46,7 @@ class CommonExtension {
     showCustomToast(
       context,
       OkToast(
-          text: StringConstant.commonFailedToast,
+          text: S.of(context).commonFailedToast,
           color: Color.fromARGB(255, 206, 206, 206),
           icon: Image.asset(
             ImagesConstant.ic_image_failed,

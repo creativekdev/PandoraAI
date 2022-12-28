@@ -10,7 +10,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
-import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
@@ -143,7 +142,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             ),
           ),
           Text(
-            'Save Photo',
+            S.of(context).save_photo,
             style: TextStyle(color: Colors.white, fontSize: $(17)),
           )
               .intoContainer(

@@ -14,7 +14,7 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.HOME.id(),
         normalIcon: Images.ic_tab_effect_normal,
         selectedIcon: Images.ic_tab_effect,
-        titleBuilder: (context) => StringConstant.tabHome,
+        titleBuilder: (context) => S.of(context).tabHome,
         keyBuilder: () => GlobalKey<EffectFragmentState>(),
         fragmentBuilder: (key) => EffectFragment(
           key: key,
@@ -26,7 +26,7 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.DISCOVERY.id(),
         normalIcon: Images.ic_tab_discovery_normal,
         selectedIcon: Images.ic_tab_discovery,
-        titleBuilder: (context) => StringConstant.tabDiscovery,
+        titleBuilder: (context) => S.of(context).tabDiscovery,
         keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
         fragmentBuilder: (key) => DiscoveryFragment(
           key: key,
@@ -38,7 +38,7 @@ List<AppRoleTabItem> buildTabItem() => [
         id: AppTabId.MINE.id(),
         normalIcon: Images.ic_tab_my_normal,
         selectedIcon: Images.ic_tab_my,
-        titleBuilder: (context) => StringConstant.tabMine,
+        titleBuilder: (context) => S.of(context).tabMine,
         keyBuilder: () => GlobalKey<MineFragmentState>(),
         fragmentBuilder: (key) => MineFragment(
           key: key,

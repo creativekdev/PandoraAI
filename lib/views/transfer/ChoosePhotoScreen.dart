@@ -442,12 +442,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: $(20)),
-            TitleTextWidget(StringConstant.exit_msg, ColorConstant.White, FontWeight.w600, 18),
+            TitleTextWidget(S.of(context).exit_msg, ColorConstant.White, FontWeight.w600, 18),
             SizedBox(height: $(15)),
-            TitleTextWidget(StringConstant.exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+            TitleTextWidget(S.of(context).exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
             SizedBox(height: $(15)),
             TitleTextWidget(
-              StringConstant.exit_editing,
+              S.of(context).exit_editing,
               ColorConstant.White,
               FontWeight.w600,
               16,
@@ -462,7 +462,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               Navigator.pop(context, true);
             }),
             TitleTextWidget(
-              StringConstant.cancel,
+              S.of(context).cancel,
               ColorConstant.White,
               FontWeight.w400,
               16,
@@ -562,7 +562,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   RewardAdvertisementScreen.push(
                     context,
                     adsHolder: rewardAdsHolder,
-                    watchAdText: StringConstant.watchAdText,
+                    watchAdText: S.of(context).watchAdText,
                   ).then((value) {
                     if (value ?? false) {
                       var currentEffect = offlineEffect[tabItemList[currentItemIndex.value].data.key];
@@ -583,7 +583,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       margin: EdgeInsets.symmetric(horizontal: $(25)),
                     )
                     .visibility(visible: userManager.isNeedLogin),
-                TitleTextWidget(StringConstant.signup_text, ColorConstant.White, FontWeight.normal, $(17))
+                TitleTextWidget(S.of(context).signup_text, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),
                   color: Colors.transparent,
@@ -611,7 +611,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   });
                 }).visibility(visible: userManager.isNeedLogin),
                 Container(height: $(10), width: double.maxFinite, color: ColorConstant.BackgroundColor),
-                TitleTextWidget(StringConstant.cancel, ColorConstant.White, FontWeight.normal, $(17))
+                TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.only(top: $(10), bottom: $(10) + MediaQuery.of(context).padding.bottom),
                   width: double.maxFinite,
@@ -703,7 +703,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             effectKey: selectedEffect.key,
           );
         } else {
-          CommonExtension().showToast(StringConstant.commonFailedToast);
+          CommonExtension().showToast(S.of(context).commonFailedToast);
         }
       });
     } else {
@@ -1171,7 +1171,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     height: 17,
                   ),
                   SizedBox(width: $(6)),
-                  TitleTextWidget(StringConstant.in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                  TitleTextWidget(S.of(context).in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
                   SizedBox(width: $(20)),
                 ],
               ).intoGestureDetector(onTap: () async {
@@ -1243,7 +1243,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             Image.asset(Images.ic_camera, width: $(24)),
             SizedBox(width: $(8)),
             Text(
-              StringConstant.choose_photo,
+              S.of(context).choose_photo,
               style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
             ),
           ],
@@ -1293,7 +1293,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: true,
+      useOld: false,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,
@@ -1467,7 +1467,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       controller.changeIsLoading(false);
-      CommonExtension().showToast(StringConstant.no_internet_msg);
+      CommonExtension().showToast(S.of(context).no_internet_msg);
       return;
     }
 
@@ -1475,7 +1475,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     EffectModel? category = findCategory(selectedEffect);
     if (category == null) {
       controller.changeIsLoading(false);
-      // CommonExtension().showToast(StringConstant.commonFailedToast);
+      // CommonExtension().showToast(S.of(context).commonFailedToast);
       CommonExtension().showToast('cannot find category');
       return;
     }
@@ -1737,7 +1737,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             if (!isLogin) {
               showDialogLogin(context, sharedPrefs);
             } else {
-              CommonExtension().showToast(StringConstant.DAILY_IP_LIMIT_EXCEEDED);
+              CommonExtension().showToast(S.of(context).DAILY_IP_LIMIT_EXCEEDED);
             }
           } else {
             CommonExtension().showToast(responseBody['message']);
@@ -1798,11 +1798,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   SizedBox(
                     height: 1.h,
                   ),
-                  TitleTextWidget(StringConstant.signup_text1, ColorConstant.TextBlack, FontWeight.w600, 18),
+                  TitleTextWidget(S.of(context).signup_text1, ColorConstant.TextBlack, FontWeight.w600, 18),
                   SizedBox(
                     height: 1.h,
                   ),
-                  TitleTextWidget(StringConstant.signup_text2, ColorConstant.TextBlack, FontWeight.w400, 14, maxLines: 3),
+                  TitleTextWidget(S.of(context).signup_text2, ColorConstant.TextBlack, FontWeight.w400, 14, maxLines: 3),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -1818,7 +1818,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           ));
                       userManager.refreshUser(context: context);
                     },
-                    child: RoundedBorderBtnWidget(StringConstant.sign_up, color: ColorConstant.TextBlack),
+                    child: RoundedBorderBtnWidget(S.of(context).sign_up, color: ColorConstant.TextBlack),
                   ),
                 ],
               ),

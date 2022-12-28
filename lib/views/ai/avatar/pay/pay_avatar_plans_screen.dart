@@ -29,7 +29,7 @@ class _PayAvatarPlansScreenState extends State<PayAvatarPlansScreen> {
         backgroundColor: ColorConstant.BackgroundColor,
         appBar: AppNavigationBar(
           backgroundColor: ColorConstant.BackgroundColor,
-          middle: TitleTextWidget('All Plans', Colors.white, FontWeight.w600, $(17)),
+          middle: TitleTextWidget(S.of(context).all_plans, Colors.white, FontWeight.w600, $(17)),
         ),
         body: ListView.builder(
           padding: EdgeInsets.only(top: $(15), bottom: $(15)),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -52,7 +53,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
           blurAble: false,
           backgroundColor: Colors.transparent,
           middle: TitleTextWidget(
-            StringConstant.sign_up,
+            S.of(context).sign_up,
             ColorConstant.BtnTextColor,
             FontWeight.w600,
             FontSizeConstants.topBarTitle,
@@ -93,7 +94,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                       ],
                     ),
                   ),
-                  TitleTextWidget(StringConstant.set_password, ColorConstant.White, FontWeight.w600, 20),
+                  TitleTextWidget(S.of(context).set_password, ColorConstant.White, FontWeight.w600, 20),
                   Container(
                     width: 20.w,
                     height: 0.3.h,
@@ -111,7 +112,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                   SizedBox(
                     height: 3.h,
                   ),
-                  TextInputWidget(StringConstant.email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress,
+                  TextInputWidget(S.of(context).email, ImagesConstant.ic_email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress,
                       false, emailController),
                   SizedBox(
                     height: 1.5.h,
@@ -158,7 +159,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                               obscureText: isShow,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.only(right: 5.w),
-                                hintText: StringConstant.password,
+                                hintText: S.of(context).password,
                                 border: InputBorder.none,
                                 enabledBorder: InputBorder.none,
                                 disabledBorder: InputBorder.none,
@@ -203,11 +204,11 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                   GestureDetector(
                     onTap: () async {
                       if (emailController.text.trim().isEmpty) {
-                        CommonExtension().showToast(StringConstant.email_validation);
+                        CommonExtension().showToast(S.of(context).email_validation);
                       } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
-                        CommonExtension().showToast(StringConstant.email_validation1);
+                        CommonExtension().showToast(S.of(context).email_validation1);
                       } else if (passController.text.trim().isEmpty) {
-                        CommonExtension().showToast(StringConstant.pass_validation);
+                        CommonExtension().showToast(S.of(context).pass_validation);
                       } else {
                         FocusManager.instance.primaryFocus?.unfocus();
                         setState(() {
@@ -334,7 +335,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                         }
                       }
                     },
-                    child: ButtonWidget(StringConstant.sign_up),
+                    child: ButtonWidget(S.of(context).sign_up),
                   ),
                   SizedBox(
                     height: 1.5.h,

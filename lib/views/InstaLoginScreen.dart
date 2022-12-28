@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -25,7 +26,7 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TitleTextWidget(StringConstant.insta_login, ColorConstant.White, FontWeight.w600, 14.sp),
+        title: TitleTextWidget(S.of(context).insta_login, ColorConstant.White, FontWeight.w600, 14.sp),
       ),
       body: SafeArea(
           child: WebView(

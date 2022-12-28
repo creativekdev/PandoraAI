@@ -45,8 +45,8 @@ class AvatarAiController extends GetxController {
     super.dispose();
   }
 
-  String get pickPhotosText {
-    return 'Select $minSize-$maxSize selfies';
+  String pickPhotosText(BuildContext context) {
+    return '${S.of(context).select} $minSize-$maxSize ${S.of(context).selfies}';
   }
 
   // Future<bool> pickImageFromCamera() async {

@@ -64,7 +64,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     data = widget.data.copy();
     resources = data.resourceList();
     if (resources.isEmpty) {
-      CommonExtension().showToast(StringConstant.commonFailedToast);
+      CommonExtension().showToast(S.of(context).commonFailedToast);
       Navigator.pop(context);
     }
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
@@ -136,7 +136,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             MaterialPageRoute(
               builder: (BuildContext context) => MyDiscoveryScreen(
                 userId: data.userId,
-                title: isMe ? StringConstant.setting_my_discovery : null,
+                title: isMe ? S.of(context).setting_my_discovery : null,
               ),
               settings: RouteSettings(name: "/UserDiscoveryScreen"),
             ),
@@ -224,7 +224,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             ).createShader(Offset.zero & bounds.size),
             blendMode: BlendMode.srcATop,
             child: TitleTextWidget(
-              StringConstant.discoveryDetailsUseSameTemplate,
+              S.of(context).discoveryDetailsUseSameTemplate,
               Color(0xffffffff),
               FontWeight.w700,
               $(15),

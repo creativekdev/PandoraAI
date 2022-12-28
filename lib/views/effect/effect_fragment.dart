@@ -219,7 +219,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                 future: getConnectionStatus(),
                 builder: (context, snapshot1) {
                   return Center(
-                    child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? StringConstant.empty_msg : StringConstant.no_internet_msg, ColorConstant.BtnTextColor,
+                    child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? S.of(context).empty_msg : S.of(context).no_internet_msg, ColorConstant.BtnTextColor,
                         FontWeight.w400, 12.sp),
                   ).intoGestureDetector(onTap: () {
                     _.loadData();
@@ -450,7 +450,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    StringConstant.pro,
+                    S.of(context).pro,
                     style: TextStyle(fontSize: $(14), color: Color(0xffffffff), fontWeight: FontWeight.w700),
                   )
                       .intoContainer(
@@ -488,7 +488,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   }),
                 ],
               ).intoContainer(margin: EdgeInsets.only(left: $(10))).offstage(offstage: !proVisible),
-              middle: TitleTextWidget(StringConstant.home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+              middle: TitleTextWidget(S.of(context).home, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
               trailing: Obx(() => BadgeView(
                     type: BadgeType.fill,
                     count: AppDelegate.instance.getManager<MsgManager>().unreadCount.value,

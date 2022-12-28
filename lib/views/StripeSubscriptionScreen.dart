@@ -1,16 +1,15 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/dialog.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:flutter/material.dart' as material;
 
-import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/models/UserModel.dart';
-import 'package:cartoonizer/api/api.dart';
-import 'account/LoginScreen.dart';
 import 'StripePaymentScreen.dart';
+import 'account/LoginScreen.dart';
 
 class StripeSubscriptionScreen extends StatefulWidget {
   const StripeSubscriptionScreen({Key? key}) : super(key: key);
@@ -99,7 +98,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
       Get.dialog(
         CommonDialog(
           image: ImagesConstant.ic_success,
-          description: StringConstant.payment_successfully,
+          description: S.of(context).payment_successfully,
           isCancel: false,
           confirmText: "OK",
         ),
@@ -130,7 +129,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
         // FirebaseAnalytics.instance.logEvent(name: Events.click_purchase);
 
         if (userManager.isNeedLogin) {
-          CommonExtension().showToast(StringConstant.please_login_first);
+          CommonExtension().showToast(S.of(context).please_login_first);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -142,7 +141,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           _handleStripePayment();
         }
       },
-      child: _showPurchasePlan ? null : ButtonWidget(StringConstant.txtContinue),
+      child: _showPurchasePlan ? null : ButtonWidget(S.of(context).txtContinue),
     );
   }
 
@@ -398,7 +397,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_ads, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).no_ads, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -414,7 +413,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).no_watermark1, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -430,7 +429,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).high_resolution, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -446,7 +445,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).faster_speed, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),

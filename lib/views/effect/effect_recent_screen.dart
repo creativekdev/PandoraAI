@@ -30,7 +30,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(
-          StringConstant.recently,
+          S.of(context).recently,
           ColorConstant.BtnTextColor,
           FontWeight.w600,
           FontSizeConstants.topBarTitle,
@@ -41,7 +41,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
           builder: (_) {
             return _.dataList.isEmpty
                 ? Text(
-                    StringConstant.effectRecentEmptyHint,
+                    S.of(context).effectRecentEmptyHint,
                     style: TextStyle(
                       color: ColorConstant.White,
                       fontWeight: FontWeight.w500,

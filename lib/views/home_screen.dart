@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:cartoonizer/Common/ThemeConstant.dart' as theme;
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
@@ -72,6 +73,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       });
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    theme.AppContext.context = context;
   }
 
   void onLogin() {

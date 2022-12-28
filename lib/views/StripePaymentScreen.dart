@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -12,7 +13,6 @@ import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'StripeAddNewCardScreen.dart';
 
 class StripePaymentScreen extends StatefulWidget {
@@ -283,7 +283,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                       fit: BoxFit.contain,
                     ),
                     SizedBox(width: 4.w),
-                    TitleTextWidget(StringConstant.pay_with_new_card, ColorConstant.TextBlack, FontWeight.w500, 14.sp, align: TextAlign.center),
+                    TitleTextWidget(S.of(context).pay_with_new_card, ColorConstant.TextBlack, FontWeight.w500, 14.sp, align: TextAlign.center),
                   ],
                 ),
               ]),
@@ -326,7 +326,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
             blurAble: false,
             backgroundColor: Colors.transparent,
             middle: TitleTextWidget(
-              StringConstant.payment,
+              S.of(context).payment,
               ColorConstant.BtnTextColor,
               FontWeight.w600,
               FontSizeConstants.topBarTitle,

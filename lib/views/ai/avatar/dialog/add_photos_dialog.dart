@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 
 class AddPhotosDialog extends StatelessWidget {
   AvatarAiController controller;

@@ -223,7 +223,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                               : Stack(
                                   children: [
                                     CachedNetworkImageUtils.custom(
-                                        useOld: true,
+                                        useOld: false,
                                         context: context,
                                         imageUrl: data.data!.item!.imageUrl,
                                         width: cardWidth - (nfwShown ? 2 : 0),

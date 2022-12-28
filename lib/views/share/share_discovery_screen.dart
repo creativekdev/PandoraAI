@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/selected_button.dart';
@@ -109,7 +108,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   submit() {
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
-      text = StringConstant.discoveryShareInputHint;
+      text = S.of(context).discoveryShareInputHint;
       // CommonExtension().showToast('Please input description');
       // return;
     }
@@ -119,12 +118,12 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         GallerySaver.saveVideo(image, false).then((value) {
           if (value == null) {
             hideLoading();
-            CommonExtension().showToast(StringConstant.commonFailedToast);
+            CommonExtension().showToast(S.of(context).commonFailedToast);
           } else {
             uploadFile(value, needCompress: false).then((value) async {
               if (value == null) {
                 hideLoading();
-                CommonExtension().showToast(StringConstant.commonFailedToast);
+                CommonExtension().showToast(S.of(context).commonFailedToast);
               } else {
                 var imageUrl = value.key;
                 var list = [
@@ -141,13 +140,13 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   var response = await Downloader().downloadSync(originalUrl, originFilePath);
                   if (response?.statusCode != 200) {
                     hideLoading();
-                    CommonExtension().showToast(StringConstant.commonFailedToast);
+                    CommonExtension().showToast(S.of(context).commonFailedToast);
                     return;
                   }
                   var keyValue = await uploadFile(originFilePath, needCompress: true);
                   if (keyValue == null) {
                     hideLoading();
-                    CommonExtension().showToast(StringConstant.commonFailedToast);
+                    CommonExtension().showToast(S.of(context).commonFailedToast);
                     return;
                   }
                   list.add(
@@ -187,7 +186,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         api.getPresignedUrl(params).then((url) async {
           if (url == null) {
             hideLoading();
-            CommonExtension().showToast(StringConstant.commonFailedToast);
+            CommonExtension().showToast(S.of(context).commonFailedToast);
           } else {
             Uint8List image = await imageCompressWithList(imageData!);
             var baseEntity = await Uploader().upload(url, image, c_type);
@@ -207,13 +206,13 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 var response = await Downloader().downloadSync(originalUrl, originFilePath);
                 if (response?.statusCode != 200) {
                   hideLoading();
-                  CommonExtension().showToast(StringConstant.commonFailedToast);
+                  CommonExtension().showToast(S.of(context).commonFailedToast);
                   return;
                 }
                 var keyValue = await uploadFile(originFilePath, needCompress: true);
                 if (keyValue == null) {
                   hideLoading();
-                  CommonExtension().showToast(StringConstant.commonFailedToast);
+                  CommonExtension().showToast(S.of(context).commonFailedToast);
                   return;
                 }
                 list.add(
@@ -291,7 +290,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             backgroundColor: Colors.transparent,
             blurAble: false,
             backIcon: TitleTextWidget(
-              StringConstant.cancel,
+              S.of(context).cancel,
               ColorConstant.White,
               FontWeight.normal,
               $(16),
@@ -304,7 +303,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               Navigator.of(context).pop();
             },
             trailing: TitleTextWidget(
-              StringConstant.discoveryShareSubmit,
+              S.of(context).discoveryShareSubmit,
               canSubmit ? ColorConstant.White : ColorConstant.EffectFunctionGrey,
               FontWeight.normal,
               $(16),
@@ -353,7 +352,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   // },
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: StringConstant.discoveryShareInputHint,
+                    hintText: S.of(context).discoveryShareInputHint,
                     hintStyle: TextStyle(
                       color: ColorConstant.DiscoveryCommentGrey,
                       fontFamily: 'Poppins',
@@ -411,14 +410,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                     children: [
                       Image.asset(Images.ic_checked, width: $(16)),
                       SizedBox(width: $(6)),
-                      TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
+                      TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
                     ],
                   ),
                   normalImage: Row(
                     children: [
                       Image.asset(Images.ic_unchecked, width: $(16)),
                       SizedBox(width: $(6)),
-                      TitleTextWidget(StringConstant.shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
+                      TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
                     ],
                   ),
                   onChange: (value) {

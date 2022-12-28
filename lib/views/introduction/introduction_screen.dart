@@ -1,6 +1,6 @@
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/welcome_widgets.dart';
@@ -16,23 +16,7 @@ class IntroductionScreen extends StatefulWidget {
 
 class IntroductionScreenState extends State<IntroductionScreen> {
   int position = 0;
-  List pages = [
-    {
-      'image': Images.introduction_bg1,
-      'title': StringConstant.app_name,
-      'subTitle': StringConstant.welcome_title1,
-    },
-    {
-      'image': Images.introduction_bg2,
-      'title': StringConstant.app_name,
-      'subTitle': StringConstant.welcome_title2,
-    },
-    // {
-    //   'image': Images.introduction_bg3,
-    //   'title': StringConstant.app_name,
-    //   'subTitle': StringConstant.welcome_title3,
-    // }
-  ];
+  List pages = [];
 
   late PageController pageController;
 
@@ -40,6 +24,27 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   void initState() {
     super.initState();
     pageController = PageController(initialPage: 0);
+    delay(() {
+      setState(() {
+        pages = [
+          {
+            'image': Images.introduction_bg1,
+            'title': S.of(context).app_name,
+            'subTitle': S.of(context).welcome_title1,
+          },
+          {
+            'image': Images.introduction_bg2,
+            'title': S.of(context).app_name,
+            'subTitle': S.of(context).welcome_title2,
+          },
+          // {
+          //   'image': Images.introduction_bg3,
+          //   'title': S.of(context).app_name,
+          //   'subTitle': S.of(context).welcome_title3,
+          // }
+        ];
+      });
+    });
   }
 
   _onContinueClick(BuildContext context) {
@@ -104,7 +109,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
                         ),
                         child: Center(
                           child: Text(
-                            StringConstant.txtContinue,
+                            S.of(context).txtContinue,
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, fontFamily: "Poppins"),
                           ),

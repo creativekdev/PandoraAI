@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -38,7 +39,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           blurAble: false,
           backgroundColor: Colors.transparent,
           middle: TitleTextWidget(
-            StringConstant.change_password,
+            S.of(context).change_password,
             ColorConstant.BtnTextColor,
             FontWeight.w600,
             FontSizeConstants.topBarTitle,
@@ -49,24 +50,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             children: [
               SizedBox(height: 5.h),
               SimpleTextInputWidget(
-                  StringConstant.current_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
+                  S.of(context).current_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, oPassController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  StringConstant.new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
+                  S.of(context).new_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.next, TextInputType.emailAddress, false, passController),
               SizedBox(height: 1.4.h),
               SimpleTextInputWidget(
-                  StringConstant.confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
+                  S.of(context).confirm_pass, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, cPassController),
               SizedBox(height: 5.h),
               GestureDetector(
                 onTap: () async {
                   if (oPassController.text.trim().isEmpty) {
-                    CommonExtension().showToast(StringConstant.pass_validation);
+                    CommonExtension().showToast(S.of(context).pass_validation);
                   } else if (passController.text.trim().isEmpty) {
-                    CommonExtension().showToast(StringConstant.pass_validation);
+                    CommonExtension().showToast(S.of(context).pass_validation);
                   } else if (cPassController.text.trim().isEmpty) {
-                    CommonExtension().showToast(StringConstant.cpass_validation);
+                    CommonExtension().showToast(S.of(context).cpass_validation);
                   } else if (passController.text.trim() != cPassController.text.trim()) {
-                    CommonExtension().showToast(StringConstant.pass_validation1);
+                    CommonExtension().showToast(S.of(context).pass_validation1);
                   } else {
                     setState(() {
                       isLoading = true;
@@ -91,7 +92,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     }
                   }
                 },
-                child: ButtonWidget(StringConstant.update_pass),
+                child: ButtonWidget(S.of(context).update_pass),
               ),
             ],
           ),

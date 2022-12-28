@@ -48,7 +48,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     super.initState();
     logEvent(Events.user_discovery_loading);
     userId = widget.userId;
-    title = widget.title ?? StringConstant.tabDiscovery;
+    title = widget.title ?? S.of(context).tabDiscovery;
     emptyText = widget.title == null ? 'This user has not posted anything' : 'You have not posted anything';
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());

@@ -8,7 +8,7 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/auth.dart';
-import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
@@ -156,7 +156,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                StringConstant.welcomeBack,
+                S.of(context).welcomeBack,
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   color: Colors.white,
@@ -168,7 +168,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                 margin: EdgeInsets.only(top: $(70), bottom: $(24)),
               ),
               iconInput(
-                title: StringConstant.email,
+                title: S.of(context).email,
                 iconRes: Images.ic_email,
                 controller: emailController,
                 inputAction: TextInputAction.next,
@@ -176,7 +176,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
               ).intoMaterial(color: Colors.transparent).hero(tag: 'email'),
               SizedBox(height: $(16)),
               iconInput(
-                title: StringConstant.password,
+                title: S.of(context).password,
                 iconRes: Images.ic_password,
                 passwordIcon: Images.ic_password_hide,
                 plainIcon: Images.ic_password_show,
@@ -197,12 +197,12 @@ class _LoginScreenState extends AppState<LoginScreen> {
                             builder: (context) => ForgotPasswordScreen(),
                           ))
                     },
-                    child: TitleTextWidget(StringConstant.forgot_password, ColorConstant.BlueColor, FontWeight.w400, 12),
+                    child: TitleTextWidget(S.of(context).forgot_password, ColorConstant.BlueColor, FontWeight.w400, 12),
                   ),
                 ],
               ),
               SizedBox(height: $(40)),
-              TitleTextWidget(StringConstant.log_in, ColorConstant.White, FontWeight.w500, $(16))
+              TitleTextWidget(S.of(context).sign_in, ColorConstant.White, FontWeight.w500, $(16))
                   .intoContainer(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: $(10)),
@@ -214,11 +214,11 @@ class _LoginScreenState extends AppState<LoginScreen> {
                   .hero(tag: 'btn')
                   .intoGestureDetector(onTap: () async {
                 if (emailController.text.trim().isEmpty) {
-                  CommonExtension().showToast(StringConstant.email_validation);
+                  CommonExtension().showToast(S.of(context).email_validation);
                 } else if (passController.text.trim().isEmpty) {
-                  CommonExtension().showToast(StringConstant.pass_validation);
+                  CommonExtension().showToast(S.of(context).pass_validation);
                 } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
-                  CommonExtension().showToast(StringConstant.email_validation1);
+                  CommonExtension().showToast(S.of(context).email_validation1);
                 } else {
                   FocusManager.instance.primaryFocus?.unfocus();
                   showLoading().whenComplete(() async {
@@ -253,7 +253,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                       ),
                     ),
                     SizedBox(width: 3.w),
-                    TitleTextWidget(StringConstant.or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
+                    TitleTextWidget(S.of(context).or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
                     SizedBox(width: 3.w),
                     Expanded(
                       child: Divider(
@@ -284,9 +284,9 @@ class _LoginScreenState extends AppState<LoginScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TitleTextWidget(StringConstant.no_account, ColorConstant.White, FontWeight.w400, 12),
+                  TitleTextWidget(S.of(context).no_account, ColorConstant.White, FontWeight.w400, 12),
                   Text(
-                    StringConstant.sign_up,
+                    S.of(context).sign_up,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                   ).intoGestureDetector(

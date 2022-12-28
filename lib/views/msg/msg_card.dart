@@ -27,17 +27,17 @@ class MsgCard extends StatelessWidget {
       var timeZoneOffset = DateTime.now().timeZoneOffset;
       dateTime = date.add(timeZoneOffset);
     }
-    String? name = extras['user_name'];
-    if (TextUtil.isEmpty(name)) {
-      userName = StringConstant.accountCancelled;
-    } else {
-      userName = name!;
-    }
     avatar = extras['user_avatar']?.toString() ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
+    String? name = extras['user_name'];
+    if (TextUtil.isEmpty(name)) {
+      userName = S.of(context).accountCancelled;
+    } else {
+      userName = name!;
+    }
     return Column(
       children: [
         Row(
@@ -91,7 +91,7 @@ class MsgCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          msgType == MsgType.UNDEFINED ? 'System Information' : extras['user_name'] ?? StringConstant.accountCancelled,
+                          msgType == MsgType.UNDEFINED ? 'System Information' : extras['user_name'] ?? S.of(context).accountCancelled,
                           style: TextStyle(
                             color: Color(0xfff3f3f3),
                             fontFamily: 'Poppins',

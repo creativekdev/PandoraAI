@@ -1,27 +1,27 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/input_text.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/auth.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/common/auth.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:cartoonizer/api/api.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'InstaLoginScreen.dart';
@@ -458,7 +458,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                StringConstant.createAccount,
+                S.of(context).createAccount,
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   color: Colors.white,
@@ -470,7 +470,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 margin: EdgeInsets.only(top: $(70), bottom: $(24)),
               ),
               iconInput(
-                title: StringConstant.email,
+                title: S.of(context).email,
                 iconRes: Images.ic_email,
                 controller: emailController,
                 inputAction: TextInputAction.next,
@@ -478,7 +478,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
               ).intoMaterial(color: Colors.transparent).hero(tag: 'email'),
               SizedBox(height: $(16)),
               iconInput(
-                title: StringConstant.password,
+                title: S.of(context).password,
                 iconRes: Images.ic_password,
                 passwordIcon: Images.ic_password_hide,
                 plainIcon: Images.ic_password_show,
@@ -488,7 +488,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
               ).intoMaterial(color: Colors.transparent).hero(tag: 'pwd'),
               SizedBox(height: $(16)),
               iconInput(
-                title: StringConstant.c_password,
+                title: S.of(context).c_password,
                 iconRes: Images.ic_password,
                 passwordIcon: Images.ic_password_hide,
                 plainIcon: Images.ic_password_show,
@@ -497,7 +497,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                 passwordInput: true,
               ),
               SizedBox(height: $(40)),
-              TitleTextWidget(StringConstant.sign_up, ColorConstant.White, FontWeight.w500, $(16))
+              TitleTextWidget(S.of(context).sign_up, ColorConstant.White, FontWeight.w500, $(16))
                   .intoContainer(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: $(10)),
@@ -530,7 +530,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                     SizedBox(
                       width: 3.w,
                     ),
-                    TitleTextWidget(StringConstant.or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
+                    TitleTextWidget(S.of(context).or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
                     SizedBox(
                       width: 3.w,
                     ),
@@ -575,7 +575,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TitleTextWidget(StringConstant.already_account, ColorConstant.White, FontWeight.w400, 12),
+                  TitleTextWidget(S.of(context).already_account, ColorConstant.White, FontWeight.w400, 12),
                   GestureDetector(
                     onTap: () => {
                       if (prefixPage != null)
@@ -592,7 +592,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                         {Navigator.pop(context, false)}
                     },
                     child: Text(
-                      StringConstant.log_in,
+                      S.of(context).sign_in,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: ColorConstant.BlueColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', fontSize: 12, decoration: TextDecoration.underline),
                     ),

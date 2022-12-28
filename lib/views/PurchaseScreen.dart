@@ -2,14 +2,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/images-res.dart';
-import 'package:http/http.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -262,7 +261,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         var sharedPrefs = await SharedPreferences.getInstance();
 
         if (userManager.isNeedLogin) {
-          CommonExtension().showToast(StringConstant.please_login_first);
+          CommonExtension().showToast(S.of(context).please_login_first);
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -285,7 +284,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           }
         }
       },
-      child: _showPurchasePlan ? null : ButtonWidget(StringConstant.txtContinue),
+      child: _showPurchasePlan ? null : ButtonWidget(S.of(context).txtContinue),
     );
   }
 
@@ -558,7 +557,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 ),
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
-                                  child: TitleTextWidget(StringConstant.restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
+                                  child: TitleTextWidget(S.of(context).restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
                                 ),
                               ),
                             ),
@@ -602,7 +601,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_ads, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).no_ads, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -618,7 +617,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.no_watermark1, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).no_watermark1, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -634,7 +633,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.high_resolution, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).high_resolution, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),
@@ -650,7 +649,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(StringConstant.faster_speed, ColorConstant.White, FontWeight.w400, 14),
+                                            child: TitleTextWidget(S.of(context).faster_speed, ColorConstant.White, FontWeight.w400, 14),
                                           ),
                                         ],
                                       ),

@@ -69,13 +69,12 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
       ),
       body: Column(
         children: [
-          TitleTextWidget('Check out', ColorConstant.White, FontWeight.w600, $(26)),
+          TitleTextWidget(S.of(context).checkout, ColorConstant.White, FontWeight.w600, $(26)),
           SizedBox(height: $(24)),
-          TitleTextWidget('Why it\'s paid?', ColorConstant.White, FontWeight.w600, $(17)),
+          TitleTextWidget(S.of(context).why_its_paid, ColorConstant.White, FontWeight.w600, $(17)),
           SizedBox(height: $(12)),
           TitleTextWidget(
-            'Pandora Avatars use state of the art AI technology to create magnificent avatars for you! '
-            'Despite requiring a high amount of resources (GPU), we’ve made it as affordable as possible!',
+            S.of(context).pandora_pay_description,
             ColorConstant.White,
             FontWeight.w600,
             $(13),
@@ -105,7 +104,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             });
           }).visibility(visible: false),
           TitleTextWidget(
-            'Purchase for \$${selected?.price}',
+            '${S.of(context).pandora_purchase}\$${selected?.price}',
             ColorConstant.White,
             FontWeight.w500,
             $(16),
@@ -133,7 +132,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
                 avatarIOS = PayAvatarIOS(
                   planId: selected!.appleStorePlanId,
                 );
-                avatarIOS!.startPay((result) {
+                avatarIOS!.startPay(context, (result) {
                   hideLoading().whenComplete(() {
                     avatarIOS?.dispose();
                     if (result) {
@@ -209,7 +208,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
           item.marginOnly(top: 10),
           Positioned(
             child: Text(
-              'MOST POPULAR',
+              S.of(context).most_popular,
               style: TextStyle(color: Colors.black, fontSize: $(9), fontFamily: 'Poppins'),
             ).intoContainer(
               decoration: BoxDecoration(color: Color(0xffFED700), borderRadius: BorderRadius.circular(4)),

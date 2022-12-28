@@ -123,7 +123,7 @@ class MsgListState extends AppState<MsgListScreen> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.CardColor,
         blurAble: false,
-        middle: TitleTextWidget(StringConstant.msgTitle, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
+        middle: TitleTextWidget(S.of(context).msgTitle, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
         trailing: TitleTextWidget('Read All', ColorConstant.White, FontWeight.normal, $(15)).intoGestureDetector(
           onTap: () {
             readAll();

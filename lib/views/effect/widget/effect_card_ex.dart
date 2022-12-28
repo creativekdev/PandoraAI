@@ -33,7 +33,7 @@ class EffectCardEx {
     required double height,
   }) =>
       CachedNetworkImageUtils.custom(
-        useOld: true,
+        useOld: false,
         context: context,
         imageUrl: url,
         fit: BoxFit.fill,

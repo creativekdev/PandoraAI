@@ -235,7 +235,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Packages purchased',
+              S.of(context).packages_purchased,
               style: TextStyle(fontSize: $(10)),
             ).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -255,8 +255,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${AppDelegate.instance.getManager<UserManager>().user!.aiAvatarCredit}'
-                      ' unique avatars',
+                      '${AppDelegate.instance.getManager<UserManager>().user!.aiAvatarCredit} ${S.of(context).unique_avatars}',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: $(17),
@@ -264,7 +263,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                       ),
                     ),
                     Text(
-                      '10 variations of 10 styles',
+                      S.of(context).variations_of_styles,
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: $(13),
@@ -274,7 +273,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   ],
                 )),
                 Text(
-                  'Create',
+                  S.of(context).create,
                   style: TextStyle(
                     color: Colors.white,
                     fontFamily: 'Poppins',

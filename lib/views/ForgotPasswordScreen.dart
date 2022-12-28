@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cartoonizer/api/api.dart';
 
@@ -39,14 +39,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: TitleTextWidget(StringConstant.forgot_your_password, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
+                  child: TitleTextWidget(S.of(context).forgot_your_password, ColorConstant.BtnTextColor, FontWeight.w600, 14.sp),
                 ),
                 SizedBox(
                   height: 1.h,
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: TitleTextWidget(StringConstant.forgot_password_text, ColorConstant.HintColor, FontWeight.w400, 12.sp, maxLines: 2),
+                  child: TitleTextWidget(S.of(context).forgot_password_text, ColorConstant.HintColor, FontWeight.w400, 12.sp, maxLines: 2),
                 ),
                 SizedBox(
                   height: 5.h,
@@ -59,16 +59,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   height: 5.h,
                 ),
                 SimpleTextInputWidget(
-                    StringConstant.email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, emailController),
+                    S.of(context).email, ColorConstant.TextBlack, FontWeight.w400, 12.sp, TextInputAction.done, TextInputType.emailAddress, false, emailController),
                 SizedBox(
                   height: 3.h,
                 ),
                 GestureDetector(
                   onTap: () async {
                     if (emailController.text.trim().isEmpty) {
-                      CommonExtension().showToast(StringConstant.email_validation);
+                      CommonExtension().showToast(S.of(context).email_validation);
                     } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
-                      CommonExtension().showToast(StringConstant.email_validation1);
+                      CommonExtension().showToast(S.of(context).email_validation1);
                     } else {
                       setState(() {
                         isLoading = true;
@@ -86,7 +86,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       }
                     }
                   },
-                  child: ButtonWidget(StringConstant.send),
+                  child: ButtonWidget(S.of(context).send),
                 ),
               ],
             ),
