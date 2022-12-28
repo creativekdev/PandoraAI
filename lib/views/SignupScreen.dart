@@ -448,11 +448,11 @@ class _SignupScreenState extends AppState<SignupScreen> {
           Icons.close,
           size: $(24),
           color: Colors.white,
-        ).marginOnly(left: $(15)).hero(tag: 'back'),
+        ).hero(tag: 'back'),
       ),
       body: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.only(bottom: 2.h, left: $(30), right: $(30)),
+        padding: EdgeInsets.only(bottom: 2.h, left: $(15), right: $(15)),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
