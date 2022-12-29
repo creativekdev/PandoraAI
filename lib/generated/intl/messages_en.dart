@@ -26,6 +26,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "You have run out of your daily credits. Please come back tomorrow."),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Pandora User"),
+        "activate_failed":
+            MessageLookupByLibrary.simpleMessage("Activate failure."),
+        "activate_successfully":
+            MessageLookupByLibrary.simpleMessage("Activate successfully!"),
         "agree_text1":
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
@@ -64,14 +68,19 @@ class MessageLookup extends MessageLookupByLibrary {
             "Closing the page will stop the transforming process. Are you sure to continue?"),
         "change_password":
             MessageLookupByLibrary.simpleMessage("Change Password"),
+        "change_pwd_successfully": MessageLookupByLibrary.simpleMessage(
+            "Password change successfully."),
         "checkout": MessageLookupByLibrary.simpleMessage("Check out"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("Choose Photo"),
         "choose_photo_more_photos": MessageLookupByLibrary.simpleMessage(
             "Please select at least %d more photos."),
         "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
             "You\'ve selected %selected photos of %minSize minimum required."),
+        "click_logout": MessageLookupByLibrary.simpleMessage("Click logout"),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("Your code was emailed to "),
+        "comment_posted":
+            MessageLookupByLibrary.simpleMessage("Comment posted"),
         "commonFailedToast":
             MessageLookupByLibrary.simpleMessage("Oops Failed"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
@@ -103,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Submit"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Unlike"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
         "effectRecentEmptyHint": MessageLookupByLibrary.simpleMessage(
             "No record of your usage found\nPlease make your first profile pic to view your history here"),
@@ -125,6 +135,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "expired_date": MessageLookupByLibrary.simpleMessage("Expired Date"),
         "facebook": MessageLookupByLibrary.simpleMessage(
             "Continue with IG Business(via FB)"),
+        "faces": MessageLookupByLibrary.simpleMessage("Faces"),
         "faster_speed": MessageLookupByLibrary.simpleMessage("Faster Speed"),
         "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "forgot_password":
@@ -177,9 +188,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "not_enough_photos":
             MessageLookupByLibrary.simpleMessage("Not enough photos"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "okay": MessageLookupByLibrary.simpleMessage("Okay"),
         "or": MessageLookupByLibrary.simpleMessage("Or"),
         "other_replies":
             MessageLookupByLibrary.simpleMessage("other %d replies >"),
+        "others": MessageLookupByLibrary.simpleMessage("Others"),
         "packages_purchased":
             MessageLookupByLibrary.simpleMessage("Packages purchased"),
         "pandora_create_input_name_hint":
@@ -214,6 +227,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("PhotoLibrary Permission"),
         "permissionPhotoLibraryContent": MessageLookupByLibrary.simpleMessage(
             "This app needs photo library access to choose pictures for upload user profile photo"),
+        "photo_delete_already": MessageLookupByLibrary.simpleMessage(
+            "This photo has been deleted already"),
         "photo_select_already": MessageLookupByLibrary.simpleMessage(
             "You\'ve chosen this photo already"),
         "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
@@ -232,11 +247,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":
             MessageLookupByLibrary.simpleMessage("Rate us on the play store"),
+        "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),
         "reply": MessageLookupByLibrary.simpleMessage("reply"),
         "resend": MessageLookupByLibrary.simpleMessage("Resend"),
+        "resend_failed":
+            MessageLookupByLibrary.simpleMessage("Resend failure."),
         "resend_logout":
             MessageLookupByLibrary.simpleMessage(" to change the email."),
+        "resend_successfully":
+            MessageLookupByLibrary.simpleMessage("Resend successfully!"),
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend."),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
@@ -245,11 +265,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
+        "select_from_album":
+            MessageLookupByLibrary.simpleMessage("Select from album"),
         "select_more_photos":
             MessageLookupByLibrary.simpleMessage("Select more photos"),
         "select_style": MessageLookupByLibrary.simpleMessage("Select Style"),
         "selfies": MessageLookupByLibrary.simpleMessage("selfies"),
         "send": MessageLookupByLibrary.simpleMessage("Send"),
+        "sent_email_already": MessageLookupByLibrary.simpleMessage(
+            "We sent reset password link to registered email"),
         "set_password": MessageLookupByLibrary.simpleMessage("Setup Password"),
         "setting": MessageLookupByLibrary.simpleMessage("Setting"),
         "setting_my_delete_account":
@@ -278,7 +302,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("Discovery"),
         "tabHome": MessageLookupByLibrary.simpleMessage("Home"),
         "tabMine": MessageLookupByLibrary.simpleMessage("My"),
+        "take_a_selfie": MessageLookupByLibrary.simpleMessage("Take a selfie"),
         "take_selfie": MessageLookupByLibrary.simpleMessage("Or take a selfie"),
+        "template_not_available": MessageLookupByLibrary.simpleMessage(
+            "This template is not available now"),
         "term_condition":
             MessageLookupByLibrary.simpleMessage("Terms and conditions"),
         "terms_condition":
@@ -294,6 +321,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_pass": MessageLookupByLibrary.simpleMessage("Update Password"),
         "update_profile":
             MessageLookupByLibrary.simpleMessage("Update Your Profile"),
+        "update_profile_successfully": MessageLookupByLibrary.simpleMessage(
+            "Profile update successfully!"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("Upload photos"),
         "uploading_photos":
             MessageLookupByLibrary.simpleMessage("Uploading photos"),
@@ -318,6 +347,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),
+        "your_post_has_been_submitted_successfully":
+            MessageLookupByLibrary.simpleMessage(
+                "Your post has been submitted successfully"),
         "youtube":
             MessageLookupByLibrary.simpleMessage("Continue with You Tube"),
         "zip_code": MessageLookupByLibrary.simpleMessage("Zip Code"),

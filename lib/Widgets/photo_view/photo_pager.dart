@@ -102,12 +102,16 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                           ShareScreen.startShare(
                             context,
                             backgroundColor: Color(0x77000000),
-                            style: 'Pandora AI',
+                            style: 'PandoraAI',
                             image: imageString,
                             isVideo: false,
-                            originalUrl: '',
-                            effectKey: 'Pandora AI',
+                            originalUrl: null,
+                            effectKey: 'PandoraAI',
+                            needDiscovery: true,
                           ).then((value) {
+                            if (value ?? false) {
+                              showShareSuccessDialog(context);
+                            }
                             AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                           });
                         });

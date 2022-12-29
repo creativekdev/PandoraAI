@@ -2020,6 +2020,16 @@ class S {
     );
   }
 
+  /// `This photo has been deleted already`
+  String get photo_delete_already {
+    return Intl.message(
+      'This photo has been deleted already',
+      name: 'photo_delete_already',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Play Ground`
   String get play_ground {
     return Intl.message(
@@ -2035,6 +2045,186 @@ class S {
     return Intl.message(
       'Login / Sign up',
       name: 'login_or_sign_up',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recent`
+  String get recent {
+    return Intl.message(
+      'Recent',
+      name: 'recent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Faces`
+  String get faces {
+    return Intl.message(
+      'Faces',
+      name: 'faces',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Others`
+  String get others {
+    return Intl.message(
+      'Others',
+      name: 'others',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message(
+      'Edit',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Password change successfully.`
+  String get change_pwd_successfully {
+    return Intl.message(
+      'Password change successfully.',
+      name: 'change_pwd_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile update successfully!`
+  String get update_profile_successfully {
+    return Intl.message(
+      'Profile update successfully!',
+      name: 'update_profile_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select from album`
+  String get select_from_album {
+    return Intl.message(
+      'Select from album',
+      name: 'select_from_album',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a selfie`
+  String get take_a_selfie {
+    return Intl.message(
+      'Take a selfie',
+      name: 'take_a_selfie',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resend successfully!`
+  String get resend_successfully {
+    return Intl.message(
+      'Resend successfully!',
+      name: 'resend_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resend failure.`
+  String get resend_failed {
+    return Intl.message(
+      'Resend failure.',
+      name: 'resend_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activate successfully!`
+  String get activate_successfully {
+    return Intl.message(
+      'Activate successfully!',
+      name: 'activate_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Activate failure.`
+  String get activate_failed {
+    return Intl.message(
+      'Activate failure.',
+      name: 'activate_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click logout`
+  String get click_logout {
+    return Intl.message(
+      'Click logout',
+      name: 'click_logout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We sent reset password link to registered email`
+  String get sent_email_already {
+    return Intl.message(
+      'We sent reset password link to registered email',
+      name: 'sent_email_already',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Okay`
+  String get okay {
+    return Intl.message(
+      'Okay',
+      name: 'okay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your post has been submitted successfully`
+  String get your_post_has_been_submitted_successfully {
+    return Intl.message(
+      'Your post has been submitted successfully',
+      name: 'your_post_has_been_submitted_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This template is not available now`
+  String get template_not_available {
+    return Intl.message(
+      'This template is not available now',
+      name: 'template_not_available',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comment posted`
+  String get comment_posted {
+    return Intl.message(
+      'Comment posted',
+      name: 'comment_posted',
       desc: '',
       args: [],
     );

@@ -8,7 +8,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';

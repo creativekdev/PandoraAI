@@ -17,6 +17,8 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -234,7 +236,13 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             ),
           ),
         )
-            .intoGestureDetector(onTap: () => toChoosePage())
+            .intoGestureDetector(onTap: () {
+              if (data.category == DiscoveryCategory.cartoonize.name) {
+                toChoosePage();
+              } else {
+                Avatar.intro(context);
+              }
+            })
             .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))
             .visibility(visible: imageSize != null || resources.length == 1),
       ],
@@ -377,7 +385,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     int categoryPos = 0;
     int itemPos = 0;
     if (tabPos == -1) {
-      CommonExtension().showToast("This template is not available now");
+      CommonExtension().showToast(S.of(context).template_not_available);
       return;
     }
     var targetSeries = effectDataController.data!.targetSeries(key)!;
@@ -401,7 +409,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       }
     }
     if (effectItem == null) {
-      CommonExtension().showToast("This template is not available now");
+      CommonExtension().showToast(S.of(context).template_not_available);
       return;
     }
     categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;

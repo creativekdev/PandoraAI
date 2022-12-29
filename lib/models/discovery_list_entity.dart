@@ -23,6 +23,7 @@ class DiscoveryListEntity {
   late String modified;
   late int id;
   late String status;
+  String category = '';
   @JSONField(name: "cartoonize_key")
   late String cartoonizeKey;
   @JSONField(name: "like_id")

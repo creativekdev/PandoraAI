@@ -24,15 +24,21 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:path/path.dart' as path;
 
+enum DiscoveryCategory {
+  ai_avatar,
+  cartoonize,
+}
+
 const int _maxInputLength = 512;
 
 class ShareDiscoveryScreen extends StatefulWidget {
   static Future<bool?> push(
     BuildContext context, {
-    required String originalUrl,
+    String? originalUrl,
     required String image,
     required bool isVideo,
     required String effectKey,
+    required DiscoveryCategory category,
   }) {
     return Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -41,23 +47,26 @@ class ShareDiscoveryScreen extends StatefulWidget {
           originalUrl: originalUrl,
           image: image,
           effectKey: effectKey,
+          category: category,
         ),
         settings: RouteSettings(name: "/ShareDiscoveryScreen"),
       ),
     );
   }
 
-  String originalUrl;
+  String? originalUrl;
   String image;
   bool isVideo;
   String effectKey;
+  DiscoveryCategory category;
 
   ShareDiscoveryScreen({
     Key? key,
-    required this.originalUrl,
+    this.originalUrl,
     required this.image,
     required this.isVideo,
     required this.effectKey,
+    required this.category,
   }) : super(key: key);
 
   @override
@@ -70,7 +79,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   bool canSubmit = true;
   late bool isVideo;
   late String image;
-  late String originalUrl;
+  String? originalUrl;
   Uint8List? imageData;
   late TextEditingController textEditingController;
   late CartoonizerApi api;
@@ -129,15 +138,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 var list = [
                   DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
                 ];
-                if (includeOriginal) {
-                  var fileType = originalUrl.substring(originalUrl.lastIndexOf(".") + 1);
+                if (includeOriginal && originalUrl != null) {
+                  var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
                   if (fileType.isEmpty) {
                     fileType = "jpg";
                   }
                   var fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileType';
                   var tempDir = cacheManager.storageOperator.tempDir;
                   var originFilePath = tempDir.path + '/$fileName';
-                  var response = await Downloader().downloadSync(originalUrl, originFilePath);
+                  var response = await Downloader().downloadSync(originalUrl!, originFilePath);
                   if (response?.statusCode != 200) {
                     hideLoading();
                     CommonExtension().showToast(S.of(context).commonFailedToast);
@@ -158,6 +167,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         description: text,
                         effectKey: effectKey,
                         resources: list,
+                        category: widget.category.name,
                         onUserExpired: () {
                           AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
                             submit();
@@ -195,15 +205,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               var list = [
                 DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
               ];
-              if (includeOriginal) {
-                var fileType = originalUrl.substring(originalUrl.lastIndexOf(".") + 1);
+              if (includeOriginal && originalUrl != null) {
+                var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
                 if (fileType.isEmpty) {
                   fileType = "jpg";
                 }
                 var fileName = '${DateTime.now().millisecondsSinceEpoch}.$fileType';
                 var tempDir = cacheManager.storageOperator.tempDir;
                 var originFilePath = tempDir.path + '/$fileName';
-                var response = await Downloader().downloadSync(originalUrl, originFilePath);
+                var response = await Downloader().downloadSync(originalUrl!, originFilePath);
                 if (response?.statusCode != 200) {
                   hideLoading();
                   CommonExtension().showToast(S.of(context).commonFailedToast);
@@ -224,6 +234,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       description: text,
                       effectKey: effectKey,
                       resources: list,
+                      category: widget.category.name,
                       onUserExpired: () {
                         AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
                           submit();
@@ -385,18 +396,20 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       });
                     })),
                     SizedBox(width: $(8)),
-                    Expanded(
-                        child: includeOriginal && imageSize != null
-                            ? Container(
-                                width: imageSize!.width,
-                                height: imageSize!.height,
-                                child: CachedNetworkImageUtils.custom(
-                                  context: context,
-                                  imageUrl: originalUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Container()),
+                    originalUrl == null
+                        ? Container()
+                        : Expanded(
+                            child: includeOriginal && imageSize != null
+                                ? Container(
+                                    width: imageSize!.width,
+                                    height: imageSize!.height,
+                                    child: CachedNetworkImageUtils.custom(
+                                      context: context,
+                                      imageUrl: originalUrl!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container()),
                     SizedBox(width: $(8)),
                     Expanded(child: Container()),
                   ],
@@ -404,28 +417,30 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 SizedBox(height: $(22)),
                 Divider(height: 1, color: ColorConstant.EffectGrey),
                 SizedBox(height: $(18)),
-                SelectedButton(
-                  selected: includeOriginal,
-                  selectedImage: Row(
-                    children: [
-                      Image.asset(Images.ic_checked, width: $(16)),
-                      SizedBox(width: $(6)),
-                      TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
-                    ],
-                  ),
-                  normalImage: Row(
-                    children: [
-                      Image.asset(Images.ic_unchecked, width: $(16)),
-                      SizedBox(width: $(6)),
-                      TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
-                    ],
-                  ),
-                  onChange: (value) {
-                    setState(() {
-                      includeOriginal = value;
-                    });
-                  },
-                ),
+                originalUrl == null
+                    ? Container()
+                    : SelectedButton(
+                        selected: includeOriginal,
+                        selectedImage: Row(
+                          children: [
+                            Image.asset(Images.ic_checked, width: $(16)),
+                            SizedBox(width: $(6)),
+                            TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.White, FontWeight.normal, $(14)),
+                          ],
+                        ),
+                        normalImage: Row(
+                          children: [
+                            Image.asset(Images.ic_unchecked, width: $(16)),
+                            SizedBox(width: $(6)),
+                            TitleTextWidget(S.of(context).shareIncludeOriginal, ColorConstant.EffectGrey, FontWeight.normal, $(14)),
+                          ],
+                        ),
+                        onChange: (value) {
+                          setState(() {
+                            includeOriginal = value;
+                          });
+                        },
+                      ),
               ],
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(25))),
           ),

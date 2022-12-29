@@ -65,6 +65,10 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (status != null) {
 		discoveryListEntity.status = status;
 	}
+	final String? category = jsonConvert.convert<String>(json['category']);
+	if (category != null) {
+		discoveryListEntity.category = category;
+	}
 	final String? cartoonizeKey = jsonConvert.convert<String>(json['cartoonize_key']);
 	if (cartoonizeKey != null) {
 		discoveryListEntity.cartoonizeKey = cartoonizeKey;
@@ -101,6 +105,7 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['modified'] = entity.modified;
 	data['id'] = entity.id;
 	data['status'] = entity.status;
+	data['category'] = entity.category;
 	data['cartoonize_key'] = entity.cartoonizeKey;
 	data['like_id'] = entity.likeId;
 	data['resources'] = entity.resources;

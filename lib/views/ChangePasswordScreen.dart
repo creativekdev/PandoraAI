@@ -84,7 +84,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           }),
                         });
                     if (response.statusCode == 200) {
-                      CommonExtension().showToast("Password change successfully.");
+                      CommonExtension().showToast(S.of(context).change_pwd_successfully);
                       AppDelegate.instance.getManager<UserManager>().refreshUser();
                       Navigator.pop(context);
                     } else {

@@ -196,7 +196,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
       case AvatarStatus.completed:
       case AvatarStatus.subscribed:
         var coverImage = data.coverImage();
-        var list = coverImage.length > 6 ? coverImage.sublist(0, 6) : coverImage;
+        var list = coverImage.length > 5 ? coverImage.sublist(0, 5) : coverImage;
         item = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -206,7 +206,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   (data, index) => CachedNetworkImageUtils.custom(
                     context: context,
                     imageUrl: data,
-                    width: imageSize / 2,
+                    width: imageSize * 0.6,
                     height: imageSize,
                   ),
                 ),

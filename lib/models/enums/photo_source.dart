@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Common/importFile.dart';
+
 ///auto generate code, please do not modify;
 enum PhotoSource {
   recent,
@@ -22,14 +24,14 @@ class PhotoSourceUtils {
 }
 
 extension PhotoSourceEx on PhotoSource {
-  title() {
+  title(BuildContext context) {
     switch (this) {
       case PhotoSource.recent:
-        return 'Recent';
+        return S.of(context).recent;
       case PhotoSource.album:
-        return 'Others';
+        return S.of(context).others;
       case PhotoSource.albumFace:
-        return 'Faces';
+        return S.of(context).faces;
       case PhotoSource.UNDEFINED:
         return null;
     }

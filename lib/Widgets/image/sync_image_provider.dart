@@ -16,19 +16,24 @@ abstract class SyncImageProvider {
 
   _loadImage();
 }
+
 class SyncMemoryImage extends SyncImageProvider {
   Uint8List list;
+
   SyncMemoryImage({required this.list});
 
   @override
   _loadImage() {
     var resolve = MemoryImage(list).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      if (_completer.isCompleted) {
+        return;
+      }
       _completer.complete(image);
     }));
   }
-
 }
+
 class SyncFileImage extends SyncImageProvider {
   File file;
 
@@ -38,6 +43,9 @@ class SyncFileImage extends SyncImageProvider {
   void _loadImage() {
     var resolve = FileImage(file).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      if (_completer.isCompleted) {
+        return;
+      }
       _completer.complete(image);
     }));
   }
@@ -52,6 +60,9 @@ class SyncNetworkImage extends SyncImageProvider {
   void _loadImage() {
     var resolve = NetworkImage(url).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      if (_completer.isCompleted) {
+        return;
+      }
       _completer.complete(image);
     }));
   }
@@ -66,6 +77,9 @@ class SyncAssetImage extends SyncImageProvider {
   void _loadImage() {
     var resolve = AssetImage(assets).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      if (_completer.isCompleted) {
+        return;
+      }
       _completer.complete(image);
     }));
   }

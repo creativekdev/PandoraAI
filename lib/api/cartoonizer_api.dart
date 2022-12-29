@@ -105,6 +105,7 @@ class CartoonizerApi extends BaseRequester {
     required List<DiscoveryResource> resources,
     required String effectKey,
     required Function onUserExpired,
+    required String category,
   }) async {
     var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
     logEvent(Events.create_discovery_share);
@@ -112,6 +113,7 @@ class CartoonizerApi extends BaseRequester {
       'resources': encode,
       'text': description,
       'cartoonize_key': effectKey,
+      'category': category,
     }, onFailed: (response) {
       if (response.statusCode == 401) {
         onUserExpired.call();

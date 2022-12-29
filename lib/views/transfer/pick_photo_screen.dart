@@ -255,7 +255,8 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    TitleTextWidget("Choose Photo", Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w500, $(14)).intoContainer(
+                                                    TitleTextWidget(S.of(context).choose_photo, Color.fromRGBO(255, 255, 255, 1 - titleAlpha), FontWeight.w500, $(14))
+                                                        .intoContainer(
                                                       height: dragWidgetHeight,
                                                       width: double.maxFinite,
                                                       decoration: BoxDecoration(
@@ -266,7 +267,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                                       padding: EdgeInsets.symmetric(horizontal: 12),
                                                     ),
                                                     ChooseTabBar(
-                                                      tabList: tabs.map((e) => e.title().toString()).toList(),
+                                                      tabList: tabs.map((e) => e.title(context).toString()).toList(),
                                                       onTabClick: (index) {
                                                         if (tabs[index].isAiSource()) {
                                                           albumController.checkPermissions().then((value) {
@@ -316,10 +317,15 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                                 }
                               },
                               middle: Text(
-                                "Choose Photo",
+                                S.of(context).choose_photo,
                                 style: TextStyle(color: Colors.white),
                               ),
-                              trailing: TitleTextWidget(selectedMode ? 'Cancel' : 'Edit', Colors.white, FontWeight.w400, $(15)).intoGestureDetector(
+                              trailing: TitleTextWidget(
+                                selectedMode ? S.of(context).cancel : S.of(context).edit,
+                                Colors.white,
+                                FontWeight.w400,
+                                $(15),
+                              ).intoGestureDetector(
                                 onTap: () {
                                   if (!dragAnimController.isCompleted) {
                                     return;
@@ -470,20 +476,24 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
       image: FileImage(albumController.getThumbnail(data)),
       fit: BoxFit.cover,
     ).intoGestureDetector(onTap: () async {
-      var file = await data.getFile();
-      if (controller.image.value != null && (controller.image.value as File) == file) {
-        CommonExtension().showToast(S.of(context).photo_select_already);
-        return;
-      }
-      if (!file.existsSync()) {
-        CommonExtension().showToast("This photo has been deleted already");
-        return;
-      }
-      widget.onPickFromAiSource(file).then((value) {
-        if (value) {
-          onBackClick(true);
+      try {
+        var file = await data.getFile();
+        if (controller.image.value != null && (controller.image.value as File) == file) {
+          CommonExtension().showToast(S.of(context).photo_select_already);
+          return;
         }
-      });
+        if (!file.existsSync()) {
+          CommonExtension().showToast(S.of(context).photo_delete_already);
+          return;
+        }
+        widget.onPickFromAiSource(file).then((value) {
+          if (value) {
+            onBackClick(true);
+          }
+        });
+      } catch (e) {
+        CommonExtension().showToast(S.of(context).photo_delete_already);
+      }
     });
   }
 

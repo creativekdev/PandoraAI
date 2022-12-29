@@ -60,16 +60,17 @@ extension ShareTypeEx on ShareType {
 }
 
 class ShareScreen extends StatefulWidget {
-  static Future startShare(
+  static Future<bool?> startShare(
     BuildContext context, {
     Color backgroundColor = Colors.transparent,
     required String style,
     required String image,
     required bool isVideo,
-    required String originalUrl,
+    required String? originalUrl,
     required String effectKey,
+    bool needDiscovery = false,
   }) {
-    return showModalBottomSheet(
+    return showModalBottomSheet<bool>(
         context: context,
         builder: (context) {
           return ShareScreen(
@@ -79,6 +80,7 @@ class ShareScreen extends StatefulWidget {
             originalUrl: originalUrl,
             backgroundColor: backgroundColor,
             effectKey: effectKey,
+            needDiscovery: needDiscovery,
           );
         },
         backgroundColor: backgroundColor);
@@ -87,9 +89,10 @@ class ShareScreen extends StatefulWidget {
   final String style;
   final String image;
   final bool isVideo;
-  final String originalUrl;
+  final String? originalUrl;
   final Color backgroundColor;
   final String effectKey;
+  final bool needDiscovery;
 
   const ShareScreen({
     Key? key,
@@ -99,6 +102,7 @@ class ShareScreen extends StatefulWidget {
     required this.originalUrl,
     required this.backgroundColor,
     required this.effectKey,
+    required this.needDiscovery,
   }) : super(key: key);
 
   @override
@@ -121,6 +125,9 @@ class _ShareScreenState extends State<ShareScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.needDiscovery) {
+      typeList.insert(0, ShareType.discovery);
+    }
   }
 
   void _openShareAction(BuildContext context, List<String> paths) {
@@ -192,9 +199,10 @@ class _ShareScreenState extends State<ShareScreen> {
             originalUrl: widget.originalUrl,
             image: widget.image,
             isVideo: widget.isVideo,
+            category: DiscoveryCategory.ai_avatar,
           ).then((value) {
             if (value ?? false) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             }
           });
         });

@@ -81,7 +81,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       isLoading = true;
     });
     startTimer();
-    var userId = AppDelegate().getManager<UserManager>().user?.id??'';
+    var userId = AppDelegate().getManager<UserManager>().user?.id ?? '';
 
     Map<String, String> body = {
       "email": widget.email ?? "",
@@ -90,13 +90,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     try {
       final response = await API.post("/user/${userId}/activation/send", body: body);
       if (response.statusCode == 200) {
-        CommonExtension().showToast("Resend successfully!");
+        CommonExtension().showToast(S.of(context).resend_successfully);
       } else {
         var body = jsonDecode(response.body);
-        CommonExtension().showToast(body['message'] ?? "Resend failure.");
+        CommonExtension().showToast(body['message'] ?? S.of(context).resend_failed);
       }
     } catch (e) {
-      CommonExtension().showToast("Resend failure.");
+      CommonExtension().showToast(S.of(context).resend_failed);
     } finally {
       setState(() {
         isLoading = false;
@@ -117,15 +117,15 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       final response = await API.post("/api/user/activate", body: body);
 
       if (response.statusCode == 200) {
-        CommonExtension().showToast("Activate successfully!");
+        CommonExtension().showToast(S.of(context).activate_successfully);
         Navigator.of(context).pop(true);
       } else {
         var body = jsonDecode(response.body);
         textEditingController.clear();
-        CommonExtension().showToast(body['message'] ?? "Activate failure.");
+        CommonExtension().showToast(body['message'] ?? S.of(context).activate_failed);
       }
     } catch (e) {
-      CommonExtension().showToast("Activate failure.");
+      CommonExtension().showToast(S.of(context).activate_failed);
     } finally {
       setState(() {
         isLoading = false;
@@ -247,7 +247,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                         GestureDetector(
                                           onTap: () => clickLogout(),
                                           child: Text(
-                                            "Click logout",
+                                            S.of(context).click_logout,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 color: ColorConstant.PrimaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins', decoration: TextDecoration.underline),

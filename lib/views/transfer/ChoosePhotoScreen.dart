@@ -746,9 +746,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: videoUrl,
           isVideo: true,
+          category: DiscoveryCategory.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            showShareSuccessDialog();
+            showShareSuccessDialog(context);
           }
         });
       } else {
@@ -769,52 +770,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: newImage,
           isVideo: false,
+          category: DiscoveryCategory.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            showShareSuccessDialog();
+            showShareSuccessDialog(context);
           }
         });
       }
     });
-  }
-
-  showShareSuccessDialog() {
-    showDialog<bool>(
-      context: context,
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Your post has been submitted successfully',
-            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
-            textAlign: TextAlign.center,
-          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
-          Text(
-            'OK',
-            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
-          )
-              .intoContainer(
-                  padding: EdgeInsets.all(10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      border: Border(
-                    top: BorderSide(color: ColorConstant.LineColor, width: 1),
-                  )))
-              .intoGestureDetector(onTap: () {
-            Navigator.pop(context);
-          }),
-        ],
-      )
-          .intoMaterial(
-            color: ColorConstant.EffectFunctionGrey,
-            borderRadius: BorderRadius.circular($(16)),
-          )
-          .intoContainer(
-            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-            margin: EdgeInsets.symmetric(horizontal: $(35)),
-          )
-          .intoCenter(),
-    );
   }
 
   @override

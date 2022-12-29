@@ -199,11 +199,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         final updateProfileResponse = await API.post("/api/user/update", body: body);
 
                                         if (updateProfileResponse.statusCode == 200) {
-                                          CommonExtension().showToast("Profile update successfully!!");
+                                          CommonExtension().showToast(S.of(context).update_profile_successfully);
                                           AppDelegate.instance.getManager<UserManager>().refreshUser();
                                           Navigator.pop(context, false);
                                         } else {
-                                          CommonExtension().showToast("Oops something went wrong!!");
+                                          CommonExtension().showToast(S.of(context).commonFailedToast);
                                         }
 
                                         controller.changeIsLoading(false);
@@ -245,7 +245,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TitleTextWidget('Select from album', ColorConstant.White, FontWeight.normal, $(17))
+              TitleTextWidget(S.of(context).select_from_album, ColorConstant.White, FontWeight.normal, $(17))
                   .intoContainer(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(vertical: $(10)),
@@ -272,7 +272,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 }
               }),
               Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
-              TitleTextWidget('Take a selfie', ColorConstant.White, FontWeight.normal, $(17))
+              TitleTextWidget(S.of(context).take_a_selfie, ColorConstant.White, FontWeight.normal, $(17))
                   .intoContainer(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(vertical: $(10)),

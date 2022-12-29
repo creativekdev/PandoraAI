@@ -111,7 +111,7 @@ class _SelectGenderScreenState extends State<_SelectGenderScreen> {
               ),
             ),
             Text(
-              'Ok',
+              S.of(context).ok,
               style: TextStyle(color: Colors.white),
             )
                 .intoContainer(

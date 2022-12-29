@@ -99,7 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context: context,
       builder: (_) => CupertinoAlertDialog(
         content: Text(
-          'We sent reset password link to registered email',
+          S.of(context).sent_email_already,
           style: TextStyle(
             fontSize: 12.sp,
             fontFamily: 'Poppins',
@@ -108,7 +108,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         actions: [
           CupertinoDialogAction(
               child: Text(
-                'Okay',
+                S.of(context).okay,
                 style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
               ),
               onPressed: () {

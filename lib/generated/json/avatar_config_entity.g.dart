@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:common_utils/common_utils.dart';
+
 
 AvatarConfigEntity $AvatarConfigEntityFromJson(Map<String, dynamic> json) {
 	final AvatarConfigEntity avatarConfigEntity = AvatarConfigEntity();
@@ -23,6 +25,10 @@ Map<String, dynamic> $AvatarConfigEntityToJson(AvatarConfigEntity entity) {
 
 AvatarConfigData $AvatarConfigDataFromJson(Map<String, dynamic> json) {
 	final AvatarConfigData avatarConfigData = AvatarConfigData();
+	final int? pendingTime = jsonConvert.convert<int>(json['pending_time']);
+	if (pendingTime != null) {
+		avatarConfigData.pendingTime = pendingTime;
+	}
 	final Map<String, dynamic>? roles = jsonConvert.convert<Map<String, dynamic>>(json['roles']);
 	if (roles != null) {
 		avatarConfigData.roles = roles;
@@ -32,6 +38,7 @@ AvatarConfigData $AvatarConfigDataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $AvatarConfigDataToJson(AvatarConfigData entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
+	data['pending_time'] = entity.pendingTime;
 	data['roles'] = entity.roles;
 	return data;
 }

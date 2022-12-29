@@ -158,7 +158,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
     );
     await hideLoading();
     if (baseEntity != null) {
-      CommonExtension().showToast('Comment posted');
+      CommonExtension().showToast(S.of(context).comment_posted);
       delay(() => _refreshController.callRefresh(), milliseconds: 64);
     }
     return baseEntity != null;
