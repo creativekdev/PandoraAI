@@ -128,11 +128,11 @@ class RateNoticeOperator {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TitleTextWidget('Rate Pandora Avatar', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+        TitleTextWidget(S.of(context).rate_pandora_avatar, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
           padding: EdgeInsets.only(top: $(20), bottom: $(15), left: $(15), right: $(15)),
         ),
         TitleTextWidget(
-          'If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?',
+          S.of(context).rate_description,
           ColorConstant.White,
           FontWeight.normal,
           $(14),
@@ -142,7 +142,7 @@ class RateNoticeOperator {
         ),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'Looove it! rate now',
+          S.of(context).looveit,
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(
@@ -160,7 +160,7 @@ class RateNoticeOperator {
         }),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'Give feedback',
+          S.of(context).give_feedback,
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(
@@ -182,7 +182,7 @@ class RateNoticeOperator {
         }),
         Container(height: 1, color: ColorConstant.LineColor),
         Text(
-          'No, thanks',
+          S.of(context).no_thanks,
           style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
         )
             .intoContainer(

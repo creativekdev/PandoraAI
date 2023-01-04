@@ -259,5 +259,16 @@
   "november": "November",
   "december": "December",
   "pandora_waiting_desc": "Please waiting, your photos will be generated in about %d minutes. We'll send you an email with a link to your AI avatars when it's done!",
-  "pandora_create_exit_dips": "You will lose all photos you selected!"
+  "pandora_create_exit_dips": "You will lose all photos you selected!",
+  "man": "man",
+  "woman": "woman",
+  "cat": "cat",
+  "dog": "dog",
+  "give_feedback": "Give Feedback",
+  "input_feedback": "input feedback",
+  "no_thanks": "No, thanks",
+  "rate_pandora_avatar": "Rate Pandora Avatar",
+  "rate_description": "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?",
+  "looveit": "Looove it! rate now",
+  "more": "More"
 }

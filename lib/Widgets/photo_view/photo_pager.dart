@@ -1,13 +1,10 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/cacheImage/sync_download_file.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -57,7 +54,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorConstant.BackgroundColor,
       body: Stack(
         children: [
           PhotoViewGallery.builder(
@@ -69,6 +66,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
             pageController: widget.pageController,
             onPageChanged: onPageChanged,
             scrollDirection: widget.scrollDirection,
+            allowImplicitScrolling: true,
           ).intoGestureDetector(onTap: () {
             Navigator.of(context).pop();
           }),

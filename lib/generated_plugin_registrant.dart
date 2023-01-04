@@ -18,7 +18,6 @@ import 'package:fluttertoast/fluttertoast_web.dart';
 import 'package:google_sign_in_web/google_sign_in_web.dart';
 import 'package:image_picker_for_web/image_picker_for_web.dart';
 import 'package:package_info_plus_web/package_info_plus_web.dart';
-import 'package:share_plus_web/share_plus_web.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:sign_in_with_apple_web/sign_in_with_apple_web.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
@@ -40,7 +39,6 @@ void registerPlugins(final Registrar registrar) {
   GoogleSignInPlugin.registerWith(registrar);
   ImagePickerPlugin.registerWith(registrar);
   PackageInfoPlugin.registerWith(registrar);
-  SharePlusPlugin.registerWith(registrar);
   SharedPreferencesPlugin.registerWith(registrar);
   SignInWithApplePlugin.registerWith(registrar);
   UrlLauncherPlugin.registerWith(registrar);

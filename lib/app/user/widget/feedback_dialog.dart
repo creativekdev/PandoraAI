@@ -52,14 +52,14 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TitleTextWidget('Give feedback', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+        TitleTextWidget(S.of(context).give_feedback, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
           padding: EdgeInsets.only(top: $(25), bottom: $(15), left: $(15), right: $(15)),
         ),
         TextField(
           controller: textEditingController,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-            hintText: 'input feedback',
+            hintText: S.of(context).input_feedback,
             hintStyle: TextStyle(
               fontFamily: 'Poppins',
               color: ColorConstant.InputContent,
@@ -82,7 +82,7 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
           decoration: BoxDecoration(color: Color(0xff33363a), borderRadius: BorderRadius.circular($(6))),
         ),
         Text(
-          'Submit',
+          S.of(context).submit,
           style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)),
         )
             .intoContainer(

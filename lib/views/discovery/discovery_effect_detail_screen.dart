@@ -178,7 +178,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
             opaque: false,
             pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
               uniqueId: "${discoveryEntity.id}_${replySocialPostCommentId ?? ''}",
-              hint: userName != null ? 'reply $userName' : '',
+              hint: userName != null ? '${S.of(context).reply} $userName' : '',
               callback: (text) async {
                 return createComment(text, replySocialPostCommentId);
               },

@@ -71,6 +71,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Cancel now"),
         "cartoonizeCancelTitle": MessageLookupByLibrary.simpleMessage(
             "Closing the page will stop the transforming process. Are you sure to continue?"),
+        "cat": MessageLookupByLibrary.simpleMessage("cat"),
         "change_password":
             MessageLookupByLibrary.simpleMessage("Change Password"),
         "change_pwd_successfully": MessageLookupByLibrary.simpleMessage(
@@ -128,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Add some text"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Submit"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Unlike"),
+        "dog": MessageLookupByLibrary.simpleMessage("dog"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
@@ -168,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Forgot Your Password?"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
+        "give_feedback": MessageLookupByLibrary.simpleMessage("Give Feedback"),
         "go_premium": MessageLookupByLibrary.simpleMessage("Go Premium"),
         "good_photo_description": MessageLookupByLibrary.simpleMessage(
             "Show your shoulders, close-up selfies, same person in the photos, variety of location/backgrounds/angels, different facial expressions."),
@@ -181,6 +184,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("High resolution images"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "in_original": MessageLookupByLibrary.simpleMessage("Include original"),
+        "input_feedback":
+            MessageLookupByLibrary.simpleMessage("input feedback"),
         "input_name": MessageLookupByLibrary.simpleMessage("Input name"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram":
@@ -194,10 +199,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
         "logout_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure want to logout?"),
+        "looveit": MessageLookupByLibrary.simpleMessage("Looove it! rate now"),
+        "man": MessageLookupByLibrary.simpleMessage("man"),
         "march": MessageLookupByLibrary.simpleMessage("March"),
         "may": MessageLookupByLibrary.simpleMessage("May"),
         "month": MessageLookupByLibrary.simpleMessage("Month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
+        "more": MessageLookupByLibrary.simpleMessage("More"),
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("Messages"),
         "name": MessageLookupByLibrary.simpleMessage("Full Name"),
@@ -217,6 +225,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Oops! Please check your network connection."),
         "no_messages_yet":
             MessageLookupByLibrary.simpleMessage("There are no messages yet"),
+        "no_thanks": MessageLookupByLibrary.simpleMessage("No, thanks"),
         "no_watermark": MessageLookupByLibrary.simpleMessage(
             "(No watermark, High-res image)"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("No watermark"),
@@ -286,6 +295,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Privacy policy"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
+        "rate_description": MessageLookupByLibrary.simpleMessage(
+            "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?"),
+        "rate_pandora_avatar":
+            MessageLookupByLibrary.simpleMessage("Rate Pandora Avatar"),
         "rate_us":
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":
@@ -400,6 +413,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),
+        "woman": MessageLookupByLibrary.simpleMessage("woman"),
         "year": MessageLookupByLibrary.simpleMessage("Year"),
         "yearly": MessageLookupByLibrary.simpleMessage("Yearly"),
         "you_have_not_posted_anything": MessageLookupByLibrary.simpleMessage(

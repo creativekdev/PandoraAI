@@ -12,6 +12,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum ShareType {
@@ -44,7 +45,7 @@ extension ShareTypeEx on ShareType {
     }
   }
 
-  String title() {
+  String title(BuildContext context) {
     switch (this) {
       case ShareType.discovery:
         return 'Discovery';
@@ -59,7 +60,7 @@ extension ShareTypeEx on ShareType {
       case ShareType.twitter:
         return 'Twitter';
       case ShareType.system:
-        return 'More';
+        return S.of(context).more;
     }
   }
 }
@@ -137,7 +138,8 @@ class _ShareScreenState extends State<ShareScreen> {
 
   void _openShareAction(BuildContext context, List<String> paths) {
     final box = context.findRenderObject() as RenderBox?;
-    Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
+    Share.shareXFiles(paths.map((e) => XFile(e)).toList(), sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
+    // Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
   }
 
   onShareClick(ShareType shareType) async {
@@ -324,7 +326,7 @@ class _FunctionCard extends StatelessWidget {
               )
             : Image.asset(type.imageRes(), width: $(50), height: $(50)),
         SizedBox(height: $(6)),
-        TitleTextWidget(type.title(), ColorConstant.White, FontWeight.normal, $(12)),
+        TitleTextWidget(type.title(context), ColorConstant.White, FontWeight.normal, $(12)),
       ],
     ).intoContainer(constraints: BoxConstraints(minWidth: ScreenUtil.screenSize.width / 4.65)).intoGestureDetector(onTap: onTap);
   }

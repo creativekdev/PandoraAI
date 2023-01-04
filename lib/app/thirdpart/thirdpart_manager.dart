@@ -97,6 +97,14 @@ class ThirdpartManager extends BaseManager {
         return S.of(context).november;
       case 'december':
         return S.of(context).december;
+      case 'man':
+        return S.of(context).man;
+      case 'woman':
+        return S.of(context).woman;
+      case 'cat':
+        return S.of(context).cat;
+      case 'dog':
+        return S.of(context).dog;
       default:
         return str;
     }

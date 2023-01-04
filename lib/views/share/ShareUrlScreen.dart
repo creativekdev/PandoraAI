@@ -217,7 +217,7 @@ class _FunctionCard extends StatelessWidget {
               )
             : Image.asset(type.imageRes(), width: $(50), height: $(50)),
         SizedBox(height: $(6)),
-        TitleTextWidget(type.title(), ColorConstant.White, FontWeight.normal, $(12)),
+        TitleTextWidget(type.title(context), ColorConstant.White, FontWeight.normal, $(12)),
       ],
     ).intoContainer(constraints: BoxConstraints(minWidth: ScreenUtil.screenSize.width / 4.65)).intoGestureDetector(onTap: onTap);
   }

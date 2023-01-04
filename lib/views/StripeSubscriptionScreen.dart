@@ -18,22 +18,6 @@ class StripeSubscriptionScreen extends StatefulWidget {
   _StripeSubscriptionScreenState createState() => _StripeSubscriptionScreenState();
 }
 
-const Map<String, dynamic> subscriptions = {
-  "monthly": {
-    "id": "io.socialbook.cartoonizer.monthly",
-    "plan_id": "80000",
-    "title": "Monthly",
-    "price": 3.99,
-    "unit": "Month",
-  },
-  "yearly": {
-    "id": "io.socialbook.cartoonizer.yearly",
-    "plan_id": "80001",
-    "title": "Yearly",
-    "price": 39.99,
-    "unit": "Year",
-  },
-};
 
 class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   bool isYear = true;
@@ -42,12 +26,44 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   bool _purchasePending = false;
   bool _showPurchasePlan = false;
   UserManager userManager = AppDelegate.instance.getManager();
-
+  Map<String, dynamic> subscriptions = {
+    "monthly": {
+      "id": "io.socialbook.cartoonizer.monthly",
+      "plan_id": "80000",
+      "title": "Monthly",
+      "price": 3.99,
+      "unit": "Month",
+    },
+    "yearly": {
+      "id": "io.socialbook.cartoonizer.yearly",
+      "plan_id": "80001",
+      "title": "Yearly",
+      "price": 39.99,
+      "unit": "Year",
+    },
+  };
   @override
   void initState() {
     logEvent(Events.premium_page_loading);
-
-    initStoreInfo();
+    delay(() {
+      subscriptions = {
+        "monthly": {
+          "id": "io.socialbook.cartoonizer.monthly",
+          "plan_id": "80000",
+          "title": S.of(context).monthly,
+          "price": 3.99,
+          "unit": S.of(context).month,
+        },
+        "yearly": {
+          "id": "io.socialbook.cartoonizer.yearly",
+          "plan_id": "80001",
+          "title": S.of(context).yearly,
+          "price": 39.99,
+          "unit": S.of(context).year,
+        },
+      };
+      initStoreInfo();
+    });
     super.initState();
   }
 
@@ -174,7 +190,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TitleTextWidget(
-                              "${currentSubscription["title"]} : ${currentSubscription["price"]}/${currentSubscription["unit"]}", ColorConstant.White, FontWeight.w500, 14,
+                              "${currentSubscription["title"]} : \$${currentSubscription["price"]} / ${currentSubscription["unit"]}", ColorConstant.White, FontWeight.w500, 14,
                               align: TextAlign.start),
                         ],
                       ),
@@ -237,7 +253,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${S.of(context).yearly} ${yearly["price"]} / ${yearly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
+                              TitleTextWidget("${yearly['title']} \$${yearly["price"]} / ${yearly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -291,7 +307,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${S.of(context).monthly} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14,
+                              TitleTextWidget("${monthly['title']} \$${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14,
                                   align: TextAlign.start),
                             ],
                           ),

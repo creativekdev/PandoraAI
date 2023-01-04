@@ -2659,6 +2659,116 @@ class S {
       args: [],
     );
   }
+
+  /// `man`
+  String get man {
+    return Intl.message(
+      'man',
+      name: 'man',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `woman`
+  String get woman {
+    return Intl.message(
+      'woman',
+      name: 'woman',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `cat`
+  String get cat {
+    return Intl.message(
+      'cat',
+      name: 'cat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `dog`
+  String get dog {
+    return Intl.message(
+      'dog',
+      name: 'dog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give Feedback`
+  String get give_feedback {
+    return Intl.message(
+      'Give Feedback',
+      name: 'give_feedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `input feedback`
+  String get input_feedback {
+    return Intl.message(
+      'input feedback',
+      name: 'input_feedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No, thanks`
+  String get no_thanks {
+    return Intl.message(
+      'No, thanks',
+      name: 'no_thanks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rate Pandora Avatar`
+  String get rate_pandora_avatar {
+    return Intl.message(
+      'Rate Pandora Avatar',
+      name: 'rate_pandora_avatar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?`
+  String get rate_description {
+    return Intl.message(
+      'If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?',
+      name: 'rate_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Looove it! rate now`
+  String get looveit {
+    return Intl.message(
+      'Looove it! rate now',
+      name: 'looveit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `More`
+  String get more {
+    return Intl.message(
+      'More',
+      name: 'more',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

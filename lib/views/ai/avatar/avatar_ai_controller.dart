@@ -74,6 +74,7 @@ class AvatarAiController extends GetxController {
     );
     if (photos == null) {
       isLoading = false;
+      update();
       return false;
     }
     List<Medium> goodList = [];
