@@ -60,6 +60,15 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       ticker: this,
       tabId: widget.tabId,
     ));
+    delay(
+      () {
+        listController.tabList = [
+          DiscoveryFilterTab(sort: DiscoverySort.newest, title: S.of(context).newest),
+          DiscoveryFilterTab(sort: DiscoverySort.likes, title: S.of(context).popular),
+        ];
+        listController.update();
+      },
+    );
   }
 
   void initAnimator() {

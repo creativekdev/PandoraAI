@@ -249,7 +249,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               });
             } else {
               hideLoading();
-              CommonExtension().showToast("Failed to upload image");
+              CommonExtension().showToast(S.of(context).failed_to_upload_image);
             }
           }
         });

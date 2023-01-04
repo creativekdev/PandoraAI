@@ -153,7 +153,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
-              functions('Scary content alert!',
+              functions(S.of(context).scary_content_alert,
                   training: FlutterSwitch(
                     value: nsfwOpen,
                     onToggle: (value) {
@@ -243,7 +243,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Are you sure want to logout?',
+            S.of(context).logout_tips,
             style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
             textAlign: TextAlign.center,
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
@@ -251,7 +251,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
             children: [
               Expanded(
                   child: Text(
-                'Logout',
+                S.of(context).logout,
                 style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
               )
                       .intoContainer(
@@ -269,7 +269,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
               })),
               Expanded(
                   child: Text(
-                'Cancel',
+                S.of(context).cancel,
                 style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
               )
                       .intoContainer(
@@ -304,7 +304,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Are you sure to delete your account?',
+              S.of(context).delete_account_tips,
               style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
               textAlign: TextAlign.center,
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
@@ -312,7 +312,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
               children: [
                 Expanded(
                     child: Text(
-                  'Delete',
+                  S.of(context).delete,
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
                 )
                         .intoContainer(
@@ -328,7 +328,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 })),
                 Expanded(
                     child: Text(
-                  'Cancel',
+                  S.of(context).cancel,
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
                 )
                         .intoContainer(
@@ -362,12 +362,12 @@ class _SettingScreenState extends AppState<SettingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Your account has been successfully deleted. We always welcome you to use our service again.',
+              S.of(context).delete_account_successfully_tips,
               style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
               textAlign: TextAlign.center,
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
             Text(
-              'OK',
+              S.of(context).ok,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins', color: ColorConstant.BlueColor),
             )
                 .intoContainer(
@@ -409,7 +409,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Are you sure to clear all cache?\n total: ${totalSize.fileSize}',
+              S.of(context).clear_cache_tips.replaceAll('%d', '${totalSize.fileSize}'),
               style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
               textAlign: TextAlign.center,
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
@@ -417,7 +417,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
               children: [
                 Expanded(
                     child: Text(
-                  'Clear',
+                  S.of(context).clear,
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
                 )
                         .intoContainer(
@@ -433,7 +433,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 })),
                 Expanded(
                     child: Text(
-                  'Cancel',
+                  S.of(context).cancel,
                   style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
                 )
                         .intoContainer(

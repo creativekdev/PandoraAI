@@ -41,7 +41,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     super.initState();
     avatarAiManager.listPageAlive = true;
     logEvent(Events.avatar_list_loading);
-    imageSize = (ScreenUtil.screenSize.width - $(30)) / 3;
+    imageSize = (ScreenUtil.screenSize.width - $(32)) / 3;
     listListen = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       _refreshController.callRefresh();
     });
@@ -101,7 +101,10 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             child: TabBar(
               indicatorColor: Colors.transparent,
               tabs: statusList
-                  .map((e) => Text(e.title()).intoContainer(
+                  .map((e) => Text(
+                        e.title(context),
+                        style: TextStyle(fontSize: $(13)),
+                      ).intoContainer(
                           padding: EdgeInsets.symmetric(
                         vertical: 6,
                       )))
@@ -127,7 +130,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             childCount: dataList.length,
           ))
         ],
-      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+      ),
     );
   }
 
@@ -146,52 +149,74 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
       case AvatarStatus.pending:
       case AvatarStatus.processing:
         var trainingImage = data.trainingImage();
-        var trainingList = trainingImage.length > 6 ? trainingImage.sublist(0, 6) : trainingImage;
-
-        item = ClipRRect(
-          child: Stack(
-            children: [
-              Wrap(
-                children: trainingList.transfer(
-                  (data, index) => CachedNetworkImageUtils.custom(
-                    context: context,
-                    imageUrl: data,
-                    width: imageSize,
-                    height: imageSize,
+        var trainingList = trainingImage.length > 5 ? trainingImage.sublist(0, 5) : trainingImage;
+        item = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              child: Stack(
+                children: [
+                  Row(
+                    children: trainingList.transfer(
+                      (data, index) => CachedNetworkImageUtils.custom(
+                        context: context,
+                        imageUrl: data,
+                        width: imageSize * 0.6,
+                        height: $(168),
+                      ),
+                    ),
                   ),
-                ),
+                  Container(
+                    color: Color(0xaa000000),
+                  ),
+                  Align(
+                    child: TitleTextWidget(
+                      S.of(context).pandora_waiting_desc.replaceAll(
+                            "%d",
+                            '${avatarAiManager.config?.data.pendingTime ?? 120}',
+                          ),
+                      ColorConstant.White,
+                      FontWeight.normal,
+                      $(12),
+                      maxLines: 10,
+                    ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 40)),
+                    alignment: Alignment.center,
+                  ),
+                ],
               ),
-              Container(
-                color: Color(0xaa000000),
+              borderRadius: BorderRadius.circular($(8)),
+            ).intoContainer(height: $(168)),
+            SizedBox(height: 6),
+            Text(
+              data.name,
+              style: TextStyle(
+                color: ColorConstant.White,
+                fontFamily: 'Poppins',
+                fontSize: $(15),
               ),
-              Align(
-                child: TitleTextWidget(
-                  'Please waiting, your photos will '
-                  'be generated in about ${avatarAiManager.config?.data.pendingTime ?? 120} minutes. We\'ll '
-                  'send you an email with a link to '
-                  'your AI avatars when it\'s done!',
-                  ColorConstant.White,
-                  FontWeight.normal,
-                  $(12),
-                  maxLines: 10,
-                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 40)),
-                alignment: Alignment.center,
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 10)),
+            Text(
+              '${data.imageCount}${S.of(context).avatars}',
+              style: TextStyle(
+                color: Colors.grey.shade400,
+                fontFamily: 'Poppins',
+                fontSize: $(13),
               ),
-            ],
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 10)),
+            SizedBox(height: 8),
+          ],
+        ).intoContainer(
+          margin: EdgeInsets.only(
+            left: $(16),
+            right: $(16),
+            top: $(12),
           ),
-          borderRadius: BorderRadius.circular($(8)),
-        )
-            .intoContainer(
-              height: imageSize * 1.5,
-            )
-            .intoContainer(
-              margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-              width: double.maxFinite,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular($(8)),
-                color: Colors.grey.shade900,
-              ),
-            );
+          width: double.maxFinite,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular($(8)),
+            color: Colors.grey.shade900,
+          ),
+        );
         break;
       case AvatarStatus.completed:
       case AvatarStatus.subscribed:
@@ -207,7 +232,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                     context: context,
                     imageUrl: data,
                     width: imageSize * 0.6,
-                    height: imageSize,
+                    height: $(168),
                   ),
                 ),
               ),
@@ -226,7 +251,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
               ),
             ).intoContainer(margin: EdgeInsets.symmetric(horizontal: 10)),
             Text(
-              '${data.imageCount} avatars',
+              '${data.imageCount}${S.of(context).avatars}',
               style: TextStyle(
                 color: Colors.grey.shade400,
                 fontFamily: 'Poppins',
@@ -241,7 +266,11 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             color: Colors.grey.shade900,
             borderRadius: BorderRadius.circular($(8)),
           ),
-          margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(15)),
+          margin: EdgeInsets.only(
+            left: $(16),
+            right: $(16),
+            top: $(12),
+          ),
         )
             .intoGestureDetector(onTap: () {
           showLoading().whenComplete(() {
@@ -317,7 +346,11 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
           ],
         )
             .intoContainer(
-          margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
+          margin: EdgeInsets.only(
+            left: $(16),
+            right: $(16),
+            top: $(12),
+          ),
           width: double.maxFinite,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular($(8)),
@@ -329,9 +362,12 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
         });
         break;
       case AvatarStatus.UNDEFINED:
-        item = Container();
-        break;
+        return Container();
     }
-    return item;
+    return item.intoContainer(
+      padding: EdgeInsets.only(
+        bottom: index == dataList.length - 1 ? ScreenUtil.getBottomPadding(context, padding: $(32)) : 0,
+      ),
+    );
   }
 }

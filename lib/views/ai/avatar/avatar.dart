@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
@@ -49,7 +50,7 @@ class Avatar {
     }, autoExec: true);
   }
 
-  static create(BuildContext context, {required String name, required String style, AppState? state}) async {
+  static create(BuildContext context, {required String name, required String style, AppState? state, required Function onCancel}) async {
     UserManager userManager = AppDelegate().getManager();
     AvatarAiManager aiManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () async {
@@ -67,10 +68,13 @@ class Avatar {
               ),
             )).then((value) {
           if (value ?? false) {
+            AppDelegate.instance.getManager<CacheManager>().setJson(CacheManager.lastCreateAvatar, null);
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
             if (!aiManager.listPageAlive) {
               delay(() => open(context), milliseconds: 64);
             }
+          } else {
+            onCancel.call();
           }
         });
       };
@@ -81,6 +85,8 @@ class Avatar {
         PayAvatarPage.push(context).then((payStatus) {
           if (payStatus ?? false) {
             forward.call();
+          } else {
+            onCancel.call();
           }
         });
       }

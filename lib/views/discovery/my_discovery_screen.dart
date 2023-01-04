@@ -38,8 +38,8 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   int size = 20;
   Map<int, List<DiscoveryListEntity>> dataMap = {};
   late int userId;
-  late String title;
-  late String emptyText;
+  String title = '';
+  String emptyText = '';
   late double imgWidth;
   ScrollController scrollController = ScrollController();
 
@@ -48,8 +48,12 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     super.initState();
     logEvent(Events.user_discovery_loading);
     userId = widget.userId;
-    title = widget.title ?? S.of(context).tabDiscovery;
-    emptyText = widget.title == null ? 'This user has not posted anything' : 'You have not posted anything';
+    delay(() {
+      setState(() {
+        title = widget.title ?? S.of(context).tabDiscovery;
+        emptyText = widget.title == null ? S.of(context).this_user_has_not_posted_anything : S.of(context).you_have_not_posted_anything;
+      });
+    });
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
     imgWidth = (ScreenUtil.screenSize.width - $(90)) / 3;

@@ -1003,7 +1003,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   ),
                   ChooseTabBar(
                       height: $(36),
-                      tabList: tabList.map((e) => e.title).toList(),
+                      tabList: tabList.map((e) => thirdpartManager.getLocaleString(context, e.title)).toList(),
                       currentIndex: currentTabIndex,
                       scrollable: tabList.length > 3,
                       onTabClick: (index) {

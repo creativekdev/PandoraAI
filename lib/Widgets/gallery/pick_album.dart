@@ -226,8 +226,8 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             child: Image(
               image: MediumImage(
                 data,
-                width: imageSize.toInt(),
-                height: imageSize.toInt(),
+                width: (imageSize * 3).toInt(),
+                height: (imageSize * 3).toInt(),
               ),
               fit: BoxFit.cover,
             ),

@@ -284,7 +284,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/app.pic2cartoon/");
+                        launchURL("https://www.facebook.com/pandoraaiapp/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_facebook,
@@ -295,7 +295,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/pic2cartoon.app/");
+                        launchURL("https://www.instagram.com/pandoraai.app/");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_instagram,
@@ -306,7 +306,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/pic2cartoon");
+                        launchURL("https://twitter.com/PandoraAI_App");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_twitter,
@@ -317,7 +317,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     GestureDetector(
                       onTap: () async {
                         logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://www.tiktok.com/@pic2cartoon");
+                        launchURL("https://www.tiktok.com/@pandoraapp");
                       },
                       child: Image.asset(
                         ImagesConstant.ic_share_tiktok,

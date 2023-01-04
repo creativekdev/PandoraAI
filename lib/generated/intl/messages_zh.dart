@@ -31,16 +31,21 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
+        "all": MessageLookupByLibrary.simpleMessage("全部"),
         "all_plans": MessageLookupByLibrary.simpleMessage("所有任务"),
         "already_account": MessageLookupByLibrary.simpleMessage("已有账号？ "),
         "and": MessageLookupByLibrary.simpleMessage("和"),
         "app_name": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "apple": MessageLookupByLibrary.simpleMessage("使用Apple账号"),
+        "april": MessageLookupByLibrary.simpleMessage("四月"),
         "are_you_sure_to_delete_this_post":
             MessageLookupByLibrary.simpleMessage("您确定要删除这条分享么"),
+        "august": MessageLookupByLibrary.simpleMessage("八月"),
+        "avatars": MessageLookupByLibrary.simpleMessage("张肖像"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
-            "集体照，只有照片看着相机，遮脸/太阳镜，单调的照片，裸体，孩子(仅限12+成人)"),
+            "集体照，只有照片看着相机，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）"),
         "bad_photo_examples": MessageLookupByLibrary.simpleMessage("不合适的照片案例"),
+        "bought": MessageLookupByLibrary.simpleMessage("已购买"),
         "buyAttrFasterSpeed": MessageLookupByLibrary.simpleMessage("更快速转化"),
         "buyAttrHDImages": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "buyAttrNoAds": MessageLookupByLibrary.simpleMessage("无广告"),
@@ -59,10 +64,15 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("修改密码成功"),
         "checkout": MessageLookupByLibrary.simpleMessage("支付"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("选择图片"),
+        "choose_photo_bad_images_desc":
+            MessageLookupByLibrary.simpleMessage("有%badCount张无效，"),
         "choose_photo_more_photos":
-            MessageLookupByLibrary.simpleMessage("请选择至少%d张照片。"),
+            MessageLookupByLibrary.simpleMessage("请再选择%d张照片。"),
         "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
-            "当前选择了%selected张照片，最少需要%minSize张照片。"),
+            "您选择了%selected张照片，%badImages最少需要%minSize张照片。"),
+        "clear": MessageLookupByLibrary.simpleMessage("清除"),
+        "clear_cache_tips":
+            MessageLookupByLibrary.simpleMessage("确定要清除所有缓存？\n 共：%d"),
         "click_logout": MessageLookupByLibrary.simpleMessage("单击退出登录"),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("您的验证码已经发送到"),
@@ -74,8 +84,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
         "create": MessageLookupByLibrary.simpleMessage("创建"),
         "createAccount": MessageLookupByLibrary.simpleMessage("创建\n账号"),
+        "create_avatar": MessageLookupByLibrary.simpleMessage("创建头像"),
+        "created": MessageLookupByLibrary.simpleMessage("完成"),
         "current_pass": MessageLookupByLibrary.simpleMessage("当前密码"),
+        "december": MessageLookupByLibrary.simpleMessage("十二月"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
+        "delete_account_successfully_tips":
+            MessageLookupByLibrary.simpleMessage("您的账号已经被注销，我们期待您的下次使用！"),
+        "delete_account_tips":
+            MessageLookupByLibrary.simpleMessage("您确定要永久注销您的账户吗？"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("删除成功"),
         "deny": MessageLookupByLibrary.simpleMessage("拒绝"),
         "discoveryComment": MessageLookupByLibrary.simpleMessage("评论"),
@@ -95,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "edit_profile": MessageLookupByLibrary.simpleMessage("编辑信息"),
         "effectRecentEmptyHint":
             MessageLookupByLibrary.simpleMessage("暂无转化记录，您可以在这里查看您的转换历史"),
+        "effects": MessageLookupByLibrary.simpleMessage("滤镜"),
         "email": MessageLookupByLibrary.simpleMessage("邮箱"),
         "emailAddress": MessageLookupByLibrary.simpleMessage("邮箱地址"),
         "email_validation": MessageLookupByLibrary.simpleMessage("请输入邮箱"),
@@ -106,25 +124,30 @@ class MessageLookup extends MessageLookupByLibrary {
         "exit_msg": MessageLookupByLibrary.simpleMessage("退出编辑"),
         "exit_msg1": MessageLookupByLibrary.simpleMessage("您将会失去全部进度"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
-            "此功能所使用的人工智能可能产生不可预测的结果，其中可能包括艺术裸体，缺陷或令人震惊的图像。这不是我们所能控制的。在继续之前，请承认并承担全部责任和风险。"),
+            "此功能所使用的人工智能可能产生不可预测的结果，其中可能包括艺术裸体，缺陷或令人震惊的图像，这不是我们所能控制的。在继续使用之前，我们认为您已知晓并承担全部责任和风险。"),
         "expired_date": MessageLookupByLibrary.simpleMessage("有效期至"),
+        "face_toon": MessageLookupByLibrary.simpleMessage("人脸卡通"),
         "facebook":
             MessageLookupByLibrary.simpleMessage("使用IG Business(via FB)"),
         "faces": MessageLookupByLibrary.simpleMessage("人脸"),
+        "failed_to_upload_image":
+            MessageLookupByLibrary.simpleMessage("上传图片失败"),
         "faster_speed": MessageLookupByLibrary.simpleMessage("更快速转化"),
+        "february": MessageLookupByLibrary.simpleMessage("二月"),
         "feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
         "forgot_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "forgot_password_text":
             MessageLookupByLibrary.simpleMessage("请在下面输入您的注册邮箱以接收密码重置指令"),
         "forgot_your_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
+        "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
         "go_premium": MessageLookupByLibrary.simpleMessage("获取专业版"),
         "good_photo_description": MessageLookupByLibrary.simpleMessage(
-            "露出你的肩膀，近距离自拍，所有照片需要是同一个人，不同的地点/背景/角度，不同的面部表情"),
+            "露出你的肩膀，近距离自拍，所有照片需要是同一个人，可以是不同的地点/背景/角度，不同的面部表情"),
         "good_photo_examples": MessageLookupByLibrary.simpleMessage("合适的照片案例"),
         "google": MessageLookupByLibrary.simpleMessage("使用Google账号"),
         "guidelines":
-            MessageLookupByLibrary.simpleMessage("遵循这些指导原则，您将能得到好的处理结果"),
+            MessageLookupByLibrary.simpleMessage("遵循这些指导原则，您将能得到更好的生成结果"),
         "help": MessageLookupByLibrary.simpleMessage("帮助"),
         "high_resolution": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
@@ -132,9 +155,17 @@ class MessageLookup extends MessageLookupByLibrary {
         "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
+        "january": MessageLookupByLibrary.simpleMessage("一月"),
+        "july": MessageLookupByLibrary.simpleMessage("七月"),
+        "june": MessageLookupByLibrary.simpleMessage("六月"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
         "login_or_sign_up": MessageLookupByLibrary.simpleMessage("注册/登录"),
         "logout": MessageLookupByLibrary.simpleMessage("登出"),
+        "logout_tips": MessageLookupByLibrary.simpleMessage("您确定要退出么？"),
+        "march": MessageLookupByLibrary.simpleMessage("三月"),
+        "may": MessageLookupByLibrary.simpleMessage("五月"),
+        "month": MessageLookupByLibrary.simpleMessage("月"),
+        "monthly": MessageLookupByLibrary.simpleMessage("月付"),
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
         "name": MessageLookupByLibrary.simpleMessage("全名"),
@@ -145,29 +176,37 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("当前版本要求您必须更新，否则将无法使用App"),
         "new_update_dialog_title":
             MessageLookupByLibrary.simpleMessage("新版本可用"),
+        "newest": MessageLookupByLibrary.simpleMessage("最新"),
         "no_account": MessageLookupByLibrary.simpleMessage("还没有账号？ "),
         "no_ads": MessageLookupByLibrary.simpleMessage("无广告"),
         "no_internet_msg": MessageLookupByLibrary.simpleMessage("请求失败！请检查您的网络"),
+        "no_messages_yet": MessageLookupByLibrary.simpleMessage("暂无新消息"),
         "no_watermark": MessageLookupByLibrary.simpleMessage("（高清、无水印图片）"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("无水印"),
         "not_enough_photos": MessageLookupByLibrary.simpleMessage("照片数目不够"),
+        "november": MessageLookupByLibrary.simpleMessage("十一月"),
+        "october": MessageLookupByLibrary.simpleMessage("十月"),
         "ok": MessageLookupByLibrary.simpleMessage("好的"),
         "okay": MessageLookupByLibrary.simpleMessage("好的"),
         "or": MessageLookupByLibrary.simpleMessage("或"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("其他"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("已购买"),
+        "pandora_create_exit_dips":
+            MessageLookupByLibrary.simpleMessage("现在退出将会丢失已选择的照片！"),
         "pandora_create_input_name_hint":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "pandora_create_spend":
-            MessageLookupByLibrary.simpleMessage("您的照片大约要2小时转换完成"),
+            MessageLookupByLibrary.simpleMessage("您的照片大约要%d小时转换完成"),
         "pandora_create_style_hint":
             MessageLookupByLibrary.simpleMessage("请选择风格"),
         "pandora_pay_description": MessageLookupByLibrary.simpleMessage(
-            "我们使用了最先进的人工智能算法为您创造华丽的画像，这需要极为庞大的算力支撑！"),
+            "我们的人工智能技术和极为强大的算法支撑将为您创造出最华丽的画像！"),
         "pandora_purchase": MessageLookupByLibrary.simpleMessage("购买金额"),
         "pandora_transfer_tips": MessageLookupByLibrary.simpleMessage(
             "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。你可以选择将AI模型作为高级服务。"),
+        "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
+            "您的照片将在大约%d分钟内生成，请稍候。生成结束后，我们会给你发送电子邮件，里面有你的PandoraAvatar链接!"),
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
@@ -190,11 +229,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
-        "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
+        "popular": MessageLookupByLibrary.simpleMessage("热门"),
+        "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI 专业版"),
         "premium": MessageLookupByLibrary.simpleMessage("专业版"),
         "privacy_policy": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
+        "q1": MessageLookupByLibrary.simpleMessage("？"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
         "recent": MessageLookupByLibrary.simpleMessage("最近"),
@@ -209,6 +250,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
         "save_photo": MessageLookupByLibrary.simpleMessage("保存到相册"),
         "save_share": MessageLookupByLibrary.simpleMessage("保存&分享"),
+        "scary_content_alert": MessageLookupByLibrary.simpleMessage("含恐怖元素！"),
+        "scary_content_alert_open_it":
+            MessageLookupByLibrary.simpleMessage("恐怖内容已被隐藏，点击显示它"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),
@@ -218,6 +262,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "send": MessageLookupByLibrary.simpleMessage("发送"),
         "sent_email_already":
             MessageLookupByLibrary.simpleMessage("已发送验证码到注册邮箱"),
+        "september": MessageLookupByLibrary.simpleMessage("九月"),
         "set_password": MessageLookupByLibrary.simpleMessage("设置密码"),
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
         "setting_my_delete_account":
@@ -230,6 +275,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share_app": MessageLookupByLibrary.simpleMessage("分享App"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "share_to": MessageLookupByLibrary.simpleMessage("分享到"),
+        "show_it": MessageLookupByLibrary.simpleMessage("显示"),
         "sign_in": MessageLookupByLibrary.simpleMessage("登录"),
         "sign_up": MessageLookupByLibrary.simpleMessage("注册"),
         "signup_text": MessageLookupByLibrary.simpleMessage("注册账号免费使用一次"),
@@ -247,6 +293,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("此模板已经不再可用"),
         "term_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
         "terms_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
+        "this_user_has_not_posted_anything":
+            MessageLookupByLibrary.simpleMessage("该用户还没有分享任何内容"),
         "tiktok": MessageLookupByLibrary.simpleMessage("使用TikTok账号"),
         "tiktok_login": MessageLookupByLibrary.simpleMessage("TikTok"),
         "toastImageSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
@@ -263,6 +311,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "variations_of_styles":
             MessageLookupByLibrary.simpleMessage("10种风格，每种10张变化"),
         "view_all": MessageLookupByLibrary.simpleMessage("查看全部"),
+        "waiting": MessageLookupByLibrary.simpleMessage("等待生成"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
         "watchAdText": MessageLookupByLibrary.simpleMessage("下载高清\n无水印图片"),
         "watchAdToShareText":
@@ -275,6 +324,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome_title3": MessageLookupByLibrary.simpleMessage("创造您的卡通形象"),
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("为什么需要付款"),
+        "year": MessageLookupByLibrary.simpleMessage("年"),
+        "yearly": MessageLookupByLibrary.simpleMessage("年付"),
+        "you_have_not_posted_anything":
+            MessageLookupByLibrary.simpleMessage("您还没有分享任何内容"),
         "your_post_has_been_submitted_successfully":
             MessageLookupByLibrary.simpleMessage("您已分享成功"),
         "youtube": MessageLookupByLibrary.simpleMessage("使用YouTube账号"),

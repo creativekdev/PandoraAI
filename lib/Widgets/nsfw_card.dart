@@ -23,13 +23,13 @@ class NsfwCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Scary content alert!',
+            S.of(context).scary_content_alert,
             style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(12)),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: $(16)),
           Text(
-            'Show it?',
+            S.of(context).show_it + S.of(context).q1,
             style: TextStyle(
               color: ColorConstant.BlueColor,
               fontFamily: 'Poppins',

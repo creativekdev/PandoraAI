@@ -337,7 +337,7 @@ class CartoonizerApi extends BaseRequester {
   Future<AvatarAiListEntity?> getAvatarAiDetail({required String token}) async {
     var cacheManager = AppDelegate.instance.getManager<CacheManager>();
     var json = cacheManager.getJson(CacheManager.avatarHistory + token);
-    if (json == null || json['output_images'] == null || (json['output_images'] as List).isEmpty) {
+    if (json == null || TextUtil.isEmpty(json['share_code']?.toString()) || json['output_images'] == null || (json['output_images'] as List).isEmpty) {
       var baseEntity = await get('/ai_avatar/get', params: {
         'token': token,
       });
@@ -368,7 +368,5 @@ class CartoonizerApi extends BaseRequester {
     return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }
 
-  Future<BaseEntity?> getInspirationText() async {
-
-  }
+  Future<BaseEntity?> getInspirationText() async {}
 }

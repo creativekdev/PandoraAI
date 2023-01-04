@@ -50,6 +50,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// ` avatars`
+  String get avatars {
+    return Intl.message(
+      ' avatars',
+      name: 'avatars',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Pandora User`
   String get accountCancelled {
     return Intl.message(
@@ -1070,10 +1080,10 @@ class S {
     );
   }
 
-  /// `Your photos will be generated in about 2 hours`
+  /// `Your photos will be generated in about %d hours`
   String get pandora_create_spend {
     return Intl.message(
-      'Your photos will be generated in about 2 hours',
+      'Your photos will be generated in about %d hours',
       name: 'pandora_create_spend',
       desc: '',
       args: [],
@@ -1960,11 +1970,21 @@ class S {
     );
   }
 
-  /// `You've selected %selected photos of %minSize minimum required.`
+  /// `You've selected %selected photos%badImages of %minSize minimum required.`
   String get choose_photo_not_enough_desc {
     return Intl.message(
-      'You\'ve selected %selected photos of %minSize minimum required.',
+      'You\'ve selected %selected photos%badImages of %minSize minimum required.',
       name: 'choose_photo_not_enough_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` with %badCount invalid`
+  String get choose_photo_bad_images_desc {
+    return Intl.message(
+      ' with %badCount invalid',
+      name: 'choose_photo_bad_images_desc',
       desc: '',
       args: [],
     );
@@ -2225,6 +2245,416 @@ class S {
     return Intl.message(
       'Comment posted',
       name: 'comment_posted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Newest`
+  String get newest {
+    return Intl.message(
+      'Newest',
+      name: 'newest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Popular`
+  String get popular {
+    return Intl.message(
+      'Popular',
+      name: 'popular',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure want to logout?`
+  String get logout_tips {
+    return Intl.message(
+      'Are you sure want to logout?',
+      name: 'logout_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure to delete your account?`
+  String get delete_account_tips {
+    return Intl.message(
+      'Are you sure to delete your account?',
+      name: 'delete_account_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your account has been successfully deleted. We always welcome you to use our service again.`
+  String get delete_account_successfully_tips {
+    return Intl.message(
+      'Your account has been successfully deleted. We always welcome you to use our service again.',
+      name: 'delete_account_successfully_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure to clear all cache?\n total: %d`
+  String get clear_cache_tips {
+    return Intl.message(
+      'Are you sure to clear all cache?\n total: %d',
+      name: 'clear_cache_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get clear {
+    return Intl.message(
+      'Clear',
+      name: 'clear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scary content alert!`
+  String get scary_content_alert {
+    return Intl.message(
+      'Scary content alert!',
+      name: 'scary_content_alert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show it`
+  String get show_it {
+    return Intl.message(
+      'Show it',
+      name: 'show_it',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scary content alert! Tap to show it`
+  String get scary_content_alert_open_it {
+    return Intl.message(
+      'Scary content alert! Tap to show it',
+      name: 'scary_content_alert_open_it',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `?`
+  String get q1 {
+    return Intl.message(
+      '?',
+      name: 'q1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This user has not posted anything`
+  String get this_user_has_not_posted_anything {
+    return Intl.message(
+      'This user has not posted anything',
+      name: 'this_user_has_not_posted_anything',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have not posted anything`
+  String get you_have_not_posted_anything {
+    return Intl.message(
+      'You have not posted anything',
+      name: 'you_have_not_posted_anything',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly`
+  String get monthly {
+    return Intl.message(
+      'Monthly',
+      name: 'monthly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly`
+  String get yearly {
+    return Intl.message(
+      'Yearly',
+      name: 'yearly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Avatar`
+  String get create_avatar {
+    return Intl.message(
+      'Create Avatar',
+      name: 'create_avatar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Waiting`
+  String get waiting {
+    return Intl.message(
+      'Waiting',
+      name: 'waiting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Created`
+  String get created {
+    return Intl.message(
+      'Created',
+      name: 'created',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message(
+      'All',
+      name: 'all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bought`
+  String get bought {
+    return Intl.message(
+      'Bought',
+      name: 'bought',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `There are no messages yet`
+  String get no_messages_yet {
+    return Intl.message(
+      'There are no messages yet',
+      name: 'no_messages_yet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to upload image`
+  String get failed_to_upload_image {
+    return Intl.message(
+      'Failed to upload image',
+      name: 'failed_to_upload_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Year`
+  String get year {
+    return Intl.message(
+      'Year',
+      name: 'year',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Month`
+  String get month {
+    return Intl.message(
+      'Month',
+      name: 'month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get Inspired`
+  String get get_inspired {
+    return Intl.message(
+      'Get Inspired',
+      name: 'get_inspired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `FaceToon`
+  String get face_toon {
+    return Intl.message(
+      'FaceToon',
+      name: 'face_toon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Effects`
+  String get effects {
+    return Intl.message(
+      'Effects',
+      name: 'effects',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `January`
+  String get january {
+    return Intl.message(
+      'January',
+      name: 'january',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `February`
+  String get february {
+    return Intl.message(
+      'February',
+      name: 'february',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `March`
+  String get march {
+    return Intl.message(
+      'March',
+      name: 'march',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `April`
+  String get april {
+    return Intl.message(
+      'April',
+      name: 'april',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `May`
+  String get may {
+    return Intl.message(
+      'May',
+      name: 'may',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `June`
+  String get june {
+    return Intl.message(
+      'June',
+      name: 'june',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `July`
+  String get july {
+    return Intl.message(
+      'July',
+      name: 'july',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `August`
+  String get august {
+    return Intl.message(
+      'August',
+      name: 'august',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `September`
+  String get september {
+    return Intl.message(
+      'September',
+      name: 'september',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `October`
+  String get october {
+    return Intl.message(
+      'October',
+      name: 'october',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `November`
+  String get november {
+    return Intl.message(
+      'November',
+      name: 'november',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `December`
+  String get december {
+    return Intl.message(
+      'December',
+      name: 'december',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please waiting, your photos will be generated in about %d minutes. We'll send you an email with a link to your AI avatars when it's done!`
+  String get pandora_waiting_desc {
+    return Intl.message(
+      'Please waiting, your photos will be generated in about %d minutes. We\'ll send you an email with a link to your AI avatars when it\'s done!',
+      name: 'pandora_waiting_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You will lose all photos you selected!`
+  String get pandora_create_exit_dips {
+    return Intl.message(
+      'You will lose all photos you selected!',
+      name: 'pandora_create_exit_dips',
       desc: '',
       args: [],
     );

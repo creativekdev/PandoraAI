@@ -89,19 +89,39 @@ class MyApp extends StatelessWidget {
           localeResolutionCallback: (deviceLocale, supportedLocales) {
             var current = DateTime.now().millisecondsSinceEpoch;
             var duration = current - lastLocaleTime;
+            Locale? result;
             if (duration > 200) {
               lastLocaleTime = current;
               debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
               theme.AppContext.currentLocales = deviceLocale.languageCode;
-              return deviceLocale;
+              result = deviceLocale;
             } else {
               for (var locale in supportedLocales) {
                 if (locale.languageCode == theme.AppContext.currentLocales) {
-                  return locale;
+                  result = locale;
+                  break;
                 }
               }
             }
-            return deviceLocale;
+            if (AppDelegate.instance.initialized) {
+              ThirdpartManager thirdpartManager = AppDelegate().getManager();
+              thirdpartManager.initRefresh(result);
+            } else {
+              Function(bool status)? listener;
+              listener = (status) {
+                if (status) {
+                  ThirdpartManager thirdpartManager = AppDelegate().getManager();
+                  thirdpartManager.initRefresh(result);
+                  AppDelegate.instance.cancelListenAsync(listener!);
+                }
+              };
+              AppDelegate.instance.listen(listener);
+            }
+            if (result == null) {
+              return deviceLocale;
+            } else {
+              return result;
+            }
           },
           locale: const Locale('en', 'US'),
           supportedLocales: S.delegate.supportedLocales,

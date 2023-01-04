@@ -9,135 +9,58 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:share_plus/share_plus.dart';
 
-enum ShareType {
-  discovery,
-  facebook,
-  instagram,
-  whatsapp,
-  twitter,
-  email,
-  system,
-}
-
-extension ShareTypeEx on ShareType {
-  String imageRes() {
-    switch (this) {
-      case ShareType.discovery:
-        return Images.ic_share_discovery;
-      case ShareType.facebook:
-        return Images.ic_share_facebook;
-      case ShareType.instagram:
-        return Images.ic_share_instagram;
-      case ShareType.whatsapp:
-        return Images.ic_share_whatsapp;
-      case ShareType.email:
-        return Images.ic_share_email;
-      case ShareType.system:
-        return Images.ic_share_more;
-      case ShareType.twitter:
-        return Images.ic_share_twitter;
-    }
-  }
-
-  String title() {
-    switch (this) {
-      case ShareType.discovery:
-        return 'Discovery';
-      case ShareType.facebook:
-        return 'Facebook';
-      case ShareType.instagram:
-        return 'Instagram';
-      case ShareType.whatsapp:
-        return 'Whatsapp';
-      case ShareType.email:
-        return 'Email';
-      case ShareType.twitter:
-        return 'Twitter';
-      case ShareType.system:
-        return 'More';
-    }
-  }
-}
-
-class ShareScreen extends StatefulWidget {
+class ShareUrlScreen extends StatefulWidget {
   static Future<bool?> startShare(
     BuildContext context, {
     Color backgroundColor = Colors.transparent,
-    required String style,
-    required String image,
-    required bool isVideo,
-    required String? originalUrl,
-    required String effectKey,
-    bool needDiscovery = false,
+    required String url,
   }) {
     return showModalBottomSheet<bool>(
         context: context,
         builder: (context) {
-          return ShareScreen(
-            style: style,
-            image: image,
-            isVideo: isVideo,
-            originalUrl: originalUrl,
+          return ShareUrlScreen(
+            url: url,
             backgroundColor: backgroundColor,
-            effectKey: effectKey,
-            needDiscovery: needDiscovery,
           );
         },
         backgroundColor: backgroundColor);
   }
 
-  final String style;
-  final String image;
-  final bool isVideo;
-  final String? originalUrl;
   final Color backgroundColor;
-  final String effectKey;
-  final bool needDiscovery;
+  final String url;
 
-  const ShareScreen({
+  const ShareUrlScreen({
     Key? key,
-    required this.style,
-    required this.image,
-    required this.isVideo,
-    required this.originalUrl,
+    required this.url,
     required this.backgroundColor,
-    required this.effectKey,
-    required this.needDiscovery,
   }) : super(key: key);
 
   @override
   _ShareScreenState createState() => _ShareScreenState();
 }
 
-class _ShareScreenState extends State<ShareScreen> {
+class _ShareScreenState extends State<ShareUrlScreen> {
   static const platform = MethodChannel(PLATFORM_CHANNEL);
   Size? cancelSize;
 
   List<ShareType> typeList = [
-    // ShareType.discovery,
     ShareType.facebook,
-    ShareType.instagram,
+    // ShareType.instagram,
     ShareType.whatsapp,
+    ShareType.twitter,
     ShareType.email,
     ShareType.system,
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.needDiscovery) {
-      typeList.insert(0, ShareType.discovery);
-    }
-  }
-
-  void _openShareAction(BuildContext context, List<String> paths) {
-    final box = context.findRenderObject() as RenderBox?;
-    Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
+  void _openShareAction(BuildContext context, String url) async {
+    await FlutterShareMe().shareToSystem(msg: url);
   }
 
   onShareClick(ShareType shareType) async {
@@ -150,6 +73,9 @@ class _ShareScreenState extends State<ShareScreen> {
         } else {
           onShareButtonTap(shareType: shareType);
         }
+        break;
+      case ShareType.twitter:
+        onShareButtonTap(shareType: shareType);
         break;
       case ShareType.instagram:
         var isAppInstalled =
@@ -169,10 +95,9 @@ class _ShareScreenState extends State<ShareScreen> {
           onShareButtonTap(shareType: shareType);
         }
         break;
-      case ShareType.twitter:
-        onShareButtonTap(shareType: shareType);
-        break;
       case ShareType.discovery:
+        LogUtil.e('wrong share type');
+        break;
       case ShareType.email:
       case ShareType.system:
         onShareButtonTap(shareType: shareType);
@@ -181,78 +106,46 @@ class _ShareScreenState extends State<ShareScreen> {
   }
 
   Future<void> onShareButtonTap({required ShareType shareType}) async {
-    File file;
-    var dir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-    String fullPath = '$dir${DateTime.now().millisecondsSinceEpoch}.png';
-
-    if (widget.isVideo) {
-      file = File(widget.image);
-    } else {
-      file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
-    }
-
     final FlutterShareMe flutterShareMe = FlutterShareMe();
 
-    logEvent(Events.result_share, eventValues: {
-      "effect": widget.style,
+    logEvent(Events.result_url_share, eventValues: {
+      "url": widget.url,
       "channel": shareType.name,
     });
 
     switch (shareType) {
-      case ShareType.discovery:
-        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
-          ShareDiscoveryScreen.push(
-            context,
-            effectKey: widget.effectKey,
-            originalUrl: widget.originalUrl,
-            image: widget.image,
-            isVideo: widget.isVideo,
-            category: DiscoveryCategory.ai_avatar,
-          ).then((value) {
-            if (value ?? false) {
-              Navigator.of(context).pop(true);
-            }
-          });
-        });
-        break;
       case ShareType.facebook:
-        if (widget.isVideo) {
-          _openShareAction(context, [file.path]);
-        } else {
-          if (Platform.isAndroid) {
-            _openShareAction(context, [file.path]);
-            // await flutterShareMe.shareToFacebook(msg: "AAAAAAAAAAAAAAAA");
-            // await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
-          } else {
-            await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
-          }
-        }
+        await flutterShareMe.shareToFacebook(msg: '', url: widget.url);
         Navigator.of(context).pop();
         break;
-      case ShareType.instagram:
-        await flutterShareMe.shareToInstagram(filePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
-        Navigator.of(context).pop();
-        break;
-      case ShareType.whatsapp:
-        await flutterShareMe.shareToWhatsApp(msg: S.of(context).share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
-        Navigator.of(context).pop();
-        break;
+      // case ShareType.instagram:
+      //   await flutterShareMe.shareToInstagram(filePath: widget.url, fileType: FileType.image);
+      //   Navigator.of(context).pop();
+      //   break;
+      // case ShareType.whatsapp:
+      // await flutterShareMe.shareToWhatsApp(msg: S.of(context).share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+      // Navigator.of(context).pop();
+      // break;
       case ShareType.email:
-        List<String> paths = [file.path];
         final Email email = Email(
-          body: '',
+          body: widget.url,
           subject: '',
           recipients: [''],
-          attachmentPaths: paths,
         );
         await FlutterEmailSender.send(email);
         Navigator.of(context).pop();
         break;
-      case ShareType.system:
-        _openShareAction(context, [file.path]);
-        break;
       case ShareType.twitter:
-        Navigator.of(context).pop();
+        await flutterShareMe.shareToTwitter(msg: '', url: widget.url);
+        break;
+      case ShareType.system:
+        await flutterShareMe.shareToSystem(msg: widget.url);
+        break;
+      case ShareType.whatsapp:
+        flutterShareMe.shareToWhatsApp(msg: widget.url);
+        break;
+      default:
+        _openShareAction(context, widget.url);
         break;
     }
   }

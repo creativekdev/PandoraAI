@@ -1,11 +1,14 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
+typedef ItemBuilder = Widget Function(BuildContext context, int index, String value, bool checked);
+
 class ChooseTabBar extends StatelessWidget {
   List<String> tabList;
   bool scrollable;
   int currentIndex;
   double height;
   Function(int index) onTabClick;
+  late ItemBuilder itemBuilder;
 
   ChooseTabBar({
     Key? key,
@@ -14,7 +17,43 @@ class ChooseTabBar extends StatelessWidget {
     this.scrollable = false,
     this.currentIndex = 0,
     required this.height,
-  }) : super(key: key);
+    ItemBuilder? itemBuilder,
+  }) : super(key: key) {
+    this.itemBuilder = itemBuilder ??= (context, index, value, checked) {
+      if (checked) {
+        return ShaderMask(
+          shaderCallback: (Rect bounds) => LinearGradient(
+            colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ).createShader(Offset.zero & bounds.size),
+          blendMode: BlendMode.srcATop,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: ColorConstant.White,
+              fontSize: $(14),
+            ),
+          ),
+        );
+      } else {
+        return Text(
+          value,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            color: ColorConstant.HintColor,
+            fontSize: $(14),
+          ),
+        ).intoContainer(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          color: Colors.transparent,
+          alignment: Alignment.center,
+        );
+      }
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,43 +84,17 @@ class ChooseTabBar extends StatelessWidget {
   }
 
   List<Widget> items(BuildContext context) {
-    return tabList.transfer((data, index) {
-      if (index == currentIndex) {
-        return ShaderMask(
-          shaderCallback: (Rect bounds) => LinearGradient(
-            colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ).createShader(Offset.zero & bounds.size),
-          blendMode: BlendMode.srcATop,
-          child: Text(
-            data,
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              color: ColorConstant.White,
-              fontSize: $(14),
-            ),
-          ),
-        );
-      } else {
-        return Text(
+    return tabList.transfer((data, index) => itemBuilder
+            .call(
+          context,
+          index,
           data,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            color: ColorConstant.HintColor,
-            fontSize: $(14),
-          ),
-        )
-            .intoContainer(
-          width: double.maxFinite,
-          height: double.maxFinite,
-          color: Colors.transparent,
-          alignment: Alignment.center,
+          index == currentIndex,
         )
             .intoGestureDetector(onTap: () {
-          onTabClick.call(index);
-        });
-      }
-    });
+          if (currentIndex != index) {
+            onTabClick.call(index);
+          }
+        }));
   }
 }

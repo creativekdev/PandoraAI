@@ -19,6 +19,7 @@ class Events {
   static String photo_cartoon_result = "photo_cartoon_result"; // success, category:3d, effect:3d1, original_face
   static String result_signup_get_credit = "result_signup_get_credit";
   static String result_share = "result_share"; // channel, effect
+  static String result_url_share = "result_url_share"; // effect
   static String result_download = "result_download"; // effect
   static String result_back = "result_back";
   static String homepage_loading = "homepage_loading";

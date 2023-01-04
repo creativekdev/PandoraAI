@@ -100,7 +100,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           image: ImagesConstant.ic_success,
           description: S.of(context).payment_successfully,
           isCancel: false,
-          confirmText: "OK",
+          confirmText: S.of(context).ok,
         ),
       );
     }
@@ -237,7 +237,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${yearly["title"]} ${yearly["price"]} / ${yearly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
+                              TitleTextWidget("${S.of(context).yearly} ${yearly["price"]} / ${yearly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
                             ],
                           ),
                         ),
@@ -291,7 +291,8 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TitleTextWidget("${monthly["title"]} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
+                              TitleTextWidget("${S.of(context).monthly} ${monthly["price"]} / ${monthly["unit"]}", ColorConstant.White, FontWeight.w500, 14,
+                                  align: TextAlign.start),
                             ],
                           ),
                         ),

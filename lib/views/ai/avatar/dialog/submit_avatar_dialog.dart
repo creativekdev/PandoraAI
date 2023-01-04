@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/input_text.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:common_utils/common_utils.dart';
 
 class SubmitAvatarDialog {
@@ -28,7 +29,18 @@ class _SubmitAvatarDialog extends StatefulWidget {
 class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
   TextEditingController controller = TextEditingController();
   AvatarAiManager aiManager = AppDelegate().getManager();
+  CacheManager cacheManager = AppDelegate().getManager();
   String? selectedStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    var json = cacheManager.getJson(CacheManager.lastCreateAvatar);
+    if (json != null) {
+      controller.text = json['name'];
+      selectedStyle = json['style'];
+    }
+  }
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -37,7 +49,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(
-          'Create Avatar',
+          S.of(context).create_avatar,
           ColorConstant.White,
           FontWeight.w600,
           $(18),
@@ -80,6 +92,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
           ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(20)),
           SelectStyleCard(
+              style: selectedStyle,
               onSelect: (style) {
                 setState(() {
                   selectedStyle = style;
@@ -116,6 +129,11 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
               CommonExtension().showToast(S.of(context).pandora_create_style_hint);
               return;
             }
+            var json = {
+              'name': controller.text,
+              'style': selectedStyle,
+            };
+            cacheManager.setJson(CacheManager.lastCreateAvatar, json);
             Navigator.of(context).pop(MapEntry(name, selectedStyle!));
           }),
         ],

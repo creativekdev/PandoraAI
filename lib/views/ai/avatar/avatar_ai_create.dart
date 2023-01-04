@@ -53,172 +53,255 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backgroundColor: ColorConstant.BackgroundColor,
-        backIcon: Image.asset(
-          Images.ic_back,
-          height: $(24),
-          width: $(24),
-        ).hero(tag: Avatar.logoBackTag),
-      ),
-      body: GetBuilder<AvatarAiController>(
-        builder: (controller) => LoadingOverlay(
+    return GetBuilder<AvatarAiController>(
+      builder: (controller) {
+        var result = LoadingOverlay(
             isLoading: controller.isLoading,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20),
-                      shaderMask(
-                          context: context,
-                          child: Text(
-                            S.of(context).upload_photos,
-                            style: TextStyle(
-                              color: ColorConstant.White,
-                              fontSize: $(26),
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
-                          )),
-                      SizedBox(height: 20),
-                      buildIconText(
-                        context,
-                        title: S.of(context).good_photo_examples,
-                        icon: Images.ic_avatar_good_example,
-                      ),
-                      SizedBox(height: 12),
-                      TitleTextWidget(
-                        S.of(context).good_photo_description,
-                        ColorConstant.White,
-                        FontWeight.normal,
-                        $(14),
-                        maxLines: 5,
-                        align: TextAlign.left,
-                      ).intoContainer(
-                        padding: EdgeInsets.symmetric(horizontal: $(15)),
-                      ),
-                      SizedBox(height: 12),
-                      FutureBuilder(
-                        builder: (context, snapshot) {
-                          if (snapshot.data == null) {
-                            return buildExamples(context, []);
-                          }
-                          var data = snapshot.data as AvatarConfig;
-                          List<String> goodImages = data.goodImages(controller.style);
-                          return buildExamples(context, goodImages);
-                        },
-                        future: manager.getConfig(),
-                      ),
-                      SizedBox(height: 20),
-                      buildIconText(
-                        context,
-                        title: S.of(context).bad_photo_examples,
-                        icon: Images.ic_avatar_bad_example,
-                      ),
-                      SizedBox(height: 12),
-                      TitleTextWidget(
-                        S.of(context).bad_photo_description,
-                        ColorConstant.White,
-                        FontWeight.normal,
-                        $(14),
-                        align: TextAlign.left,
-                        maxLines: 5,
-                      ).intoContainer(
-                        padding: EdgeInsets.symmetric(horizontal: $(15)),
-                      ),
-                      SizedBox(height: 12),
-                      FutureBuilder(
-                        builder: (context, snapshot) {
-                          if (snapshot.data == null) {
-                            return buildExamples(context, []);
-                          }
-                          var data = snapshot.data as AvatarConfig;
-                          List<String> badImages = data.badImages(controller.style);
-                          return buildExamples(context, badImages);
-                        },
-                        future: manager.getConfig(),
-                      ),
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: '',
-                          children: [
-                            WidgetSpan(
-                              child: Image.asset(
-                                Images.ic_warning,
-                                width: $(15),
-                                color: Color(0xffFFCC00),
-                              ),
-                            ),
-                            TextSpan(
-                              text: S.of(context).pandora_transfer_tips,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: ColorConstant.White,
-                                fontSize: $(14),
-                              ),
-                            )
-                          ],
-                        ),
-                      ).intoContainer(
-                          padding: EdgeInsets.only(
-                            top: $(20),
-                            left: $(20),
-                            right: $(20),
-                            bottom: $(25),
+            child: Scaffold(
+                backgroundColor: ColorConstant.BackgroundColor,
+                appBar: AppNavigationBar(
+                  backgroundColor: ColorConstant.BackgroundColor,
+                  backAction: () {
+                    showBackDialog(context, controller).then((value) {
+                      if (value ?? false) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  backIcon: Image.asset(
+                    Images.ic_back,
+                    height: $(24),
+                    width: $(24),
+                  ).hero(tag: Avatar.logoBackTag),
+                ),
+                body: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                        child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          shaderMask(
+                              context: context,
+                              child: Text(
+                                S.of(context).upload_photos,
+                                style: TextStyle(
+                                  color: ColorConstant.White,
+                                  fontSize: $(26),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                ),
+                              )),
+                          SizedBox(height: 20),
+                          buildIconText(
+                            context,
+                            title: S.of(context).good_photo_examples,
+                            icon: Images.ic_avatar_good_example,
                           ),
-                          margin: EdgeInsets.only(
-                            top: $(20),
-                            left: $(15),
-                            right: $(15),
-                            bottom: $(10),
+                          SizedBox(height: 12),
+                          TitleTextWidget(
+                            S.of(context).good_photo_description,
+                            ColorConstant.White,
+                            FontWeight.normal,
+                            $(14),
+                            maxLines: 5,
+                            align: TextAlign.left,
+                          ).intoContainer(
+                            padding: EdgeInsets.symmetric(horizontal: $(15)),
                           ),
-                          decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular($(12)))),
-                    ],
-                  ),
-                )),
-                Text(
-                  controller.pickPhotosText(context),
-                  style: TextStyle(color: Colors.white, fontSize: $(17)),
-                )
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(12)),
-                  margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15)),
-                  width: double.maxFinite,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular($(8)),
-                    color: ColorConstant.BlueColor,
-                  ),
-                )
-                    .intoGestureDetector(onTap: () {
-                  if (controller.imageList.isEmpty) {
-                    controller.pickImageFromGallery(context).then((value) {
-                      if (value) {
+                          SizedBox(height: 12),
+                          FutureBuilder(
+                            builder: (context, snapshot) {
+                              if (snapshot.data == null) {
+                                return buildExamples(context, []);
+                              }
+                              var data = snapshot.data as AvatarConfig;
+                              List<String> goodImages = data.goodImages(controller.style);
+                              return buildExamples(context, goodImages);
+                            },
+                            future: manager.getConfig(),
+                          ),
+                          SizedBox(height: 20),
+                          buildIconText(
+                            context,
+                            title: S.of(context).bad_photo_examples,
+                            icon: Images.ic_avatar_bad_example,
+                          ),
+                          SizedBox(height: 12),
+                          TitleTextWidget(
+                            S.of(context).bad_photo_description,
+                            ColorConstant.White,
+                            FontWeight.normal,
+                            $(14),
+                            align: TextAlign.left,
+                            maxLines: 5,
+                          ).intoContainer(
+                            padding: EdgeInsets.symmetric(horizontal: $(15)),
+                          ),
+                          SizedBox(height: 12),
+                          FutureBuilder(
+                            builder: (context, snapshot) {
+                              if (snapshot.data == null) {
+                                return buildExamples(context, []);
+                              }
+                              var data = snapshot.data as AvatarConfig;
+                              List<String> badImages = data.badImages(controller.style);
+                              return buildExamples(context, badImages);
+                            },
+                            future: manager.getConfig(),
+                          ),
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: '',
+                              children: [
+                                WidgetSpan(
+                                  child: Image.asset(
+                                    Images.ic_warning,
+                                    width: $(15),
+                                    color: Color(0xffFFCC00),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: S.of(context).pandora_transfer_tips,
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    color: ColorConstant.White,
+                                    fontSize: $(14),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ).intoContainer(
+                              padding: EdgeInsets.only(
+                                top: $(20),
+                                left: $(20),
+                                right: $(20),
+                                bottom: $(25),
+                              ),
+                              margin: EdgeInsets.only(
+                                top: $(20),
+                                left: $(15),
+                                right: $(15),
+                                bottom: $(10),
+                              ),
+                              decoration: BoxDecoration(color: Colors.grey.shade900, borderRadius: BorderRadius.circular($(12)))),
+                        ],
+                      ),
+                    )),
+                    Text(
+                      controller.pickPhotosText(context),
+                      style: TextStyle(color: Colors.white, fontSize: $(17)),
+                    )
+                        .intoContainer(
+                      padding: EdgeInsets.symmetric(vertical: $(12)),
+                      margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15)),
+                      width: double.maxFinite,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular($(8)),
+                        color: ColorConstant.BlueColor,
+                      ),
+                    )
+                        .intoGestureDetector(onTap: () {
+                      if (controller.imageList.isEmpty) {
+                        controller.pickImageFromGallery(context).then((value) {
+                          if (value) {
+                            if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
+                              startUpload(context, controller);
+                            } else {
+                              showChosenDialog(context, controller);
+                            }
+                          }
+                        });
+                      } else {
                         if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
                           startUpload(context, controller);
                         } else {
                           showChosenDialog(context, controller);
                         }
                       }
-                    });
-                  } else {
-                    if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
-                      startUpload(context, controller);
-                    } else {
-                      showChosenDialog(context, controller);
-                    }
+                    }),
+                  ],
+                )));
+        if (controller.hasChosen) {
+          return WillPopScope(
+              child: result,
+              onWillPop: () async {
+                showBackDialog(context, controller).then((value) {
+                  if (value ?? false) {
+                    Navigator.of(context).pop();
                   }
-                }),
-              ],
-            )),
-        init: controller,
-      ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))),
+                });
+                return false;
+              });
+        }
+        return result;
+      },
+      init: controller,
+    ).intoContainer(
+      padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
+    );
+  }
+
+  Future<bool?> showBackDialog(BuildContext context, AvatarAiController controller) async {
+    return showDialog<bool>(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            S.of(context).pandora_create_exit_dips,
+            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+            textAlign: TextAlign.center,
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                S.of(context).ok,
+                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.BlueColor),
+              )
+                      .intoContainer(
+                          padding: EdgeInsets.all(10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                          )))
+                      .intoGestureDetector(onTap: () async {
+                Navigator.pop(context, true);
+              })),
+              Expanded(
+                  child: Text(
+                S.of(context).cancel,
+                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.BlueColor),
+              )
+                      .intoContainer(
+                          padding: EdgeInsets.all(10),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                          )))
+                      .intoGestureDetector(onTap: () {
+                Navigator.pop(context, false);
+              })),
+            ],
+          ),
+        ],
+      )
+          .intoMaterial(
+            color: ColorConstant.EffectFunctionGrey,
+            borderRadius: BorderRadius.circular($(16)),
+          )
+          .intoContainer(
+            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
+            margin: EdgeInsets.symmetric(horizontal: $(35)),
+          )
+          .intoCenter(),
     );
   }
 
@@ -261,7 +344,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       TitleTextWidget(S.of(context).successful, Color(0xff34C759), FontWeight.w600, $(16)),
                     ],
                   ),
-                  content: TitleTextWidget(S.of(context).pandora_create_spend, ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                  content: TitleTextWidget(S.of(context).pandora_create_spend.replaceAll('%d', '2'), ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
                   actions: [
                     TitleTextWidget(
                       S.of(context).ok,

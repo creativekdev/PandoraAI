@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/avatar_config_entity.g.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:common_utils/common_utils.dart';
 
 abstract class AvatarConfig {
   List<String> getRoles();
+
+  Map<String, String> getRoleImages();
 
   String styleTitle(String role, String style);
 
@@ -71,6 +74,32 @@ class AvatarConfigEntity extends AvatarConfig {
   @override
   List<String> getRoles() {
     return data.roles.keys.toList();
+  }
+
+  @override
+  Map<String, String> getRoleImages() {
+    var roles = getRoles();
+    Map<String, String> result = {};
+    for (var value in roles) {
+      switch (value.toLowerCase()) {
+        case 'woman':
+          result[value] = Images.ic_avatar_sample_woman;
+          break;
+        case 'man':
+          result[value] = Images.ic_avatar_sample_man;
+          break;
+        case 'cat':
+          result[value] = Images.ic_avatar_sample_cat;
+          break;
+        case 'dog':
+          result[value] = Images.ic_avatar_sample_dog;
+          break;
+        default:
+          result[value] = Images.ic_avatar_sample_man;
+          break;
+      }
+    }
+    return result;
   }
 }
 

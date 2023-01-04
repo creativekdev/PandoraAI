@@ -58,92 +58,95 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: widget.shareEnable
-          ? AppNavigationBar(
-              backgroundColor: Colors.transparent,
-              // showBackItem: false,
-              middle: TitleTextWidget(
-                '${currentIndex + 1}/${widget.galleryItems.length}',
-                ColorConstant.White,
-                FontWeight.w500,
-                $(18),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    Images.ic_download,
-                    width: $(24),
-                  ).hero(tag: 'download').intoGestureDetector(onTap: () async {
-                    showLoading().whenComplete(() async {
-                      var file = await SyncDownloadFile(url: widget.galleryItems[currentIndex], type: 'png').getImage();
-                      if (file != null) {
-                        await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
-                        hideLoading().whenComplete(() {
-                          CommonExtension().showImageSavedOkToast(context);
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            scrollPhysics: const BouncingScrollPhysics(),
+            builder: _buildItem,
+            itemCount: widget.galleryItems.length,
+            loadingBuilder: widget.loadingBuilder,
+            backgroundDecoration: widget.backgroundDecoration,
+            pageController: widget.pageController,
+            onPageChanged: onPageChanged,
+            scrollDirection: widget.scrollDirection,
+          ).intoGestureDetector(onTap: () {
+            Navigator.of(context).pop();
+          }),
+          widget.shareEnable
+              ? Positioned(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        Images.ic_download,
+                        width: $(20),
+                      )
+                          .intoContainer(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade800,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                      )
+                          .intoGestureDetector(onTap: () async {
+                        showLoading().whenComplete(() async {
+                          var file = await SyncDownloadFile(url: widget.galleryItems[currentIndex], type: 'png').getImage();
+                          if (file != null) {
+                            await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
+                            hideLoading().whenComplete(() {
+                              CommonExtension().showImageSavedOkToast(context);
+                            });
+                          } else {
+                            hideLoading();
+                          }
                         });
-                      } else {
-                        hideLoading();
-                      }
-                    });
-                  }),
-                  SizedBox(width: 8),
-                  Image.asset(
-                    Images.ic_share,
-                    color: Colors.white,
-                    width: $(24),
-                  ).intoGestureDetector(onTap: () {
-                    var item = widget.galleryItems[currentIndex];
-                    showLoading().whenComplete(() {
-                      SyncDownloadFile(url: item, type: 'png').getImage().then((image) {
-                        hideLoading().whenComplete(() {
-                          var imageString = base64Encode(image!.readAsBytesSync());
-                          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                          ShareScreen.startShare(
-                            context,
-                            backgroundColor: Color(0x77000000),
-                            style: 'PandoraAI',
-                            image: imageString,
-                            isVideo: false,
-                            originalUrl: null,
-                            effectKey: 'PandoraAI',
-                            needDiscovery: true,
-                          ).then((value) {
-                            if (value ?? false) {
-                              showShareSuccessDialog(context);
-                            }
-                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                      }),
+                      SizedBox(width: 8),
+                      Image.asset(
+                        Images.ic_share,
+                        color: Colors.white,
+                        width: $(20),
+                      )
+                          .intoContainer(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade800,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                      )
+                          .intoGestureDetector(onTap: () {
+                        var item = widget.galleryItems[currentIndex];
+                        showLoading().whenComplete(() {
+                          SyncDownloadFile(url: item, type: 'png').getImage().then((image) {
+                            hideLoading().whenComplete(() {
+                              var imageString = base64Encode(image!.readAsBytesSync());
+                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                              ShareScreen.startShare(
+                                context,
+                                backgroundColor: Color(0x77000000),
+                                style: 'PandoraAI',
+                                image: imageString,
+                                isVideo: false,
+                                originalUrl: null,
+                                effectKey: 'PandoraAI',
+                                needDiscovery: true,
+                              ).then((value) {
+                                if (value ?? false) {
+                                  showShareSuccessDialog(context);
+                                }
+                                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                              });
+                            });
                           });
                         });
-                      });
-                    });
-                  }),
-                ],
-              ),
-            )
-          : null,
-      body: Container(
-        decoration: widget.backgroundDecoration,
-        constraints: BoxConstraints.expand(
-          height: MediaQuery.of(context).size.height,
-        ),
-        child: Stack(
-          alignment: Alignment.topLeft,
-          children: <Widget>[
-            PhotoViewGallery.builder(
-              scrollPhysics: const BouncingScrollPhysics(),
-              builder: _buildItem,
-              itemCount: widget.galleryItems.length,
-              loadingBuilder: widget.loadingBuilder,
-              backgroundDecoration: widget.backgroundDecoration,
-              pageController: widget.pageController,
-              onPageChanged: onPageChanged,
-              scrollDirection: widget.scrollDirection,
-            ).intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
-            }),
-          ],
-        ),
+                      }),
+                    ],
+                  ),
+                  bottom: ScreenUtil.getBottomPadding(context, padding: 15),
+                  right: 15,
+                )
+              : Container(),
+        ],
       ),
     );
   }

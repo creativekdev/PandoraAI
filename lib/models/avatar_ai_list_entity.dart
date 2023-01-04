@@ -21,6 +21,8 @@ class AvatarAiListEntity {
   int imageCount = 0;
   String created = '';
   String modified = '';
+  @JSONField(name: "share_code")
+  String shareCode = '';
   int id = 0;
 
   AvatarAiListEntity({List<AvatarChildEntity>? outputImages}) {

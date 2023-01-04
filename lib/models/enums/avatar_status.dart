@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Common/importFile.dart';
+
 ///auto generate code, please do not modify;
 enum AvatarStatus {
   pending,
@@ -45,18 +47,18 @@ extension AvatarStatusEx on AvatarStatus {
     }
   }
 
-  title() {
+  title(BuildContext context) {
     switch (this) {
       case AvatarStatus.pending:
       case AvatarStatus.processing:
-        return 'Waiting';
+        return S.of(context).waiting;
       case AvatarStatus.completed:
       case AvatarStatus.subscribed:
-        return 'Created';
+        return S.of(context).created;
       case AvatarStatus.UNDEFINED:
-        return 'All';
+        return S.of(context).all;
       case AvatarStatus.bought:
-        return 'Bought';
+        return S.of(context).bought;
     }
   }
 }

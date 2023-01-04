@@ -308,7 +308,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                       .intoContainer(width: width, height: height ?? width);
                 })
           ],
-        ).intoContainer(width: width, height: height);
+        ).hero(tag: resource.url ?? '').intoContainer(width: width, height: height);
       } else {
         return CachedNetworkImageUtils.custom(
             context: context,
@@ -334,7 +334,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                   )
                   .intoCenter()
                   .intoContainer(width: width, height: height ?? width);
-            });
+            }).hero(tag: resource.url ?? '');
       }
     }
   }

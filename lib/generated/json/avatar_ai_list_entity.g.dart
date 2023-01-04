@@ -51,6 +51,10 @@ AvatarAiListEntity $AvatarAiListEntityFromJson(Map<String, dynamic> json) {
 	if (modified != null) {
 		avatarAiListEntity.modified = modified;
 	}
+	final String? shareCode = jsonConvert.convert<String>(json['share_code']);
+	if (shareCode != null) {
+		avatarAiListEntity.shareCode = shareCode;
+	}
 	final int? id = jsonConvert.convert<int>(json['id']);
 	if (id != null) {
 		avatarAiListEntity.id = id;
@@ -72,6 +76,7 @@ Map<String, dynamic> $AvatarAiListEntityToJson(AvatarAiListEntity entity) {
 	data['image_count'] = entity.imageCount;
 	data['created'] = entity.created;
 	data['modified'] = entity.modified;
+	data['share_code'] = entity.shareCode;
 	data['id'] = entity.id;
 	return data;
 }

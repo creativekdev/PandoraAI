@@ -1,11 +1,14 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 
 class MyDiscoveryListCard extends StatelessWidget {
   int time;
   List<DiscoveryListEntity> dataList;
+  var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
 
   double imgWidth;
   int rows = 0;
@@ -54,7 +57,7 @@ class MyDiscoveryListCard extends StatelessWidget {
         ],
       ).visibility(visible: hasYear),
       Text(
-        time.dateMonth,
+        thirdpartManager.getLocaleString(context, time.dateMonth),
         style: TextStyle(
           color: ColorConstant.White,
           fontFamily: 'Poppins',

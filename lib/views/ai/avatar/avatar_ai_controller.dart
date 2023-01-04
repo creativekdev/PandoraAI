@@ -9,12 +9,14 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 class AvatarAiController extends GetxController {
   final String name;
   final String style;
   List<Medium> imageList = [];
+  List<Medium> badList = [];
   List<String> compressedList = [];
   List<String> uploadedList = [];
   int minSize = 15;
@@ -63,18 +65,41 @@ class AvatarAiController extends GetxController {
   // }
 
   Future<bool> pickImageFromGallery(BuildContext context) async {
+    isLoading = true;
+    update();
     var photos = await PickAlbumScreen.pickImage(
       context,
       count: maxSize,
       selectedList: imageList,
     );
     if (photos == null) {
+      isLoading = false;
       return false;
     }
-    imageList = photos;
+    List<Medium> goodList = [];
+    List<Medium> badImages = [];
+    if(style == 'man' || style == 'woman') {
+      FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
+      for (var medium in photos) {
+        var file = await medium.getFile();
+        var inputImage = InputImage.fromFile(file);
+        var list = await detector.processImage(inputImage);
+        if (list.isEmpty || list.length > 1) {
+          badImages.add(medium);
+        } else {
+          goodList.add(medium);
+        }
+      }
+      detector.close();
+    } else {
+      goodList = photos;
+    }
+    imageList = goodList;
+    badList = badImages;
     if (imageList.length > maxSize) {
       imageList = imageList.sublist(0, maxSize);
     }
+    isLoading = false;
     update();
     return photos.isNotEmpty;
   }

@@ -13,6 +13,7 @@ import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/effect_map.dart';
@@ -42,6 +43,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
+  ThirdpartManager thirdPartManager = AppDelegate().getManager();
   EffectDataController dataController = Get.find();
   RecentController recentController = Get.find();
   late AppTabId tabId;
@@ -320,10 +322,10 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                                   height: $(44),
                                   width: ScreenUtil.screenSize.width - $(30),
                                   padding: EdgeInsets.symmetric(vertical: $(8)),
-                                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12))).intoGestureDetector(onTap: (){
-                                    Avatar.openFromHome(context);
-                          })
-                              .intoContainer(
+                                  margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12)))
+                              .intoGestureDetector(onTap: () {
+                            Avatar.openFromHome(context);
+                          }).intoContainer(
                                   height: $(56),
                                   margin: EdgeInsets.only(bottom: AppTabBarHeight + MediaQuery.of(context).padding.bottom),
                                   color: ColorConstant.BackgroundColorBlur))),
@@ -366,7 +368,9 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                       onTap: (index) {
                         setIndex(index);
                       },
-                      tabs: tabConfig.map((e) => Text(e.title).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0)))).toList(),
+                      tabs: tabConfig
+                          .map((e) => Text(thirdPartManager.getLocaleString(context, e.title)).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0))))
+                          .toList(),
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
                 SizedBox(height: $(8))
               ],
