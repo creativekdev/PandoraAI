@@ -159,6 +159,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   Row(
                     children: trainingList.transfer(
                       (data, index) => CachedNetworkImageUtils.custom(
+                        useOld: true,
                         context: context,
                         imageUrl: data,
                         width: imageSize * 0.6,

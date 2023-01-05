@@ -3,10 +3,12 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/upload_loading_dialog.dart';
+import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_screen.dart';
 
 import 'avatar.dart';
 import 'dialog/add_photos_dialog.dart';
@@ -306,12 +308,25 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 
   startUpload(BuildContext context, AvatarAiController controller) {
-    if (controller.uploadedList.length == controller.imageList.length) {
-      startSubmit(context, controller);
+    var forward = (){
+      if (controller.uploadedList.length == controller.imageList.length) {
+        startSubmit(context, controller);
+      } else {
+        showDialog<bool>(context: context, barrierDismissible: false, builder: (_) => UploadLoadingDialog(controller: controller)).then((value) {
+          if (value ?? false) {
+            startSubmit(context, controller);
+          }
+        });
+      }
+    };
+    var userManager = AppDelegate.instance.getManager<UserManager>();
+    if (userManager.user!.aiAvatarCredit > 0) {
+      forward.call();
     } else {
-      showDialog<bool>(context: context, barrierDismissible: false, builder: (_) => UploadLoadingDialog(controller: controller)).then((value) {
-        if (value ?? false) {
-          startSubmit(context, controller);
+      // user not pay yet. to introduce page. and get pay status to edit page.
+      PayAvatarPage.push(context).then((payStatus) {
+        if (payStatus ?? false) {
+          forward.call();
         }
       });
     }

@@ -78,6 +78,8 @@ class Avatar {
           }
         });
       };
+      forward.call();
+      return;
       if (userManager.user!.aiAvatarCredit > 0) {
         forward.call();
       } else {

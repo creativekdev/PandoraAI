@@ -105,19 +105,20 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                     Wrap(
                       children: list
                           .map((e) => CachedNetworkImageUtils.custom(
-                        context: context,
-                        imageUrl: e.url,
-                        width: itemSize,
-                        height: itemSize,
-                      )
-                          .hero(tag: e.url)
-                          .intoContainer(
-                        width: itemSize,
-                        height: itemSize,
-                      )
-                          .intoGestureDetector(onTap: () {
-                        openImage(context, e);
-                      }))
+                                useOld: true,
+                                context: context,
+                                imageUrl: e.url,
+                                width: itemSize,
+                                height: itemSize,
+                              )
+                                  .hero(tag: e.url)
+                                  .intoContainer(
+                                    width: itemSize,
+                                    height: itemSize,
+                                  )
+                                  .intoGestureDetector(onTap: () {
+                                openImage(context, e);
+                              }))
                           .toList(),
                       spacing: $(4),
                     ),
@@ -127,19 +128,20 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                 return Wrap(
                   children: list
                       .map((e) => CachedNetworkImageUtils.custom(
-                    context: context,
-                    imageUrl: e.url,
-                    width: itemSize,
-                    height: itemSize,
-                  )
-                      .hero(tag: e.url)
-                      .intoContainer(
-                    width: itemSize,
-                    height: itemSize,
-                  )
-                      .intoGestureDetector(onTap: () {
-                    openImage(context, e);
-                  }))
+                            useOld: true,
+                            context: context,
+                            imageUrl: e.url,
+                            width: itemSize,
+                            height: itemSize,
+                          )
+                              .hero(tag: e.url)
+                              .intoContainer(
+                                width: itemSize,
+                                height: itemSize,
+                              )
+                              .intoGestureDetector(onTap: () {
+                            openImage(context, e);
+                          }))
                       .toList(),
                   spacing: $(4),
                 ).intoContainer(margin: EdgeInsets.only(top: $(4)));
