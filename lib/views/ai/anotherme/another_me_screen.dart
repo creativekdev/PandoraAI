@@ -124,6 +124,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
                 .intoGestureDetector(onTap: () {
               // 重新生成
             }),
+            SizedBox(height: 20),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
