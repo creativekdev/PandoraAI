@@ -27,6 +27,28 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
+        middle: TitleTextWidget(
+          S.of(context).tabAI,
+          ColorConstant.White,
+          FontWeight.w500,
+          $(18),
+        ),
+        trailing: GetBuilder<AnotherMeController>(
+          init: controller,
+          builder: (controller) {
+            if (controller.transList.isNotEmpty) {
+              return Image.asset(
+                Images.ic_share,
+                width: $(24),
+              );
+            } else {
+              return Container(
+                width: 1,
+                height: 1,
+              );
+            }
+          },
+        ),
       ),
       body: GetBuilder<AnotherMeController>(
         init: controller,
@@ -103,6 +125,27 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
             //todo 选择图片
           })
         : Column(children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(Images.ic_camera, height: $(24), width: $(24))
+                    .intoGestureDetector(
+                      onTap: () {},
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+                Image.asset(Images.ic_download, height: $(24), width: $(24))
+                    .intoGestureDetector(
+                      onTap: () {},
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+                Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
+                    .intoGestureDetector(
+                      onTap: () {},
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+              ],
+            ),
             Text(
               S.of(context).generate_again,
               style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
@@ -112,7 +155,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
                     padding: EdgeInsets.symmetric(vertical: $(10)),
                     margin: EdgeInsets.only(
                       bottom: $(20),
-                      top: $(80),
+                      top: $(100),
                       left: $(25),
                       right: $(25),
                     ),
@@ -124,29 +167,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
                 .intoGestureDetector(onTap: () {
               // 重新生成
             }),
-            SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(Images.ic_download, height: $(24), width: $(24))
-                    .intoGestureDetector(
-                      onTap: () {},
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-                Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                    .intoGestureDetector(
-                      onTap: () {},
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-                Image.asset(Images.ic_share, height: $(24), width: $(24))
-                    .intoGestureDetector(
-                      // onTap: () => showPickPhotoDialog(context),
-                      onTap: () {},
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-              ],
-            ),
           ]).intoContainer(margin: EdgeInsets.only(bottom: $(100)));
   }
 }

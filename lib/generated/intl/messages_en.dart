@@ -365,7 +365,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
-        "tabAI": MessageLookupByLibrary.simpleMessage("AI"),
+        "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("Discovery"),
         "tabHome": MessageLookupByLibrary.simpleMessage("Home"),
         "tabMine": MessageLookupByLibrary.simpleMessage("My"),

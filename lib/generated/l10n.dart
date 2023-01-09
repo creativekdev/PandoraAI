@@ -1660,10 +1660,10 @@ class S {
     );
   }
 
-  /// `AI`
+  /// `AI-Lab`
   String get tabAI {
     return Intl.message(
-      'AI',
+      'AI-Lab',
       name: 'tabAI',
       desc: '',
       args: [],

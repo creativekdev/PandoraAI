@@ -296,7 +296,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "我们很高兴你喜欢我们的工具！现在注册或登录，只需2分钟，你可以体验更多的功能！"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
-        "tabAI": MessageLookupByLibrary.simpleMessage("AI"),
+        "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("发现"),
         "tabHome": MessageLookupByLibrary.simpleMessage("首页"),
         "tabMine": MessageLookupByLibrary.simpleMessage("我的"),
