@@ -160,6 +160,7 @@
   "successful": "成功",
   "tabDiscovery": "发现",
   "tabHome": "首页",
+  "tabAI": "AI",
   "tabMine": "我的",
   "take_selfie": "或者拍照",
   "term_condition": "法律和条款",
@@ -270,5 +271,7 @@
   "rate_pandora_avatar": "给我们评分",
   "rate_description": "您的使用体验如何？愿意给我们评分么？",
   "looveit": "很喜欢，现在去评分",
-  "more": "更多"
+  "more": "更多",
+  "another_me_tips": "快来生成您的独特肖像吧",
+  "generate_again": "重新生成"
 }

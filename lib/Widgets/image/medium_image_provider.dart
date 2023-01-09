@@ -1,7 +1,9 @@
+import 'dart:ui' as ui;
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:photo_gallery/photo_gallery.dart';
-import 'dart:ui' as ui;
 
 class MediumImage extends ImageProvider<MediumImage> {
   final Medium medium;
@@ -51,8 +53,21 @@ class MediumImage extends ImageProvider<MediumImage> {
     assert(key == this);
 
     try {
-      var byte = await medium.getThumbnail(width: width, height: height, highQuality: true);
-      final Uint8List bytes = await Uint8List.fromList(byte);
+      Uint8List bytes;
+      if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
+        var file = await medium.getFile();
+        var uint8list = await FlutterImageCompress.compressWithFile(
+          file.path,
+          format: CompressFormat.heic,
+          minWidth: 512,
+          minHeight: 512,
+          quality: 80,
+        );
+        bytes = uint8list!;
+      } else {
+        var byte = await medium.getThumbnail(width: width, height: height, highQuality: true);
+        bytes = await Uint8List.fromList(byte);
+      }
       if (bytes.lengthInBytes == 0) {
         // The file may become available later.
         PaintingBinding.instance.imageCache.evict(key);

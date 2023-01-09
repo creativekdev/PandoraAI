@@ -4,19 +4,14 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:vibration/vibration.dart';
 
 class PickPhotoScreen {

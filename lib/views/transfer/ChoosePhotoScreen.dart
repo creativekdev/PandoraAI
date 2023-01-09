@@ -1074,7 +1074,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               Positioned(
                 bottom: $(1),
                 left: $(3.6),
-                child: controller.image.value != null
+                child: controller.cropImage.value != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular($(36)),
                         child: Image.file(

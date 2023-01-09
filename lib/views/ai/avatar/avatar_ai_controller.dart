@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -9,6 +10,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
@@ -71,6 +73,7 @@ class AvatarAiController extends GetxController {
       context,
       count: maxSize,
       selectedList: imageList,
+      badList: badList,
     );
     if (photos == null) {
       isLoading = false;
@@ -79,7 +82,7 @@ class AvatarAiController extends GetxController {
     }
     List<Medium> goodList = [];
     List<Medium> badImages = [];
-    if(style == 'man' || style == 'woman') {
+    if (style == 'man' || style == 'woman') {
       FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
       for (var medium in photos) {
         var file = await medium.getFile();
@@ -88,7 +91,13 @@ class AvatarAiController extends GetxController {
         if (list.isEmpty || list.length > 1) {
           badImages.add(medium);
         } else {
-          goodList.add(medium);
+          var face = list.first;
+          var imageInfo = await SyncFileImage(file: file).getImage();
+          if (face.boundingBox.width * 6 > imageInfo.image.width) {
+            goodList.add(medium);
+          } else {
+            badImages.add(medium);
+          }
         }
       }
       detector.close();
@@ -96,7 +105,11 @@ class AvatarAiController extends GetxController {
       goodList = photos;
     }
     imageList = goodList;
-    badList = badImages;
+    badImages.forEach((element) {
+      if (!badList.exist((t) => t.id == element.id)) {
+        badList.add(element);
+      }
+    });
     if (imageList.length > maxSize) {
       imageList = imageList.sublist(0, maxSize);
     }
@@ -114,8 +127,17 @@ class AvatarAiController extends GetxController {
       var media = imageList[i];
       File file;
       if (Platform.isIOS) {
-        var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
-        file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
+        if ((media.filename ?? '').toUpperCase().contains('.HEIC')) {
+          var sourceFile = await media.getFile();
+          file = await imageCompress(
+            sourceFile,
+            cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".png",
+            format: CompressFormat.heic,
+          );
+        } else {
+          var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
+          file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
+        }
       } else {
         var sourceFile = await media.getFile();
         file = await imageCompress(sourceFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".png");

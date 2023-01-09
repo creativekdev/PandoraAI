@@ -39,6 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "already_account":
             MessageLookupByLibrary.simpleMessage("Already have an account? "),
         "and": MessageLookupByLibrary.simpleMessage("and"),
+        "another_me_tips":
+            MessageLookupByLibrary.simpleMessage("Look at you in the AI world"),
         "app_name": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "apple": MessageLookupByLibrary.simpleMessage("Continue with Apple"),
         "april": MessageLookupByLibrary.simpleMessage("April"),
@@ -169,6 +171,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Forgot Your Password?"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
+        "generate_again":
+            MessageLookupByLibrary.simpleMessage("Generate again"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("Give Feedback"),
         "go_premium": MessageLookupByLibrary.simpleMessage("Go Premium"),
@@ -361,6 +365,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
+        "tabAI": MessageLookupByLibrary.simpleMessage("AI"),
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("Discovery"),
         "tabHome": MessageLookupByLibrary.simpleMessage("Home"),
         "tabMine": MessageLookupByLibrary.simpleMessage("My"),

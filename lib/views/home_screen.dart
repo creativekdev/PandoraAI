@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/activity/activity_fragment.dart';
+import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'home_tab.dart';
@@ -177,7 +178,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           backgroundColor: Color.fromARGB(180, 14, 16, 17),
                           iconSize: $(24),
                           onTap: (pos) {
-                            _setIndex(pos);
+                            if (tabItems[pos].id == AppTabId.AI.id()) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  settings: RouteSettings(name: "/AnotherMeScreen"),
+                                  builder: (context) => AnotherMeScreen(),
+                                ),
+                              );
+                            } else {
+                              _setIndex(pos);
+                            }
                           },
                           onDoubleTap: (index) {
                             EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));

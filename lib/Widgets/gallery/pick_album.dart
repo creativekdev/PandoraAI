@@ -9,6 +9,7 @@ class PickAlbumScreen {
   static Future<List<Medium>?> pickImage(
     BuildContext context, {
     List<Medium>? selectedList,
+    List<Medium>? badList,
     int count = 20,
     bool switchAlbum = false,
   }) async {
@@ -21,6 +22,7 @@ class PickAlbumScreen {
         builder: (context) => _PickAlbumScreen(
           switchAlbum: switchAlbum,
           selectedList: selectedList ?? [],
+          badList: badList ?? [],
           maxCount: count,
         ),
       ));
@@ -32,12 +34,14 @@ class _PickAlbumScreen extends StatefulWidget {
   bool switchAlbum;
   List<Medium> selectedList;
   int maxCount;
+  List<Medium> badList;
 
   _PickAlbumScreen({
     Key? key,
     required this.switchAlbum,
     required this.selectedList,
     required this.maxCount,
+    required this.badList,
   }) : super(key: key);
 
   @override
@@ -55,6 +59,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   ScrollController scrollController = ScrollController();
   late bool switchAlbum;
   late List<Medium> selectedList;
+  late List<Medium> badList;
   late int maxCount;
 
   late double imageSize;
@@ -67,6 +72,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     imageSize = (ScreenUtil.screenSize.width - $(48)) / 3;
     maxCount = widget.maxCount;
     selectedList = [...widget.selectedList];
+    badList = [...widget.badList];
     switchAlbum = widget.switchAlbum;
     scrollController.addListener(() {
       if (_isRequesting) {
@@ -218,6 +224,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
 
   Widget buildItem(BuildContext context, int index) {
     var data = dataList[index];
+    bool isBad = badList.exist((t) => t.id == data.id);
     bool selected = selectedList.exist((t) => t.id == data.id);
     return Container(
       child: Stack(
@@ -235,28 +242,39 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             height: imageSize,
           ),
           Positioned(
-            child: selected
-                ? Text(
-                    '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
-                    style: TextStyle(color: Colors.white),
-                  ).intoContainer(
-                    width: $(19),
-                    height: $(19),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: ColorConstant.BlueColor,
-                      borderRadius: BorderRadius.circular(32),
-                    ))
-                : Icon(
-                    Icons.check,
-                    color: ColorConstant.White,
+            child: isBad
+                ? Icon(
+                    Icons.close,
+                    color: ColorConstant.Red,
                     size: $(16),
                   ).intoContainer(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: ColorConstant.White),
+                      border: Border.all(color: ColorConstant.Red),
                     ),
-                  ),
+                  )
+                : selected
+                    ? Text(
+                        '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
+                        style: TextStyle(color: Colors.white),
+                      ).intoContainer(
+                        width: $(19),
+                        height: $(19),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: ColorConstant.BlueColor,
+                          borderRadius: BorderRadius.circular(32),
+                        ))
+                    : Icon(
+                        Icons.check,
+                        color: ColorConstant.White,
+                        size: $(16),
+                      ).intoContainer(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(color: ColorConstant.White),
+                        ),
+                      ),
             top: 6,
             right: 6,
           ),
@@ -265,6 +283,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       width: imageSize,
       height: imageSize,
     ).intoGestureDetector(onTap: () {
+      if (isBad) {
+        return;
+      }
       if (selectedList.exist((t) => t.id == data.id)) {
         selectedList.removeWhere((element) => element.id == data.id);
         setState(() {});

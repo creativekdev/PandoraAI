@@ -160,6 +160,7 @@
   "successful": "Successful",
   "tabDiscovery": "Discovery",
   "tabHome": "Home",
+  "tabAI": "AI",
   "tabMine": "My",
   "take_selfie": "Or take a selfie",
   "term_condition": "Terms and conditions",
@@ -270,5 +271,7 @@
   "rate_pandora_avatar": "Rate Pandora Avatar",
   "rate_description": "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?",
   "looveit": "Looove it! rate now",
-  "more": "More"
+  "more": "More",
+  "another_me_tips": "Look at you in the AI world",
+  "generate_again": "Generate again"
 }

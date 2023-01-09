@@ -96,7 +96,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                   children: [
                     SizedBox(height: $(10)),
                     TitleTextWidget(
-                      aiManager.config!.styleTitle('', list.first.style),
+                      aiManager.config?.styleTitle('', list.first.style) ?? list.first.style,
                       ColorConstant.White,
                       FontWeight.w500,
                       $(16),

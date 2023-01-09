@@ -1660,6 +1660,16 @@ class S {
     );
   }
 
+  /// `AI`
+  String get tabAI {
+    return Intl.message(
+      'AI',
+      name: 'tabAI',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `My`
   String get tabMine {
     return Intl.message(
@@ -2765,6 +2775,26 @@ class S {
     return Intl.message(
       'More',
       name: 'more',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Look at you in the AI world`
+  String get another_me_tips {
+    return Intl.message(
+      'Look at you in the AI world',
+      name: 'another_me_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate again`
+  String get generate_again {
+    return Intl.message(
+      'Generate again',
+      name: 'generate_again',
       desc: '',
       args: [],
     );

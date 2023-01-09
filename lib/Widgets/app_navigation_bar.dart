@@ -4,7 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:flutter/cupertino.dart';
 
-const double _kNavBarPersistentHeight = 44.0;
+const double kNavBarPersistentHeight = 44.0;
 
 const _HeroTag _defaultHeroTag = _HeroTag(null);
 
@@ -163,7 +163,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
 
   @override
   Size get preferredSize {
-    return Size.fromHeight((visible ? _kNavBarPersistentHeight : 0) + childHeight);
+    return Size.fromHeight((visible ? kNavBarPersistentHeight : 0) + childHeight);
   }
 
   @override

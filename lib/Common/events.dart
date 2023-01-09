@@ -46,6 +46,7 @@ class Events {
   static String tab_effect_loading = "tab_effect_loading";
   static String tab_discovery_loading = "tab_discovery_loading";
   static String tab_me_loading = "tab_me_loading";
+  static String tab_ai_loading = "tab_ai_loading";
   static String user_discovery_loading = "user_discovery_loading";
   static String discovery_detail_loading = "discovery_detail_loading";
   // static String discovery_comment_loading = "discovery_comment_loading";

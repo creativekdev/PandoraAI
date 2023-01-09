@@ -26,7 +26,7 @@ import 'package:share_plus/share_plus.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
-  AppTabId tabId;
+    AppTabId tabId;
 
   MineFragment({Key? key, required this.tabId}) : super(key: key);
 

@@ -19,17 +19,5 @@ class Images {
    static const String Supergirl = 'lib/Common/images/Supergirl.png';
    static const String Valorant = 'lib/Common/images/Valorant.png';
    static const String Wonder_Woman = 'lib/Common/images/Wonder_Woman.png';
-   static const String bad_1 = 'lib/Common/images/bad_1.png';
-   static const String bad_2 = 'lib/Common/images/bad_2.png';
-   static const String bad_3 = 'lib/Common/images/bad_3.png';
-   static const String bad_4 = 'lib/Common/images/bad_4.png';
-   static const String bad_5 = 'lib/Common/images/bad_5.png';
-   static const String bad_6 = 'lib/Common/images/bad_6.png';
-   static const String good_1 = 'lib/Common/images/good_1.png';
-   static const String good_2 = 'lib/Common/images/good_2.png';
-   static const String good_3 = 'lib/Common/images/good_3.png';
-   static const String good_4 = 'lib/Common/images/good_4.png';
-   static const String good_5 = 'lib/Common/images/good_5.png';
-   static const String good_6 = 'lib/Common/images/good_6.png';
 }
 
