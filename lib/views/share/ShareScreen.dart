@@ -48,7 +48,7 @@ extension ShareTypeEx on ShareType {
   String title(BuildContext context) {
     switch (this) {
       case ShareType.discovery:
-        return 'Discovery';
+        return S.of(context).tabDiscovery;
       case ShareType.facebook:
         return 'Facebook';
       case ShareType.instagram:

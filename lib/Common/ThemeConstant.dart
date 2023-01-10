@@ -49,4 +49,8 @@ class ColorConstant {
   static const SysMsgIconColor = Color(0xff5856D6);
   static const loginTitleColor = Color(0xff909090);
   static const hashTagNormalColor = Color(0xff0e0e10);
+
+  static const colorBlue = Color(0xff1f51e9);
+  static const colorBlue2 = Color(0xff243cff);
+  static const colorBlue3 = Color(0xff0114b1);
 }

@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 class PickAlbumScreen {
@@ -241,43 +242,44 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             width: imageSize,
             height: imageSize,
           ),
-          Positioned(
-            child: isBad
-                ? Icon(
-                    Icons.close,
+          isBad
+              ? Container(
+                  width: imageSize,
+                  height: imageSize,
+                  color: Color(0x66000000),
+                  child: Image.asset(
+                    Images.ic_image_failed,
+                    width: $(32),
+                    height: $(32),
                     color: ColorConstant.Red,
-                    size: $(16),
-                  ).intoContainer(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: ColorConstant.Red),
-                    ),
-                  )
-                : selected
-                    ? Text(
-                        '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
-                        style: TextStyle(color: Colors.white),
-                      ).intoContainer(
-                        width: $(19),
-                        height: $(19),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: ColorConstant.BlueColor,
-                          borderRadius: BorderRadius.circular(32),
-                        ))
-                    : Icon(
-                        Icons.check,
-                        color: ColorConstant.White,
-                        size: $(16),
-                      ).intoContainer(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                          border: Border.all(color: ColorConstant.White),
+                  ).intoCenter(),
+                )
+              : Positioned(
+                  child: selected
+                      ? Text(
+                          '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
+                          style: TextStyle(color: Colors.white),
+                        ).intoContainer(
+                          width: $(19),
+                          height: $(19),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: ColorConstant.BlueColor,
+                            borderRadius: BorderRadius.circular(32),
+                          ))
+                      : Icon(
+                          Icons.check,
+                          color: ColorConstant.White,
+                          size: $(16),
+                        ).intoContainer(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(color: ColorConstant.White),
+                          ),
                         ),
-                      ),
-            top: 6,
-            right: 6,
-          ),
+                  top: 6,
+                  right: 6,
+                ),
         ],
       ),
       width: imageSize,

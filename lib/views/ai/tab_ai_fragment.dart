@@ -5,6 +5,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 
+// unused yet
 class TabAIFragment extends StatefulWidget {
   AppTabId tabId;
 

@@ -53,6 +53,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Group shots, only photos looking INTO the camera, covered faces/sunglasses, monotonous pics, nudes, kids(ONLY 12+ ADULTS)"),
         "bad_photo_examples":
             MessageLookupByLibrary.simpleMessage("Bad photo examples"),
+        "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
+            "Please don\'t upload photos of more than one pet; don\'t cover your pet\'s face; don\'t use photos where your pet curls up into a ball."),
         "bought": MessageLookupByLibrary.simpleMessage("Bought"),
         "buyAttrFasterSpeed":
             MessageLookupByLibrary.simpleMessage("Faster speed"),
@@ -125,8 +127,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryDetailsUseSameTemplate":
             MessageLookupByLibrary.simpleMessage("Try this template"),
         "discoveryLike": MessageLookupByLibrary.simpleMessage("Like"),
-        "discoveryShareInputHint": MessageLookupByLibrary.simpleMessage(
-            "I created this using #Pandora Avatar"),
+        "discoveryShareInputHint":
+            MessageLookupByLibrary.simpleMessage("I created this using %s"),
         "discoveryShareInputTitle":
             MessageLookupByLibrary.simpleMessage("Add some text"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Submit"),
@@ -173,6 +175,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
+        "generate_record":
+            MessageLookupByLibrary.simpleMessage("Generate Record"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("Give Feedback"),
         "go_premium": MessageLookupByLibrary.simpleMessage("Go Premium"),
@@ -180,6 +184,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Show your shoulders, close-up selfies, same person in the photos, variety of location/backgrounds/angels, different facial expressions."),
         "good_photo_examples":
             MessageLookupByLibrary.simpleMessage("Good photo examples"),
+        "good_photo_pet_description": MessageLookupByLibrary.simpleMessage(
+            "Closeup portraits or full body shots of your pet; always upload photos of the same one; various angles, lighting and settings are welcomed."),
         "google": MessageLookupByLibrary.simpleMessage("Continue with Google"),
         "guidelines": MessageLookupByLibrary.simpleMessage(
             "The better you follow these guidelines, the better chances for great result!"),
@@ -207,6 +213,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "man": MessageLookupByLibrary.simpleMessage("man"),
         "march": MessageLookupByLibrary.simpleMessage("March"),
         "may": MessageLookupByLibrary.simpleMessage("May"),
+        "meTaverse": MessageLookupByLibrary.simpleMessage("Me-taverse"),
         "month": MessageLookupByLibrary.simpleMessage("Month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
         "more": MessageLookupByLibrary.simpleMessage("More"),
@@ -245,6 +252,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "others": MessageLookupByLibrary.simpleMessage("Others"),
         "packages_purchased":
             MessageLookupByLibrary.simpleMessage("Packages purchased"),
+        "pandora_avatar":
+            MessageLookupByLibrary.simpleMessage("Pandora Avatar"),
         "pandora_create_exit_dips": MessageLookupByLibrary.simpleMessage(
             "You will lose all photos you selected!"),
         "pandora_create_input_name_hint":
@@ -326,6 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scary content alert!"),
         "scary_content_alert_open_it": MessageLookupByLibrary.simpleMessage(
             "Scary content alert! Tap to show it"),
+        "see_it_now": MessageLookupByLibrary.simpleMessage("See it now"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),

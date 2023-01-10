@@ -49,6 +49,8 @@ class AvatarAiController extends GetxController {
     super.dispose();
   }
 
+  bool isHuman() => style == 'man' || style == 'woman';
+
   String pickPhotosText(BuildContext context) {
     return '${S.of(context).select} $minSize-$maxSize ${S.of(context).selfies}';
   }
@@ -82,7 +84,7 @@ class AvatarAiController extends GetxController {
     }
     List<Medium> goodList = [];
     List<Medium> badImages = [];
-    if (style == 'man' || style == 'woman') {
+    if (isHuman()) {
       FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
       for (var medium in photos) {
         var file = await medium.getFile();

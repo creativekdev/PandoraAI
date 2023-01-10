@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
@@ -18,15 +19,17 @@ class PickPhotoScreen {
   static Future<bool?> push(
     BuildContext context, {
     Key? key,
-    required ChoosePhotoScreenController controller,
+    required UploadImageController controller,
     required OnPickFromSystem onPickFromSystem,
     required OnPickFromRecent onPickFromRecent,
     required OnPickFromAiSource onPickFromAiSource,
-    required Widget floatWidget,
+    required Widget? floatWidget,
+    required File? selectedFile,
   }) {
     return Navigator.of(context).push<bool>(NoAnimRouter(
       _PickPhotoScreen(
         key: key,
+        selectedFile: selectedFile,
         controller: controller,
         onPickFromSystem: onPickFromSystem,
         onPickFromRecent: onPickFromRecent,
@@ -42,11 +45,12 @@ typedef OnPickFromRecent = Future<bool> Function(UploadRecordEntity entity);
 typedef OnPickFromAiSource = Future<bool> Function(File entity);
 
 class _PickPhotoScreen extends StatefulWidget {
-  ChoosePhotoScreenController controller;
+  UploadImageController controller;
   OnPickFromSystem onPickFromSystem;
   OnPickFromRecent onPickFromRecent;
   OnPickFromAiSource onPickFromAiSource;
-  Widget floatWidget;
+  Widget? floatWidget;
+  File? selectedFile;
 
   _PickPhotoScreen({
     Key? key,
@@ -55,6 +59,7 @@ class _PickPhotoScreen extends StatefulWidget {
     required this.onPickFromRecent,
     required this.onPickFromAiSource,
     required this.floatWidget,
+    required this.selectedFile,
   }) : super(key: key);
 
   @override
@@ -63,8 +68,8 @@ class _PickPhotoScreen extends StatefulWidget {
   }
 }
 
-class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderStateMixin {
-  late ChoosePhotoScreenController controller;
+class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProviderStateMixin {
+  late UploadImageController controller;
   late AnimationController entryAnimController;
   late AnimationController dragAnimController;
   late AnimationController titleAlphaController;
@@ -77,7 +82,8 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   final double deleteContainerHeight = 40;
   late bool lastDragDirection = true;
   late double lineHeight;
-  late Widget floatWidget;
+  late Widget? floatWidget;
+  File? selectedFile;
 
   bool selectedMode = false;
 
@@ -100,6 +106,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   @override
   initState() {
     super.initState();
+    selectedFile = widget.selectedFile;
     floatWidget = widget.floatWidget;
     controller = widget.controller;
     dragGestureRecognizer.onDragStart = onDragStart;
@@ -110,7 +117,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     entryAnimController = AnimationController(
         vsync: this,
         duration: Duration(
-          milliseconds: controller.isPhotoSelect.value ? 300 : 300,
+          milliseconds: 300,
         ));
     entryAnimController.forward();
     entryAnimController.addStatusListener((status) {
@@ -173,7 +180,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
   toggle() => dragAnimController.isDismissed ? dragAnimController.forward() : dragAnimController.reverse();
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return MediaQuery.removePadding(
       context: context,
       child: WillPopScope(
@@ -384,7 +391,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
                       );
                     },
                   ),
-                  floatCurrentItem(),
+                  floatCurrentItem() ?? SizedBox.shrink(),
                 ],
               ),
             ),
@@ -407,41 +414,43 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     );
   }
 
-  Positioned floatCurrentItem() => Positioned(
-        child: AnimatedBuilder(
-          animation: dragAnimController,
-          builder: (context, child) {
-            double alpha = 0;
-            if (dragAnimController.value > 0.5) {
-              alpha = (dragAnimController.value - 0.5) * 2;
-            }
-            return Opacity(
-              opacity: alpha,
-              child: Container(
-                width: lineHeight,
-                height: lineHeight,
-                child: OutlineWidget(
-                    radius: $(6),
-                    strokeWidth: 3,
-                    gradient: LinearGradient(
-                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.all($(3)),
-                      child: ClipRRect(
-                        child: floatWidget,
-                        borderRadius: BorderRadius.circular(3),
+  Positioned? floatCurrentItem() => floatWidget != null
+      ? Positioned(
+          child: AnimatedBuilder(
+            animation: dragAnimController,
+            builder: (context, child) {
+              double alpha = 0;
+              if (dragAnimController.value > 0.5) {
+                alpha = (dragAnimController.value - 0.5) * 2;
+              }
+              return Opacity(
+                opacity: alpha,
+                child: Container(
+                  width: lineHeight,
+                  height: lineHeight,
+                  child: OutlineWidget(
+                      radius: $(6),
+                      strokeWidth: 3,
+                      gradient: LinearGradient(
+                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    )),
-              ),
-            );
-          },
-        ),
-        top: appBarHeight + 34,
-        right: 12,
-      );
+                      child: Container(
+                        padding: EdgeInsets.all($(3)),
+                        child: ClipRRect(
+                          child: floatWidget!,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      )),
+                ),
+              );
+            },
+          ),
+          top: appBarHeight + 34,
+          right: 12,
+        )
+      : null;
 
   Widget buildFromAiSource() => GetBuilder<AlbumController>(
         builder: (albumController) {
@@ -473,7 +482,7 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
     ).intoGestureDetector(onTap: () async {
       try {
         var file = await data.getFile();
-        if (controller.image.value != null && (controller.image.value as File) == file) {
+        if (selectedFile == file) {
           CommonExtension().showToast(S.of(context).photo_select_already);
           return;
         }
@@ -481,10 +490,14 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           CommonExtension().showToast(S.of(context).photo_delete_already);
           return;
         }
-        widget.onPickFromAiSource(file).then((value) {
-          if (value) {
-            onBackClick(true);
-          }
+        showLoading().whenComplete(() {
+          widget.onPickFromAiSource(file).then((value) {
+            hideLoading().whenComplete(() {
+              if (value) {
+                onBackClick(true);
+              }
+            });
+          });
         });
       } catch (e) {
         CommonExtension().showToast(S.of(context).photo_delete_already);
@@ -550,14 +563,18 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
           });
         } else {
           var entity = data;
-          if (controller.image.value != null && (controller.image.value as File).path == entity.fileName) {
+          if (selectedFile != null && selectedFile!.path == entity.fileName) {
             CommonExtension().showToast(S.of(context).photo_select_already);
             return;
           }
-          widget.onPickFromRecent(entity).then((value) {
-            if (value) {
-              onBackClick(true);
-            }
+          showLoading().whenComplete(() {
+            widget.onPickFromRecent(entity).then((value) {
+              hideLoading().whenComplete(() {
+                if (value) {
+                  onBackClick(true);
+                }
+              });
+            });
           });
         }
       },
@@ -575,10 +592,14 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         padding: EdgeInsets.symmetric(vertical: $(24)),
       )
           .intoGestureDetector(onTap: () {
-        widget.onPickFromSystem.call(true).then((value) {
-          if (value) {
-            onBackClick(true);
-          }
+        showLoading().then((value) {
+          widget.onPickFromSystem.call(true).then((value) {
+            hideLoading().whenComplete(() {
+              if (value) {
+                onBackClick(true);
+              }
+            });
+          });
         });
       });
     } else if (pos == 1) {
@@ -591,10 +612,14 @@ class PickPhotoScreenState extends State<_PickPhotoScreen> with TickerProviderSt
         padding: EdgeInsets.symmetric(vertical: $(24)),
       )
           .intoGestureDetector(onTap: () {
-        widget.onPickFromSystem.call(false).then((value) {
-          if (value) {
-            onBackClick(true);
-          }
+        showLoading().then((value) {
+          widget.onPickFromSystem.call(false).then((value) {
+            hideLoading().whenComplete(() {
+              if (value) {
+                onBackClick(true);
+              }
+            });
+          });
         });
       });
     }

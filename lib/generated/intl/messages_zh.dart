@@ -45,6 +45,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
             "集体照，只有照片看着相机，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）"),
         "bad_photo_examples": MessageLookupByLibrary.simpleMessage("不合适的照片案例"),
+        "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
+            "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……"),
         "bought": MessageLookupByLibrary.simpleMessage("已购买"),
         "buyAttrFasterSpeed": MessageLookupByLibrary.simpleMessage("更快速转化"),
         "buyAttrHDImages": MessageLookupByLibrary.simpleMessage("高质量图片"),
@@ -103,7 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("使用此模板"),
         "discoveryLike": MessageLookupByLibrary.simpleMessage("点赞"),
         "discoveryShareInputHint":
-            MessageLookupByLibrary.simpleMessage("我正在使用#Pandora Avatar创建"),
+            MessageLookupByLibrary.simpleMessage("我正在使用 %s 创建"),
         "discoveryShareInputTitle":
             MessageLookupByLibrary.simpleMessage("分享些东西吧"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提交"),
@@ -143,12 +145,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_your_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
+        "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
         "go_premium": MessageLookupByLibrary.simpleMessage("获取专业版"),
         "good_photo_description": MessageLookupByLibrary.simpleMessage(
             "露出你的肩膀，近距离自拍，所有照片需要是同一个人，可以是不同的地点/背景/角度，不同的面部表情"),
         "good_photo_examples": MessageLookupByLibrary.simpleMessage("合适的照片案例"),
+        "good_photo_pet_description": MessageLookupByLibrary.simpleMessage(
+            "上传宠物的特写或者全身照，所有照片都需要是同一只宠物，尽可能少包含不同的角度、光线、环境……\n"),
         "google": MessageLookupByLibrary.simpleMessage("使用Google账号"),
         "guidelines":
             MessageLookupByLibrary.simpleMessage("按照我们的建议，能获得\n更好的头像效果。"),
@@ -171,6 +176,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "man": MessageLookupByLibrary.simpleMessage("男性"),
         "march": MessageLookupByLibrary.simpleMessage("三月"),
         "may": MessageLookupByLibrary.simpleMessage("五月"),
+        "meTaverse": MessageLookupByLibrary.simpleMessage("Me-taverse"),
         "month": MessageLookupByLibrary.simpleMessage("月"),
         "monthly": MessageLookupByLibrary.simpleMessage("月付"),
         "more": MessageLookupByLibrary.simpleMessage("更多"),
@@ -201,6 +207,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("其他"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("已购买"),
+        "pandora_avatar":
+            MessageLookupByLibrary.simpleMessage("Pandora Avatar"),
         "pandora_create_exit_dips":
             MessageLookupByLibrary.simpleMessage("现在退出将会丢失已选择的照片！"),
         "pandora_create_input_name_hint":
@@ -265,6 +273,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scary_content_alert": MessageLookupByLibrary.simpleMessage("含恐怖元素！"),
         "scary_content_alert_open_it":
             MessageLookupByLibrary.simpleMessage("恐怖内容已被隐藏，点击显示它"),
+        "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),

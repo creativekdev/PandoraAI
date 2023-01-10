@@ -160,6 +160,16 @@ class S {
     );
   }
 
+  /// `Please don't upload photos of more than one pet; don't cover your pet's face; don't use photos where your pet curls up into a ball.`
+  String get bad_photo_pet_description {
+    return Intl.message(
+      'Please don\'t upload photos of more than one pet; don\'t cover your pet\'s face; don\'t use photos where your pet curls up into a ball.',
+      name: 'bad_photo_pet_description',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Bad photo examples`
   String get bad_photo_examples {
     return Intl.message(
@@ -500,10 +510,10 @@ class S {
     );
   }
 
-  /// `I created this using #Pandora Avatar`
+  /// `I created this using %s`
   String get discoveryShareInputHint {
     return Intl.message(
-      'I created this using #Pandora Avatar',
+      'I created this using %s',
       name: 'discoveryShareInputHint',
       desc: '',
       args: [],
@@ -775,6 +785,16 @@ class S {
     return Intl.message(
       'Show your shoulders, close-up selfies, same person in the photos, variety of location/backgrounds/angels, different facial expressions.',
       name: 'good_photo_description',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Closeup portraits or full body shots of your pet; always upload photos of the same one; various angles, lighting and settings are welcomed.`
+  String get good_photo_pet_description {
+    return Intl.message(
+      'Closeup portraits or full body shots of your pet; always upload photos of the same one; various angles, lighting and settings are welcomed.',
+      name: 'good_photo_pet_description',
       desc: '',
       args: [],
     );
@@ -2240,6 +2260,16 @@ class S {
     );
   }
 
+  /// `See it now`
+  String get see_it_now {
+    return Intl.message(
+      'See it now',
+      name: 'see_it_now',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `This template is not available now`
   String get template_not_available {
     return Intl.message(
@@ -2795,6 +2825,36 @@ class S {
     return Intl.message(
       'Generate again',
       name: 'generate_again',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Me-taverse`
+  String get meTaverse {
+    return Intl.message(
+      'Me-taverse',
+      name: 'meTaverse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate Record`
+  String get generate_record {
+    return Intl.message(
+      'Generate Record',
+      name: 'generate_record',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pandora Avatar`
+  String get pandora_avatar {
+    return Intl.message(
+      'Pandora Avatar',
+      name: 'pandora_avatar',
       desc: '',
       args: [],
     );

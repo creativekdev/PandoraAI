@@ -10,6 +10,7 @@
   "apple": "Continue with Apple",
   "are_you_sure_to_delete_this_post": "Are you sure to delete this post?",
   "bad_photo_description": "Group shots, only photos looking INTO the camera, covered faces/sunglasses, monotonous pics, nudes, kids(ONLY 12+ ADULTS)",
+  "bad_photo_pet_description": "Please don't upload photos of more than one pet; don't cover your pet's face; don't use photos where your pet curls up into a ball.",
   "bad_photo_examples": "Bad photo examples",
   "buyAttrFasterSpeed": "Faster speed",
   "buyAttrHDImages": "High resolution images",
@@ -44,7 +45,7 @@
   "discoveryDetails": "Details",
   "discoveryDetailsUseSameTemplate": "Try this template",
   "discoveryLike": "Like",
-  "discoveryShareInputHint": "I created this using #Pandora Avatar",
+  "discoveryShareInputHint": "I created this using %s",
   "discoveryShareInputTitle": "Add some text",
   "discoveryShareSubmit": "Submit",
   "discoveryUnlike": "Unlike",
@@ -72,6 +73,7 @@
   "full_name": "Full Name",
   "go_premium": "Go Premium",
   "good_photo_description": "Show your shoulders, close-up selfies, same person in the photos, variety of location/backgrounds/angels, different facial expressions.",
+  "good_photo_pet_description": "Closeup portraits or full body shots of your pet; always upload photos of the same one; various angles, lighting and settings are welcomed.",
   "good_photo_examples": "Good photo examples",
   "google": "Continue with Google",
   "guidelines": "The better you follow these guidelines, the better chances for great result!",
@@ -218,6 +220,7 @@
   "sent_email_already": "We sent reset password link to registered email",
   "okay": "Okay",
   "your_post_has_been_submitted_successfully": "Your post has been submitted successfully",
+  "see_it_now": "See it now",
   "template_not_available": "This template is not available now",
   "comment_posted": "Comment posted",
   "newest": "Newest",
@@ -273,5 +276,8 @@
   "looveit": "Looove it! rate now",
   "more": "More",
   "another_me_tips": "Look at you in the AI world",
-  "generate_again": "Generate again"
+  "generate_again": "Generate again",
+  "meTaverse": "Me-taverse",
+  "generate_record": "Generate Record",
+  "pandora_avatar": "Pandora Avatar"
 }

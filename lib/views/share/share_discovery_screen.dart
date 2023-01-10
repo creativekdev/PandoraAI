@@ -88,6 +88,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   Size? imageSize;
   FocusNode focusNode = new FocusNode();
   CacheManager cacheManager = AppDelegate.instance.getManager();
+  String textHint = '';
 
   @override
   void initState() {
@@ -103,6 +104,14 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
       imageData = base64Decode(image);
     }
     delay(() {
+      switch (widget.category) {
+        case DiscoveryCategory.ai_avatar:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#Pandora Avatar');
+          break;
+        case DiscoveryCategory.cartoonize:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Pandora Cartoonizer");
+          break;
+      }
       FocusScope.of(context).requestFocus(focusNode);
     }, milliseconds: 500);
   }
@@ -117,9 +126,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   submit() {
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
-      text = S.of(context).discoveryShareInputHint;
-      // CommonExtension().showToast('Please input description');
-      // return;
+      text = textHint;
     }
     FocusScope.of(context).requestFocus(FocusNode());
     showLoading().whenComplete(() {
@@ -363,7 +370,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   // },
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: S.of(context).discoveryShareInputHint,
+                    hintText: textHint,
                     hintStyle: TextStyle(
                       color: ColorConstant.DiscoveryCommentGrey,
                       fontFamily: 'Poppins',

@@ -20,3 +20,20 @@ class CachedImageCacheManager extends CacheManager with ImageCacheManager {
           maxNrOfCacheObjects: 100,
         ));
 }
+
+class TransAICachedManager extends CacheManager with ImageCacheManager {
+  static const key = 'TransAICachedManager';
+
+  static final TransAICachedManager _instance = TransAICachedManager._();
+
+  factory TransAICachedManager() {
+    return _instance;
+  }
+
+  TransAICachedManager._()
+      : super(Config(
+    key,
+    stalePeriod: const Duration(days: 90),
+    maxNrOfCacheObjects: 100,
+  ));
+}

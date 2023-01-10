@@ -22,19 +22,18 @@ List<AppRoleTabItem> buildTabItem() => [
           tabId: AppTabId.HOME,
         ),
       ),
-
       //Ai
-      AppRoleTabItem(
-        id: AppTabId.AI.id(),
-        normalIcon: Images.ic_avatar_ai,
-        selectedIcon: Images.ic_tab_effect_normal,
-        titleBuilder: (context) => S.of(context).tabAI,
-        keyBuilder: () => GlobalKey<TabAIFragmentState>(),
-        fragmentBuilder: (key) => TabAIFragment(
-          key: key,
-          tabId: AppTabId.AI,
-        ),
-      ),
+      // AppRoleTabItem(
+      //   id: AppTabId.AI.id(),
+      //   normalIcon: Images.ic_avatar_ai,
+      //   selectedIcon: Images.ic_tab_effect_normal,
+      //   titleBuilder: (context) => S.of(context).tabAI,
+      //   keyBuilder: () => GlobalKey<TabAIFragmentState>(),
+      //   fragmentBuilder: (key) => TabAIFragment(
+      //     key: key,
+      //     tabId: AppTabId.AI,
+      //   ),
+      // ),
       //Discovery
       AppRoleTabItem(
         id: AppTabId.DISCOVERY.id(),

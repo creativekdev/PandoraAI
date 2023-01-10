@@ -15,7 +15,7 @@ showShareSuccessDialog(BuildContext context) {
           textAlign: TextAlign.center,
         ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
         Text(
-          S.of(context).ok,
+          S.of(context).see_it_now,
           style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
         )
             .intoContainer(
@@ -28,6 +28,20 @@ showShareSuccessDialog(BuildContext context) {
             .intoGestureDetector(onTap: () {
           EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id()]));
           Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+        }),
+        Text(
+          S.of(context).ok,
+          style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+        )
+            .intoContainer(
+                padding: EdgeInsets.all(10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    border: Border(
+                  top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                )))
+            .intoGestureDetector(onTap: () {
+          Navigator.of(context).pop();
         }),
       ],
     )

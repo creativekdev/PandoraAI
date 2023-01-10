@@ -10,6 +10,7 @@
   "apple": "使用Apple账号",
   "are_you_sure_to_delete_this_post": "您确定要删除这条分享么",
   "bad_photo_description": "集体照，只有照片看着相机，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）",
+  "bad_photo_pet_description": "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……",
   "bad_photo_examples": "不合适的照片案例",
   "buyAttrFasterSpeed": "更快速转化",
   "buyAttrHDImages": "高质量图片",
@@ -44,7 +45,7 @@
   "discoveryDetails": "详情",
   "discoveryDetailsUseSameTemplate": "使用此模板",
   "discoveryLike": "点赞",
-  "discoveryShareInputHint": "我正在使用#Pandora Avatar创建",
+  "discoveryShareInputHint": "我正在使用 %s 创建",
   "discoveryShareInputTitle": "分享些东西吧",
   "discoveryShareSubmit": "提交",
   "discoveryUnlike": "取消",
@@ -72,6 +73,7 @@
   "full_name": "全名",
   "go_premium": "获取专业版",
   "good_photo_description": "露出你的肩膀，近距离自拍，所有照片需要是同一个人，可以是不同的地点/背景/角度，不同的面部表情",
+  "good_photo_pet_description": "上传宠物的特写或者全身照，所有照片都需要是同一只宠物，尽可能少包含不同的角度、光线、环境……\n",
   "good_photo_examples": "合适的照片案例",
   "google": "使用Google账号",
   "guidelines": "按照我们的建议，能获得\n更好的头像效果。",
@@ -217,6 +219,7 @@
   "click_logout": "单击退出登录",
   "sent_email_already": "已发送验证码到注册邮箱",
   "okay": "好的",
+  "see_it_now": "去看看",
   "your_post_has_been_submitted_successfully": "您已分享成功",
   "template_not_available": "此模板已经不再可用",
   "comment_posted": "评论已提交",
@@ -273,5 +276,8 @@
   "looveit": "很喜欢，现在去评分",
   "more": "更多",
   "another_me_tips": "快来生成您的独特肖像吧",
-  "generate_again": "重新生成"
+  "generate_again": "重新生成",
+  "meTaverse": "Me-taverse",
+  "generate_record": "生成记录",
+  "pandora_avatar": "Pandora Avatar"
 }

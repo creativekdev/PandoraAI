@@ -8,7 +8,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_create.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_ai_list_screen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar_introduce_screen.dart';
-import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_screen.dart';
 
 class Avatar {
   static String logoTag = 'avatar_logo';
@@ -79,19 +78,6 @@ class Avatar {
         });
       };
       forward.call();
-      return;
-      if (userManager.user!.aiAvatarCredit > 0) {
-        forward.call();
-      } else {
-        // user not pay yet. to introduce page. and get pay status to edit page.
-        PayAvatarPage.push(context).then((payStatus) {
-          if (payStatus ?? false) {
-            forward.call();
-          } else {
-            onCancel.call();
-          }
-        });
-      }
     }, autoExec: true);
   }
 }

@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/progress_bar.dart';
+import 'package:cartoonizer/Widgets/progress/progress_bar.dart';
 import 'dart:math' as math;
 
 const int minDuration = 10000; //at least shown time duration.

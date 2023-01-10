@@ -9,11 +9,13 @@ import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
@@ -90,6 +92,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
   final EffectDataController effectDataController = Get.find();
   ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
+  UploadImageController uploadImageController = Get.put(UploadImageController());
   late RecentController recentController;
 
   late ItemScrollController titleScrollController;
@@ -274,6 +277,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void dispose() {
     super.dispose();
     Get.delete<ChoosePhotoScreenController>();
+    Get.delete<UploadImageController>();
     api.unbind();
     thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
@@ -347,7 +351,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   judgeAndOpenPickPhotoDialog() {
     delay(() {
       autoScrollToSelectedIndex();
-      controller.loadImageUploadCache().then((value) {
+      uploadImageController.loadImageUploadCache().then((value) {
         if (!controller.isPhotoSelect.value) {
           pickFromRecent(context);
         }
@@ -708,11 +712,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       });
     } else {
       AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+      controller.changeIsLoading(true);
+      var newImage = await composeImageWithWatermark();
+      controller.changeIsLoading(false);
       ShareScreen.startShare(
         context,
         backgroundColor: Color(0x77000000),
         style: selectedEffect.key,
-        image: (controller.isVideo.value) ? videoPath : image,
+        image: (controller.isVideo.value) ? videoPath : newImage,
         isVideo: controller.isVideo.value,
         originalUrl: urlFinal,
         effectKey: selectedEffect.key,
@@ -754,15 +761,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         });
       } else {
         controller.changeIsLoading(true);
-        var imageData = await decodeImageFromList(base64Decode(image));
-        ui.Image? cropImage;
-        if ((controller.cropImage.value != null && includeOriginalFace())) {
-          if (cropKey.currentContext != null) {
-            cropImage = await getBitmapFromContext(cropKey.currentContext!);
-          }
-        }
-        var uint8list = await addWaterMark(image: imageData, originalImage: cropImage);
-        var newImage = base64Encode(uint8list);
+        var newImage = await composeImageWithWatermark();
         controller.changeIsLoading(false);
         ShareDiscoveryScreen.push(
           context,
@@ -1505,7 +1504,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         var imageUrl = controller.imageUrl.value;
         await controller.buildCropFile();
         if (imageUrl == "") {
-          await controller.uploadCompressedImage();
+          await uploadImageController.uploadCompressedImage(controller.image.value);
+          controller.updateImageUrl(uploadImageController.imageUrl.value);
           imageUrl = controller.imageUrl.value;
         }
 
@@ -1528,7 +1528,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         if (tokenResponse.statusCode == 200) {
           if (tokenParsed['data'] == null) {
             List<String> imageArray = ["$imageUrl"];
-            String? cachedId = await controller.getCachedId();
+            String? cachedId = await uploadImageController.getCachedId(controller.image.value);
             var dataBody = {
               'querypics': imageArray,
               'is_data': 0,
@@ -1550,7 +1550,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               final Map parsed = baseEntity.data;
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
-                controller.updateCachedId(cachedId!);
+                uploadImageController.updateCachedId(controller.image.value, cachedId!);
               }
               var dataString = parsed['data'].toString();
               if (TextUtil.isEmpty(dataString)) {
@@ -1803,18 +1803,47 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<void> pickFromRecent(BuildContext context) async {
-    PickPhotoScreen.push(context, controller: controller, floatWidget: _createEffectModelIcon(context, effectItem: tabItemList[currentItemIndex.value].data, checked: true),
-        onPickFromSystem: (takePhoto) async {
-      if (takePhoto) {
-        return await pickImageFromCamera(context, from: "result");
-      } else {
-        return await pickImageFromGallery(context, from: "result");
+    PickPhotoScreen.push(
+      context,
+      selectedFile: controller.image.value,
+      controller: uploadImageController,
+      floatWidget: _createEffectModelIcon(
+        context,
+        effectItem: tabItemList[currentItemIndex.value].data,
+        checked: true,
+      ),
+      onPickFromSystem: (takePhoto) async {
+        if (takePhoto) {
+          return await pickImageFromCamera(context, from: "result");
+        } else {
+          return await pickImageFromGallery(context, from: "result");
+        }
+      },
+      onPickFromRecent: (entity) async {
+        return await pickImageFromGallery(context, from: "result", entity: entity);
+      },
+      onPickFromAiSource: (file) async {
+        return await pickImageFromGallery(context, from: "result", file: file);
+      },
+    );
+  }
+
+  Future<String> composeImageWithWatermark() async {
+    var imageData = await decodeImageFromList(base64Decode(image));
+    ui.Image? cropImage;
+    if ((controller.cropImage.value != null && includeOriginalFace())) {
+      if (cropKey.currentContext != null) {
+        cropImage = await getBitmapFromContext(cropKey.currentContext!);
       }
-    }, onPickFromRecent: (entity) async {
-      return await pickImageFromGallery(context, from: "result", entity: entity);
-    }, onPickFromAiSource: (file) async {
-      return await pickImageFromGallery(context, from: "result", file: file);
-    });
+    }
+    ui.Image? watermark = null;
+    if (lastBuildType == _BuildType.waterMark) {
+      var imageInfo = await SyncAssetImage(assets: Images.ic_watermark).getImage();
+      watermark = imageInfo.image;
+    }
+    var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: watermark);
+    var newImage = base64Encode(uint8list);
+    return newImage;
   }
 }
 

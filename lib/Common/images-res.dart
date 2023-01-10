@@ -19,5 +19,6 @@ class Images {
    static const String Supergirl = 'lib/Common/images/Supergirl.png';
    static const String Valorant = 'lib/Common/images/Valorant.png';
    static const String Wonder_Woman = 'lib/Common/images/Wonder_Woman.png';
+   static const String ic_am_initial_header = 'lib/Common/images/ic_am_initial_header.png';
 }
 

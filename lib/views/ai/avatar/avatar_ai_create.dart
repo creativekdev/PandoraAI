@@ -103,7 +103,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                           ),
                           SizedBox(height: 12),
                           TitleTextWidget(
-                            S.of(context).good_photo_description,
+                            controller.isHuman() ? S.of(context).good_photo_description : S.of(context).good_photo_pet_description,
                             ColorConstant.White,
                             FontWeight.normal,
                             $(14),
@@ -132,7 +132,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                           ),
                           SizedBox(height: 12),
                           TitleTextWidget(
-                            S.of(context).bad_photo_description,
+                            controller.isHuman() ? S.of(context).bad_photo_description : S.of(context).bad_photo_pet_description,
                             ColorConstant.White,
                             FontWeight.normal,
                             $(14),
@@ -308,7 +308,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   }
 
   startUpload(BuildContext context, AvatarAiController controller) {
-    var forward = (){
+    var forward = () {
       if (controller.uploadedList.length == controller.imageList.length) {
         startSubmit(context, controller);
       } else {

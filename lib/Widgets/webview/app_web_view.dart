@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -9,10 +8,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/webview/js_list.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/upload_record_entity.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum LoadType { URL, HTML_DATA }
@@ -132,23 +127,6 @@ class AppWebViewState extends AppState<AppWebView> {
                 _onEventFinished("showToast", "执行结束");
               }),
           JavascriptChannel(
-              name: 'choosePhoto',
-              onMessageReceived: (JavascriptMessage message) {
-                debugPrint("参数： ${message.message}");
-                PickPhotoScreen.push(context, controller: controller, onPickFromSystem: (takePhoto) async {
-                  if (takePhoto) {
-                    pickImage(context, from: "result", source: ImageSource.camera);
-                  } else {
-                    pickImage(context, from: "result", source: ImageSource.gallery);
-                  }
-                  return true;
-                }, onPickFromRecent: (entity) async {
-                  return await pickImage(context, from: "result", source: ImageSource.gallery, entity: entity);
-                }, onPickFromAiSource: (file) async {
-                  return await pickImage(context, from: "result", source: ImageSource.gallery, file: file);
-                }, floatWidget: Container());
-              }),
-          JavascriptChannel(
               name: 'getPayStatus',
               onMessageReceived: (JavascriptMessage message) {
                 debugPrint("参数： ${message.message}");
@@ -174,43 +152,5 @@ class AppWebViewState extends AppState<AppWebView> {
         ].toSet(),
       ),
     );
-  }
-
-  Future<bool> pickImage(BuildContext context, {String from = "center", required ImageSource source, File? file, UploadRecordEntity? entity}) async {
-    logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": from});
-    await showLoading();
-    File? compressedImage;
-    if (file != null) {
-      compressedImage = await imageCompressAndGetFile(file);
-      if (controller.image.value != null) {
-        File oldFile = controller.image.value as File;
-        if ((await md5File(oldFile)) == (await md5File(compressedImage))) {
-          CommonExtension().showToast(S.of(context).photo_select_already);
-          await hideLoading();
-          return false;
-        }
-      }
-    } else if (entity == null) {
-      XFile? image = await ImagePicker().pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-      if (image == null) {
-        CommonExtension().showToast("cancelled");
-        await hideLoading();
-        return false;
-      }
-      compressedImage = await imageCompressAndGetFile(File(image.path));
-    } else {
-      controller.updateImageFile(File(entity.fileName));
-    }
-    if (compressedImage != null) {
-      controller.updateImageFile(compressedImage);
-    }
-    controller.updateImageUrl("");
-    var bool = await controller.uploadCompressedImage();
-    await hideLoading();
-    if (bool) {
-      _controller.runJavascript(JsList.postToWebView("choosePhoto", {'result': controller.imageUrl.value}));
-      return true;
-    }
-    return false;
   }
 }
