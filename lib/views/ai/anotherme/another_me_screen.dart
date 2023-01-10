@@ -93,7 +93,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
                     alignment: Alignment.center,
                   ),
                 ],
-              ),
+              ).visibility(visible: false),
               Expanded(
                 child: buildImageContainer(context, controller),
               ),

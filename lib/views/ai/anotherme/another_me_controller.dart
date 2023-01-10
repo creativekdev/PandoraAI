@@ -87,7 +87,7 @@ class AnotherMeController extends GetxController {
       return false;
     }
     var file = File(image.path);
-    File compressedImage = await imageCompressAndGetFile(file);
+    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
     return _uploadAndSave(compressedImage, uploadImageController, sourceFile: file);
   }
 
@@ -97,7 +97,7 @@ class AnotherMeController extends GetxController {
   }
 
   Future<bool> pickFromAiSource(File file, UploadImageController uploadImageController) async {
-    File compressedImage = await imageCompressAndGetFile(file);
+    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
     return _uploadAndSave(compressedImage, uploadImageController, sourceFile: file);
   }
 

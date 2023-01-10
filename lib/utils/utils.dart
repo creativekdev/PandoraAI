@@ -78,7 +78,7 @@ Future<bool> mkdir(Directory file) async {
   return true;
 }
 
-Future<File> imageCompressAndGetFile(File file) async {
+Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
   var length = await file.length();
   if (length < 200 * 1024) {
     return file;
@@ -103,8 +103,8 @@ Future<File> imageCompressAndGetFile(File file) async {
   var image = imageInfo.image;
   var shortSide = image.width > image.height ? image.height : image.width;
   File result;
-  if (shortSide > 1024) {
-    var scale = 1024 / shortSide;
+  if (shortSide > imageSize) {
+    var scale = imageSize / shortSide;
     int width = (image.width * scale).toInt();
     int height = (image.height * scale).toInt();
     result = (await FlutterImageCompress.compressAndGetFile(
