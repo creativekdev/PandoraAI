@@ -101,10 +101,10 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
   var imageInfo = await SyncFileImage(file: file).getImage();
   var image = imageInfo.image;
-  var shortSide = image.width > image.height ? image.height : image.width;
+  var wideSide = image.width > image.height ? image.width : image.height;
   File result;
-  if (shortSide > imageSize) {
-    var scale = imageSize / shortSide;
+  if (wideSide > imageSize) {
+    var scale = imageSize / wideSide;
     int width = (image.width * scale).toInt();
     int height = (image.height * scale).toInt();
     result = (await FlutterImageCompress.compressAndGetFile(
@@ -342,4 +342,10 @@ Future<String> md5File(File file) async {
   var uint8list = await file.readAsBytes();
   var digest = md5.convert(uint8list);
   return hex.encode(digest.bytes);
+}
+
+int faceRatio(Size originalSize, Size faceSize) {
+  var oriArea = originalSize.width * originalSize.height;
+  var faceArea = faceSize.width * faceSize.height;
+  return (oriArea / faceArea).round();
 }

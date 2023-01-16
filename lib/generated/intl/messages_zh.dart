@@ -43,7 +43,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "august": MessageLookupByLibrary.simpleMessage("八月"),
         "avatars": MessageLookupByLibrary.simpleMessage("张肖像"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
-            "集体照，只有照片看着相机，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）"),
+            "集体照，只有注视镜头的照片，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）"),
         "bad_photo_examples": MessageLookupByLibrary.simpleMessage("不合适的照片案例"),
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……"),
@@ -153,7 +153,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "露出你的肩膀，近距离自拍，所有照片需要是同一个人，可以是不同的地点/背景/角度，不同的面部表情"),
         "good_photo_examples": MessageLookupByLibrary.simpleMessage("合适的照片案例"),
         "good_photo_pet_description": MessageLookupByLibrary.simpleMessage(
-            "上传宠物的特写或者全身照，所有照片都需要是同一只宠物，尽可能少包含不同的角度、光线、环境……\n"),
+            "上传宠物的特写或者全身照，所有照片都需要是同一只宠物，尽可能少包含不同的角度、光线、环境……"),
         "google": MessageLookupByLibrary.simpleMessage("使用Google账号"),
         "guidelines":
             MessageLookupByLibrary.simpleMessage("按照我们的建议，能获得\n更好的头像效果。"),
@@ -276,6 +276,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
+        "select_completed": MessageLookupByLibrary.simpleMessage("选择完成"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),
         "select_more_photos": MessageLookupByLibrary.simpleMessage("选择更多照片"),
         "select_style": MessageLookupByLibrary.simpleMessage("选择风格"),
@@ -328,6 +329,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile": MessageLookupByLibrary.simpleMessage("更新个人信息"),
         "update_profile_successfully":
             MessageLookupByLibrary.simpleMessage("信息更新成功"),
+        "upload": MessageLookupByLibrary.simpleMessage("上传"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
         "uploading_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
         "variations_of_styles":

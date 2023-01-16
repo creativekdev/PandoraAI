@@ -15,6 +15,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'home_tab.dart';
@@ -179,13 +180,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           iconSize: $(24),
                           onTap: (pos) {
                             if (tabItems[pos].id == AppTabId.AI.id()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  settings: RouteSettings(name: "/AnotherMeScreen"),
-                                  builder: (context) => AnotherMeScreen(),
-                                ),
-                              );
+                              AnotherMe.open(context);
                             } else {
                               _setIndex(pos);
                             }

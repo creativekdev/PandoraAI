@@ -27,6 +27,7 @@ import 'package:path/path.dart' as path;
 enum DiscoveryCategory {
   ai_avatar,
   cartoonize,
+  another_me,
 }
 
 const int _maxInputLength = 512;
@@ -106,10 +107,13 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     delay(() {
       switch (widget.category) {
         case DiscoveryCategory.ai_avatar:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#Pandora Avatar');
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#PandoraAI');
           break;
         case DiscoveryCategory.cartoonize:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Pandora Cartoonizer");
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
+          break;
+        case DiscoveryCategory.another_me:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

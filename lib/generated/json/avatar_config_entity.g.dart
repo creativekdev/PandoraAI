@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/images-res.dart';
+
 import 'package:common_utils/common_utils.dart';
 
 

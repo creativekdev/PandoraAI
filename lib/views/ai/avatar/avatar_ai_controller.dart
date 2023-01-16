@@ -76,6 +76,7 @@ class AvatarAiController extends GetxController {
       count: maxSize,
       selectedList: imageList,
       badList: badList,
+      switchAlbum: true,
     );
     if (photos == null) {
       isLoading = false;
@@ -88,6 +89,9 @@ class AvatarAiController extends GetxController {
       FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
       for (var medium in photos) {
         var file = await medium.getFile();
+        if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
+          file = await heicToImage(medium);
+        }
         var inputImage = InputImage.fromFile(file);
         var list = await detector.processImage(inputImage);
         if (list.isEmpty || list.length > 1) {
@@ -95,11 +99,16 @@ class AvatarAiController extends GetxController {
         } else {
           var face = list.first;
           var imageInfo = await SyncFileImage(file: file).getImage();
-          if (face.boundingBox.width * 6 > imageInfo.image.width) {
-            goodList.add(medium);
-          } else {
+          if (faceRatio(Size(imageInfo.image.width.toDouble(), imageInfo.image.height.toDouble()), Size(face.boundingBox.width, face.boundingBox.height)) > 36) {
             badImages.add(medium);
+          } else {
+            goodList.add(medium);
           }
+          // if (face.boundingBox.width * 6 > imageInfo.image.width) {
+          //   goodList.add(medium);
+          // } else {
+          //   badImages.add(medium);
+          // }
         }
       }
       detector.close();
@@ -130,12 +139,7 @@ class AvatarAiController extends GetxController {
       File file;
       if (Platform.isIOS) {
         if ((media.filename ?? '').toUpperCase().contains('.HEIC')) {
-          var sourceFile = await media.getFile();
-          file = await imageCompress(
-            sourceFile,
-            cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".png",
-            format: CompressFormat.heic,
-          );
+          file = await heicToImage(media);
         } else {
           var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
           file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
@@ -167,6 +171,15 @@ class AvatarAiController extends GetxController {
     }
     logEvent(Events.avatar_submit_photos);
     return true;
+  }
+
+  Future<File> heicToImage(Medium media) async {
+    var sourceFile = await media.getFile();
+    return await imageCompress(
+      sourceFile,
+      cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".heic",
+      format: CompressFormat.heic,
+    );
   }
 
   void stopUpload() {

@@ -59,9 +59,9 @@ class MediumImage extends ImageProvider<MediumImage> {
         var uint8list = await FlutterImageCompress.compressWithFile(
           file.path,
           format: CompressFormat.heic,
-          minWidth: 512,
-          minHeight: 512,
-          quality: 80,
+          minWidth: 256,
+          minHeight: 256,
+          quality: 60,
         );
         bytes = uint8list!;
       } else {

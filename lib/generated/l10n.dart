@@ -2859,6 +2859,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Upload`
+  String get upload {
+    return Intl.message(
+      'Upload',
+      name: 'upload',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Completed`
+  String get select_completed {
+    return Intl.message(
+      'Select Completed',
+      name: 'select_completed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

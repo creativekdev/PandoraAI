@@ -32,8 +32,8 @@ class TransAICachedManager extends CacheManager with ImageCacheManager {
 
   TransAICachedManager._()
       : super(Config(
-    key,
-    stalePeriod: const Duration(days: 90),
-    maxNrOfCacheObjects: 100,
-  ));
+          key,
+          stalePeriod: const Duration(days: 1),
+          maxNrOfCacheObjects: 10,
+        ));
 }

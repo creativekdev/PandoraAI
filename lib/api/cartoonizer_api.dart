@@ -20,6 +20,7 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -363,7 +364,7 @@ class CartoonizerApi extends BaseRequester {
 
   Future<AvatarConfigEntity?> getAvatarAiConfig() async {
     var baseEntity = await get('/ai_avatar/config/v1', params: {
-      'language': AppContext.currentLocales ?? 'en',
+      'language': AppContext.currentLocales,
     });
     return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }

@@ -339,6 +339,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
+        "select_completed":
+            MessageLookupByLibrary.simpleMessage("Select Completed"),
         "select_from_album":
             MessageLookupByLibrary.simpleMessage("Select from album"),
         "select_more_photos":
@@ -403,6 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Update Your Profile"),
         "update_profile_successfully": MessageLookupByLibrary.simpleMessage(
             "Profile update successfully!"),
+        "upload": MessageLookupByLibrary.simpleMessage("Upload"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("Upload photos"),
         "uploading_photos":
             MessageLookupByLibrary.simpleMessage("Uploading photos"),

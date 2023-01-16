@@ -11,11 +11,19 @@ abstract class AvatarConfig {
 
   String styleTitle(String role, String style);
 
+  String originalImage(String style);
+
   List<String> goodImages(String style);
 
   List<String> examples(String style);
 
   List<String> badImages(String style);
+
+  String goodHint(String role);
+
+  String badHint(String role);
+
+  String getName(String role);
 }
 
 @JsonSerializable()
@@ -49,6 +57,11 @@ class AvatarConfigEntity extends AvatarConfig {
   }
 
   @override
+  String originalImage(String style) {
+    return data.roles[style]['original_image'];
+  }
+
+  @override
   List<String> examples(String style) {
     var array = data.roles[style]['sample_images'] ?? [];
     var images = (array as List).map((e) => e.toString()).toList();
@@ -72,8 +85,23 @@ class AvatarConfigEntity extends AvatarConfig {
   }
 
   @override
+  String goodHint(String role) {
+    return locale[role]['good_hints'];
+  }
+
+  @override
+  String badHint(String role) {
+    return locale[role]['bad_hints'];
+  }
+
+  @override
   List<String> getRoles() {
     return data.roles.keys.toList();
+  }
+
+  @override
+  String getName(String role) {
+    return locale[role]['name'] ?? role;
   }
 
   @override
@@ -81,23 +109,7 @@ class AvatarConfigEntity extends AvatarConfig {
     var roles = getRoles();
     Map<String, String> result = {};
     for (var value in roles) {
-      switch (value.toLowerCase()) {
-        case 'woman':
-          result[value] = Images.ic_avatar_sample_woman;
-          break;
-        case 'man':
-          result[value] = Images.ic_avatar_sample_man;
-          break;
-        case 'cat':
-          result[value] = Images.ic_avatar_sample_cat;
-          break;
-        case 'dog':
-          result[value] = Images.ic_avatar_sample_dog;
-          break;
-        default:
-          result[value] = Images.ic_avatar_sample_man;
-          break;
-      }
+      result[value] = originalImage(value);
     }
     return result;
   }

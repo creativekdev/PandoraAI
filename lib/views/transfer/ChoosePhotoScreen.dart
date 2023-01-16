@@ -697,6 +697,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsLoading(false);
         videoPath = value as String;
         if (value != "") {
+          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
           ShareScreen.startShare(
             context,
             backgroundColor: Color(0x77000000),
@@ -706,6 +707,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             originalUrl: urlFinal,
             effectKey: selectedEffect.key,
           );
+          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         } else {
           CommonExtension().showToast(S.of(context).commonFailedToast);
         }

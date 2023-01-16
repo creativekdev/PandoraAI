@@ -21,6 +21,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
@@ -318,33 +319,77 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                     child: Row(
                       children: [
-                        TitleTextWidget(S.of(context).pandora_avatar, ColorConstant.White, FontWeight.w500, $(15))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              Images.ic_am_icon,
+                              width: $(32),
+                            ),
+                            Text(
+                              S.of(context).pandora_avatar,
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: ColorConstant.White,
+                                fontWeight: FontWeight.w500,
+                                fontSize: $(15),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
                             .intoContainer(
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular($(6)),
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
                                 height: $(44),
-                                width: (ScreenUtil.screenSize.width - $(50)) / 2,
-                                padding: EdgeInsets.symmetric(vertical: $(8)),
-                                margin: EdgeInsets.only(left: $(15), right: $(8), top: $(12)))
+                                width: (ScreenUtil.screenSize.width - $(38)) / 2,
+                                padding: EdgeInsets.symmetric(vertical: $(8), horizontal: 2),
+                                margin: EdgeInsets.only(left: $(15), right: $(4), top: $(12)))
                             .intoGestureDetector(onTap: () {
                           Avatar.openFromHome(context);
                         }),
-                        TitleTextWidget(S.of(context).meTaverse, ColorConstant.White, FontWeight.w500, $(15))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              Images.ic_camera,
+                              width: $(32),
+                            ),
+                            Text(
+                              S.of(context).meTaverse,
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                color: ColorConstant.White,
+                                fontWeight: FontWeight.w500,
+                                fontSize: $(15),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )
                             .intoContainer(
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular($(6)),
+                                  gradient: LinearGradient(
+                                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
                                 height: $(44),
-                                width: (ScreenUtil.screenSize.width - $(50)) / 2,
-                                padding: EdgeInsets.symmetric(vertical: $(8)),
-                                margin: EdgeInsets.only(left: $(8), right: $(15), top: $(12)))
+                                width: (ScreenUtil.screenSize.width - $(38)) / 2,
+                                padding: EdgeInsets.symmetric(vertical: $(8), horizontal: 2),
+                                margin: EdgeInsets.only(left: $(4), right: $(15), top: $(12)))
                             .intoGestureDetector(onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/AnotherMeScreen"),
-                              builder: (context) => AnotherMeScreen(),
-                            ),
-                          );
+                          AnotherMe.open(context);
                         }),
                       ],
                     ).intoContainer(

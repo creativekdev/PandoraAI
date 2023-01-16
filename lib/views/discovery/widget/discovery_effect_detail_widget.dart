@@ -17,6 +17,8 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
@@ -239,8 +241,10 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             .intoGestureDetector(onTap: () {
               if (data.category == DiscoveryCategory.cartoonize.name) {
                 toChoosePage();
-              } else {
+              } else if (data.category == DiscoveryCategory.ai_avatar.name) {
                 Avatar.intro(context);
+              } else if (data.category == DiscoveryCategory.another_me) {
+                AnotherMe.open(context);
               }
             })
             .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))

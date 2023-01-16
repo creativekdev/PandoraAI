@@ -176,11 +176,26 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     width: $(50),
                     height: $(24),
                   ).intoContainer(margin: EdgeInsets.only(right: $(12)))),
-              SizedBox(height: $(50)),
-              TitleTextWidget(S.of(context).setting_my_delete_account, ColorConstant.White, FontWeight.normal, $(15))
+              SizedBox(height: $(35)),
+              TitleTextWidget(S.of(context).logout, ColorConstant.Red, FontWeight.normal, $(18))
                   .intoContainer(
                       width: double.maxFinite,
                       decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),
+                      margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
+                      padding: EdgeInsets.symmetric(vertical: $(10)))
+                  .intoGestureDetector(onTap: () {
+                showLogoutAlertDialog().then((value) {
+                  setState(() {});
+                  if (value ?? false) {
+                    userManager.doOnLogin(context);
+                  }
+                });
+              }).offstage(offstage: userManager.isNeedLogin),
+              SizedBox(height: $(10)),
+              TitleTextWidget(S.of(context).setting_my_delete_account, ColorConstant.White, FontWeight.normal, $(15))
+                  .intoContainer(
+                      width: double.maxFinite,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: Colors.transparent),
                       margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
                       padding: EdgeInsets.symmetric(vertical: $(10)))
                   .intoGestureDetector(onTap: () {
@@ -195,20 +210,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                         });
                       });
                     });
-                  }
-                });
-              }).offstage(offstage: userManager.isNeedLogin),
-              TitleTextWidget(S.of(context).logout, ColorConstant.Red, FontWeight.normal, $(15))
-                  .intoContainer(
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular($(6)), color: ColorConstant.BackgroundColor),
-                      margin: EdgeInsets.only(left: $(15), right: $(15), top: $(20)),
-                      padding: EdgeInsets.symmetric(vertical: $(10)))
-                  .intoGestureDetector(onTap: () {
-                showLogoutAlertDialog().then((value) {
-                  setState(() {});
-                  if (value ?? false) {
-                    userManager.doOnLogin(context);
                   }
                 });
               }).offstage(offstage: userManager.isNeedLogin),

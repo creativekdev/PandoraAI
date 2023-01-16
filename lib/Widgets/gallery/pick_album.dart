@@ -3,8 +3,12 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+
+import 'pick_album_navigation_bar.dart';
 
 class PickAlbumScreen {
   static Future<List<Medium>?> pickImage(
@@ -14,20 +18,22 @@ class PickAlbumScreen {
     int count = 20,
     bool switchAlbum = false,
   }) async {
-    var value = await Permission.photos.request();
-    if (value.isDenied || value.isPermanentlyDenied) {
-      CommonExtension().showToast('Please grant photo permission');
-      return [];
-    } else {
-      return Navigator.of(context).push<List<Medium>>(MaterialPageRoute(
-        builder: (context) => _PickAlbumScreen(
-          switchAlbum: switchAlbum,
-          selectedList: selectedList ?? [],
-          badList: badList ?? [],
-          maxCount: count,
-        ),
-      ));
+    Map<Permission, PermissionStatus> map = await [Permission.photos, Permission.storage].request();
+    for (var key in map.keys) {
+      var value = map[key];
+      if (value!.isDenied || value.isPermanentlyDenied) {
+        CommonExtension().showToast('Please grant $key permission');
+        return [];
+      }
     }
+    return Navigator.of(context).push<List<Medium>>(MaterialPageRoute(
+      builder: (context) => _PickAlbumScreen(
+        switchAlbum: switchAlbum,
+        selectedList: selectedList ?? [],
+        badList: badList ?? [],
+        maxCount: count,
+      ),
+    ));
   }
 }
 
@@ -64,14 +70,29 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   late int maxCount;
 
   late double imageSize;
+  late EdgeInsets padding;
+  late double spacing;
+  late int crossCount;
+
+  CacheManager cacheManager = AppDelegate.instance.getManager();
 
   _PickAlbumScreenState() : super(canCancelOnLoading: false);
 
   @override
   void initState() {
     super.initState();
-    imageSize = (ScreenUtil.screenSize.width - $(48)) / 3;
     maxCount = widget.maxCount;
+    if (maxCount == 1) {
+      crossCount = 4;
+      spacing = $(4);
+      imageSize = (ScreenUtil.screenSize.width - $(12)) / crossCount;
+      padding = EdgeInsets.zero;
+    } else {
+      crossCount = 3;
+      spacing = $(6);
+      imageSize = (ScreenUtil.screenSize.width - $(48)) / crossCount;
+      padding = EdgeInsets.all($(12));
+    }
     selectedList = [...widget.selectedList];
     badList = [...widget.badList];
     switchAlbum = widget.switchAlbum;
@@ -92,7 +113,8 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
               } else {
                 if (selectAlbum == null) {
                   if (switchAlbum) {
-                    selectAlbum = albums.first;
+                    var lastAlbumId = cacheManager.getString(CacheManager.lastAlbum);
+                    selectAlbum = albums.pick((t) => t.id == lastAlbumId) ?? albums.pick((t) => (t.name ?? '').toLowerCase().contains('camera')) ?? albums.first;
                   } else {
                     Album? s;
                     for (var album in albums) {
@@ -160,65 +182,85 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColorBlur,
-      appBar: AppNavigationBar(
-        backgroundColor: ColorConstant.BackgroundColorBlur,
-        middle: albums.isNotEmpty && switchAlbum
-            ? DropdownButton<Album>(
-                alignment: Alignment.center,
-                dropdownColor: ColorConstant.BackgroundColor,
-                icon: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Colors.white,
-                ),
-                underline: Container(),
-                value: selectAlbum,
-                onChanged: (value) {
-                  setState(() {
-                    selectAlbum = value;
-                    loadData();
-                  });
-                },
-                items: albums
-                    .map((e) => DropdownMenuItem<Album>(
-                        value: e,
-                        child: Text(
-                          '${e.name} (${e.count})',
-                          style: TextStyle(color: ColorConstant.White),
-                        )))
-                    .toList(),
-              )
-            : Container(),
-        trailing: Text(
-          '${selectedList.length}/${maxCount}',
-          style: TextStyle(color: Colors.white),
-        )
-            .intoContainer(
+      backgroundColor: ColorConstant.BackgroundColor,
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          PickAlbumNavigationBar(
+            leading: maxCount == 1
+                ? null
+                : Text(
+              '${selectedList.length}/${maxCount}',
+              style: TextStyle(color: Colors.white),
+            )
+                .intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.BlueColor,
-                ))
-            .intoGestureDetector(onTap: () {
-          if (selectedList.isEmpty) {
-            return;
-          }
-          Navigator.of(context).pop(selectedList);
-        }),
-      ),
-      body: GridView.builder(
-        // cacheExtent: ScreenUtil.screenSize.height,
-        controller: scrollController,
-        padding: EdgeInsets.all($(12)),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: $(6),
-          crossAxisSpacing: $(6),
-        ),
-        itemBuilder: (context, index) {
-          return buildItem(context, index);
-        },
-        itemCount: dataList.length,
+                  color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.EffectCardColor,
+                )),
+            middle: albums.isNotEmpty && switchAlbum
+                ? DropdownButton<Album>(
+                    alignment: Alignment.center,
+                    dropdownColor: ColorConstant.BackgroundColor,
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                    ),
+                    underline: Container(),
+                    value: selectAlbum,
+                    onChanged: (value) {
+                      setState(() {
+                        selectAlbum = value;
+                        cacheManager.setString(CacheManager.lastAlbum, value!.id);
+                        loadData();
+                      });
+                    },
+                    items: albums
+                        .map((e) => DropdownMenuItem<Album>(
+                            value: e,
+                            child: Text(
+                              '${e.name} (${e.count})',
+                              style: TextStyle(color: ColorConstant.White),
+                            )))
+                        .toList(),
+                  )
+                : TitleTextWidget(S.of(context).choose_photo, ColorConstant.White, FontWeight.w500, $(17)),
+            trailing: maxCount == 1
+                ? null
+                : Text(
+                    S.of(context).ok,
+                    style: TextStyle(color: Colors.white),
+                  )
+                    .intoContainer(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.BlueColor,
+                        ))
+                    .intoGestureDetector(onTap: () {
+                    if (selectedList.isEmpty) {
+                      return;
+                    }
+                    Navigator.of(context).pop(selectedList);
+                  }),
+          ),
+          Expanded(
+              child: GridView.builder(
+            // cacheExtent: ScreenUtil.screenSize.height,
+            controller: scrollController,
+            padding: padding,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossCount,
+              mainAxisSpacing: spacing,
+              crossAxisSpacing: spacing,
+            ),
+            itemBuilder: (context, index) {
+              return buildItem(context, index);
+            },
+            itemCount: dataList.length,
+          )),
+        ],
       ),
     );
   }
@@ -242,44 +284,46 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             width: imageSize,
             height: imageSize,
           ),
-          isBad
-              ? Container(
-                  width: imageSize,
-                  height: imageSize,
-                  color: Color(0x66000000),
-                  child: Image.asset(
-                    Images.ic_image_failed,
-                    width: $(32),
-                    height: $(32),
-                    color: ColorConstant.Red,
-                  ).intoCenter(),
-                )
-              : Positioned(
-                  child: selected
-                      ? Text(
-                          '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
-                          style: TextStyle(color: Colors.white),
-                        ).intoContainer(
-                          width: $(19),
-                          height: $(19),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: ColorConstant.BlueColor,
-                            borderRadius: BorderRadius.circular(32),
-                          ))
-                      : Icon(
-                          Icons.check,
-                          color: ColorConstant.White,
-                          size: $(16),
-                        ).intoContainer(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(32),
-                            border: Border.all(color: ColorConstant.White),
-                          ),
-                        ),
-                  top: 6,
-                  right: 6,
-                ),
+          maxCount == 1
+              ? Container()
+              : isBad
+                  ? Container(
+                      width: imageSize,
+                      height: imageSize,
+                      color: Color(0x66000000),
+                      child: Image.asset(
+                        Images.ic_image_failed,
+                        width: $(32),
+                        height: $(32),
+                        color: ColorConstant.Red,
+                      ).intoCenter(),
+                    )
+                  : Positioned(
+                      child: selected
+                          ? Text(
+                              '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
+                              style: TextStyle(color: Colors.white),
+                            ).intoContainer(
+                              width: $(19),
+                              height: $(19),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: ColorConstant.BlueColor,
+                                borderRadius: BorderRadius.circular(32),
+                              ))
+                          : Icon(
+                              Icons.check,
+                              color: ColorConstant.White,
+                              size: $(16),
+                            ).intoContainer(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                border: Border.all(color: ColorConstant.White),
+                              ),
+                            ),
+                      top: 6,
+                      right: 6,
+                    ),
         ],
       ),
       width: imageSize,
@@ -287,6 +331,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     ).intoGestureDetector(onTap: () {
       if (isBad) {
         return;
+      }
+      if (maxCount == 1) {
+        Navigator.of(context).pop([data]);
       }
       if (selectedList.exist((t) => t.id == data.id)) {
         selectedList.removeWhere((element) => element.id == data.id);

@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:common_utils/common_utils.dart';
 
 class SubmitAvatarDialog {
@@ -93,13 +94,14 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
           ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(20)),
           SelectStyleCard(
-              style: selectedStyle,
-              onSelect: (style) {
-                setState(() {
-                  selectedStyle = style;
-                });
-              },
-              roles: aiManager.config!.getRoles()),
+            style: selectedStyle,
+            onSelect: (style) {
+              setState(() {
+                selectedStyle = style;
+              });
+            },
+            config: aiManager.config!,
+          ),
           SizedBox(height: $(10)),
           Expanded(child: Container()),
           TitleTextWidget(
@@ -146,14 +148,17 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
 class SelectStyleCard extends StatefulWidget {
   String? style;
   Function(String style) onSelect;
-  List<String> roles;
+  late List<String> roles;
+  AvatarConfigEntity config;
 
   SelectStyleCard({
     Key? key,
     required this.onSelect,
-    required this.roles,
     this.style,
-  }) : super(key: key);
+    required this.config,
+  }) : super(key: key) {
+    this.roles = config.getRoles();
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -189,7 +194,7 @@ class SelectStyleState extends State<SelectStyleCard> {
         (e) {
           var checked = selectedStyle == e;
           return Text(
-            AppDelegate.instance.getManager<ThirdpartManager>().getLocaleString(context, e),
+            widget.config.getName(e),
             style: TextStyle(
               color: ColorConstant.White,
               fontFamily: 'Poppins',

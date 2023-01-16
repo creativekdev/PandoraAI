@@ -9,7 +9,7 @@ Widget TitleTextWidget(String text, Color color, FontWeight fontWeight, double s
         fontFamily: 'Poppins',
         fontSize: size,
       ),
-      overflow: TextOverflow.fade,
+      overflow: TextOverflow.ellipsis,
       maxLines: maxLines,
       softWrap: true,
     );

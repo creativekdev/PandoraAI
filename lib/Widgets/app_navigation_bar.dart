@@ -113,7 +113,6 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                     ? GestureDetector(
                         child: Container(
                           color: Colors.transparent,
-                          // width: backText == null ? $(32) : $(20),
                           alignment: Alignment.centerLeft,
                           child: backIcon,
                         ),
@@ -121,7 +120,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                           backAction == null ? Navigator.pop(context) : backAction!();
                         },
                       )
-                    : (leading == null ? Container() : leading),
+                    : (leading == null ? SizedBox.shrink() : leading),
                 automaticallyImplyLeading: automaticallyImplyLeading,
                 automaticallyImplyMiddle: automaticallyImplyMiddle,
                 previousPageTitle: previousPageTitle,
@@ -133,7 +132,10 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                               }
                             : null)
                     : null,
-                trailing: trailing,
+                trailing: trailing ??
+                    SizedBox(
+                      width: $(60),
+                    ),
                 padding: padding,
                 transitionBetweenRoutes: transitionBetweenRoutes,
                 border: null),

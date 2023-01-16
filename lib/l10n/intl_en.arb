@@ -279,5 +279,7 @@
   "generate_again": "Generate again",
   "meTaverse": "Me-taverse",
   "generate_record": "Generate Record",
-  "pandora_avatar": "Pandora Avatar"
+  "pandora_avatar": "Pandora Avatar",
+  "upload": "Upload",
+  "select_completed": "Select Completed"
 }

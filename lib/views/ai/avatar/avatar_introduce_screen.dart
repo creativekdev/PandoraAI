@@ -108,6 +108,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                   children: [
                     SizedBox(height: $(10)),
                     ChooseTabBar(
+                        scrollable: roleImages.length > 4,
                         tabList: roleImages,
                         currentIndex: selectedStyleIndex,
                         onTabClick: (index) {
@@ -116,8 +117,9 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                           });
                         },
                         itemBuilder: (context, index, value, checked) {
-                          var image = Image.asset(
-                            value,
+                          var image = CachedNetworkImageUtils.custom(
+                            context: context,
+                            imageUrl: value,
                             height: $(55),
                             width: $(55),
                           );

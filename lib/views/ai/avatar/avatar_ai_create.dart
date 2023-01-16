@@ -103,7 +103,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                           ),
                           SizedBox(height: 12),
                           TitleTextWidget(
-                            controller.isHuman() ? S.of(context).good_photo_description : S.of(context).good_photo_pet_description,
+                            manager.config?.goodHint(widget.style) ?? S.of(context).good_photo_description,
                             ColorConstant.White,
                             FontWeight.normal,
                             $(14),
@@ -132,7 +132,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                           ),
                           SizedBox(height: 12),
                           TitleTextWidget(
-                            controller.isHuman() ? S.of(context).bad_photo_description : S.of(context).bad_photo_pet_description,
+                            manager.config?.badHint(widget.style) ?? S.of(context).bad_photo_description,
                             ColorConstant.White,
                             FontWeight.normal,
                             $(14),
@@ -210,19 +210,11 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       if (controller.imageList.isEmpty) {
                         controller.pickImageFromGallery(context).then((value) {
                           if (value) {
-                            if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
-                              startUpload(context, controller);
-                            } else {
-                              showChosenDialog(context, controller);
-                            }
+                            showChosenDialog(context, controller);
                           }
                         });
                       } else {
-                        if (controller.imageList.length >= controller.minSize && controller.imageList.length <= controller.maxSize) {
-                          startUpload(context, controller);
-                        } else {
-                          showChosenDialog(context, controller);
-                        }
+                        showChosenDialog(context, controller);
                       }
                     }),
                   ],

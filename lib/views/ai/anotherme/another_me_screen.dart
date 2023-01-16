@@ -1,17 +1,21 @@
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/Widgets/camera/app_camera.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album_helper.dart';
+import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
-import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
-import 'am_opt_container.dart';
+import 'anotherme.dart';
+import 'widgets/take_photo_button.dart';
 
 class AnotherMeScreen extends StatefulWidget {
   const AnotherMeScreen({Key? key}) : super(key: key);
@@ -22,16 +26,20 @@ class AnotherMeScreen extends StatefulWidget {
 
 class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
   late double sourceImageSize;
-  late double transImageSize;
+  late double galleryImageSize;
+  late double cameraWidth;
+  late double cameraHeight;
   AnotherMeController controller = Get.put(AnotherMeController());
   UploadImageController uploadImageController = Get.put(UploadImageController());
-  ItemScrollController scrollController = ItemScrollController();
+  late AppCameraController cameraController;
 
   @override
   void initState() {
     super.initState();
     sourceImageSize = ScreenUtil.screenSize.width;
-    transImageSize = ScreenUtil.screenSize.width / 5;
+    galleryImageSize = ScreenUtil.screenSize.width / 7.5;
+    cameraWidth = ScreenUtil.screenSize.width;
+    cameraHeight = ScreenUtil.screenSize.height;
     delay(() {
       controller.initialConfig = anotherMeInitialConfig(context);
     });
@@ -39,66 +47,91 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     Get.delete<AnotherMeController>();
     Get.delete<UploadImageController>();
+    super.dispose();
   }
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backgroundColor: ColorConstant.BackgroundColor,
-        middle: TitleTextWidget(
-          S.of(context).meTaverse,
-          ColorConstant.White,
-          FontWeight.w500,
-          $(18),
-        ),
-        trailing: GetBuilder<AnotherMeController>(
-          init: controller,
-          builder: (controller) => Image.asset(
-            Images.ic_share,
-            width: $(24),
-          ).visibility(visible: controller.hasTransRecord()),
-        ),
-      ),
       body: GetBuilder<AnotherMeController>(
         init: controller,
         builder: (controller) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          return Stack(
             children: [
-              Stack(
-                children: [
-                  AppCircleProgressBar(
-                    size: $(50),
-                    ringWidth: 4,
-                    backgroundColor: ColorConstant.White,
-                    loadingColors: [
-                      ColorConstant.colorBlue,
-                      ColorConstant.colorBlue2,
-                      ColorConstant.colorBlue3,
+              AppCamera(
+                width: cameraWidth,
+                height: cameraHeight,
+                onCreate: (c) {
+                  cameraController = c;
+                  controller.viewInit = true;
+                },
+              ).hero(tag: AnotherMe.takeItemTag),
+              Image.asset(
+                Images.ic_back,
+                height: $(24),
+                width: $(24),
+              )
+                  .intoContainer(
+                    padding: EdgeInsets.all($(10)),
+                    margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
+                  )
+                  .hero(tag: AnotherMe.logoBackTag)
+                  .intoGestureDetector(onTap: () {
+                Navigator.pop(context);
+              }),
+              Positioned(
+                  bottom: ScreenUtil.getBottomPadding(context) + 10,
+                  child: Column(
+                    children: [
+                      galleryContainer(context, controller),
+                      SizedBox(height: $(16)),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 50,
+                            height: 50,
+                          ),
+                          TakePhotoButton(
+                            size: $(68),
+                            onTakePhoto: () {
+                              cameraController.takePhoto().then((value) {
+                                if (value != null) {
+                                  startTransfer(context, value);
+                                } else {
+                                  CommonExtension().showToast('Take Photo Failed');
+                                }
+                              });
+                            },
+                            onTakeVideoEnd: () {
+                              cameraController.stopTakeVideo();
+                            },
+                            onTakeVideoStart: () async {
+                              cameraController.takeVideo(maxDuration: 8).then((value) {
+                                print(value);
+                              });
+                              return true;
+                            },
+                            maxSecond: 8,
+                          ),
+                          Image.asset(
+                            Images.ic_camera_switch,
+                            width: 50,
+                            height: 50,
+                          ).intoContainer(width: 50, height: 50, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
+                              onTap: () {
+                            cameraController.switchCamera();
+                          }),
+                        ],
+                      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                     ],
-                    progress: 0.5,
-                  ),
-                  Text(
-                    '50',
-                    style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontWeight: FontWeight.w500, fontSize: $(18)),
                   ).intoContainer(
-                    width: $(50),
-                    height: $(50),
-                    alignment: Alignment.center,
-                  ),
-                ],
-              ).visibility(visible: false),
-              Expanded(
-                child: buildImageContainer(context, controller),
-              ),
-              buildOptContainer(context, controller).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
-              buildTransRecord(context, controller),
+                    width: ScreenUtil.screenSize.width,
+                  )),
             ],
           );
         },
@@ -106,219 +139,91 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
     );
   }
 
-  Widget buildImageContainer(BuildContext context, AnotherMeController controller) {
-    return controller.hasChoosePhoto()
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              controller.transKeyList.isEmpty
-                  ? Image.file(
-                      controller.sourcePhoto!,
-                      width: sourceImageSize,
-                      height: sourceImageSize,
-                    )
-                  : CachedNetworkImageUtils.custom(
-                      context: context,
-                      imageUrl: controller.transKeyList[controller.recordIndex],
-                      useOld: true,
-                      cacheManager: controller.transManager,
-                      width: sourceImageSize,
-                      height: sourceImageSize,
-                    ),
-            ],
+  Widget galleryContainer(BuildContext context, AnotherMeController controller) => Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Icon(
+            Icons.add,
+            size: $(28),
+            color: ColorConstant.White,
           )
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              controller.initialConfig.containsKey('image')
-                  ? Image.asset(
-                      controller.initialConfig['image'],
-                      width: sourceImageSize,
-                      height: sourceImageSize,
-                    )
-                  : Container(),
-              SizedBox(height: $(80)),
-              controller.initialConfig.containsKey('text')
-                  ? Text(
-                      controller.initialConfig['text'],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        height: 1,
-                        fontSize: 21,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            color: Color(0xffc4400c),
-                            blurRadius: 6,
-                            offset: Offset(4, 0),
-                          ),
-                          Shadow(
-                            color: Color(0xffc4400c),
-                            blurRadius: 6,
-                            offset: Offset(-4, 0),
-                          ),
-                        ],
-                      ),
-                    ).intoContainer(
-                      alignment: Alignment.center,
-                    )
-                  : Container()
-            ],
-          );
-  }
-
-  Widget buildOptContainer(BuildContext context, AnotherMeController controller) {
-    return controller.hasTransRecord()
-        ? Column(children: [
-            AMOptContainer(
-              onChoosePhotoTap: () {
-                choosePhoto(context, controller);
-              },
-              onDownloadTap: () {},
-              onShareDiscoveryTap: () {},
-            ),
-            Text(
-              S.of(context).generate_again,
-              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
-            )
-                .intoContainer(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(vertical: $(10)),
-                    margin: EdgeInsets.only(bottom: $(20), top: $(50), left: $(25), right: $(25)),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: ColorConstant.DiscoveryBtn,
-                      borderRadius: BorderRadius.circular($(8)),
-                    ))
-                .intoGestureDetector(onTap: () {
-              startGenerate(controller);
-            }),
-          ])
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(Images.ic_camera, width: $(24)),
-              SizedBox(width: $(8)),
-              Text(
-                S.of(context).choose_photo,
-                style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
-              ),
-            ],
-          )
-            .intoContainer(
-                width: double.maxFinite,
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                margin: EdgeInsets.only(bottom: $(50), top: $(80)),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: ColorConstant.DiscoveryBtn,
-                  borderRadius: BorderRadius.circular($(8)),
-                ))
-            .intoGestureDetector(onTap: () {
+              .intoContainer(
+                  alignment: Alignment.center,
+                  width: galleryImageSize,
+                  height: galleryImageSize,
+                  margin: EdgeInsets.all($(6)),
+                  decoration: BoxDecoration(color: Color(0x55ffffff), borderRadius: BorderRadius.circular(4)))
+              .intoGestureDetector(onTap: () {
             choosePhoto(context, controller);
-          });
-  }
+          }),
+          Container(
+            height: galleryImageSize,
+            width: 2,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black),
+          ),
+          FutureBuilder<List<Medium>>(
+            builder: (context, snap) {
+              var list = snap.data ?? [];
+              return Container(
+                width: ScreenUtil.screenSize.width - 2 - galleryImageSize - $(28),
+                height: galleryImageSize + $(12),
+                padding: EdgeInsets.symmetric(vertical: $(6)),
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: $(6)),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return ClipRRect(
+                      child: Image(
+                        image: MediumImage(list[index], width: 256, height: 256),
+                        width: galleryImageSize,
+                        height: galleryImageSize,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ).intoGestureDetector(onTap: () async {
+                      var medium = list[index];
+                      var xFile = XFile((await medium.getFile()).path);
+                      startTransfer(context, xFile);
+                    }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
+                  },
+                  itemCount: list.length,
+                ),
+              );
+            },
+            future: PickAlbumHelper.getNewest(),
+          ),
+        ],
+      ).intoContainer(
+          width: ScreenUtil.screenSize.width - $(16),
+          margin: EdgeInsets.symmetric(horizontal: $(8)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Color(0x88010101),
+          ));
 
-  choosePhoto(BuildContext context, AnotherMeController controller) async {
-    PickPhotoScreen.push(context, selectedFile: controller.sourcePhoto, controller: uploadImageController, onPickFromSystem: (takePhoto) async {
-      await showLoading();
-      bool result = await controller.takePhoto(takePhoto ? ImageSource.camera : ImageSource.gallery, uploadImageController);
-      await hideLoading();
-      return result;
-    }, onPickFromRecent: (record) async {
-      await showLoading();
-      bool result = await controller.pickFromRecent(record, uploadImageController);
-      await hideLoading();
-      return result;
-    }, onPickFromAiSource: (file) async {
-      await showLoading();
-      bool result = await controller.pickFromAiSource(file, uploadImageController);
-      await hideLoading();
-      return result;
-    }, floatWidget: null)
+  startTransfer(BuildContext context, XFile xFile) {
+    controller.clear(uploadImageController);
+    Navigator.of(context)
+        .push<bool>(
+      FadeRouter(child: AnotherMeTransScreen(file: xFile)),
+    )
         .then((value) {
-      if (value ?? false) {
-        startGenerate(controller);
+      if (value == null) {
+        Navigator.of(context).pop();
       }
     });
   }
 
-  Future<bool> startGenerate(AnotherMeController controller) async {
-    await showLoading();
-    var value = await controller.startTransfer(uploadImageController.imageUrl.value);
-    if (value) {
-      if (controller.transKeyList.length > 4) {
-        scrollController.scrollTo(
-          index: controller.transKeyList.length - 5,
-          duration: Duration(milliseconds: 300),
-          alignment: -0.085,
-        );
+  choosePhoto(BuildContext context, AnotherMeController controller) async {
+    PickAlbumScreen.pickImage(
+      context,
+      count: 1,
+      switchAlbum: true,
+    ).then((value) async {
+      if (value != null && value.isNotEmpty) {
+        var xFile = XFile((await value.first.getFile()).path);
+        startTransfer(context, xFile);
       }
-    }
-    await hideLoading();
-    return value;
-  }
-
-  Widget buildTransRecord(BuildContext context, AnotherMeController controller) {
-    if (!controller.hasTransRecord()) {
-      return SizedBox.shrink();
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TitleTextWidget(
-          S.of(context).generate_record,
-          ColorConstant.White,
-          FontWeight.w500,
-          $(15),
-          align: TextAlign.start,
-        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-        SizedBox(height: $(12)),
-        ScrollablePositionedList.separated(
-          padding: EdgeInsets.symmetric(horizontal: $(15)),
-          itemScrollController: scrollController,
-          scrollDirection: Axis.horizontal,
-          itemCount: controller.transKeyList.length,
-          itemBuilder: (context, index) {
-            var e = controller.transKeyList[index];
-            var checked = controller.recordIndex == index;
-            Widget icon = OutlineWidget(
-              radius: $(2),
-              strokeWidth: 2,
-              gradient: LinearGradient(
-                colors: [checked ? Color(0xffE31ECD) : Colors.transparent, checked ? Color(0xff243CFF) : Colors.transparent],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              child: ClipRRect(
-                child: CachedNetworkImageUtils.custom(
-                  context: context,
-                  imageUrl: e,
-                  useOld: true,
-                  width: transImageSize - $(4),
-                  height: transImageSize - $(4),
-                  cacheManager: controller.transManager,
-                ),
-                borderRadius: BorderRadius.circular($(1)),
-              ).intoContainer(
-                padding: EdgeInsets.all($(2)),
-                width: transImageSize,
-                height: transImageSize,
-              ),
-            );
-            return icon.intoGestureDetector(onTap: () {
-              controller.onSelectRecord(index);
-            });
-          },
-          separatorBuilder: (context, index) => Container(width: 4),
-        ).intoContainer(height: transImageSize),
-      ],
-    ).intoContainer(
-      margin: EdgeInsets.only(
-        top: $(25),
-        bottom: ScreenUtil.getBottomPadding(context, padding: $(30)),
-      ),
-    );
+    });
   }
 }
