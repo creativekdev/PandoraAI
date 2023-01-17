@@ -378,12 +378,20 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
     showDialog<bool>(
         context: context,
         builder: (_) {
-          return AddPhotosDialog(controller: controller);
-        }).then((value) {
-      if (value ?? false) {
-        startUpload(context, controller);
-      }
-    });
+          return AddPhotosDialog(
+            controller: controller,
+            onAddMoreTap: () {
+              Navigator.of(_).pop();
+              controller.pickImageFromGallery(context).then((value) {
+                showChosenDialog(context, controller);
+              });
+            },
+            onUploadTap: () {
+              Navigator.of(_).pop();
+              startUpload(context, controller);
+            },
+          );
+        });
   }
 
   Widget buildExamples(BuildContext context, List<String> examples) {

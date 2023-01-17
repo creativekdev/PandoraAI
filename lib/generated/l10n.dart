@@ -2030,7 +2030,7 @@ class S {
     );
   }
 
-  /// `You've selected 22 photos%badImages\n Are you sure to upload these %goodCount photos?`
+  /// `You've selected %selected photos%badImages\n Are you sure to upload these %goodCount photos?`
   String get choose_photo_ok_description {
     return Intl.message(
       'You\'ve selected %selected photos%badImages\n Are you sure to upload these %goodCount photos?',

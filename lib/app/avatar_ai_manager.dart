@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -10,16 +13,21 @@ class AvatarAiManager extends BaseManager {
   late CartoonizerApi api;
   AvatarConfigEntity? config;
   bool listPageAlive = false;
+  late StreamSubscription userLoginListen;
 
   @override
   Future<void> onCreate() async {
     await super.onCreate();
+    userLoginListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      listAllAvatarAi();
+    });
     api = CartoonizerApi().bindManager(this);
   }
 
   @override
   Future<void> onDestroy() async {
     await super.onDestroy();
+    userLoginListen.cancel();
     api.unbind();
   }
 
