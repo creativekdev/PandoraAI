@@ -197,7 +197,7 @@
   "choose_photo_not_enough_desc": "You've selected %selected photos%badImages of %minSize minimum required.",
   "choose_photo_bad_images_desc": " with %badCount invalid",
   "choose_photo_more_photos": "Please select at least %d more photos.",
-  "choose_photo_ok_description": "You've selected 22 photos%badImages\n Are you sure to upload these %goodCount photos?",
+  "choose_photo_ok_description": "You've selected %selected photos%badImages\n Are you sure to upload these %goodCount photos?",
   "select_more_photos": "Select more photos",
   "pandora_create_input_name_hint": "Please input name",
   "pandora_create_style_hint": "Please select style",
