@@ -2030,6 +2030,16 @@ class S {
     );
   }
 
+  /// `You've selected 22 photos%badImages\n Are you sure to upload these %goodCount photos?`
+  String get choose_photo_ok_description {
+    return Intl.message(
+      'You\'ve selected 22 photos%badImages\n Are you sure to upload these %goodCount photos?',
+      name: 'choose_photo_ok_description',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Select more photos`
   String get select_more_photos {
     return Intl.message(

@@ -7,6 +7,7 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
@@ -71,9 +72,16 @@ class AvatarAiController extends GetxController {
   Future<bool> pickImageFromGallery(BuildContext context) async {
     isLoading = true;
     update();
+    var minCount = minSize - imageList.length;
+    if (minCount < 0) {
+      isLoading = false;
+      update();
+      return false;
+    }
     var photos = await PickAlbumScreen.pickImage(
       context,
       count: maxSize,
+      minCount: minCount,
       selectedList: imageList,
       badList: badList,
       switchAlbum: true,
@@ -86,14 +94,16 @@ class AvatarAiController extends GetxController {
     List<Medium> goodList = [];
     List<Medium> badImages = [];
     if (isHuman()) {
-      FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
       for (var medium in photos) {
         var file = await medium.getFile();
         if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
-          file = await heicToImage(medium);
+          File sourceFile = await heicToImage(medium);
+          file = await imageCompressAndGetFile(sourceFile, imageSize: 1024);
         }
         var inputImage = InputImage.fromFile(file);
+        FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
         var list = await detector.processImage(inputImage);
+        await detector.close();
         if (list.isEmpty || list.length > 1) {
           badImages.add(medium);
         } else {
@@ -111,7 +121,6 @@ class AvatarAiController extends GetxController {
           // }
         }
       }
-      detector.close();
     } else {
       goodList = photos;
     }
@@ -139,7 +148,8 @@ class AvatarAiController extends GetxController {
       File file;
       if (Platform.isIOS) {
         if ((media.filename ?? '').toUpperCase().contains('.HEIC')) {
-          file = await heicToImage(media);
+          File sourceFile = await heicToImage(media);
+          file = await imageCompressAndGetFile(sourceFile, imageSize: 512);
         } else {
           var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
           file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
@@ -171,15 +181,6 @@ class AvatarAiController extends GetxController {
     }
     logEvent(Events.avatar_submit_photos);
     return true;
-  }
-
-  Future<File> heicToImage(Medium media) async {
-    var sourceFile = await media.getFile();
-    return await imageCompress(
-      sourceFile,
-      cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".heic",
-      format: CompressFormat.heic,
-    );
   }
 
   void stopUpload() {

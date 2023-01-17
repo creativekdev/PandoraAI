@@ -16,6 +16,7 @@ class PickAlbumScreen {
     List<Medium>? selectedList,
     List<Medium>? badList,
     int count = 20,
+    int minCount = 1,
     bool switchAlbum = false,
   }) async {
     Map<Permission, PermissionStatus> map = await [Permission.photos, Permission.storage].request();
@@ -32,6 +33,7 @@ class PickAlbumScreen {
         selectedList: selectedList ?? [],
         badList: badList ?? [],
         maxCount: count,
+        minCount: minCount,
       ),
     ));
   }
@@ -42,12 +44,14 @@ class _PickAlbumScreen extends StatefulWidget {
   List<Medium> selectedList;
   int maxCount;
   List<Medium> badList;
+  int minCount;
 
   _PickAlbumScreen({
     Key? key,
     required this.switchAlbum,
     required this.selectedList,
     required this.maxCount,
+    this.minCount = 1,
     required this.badList,
   }) : super(key: key);
 
@@ -68,6 +72,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   late List<Medium> selectedList;
   late List<Medium> badList;
   late int maxCount;
+  late int minCount;
 
   late double imageSize;
   late EdgeInsets padding;
@@ -82,6 +87,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   void initState() {
     super.initState();
     maxCount = widget.maxCount;
+    minCount = widget.minCount;
     if (maxCount == 1) {
       crossCount = 4;
       spacing = $(4);
@@ -190,15 +196,14 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             leading: maxCount == 1
                 ? null
                 : Text(
-              '${selectedList.length}/${maxCount}',
-              style: TextStyle(color: Colors.white),
-            )
-                .intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.EffectCardColor,
-                )),
+                    '${selectedList.length}/${maxCount}',
+                    style: TextStyle(color: Colors.white),
+                  ).intoContainer(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.EffectCardColor,
+                    )),
             middle: albums.isNotEmpty && switchAlbum
                 ? DropdownButton<Album>(
                     alignment: Alignment.center,
@@ -233,13 +238,13 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     style: TextStyle(color: Colors.white),
                   )
                     .intoContainer(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.BlueColor,
+                          color: selectedList.length < minCount ? ColorConstant.CardColor : ColorConstant.BlueColor,
                         ))
                     .intoGestureDetector(onTap: () {
-                    if (selectedList.isEmpty) {
+                    if (selectedList.length < minCount) {
                       return;
                     }
                     Navigator.of(context).pop(selectedList);

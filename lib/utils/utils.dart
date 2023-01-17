@@ -13,6 +13,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as im;
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> loginBack(BuildContext context) async {
@@ -348,4 +349,16 @@ int faceRatio(Size originalSize, Size faceSize) {
   var oriArea = originalSize.width * originalSize.height;
   var faceArea = faceSize.width * faceSize.height;
   return (oriArea / faceArea).round();
+}
+
+
+Future<File> heicToImage(Medium media) async {
+  var sourceFile = await media.getFile();
+  if(Platform.isIOS) {
+    const platform = MethodChannel(PLATFORM_CHANNEL);
+    final String outPath = await platform.invokeMethod('heic2jpg', sourceFile.path);
+    return File(outPath);
+  } else {
+    return sourceFile;
+  }
 }

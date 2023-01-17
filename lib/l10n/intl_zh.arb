@@ -197,6 +197,7 @@
   "choose_photo_not_enough_desc": "您选择了 %selected 张照片，%badImages最少需要 %minSize 张照片。",
   "choose_photo_bad_images_desc": "有 %badCount 张无效，",
   "choose_photo_more_photos": "请再选择 %d 张照片。",
+  "choose_photo_ok_description": "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？",
   "select_more_photos": "选择更多照片",
   "pandora_create_input_name_hint": "请输入名称",
   "pandora_create_style_hint": "请选择风格",

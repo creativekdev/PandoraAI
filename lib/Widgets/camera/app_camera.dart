@@ -33,12 +33,15 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
   late double height;
   CameraController? controller;
   Future<void>? _initializeControllerFuture;
-  var scrollController = ScrollController();
   Completer<XFile?>? _completer;
   GlobalKey screenShotKey = GlobalKey();
   bool isFront = true;
 
   late Axis widgetDirection;
+
+  CameraImage? lastScreenShot;
+  int lastScreenShotStamp = 0;
+  bool takingPhoto = false;
 
   @override
   void initState() {
@@ -47,6 +50,9 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
     height = widget.height;
     widgetDirection = width / height > 1 ? Axis.horizontal : Axis.vertical;
     availableCameras().then((value) {
+      if (!mounted) {
+        return;
+      }
       var pick = value.pick((t) => t.lensDirection == CameraLensDirection.front) ?? value.first;
       setState(() {
         isFront = pick.lensDirection == CameraLensDirection.front;
@@ -94,6 +100,17 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
       future: _initializeControllerFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
+          lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
+          controller!.startImageStream((image) {
+            if (takingPhoto) {
+              return;
+            }
+            var currentTime = DateTime.now().millisecondsSinceEpoch;
+            if (currentTime - lastScreenShotStamp > 200) {
+              lastScreenShot = image;
+              lastScreenShotStamp = currentTime;
+            }
+          }).onError((error, stackTrace) {});
           // If the Future is complete, display the preview.
           var ratio = controller!.value.aspectRatio;
           var surfaceWidth = height / ratio;
@@ -102,13 +119,18 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
                 width: surfaceWidth,
                 height: height,
               );
+          var scrollController = ScrollController();
           var view = SingleChildScrollView(
             child: RepaintBoundary(key: screenShotKey, child: surface),
             controller: scrollController,
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
           );
-          delay(() => scrollController.jumpTo(offsetX), milliseconds: 64);
+          delay(() {
+            if(scrollController.positions.isNotEmpty) {
+              scrollController.jumpTo(offsetX);
+            }
+          }, milliseconds: 64);
           return view;
         } else {
           // Otherwise, display a loading indicator.
@@ -120,6 +142,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
 
   @override
   switchCamera() {
+    controller?.stopImageStream().onError((error, stackTrace) {});
     controller?.dispose();
     delay(() {
       availableCameras().then((value) {
@@ -143,12 +166,47 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
 
   @override
   Future<XFile?> takePhoto() async {
+    if (lastScreenShot == null) {
+      return null;
+    }
+    if (takingPhoto) {
+      return null;
+    }
+    takingPhoto = true;
+    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection);
+    if (list == null) {
+      takingPhoto = false;
+      return null;
+    }
+    var operator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
+    String filePath = '${operator.imageDir.path}${DateTime.now().millisecondsSinceEpoch}.png';
+    var uint8list = Uint8List.fromList(list);
+    var imageInfo = (await SyncMemoryImage(list: uint8list).getImage()).image;
+    double ratio = height / width;
+    double canvasRatio = imageInfo.height / imageInfo.width;
+    Rect rect;
+    if (ratio > canvasRatio) {
+      var newWidth = imageInfo.height / ratio;
+      var d = (newWidth - imageInfo.width).abs() / 2;
+      rect = Rect.fromLTWH(d, 0, newWidth, imageInfo.height.toDouble());
+    } else {
+      var newHeight = imageInfo.width / ratio;
+      var d = (newHeight - imageInfo.height).abs() / 2;
+      rect = Rect.fromLTWH(0, d, imageInfo.width.toDouble(), newHeight);
+    }
+    File file = await cropFileToTarget(
+      imageInfo,
+      rect,
+      filePath,
+    );
+    takingPhoto = false;
+    return XFile(file.path);
     Completer<XFile?> _completer = Completer();
     bool hasPickScreenShot = false;
     int start = DateTime.now().millisecondsSinceEpoch;
     controller!.startImageStream((image) async {
       int end = DateTime.now().millisecondsSinceEpoch;
-      if (end - start < 500) {
+      if (end - start < 600) {
         return;
       }
       if (!_completer.isCompleted && !hasPickScreenShot) {

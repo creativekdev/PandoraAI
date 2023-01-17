@@ -73,6 +73,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("请再选择 %d 张照片。"),
         "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
             "您选择了 %selected 张照片，%badImages最少需要 %minSize 张照片。"),
+        "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
+            "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？"),
         "clear": MessageLookupByLibrary.simpleMessage("清除"),
         "clear_cache_tips":
             MessageLookupByLibrary.simpleMessage("确定要清除所有缓存？\n 共：%d"),

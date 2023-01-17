@@ -44,9 +44,7 @@ class AddPhotosDialog extends StatelessWidget {
               ),
               SizedBox(height: $(20)),
               TitleTextWidget(
-                S
-                    .of(context)
-                    .choose_photo_not_enough_desc
+                (controller.imageList.length >= controller.minSize ? S.of(context).choose_photo_ok_description : S.of(context).choose_photo_not_enough_desc)
                     .replaceAll(
                       '%selected',
                       '${controller.imageList.length + controller.badList.length}',
@@ -60,7 +58,8 @@ class AddPhotosDialog extends StatelessWidget {
                               )
                           : '',
                     )
-                    .replaceAll('%minSize', '${controller.minSize}'),
+                    .replaceAll('%minSize', '${controller.minSize}')
+                    .replaceAll('%goodCount', '${controller.imageList.length}'),
                 ColorConstant.White,
                 FontWeight.normal,
                 $(14),

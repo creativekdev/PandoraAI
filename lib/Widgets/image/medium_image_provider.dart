@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:photo_gallery/photo_gallery.dart';
@@ -55,13 +56,13 @@ class MediumImage extends ImageProvider<MediumImage> {
     try {
       Uint8List bytes;
       if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
-        var file = await medium.getFile();
+        var file = await heicToImage(medium);
         var uint8list = await FlutterImageCompress.compressWithFile(
           file.path,
           format: CompressFormat.heic,
           minWidth: 256,
           minHeight: 256,
-          quality: 60,
+          quality: 100,
         );
         bytes = uint8list!;
       } else {

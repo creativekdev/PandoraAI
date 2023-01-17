@@ -88,6 +88,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Please select at least %d more photos."),
         "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
             "You\'ve selected %selected photos%badImages of %minSize minimum required."),
+        "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
+            "You\'ve selected 22 photos%badImages\n Are you sure to upload these %goodCount photos?"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
         "clear_cache_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to clear all cache?\n total: %d"),

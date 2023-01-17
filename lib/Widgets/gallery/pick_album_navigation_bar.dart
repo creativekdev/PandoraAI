@@ -37,6 +37,7 @@ class PickAlbumNavigationBar extends StatelessWidget {
             leading ?? SizedBox.shrink(),
             Expanded(child: (middle ?? SizedBox.shrink()).intoCenter()),
             trailing,
+            SizedBox(width: 15),
           ],
         ).intoContainer(height: 44),
       ],
