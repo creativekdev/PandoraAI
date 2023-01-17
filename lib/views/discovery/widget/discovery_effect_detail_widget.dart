@@ -243,7 +243,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                 toChoosePage();
               } else if (data.category == DiscoveryCategory.ai_avatar.name) {
                 Avatar.intro(context);
-              } else if (data.category == DiscoveryCategory.another_me) {
+              } else if (data.category == DiscoveryCategory.another_me.name) {
                 AnotherMe.open(context);
               }
             })
