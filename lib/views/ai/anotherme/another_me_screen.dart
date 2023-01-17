@@ -56,85 +56,86 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      body: GetBuilder<AnotherMeController>(
-        init: controller,
-        builder: (controller) {
-          return Stack(
-            children: [
-              AppCamera(
-                width: cameraWidth,
-                height: cameraHeight,
-                onCreate: (c) {
-                  cameraController = c;
-                  controller.viewInit = true;
-                },
-              ).hero(tag: AnotherMe.takeItemTag),
-              Image.asset(
-                Images.ic_back,
-                height: $(24),
-                width: $(24),
+      body: Stack(
+        children: [
+          AppCamera(
+            width: cameraWidth,
+            height: cameraHeight,
+            onCreate: (c) {
+              cameraController = c;
+              controller.viewInit = true;
+            },
+          ).hero(tag: AnotherMe.takeItemTag),
+          Image.asset(
+            Images.ic_back,
+            height: $(24),
+            width: $(24),
+          )
+              .intoContainer(
+                padding: EdgeInsets.all($(10)),
+                margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
               )
-                  .intoContainer(
-                    padding: EdgeInsets.all($(10)),
-                    margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
-                  )
-                  .hero(tag: AnotherMe.logoBackTag)
-                  .intoGestureDetector(onTap: () {
-                Navigator.pop(context);
-              }),
-              Positioned(
-                  bottom: ScreenUtil.getBottomPadding(context) + 10,
-                  child: Column(
-                    children: [
-                      galleryContainer(context, controller),
-                      SizedBox(height: $(16)),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 50,
-                            height: 50,
-                          ),
-                          TakePhotoButton(
-                            size: $(68),
-                            onTakePhoto: () {
-                              cameraController.takePhoto().then((value) {
-                                if (value != null) {
-                                  startTransfer(context, value);
-                                } else {
-                                  CommonExtension().showToast('Take Photo Failed');
-                                }
-                              });
-                            },
-                            onTakeVideoEnd: () {
-                              cameraController.stopTakeVideo();
-                            },
-                            onTakeVideoStart: () async {
-                              cameraController.takeVideo(maxDuration: 8).then((value) {
-                                print(value);
-                              });
-                              return true;
-                            },
-                            maxSecond: 8,
-                          ),
-                          Image.asset(
-                            Images.ic_camera_switch,
-                            width: 50,
-                            height: 50,
-                          ).intoContainer(width: 50, height: 50, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
-                              onTap: () {
-                            cameraController.switchCamera();
-                          }),
-                        ],
-                      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
-                    ],
-                  ).intoContainer(
-                    width: ScreenUtil.screenSize.width,
-                  )),
-            ],
-          );
-        },
+              .hero(tag: AnotherMe.logoBackTag)
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+          Positioned(
+            bottom: ScreenUtil.getBottomPadding(context) + 10,
+            child: GetBuilder<AnotherMeController>(
+              init: controller,
+              builder: (controller) {
+                return Column(
+                  children: [
+                    galleryContainer(context, controller),
+                    SizedBox(height: $(16)),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                        ),
+                        TakePhotoButton(
+                          size: $(68),
+                          onTakePhoto: () {
+                            cameraController.takePhoto().then((value) {
+                              if (value != null) {
+                                startTransfer(context, value);
+                              } else {
+                                CommonExtension().showToast('Take Photo Failed');
+                              }
+                            });
+                          },
+                          onTakeVideoEnd: () {
+                            cameraController.stopTakeVideo();
+                          },
+                          onTakeVideoStart: () async {
+                            cameraController.takeVideo(maxDuration: 8).then((value) {
+                              print(value);
+                            });
+                            return true;
+                          },
+                          maxSecond: 8,
+                        ),
+                        Image.asset(
+                          Images.ic_camera_switch,
+                          width: 50,
+                          height: 50,
+                        ).intoContainer(width: 50, height: 50, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
+                            onTap: () {
+                          cameraController.switchCamera();
+                        }),
+                      ],
+                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                  ],
+                ).intoContainer(
+                  width: ScreenUtil.screenSize.width,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

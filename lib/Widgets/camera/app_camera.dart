@@ -1,7 +1,5 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -59,6 +57,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
         controller = CameraController(
           pick,
           ResolutionPreset.medium,
+          imageFormatGroup: ImageFormatGroup.yuv420,
         );
         widget.onCreate.call(this);
         _initializeControllerFuture = controller!.initialize();
@@ -68,9 +67,10 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
 
   @override
   void dispose() {
-    controller?.stopImageStream().onError((error, stackTrace) {});
-    controller?.dispose();
     super.dispose();
+    controller?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
+      controller?.dispose();
+    });
   }
 
   @override
@@ -89,6 +89,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
       controller = CameraController(
         cameraController.description,
         ResolutionPreset.medium,
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
       _initializeControllerFuture = controller!.initialize();
     }
@@ -101,16 +102,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
-          controller!.startImageStream((image) {
-            if (takingPhoto) {
-              return;
-            }
-            var currentTime = DateTime.now().millisecondsSinceEpoch;
-            if (currentTime - lastScreenShotStamp > 200) {
-              lastScreenShot = image;
-              lastScreenShotStamp = currentTime;
-            }
-          }).onError((error, stackTrace) {});
+          startStream();
           // If the Future is complete, display the preview.
           var ratio = controller!.value.aspectRatio;
           var surfaceWidth = height / ratio;
@@ -127,7 +119,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
             scrollDirection: Axis.horizontal,
           );
           delay(() {
-            if(scrollController.positions.isNotEmpty) {
+            if (scrollController.positions.isNotEmpty) {
               scrollController.jumpTo(offsetX);
             }
           }, milliseconds: 64);
@@ -138,6 +130,21 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
         }
       },
     );
+  }
+
+  Future<void> startStream() async {
+    if (controller != null) {
+      await controller!.startImageStream((image) {
+        if (takingPhoto) {
+          return;
+        }
+        var currentTime = DateTime.now().millisecondsSinceEpoch;
+        if (currentTime - lastScreenShotStamp > 200) {
+          lastScreenShot = image;
+          lastScreenShotStamp = currentTime;
+        }
+      }).onError((error, stackTrace) {});
+    }
   }
 
   @override
@@ -152,6 +159,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
           controller = CameraController(
             pick,
             ResolutionPreset.medium,
+            imageFormatGroup: ImageFormatGroup.yuv420,
           );
           _initializeControllerFuture = controller!.initialize();
         });
@@ -201,50 +209,6 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
     );
     takingPhoto = false;
     return XFile(file.path);
-    Completer<XFile?> _completer = Completer();
-    bool hasPickScreenShot = false;
-    int start = DateTime.now().millisecondsSinceEpoch;
-    controller!.startImageStream((image) async {
-      int end = DateTime.now().millisecondsSinceEpoch;
-      if (end - start < 600) {
-        return;
-      }
-      if (!_completer.isCompleted && !hasPickScreenShot) {
-        var list = await convertImagetoPng(isFront, image, widgetDirection);
-        if (list == null) {
-          return;
-        }
-        hasPickScreenShot = true;
-        var operator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
-        String filePath = '${operator.imageDir.path}${DateTime.now().millisecondsSinceEpoch}.png';
-        var uint8list = Uint8List.fromList(list);
-        var imageInfo = (await SyncMemoryImage(list: uint8list).getImage()).image;
-        double ratio = height / width;
-        double canvasRatio = imageInfo.height / imageInfo.width;
-        Rect rect;
-        if (ratio > canvasRatio) {
-          var newWidth = imageInfo.height / ratio;
-          var d = (newWidth - imageInfo.width).abs() / 2;
-          rect = Rect.fromLTWH(d, 0, newWidth, imageInfo.height.toDouble());
-        } else {
-          var newHeight = imageInfo.width / ratio;
-          var d = (newHeight - imageInfo.height).abs() / 2;
-          rect = Rect.fromLTWH(0, d, imageInfo.width.toDouble(), newHeight);
-        }
-        File file = await cropFileToTarget(
-          imageInfo,
-          rect,
-          filePath,
-        );
-        if (!_completer.isCompleted) {
-          _completer.complete(XFile(file.path));
-        }
-        controller!.stopImageStream().onError((error, stackTrace) {
-          error;
-        });
-      }
-    });
-    return _completer.future;
   }
 
   @override

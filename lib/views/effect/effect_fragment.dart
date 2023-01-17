@@ -324,7 +324,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                           children: [
                             Image.asset(
                               Images.ic_am_icon,
-                              width: $(32),
+                              width: $(24),
                             ),
                             Text(
                               S.of(context).pandora_avatar,
@@ -360,7 +360,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                           children: [
                             Image.asset(
                               Images.ic_camera,
-                              width: $(32),
+                              width: $(24),
                             ),
                             Text(
                               S.of(context).meTaverse,
