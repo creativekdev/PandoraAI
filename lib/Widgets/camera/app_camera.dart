@@ -66,11 +66,18 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  onDispose() {
     controller?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
       controller?.dispose();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // controller?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
+    //   controller?.dispose();
+    // });
   }
 
   @override
@@ -244,6 +251,8 @@ abstract class AppCameraController {
   Future<bool> stopTakeVideo();
 
   switchCamera();
+
+  onDispose();
 }
 
 /// imgLib -> Image package from https://pub.dartlang.org/packages/image

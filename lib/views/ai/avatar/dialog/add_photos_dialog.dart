@@ -6,8 +6,15 @@ import 'package:cartoonizer/views/ai/avatar/avatar_ai_controller.dart';
 
 class AddPhotosDialog extends StatelessWidget {
   AvatarAiController controller;
+  Function onUploadTap;
+  Function onAddMoreTap;
 
-  AddPhotosDialog({Key? key, required this.controller}) : super(key: key);
+  AddPhotosDialog({
+    Key? key,
+    required this.controller,
+    required this.onAddMoreTap,
+    required this.onUploadTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +96,7 @@ class AddPhotosDialog extends StatelessWidget {
                 FontWeight.w500,
                 $(17),
               ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(context).pop(true);
+                onUploadTap.call();
               }).visibility(visible: controller.imageList.length >= controller.minSize),
               Divider(
                 height: 1,
@@ -101,7 +108,8 @@ class AddPhotosDialog extends StatelessWidget {
                 FontWeight.w500,
                 $(17),
               ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
-                controller.pickImageFromGallery(context);
+                onAddMoreTap.call();
+                // controller.pickImageFromGallery(context);
               }),
               Divider(
                 height: 1,
@@ -113,7 +121,7 @@ class AddPhotosDialog extends StatelessWidget {
                 FontWeight.w500,
                 $(17),
               ).intoContainer(padding: EdgeInsets.symmetric(vertical: 10), width: double.maxFinite, color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(context).pop(false);
+                Navigator.of(context).pop();
               }),
             ],
             mainAxisSize: MainAxisSize.min,
