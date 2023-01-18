@@ -18,7 +18,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 import 'anotherme.dart';
@@ -67,7 +66,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         cameraController = CameraController(
           pick,
           ResolutionPreset.medium,
-          imageFormatGroup: ImageFormatGroup.yuv420,
+          imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
         );
         _initializeControllerFuture = cameraController!.initialize();
       });
@@ -103,7 +102,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       cameraController = CameraController(
         cc.description,
         ResolutionPreset.medium,
-        imageFormatGroup: ImageFormatGroup.yuv420,
+        imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
       );
       _initializeControllerFuture = cameraController!.initialize();
     }
@@ -325,7 +324,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             cameraController = CameraController(
               pick,
               ResolutionPreset.medium,
-              imageFormatGroup: ImageFormatGroup.yuv420,
+              imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
             );
             _initializeControllerFuture = cameraController!.initialize();
           });

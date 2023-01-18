@@ -370,4 +370,8 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<BaseEntity?> getInspirationText() async {}
+
+  Future<BaseEntity?> logAnotherMe(Map<String, dynamic> params) async {
+    return await get('/log/anotherme', params: params);
+  }
 }

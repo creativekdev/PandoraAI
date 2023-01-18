@@ -105,18 +105,13 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
                   builder: (context, child) {
                     return AppCircleProgressBar(
                       size: $(60),
+                      ringWidth: $(7),
                       backgroundColor: Colors.transparent,
                       progress: animationControllerCurved.value * 0.8 + completeController.value * 0.2,
                       loadingColors: [
-                        ColorConstant.colorBlue3,
-                        ColorConstant.colorBlue2,
-                        ColorConstant.colorBlue,
-                        ColorConstant.colorBlue2,
-                        ColorConstant.colorBlue3,
-                        ColorConstant.colorBlue2,
-                        ColorConstant.colorBlue,
-                        ColorConstant.colorBlue2,
-                        ColorConstant.colorBlue3,
+                        ColorConstant.ThemeColor1,
+                        ColorConstant.ThemeColor2,
+                        ColorConstant.ThemeColor1,
                       ],
                     );
                   });

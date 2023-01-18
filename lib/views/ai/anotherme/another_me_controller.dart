@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -114,6 +115,10 @@ class AnotherMeController extends GetxController {
     var name = storageOperator.imageDir.path + key + '.png';
     await File(name).writeAsBytes(imageUint8List.toList(), flush: true);
     _transKey = name;
+    CartoonizerApi().logAnotherMe({
+      'init_images': [imageUrl],
+      'face_ratio': _mFaceRatio,
+    });
     return true;
   }
 

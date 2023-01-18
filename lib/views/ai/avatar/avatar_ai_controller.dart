@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -25,6 +26,7 @@ class AvatarAiController extends GetxController {
   int minSize = 15;
   int maxSize = 30;
   CacheManager cacheManager = AppDelegate.instance.getManager();
+  AvatarAiManager aiManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   bool isLoading = false;
 
@@ -109,7 +111,8 @@ class AvatarAiController extends GetxController {
         } else {
           var face = list.first;
           var imageInfo = await SyncFileImage(file: file).getImage();
-          if (faceRatio(Size(imageInfo.image.width.toDouble(), imageInfo.image.height.toDouble()), Size(face.boundingBox.width, face.boundingBox.height)) > 36) {
+          if (faceRatio(Size(imageInfo.image.width.toDouble(), imageInfo.image.height.toDouble()), Size(face.boundingBox.width, face.boundingBox.height)) >
+              (aiManager.config?.data.faceCheckRatio ?? 36)) {
             badImages.add(medium);
           } else {
             goodList.add(medium);

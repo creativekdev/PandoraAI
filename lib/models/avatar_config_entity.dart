@@ -120,6 +120,8 @@ class AvatarConfigData {
   @JSONField(name: 'pending_time')
   late int pendingTime = 120;
   late Map<String, dynamic> roles;
+  @JSONField(name: 'face_check_ratio')
+  late int faceCheckRatio = 36;
 
   AvatarConfigData();
 

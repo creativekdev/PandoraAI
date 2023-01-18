@@ -35,6 +35,10 @@ AvatarConfigData $AvatarConfigDataFromJson(Map<String, dynamic> json) {
 	if (roles != null) {
 		avatarConfigData.roles = roles;
 	}
+	final int? faceCheckRatio = jsonConvert.convert<int>(json['face_check_ratio']);
+	if (faceCheckRatio != null) {
+		avatarConfigData.faceCheckRatio = faceCheckRatio;
+	}
 	return avatarConfigData;
 }
 
@@ -42,5 +46,6 @@ Map<String, dynamic> $AvatarConfigDataToJson(AvatarConfigData entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['pending_time'] = entity.pendingTime;
 	data['roles'] = entity.roles;
+	data['face_check_ratio'] = entity.faceCheckRatio;
 	return data;
 }
