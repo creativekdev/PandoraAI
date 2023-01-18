@@ -20,8 +20,8 @@ class PickAlbumNavigationBar extends StatelessWidget {
     this.elevation = 0,
   }) : super(key: key) {
     statusBar = Container(color: Colors.transparent, height: ScreenUtil.getStatusBarHeight());
-    this.backIcon = backIcon ?? Image.asset(Images.ic_back, height: $(24), width: $(24));
-    this.trailing = trailing ?? SizedBox(width: $(24));
+    this.backIcon = backIcon ?? Image.asset(Images.ic_back, height: $(22), width: $(22));
+    this.trailing = trailing ?? SizedBox(width: $(22));
   }
 
   @override
@@ -31,7 +31,7 @@ class PickAlbumNavigationBar extends StatelessWidget {
         statusBar,
         Row(
           children: [
-            backIcon.intoContainer(padding: EdgeInsets.symmetric(horizontal: 8)).intoGestureDetector(onTap: () {
+            backIcon.intoContainer(padding: EdgeInsets.only(left: 14, right: 6)).intoGestureDetector(onTap: () {
               Navigator.of(context).pop();
             }),
             leading ?? SizedBox.shrink(),

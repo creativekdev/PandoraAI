@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -10,6 +11,7 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
@@ -129,7 +131,7 @@ class _AnotherMeTransScreenState extends State<AnotherMeTransScreen> {
                         category: DiscoveryCategory.another_me,
                       ).then((value) {
                         if (value ?? false) {
-                          showShareSuccessDialog(context);
+                          showShareResult();
                         }
                       });
                     },
@@ -158,4 +160,15 @@ class _AnotherMeTransScreenState extends State<AnotherMeTransScreen> {
           );
         },
       );
+
+  void showShareResult() {
+    showShareMetaverseSuccessDialog(context).then((value) {
+      if (value ?? false) {
+        EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id()]));
+        Navigator.of(context).pop();
+        //todo 这里不用popUntil是因为trans页面和上一级页面是同一个业务逻辑上的页面，
+        //todo trans返回时什么也不带就会自动关闭上一级页面，后续需要优化。
+      }
+    });
+  }
 }

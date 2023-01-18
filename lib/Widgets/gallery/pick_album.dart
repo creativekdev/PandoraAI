@@ -2,12 +2,14 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
+import 'albums_popup.dart';
 import 'pick_album_navigation_bar.dart';
 
 class PickAlbumScreen {
@@ -205,31 +207,36 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                       color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.EffectCardColor,
                     )),
             middle: albums.isNotEmpty && switchAlbum
-                ? DropdownButton<Album>(
-                    alignment: Alignment.center,
-                    dropdownColor: ColorConstant.BackgroundColor,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white,
-                    ),
-                    underline: Container(),
-                    value: selectAlbum,
-                    onChanged: (value) {
-                      setState(() {
-                        selectAlbum = value;
-                        cacheManager.setString(CacheManager.lastAlbum, value!.id);
-                        loadData();
-                      });
-                    },
-                    items: albums
-                        .map((e) => DropdownMenuItem<Album>(
-                            value: e,
-                            child: Text(
-                              '${e.name} (${e.count})',
-                              style: TextStyle(color: ColorConstant.White),
-                            )))
-                        .toList(),
-                  )
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '${selectAlbum?.name} (${selectAlbum?.count})' ?? '',
+                        style: TextStyle(
+                          color: ColorConstant.White,
+                          fontSize: $(17),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      SizedBox(width: 6),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: $(24),
+                        color: ColorConstant.White,
+                      ),
+                    ],
+                  ).intoGestureDetector(onTap: () {
+                    Navigator.of(context).push<Album>(Top2BottomRouter(duration: 300, opaque: false, child: AlbumPopup(albums: albums))).then((value) {
+                      if (value != null) {
+                        setState(() {
+                          selectAlbum = value;
+                          cacheManager.setString(CacheManager.lastAlbum, value.id);
+                          loadData();
+                        });
+                      }
+                    });
+                  })
                 : TitleTextWidget(S.of(context).choose_photo, ColorConstant.White, FontWeight.w500, $(17)),
             trailing: maxCount == 1
                 ? null

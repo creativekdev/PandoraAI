@@ -28,6 +28,8 @@ class AddPhotosDialog extends StatelessWidget {
               controller.imageList.length >= controller.minSize
                   ? Image.asset(
                       Images.ic_success,
+                      width: $(28),
+                      color: Colors.green,
                     )
                   : Image.asset(
                       Images.ic_warning,

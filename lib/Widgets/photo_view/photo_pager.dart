@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/cacheImage/sync_download_file.dart';
@@ -10,6 +11,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
