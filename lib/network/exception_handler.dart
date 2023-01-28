@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/src/dio_error.dart';
@@ -16,8 +17,8 @@ class ExceptionHandler {
       if (e is DioError) {
         if (e.type == DioErrorType.other) {
           if (kReleaseMode) {
-            if (AppContext.context != null) {
-              CommonExtension().showToast(S.of(AppContext.context!).commonFailedToast);
+            if (Get.context != null) {
+              CommonExtension().showToast(S.of(Get.context!).commonFailedToast);
             } else {
               CommonExtension().showToast("Oops failed!");
             }
@@ -47,21 +48,26 @@ class ExceptionHandler {
     } else {
       var data = e.response!.data;
       if (data == null) {
-        if (AppContext.context != null) {
-          CommonExtension().showToast(S.of(AppContext.context!).commonFailedToast);
+        if (Get.context != null) {
+          CommonExtension().showToast(S.of(Get.context!).commonFailedToast);
         } else {
           CommonExtension().showToast("Oops failed!");
         }
       } else if (data is Map) {
         var ctoast;
-        if (AppContext.context != null) {
-          ctoast = S.of(AppContext.context!).commonFailedToast;
+        if (Get.context != null) {
+          ctoast = S.of(Get.context!).commonFailedToast;
         } else {
           ctoast = "Oops failed!";
         }
         CommonExtension().showToast(data['message'] ?? ctoast);
       } else {
-        CommonExtension().showToast(data.toString());
+        if (Get.context != null) {
+          var manager = AppDelegate.instance.getManager<ThirdpartManager>();
+          CommonExtension().showToast(manager.getLocaleString(Get.context!, data.toString()));
+        } else {
+          CommonExtension().showToast(data.toString());
+        }
       }
     }
   }

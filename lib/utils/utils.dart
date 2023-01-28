@@ -351,14 +351,17 @@ int faceRatio(Size originalSize, Size faceSize) {
   return (oriArea / faceArea).round();
 }
 
-
 Future<File> heicToImage(Medium media) async {
   var sourceFile = await media.getFile();
-  if(Platform.isIOS) {
+  return heicFileToImage(sourceFile);
+}
+
+Future<File> heicFileToImage(File file) async {
+  if (Platform.isIOS) {
     const platform = MethodChannel(PLATFORM_CHANNEL);
-    final String outPath = await platform.invokeMethod('heic2jpg', sourceFile.path);
+    final String outPath = await platform.invokeMethod('heic2jpg', file.path);
     return File(outPath);
   } else {
-    return sourceFile;
+    return file;
   }
 }

@@ -65,6 +65,8 @@ class ThirdpartManager extends BaseManager {
 
   String getLocaleString(BuildContext context, String str) {
     switch (str.toLowerCase()) {
+      case 'invalid password':
+        return S.of(context).invalid_password;
       case 'recent':
         return S.of(context).recent;
       case 'get inspired':

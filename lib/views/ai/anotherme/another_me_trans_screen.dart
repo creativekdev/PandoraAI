@@ -39,34 +39,42 @@ class _AnotherMeTransScreenState extends State<AnotherMeTransScreen> {
   AnotherMeController controller = Get.find();
   UploadImageController uploadImageController = Get.find();
   late TransResultController transResultController;
+  GlobalKey<AMOptContainerState> optKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     file = widget.file;
     delay(() {
-      generate(context, controller);
+      generate(context, controller, true);
     });
   }
 
-  void generate(BuildContext context, AnotherMeController controller) {
+  void generate(BuildContext context, AnotherMeController controller, bool needUpload) {
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
-    SimulateProgressBar.startLoading(context, controller: simulateProgressBarController).then((value) {
+    SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: simulateProgressBarController).then((value) {
       controller.update();
       if (!TextUtil.isEmpty(controller.transKey)) {
         transResultController.bindData(File(controller.transKey!));
         transResultController.showResult();
       }
     });
-    controller.onTakePhoto(file, uploadImageController).then((value) {
-      if (value) {
-        controller.startTransfer(uploadImageController.imageUrl.value).then((value) {
+    if(needUpload) {
+      controller.onTakePhoto(file, uploadImageController).then((value) {
+        simulateProgressBarController.uploadComplete();
+        if (value) {
+          controller.startTransfer(uploadImageController.imageUrl.value).then((value) {
+            simulateProgressBarController.loadComplete();
+          });
+        } else {
           simulateProgressBarController.loadComplete();
-        });
-      } else {
+        }
+      });
+    } else {
+      controller.startTransfer(uploadImageController.imageUrl.value).then((value) {
         simulateProgressBarController.loadComplete();
-      }
-    });
+      });
+    }
   }
 
   @override
@@ -100,9 +108,12 @@ class _AnotherMeTransScreenState extends State<AnotherMeTransScreen> {
                 }),
                 Positioned(
                   child: AMOptContainer(
+                    key: optKey,
                     onChoosePhotoTap: () {
-                      controller.clear(uploadImageController);
-                      Navigator.of(context).pop(true);
+                      optKey.currentState!.dismiss().whenComplete(() {
+                        controller.clear(uploadImageController);
+                        Navigator.of(context).pop(true);
+                      });
                     },
                     onDownloadTap: () async {
                       if (TextUtil.isEmpty(controller.transKey)) {
@@ -115,7 +126,7 @@ class _AnotherMeTransScreenState extends State<AnotherMeTransScreen> {
                     onGenerateAgainTap: () {
                       controller.clearTransKey();
                       transResultController.showOriginal();
-                      generate(context, controller);
+                      generate(context, controller, false);
                     },
                     onShareDiscoveryTap: () {
                       if (TextUtil.isEmpty(controller.transKey)) {

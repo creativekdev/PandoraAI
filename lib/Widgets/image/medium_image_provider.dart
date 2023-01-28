@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -8,6 +9,8 @@ import 'package:photo_gallery/photo_gallery.dart';
 
 class MediumImage extends ImageProvider<MediumImage> {
   final Medium medium;
+  final String failedImageAssets;
+  final Function(Medium medium)? onError;
 
   final double scale;
   final int width;
@@ -18,6 +21,8 @@ class MediumImage extends ImageProvider<MediumImage> {
     this.scale = 1.0,
     required this.height,
     required this.width,
+    required this.failedImageAssets,
+    this.onError,
   })  : assert(medium != null),
         assert(scale != null);
 
@@ -60,8 +65,8 @@ class MediumImage extends ImageProvider<MediumImage> {
         var uint8list = await FlutterImageCompress.compressWithFile(
           file.path,
           format: CompressFormat.heic,
-          minWidth: 256,
-          minHeight: 256,
+          minWidth: width,
+          minHeight: height,
           quality: 100,
         );
         bytes = uint8list!;
@@ -72,7 +77,7 @@ class MediumImage extends ImageProvider<MediumImage> {
       if (bytes.lengthInBytes == 0) {
         // The file may become available later.
         PaintingBinding.instance.imageCache.evict(key);
-        throw StateError('$medium is empty and cannot be loaded as an image.');
+        return await getWrongData(decode, decodeDeprecated);
       }
 
       if (decode != null) {
@@ -82,8 +87,20 @@ class MediumImage extends ImageProvider<MediumImage> {
     } catch (e) {
       // The file may become available later.
       PaintingBinding.instance.imageCache.evict(key);
-      throw StateError('$medium is empty and cannot be loaded as an image.');
+      return await getWrongData(decode, decodeDeprecated);
+      // throw StateError('$medium is empty and cannot be loaded as an image.');
     }
+  }
+
+  getWrongData(DecoderBufferCallback? decode, DecoderCallback? decodeDeprecated) async {
+    onError?.call(medium);
+    var wrongImage = await SyncAssetImage(assets: failedImageAssets).getImage();
+    var byteData = await wrongImage.image.toByteData(format: ui.ImageByteFormat.png);
+    var byte = byteData!.buffer.asUint8List();
+    if (decode != null) {
+      return decode(await ui.ImmutableBuffer.fromUint8List(byte));
+    }
+    return decodeDeprecated!(byte);
   }
 
   @override

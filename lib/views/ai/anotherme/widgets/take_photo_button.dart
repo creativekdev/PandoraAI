@@ -34,6 +34,7 @@ class _TakePhotoButtonState extends State<TakePhotoButton> with SingleTickerProv
 
   int? downStamp;
   int? longTapStamp;
+  bool onTapDown = false;
 
   @override
   void initState() {
@@ -60,6 +61,9 @@ class _TakePhotoButtonState extends State<TakePhotoButton> with SingleTickerProv
   Widget build(BuildContext context) {
     return Listener(
       onPointerDown: (event) {
+        setState(() {
+          onTapDown = true;
+        });
         return;
         downStamp = DateTime.now().millisecondsSinceEpoch;
         delay(() {
@@ -78,6 +82,9 @@ class _TakePhotoButtonState extends State<TakePhotoButton> with SingleTickerProv
         }, milliseconds: 200);
       },
       onPointerUp: (event) {
+        setState(() {
+          onTapDown = false;
+        });
         return;
         if (downStamp == null) {
           return;
@@ -91,6 +98,9 @@ class _TakePhotoButtonState extends State<TakePhotoButton> with SingleTickerProv
         }
       },
       onPointerCancel: (event) {
+        setState(() {
+          onTapDown = false;
+        });
         return;
         if (longTapStamp != null) {
           onTakeVideoEnd.call();
@@ -102,14 +112,14 @@ class _TakePhotoButtonState extends State<TakePhotoButton> with SingleTickerProv
       child: Stack(
         children: [
           Container(
-            width: size - 8,
-            height: size - 8,
+            width: size - 8 - (onTapDown ? 4 : 0),
+            height: size - 8 - (onTapDown ? 4 : 0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(64),
             ),
           ).intoContainer(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.all(4 + (onTapDown ? 2 : 0)),
             decoration: BoxDecoration(
                 border: Border.all(
                   color: Colors.white,

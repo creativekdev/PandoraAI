@@ -351,7 +351,16 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       TitleTextWidget(S.of(context).successful, Color(0xff34C759), FontWeight.w600, $(16)),
                     ],
                   ),
-                  content: TitleTextWidget(S.of(context).pandora_create_spend.replaceAll('%d', '2'), ColorConstant.White, FontWeight.w600, $(14), maxLines: 3),
+                  content: TitleTextWidget(
+                    S.of(context).pandora_create_spend.replaceAll(
+                          '%d',
+                          '${manager.config?.data.pendingTime ?? 120}',
+                        ),
+                    ColorConstant.White,
+                    FontWeight.w600,
+                    $(14),
+                    maxLines: 3,
+                  ),
                   actions: [
                     TitleTextWidget(
                       S.of(context).ok,

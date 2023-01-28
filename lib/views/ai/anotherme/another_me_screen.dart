@@ -30,7 +30,7 @@ class AnotherMeScreen extends StatefulWidget {
   State<AnotherMeScreen> createState() => _AnotherMeScreenState();
 }
 
-class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindingObserver {
+class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   late double sourceImageSize;
   late double galleryImageSize;
   late double cameraWidth;
@@ -47,10 +47,15 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   CameraImage? lastScreenShot;
   int lastScreenShotStamp = 0;
   bool takingPhoto = false;
+  late AnimationController _animationController;
+  late CurvedAnimation _anim;
+  List<String> loadFailedList = [];
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
     sourceImageSize = ScreenUtil.screenSize.width;
     galleryImageSize = ScreenUtil.screenSize.width / 7.5;
     cameraWidth = ScreenUtil.screenSize.width;
@@ -58,6 +63,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     widgetDirection = cameraWidth / cameraHeight > 1 ? Axis.horizontal : Axis.vertical;
     availableCameras().then((value) {
       if (!mounted) {
+        return;
+      }
+      if (value.isEmpty) {
         return;
       }
       var pick = value.pick((t) => t.lensDirection == CameraLensDirection.front) ?? value.first;
@@ -117,6 +125,10 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
           FutureBuilder<void>(
             future: _initializeControllerFuture,
             builder: (context, snapshot) {
+              const defaultWidget = const Center(child: CircularProgressIndicator());
+              if (cameraController == null) {
+                return defaultWidget;
+              }
               if (snapshot.connectionState == ConnectionState.done) {
                 lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
                 if (cameraController != null) {
@@ -148,8 +160,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                 );
                 return view;
               } else {
-                // Otherwise, display a loading indicator.
-                return const Center(child: CircularProgressIndicator());
+                return defaultWidget;
               }
             },
           ).hero(tag: AnotherMe.takeItemTag),
@@ -173,48 +184,70 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
               builder: (controller) {
                 return Column(
                   children: [
-                    galleryContainer(context, controller),
+                    AnimatedBuilder(
+                      animation: _anim,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(-_animationController.value * ScreenUtil.screenSize.width, 0),
+                          child: child,
+                        );
+                      },
+                      child: galleryContainer(context, controller),
+                    ),
                     SizedBox(height: $(16)),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 50,
-                          height: 50,
-                        ),
-                        TakePhotoButton(
-                          size: $(68),
-                          onTakePhoto: () {
-                            takePhoto().then((value) {
-                              if (value != null) {
-                                startTransfer(context, value);
-                              } else {
-                                CommonExtension().showToast('Take Photo Failed');
+                    AnimatedBuilder(
+                      animation: _anim,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(0, _animationController.value * $(80)),
+                          child: child,
+                        );
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 50,
+                            height: 50,
+                          ),
+                          TakePhotoButton(
+                            size: $(68),
+                            onTakePhoto: () {
+                              if (_animationController.isAnimating) {
+                                return;
                               }
-                            });
-                          },
-                          onTakeVideoEnd: () {
-                            // cameraController.stopTakeVideo();
-                          },
-                          onTakeVideoStart: () async {
-                            // cameraController.takeVideo(maxDuration: 8).then((value) {
-                            //   print(value);
-                            // });
-                            return true;
-                          },
-                          maxSecond: 8,
-                        ),
-                        Image.asset(
-                          Images.ic_camera_switch,
-                          width: 50,
-                          height: 50,
-                        ).intoContainer(width: 50, height: 50, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
-                            onTap: () {
-                          switchCamera();
-                        }),
-                      ],
-                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                              takePhoto().then((value) {
+                                if (value != null) {
+                                  _animationController.forward();
+                                  delay(() => startTransfer(context, value), milliseconds: 300);
+                                } else {
+                                  CommonExtension().showToast('Take Photo Failed');
+                                }
+                              });
+                            },
+                            onTakeVideoEnd: () {
+                              // cameraController.stopTakeVideo();
+                            },
+                            onTakeVideoStart: () async {
+                              // cameraController.takeVideo(maxDuration: 8).then((value) {
+                              //   print(value);
+                              // });
+                              return true;
+                            },
+                            maxSecond: 8,
+                          ),
+                          Image.asset(
+                            Images.ic_camera_switch,
+                            width: 44,
+                            height: 44,
+                          ).intoContainer(width: 44, height: 44, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
+                              onTap: () {
+                            switchCamera();
+                          }),
+                        ],
+                      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                    ),
                   ],
                 ).intoContainer(
                   width: ScreenUtil.screenSize.width,
@@ -261,7 +294,17 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                   itemBuilder: (context, index) {
                     return ClipRRect(
                       child: Image(
-                        image: MediumImage(list[index], width: 256, height: 256),
+                        image: MediumImage(
+                          list[index],
+                          width: 256,
+                          height: 256,
+                          failedImageAssets: Images.ic_netimage_failed,
+                          onError: (medium) {
+                            if (!loadFailedList.contains(medium.id)) {
+                              loadFailedList.add(medium.id);
+                            }
+                          },
+                        ),
                         width: galleryImageSize,
                         height: galleryImageSize,
                         fit: BoxFit.cover,
@@ -269,6 +312,10 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                       borderRadius: BorderRadius.circular(4),
                     ).intoGestureDetector(onTap: () async {
                       var medium = list[index];
+                      if (loadFailedList.contains(medium.id)) {
+                        CommonExtension().showToast(S.of(context).wrong_image);
+                        return;
+                      }
                       var xFile = XFile((await medium.getFile()).path);
                       startTransfer(context, xFile);
                     }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
@@ -297,6 +344,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         .then((value) {
       if (value == null) {
         Navigator.of(context).pop();
+      } else {
+        _animationController.reverse();
       }
     });
   }

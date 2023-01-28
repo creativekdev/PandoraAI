@@ -68,6 +68,7 @@ class Images {
    static const String ic_man = 'assets/images/ic_man.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_list = 'assets/images/ic_msg_list.png';
+   static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
    static const String ic_no_watermark = 'assets/images/ic_no_watermark.png';

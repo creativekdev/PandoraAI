@@ -20,9 +20,9 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
-import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class CartoonizerApi extends BaseRequester {
   @override
@@ -373,5 +373,20 @@ class CartoonizerApi extends BaseRequester {
 
   Future<BaseEntity?> logAnotherMe(Map<String, dynamic> params) async {
     return await get('/log/anotherme', params: params);
+  }
+
+  Future<Map> checkAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var baseEntity = await get('/check_app_version');
+    if(baseEntity != null) {
+      var result = baseEntity.data['data'] as Map;
+      int availableBuild = result['available_build'] ?? 0;
+      if (availableBuild > int.parse(packageInfo.buildNumber)) {
+        result["need_update"] = true;
+      }
+      return result;
+    } else {
+      return {"need_update": false};
+    }
   }
 }

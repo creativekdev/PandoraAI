@@ -50,13 +50,15 @@ class _TransResultCardState extends State<TransResultCard> with TickerProviderSt
           AnimatedBuilder(
             animation: alphaAnim,
             builder: (context, child) => Opacity(
-                opacity: 1 - alphaAnim.value,
-                child: Image.file(
-                  originalImage,
-                  width: width,
-                  height: height,
-                  fit: BoxFit.contain,
-                ).hero(tag: AnotherMe.takeItemTag)),
+              opacity: 1 - alphaAnim.value,
+              child: Image.file(
+                originalImage,
+                width: width,
+                height: height,
+                fit: BoxFit.contain,
+                // ).hero(tag: AnotherMe.takeItemTag),
+              ),
+            ),
           ),
           resultImage == null
               ? SizedBox.shrink()

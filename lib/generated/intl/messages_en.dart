@@ -202,6 +202,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram":
             MessageLookupByLibrary.simpleMessage("Continue with Instagram"),
+        "invalid_password":
+            MessageLookupByLibrary.simpleMessage("Invalid Password"),
         "january": MessageLookupByLibrary.simpleMessage("January"),
         "july": MessageLookupByLibrary.simpleMessage("July"),
         "june": MessageLookupByLibrary.simpleMessage("June"),
@@ -261,7 +263,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pandora_create_input_name_hint":
             MessageLookupByLibrary.simpleMessage("Please input name"),
         "pandora_create_spend": MessageLookupByLibrary.simpleMessage(
-            "Your photos will be generated in about %d hours"),
+            "Your photos will be generated in about %d minutes"),
         "pandora_create_style_hint":
             MessageLookupByLibrary.simpleMessage("Please select style"),
         "pandora_pay_description": MessageLookupByLibrary.simpleMessage(
@@ -398,6 +400,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "tiktok_login": MessageLookupByLibrary.simpleMessage("TikTok"),
         "toastImageSaved": MessageLookupByLibrary.simpleMessage("Image Saved"),
         "toastVideoSaved": MessageLookupByLibrary.simpleMessage("Video Saved"),
+        "trans_painting":
+            MessageLookupByLibrary.simpleMessage("Ai Painting..."),
+        "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),
@@ -434,6 +439,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),
         "woman": MessageLookupByLibrary.simpleMessage("woman"),
+        "wrong_image": MessageLookupByLibrary.simpleMessage("Wrong Image File"),
         "year": MessageLookupByLibrary.simpleMessage("Year"),
         "yearly": MessageLookupByLibrary.simpleMessage("Yearly"),
         "you_have_not_posted_anything": MessageLookupByLibrary.simpleMessage(

@@ -104,7 +104,7 @@
   "or": "Or",
   "other_replies": "other %d replies >",
   "packages_purchased": "Packages purchased",
-  "pandora_create_spend": "Your photos will be generated in about %d hours",
+  "pandora_create_spend": "Your photos will be generated in about %d minutes",
   "pandora_pay_description": "Pandora Avatars use state of the art AI technology to create magnificent avatars for you! Despite requiring a high amount of resources (GPU), we’ve made it as affordable as possible!",
   "pandora_purchase": "Purchase for ",
   "pandora_transfer_tips": "We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service",
@@ -282,5 +282,9 @@
   "generate_record": "Generate Record",
   "pandora_avatar": "Pandora Avatar",
   "upload": "Upload",
-  "select_completed": "Select Completed"
+  "select_completed": "Select Completed",
+  "invalid_password": "Invalid Password",
+  "trans_uploading": "Uploading...",
+  "trans_painting": "Ai Painting...",
+  "wrong_image": "Wrong Image File"
 }

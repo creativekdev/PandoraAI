@@ -80,6 +80,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   late EdgeInsets padding;
   late double spacing;
   late int crossCount;
+  List<String> loadFailedList = [];
 
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
@@ -226,7 +227,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                         color: ColorConstant.White,
                       ),
                     ],
-                  ).intoGestureDetector(onTap: () {
+                  ).intoContainer(color: Colors.transparent, padding: EdgeInsets.symmetric(vertical: 9)).intoGestureDetector(onTap: () {
                     Navigator.of(context).push<Album>(Top2BottomRouter(duration: 300, opaque: false, child: AlbumPopup(albums: albums))).then((value) {
                       if (value != null) {
                         setState(() {
@@ -290,6 +291,12 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                 data,
                 width: (imageSize * 3).toInt(),
                 height: (imageSize * 3).toInt(),
+                failedImageAssets: Images.ic_netimage_failed,
+                onError: (medium) {
+                  if (!loadFailedList.contains(medium.id)) {
+                    loadFailedList.add(medium.id);
+                  }
+                },
               ),
               fit: BoxFit.cover,
             ),
@@ -310,38 +317,40 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                         color: ColorConstant.Red,
                       ).intoCenter(),
                     )
-                  : Positioned(
-                      child: selected
-                          ? Text(
-                              '${(selectedList.findPosition((e) => e.id == data.id) ?? 0) + 1}',
-                              style: TextStyle(color: Colors.white),
-                            ).intoContainer(
-                              width: $(19),
-                              height: $(19),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: ColorConstant.BlueColor,
-                                borderRadius: BorderRadius.circular(32),
-                              ))
-                          : Icon(
-                              Icons.check,
-                              color: ColorConstant.White,
-                              size: $(16),
-                            ).intoContainer(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                border: Border.all(color: ColorConstant.White),
-                              ),
+                  : selected
+                      ? Positioned(
+                          child: Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: $(22),
+                          ),
+                          top: 4,
+                          right: 4,
+                        )
+                      : Positioned(
+                          child: Icon(
+                            Icons.check,
+                            color: ColorConstant.White,
+                            size: $(16),
+                          ).intoContainer(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(32),
+                              border: Border.all(color: selected ? Colors.green : ColorConstant.White),
                             ),
-                      top: 6,
-                      right: 6,
-                    ),
+                          ),
+                          top: 6,
+                          right: 6,
+                        ),
         ],
       ),
       width: imageSize,
       height: imageSize,
     ).intoGestureDetector(onTap: () {
       if (isBad) {
+        return;
+      }
+      if(loadFailedList.contains(data.id)) {
+        CommonExtension().showToast(S.of(context).wrong_image);
         return;
       }
       if (maxCount == 1) {

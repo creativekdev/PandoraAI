@@ -167,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
+        "invalid_password": MessageLookupByLibrary.simpleMessage("密码错误"),
         "january": MessageLookupByLibrary.simpleMessage("一月"),
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
@@ -216,7 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pandora_create_input_name_hint":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "pandora_create_spend":
-            MessageLookupByLibrary.simpleMessage("您的照片大约要%d小时转换完成"),
+            MessageLookupByLibrary.simpleMessage("您的照片大约要 %d 分钟转换完成"),
         "pandora_create_style_hint":
             MessageLookupByLibrary.simpleMessage("请选择风格"),
         "pandora_pay_description": MessageLookupByLibrary.simpleMessage(
@@ -324,6 +325,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "tiktok_login": MessageLookupByLibrary.simpleMessage("TikTok"),
         "toastImageSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
         "toastVideoSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
+        "trans_painting": MessageLookupByLibrary.simpleMessage("AI作画中..."),
+        "trans_uploading": MessageLookupByLibrary.simpleMessage("正在上传..."),
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),
@@ -351,6 +354,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "what_to_expect": MessageLookupByLibrary.simpleMessage("使用声明"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("为什么需要付款"),
         "woman": MessageLookupByLibrary.simpleMessage("女性"),
+        "wrong_image": MessageLookupByLibrary.simpleMessage("图片无效"),
         "year": MessageLookupByLibrary.simpleMessage("年"),
         "yearly": MessageLookupByLibrary.simpleMessage("年付"),
         "you_have_not_posted_anything":

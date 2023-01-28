@@ -79,16 +79,21 @@ class _GradientCircularProgressPainter extends CustomPainter {
 
     Rect rect = Offset(_offset, _offset) & Size(size.width - strokeWidth, size.height - strokeWidth);
 
+    var bgPaint = Paint()
+      ..strokeCap = strokeCapRound ? StrokeCap.round : StrokeCap.butt
+      ..style = PaintingStyle.stroke
+      ..isAntiAlias = true
+      ..strokeWidth = strokeWidth;
+    if (backgroundColor != Colors.transparent) {
+      bgPaint.color = backgroundColor;
+      canvas.drawArc(rect, _start, total, false, bgPaint);
+    }
+
     var paint = Paint()
       ..strokeCap = strokeCapRound ? StrokeCap.round : StrokeCap.butt
       ..style = PaintingStyle.stroke
       ..isAntiAlias = true
       ..strokeWidth = strokeWidth;
-
-    if (backgroundColor != Colors.transparent) {
-      paint.color = backgroundColor;
-      canvas.drawArc(rect, _start, total, false, paint);
-    }
 
     if (_value > 0) {
       paint.shader = SweepGradient(

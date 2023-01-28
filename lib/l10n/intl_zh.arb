@@ -104,7 +104,7 @@
   "or": "或",
   "other_replies": "共%d条评论 >",
   "packages_purchased": "已购买",
-  "pandora_create_spend": "您的照片大约要%d小时转换完成",
+  "pandora_create_spend": "您的照片大约要 %d 分钟转换完成",
   "pandora_pay_description": "我们的人工智能技术和极为强大的算法支撑将为您创造出最华丽的画像！",
   "pandora_purchase": "购买金额",
   "pandora_transfer_tips": "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。你可以选择将AI模型作为高级服务。",
@@ -282,5 +282,9 @@
   "generate_record": "生成记录",
   "pandora_avatar": "Pandora Avatar",
   "upload": "上传",
-  "select_completed": "选择完成"
+  "select_completed": "选择完成",
+  "invalid_password": "密码错误",
+  "trans_uploading": "正在上传...",
+  "trans_painting": "AI作画中...",
+  "wrong_image": "图片无效"
 }

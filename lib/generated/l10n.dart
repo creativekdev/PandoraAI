@@ -1100,10 +1100,10 @@ class S {
     );
   }
 
-  /// `Your photos will be generated in about %d hours`
+  /// `Your photos will be generated in about %d minutes`
   String get pandora_create_spend {
     return Intl.message(
-      'Your photos will be generated in about %d hours',
+      'Your photos will be generated in about %d minutes',
       name: 'pandora_create_spend',
       desc: '',
       args: [],
@@ -2885,6 +2885,46 @@ class S {
     return Intl.message(
       'Select Completed',
       name: 'select_completed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid Password`
+  String get invalid_password {
+    return Intl.message(
+      'Invalid Password',
+      name: 'invalid_password',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Uploading...`
+  String get trans_uploading {
+    return Intl.message(
+      'Uploading...',
+      name: 'trans_uploading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ai Painting...`
+  String get trans_painting {
+    return Intl.message(
+      'Ai Painting...',
+      name: 'trans_painting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wrong Image File`
+  String get wrong_image {
+    return Intl.message(
+      'Wrong Image File',
+      name: 'wrong_image',
       desc: '',
       args: [],
     );

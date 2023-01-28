@@ -46,8 +46,10 @@ class _AlbumPopupState extends State<AlbumPopup> {
                                   fontFamily: 'Poppins',
                                 ),
                                 maxLines: 2,
-                              ).intoContainer(width: ScreenUtil.screenSize.width * 0.55, padding: EdgeInsets.symmetric(vertical: $(12), horizontal: $(15))).intoGestureDetector(
-                                  onTap: () {
+                              )
+                                  .intoContainer(
+                                      color: Colors.transparent, width: ScreenUtil.screenSize.width * 0.55, padding: EdgeInsets.symmetric(vertical: $(12), horizontal: $(15)))
+                                  .intoGestureDetector(onTap: () {
                                 Navigator.of(context).pop(e);
                               }))
                           .toList()

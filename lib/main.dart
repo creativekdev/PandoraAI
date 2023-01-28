@@ -8,6 +8,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -160,10 +161,10 @@ class _MyHomePageState extends State<MyHomePage> {
     onSplashAdLoadingListener.cancel();
   }
 
-  Future<void> _checkAppVersion() async {
-    var data = await API.checkLatestVersion();
+  Future<bool?> _checkAppVersion() async {
+    var data = await CartoonizerApi().checkAppVersion();
     if (data["need_update"] == true) {
-      Get.dialog(
+      return await Get.dialog<bool>(
         CommonDialog(
           height: 385,
           barrierDismissible: false,
@@ -201,6 +202,8 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       );
+    } else {
+      return true;
     }
   }
 
@@ -224,10 +227,13 @@ class _MyHomePageState extends State<MyHomePage> {
     logSystemEvent(Events.open_app);
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
-      _checkAppVersion();
-      var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
-      thirdpartManager.adsHolder.initHolder();
-      delay(() => openApp(force: true), milliseconds: 5000);
+      _checkAppVersion().then((value) {
+        if (value ?? false) {
+          var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
+          thirdpartManager.adsHolder.initHolder();
+          delay(() => openApp(force: true), milliseconds: 5000);
+        }
+      });
     } else {
       Navigator.pushAndRemoveUntil(
         context,

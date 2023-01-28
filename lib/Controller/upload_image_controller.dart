@@ -77,6 +77,9 @@ class UploadImageController extends GetxController {
       return false;
     }
     var key = await md5File(imageFile);
+    if (imageFile.path.toLowerCase().endsWith('heic')) {
+      imageFile = await heicFileToImage(imageFile);
+    }
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null && !cacheFile.urlExpired()) {
       updateImageUrl(cacheFile.url);
@@ -122,6 +125,9 @@ class UploadImageController extends GetxController {
       return;
     }
     var key = await md5File(imageFile);
+    if (imageFile.path.toLowerCase().endsWith('heic')) {
+      imageFile = await heicFileToImage(imageFile);
+    }
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       cacheFile.cachedId = cachedId;
