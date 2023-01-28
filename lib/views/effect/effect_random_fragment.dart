@@ -13,6 +13,7 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
@@ -127,7 +128,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     }
     List<List<_ListData>> result = [];
     List<_ListData> allList = [];
-    var showAdsNew = isShowAdsNew();
+    var showAdsNew = isShowAdsNew(type: AdType.card);
     for (int i = 0; i < list.length; i++) {
       int page = i ~/ 20;
       var data = list[i];
@@ -280,7 +281,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   bool get wantKeepAlive => true;
 
   Widget _buildMERCAd(double width, double height, int page) {
-    var showAds = isShowAdsNew();
+    var showAds = isShowAdsNew(type: AdType.card);
 
     if (showAds) {
       var appBackground = thirdpartManager.appBackground;

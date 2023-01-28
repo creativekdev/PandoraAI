@@ -1,5 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -55,6 +57,9 @@ class BannerAdsHolder extends WidgetAdsHolder {
 
   @override
   initHolder() {
+    if (!isShowAdsNew(type: AdType.card)) {
+      return;
+    }
     loadAd();
   }
 
@@ -75,7 +80,7 @@ class BannerAdsHolder extends WidgetAdsHolder {
   }
 
   loadAd() async {
-    if(cache.getAdsCache(key) != null) {
+    if (cache.getAdsCache(key) != null) {
       return;
     }
     await _inlineAdaptiveAd?.dispose();

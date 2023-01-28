@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -42,6 +43,9 @@ class SplashAdsHolder extends PageAdsHolder {
 
   @override
   initHolder() {
+    if (!isShowAdsNew(type: AdType.splash)) {
+      return;
+    }
     loadAd();
   }
 
@@ -96,7 +100,7 @@ class SplashAdsHolder extends PageAdsHolder {
     if (ignore) {
       return;
     }
-    if (!isShowAdsNew()) {
+    if (!isShowAdsNew(type: AdType.splash)) {
       return;
     }
     if (!isAdAvailable) {
@@ -142,14 +146,14 @@ class SplashAdsHolder extends PageAdsHolder {
         _appOpenAd = null;
         loadAd();
         if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-          if (isShowAdsNew()) {
+          if (isShowAdsNew(type: AdType.splash)) {
             delay(() {
               if (Platform.isIOS) {
                 Get.to(PurchaseScreen());
               } else {
                 Get.to(StripeSubscriptionScreen());
               }
-            }, milliseconds: 100);
+            }, milliseconds: 500);
           }
         }
       },

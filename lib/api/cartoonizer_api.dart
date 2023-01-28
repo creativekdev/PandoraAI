@@ -10,6 +10,7 @@ import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/common/events.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -62,10 +63,16 @@ class CartoonizerApi extends BaseRequester {
         if (login) {
           user = SocialUserInfo.fromJson(data['data']);
         }
-        return OnlineModel(user: user, loginSuccess: login, aiServers: data['ai_servers']);
+        AdConfigEntity adConfig = AdConfigEntity.fromJson(data['ads_config'] ?? {});
+        return OnlineModel(
+          user: user,
+          loginSuccess: login,
+          aiServers: data['ai_servers'],
+          adConfig: adConfig,
+        );
       }
     }
-    return OnlineModel(user: null, loginSuccess: false, aiServers: {});
+    return OnlineModel(user: null, loginSuccess: false, aiServers: {}, adConfig: AdConfigEntity());
   }
 
   Future<BaseEntity?> deleteAccount() async {
@@ -378,7 +385,7 @@ class CartoonizerApi extends BaseRequester {
   Future<Map> checkAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     var baseEntity = await get('/check_app_version');
-    if(baseEntity != null) {
+    if (baseEntity != null) {
       var result = baseEntity.data['data'] as Map;
       int availableBuild = result['available_build'] ?? 0;
       if (availableBuild > int.parse(packageInfo.buildNumber)) {

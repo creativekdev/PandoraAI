@@ -11,6 +11,7 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
@@ -246,7 +247,7 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
   }
 
   Widget _buildMERCAd() {
-    if (isShowAdsNew()) {
+    if (isShowAdsNew(type: AdType.card)) {
       if (thirdpartManager.appBackground) {
         return const SizedBox();
       } else {

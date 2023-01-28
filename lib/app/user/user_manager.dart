@@ -3,10 +3,10 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
 
@@ -25,6 +25,16 @@ class UserManager extends BaseManager {
   Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
   set aiServers(Map<String, dynamic> data) => cacheManager.setJson(CacheManager.keyAiServer, data);
+
+  AdConfigEntity get adConfig {
+    var data = cacheManager.getJson(CacheManager.keyAdConfig);
+    if (data == null) {
+      return AdConfigEntity();
+    }
+    return AdConfigEntity.fromJson(data);
+  }
+
+  set adConfig(AdConfigEntity config) => cacheManager.setJson(CacheManager.keyAdConfig, config.toJson());
 
   SocialUserInfo? _user;
 
@@ -105,6 +115,7 @@ class UserManager extends BaseManager {
     if (value.aiServers.isNotEmpty) {
       aiServers = value.aiServers;
     }
+    adConfig = value.adConfig;
     if (value.loginSuccess) {
       user = value.user!;
       if (context != null && user!.status != 'activated') {

@@ -1,7 +1,10 @@
 import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../../models/enums/ad_type.dart';
 
 ///
 /// @Author: wangyu
@@ -40,6 +43,9 @@ class InterstitialAdsHolder extends PageAdsHolder {
 
   @override
   initHolder() {
+    if (!isShowAdsNew(type: AdType.processing)) {
+      return;
+    }
     _createInterstitialAd();
   }
 

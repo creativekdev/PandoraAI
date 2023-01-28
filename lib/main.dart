@@ -7,7 +7,6 @@ import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
-import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -56,14 +55,14 @@ void main() async {
   }
 
   // init firebase analytics
-  await FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
+  FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
 
   // init appsflyer
   // Appsflyer.instance;
   KoChaVa.instance.init();
   // init admob
-  await MobileAds.instance.initialize();
-  await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['F6236D69A8A84479F17A3C6D0EAB1C53']));
+  MobileAds.instance.initialize();
+  // await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['F6236D69A8A84479F17A3C6D0EAB1C53']));
   // run app
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
@@ -231,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (value ?? false) {
           var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
           thirdpartManager.adsHolder.initHolder();
-          delay(() => openApp(force: true), milliseconds: 5000);
+          delay(() => openApp(force: true), milliseconds: 2000);
         }
       });
     } else {

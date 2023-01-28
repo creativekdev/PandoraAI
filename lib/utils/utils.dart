@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
@@ -45,9 +46,27 @@ launchURL(String url) async {
   }
 }
 
-bool isShowAdsNew() {
+bool isShowAdsNew({required AdType type}) {
   // return false;
   var manager = AppDelegate.instance.getManager<UserManager>();
+  bool apiOpen;
+  switch (type) {
+    case AdType.splash:
+      apiOpen = manager.adConfig.splash == 1;
+      break;
+    case AdType.card:
+      apiOpen = manager.adConfig.card == 1;
+      break;
+    case AdType.processing:
+      apiOpen = manager.adConfig.processing == 1;
+      break;
+    case AdType.UNDEFINED:
+      apiOpen = true;
+      break;
+  }
+  if(!apiOpen) {
+    return false;
+  }
   if (manager.isNeedLogin) {
     return true;
   }
@@ -281,6 +300,7 @@ Future<Uint8List> addWaterMark({
   return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
 }
 
+///无效方法，flutter2.0以下适用
 Future<ui.Image?> createImageFromWidget(Widget widget, {Duration? wait, required Size imageSize}) async {
   var devicePixelRatio = ui.window.devicePixelRatio;
   final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();

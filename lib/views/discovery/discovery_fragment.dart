@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -304,7 +305,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   bool get wantKeepAlive => true;
 
   Widget _buildMERCAd(DiscoveryListController listController, int page) {
-    var showAds = isShowAdsNew();
+    var showAds = isShowAdsNew(type: AdType.card);
 
     if (showAds) {
       var appBackground = thirdpartManager.appBackground;

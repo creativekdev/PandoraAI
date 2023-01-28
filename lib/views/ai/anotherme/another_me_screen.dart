@@ -18,6 +18,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 import 'anotherme.dart';
@@ -54,6 +55,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
     sourceImageSize = ScreenUtil.screenSize.width;
@@ -92,6 +94,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       cameraController?.dispose();
     });
     super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
@@ -113,6 +116,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
       );
       _initializeControllerFuture = cameraController!.initialize();
+      setState(() {});
     }
   }
 
@@ -220,7 +224,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                               takePhoto().then((value) {
                                 if (value != null) {
                                   _animationController.forward();
-                                  delay(() => startTransfer(context, value), milliseconds: 300);
+                                  delay(() => startTransfer(context, value.value, value.key), milliseconds: 300);
                                 } else {
                                   CommonExtension().showToast('Take Photo Failed');
                                 }
@@ -317,7 +321,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                         return;
                       }
                       var xFile = XFile((await medium.getFile()).path);
-                      startTransfer(context, xFile);
+                      var ratio = medium.height! / medium.width!;
+                      startTransfer(context, xFile, ratio);
                     }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
                   },
                   itemCount: list.length,
@@ -335,11 +340,15 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             color: Color(0x88010101),
           ));
 
-  startTransfer(BuildContext context, XFile xFile) {
+  startTransfer(BuildContext context, XFile xFile, double ratio) {
     controller.clear(uploadImageController);
     Navigator.of(context)
         .push<bool>(
-      FadeRouter(child: AnotherMeTransScreen(file: xFile)),
+      FadeRouter(
+          child: AnotherMeTransScreen(
+        file: xFile,
+        ratio: ratio,
+      )),
     )
         .then((value) {
       if (value == null) {
@@ -357,8 +366,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       switchAlbum: true,
     ).then((value) async {
       if (value != null && value.isNotEmpty) {
-        var xFile = XFile((await value.first.getFile()).path);
-        startTransfer(context, xFile);
+        var medium = value.first;
+        var xFile = XFile((await medium.getFile()).path);
+        startTransfer(context, xFile, medium.height! / medium.width!);
       }
     });
   }
@@ -382,7 +392,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     }).onError((error, stackTrace) {});
   }
 
-  Future<XFile?> takePhoto() async {
+  Future<MapEntry<double, XFile>?> takePhoto() async {
     if (lastScreenShot == null) {
       return null;
     }
@@ -417,6 +427,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       filePath,
     );
     takingPhoto = false;
-    return XFile(file.path);
+    return MapEntry(ratio, XFile(file.path));
   }
 }

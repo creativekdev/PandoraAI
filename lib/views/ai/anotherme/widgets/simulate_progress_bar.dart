@@ -7,6 +7,7 @@ class SimulateProgressBar {
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
+    Function(double progress)? onUpdate,
   }) {
     return showDialog(
       context: context,
@@ -14,6 +15,7 @@ class SimulateProgressBar {
         return _SimulateProgressBar(
           controller: controller,
           needUploadProgress: needUploadProgress,
+          onUpdate: onUpdate,
         );
       },
       barrierDismissible: false,
@@ -24,11 +26,13 @@ class SimulateProgressBar {
 class _SimulateProgressBar extends StatefulWidget {
   SimulateProgressBarController controller;
   bool needUploadProgress;
+  Function(double progress)? onUpdate;
 
   _SimulateProgressBar({
     Key? key,
     required this.needUploadProgress,
     required this.controller,
+    required this.onUpdate,
   }) : super(key: key);
 
   @override
@@ -42,6 +46,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   late CurvedAnimation animationControllerCurved;
   late AnimationController completeController;
   late bool needUploadProgress;
+  Function(double progress)? onUpdate;
   bool completed = false;
   bool uploaded = false;
   List<Curve> curves = [
@@ -60,6 +65,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   void initState() {
     super.initState();
     needUploadProgress = widget.needUploadProgress;
+    onUpdate = widget.onUpdate;
     controller = widget.controller;
     controller._completeCall = () {
       if (!animationController.isCompleted) {
@@ -84,9 +90,12 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         setState(() {});
       }
     });
+    uploadAnimController.addListener(() {
+      onUpdate?.call(calculateProgress());
+    });
     animationController = AnimationController(vsync: this, duration: Duration(seconds: 5));
     animationControllerCurved = CurvedAnimation(parent: animationController, curve: curves[math.Random().nextInt(curves.length)]);
-    completeController = AnimationController(vsync: this, duration: Duration(seconds: 2));
+    completeController = AnimationController(vsync: this, duration: Duration(seconds: 1));
     animationController.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.dismissed:
@@ -102,6 +111,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
           break;
       }
     });
+    animationController.addListener(() {
+      onUpdate?.call(calculateProgress());
+    });
     completeController.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.dismissed:
@@ -115,6 +127,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
           break;
       }
     });
+    completeController.addListener(() {
+      onUpdate?.call(calculateProgress());
+    });
     if (!needUploadProgress) {
       animationController.forward();
     } else {
@@ -125,8 +140,19 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   @override
   void dispose() {
     super.dispose();
+    completeController.dispose();
     animationController.dispose();
     uploadAnimController.dispose();
+  }
+
+  double calculateProgress() {
+    var progress;
+    if (needUploadProgress) {
+      progress = uploadAnimController.value * 0.2 + animationControllerCurved.value * 0.75 + completeController.value * 0.05;
+    } else {
+      progress = animationControllerCurved.value * 0.95 + completeController.value * 0.05;
+    }
+    return progress;
   }
 
   @override
@@ -141,12 +167,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
                     return AnimatedBuilder(
                         animation: completeController,
                         builder: (context, child) {
-                          var progress;
-                          if (needUploadProgress) {
-                            progress = uploadAnimController.value * 0.2 + animationControllerCurved.value * 0.6 + completeController.value * 0.2;
-                          } else {
-                            progress = animationControllerCurved.value * 0.8 + completeController.value * 0.2;
-                          }
+                          var progress = calculateProgress();
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [

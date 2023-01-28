@@ -125,3 +125,70 @@ abstract class TransResultController {
 
   Future<bool> showOriginal({bool anim = false});
 }
+
+class TransResultNewCard extends StatelessWidget {
+  double width;
+  double height;
+  File originalImage;
+  File? resultImage;
+  Axis direction;
+  double dividerSize;
+
+  TransResultNewCard({
+    Key? key,
+    required this.width,
+    required this.height,
+    required this.originalImage,
+    required this.direction,
+    required this.resultImage,
+    required this.dividerSize,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> children = [
+      Expanded(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular($(8)),
+          child: Image.file(
+            originalImage,
+            width: direction == Axis.vertical ? double.maxFinite : null,
+            height: direction == Axis.horizontal ? double.maxFinite : null,
+            fit: BoxFit.cover,
+          ).hero(tag: AnotherMe.takeItemTag),
+        ),
+      ),
+      SizedBox(
+        width: direction == Axis.horizontal ? dividerSize : double.maxFinite,
+        height: direction == Axis.vertical ? dividerSize : double.maxFinite,
+      ),
+      Expanded(
+          child: resultImage == null
+              ? Container(
+                  width: direction == Axis.vertical ? double.maxFinite : null,
+                  height: direction == Axis.horizontal ? double.maxFinite : null,
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular($(6)),
+                  child: Image.file(
+                    resultImage!,
+                    width: direction == Axis.vertical ? double.maxFinite : null,
+                    height: direction == Axis.horizontal ? double.maxFinite : null,
+                    fit: BoxFit.cover,
+                  ))),
+    ];
+    return Container(
+      width: width,
+      height: height,
+      padding: EdgeInsets.all($(12)),
+      child: direction == Axis.vertical ? Column(children: children) : Row(children: children),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Color(0xFF04F1F9),
+          Color(0xFF7F97F3),
+          Color(0xFFEC5DD8),
+        ]),
+      ),
+    );
+  }
+}

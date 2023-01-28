@@ -4,6 +4,9 @@ class Images {
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
+   static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
+   static const String ic_app = 'assets/images/ic_app.png';
+   static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';

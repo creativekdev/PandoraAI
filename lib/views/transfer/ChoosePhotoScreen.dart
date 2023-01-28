@@ -31,6 +31,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -1289,7 +1290,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     required Function onCancel,
     Function? onFail,
   }) {
-    if (!isShowAdsNew()) {
+    if (!isShowAdsNew(type: AdType.processing)) {
       return false;
     }
     ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
@@ -1395,6 +1396,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   _BuildType getBuildType() {
+    if (userManager.adConfig.processing == 0) {
+      return _BuildType.hdImage;
+    }
     if (userManager.isNeedLogin) {
       return _BuildType.waterMark;
     } else {
