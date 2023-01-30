@@ -6,23 +6,18 @@ class AnotherMe {
   static String logoBackTag = 'am_back_logo';
   static String takeItemTag = 'am_take_item';
 
-  static Future<bool> open(BuildContext context) async {
-    var bool = await _checkPermissions();
-    if (!bool) {
-      return false;
-    }
-    Navigator.push(
+  static Future<void> open(BuildContext context) async {
+    return await Navigator.push<void>(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/AnotherMeScreen"),
         builder: (context) => AnotherMeScreen(),
       ),
     );
-    return true;
   }
 
-  static Future<bool> _checkPermissions() async {
-    var values = await [Permission.photos, Permission.camera, Permission.storage].request();
+  static Future<bool> checkPermissions() async {
+    var values = await [Permission.photos, Permission.microphone, Permission.camera, Permission.storage].request();
     for (var result in values.values) {
       if (result.isDenied || result.isPermanentlyDenied) {
         CommonExtension().showToast('Please grant all permissions');

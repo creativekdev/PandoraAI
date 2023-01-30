@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 class TransResultCard extends StatefulWidget {
   double width;
@@ -87,7 +89,7 @@ class _TransResultCardState extends State<TransResultCard> with TickerProviderSt
 
   @override
   Future<bool> showOriginal({bool anim = false}) async {
-    if (originalImage == null || resultImage == null) {
+    if (resultImage == null) {
       return false;
     }
     if (animation.isDismissed) {
@@ -103,7 +105,7 @@ class _TransResultCardState extends State<TransResultCard> with TickerProviderSt
 
   @override
   Future<bool> showResult({bool anim = true}) async {
-    if (originalImage == null || resultImage == null) {
+    if (resultImage == null) {
       return false;
     }
     if (animation.isCompleted) {
@@ -130,7 +132,7 @@ class TransResultNewCard extends StatelessWidget {
   double width;
   double height;
   File originalImage;
-  File? resultImage;
+  File resultImage;
   Axis direction;
   double dividerSize;
 
@@ -155,7 +157,9 @@ class TransResultNewCard extends StatelessWidget {
             width: direction == Axis.vertical ? double.maxFinite : null,
             height: direction == Axis.horizontal ? double.maxFinite : null,
             fit: BoxFit.cover,
-          ).hero(tag: AnotherMe.takeItemTag),
+          ).hero(tag: AnotherMe.takeItemTag).intoGestureDetector(onTap: () {
+            openImage(context, 0);
+          }),
         ),
       ),
       SizedBox(
@@ -163,19 +167,17 @@ class TransResultNewCard extends StatelessWidget {
         height: direction == Axis.vertical ? dividerSize : double.maxFinite,
       ),
       Expanded(
-          child: resultImage == null
-              ? Container(
-                  width: direction == Axis.vertical ? double.maxFinite : null,
-                  height: direction == Axis.horizontal ? double.maxFinite : null,
-                )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular($(6)),
-                  child: Image.file(
-                    resultImage!,
-                    width: direction == Axis.vertical ? double.maxFinite : null,
-                    height: direction == Axis.horizontal ? double.maxFinite : null,
-                    fit: BoxFit.cover,
-                  ))),
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular($(6)),
+            child: Image.file(
+              resultImage,
+              width: direction == Axis.vertical ? double.maxFinite : null,
+              height: direction == Axis.horizontal ? double.maxFinite : null,
+              fit: BoxFit.cover,
+            ).hero(tag: resultImage.path).intoGestureDetector(onTap: () {
+              openImage(context, 1);
+            })),
+      ),
     ];
     return Container(
       width: width,
@@ -188,6 +190,24 @@ class TransResultNewCard extends StatelessWidget {
           Color(0xFF7F97F3),
           Color(0xFFEC5DD8),
         ]),
+      ),
+    );
+  }
+
+  void openImage(BuildContext context, final int index) {
+    List<AnyPhotoItem> images =
+        [originalImage, resultImage].transfer((e, index) => AnyPhotoItem(type: AnyPhotoType.file, uri: e.path, tag: index == 0 ? AnotherMe.takeItemTag : null));
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) => AnyGalleryPhotoViewWrapper(
+          galleryItems: images,
+          backgroundDecoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+          initialIndex: index >= images.length ? 0 : index,
+        ),
       ),
     );
   }

@@ -172,7 +172,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           iconSize: $(24),
                           onTap: (pos) {
                             if (tabItems[pos].id == AppTabId.AI.id()) {
-                              AnotherMe.open(context);
+                              AnotherMe.checkPermissions().then((value) {
+                                if (value) {
+                                  AnotherMe.open(context);
+                                }
+                              });
                             } else {
                               _setIndex(pos);
                             }

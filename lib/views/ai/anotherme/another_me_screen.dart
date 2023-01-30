@@ -18,7 +18,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 
 import 'anotherme.dart';
@@ -133,37 +132,41 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
               if (cameraController == null) {
                 return defaultWidget;
               }
-              if (snapshot.connectionState == ConnectionState.done) {
-                lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
-                if (cameraController != null) {
-                  cameraController!.startImageStream((image) {
-                    if (takingPhoto) {
-                      return;
-                    }
-                    var currentTime = DateTime.now().millisecondsSinceEpoch;
-                    if (currentTime - lastScreenShotStamp > 200) {
-                      lastScreenShot = image;
-                      lastScreenShotStamp = currentTime;
-                    }
-                  }).onError((error, stackTrace) {});
+              try {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
+                  if (cameraController != null) {
+                    cameraController!.startImageStream((image) {
+                      if (takingPhoto) {
+                        return;
+                      }
+                      var currentTime = DateTime.now().millisecondsSinceEpoch;
+                      if (currentTime - lastScreenShotStamp > 200) {
+                        lastScreenShot = image;
+                        lastScreenShotStamp = currentTime;
+                      }
+                    }).onError((error, stackTrace) {});
+                  }
+                  // If the Future is complete, display the preview.
+                  var ratio = cameraController?.value.aspectRatio ?? ScreenUtil.screenSize.height / ScreenUtil.screenSize.width;
+                  var surfaceWidth = cameraHeight / ratio;
+                  var offsetX = (surfaceWidth - cameraWidth) / 2;
+                  var surface = cameraController!.buildPreview().intoContainer(
+                        width: surfaceWidth,
+                        height: cameraHeight,
+                      );
+                  var scrollController = ScrollController(initialScrollOffset: offsetX);
+                  var view = SingleChildScrollView(
+                    child: RepaintBoundary(key: screenShotKey, child: surface),
+                    controller: scrollController,
+                    physics: NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                  );
+                  return view;
+                } else {
+                  return defaultWidget;
                 }
-                // If the Future is complete, display the preview.
-                var ratio = cameraController!.value.aspectRatio;
-                var surfaceWidth = cameraHeight / ratio;
-                var offsetX = (surfaceWidth - cameraWidth) / 2;
-                var surface = cameraController!.buildPreview().intoContainer(
-                      width: surfaceWidth,
-                      height: cameraHeight,
-                    );
-                var scrollController = ScrollController(initialScrollOffset: offsetX);
-                var view = SingleChildScrollView(
-                  child: RepaintBoundary(key: screenShotKey, child: surface),
-                  controller: scrollController,
-                  physics: NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                );
-                return view;
-              } else {
+              } on CameraException catch (e) {
                 return defaultWidget;
               }
             },
@@ -320,8 +323,10 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                         CommonExtension().showToast(S.of(context).wrong_image);
                         return;
                       }
-                      var xFile = XFile((await medium.getFile()).path);
-                      var ratio = medium.height! / medium.width!;
+                      var file = await medium.getFile();
+                      var xFile = XFile((file).path);
+                      var imageInfo = await SyncFileImage(file: file).getImage();
+                      var ratio = imageInfo.image.height / imageInfo.image.width;
                       startTransfer(context, xFile, ratio);
                     }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
                   },
@@ -367,8 +372,10 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     ).then((value) async {
       if (value != null && value.isNotEmpty) {
         var medium = value.first;
-        var xFile = XFile((await medium.getFile()).path);
-        startTransfer(context, xFile, medium.height! / medium.width!);
+        var file = await medium.getFile();
+        var xFile = XFile((file).path);
+        var imageInfo = await SyncFileImage(file: file).getImage();
+        startTransfer(context, xFile, imageInfo.image.height / imageInfo.image.width);
       }
     });
   }

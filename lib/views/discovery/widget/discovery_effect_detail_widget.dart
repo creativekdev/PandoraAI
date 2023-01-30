@@ -244,7 +244,11 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               } else if (data.category == DiscoveryCategory.ai_avatar.name) {
                 Avatar.intro(context);
               } else if (data.category == DiscoveryCategory.another_me.name) {
-                AnotherMe.open(context);
+                AnotherMe.checkPermissions().then((value) {
+                  if (value) {
+                    AnotherMe.open(context);
+                  }
+                });
               }
             })
             .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))

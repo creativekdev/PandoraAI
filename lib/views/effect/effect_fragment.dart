@@ -391,7 +391,11 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                                 padding: EdgeInsets.symmetric(vertical: $(8), horizontal: 2),
                                 margin: EdgeInsets.only(left: $(4), right: $(15), top: $(12)))
                             .intoGestureDetector(onTap: () {
-                          AnotherMe.open(context);
+                          AnotherMe.checkPermissions().then((value) {
+                            if (value) {
+                              AnotherMe.open(context);
+                            }
+                          });
                         }),
                       ],
                     ).intoContainer(
