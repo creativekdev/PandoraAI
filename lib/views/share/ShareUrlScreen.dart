@@ -1,20 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
-import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:share_plus/share_plus.dart';
 
 class ShareUrlScreen extends StatefulWidget {
   static Future<bool?> startShare(

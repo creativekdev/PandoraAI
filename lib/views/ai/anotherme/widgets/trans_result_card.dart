@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 class TransResultCard extends StatefulWidget {
   double width;

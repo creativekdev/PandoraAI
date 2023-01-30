@@ -27,6 +27,8 @@ import 'package:common_utils/common_utils.dart';
 import 'anotherme.dart';
 import 'widgets/am_opt_container.dart';
 
+const axisRatioFlag = 0.75;
+
 class AnotherMeTransScreen extends StatefulWidget {
   XFile file;
   double ratio;
@@ -58,7 +60,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     ratio = widget.ratio;
     dividerSize = $(8);
     resultCardWidth = ScreenUtil.screenSize.width - $(32);
-    resultCardHeight = ratio > 1 ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
+    resultCardHeight = ratio > axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
     file = widget.file;
     delay(() {
       generate(context, controller, true);
@@ -97,12 +99,29 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         init: controller,
         builder: (controller) {
           if (TextUtil.isEmpty(controller.transKey)) {
-            return Image.file(
-              File(file.path),
-              width: ScreenUtil.screenSize.width,
-              height: ScreenUtil.screenSize.height,
-              fit: BoxFit.contain,
-            );
+            return Scaffold(
+                backgroundColor: ColorConstant.BackgroundColor,
+                body: Stack(children: [
+                  Image.file(
+                    File(file.path),
+                    width: ScreenUtil.screenSize.width,
+                    height: ScreenUtil.screenSize.height,
+                    fit: BoxFit.contain,
+                  ),
+                  Image.asset(
+                    Images.ic_back,
+                    height: $(24),
+                    width: $(24),
+                  )
+                      .intoContainer(
+                        padding: EdgeInsets.all($(10)),
+                        margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
+                      )
+                      .hero(tag: AnotherMe.logoBackTag)
+                      .intoGestureDetector(onTap: () {
+                    Navigator.pop(context, true);
+                  }),
+                ]));
           }
           return Scaffold(
             backgroundColor: ColorConstant.BackgroundColor,
@@ -111,26 +130,26 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 Column(
                   children: [
                     Expanded(
-                        child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            child: TransResultNewCard(
-                              originalImage: File(file.path),
-                              resultImage: File(controller.transKey!),
-                              width: resultCardWidth,
-                              height: resultCardHeight,
-                              direction: ratio > 1 ? Axis.horizontal : Axis.vertical,
-                              dividerSize: dividerSize,
-                            ),
-                            borderRadius: BorderRadius.circular($(12)),
-                          ).intoContainer(
-                            margin: EdgeInsets.only(right: 16, left: 16, top: $(72), bottom: $(16)),
+                      child: ClipRRect(
+                        child: TransResultNewCard(
+                          originalImage: File(file.path),
+                          resultImage: File(controller.transKey!),
+                          width: resultCardWidth,
+                          height: resultCardHeight,
+                          direction: ratio > axisRatioFlag ? Axis.horizontal : Axis.vertical,
+                          dividerSize: dividerSize,
+                        ),
+                        borderRadius: BorderRadius.circular($(12)),
+                      )
+                          .intoContainer(
+                            margin: EdgeInsets.only(right: 2, left: 2),
                           )
-                        ],
-                      ),
-                    ).intoCenter()),
+                          .intoCenter()
+                          .intoContainer(
+                        padding: EdgeInsets.only(top: 48),
+                              margin: EdgeInsets.only(right: 14, left: 14, top: 44 + ScreenUtil.getStatusBarHeight(), bottom: $(16)),
+                              decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_trans_result_bg), fit: BoxFit.fill))),
+                    ),
                     AMOptContainer(
                       key: optKey,
                       onChoosePhotoTap: () {
@@ -250,7 +269,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     var imageWidth;
     var imageHeight;
     var ratio = originalImageInfo.image.height / originalImageInfo.image.width;
-    if (ratio > 1) {
+    if (ratio > axisRatioFlag) {
       imageWidth = (width - dividerSize - padding * 2) / 2;
       imageHeight = imageWidth * ratio;
     } else {
@@ -282,7 +301,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     //绘制结果图
     var resultImageSrcRect = Rect.fromLTWH(0, 0, resultImageInfo.image.width.toDouble(), resultImageInfo.image.height.toDouble());
     Rect resultImageDstRect;
-    if (ratio > 1) {
+    if (ratio > axisRatioFlag) {
       resultImageDstRect = Rect.fromLTWH(padding + imageWidth + dividerSize, padding, imageWidth, imageWidth * ratio);
     } else {
       resultImageDstRect = Rect.fromLTWH(padding, padding + imageWidth * ratio + dividerSize, imageWidth, imageWidth * ratio);
@@ -316,7 +335,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     // 绘制标题文本
     var textPainter = TextPainter(
       text: TextSpan(
-          text: "PandoraAi App",
+          text: "PandoraAi",
           style: TextStyle(
             fontFamily: 'Poppins',
             fontWeight: FontWeight.bold,

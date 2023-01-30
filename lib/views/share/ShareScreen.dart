@@ -121,7 +121,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
   List<ShareType> typeList = [
     // ShareType.discovery,
-    ShareType.facebook,
+    // ShareType.facebook,
     ShareType.instagram,
     ShareType.whatsapp,
     ShareType.email,
@@ -218,17 +218,18 @@ class _ShareScreenState extends State<ShareScreen> {
         });
         break;
       case ShareType.facebook:
-        if (widget.isVideo) {
-          _openShareAction(context, [file.path]);
-        } else {
-          if (Platform.isAndroid) {
-            _openShareAction(context, [file.path]);
-            // await flutterShareMe.shareToFacebook(msg: "AAAAAAAAAAAAAAAA");
-            // await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
-          } else {
-            await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
-          }
-        }
+        // if (widget.isVideo) {
+        //   _openShareAction(context, [file.path]);
+        // } else {
+        //   if (Platform.isAndroid) {
+        //     // _openShareAction(context, [file.path]);
+        //     // await flutterShareMe.shareToFacebook(msg: "AAAAAAAAAAAAAAAA");
+        //     await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+        //   } else {
+        //     await platform.invokeMethod('ShareFacebook', {'fileURL': file.path, 'fileType': widget.isVideo ? 'video' : 'image'});
+        //   }
+        // }
+        _openShareAction(context, [file.path]);
         Navigator.of(context).pop();
         break;
       case ShareType.instagram:

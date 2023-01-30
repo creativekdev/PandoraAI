@@ -123,6 +123,7 @@ class Images {
    static const String ic_tag_new = 'assets/images/ic_tag_new.png';
    static const String ic_term = 'assets/images/ic_term.png';
    static const String ic_tiktok = 'assets/images/ic_tiktok.png';
+   static const String ic_trans_result_bg = 'assets/images/ic_trans_result_bg.png';
    static const String ic_unchecked = 'assets/images/ic_unchecked.png';
    static const String ic_user = 'assets/images/ic_user.png';
    static const String ic_user_round = 'assets/images/ic_user_round.png';
