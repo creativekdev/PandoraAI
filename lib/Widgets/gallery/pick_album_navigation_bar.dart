@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/images-res.dart';
 
 class PickAlbumNavigationBar extends StatelessWidget {
@@ -35,7 +36,12 @@ class PickAlbumNavigationBar extends StatelessWidget {
               Navigator.of(context).pop();
             }),
             leading ?? SizedBox.shrink(),
-            Expanded(child: (middle ?? SizedBox.shrink()).intoCenter()),
+            Expanded(
+                child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [middle ?? SizedBox.shrink()],
+            ).hero(tag: middleTag)),
             trailing,
             SizedBox(width: 15),
           ],

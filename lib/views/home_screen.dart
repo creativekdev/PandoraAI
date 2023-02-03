@@ -5,7 +5,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -15,6 +15,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'home_tab.dart';
 
@@ -73,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       });
     });
+    PhotoManager.clearFileCache();
   }
 
   void onLogin() {

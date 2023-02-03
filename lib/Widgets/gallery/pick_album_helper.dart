@@ -1,19 +1,21 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class PickAlbumHelper {
-  static Future<List<Medium>> getNewest({int reqCount = 20}) async {
-    var list = await PhotoGallery.listAlbums(mediumType: MediumType.image);
+  static Future<List<AssetEntity>> getNewest({int reqCount = 20}) async {
+    var list = await PhotoManager.getAssetPathList(type: RequestType.image);
     if (list.isEmpty) {
       return [];
     }
     var cameraAlbum = list.pick((t) => (t.name ?? '').toLowerCase().contains('camera'));
-    Album? totalAlbum = null;
+    AssetPathEntity? totalAlbum = null;
     if (cameraAlbum != null) {
       totalAlbum = cameraAlbum;
     } else {
       for (var value in list) {
-        if (value.count > (totalAlbum?.count ?? 0)) {
+        var count = await value.assetCountAsync;
+        var totalCount = await totalAlbum?.assetCountAsync;
+        if (count > (totalCount ?? 0)) {
           totalAlbum = value;
         }
       }
@@ -22,10 +24,10 @@ class PickAlbumHelper {
       return [];
     }
     int c = reqCount;
-    if (totalAlbum.count < c) {
-      c = totalAlbum.count;
+    var totalCount = totalAlbum.assetCountAsync;
+    if (await totalCount < c) {
+      c = await totalCount;
     }
-    var mediaPage = await totalAlbum.listMedia(take: c);
-    return mediaPage.items;
+    return await totalAlbum.getAssetListRange(start: 0, end: c);
   }
 }

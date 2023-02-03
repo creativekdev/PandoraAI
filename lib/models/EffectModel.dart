@@ -175,28 +175,6 @@ class EffectItemListData {
   }
 }
 
-class RecentEffectModel {
-  late int lastTime;
-  late String key;
-
-  RecentEffectModel({
-    required this.lastTime,
-    required this.key,
-  });
-
-  RecentEffectModel.fromJson(Map<String, dynamic> json) {
-    lastTime = json['lastTime'] ?? 0;
-    key = json['key'] ?? '';
-  }
-
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['lastTime'] = lastTime;
-    data['key'] = key;
-    return data;
-  }
-}
-
 extension EffectItemEx on EffectItem {
   handleApiParams(Map<String, dynamic> params) {
     if (type == 'sticker') {

@@ -94,7 +94,8 @@ class Downloader {
           });
         },
       ).then((value) async {
-        if (value.statusCode == 200) {
+        var statusCode = value.statusCode ?? 0;
+        if (statusCode >= 200 && statusCode < 300) {
           var file = File(tempPath);
           await file.copy(savePath);
           file.delete();
@@ -107,6 +108,10 @@ class Downloader {
           });
         }
         _taskMap.remove(key);
+      }).onError((error, stackTrace) {
+        _listenerMap[key]?.forEach((element) {
+          element.onError(Exception(error.toString()));
+        });
       });
     } on Exception catch (e) {
       _listenerMap[key]?.forEach((element) {

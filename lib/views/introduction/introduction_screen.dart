@@ -37,11 +37,11 @@ class IntroductionScreenState extends State<IntroductionScreen> {
             'title': S.of(context).app_name,
             'subTitle': S.of(context).welcome_title2,
           },
-          // {
-          //   'image': Images.introduction_bg3,
-          //   'title': S.of(context).app_name,
-          //   'subTitle': S.of(context).welcome_title3,
-          // }
+          {
+            'image': Images.introduction_bg3,
+            'title': S.of(context).app_name,
+            'subTitle': S.of(context).welcome_title3,
+          }
         ];
       });
     });

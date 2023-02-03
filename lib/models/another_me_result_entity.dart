@@ -7,6 +7,9 @@ class AnotherMeResultEntity {
   late List<String> images;
   Map<String, dynamic>? parameters;
   String? info;
+  @JSONField(name: 'cache_id')
+  String? cacheId;
+  String? s;
 
   AnotherMeResultEntity({List<String>? images}) {
     this.images = images ?? [];

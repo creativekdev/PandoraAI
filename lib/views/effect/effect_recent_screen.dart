@@ -1,12 +1,18 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
-import 'package:waterfall_flow/waterfall_flow.dart';
 
 class EffectRecentScreen extends StatefulWidget {
   EffectRecentScreen({
@@ -19,12 +25,12 @@ class EffectRecentScreen extends StatefulWidget {
 
 class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliveClientMixin {
   RecentController recentController = Get.find();
+  EffectDataController effectDataController = Get.find();
   ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    var cardWidth = (ScreenUtil.getCurrentWidgetSize(context).width - $(38)) / 2;
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
@@ -39,7 +45,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
       body: GetBuilder<RecentController>(
           init: recentController,
           builder: (_) {
-            return _.dataList.isEmpty
+            return _.recordList.isEmpty
                 ? Text(
                     S.of(context).effectRecentEmptyHint,
                     style: TextStyle(
@@ -53,130 +59,87 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                 : MediaQuery.removePadding(
                     context: context,
                     removeTop: true,
-                    child: WaterfallFlow.builder(
-                      cacheExtent: ScreenUtil.screenSize.height,
+                    child: GridView.builder(
                       controller: scrollController,
-                      gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: $(8),
+                        mainAxisSpacing: $(8),
+                        childAspectRatio: 1,
                       ),
                       itemBuilder: (context, index) {
-                        var data = _.dataList[index];
-                        return (data.item!.imageUrl.contains('mp4')
-                                ? Stack(
-                                    children: [
-                                      EffectVideoPlayer(url: data.item!.imageUrl),
-                                      Positioned(
-                                        right: $(5),
-                                        top: $(5),
-                                        child: Image.asset(
-                                          ImagesConstant.ic_video,
-                                          height: $(24),
-                                          width: $(24),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : CachedNetworkImageUtils.custom(
-                                    context: context,
-                                    imageUrl: data.item!.imageUrl,
-                                    width: cardWidth,
-                                    placeholder: (context, url) {
-                                      return CircularProgressIndicator()
-                                          .intoContainer(
-                                            width: $(25),
-                                            height: $(25),
-                                          )
-                                          .intoCenter()
-                                          .intoContainer(width: cardWidth, height: cardWidth);
-                                    },
-                                    errorWidget: (context, url, error) {
-                                      return CircularProgressIndicator()
-                                          .intoContainer(
-                                            width: $(25),
-                                            height: $(25),
-                                          )
-                                          .intoCenter()
-                                          .intoContainer(width: cardWidth, height: cardWidth);
-                                    }))
-                            .intoContainer(
-                          margin: EdgeInsets.only(
-                            top: $(8),
-                            bottom: index == _.dataList.length - 1 ? AppTabBarHeight : $(0),
-                          ),
-                        )
-                            .intoGestureDetector(onTap: () {
-                          _onEffectCategoryTap(_.recentModelList, data);
-                        });
+                        var data = _.recordList[index];
+                        if (data is RecentEffectModel) {
+                          if (data.itemList.first.isVideo) {
+                            return EffectVideoPlayer(url: data.itemList.first.imageData ?? '').intoGestureDetector(onTap: () {
+                              pickEffectItemAndOpen(context, data);
+                            });
+                          } else {
+                            return Image.memory(
+                              base64Decode(data.itemList.first.imageData ?? ''),
+                              fit: BoxFit.cover,
+                            ).intoGestureDetector(onTap: () {
+                              pickEffectItemAndOpen(context, data);
+                            });
+                          }
+                        } else if (data is RecentMetaverseEntity) {
+                          return Image.file(
+                            File(data.filePath.first),
+                            fit: BoxFit.cover,
+                          ).hero(tag: data.filePath.first).intoGestureDetector(onTap: () {
+                            AnotherMe.open(context, entity: data);
+                          });
+                        }
+                        return Container();
                       },
-                      itemCount: _.dataList.length,
+                      itemCount: _.recordList.length,
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
-                    // child: ListView.builder(
-                    //   controller: scrollController,
-                    //   itemCount: _.dataList.length,
-                    //   itemBuilder: (context, index) => EffectFullBodyCardWidget(
-                    //     parentWidth: width,
-                    //     data: _.dataList[index],
-                    //     onTap: (data) {
-                    //       _onEffectCategoryTap(_.recentModelList, _.dataList, data);
-                    //     },
-                    //   ).intoContainer(
-                    //     margin: EdgeInsets.only(
-                    //       left: $(15),
-                    //       right: $(15),
-                    //       top: $(8),
-                    //       bottom: index == _.dataList.length - 1 ? ($(8) + AppTabBarHeight) : $(8),
-                    //     ),
-                    //   ),
-                    // ),
                   );
           }),
     );
   }
 
-  _onEffectCategoryTap(List<EffectModel> originList, EffectItemListData data) {
+  @override
+  bool get wantKeepAlive => true;
+
+  pickEffectItemAndOpen(BuildContext context, RecentEffectModel data) async {
+    var key = data.itemList.first.key!;
+    var tabPos = effectDataController.data!.tabPos(key);
     EffectModel? effectModel;
-    int index = 0;
-    for (int i = 0; i < originList.length; i++) {
-      var model = originList[i];
-      var list = model.effects.values.toList();
-      bool find = false;
-      for (int j = 0; j < list.length; j++) {
-        var item = list[j];
-        if ('${model.key}${item.key}' == data.uniqueKey) {
-          effectModel = model;
-          index = i;
-          find = true;
-          break;
-        }
-      }
-      if (find) {
+    EffectItem? effectItem;
+    for (var value in effectDataController.data!.allEffectList()) {
+      var item = value.effects.values.toList().pick((t) => t.key == key);
+      if (item != null) {
+        effectItem = item;
+        effectModel = value;
         break;
       }
     }
-    if (effectModel == null) {
+    if (effectModel == null || effectItem == null) {
       return;
     }
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
     logEvent(Events.choose_home_cartoon_type, eventValues: {
       "category": effectModel.key,
       "style": effectModel.style,
       "page": "recent",
     });
-
-    Navigator.push(
+    var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
+    await Navigator.push(
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ChoosePhotoScreen"),
         builder: (context) => ChoosePhotoScreen(
-          tabPos: 0,
-          pos: index,
-          itemPos: 0,
-          entrySource: EntrySource.fromRecent,
+          tabPos: tabPos,
+          pos: categoryPos,
+          itemPos: itemP,
+          recentEffectModel: pick,
         ),
       ),
     );
+    AppDelegate.instance.getManager<UserManager>().refreshUser(context: context).then((value) {
+      setState(() {});
+    });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

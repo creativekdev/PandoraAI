@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
@@ -187,12 +188,32 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
   Widget buildItem(BuildContext context, int index, List<String> examples) {
     return ClipRRect(
       child: CachedNetworkImageUtils.custom(
+        useOld: true,
         context: context,
         imageUrl: examples[index],
         width: (ScreenUtil.screenSize.width - $(36)) / 2,
         height: (ScreenUtil.screenSize.width - $(36)) / 2,
       ),
       borderRadius: BorderRadius.circular($(8)),
+    ).hero(tag: examples[index]).intoGestureDetector(onTap: () {
+      openImage(context, index, examples);
+    });
+  }
+
+  void openImage(BuildContext context, final int index, List<String> examples) {
+    List<AnyPhotoItem> images = examples.transfer((e, index) => AnyPhotoItem(type: AnyPhotoType.url, uri: e));
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) => AnyGalleryPhotoViewWrapper(
+          galleryItems: images,
+          backgroundDecoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+          initialIndex: index >= images.length ? 0 : index,
+        ),
+      ),
     );
   }
 }

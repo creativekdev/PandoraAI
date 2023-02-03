@@ -10,10 +10,15 @@ const _tempDir = 'temp/';
 const _pushDir = 'push/';
 const _recentDir = 'recent/';
 const _cropDir = 'cropDir/';
+const _recordDir = 'recordDir/';
+const _recordMetaverse = 'metaverse/';
+const _recordCartoonize = 'cartoonize/';
 const saveAlbumName = 'PandoraAI';
 
 class StorageOperator {
   var _mainPath = '';
+
+  String get mainPath => _mainPath;
 
   /// videoDir
   Directory get videoDir => Directory('$_mainPath$_videoDir');
@@ -28,6 +33,12 @@ class StorageOperator {
 
   Directory get cropDir => Directory('$_mainPath$_cropDir');
 
+  Directory get recordDir => Directory('$_mainPath$_recordDir');
+
+  Directory get recordMetaverseDir => Directory('$_mainPath$_recordDir$_recordMetaverse');
+
+  Directory get recordCartoonizeDir => Directory('$_mainPath$_recordDir$_recordCartoonize');
+
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (directory == null) return false;
@@ -40,6 +51,9 @@ class StorageOperator {
       _pushDir,
       _recentDir,
       _cropDir,
+      _recordDir,
+      '$_recordDir$_recordMetaverse',
+      '$_recordDir$_recordCartoonize',
     ]);
     return true;
   }

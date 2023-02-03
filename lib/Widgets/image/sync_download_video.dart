@@ -7,7 +7,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
-class SyncDownloadFile {
+class SyncDownloadVideo {
   final Completer<File?> _completer = Completer();
   String url;
   bool downloading = false;
@@ -16,25 +16,25 @@ class SyncDownloadFile {
   String fileName = '';
   String type;
 
-  SyncDownloadFile({
+  SyncDownloadVideo({
     required this.url,
     required this.type,
   });
 
-  Future<File?> getImage() {
+  Future<File?> getVideo() {
     try {
-      _loadImage();
+      _loadVideo();
     } catch (e) {
       _completer.completeError(e);
     }
     return _completer.future;
   }
 
-  _loadImage() {
+  _loadVideo() {
     fileName = EncryptUtil.encodeMd5(url);
     var storageOperator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
-    var imageDir = storageOperator.imageDir;
-    var savePath = imageDir.path + fileName + '.' + type;
+    var videoDir = storageOperator.videoDir;
+    var savePath = videoDir.path + fileName + '.' + type;
     File data = File(savePath);
     if (data.existsSync()) {
       _completer.complete(data);
@@ -48,8 +48,8 @@ class SyncDownloadFile {
             Downloader.instance.unsubscribeSync(key, downloadListener!);
           },
           onFinished: (File file) {
-            var imageDir = storageOperator.imageDir;
-            var savePath = imageDir.path + fileName + '.' + type;
+            var videoDir = storageOperator.videoDir;
+            var savePath = videoDir.path + fileName + '.' + type;
             _completer.complete(File(savePath));
             downloading = false;
           });

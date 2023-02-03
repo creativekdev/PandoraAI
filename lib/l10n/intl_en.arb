@@ -185,9 +185,9 @@
   "watchAdToShareText": "Share HD image\nwithout watermark",
   "welcome": "Welcome Back!",
   "welcome1": "Welcome",
-  "welcome_title1": "Make a cartoon profile picture",
-  "welcome_title2": "Add artistic touch to your photo",
-  "welcome_title3": "Create cartoon stickers for yourself",
+  "welcome_title1": "Generate magic avatars using AI",
+  "welcome_title2": "Make your personal AI avatars",
+  "welcome_title3": "One-click selfies to anime",
   "welcomeBack": "Welcome\nBack",
   "what_to_expect": "What to Expect",
   "why_its_paid": "Why it's paid",
@@ -276,7 +276,6 @@
   "rate_description": "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?",
   "looveit": "Looove it! rate now",
   "more": "More",
-  "another_me_tips": "Look at you in the AI world",
   "generate_again": "Generate again",
   "meTaverse": "Me-taverse",
   "generate_record": "Generate Record",
@@ -286,5 +285,9 @@
   "invalid_password": "Invalid Password",
   "trans_uploading": "Uploading...",
   "trans_painting": "Ai Painting...",
-  "wrong_image": "Wrong Image File"
+  "wrong_image": "Wrong Image File",
+  "save_into_album": "Save into the album",
+  "save_hd_image": "Save HD, watermark-free image",
+  "save_album_tips": "Are you sure to save %d images",
+  "current_version": "App Version"
 }

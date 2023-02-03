@@ -15,6 +15,14 @@ AnotherMeResultEntity $AnotherMeResultEntityFromJson(Map<String, dynamic> json) 
 	if (info != null) {
 		anotherMeResultEntity.info = info;
 	}
+	final String? cacheId = jsonConvert.convert<String>(json['cache_id']);
+	if (cacheId != null) {
+		anotherMeResultEntity.cacheId = cacheId;
+	}
+	final String? s = jsonConvert.convert<String>(json['s']);
+	if (s != null) {
+		anotherMeResultEntity.s = s;
+	}
 	return anotherMeResultEntity;
 }
 
@@ -23,5 +31,7 @@ Map<String, dynamic> $AnotherMeResultEntityToJson(AnotherMeResultEntity entity) 
 	data['images'] =  entity.images;
 	data['parameters'] = entity.parameters;
 	data['info'] = entity.info;
+	data['cache_id'] = entity.cacheId;
+	data['s'] = entity.s;
 	return data;
 }

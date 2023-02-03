@@ -8,13 +8,12 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/admob/ads_holder.dart';
-import 'package:cartoonizer/Widgets/admob/card_ads_holder.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
@@ -31,12 +30,12 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/models/enums/ad_type.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
-import 'package:cartoonizer/views/advertisement/processing_advertisement_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
@@ -51,7 +50,6 @@ import '../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
 enum EntrySource {
-  fromRecent,
   fromDiscovery,
   fromEffect,
 }
@@ -61,6 +59,7 @@ class ChoosePhotoScreen extends StatefulWidget {
   int pos;
   int itemPos;
   EntrySource entrySource;
+  RecentEffectModel? recentEffectModel;
 
   ChoosePhotoScreen({
     Key? key,
@@ -68,6 +67,7 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.pos,
     required this.itemPos,
     this.entrySource = EntrySource.fromEffect,
+    this.recentEffectModel,
   }) : super(key: key);
 
   @override
@@ -114,7 +114,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Map<String, OfflineEffectModel> offlineEffect = {};
   Map<String, GlobalKey<EffectVideoPlayerState>> videoKeys = {};
 
-  late WidgetAdsHolder adsHolder;
   late RewardInterstitialAdsHolder rewardAdsHolder;
   late StreamSubscription userChangeListener;
   late StreamSubscription userLoginListener;
@@ -282,7 +281,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     api.unbind();
     thirdpartManager.adsHolder.ignore = false;
     _videoPlayerController?.dispose();
-    adsHolder.onDispose();
     rewardAdsHolder.onDispose();
     userChangeListener.cancel();
     userLoginListener.cancel();
@@ -295,13 +293,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     logEvent(Events.upload_page_loading);
     recentController = Get.find();
     api = Uploader().bindState(this);
-    if (widget.entrySource != EntrySource.fromRecent) {
-      tabList = effectDataController.tabList;
-      tabTitleList = effectDataController.tabTitleList;
-      tabItemList = effectDataController.tabItemList;
-    } else {
-      buildFromRecent();
-    }
+    tabList = effectDataController.tabList;
+    tabTitleList = effectDataController.tabTitleList;
+    tabItemList = effectDataController.tabItemList;
     currentTabIndex = widget.tabPos;
     currentTitleIndex = widget.pos;
     currentItemIndex.value = widget.itemPos;
@@ -315,13 +309,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     userLoginListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       setState(() {});
     });
-    adsHolder = CardAdsHolder(
-      width: ScreenUtil.screenSize.width - $(32),
-      scale: 0.75,
-      onUpdated: () {},
-      adId: AdMobConfig.PROCESSING_AD_ID,
-    );
-    adsHolder.initHolder();
     rewardAdsHolder = RewardInterstitialAdsHolder(adId: AdMobConfig.REWARD_PROCESSING_AD_ID);
     rewardAdsHolder.initHolder();
 
@@ -353,31 +340,31 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     delay(() {
       autoScrollToSelectedIndex();
       uploadImageController.loadImageUploadCache().then((value) {
-        if (!controller.isPhotoSelect.value) {
-          pickFromRecent(context);
+        refreshLastBuildType();
+        if (widget.recentEffectModel != null) {
+          controller.updateImageFile(File(widget.recentEffectModel!.originalPath!));
+          for (var value in widget.recentEffectModel!.itemList) {
+            if (value.isVideo) {
+              offlineEffect.addIf(!offlineEffect.containsKey(value.key), value.key!,
+                  OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: lastBuildType == _BuildType.waterMark, localVideo: true));
+            } else {
+              if (!value.hasWatermark) {
+                offlineEffect.addIf(!offlineEffect.containsKey(value.key), value.key!, OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: false));
+              } else {
+                offlineEffect.addIf(!offlineEffect.containsKey(value.key), value.key!,
+                    OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
+              }
+            }
+          }
+          controller.changeIsLoading(true);
+          getCartoon(context);
+        } else {
+          if (!controller.isPhotoSelect.value) {
+            pickFromRecent(context);
+          }
         }
       });
     });
-  }
-
-  void buildFromRecent() {
-    tabList = [ChooseTabInfo(key: 'recent', title: 'recent')];
-    var buildList = recentController.getBuildList();
-    for (int i = 0; i < buildList.length; i++) {
-      var effectModel = buildList[i];
-      int categoryIndex = tabTitleList.length;
-      tabTitleList.add(ChooseTitleInfo(title: effectModel.displayName, categoryKey: effectModel.key, tabKey: 'recent'));
-      List<EffectItem> effectItems = effectModel.effects.values.toList();
-      for (int j = 0; j < effectItems.length; j++) {
-        tabItemList.add(ChooseTabItemInfo(
-          data: effectItems[j],
-          tabKey: 'recent',
-          categoryKey: effectModel.key,
-          categoryIndex: categoryIndex,
-          childIndex: j,
-        ));
-      }
-    }
   }
 
   initTabBar() {
@@ -542,7 +529,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TitleTextWidget('Save into the album', ColorConstant.White, FontWeight.normal, $(17))
+                TitleTextWidget(S.of(context).save_into_album, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),
                   color: Colors.transparent,
@@ -555,7 +542,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
                   margin: EdgeInsets.symmetric(horizontal: $(25)),
                 ),
-                TitleTextWidget('Save HD, watermark-free image', ColorConstant.White, FontWeight.normal, $(17))
+                TitleTextWidget(S.of(context).save_hd_image, ColorConstant.White, FontWeight.normal, $(17))
                     .intoContainer(
                   padding: EdgeInsets.symmetric(vertical: $(10)),
                   color: Colors.transparent,
@@ -786,9 +773,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        recentController.loadingFromCache().whenComplete(() {
-          recentController.refreshDataList();
-        });
         return _willPopCallback(context);
       },
       child: Obx(
@@ -818,7 +802,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     children: [
                       controller.isPhotoDone.value
                           ? Container(
-                              child: (controller.isVideo.value)
+                              child: (controller.isVideo.value && _videoPlayerController != null)
                                   ? ChooseVideoContainer(videoPlayerController: _videoPlayerController!, width: imgContainerWidth, height: imgContainerWidth)
                                   : Center(child: cachedImage),
                             )
@@ -849,7 +833,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                           .intoGestureDetector(onTap: () {
                                         controller.changeIsLoading(true);
                                         getCartoon(context);
-                                      }).visibility(visible: !controller.isLoading.value),
+                                      }).visibility(visible: !controller.isLoading.value && !controller.transingImage.value),
                                     ),
                                   ],
                                 ).intoContainer(width: imgContainerWidth, height: imgContainerHeight)
@@ -982,7 +966,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       ));
                     },
                     separatorBuilder: (BuildContext context, int index) {
-                      if (index == tabItemList.length - 1 || widget.entrySource == EntrySource.fromRecent) {
+                      if (index == tabItemList.length - 1) {
                         return Container();
                       } else {
                         var current = tabItemList[index];
@@ -1099,10 +1083,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       lastChangeByTap = true;
       int lastTitlePos = currentTitleIndex;
       setState(() {
-        if (widget.entrySource != EntrySource.fromRecent) {
-          if (effect.tabKey != tabList[currentTabIndex].key) {
-            currentTabIndex = tabList.findPosition((data) => data.key == effect.tabKey)!;
-          }
+        if (effect.tabKey != tabList[currentTabIndex].key) {
+          currentTabIndex = tabList.findPosition((data) => data.key == effect.tabKey)!;
         }
         currentItemIndex.value = index;
         currentTitleIndex = effect.categoryIndex;
@@ -1290,22 +1272,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     required Function onCancel,
     Function? onFail,
   }) {
-    if (!isShowAdsNew(type: AdType.processing)) {
-      return false;
-    }
-    ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
-      if (value == null) {
-        onCancel.call();
-      } else if (value) {
-        onSuccess.call();
-      } else {
-        onFail?.call();
-      }
-      if (!adsHolder.adsReady) {
-        adsHolder.initHolder();
-      }
-    });
-    return true;
+    // if (!isShowAdsNew(type: AdType.processing)) {
+    //   return false;
+    // }
+    // ProcessingAdvertisementScreen.push(context, adsHolder: adsHolder).then((value) {
+    //   if (value == null) {
+    //     onCancel.call();
+    //   } else if (value) {
+    //     onSuccess.call();
+    //   } else {
+    //     onFail?.call();
+    //   }
+    //   if (!adsHolder.adsReady) {
+    //     adsHolder.initHolder();
+    //   }
+    // });
+    return false;
   }
 
   Future<bool> pickImageFromGallery(BuildContext context, {String from = "center", File? file, UploadRecordEntity? entity}) async {
@@ -1432,6 +1414,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<void> getCartoon(BuildContext context, {bool rebuild = false}) async {
     refreshLastBuildType();
+    await controller.saveOriginalIfNotExist();
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       controller.changeIsLoading(false);
@@ -1461,13 +1444,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsLoading(false);
         CommonExtension().showToast(data.message);
       } else if (data.data.toString().contains(".mp4")) {
-        controller.updateVideoUrl(data.data);
-        _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-          ..setLooping(true)
-          ..initialize().then((value) async {
-            controller.changeIsLoading(false);
-          });
-        delay(() => _videoPlayerController!.play(), milliseconds: 64);
+        if (data.localVideo) {
+          initVideoPlayerFromFile(File(data.data));
+        } else {
+          controller.updateVideoUrl(data.data);
+          await initVideoPlayerFromNet(aiHost);
+        }
 
         urlFinal = data.imageUrl;
         algoName = selectedEffect.algoname;
@@ -1484,39 +1466,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       lastBuildType = data.hasWatermark ? _BuildType.waterMark : _BuildType.hdImage;
       setState(() {});
     } else {
-      bool ignoreResult = false;
       Function? successForward;
-      bool hasAd = _judgeAndShowAdvertisement(
-        onSuccess: () {
-          successForward?.call();
-          onSwitchOnce();
-        },
-        onCancel: () {
-          ignoreResult = true;
-          controller.changeIsLoading(false);
-          logEvent(Events.photo_cartoon_result, eventValues: {
-            "success": 2,
-            "effect": selectedEffect.key,
-            "sticker_name": selectedEffect.stickerName,
-            "category": category.key,
-            "original_face": includeOriginalFace() ? 1 : 0,
-          });
-        },
-        onFail: () {
-          controller.changeIsLoading(false);
-        },
-      );
+      SimulateProgressBarController progressBarController = SimulateProgressBarController();
       try {
         var imageUrl = controller.imageUrl.value;
         await controller.buildCropFile();
+        controller.changeIsLoading(false);
+        controller.changeTransingImage(true);
+        bool needUpload = await uploadImageController.needUpload(controller.image.value);
+        SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: progressBarController);
         if (imageUrl == "") {
           await uploadImageController.uploadCompressedImage(controller.image.value);
           controller.updateImageUrl(uploadImageController.imageUrl.value);
           imageUrl = controller.imageUrl.value;
+          progressBarController.uploadComplete();
         }
 
         if (imageUrl == "") {
-          controller.changeIsLoading(false);
+          progressBarController.onError();
+          controller.changeTransingImage(false);
           EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
           return;
         }
@@ -1525,10 +1493,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         final tokenResponse = await API.get("/api/tool/image/cartoonize/token");
         final Map tokenParsed = json.decode(tokenResponse.body.toString());
 
-        if (ignoreResult) {
-          controller.changeIsLoading(false);
-          return;
-        }
         int resultSuccess = 0;
 
         if (tokenResponse.statusCode == 200) {
@@ -1548,10 +1512,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             }
             selectedEffect.handleApiParams(dataBody);
             var baseEntity = await api.post(aiHost.cartoonizeApi, params: dataBody);
-            if (ignoreResult) {
-              controller.changeIsLoading(false);
-              return;
-            }
             if (baseEntity != null) {
               final Map parsed = baseEntity.data;
               var cachedId = parsed['cache_id']?.toString();
@@ -1566,30 +1526,25 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 });
               }
               if (dataString.startsWith('<')) {
-                successForward = () {
-                  controller.changeIsLoading(false);
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(dataString.substring(dataString.indexOf('<p>') + 3, dataString.indexOf('</p>')));
                 };
               } else if (dataString == "") {
-                successForward = () {
-                  controller.changeIsLoading(false);
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message'], hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['message']);
                 };
               } else if (dataString.contains(".mp4")) {
-                successForward = () {
+                successForward = () async {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                    ..setLooping(true)
-                    ..initialize().then((value) async {
-                      controller.changeIsLoading(false);
-                    });
-                  _videoPlayerController!.play();
+                  await initVideoPlayerFromNet(aiHost);
 
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
@@ -1597,10 +1552,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   controller.changeIsVideo(true);
                 };
               } else {
-                successForward = () {
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
-                  controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
@@ -1610,13 +1565,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   API.get("/api/log/cartoonize", params: params);
                 };
               }
-              if (!hasAd) {
-                successForward.call();
-                onSwitchOnce();
-              }
+              progressBarController.loadComplete();
+              await successForward.call();
+              controller.changeTransingImage(false);
+              setState(() {});
+              onSwitchOnce();
               resultSuccess = 1;
             } else {
-              controller.changeIsLoading(false);
+              progressBarController.onError();
+              controller.changeTransingImage(false);
               // CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           } else {
@@ -1636,48 +1593,38 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
             print(cartoonizeResponse.statusCode);
             print(cartoonizeResponse.body.toString());
-            if (ignoreResult) {
-              controller.changeIsLoading(false);
-              return;
-            }
             if (cartoonizeResponse.statusCode == 200) {
               final Map parsed = json.decode(cartoonizeResponse.body.toString());
               if (parsed['data'].toString().startsWith('<')) {
-                successForward = () {
-                  controller.changeIsLoading(false);
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['data'].toString().substring(parsed['data'].toString().indexOf('<p>') + 3, parsed['data'].toString().indexOf('</p>')));
                 };
               } else if (parsed['data'].toString() == "") {
-                successForward = () {
-                  controller.changeIsLoading(false);
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: parsed['message'], hasWatermark: lastBuildType == _BuildType.waterMark));
                   CommonExtension().showToast(parsed['message']);
                 };
               } else if (parsed['data'].toString().contains(".mp4")) {
-                successForward = () {
+                successForward = () async {
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   controller.updateVideoUrl(parsed['data']);
-                  _videoPlayerController = VideoPlayerController.network('${aiHost}/resource/' + controller.videoUrl.value)
-                    ..setLooping(true)
-                    ..initialize().then((value) async {
-                      controller.changeIsLoading(false);
-                    });
-                  _videoPlayerController!.play();
-
+                  await initVideoPlayerFromNet(aiHost);
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 };
               } else {
-                successForward = () {
+                successForward = () async {
+                  progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
                       OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
-                  controller.changeIsLoading(false);
                   image = parsed['data'];
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
@@ -1687,18 +1634,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   API.get("/api/log/cartoonize", params: params);
                 };
               }
-              if (!hasAd) {
-                successForward.call();
-                onSwitchOnce();
-              }
+
+              progressBarController.loadComplete();
+              await successForward.call();
+              controller.changeTransingImage(false);
+              onSwitchOnce();
               resultSuccess = 1;
             } else {
-              controller.changeIsLoading(false);
+              progressBarController.onError();
+              controller.changeTransingImage(false);
               CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           }
         } else {
-          controller.changeIsLoading(false);
+          progressBarController.onError();
+          controller.changeTransingImage(false);
           var responseBody = json.decode(tokenResponse.body);
           if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
             bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
@@ -1721,14 +1671,18 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "category": category.key,
           "original_face": includeOriginalFace() ? 1 : 0,
         });
-        if (widget.entrySource != EntrySource.fromRecent) {
-          recentController.onEffectUsed(selectedEffect);
-        } else {
-          recentController.onEffectUsedToCache(selectedEffect);
-        }
+        //todo 这一步在视频类型记录的时候老是获取不到视频文件controller.videoFile。还没来得及调试，Xia哥有空的话可以帮我看下
+        recentController.onEffectUsed(
+          selectedEffect,
+          original: controller.image.value!,
+          imageData: controller.isVideo.value ? controller.videoFile.value!.path : _image,
+          isVideo: controller.isVideo.value,
+          hasWatermark: lastBuildType == _BuildType.waterMark,
+        );
       } catch (e) {
         print(e);
-        controller.changeIsLoading(false);
+        progressBarController.onError();
+        controller.changeTransingImage(false);
         CommonExtension().showToast("Error while uploading image, e: ${e.toString()}");
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
       }
@@ -1850,6 +1804,24 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     var uint8list = await addWaterMark(image: imageData, originalImage: cropImage, watermark: watermark);
     var newImage = base64Encode(uint8list);
     return newImage;
+  }
+
+  Future initVideoPlayerFromNet(String aiHost) async {
+    var url = '${aiHost}/resource/' + controller.videoUrl.value;
+    var file = await SyncDownloadVideo(url: url, type: 'mp4').getVideo();
+    if (file != null) {
+      await initVideoPlayerFromFile(file);
+    } else {
+      controller.changeIsLoading(false);
+    }
+  }
+
+  Future initVideoPlayerFromFile(File file) async {
+    _videoPlayerController = VideoPlayerController.file(file)..setLooping(true);
+    await _videoPlayerController!.initialize();
+    controller.updateVideoFile(file);
+    controller.changeIsLoading(false);
+    delay(() => _videoPlayerController!.play(), milliseconds: 64);
   }
 }
 

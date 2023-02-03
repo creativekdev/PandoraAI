@@ -72,18 +72,39 @@ class UploadImageController extends GetxController {
     cacheManager.setJson(CacheManager.imageUploadHistory, cache);
   }
 
-  Future<bool> uploadCompressedImage(File? imageFile) async {
+  Future<bool> needUpload(File? imageFile) async {
+    if (imageFile == null) {
+      return true;
+    }
+    var key = await md5File(imageFile);
+    return needUploadByKey(key);
+  }
+
+  bool needUploadByKey(String key) {
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
+    if (cacheFile != null && !cacheFile.urlExpired()) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> uploadCompressedImage(File? imageFile, {String? key}) async {
     if (imageFile == null) {
       return false;
     }
-    var key = await md5File(imageFile);
-    if (imageFile.path.toLowerCase().endsWith('heic')) {
-      imageFile = await heicFileToImage(imageFile);
+    if (key == null) {
+      key = await md5File(imageFile);
     }
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null && !cacheFile.urlExpired()) {
       updateImageUrl(cacheFile.url);
       return true;
+    }
+    if (imageFile.path.toLowerCase().endsWith('heic')) {
+      imageFile = await heicFileToImage(imageFile);
+    }
+    if (imageFile == null) {
+      return false;
     }
     String f_name = path.basename(imageFile.path);
     var newPath = "${storageOperator.recentDir.path}/$f_name";
@@ -125,12 +146,10 @@ class UploadImageController extends GetxController {
       return;
     }
     var key = await md5File(imageFile);
-    if (imageFile.path.toLowerCase().endsWith('heic')) {
-      imageFile = await heicFileToImage(imageFile);
-    }
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       cacheFile.cachedId = cachedId;
+      _saveUploadCacheMap();
     }
   }
 
@@ -139,6 +158,10 @@ class UploadImageController extends GetxController {
       return null;
     }
     var key = await md5File(imageFile);
+    return getCachedIdByKey(key);
+  }
+
+  Future<String?> getCachedIdByKey(String key) async {
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       return cacheFile.cachedId;

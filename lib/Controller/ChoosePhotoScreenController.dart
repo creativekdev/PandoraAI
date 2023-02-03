@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:path/path.dart' as path;
 
@@ -75,6 +76,10 @@ class ChoosePhotoScreenController extends GetxController {
 
   changeIsLoading(bool value) => isLoading.value = value;
 
+  final transingImage = false.obs;
+
+  changeTransingImage(bool value) => transingImage.value = value;
+
   // @deprecated
   // final lastSelectedIndex = 0.obs;
   // setLastSelectedIndex(int i) => lastSelectedIndex.value = i;
@@ -95,6 +100,9 @@ class ChoosePhotoScreenController extends GetxController {
 
   updateCropImageFile(File cFile) => cropImage.value = cFile;
 
+  final videoFile = (null as File?).obs;
+
+  updateVideoFile(File file) => videoFile.value = file;
   final videoUrl = "".obs;
 
   updateVideoUrl(String str) => videoUrl.value = str;
@@ -182,5 +190,26 @@ class ChoosePhotoScreenController extends GetxController {
       return true;
     }
     return false;
+  }
+
+  Future<void> saveOriginalIfNotExist() async {
+    if (image.value == null) {
+      return;
+    }
+    var value = image.value as File;
+    var dirPath = cacheManager.storageOperator.recordCartoonizeDir.path;
+    if (value.path.contains(dirPath)) {
+      return;
+    }
+    var fileName = EncryptUtil.encodeMd5(value.path);
+    var path = dirPath + fileName + '.' + getFileType(value.path);
+    var result = File(path);
+    var bool = await result.exists();
+    if (bool) {
+      updateImageFile(result);
+      return;
+    }
+    await value.copy(path);
+    updateImageFile(result);
   }
 }

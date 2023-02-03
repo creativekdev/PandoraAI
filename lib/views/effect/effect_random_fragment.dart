@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/nsfw_card.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -61,6 +61,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
   String? selectedTag;
 
   void setSelectedTag(String? tag) {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       selectedTag = tag;
     });
@@ -78,6 +81,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     recentController = widget.recentController;
     cardWidth = (ScreenUtil.screenSize.width - $(38)) / 2;
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      if (!mounted) {
+        return;
+      }
       setState(() {});
     });
     tabOnDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
@@ -98,6 +104,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     dataController.changeRandomTabViewing(true);
     var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
     if (nsfwOpen != nsfw) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         nsfwOpen = nsfw;
       });
@@ -210,6 +219,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                             onTap: () {
                                               showOpenNsfwDialog(context).then((result) {
                                                 if (result ?? false) {
+                                                  if (!mounted) {
+                                                    return;
+                                                  }
                                                   setState(() {
                                                     nsfwOpen = true;
                                                     cacheManager.setBool(CacheManager.nsfwOpen, true);
@@ -253,6 +265,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
                                             onTap: () {
                                               showOpenNsfwDialog(context).then((result) {
                                                 if (result ?? false) {
+                                                  if (!mounted) {
+                                                    return;
+                                                  }
                                                   setState(() {
                                                     nsfwOpen = true;
                                                     cacheManager.setBool(CacheManager.nsfwOpen, true);
@@ -350,6 +365,9 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
 
   void refreshUserInfo() {
     userManager.refreshUser(context: context).then((value) {
+      if (!mounted) {
+        return;
+      }
       setState(() {});
     });
   }

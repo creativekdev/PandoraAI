@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 
 JsonConvert jsonConvert = JsonConvert();
@@ -39,6 +40,9 @@ class JsonConvert {
 		(PayPlanEntity).toString(): PayPlanEntity.fromJson,
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
+		(RecentEffectModel).toString(): RecentEffectModel.fromJson,
+		(RecentEffectItem).toString(): RecentEffectItem.fromJson,
+		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
 		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
 	};
 
@@ -162,6 +166,15 @@ class JsonConvert {
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentEffectModel>[] is M){
+			return data.map<RecentEffectModel>((Map<String, dynamic> e) => RecentEffectModel.fromJson(e)).toList() as M;
+		}
+		if(<RecentEffectItem>[] is M){
+			return data.map<RecentEffectItem>((Map<String, dynamic> e) => RecentEffectItem.fromJson(e)).toList() as M;
+		}
+		if(<RecentMetaverseEntity>[] is M){
+			return data.map<RecentMetaverseEntity>((Map<String, dynamic> e) => RecentMetaverseEntity.fromJson(e)).toList() as M;
 		}
 		if(<UploadRecordEntity>[] is M){
 			return data.map<UploadRecordEntity>((Map<String, dynamic> e) => UploadRecordEntity.fromJson(e)).toList() as M;

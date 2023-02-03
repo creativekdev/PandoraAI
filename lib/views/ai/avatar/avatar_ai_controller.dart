@@ -14,13 +14,13 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class AvatarAiController extends GetxController {
   final String name;
   final String style;
-  List<Medium> imageList = [];
-  List<Medium> badList = [];
+  List<AssetEntity> imageList = [];
+  List<AssetEntity> badList = [];
   List<String> compressedList = [];
   List<String> uploadedList = [];
   int minSize = 15;
@@ -93,13 +93,19 @@ class AvatarAiController extends GetxController {
       update();
       return false;
     }
-    List<Medium> goodList = [];
-    List<Medium> badImages = [];
+    List<AssetEntity> goodList = [];
+    List<AssetEntity> badImages = [];
     if (isHuman()) {
       for (var medium in photos) {
-        var file = await medium.getFile();
-        if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
-          File sourceFile = await heicToImage(medium);
+        var file = await medium.file;
+        if (file == null) {
+          continue;
+        }
+        if ((file.path ?? '').toUpperCase().contains('.HEIC')) {
+          File? sourceFile = await heicToImage(medium);
+          if (sourceFile == null) {
+            continue;
+          }
           file = await imageCompressAndGetFile(sourceFile, imageSize: 1024);
         }
         var inputImage = InputImage.fromFile(file);
@@ -148,18 +154,24 @@ class AvatarAiController extends GetxController {
         return false;
       }
       var media = imageList[i];
+      File? originalFile = await media.file;
+      if(originalFile == null) {
+        continue;
+      }
       File file;
       if (Platform.isIOS) {
-        if ((media.filename ?? '').toUpperCase().contains('.HEIC')) {
-          File sourceFile = await heicToImage(media);
+        if ((originalFile.path ?? '').toUpperCase().contains('.HEIC')) {
+          File? sourceFile = await heicToImage(media);
+          if(sourceFile == null) {
+            continue;
+          }
           file = await imageCompressAndGetFile(sourceFile, imageSize: 512);
         } else {
-          var list = await media.getThumbnail(width: 512, height: 512, highQuality: true);
-          file = await imageCompressByte(Uint8List.fromList(list), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(media.filename!) + ".png");
+          var list = await media.thumbnailDataWithSize(ThumbnailSize(512, 512), quality: 100);
+          file = await imageCompressByte(Uint8List.fromList(list!), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(originalFile.path) + ".png");
         }
       } else {
-        var sourceFile = await media.getFile();
-        file = await imageCompress(sourceFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(sourceFile.path) + ".png");
+        file = await imageCompress(originalFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(originalFile.path) + ".png");
       }
       if (stop) {
         return false;

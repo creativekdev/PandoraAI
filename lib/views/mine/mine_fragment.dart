@@ -123,6 +123,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 S.of(context).recently,
                 Images.ic_recently,
                 true,
+                color: Color(0xfff95f5f)
               ).intoGestureDetector(onTap: () {
                 logEvent(Events.recent_loading);
                 Navigator.push(

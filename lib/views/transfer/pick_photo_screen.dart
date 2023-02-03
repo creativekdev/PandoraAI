@@ -481,7 +481,10 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
       fit: BoxFit.cover,
     ).intoGestureDetector(onTap: () async {
       try {
-        var file = await data.getFile();
+        var file = await data.file;
+        if (file == null) {
+          return;
+        }
         if (selectedFile == file) {
           CommonExtension().showToast(S.of(context).photo_select_already);
           return;

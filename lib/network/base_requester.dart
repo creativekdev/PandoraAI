@@ -138,7 +138,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         queryParameters: params,
         onReceiveProgress: onReceiveProgress,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e);
       onFailed?.call(e.response!);
@@ -173,7 +173,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e);
       onFailed?.call(e.response!);
@@ -205,7 +205,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
         onReceiveProgress: onReceiveProgress,
         options: options,
       );
-      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e);
       onFailed?.call(e.response!);
@@ -227,7 +227,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     await _preHandleRequest(headers, params, preHandleRequest);
     try {
       Response response = await _client.delete(path, data: data, queryParameters: params);
-      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed);
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e);
       onFailed?.call(e.response!);
@@ -239,6 +239,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     Response response, {
     bool toastOnFailed = true,
     Function(Response)? onFailed,
+    required String? s,
   }) {
     if (!interceptResponse(response)) {
       return null;
@@ -247,7 +248,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     var statusCode = response.statusCode ?? 0;
     if (statusCode >= 200 && statusCode < 300) {
       onPreHandleResult(response);
-      var baseEntity = BaseEntity(data: response.data, headers: headers);
+      var baseEntity = BaseEntity(data: response.data, headers: headers, s: s);
       return baseEntity;
     } else if (response.statusCode == 401) {
       onTokenExpired(response.statusCode, response.statusMessage);
@@ -276,6 +277,7 @@ class ApiOptions {
 class BaseEntity {
   dynamic data;
   Headers? headers;
+  String? s;
 
-  BaseEntity({this.data, this.headers});
+  BaseEntity({this.data, this.headers, required this.s});
 }

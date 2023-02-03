@@ -1,6 +1,6 @@
 import 'package:cartoonizer/common/importFile.dart';
 
-Widget ImageTextBarWidget(String text, String image, bool isShowArrow) {
+Widget ImageTextBarWidget(String text, String image, bool isShowArrow, {Color? color}) {
   return ListTile(
     title: Row(
       children: [
@@ -8,6 +8,7 @@ Widget ImageTextBarWidget(String text, String image, bool isShowArrow) {
           image,
           height: $(24),
           width: $(24),
+          color: color,
         ).intoContainer(padding: EdgeInsets.all($(4))),
         SizedBox(width: 3.w),
         Expanded(

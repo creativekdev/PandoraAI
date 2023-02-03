@@ -9,22 +9,22 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class AlbumController extends GetxController {
   late CacheManager cacheManager = AppDelegate.instance.getManager();
-  List<Medium> faceList = [];
-  List<Medium> otherList = [];
+  List<AssetEntity> faceList = [];
+  List<AssetEntity> otherList = [];
   int pageSize = 100;
   bool loading = false;
   late StreamSubscription onClearCacheListener;
-  Album? album;
+  AssetPathEntity? album;
 
   @override
   onInit() {
     super.onInit();
-    faceList = cacheManager.photoSourceOperator.faceList;
-    otherList = cacheManager.photoSourceOperator.otherList;
+    // faceList = cacheManager.photoSourceOperator.faceList;
+    // otherList = cacheManager.photoSourceOperator.otherList;
     onClearCacheListener = EventBusHelper().eventBus.on<OnClearCacheEvent>().listen((event) {
       faceList.clear();
       otherList.clear();
@@ -39,22 +39,26 @@ class AlbumController extends GetxController {
   }
 
   Future<bool> checkPermissions() async {
-    var values = await [Permission.photos, Permission.storage].request();
-    for (var result in values.values) {
-      if (result.isDenied || result.isPermanentlyDenied) {
-        CommonExtension().showToast('Please grant all permissions');
-        return false;
-      }
+    final PermissionState _ps = await PhotoManager.requestPermissionExtend();
+    if (_ps.isAuth) {
+      // Granted.
+      return true;
+    } else {
+      // Limited(iOS) or Rejected, use `==` for more precise judgements.
+      CommonExtension().showToast('Please grant all permissions');
+      await PhotoManager.openSetting();
+      return false;
     }
-    return true;
   }
 
-  Future<Album?> getTotalAlbum() async {
+  Future<AssetPathEntity?> getTotalAlbum() async {
     if (album != null) return album;
-    var list = await PhotoGallery.listAlbums(mediumType: MediumType.image);
-    Album? a;
+    List<AssetPathEntity> list = await PhotoManager.getAssetPathList(type: RequestType.image);
+    AssetPathEntity? a;
     for (var value in list) {
-      if (value.count >= (a?.count ?? 0)) {
+      var valueCount = await value.assetCountAsync;
+      var oldCount = await a?.assetCountAsync;
+      if (valueCount >= (oldCount ?? 0)) {
         a = value;
       }
     }
@@ -67,18 +71,19 @@ class AlbumController extends GetxController {
       return false;
     }
     var takenCount = faceList.length + otherList.length;
-    if (takenCount >= album!.count) {
+    var count = await album!.assetCountAsync;
+    if (takenCount >= count) {
       return false;
     }
     loading = true;
     update();
-    MediaPage mediaPage;
-    if (takenCount > album!.count - pageSize) {
-      mediaPage = await album!.listMedia(skip: takenCount, take: album!.count - takenCount);
+    List<AssetEntity> mediaPage;
+    if (takenCount > count - pageSize) {
+      mediaPage = await album!.getAssetListRange(start: takenCount, end: count - takenCount);
     } else {
-      mediaPage = await album!.listMedia(skip: takenCount, take: pageSize);
+      mediaPage = await album!.getAssetListRange(start: takenCount, end: pageSize);
     }
-    for (var value in mediaPage.items) {
+    for (var value in mediaPage) {
       bool needUpdate = false;
       var faceImage = await hasFace(value);
       if (faceImage) {
@@ -105,12 +110,12 @@ class AlbumController extends GetxController {
   /// check face image,
   /// crop new thumbnail base on face if has,
   /// crop centre pos base on image if not.
-  Future<bool> hasFace(Medium entity) async {
+  Future<bool> hasFace(AssetEntity entity) async {
     try {
-      var bytes = await entity.getThumbnail(width: 512, height: 512, highQuality: true);
+      var bytes = await entity.thumbnailDataWithSize(ThumbnailSize(512, 512), quality: 100);
       var tempImage = getTempImage(entity);
       if (!tempImage.existsSync()) {
-        await tempImage.writeAsBytes(bytes);
+        await tempImage.writeAsBytes(bytes!);
       }
       InputImage inputImage = InputImage.fromFile(tempImage);
       FaceDetector faceDetector = FaceDetector(options: FaceDetectorOptions());
@@ -184,15 +189,15 @@ class AlbumController extends GetxController {
     return result;
   }
 
-  File getThumbnail(Medium medium) {
+  File getThumbnail(AssetEntity medium) {
     var cropHomePath = cacheManager.storageOperator.cropDir.path;
-    var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(medium.filename!) + ".png";
+    var newThumbnailPath = cropHomePath + EncryptUtil.encodeMd5(medium.id) + ".png";
     return File(newThumbnailPath);
   }
 
-  File getTempImage(Medium medium) {
+  File getTempImage(AssetEntity medium) {
     var tempHomePath = cacheManager.storageOperator.tempDir.path;
-    var newPath = tempHomePath + EncryptUtil.encodeMd5(medium.filename!) + ".png";
+    var newPath = tempHomePath + EncryptUtil.encodeMd5(medium.id) + ".png";
     return File(newPath);
   }
 }

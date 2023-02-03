@@ -2,15 +2,13 @@ import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class MediumImage extends ImageProvider<MediumImage> {
-  final Medium medium;
+  final AssetEntity medium;
   final String failedImageAssets;
-  final Function(Medium medium)? onError;
+  final Function(AssetEntity medium)? onError;
 
   final double scale;
   final int width;
@@ -36,9 +34,9 @@ class MediumImage extends ImageProvider<MediumImage> {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, null, decode),
       scale: key.scale,
-      debugLabel: key.medium.filename,
+      debugLabel: key.medium.id,
       informationCollector: () => <DiagnosticsNode>[
-        ErrorDescription('Path: ${medium.filename}'),
+        ErrorDescription('Path: ${medium.id}'),
       ],
     );
   }
@@ -48,9 +46,9 @@ class MediumImage extends ImageProvider<MediumImage> {
     return MultiFrameImageStreamCompleter(
       codec: _loadAsync(key, decode, null),
       scale: key.scale,
-      debugLabel: key.medium.filename,
+      debugLabel: key.medium.id,
       informationCollector: () => <DiagnosticsNode>[
-        ErrorDescription('Path: ${medium.filename}'),
+        ErrorDescription('Path: ${medium.id}'),
       ],
     );
   }
@@ -60,20 +58,11 @@ class MediumImage extends ImageProvider<MediumImage> {
 
     try {
       Uint8List bytes;
-      if ((medium.filename ?? '').toUpperCase().contains('.HEIC')) {
-        var file = await heicToImage(medium);
-        var uint8list = await FlutterImageCompress.compressWithFile(
-          file.path,
-          format: CompressFormat.heic,
-          minWidth: width,
-          minHeight: height,
-          quality: 100,
-        );
-        bytes = uint8list!;
-      } else {
-        var byte = await medium.getThumbnail(width: width, height: height, highQuality: true);
-        bytes = await Uint8List.fromList(byte);
+      var byte = await medium.thumbnailDataWithSize(ThumbnailSize(width, height));
+      if (byte == null) {
+        return await getWrongData(decode, decodeDeprecated);
       }
+      bytes = await Uint8List.fromList(byte);
       if (bytes.lengthInBytes == 0) {
         // The file may become available later.
         PaintingBinding.instance.imageCache.evict(key);
@@ -108,12 +97,12 @@ class MediumImage extends ImageProvider<MediumImage> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is MediumImage && other.medium.filename == medium.filename && other.scale == scale;
+    return other is MediumImage && other.medium.id == medium.id && other.scale == scale;
   }
 
   @override
-  int get hashCode => Object.hash(medium.filename, scale);
+  int get hashCode => Object.hash(medium.id, scale);
 
   @override
-  String toString() => '${objectRuntimeType(this, 'MediumImage')}("${medium.filename}", scale: $scale)';
+  String toString() => '${objectRuntimeType(this, 'MediumImage')}("${medium.id}", scale: $scale)';
 }

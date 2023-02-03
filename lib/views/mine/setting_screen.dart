@@ -12,6 +12,7 @@ import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
@@ -153,6 +154,26 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
+              functions(
+                S.of(context).current_version,
+                training: FutureBuilder<String>(
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return TitleTextWidget(
+                          snapshot.data ?? '',
+                          ColorConstant.White,
+                          FontWeight.normal,
+                          $(13),
+                        ).marginOnly(right: $(15));
+                      }
+                      return SizedBox.shrink();
+                    },
+                    future: appVersion()),
+              ),
+              Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                color: ColorConstant.BackgroundColor,
+              ),
               functions(S.of(context).scary_content_alert,
                   training: FlutterSwitch(
                     value: nsfwOpen,
@@ -216,6 +237,11 @@ class _SettingScreenState extends AppState<SettingScreen> {
             ],
           ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),
         ));
+  }
+
+  Future<String> appVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    return packageInfo.version;
   }
 
   Widget functions(String title, {GestureTapCallback? onTap, Widget? training}) {

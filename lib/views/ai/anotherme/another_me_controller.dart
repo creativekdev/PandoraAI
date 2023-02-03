@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
@@ -8,6 +9,7 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
@@ -18,6 +20,24 @@ class AnotherMeController extends GetxController {
   File? _sourcePhoto;
 
   File? get sourcePhoto => _sourcePhoto;
+
+  set sourcePhoto(File? file) {
+    _sourcePhoto = file;
+  }
+
+  String? _error;
+
+  bool error() => _error != null;
+
+  onError() {
+    _error = '';
+    update();
+  }
+
+  onSuccess() {
+    _error = null;
+    update();
+  }
 
   clear(UploadImageController uploadImageController) {
     uploadImageController.updateImageUrl('');
@@ -31,19 +51,15 @@ class AnotherMeController extends GetxController {
 
   String? get transKey => _transKey;
 
+  set transKey(String? key) {
+    _transKey = key;
+  }
+
   clearTransKey() {
     _transKey = null;
+    _error = null;
     update();
   }
-
-  Map _initialConfig = {};
-
-  set initialConfig(Map config) {
-    _initialConfig = config;
-    update();
-  }
-
-  Map get initialConfig => _initialConfig;
 
   late Uploader api;
   bool _viewInit = false;
@@ -78,9 +94,9 @@ class AnotherMeController extends GetxController {
 
   bool hasTransRecord() => _transKey != null;
 
-  Future<bool> startTransfer(String imageUrl) async {
+  Future<AnotherMeResultEntity?> startTransfer(String imageUrl, String? cachedId) async {
     if (TextUtil.isEmpty(imageUrl)) {
-      return false;
+      return null;
     }
     if (_mFaceRatio == null) {
       int faceRatio = 0;
@@ -101,33 +117,35 @@ class AnotherMeController extends GetxController {
       }
       _mFaceRatio = faceRatio;
     }
-    var baseEntity = await api.generateAnotherMe(imageUrl, _mFaceRatio!);
+    var baseEntity = await api.generateAnotherMe(imageUrl, _mFaceRatio!, cachedId);
     if (baseEntity == null) {
-      return false;
+      return null;
     }
     if (baseEntity.images.isEmpty) {
-      return false;
+      return null;
     }
     var imageData = baseEntity.images.first;
     var key = EncryptUtil.encodeMd5(imageData);
     var imageUint8List = base64Decode(imageData);
     var storageOperator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
-    var name = storageOperator.imageDir.path + key + '.png';
+    var name = storageOperator.recordMetaverseDir.path + key + '.png';
     await File(name).writeAsBytes(imageUint8List.toList(), flush: true);
     _transKey = name;
     CartoonizerApi().logAnotherMe({
       'init_images': [imageUrl],
       'face_ratio': _mFaceRatio,
+      'result_id': baseEntity.s,
     });
-    return true;
+    return baseEntity;
   }
 
   Future<bool> _uploadAndSave(
+    String key,
     File file,
     UploadImageController uploadImageController, {
     File? sourceFile,
   }) async {
-    var uploadResult = await uploadImageController.uploadCompressedImage(file);
+    var uploadResult = await uploadImageController.uploadCompressedImage(file, key: key);
     if (!uploadResult) {
       return false;
     }
@@ -140,36 +158,13 @@ class AnotherMeController extends GetxController {
   }
 
   Future<bool> onTakePhoto(
-    XFile image,
+    File file,
     UploadImageController uploadImageController,
+    String key,
   ) async {
     _transKey = null;
     update();
-    var file = File(image.path);
     File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
-    return _uploadAndSave(compressedImage, uploadImageController, sourceFile: file);
-  }
-
-  Future<bool> takePhoto(
-    ImageSource source,
-    UploadImageController uploadImageController,
-  ) async {
-    XFile? image = await ImagePicker().pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
-    if (image == null) {
-      return false;
-    }
-    var file = File(image.path);
-    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
-    return _uploadAndSave(compressedImage, uploadImageController, sourceFile: file);
-  }
-
-  Future<bool> pickFromRecent(UploadRecordEntity record, UploadImageController uploadImageController) async {
-    var file = File(record.fileName);
-    return _uploadAndSave(file, uploadImageController);
-  }
-
-  Future<bool> pickFromAiSource(File file, UploadImageController uploadImageController) async {
-    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
-    return _uploadAndSave(compressedImage, uploadImageController, sourceFile: file);
+    return _uploadAndSave(key, compressedImage, uploadImageController, sourceFile: file);
   }
 }

@@ -5,7 +5,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
-import 'package:cartoonizer/Widgets/cacheImage/sync_download_file.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -90,7 +90,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                       )
                           .intoGestureDetector(onTap: () async {
                         showLoading().whenComplete(() async {
-                          var file = await SyncDownloadFile(url: widget.galleryItems[currentIndex], type: 'png').getImage();
+                          var file = await SyncDownloadImage(url: widget.galleryItems[currentIndex], type: 'png').getImage();
                           if (file != null) {
                             await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
                             hideLoading().whenComplete(() {
@@ -117,7 +117,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                           .intoGestureDetector(onTap: () {
                         var item = widget.galleryItems[currentIndex];
                         showLoading().whenComplete(() {
-                          SyncDownloadFile(url: item, type: 'png').getImage().then((image) {
+                          SyncDownloadImage(url: item, type: 'png').getImage().then((image) {
                             hideLoading().whenComplete(() {
                               var imageString = base64Encode(image!.readAsBytesSync());
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;

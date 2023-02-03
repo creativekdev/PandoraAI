@@ -12,11 +12,13 @@ import 'package:video_player/video_player.dart';
 class EffectVideoPlayer extends StatefulWidget {
   String url;
   bool useCached;
+  bool isFile;
 
   EffectVideoPlayer({
     Key? key,
     required this.url,
     this.useCached = true,
+    this.isFile = false,
   }) : super(key: key);
 
   @override
@@ -36,13 +38,24 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   late StreamSubscription appStateListener;
   String? key;
   late bool useCached;
+  late bool isFile;
 
   @override
   initState() {
     super.initState();
     useCached = widget.useCached;
     url = widget.url;
-    if (!useCached) {
+    isFile = widget.isFile;
+    if (isFile) {
+      downloading = false;
+      controller = VideoPlayerController.file(File(url))
+        ..setLooping(true)
+        ..initialize().then((value) {
+          setState(() {
+            play();
+          });
+        });
+    } else if (!useCached) {
       downloading = false;
       controller = VideoPlayerController.network(url)
         ..setLooping(true)
@@ -67,7 +80,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
               downloading = false;
             });
           });
-      if(url.contains('?')) {
+      if (url.contains('?')) {
         fileName = getFileName(url.split('?')[0]);
       } else {
         fileName = getFileName(url);

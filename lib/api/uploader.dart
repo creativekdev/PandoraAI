@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 
 class Uploader extends BaseRequester {
@@ -42,12 +43,20 @@ class Uploader extends BaseRequester {
         });
   }
 
-  Future<AnotherMeResultEntity?> generateAnotherMe(String url, int faceRatio) async {
+  Future<AnotherMeResultEntity?> generateAnotherMe(String url, int faceRatio, String? cachedId) async {
     UserManager userManager = AppDelegate().getManager();
-    var baseEntity = await post('${userManager.aiServers['sdppm']}/sdapi/v1/anotherme', params: {
+    var params = {
       'init_images': [url],
       'face_ratio': faceRatio,
-    });
-    return jsonConvert.convert<AnotherMeResultEntity>(baseEntity?.data);
+    };
+    if (!TextUtil.isEmpty(cachedId)) {
+      params['cache_id'] = cachedId!;
+    }
+    var baseEntity = await post('${userManager.aiServers['sdppm']}/sdapi/v1/anotherme', params: params);
+    var entity = jsonConvert.convert<AnotherMeResultEntity>(baseEntity?.data);
+    if (entity != null && baseEntity != null) {
+      entity.s = baseEntity.s;
+    }
+    return entity;
   }
 }

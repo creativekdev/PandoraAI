@@ -39,8 +39,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "already_account":
             MessageLookupByLibrary.simpleMessage("Already have an account? "),
         "and": MessageLookupByLibrary.simpleMessage("and"),
-        "another_me_tips":
-            MessageLookupByLibrary.simpleMessage("Look at you in the AI world"),
         "app_name": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "apple": MessageLookupByLibrary.simpleMessage("Continue with Apple"),
         "april": MessageLookupByLibrary.simpleMessage("April"),
@@ -114,6 +112,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "created": MessageLookupByLibrary.simpleMessage("Created"),
         "current_pass":
             MessageLookupByLibrary.simpleMessage("Current Password"),
+        "current_version": MessageLookupByLibrary.simpleMessage("App Version"),
         "december": MessageLookupByLibrary.simpleMessage("December"),
         "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "delete_account_successfully_tips": MessageLookupByLibrary.simpleMessage(
@@ -333,6 +332,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend."),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
+        "save_album_tips": MessageLookupByLibrary.simpleMessage(
+            "Are you sure to save %d images"),
+        "save_hd_image": MessageLookupByLibrary.simpleMessage(
+            "Save HD, watermark-free image"),
+        "save_into_album":
+            MessageLookupByLibrary.simpleMessage("Save into the album"),
         "save_photo": MessageLookupByLibrary.simpleMessage("Save Photo"),
         "save_share": MessageLookupByLibrary.simpleMessage("Save & Share"),
         "scary_content_alert":
@@ -430,11 +435,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "welcome1": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome\nBack"),
         "welcome_title1": MessageLookupByLibrary.simpleMessage(
-            "Make a cartoon profile picture"),
+            "Generate magic avatars using AI"),
         "welcome_title2": MessageLookupByLibrary.simpleMessage(
-            "Add artistic touch to your photo"),
-        "welcome_title3": MessageLookupByLibrary.simpleMessage(
-            "Create cartoon stickers for yourself"),
+            "Make your personal AI avatars"),
+        "welcome_title3":
+            MessageLookupByLibrary.simpleMessage("One-click selfies to anime"),
         "what_to_expect":
             MessageLookupByLibrary.simpleMessage("What to Expect"),
         "why_its_paid": MessageLookupByLibrary.simpleMessage("Why it\'s paid"),

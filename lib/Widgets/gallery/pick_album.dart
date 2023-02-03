@@ -1,22 +1,24 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'albums_popup.dart';
 import 'pick_album_navigation_bar.dart';
 
+const leadingTag = 'album_leading';
+const middleTag = 'album_middle';
+
 class PickAlbumScreen {
-  static Future<List<Medium>?> pickImage(
+  static Future<List<AssetEntity>?> pickImage(
     BuildContext context, {
-    List<Medium>? selectedList,
-    List<Medium>? badList,
+    List<AssetEntity>? selectedList,
+    List<AssetEntity>? badList,
     int count = 20,
     int minCount = 1,
     bool switchAlbum = false,
@@ -29,7 +31,7 @@ class PickAlbumScreen {
         return [];
       }
     }
-    return Navigator.of(context).push<List<Medium>>(MaterialPageRoute(
+    return Navigator.of(context).push<List<AssetEntity>>(MaterialPageRoute(
       builder: (context) => _PickAlbumScreen(
         switchAlbum: switchAlbum,
         selectedList: selectedList ?? [],
@@ -43,9 +45,9 @@ class PickAlbumScreen {
 
 class _PickAlbumScreen extends StatefulWidget {
   bool switchAlbum;
-  List<Medium> selectedList;
+  List<AssetEntity> selectedList;
   int maxCount;
-  List<Medium> badList;
+  List<AssetEntity> badList;
   int minCount;
 
   _PickAlbumScreen({
@@ -62,17 +64,17 @@ class _PickAlbumScreen extends StatefulWidget {
 }
 
 class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
-  List<Album> albums = [];
-  Album? selectAlbum;
+  List<AssetPathEntity> albums = [];
+  AssetPathEntity? selectAlbum;
   int page = 0;
   int pageSize = 40;
-  List<Medium> dataList = [];
+  List<AssetEntity> dataList = [];
   bool _isRequesting = false;
   bool _canLoadMore = false;
   ScrollController scrollController = ScrollController();
   late bool switchAlbum;
-  late List<Medium> selectedList;
-  late List<Medium> badList;
+  late List<AssetEntity> selectedList;
+  late List<AssetEntity> badList;
   late int maxCount;
   late int minCount;
 
@@ -114,8 +116,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       }
     });
     delay(() => showLoading().whenComplete(() {
-          PhotoGallery.listAlbums(mediumType: MediumType.image).then((value) {
-            hideLoading().whenComplete(() {
+          PhotoManager.getAssetPathList(type: RequestType.image).then((value) async {
+            value = await value.filterSync((t) async => await t.assetCountAsync != 0);
+            hideLoading().whenComplete(() async {
               albums = value;
               if (value.isEmpty) {
                 selectAlbum = null;
@@ -125,12 +128,14 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     var lastAlbumId = cacheManager.getString(CacheManager.lastAlbum);
                     selectAlbum = albums.pick((t) => t.id == lastAlbumId) ?? albums.pick((t) => (t.name ?? '').toLowerCase().contains('camera')) ?? albums.first;
                   } else {
-                    Album? s;
+                    AssetPathEntity? s;
                     for (var album in albums) {
                       if (s == null) {
                         s = album;
                       } else {
-                        if (album.count > s.count) {
+                        var count = await album.assetCountAsync;
+                        var oldCount = await s.assetCountAsync;
+                        if (count > oldCount) {
                           s = album;
                         }
                       }
@@ -148,20 +153,21 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         }));
   }
 
-  void loadData() {
+  void loadData() async {
     _isRequesting = true;
+    var count = await selectAlbum!.assetCountAsync;
     selectAlbum!
-        .listMedia(
-      skip: 0,
-      take: pageSize < selectAlbum!.count ? pageSize : selectAlbum!.count,
+        .getAssetListRange(
+      start: 0,
+      end: pageSize < count ? pageSize : count,
     )
-        .then((value) {
+        .then((value) async {
       setState(() {
         page = 0;
-        dataList = value.items;
+        dataList = value;
       });
       _isRequesting = false;
-      if (dataList.length >= selectAlbum!.count) {
+      if (dataList.length >= count) {
         _canLoadMore = false;
       } else {
         _canLoadMore = true;
@@ -169,18 +175,24 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     });
   }
 
-  void loadMore() {
+  void loadMore() async {
     _isRequesting = true;
     var skip = (page + 1) * pageSize;
-    selectAlbum!.listMedia(skip: skip, take: pageSize + skip < selectAlbum!.count ? pageSize : selectAlbum!.count - skip).then((value) {
-      if (value.items.isNotEmpty) {
+    var count = await selectAlbum!.assetCountAsync;
+    selectAlbum!
+        .getAssetListRange(
+      start: skip,
+      end: pageSize + skip < count ? pageSize + skip : count,
+    )
+        .then((value) async {
+      if (value.isNotEmpty) {
         setState(() {
           page++;
-          dataList.addAll(value.items);
+          dataList.addAll(value);
         });
       }
       _isRequesting = false;
-      if (dataList.length >= selectAlbum!.count) {
+      if (dataList.length >= count) {
         _canLoadMore = false;
       } else {
         _canLoadMore = true;
@@ -196,6 +208,11 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         mainAxisSize: MainAxisSize.max,
         children: [
           PickAlbumNavigationBar(
+            backIcon: Image.asset(
+              Images.ic_back,
+              height: $(22),
+              width: $(22),
+            ).hero(tag: leadingTag),
             leading: maxCount == 1
                 ? null
                 : Text(
@@ -211,24 +228,45 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        '${selectAlbum?.name} (${selectAlbum?.count})' ?? '',
-                        style: TextStyle(
-                          color: ColorConstant.White,
-                          fontSize: $(17),
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
+                      FutureBuilder<int>(
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.done) {
+                            return Text(
+                              '${selectAlbum?.name} (${snapshot.data})' ?? '',
+                              style: TextStyle(
+                                color: ColorConstant.White,
+                                fontSize: $(17),
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                              ),
+                            );
+                          }
+                          return Container();
+                        },
+                        future: selectAlbum!.assetCountAsync,
+                      ).intoMaterial(color: Colors.transparent),
                       SizedBox(width: 6),
                       Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        size: $(24),
-                        color: ColorConstant.White,
-                      ),
+                        size: $(18),
+                        color: Color(0xff404040),
+                      ).intoContainer(decoration: BoxDecoration(color: ColorConstant.White, borderRadius: BorderRadius.circular(32))),
                     ],
-                  ).intoContainer(color: Colors.transparent, padding: EdgeInsets.symmetric(vertical: 9)).intoGestureDetector(onTap: () {
-                    Navigator.of(context).push<Album>(Top2BottomRouter(duration: 300, opaque: false, child: AlbumPopup(albums: albums))).then((value) {
+                  )
+                    .intoContainer(
+                    padding: EdgeInsets.only(top: 3, bottom: 3, left: 12, right: 10),
+                    decoration: BoxDecoration(
+                      color: Color(0xff404040),
+                      borderRadius: BorderRadius.circular($(64)),
+                    ),
+                  )
+                    .intoGestureDetector(onTap: () {
+                    Navigator.of(context)
+                        .push(NoAnimRouter(AlbumPopup(
+                      albums: albums,
+                      selectedAlbum: selectAlbum!,
+                    )))
+                        .then((value) {
                       if (value != null) {
                         setState(() {
                           selectAlbum = value;
@@ -260,7 +298,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
           ),
           Expanded(
               child: GridView.builder(
-            // cacheExtent: ScreenUtil.screenSize.height,
+            cacheExtent: $(120),
             controller: scrollController,
             padding: padding,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -289,8 +327,8 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             child: Image(
               image: MediumImage(
                 data,
-                width: (imageSize * 3).toInt(),
-                height: (imageSize * 3).toInt(),
+                width: (imageSize).toInt(),
+                height: (imageSize).toInt(),
                 failedImageAssets: Images.ic_netimage_failed,
                 onError: (medium) {
                   if (!loadFailedList.contains(medium.id)) {
@@ -349,7 +387,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       if (isBad) {
         return;
       }
-      if(loadFailedList.contains(data.id)) {
+      if (loadFailedList.contains(data.id)) {
         CommonExtension().showToast(S.of(context).wrong_image);
         return;
       }

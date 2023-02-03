@@ -3,13 +3,13 @@ import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'dart:math' as math;
 
 class SimulateProgressBar {
-  static Future startLoading(
+  static Future<bool?> startLoading(
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
     Function(double progress)? onUpdate,
   }) {
-    return showDialog(
+    return showDialog<bool>(
       context: context,
       builder: (context) {
         return _SimulateProgressBar(
@@ -81,8 +81,12 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         animationController.forward();
       }
     };
+    controller._onErrorCall = () => Navigator.of(context).pop(false);
     uploadAnimController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     uploadAnimController.addStatusListener((status) {
+      if (!needUploadProgress) {
+        return;
+      }
       if (status == AnimationStatus.completed) {
         if (uploaded) {
           animationController.forward();
@@ -90,46 +94,22 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         setState(() {});
       }
     });
-    uploadAnimController.addListener(() {
-      onUpdate?.call(calculateProgress());
-    });
+    uploadAnimController.addListener(() => onUpdate?.call(calculateProgress()));
     animationController = AnimationController(vsync: this, duration: Duration(seconds: 5));
     animationControllerCurved = CurvedAnimation(parent: animationController, curve: curves[math.Random().nextInt(curves.length)]);
     completeController = AnimationController(vsync: this, duration: Duration(seconds: 1));
     animationController.addStatusListener((status) {
-      switch (status) {
-        case AnimationStatus.dismissed:
-          break;
-        case AnimationStatus.forward:
-          break;
-        case AnimationStatus.reverse:
-          break;
-        case AnimationStatus.completed:
-          if (completed) {
-            completeController.forward();
-          }
-          break;
+      if (status == AnimationStatus.completed && completed) {
+        completeController.forward();
       }
     });
-    animationController.addListener(() {
-      onUpdate?.call(calculateProgress());
-    });
+    animationController.addListener(() => onUpdate?.call(calculateProgress()));
     completeController.addStatusListener((status) {
-      switch (status) {
-        case AnimationStatus.dismissed:
-          break;
-        case AnimationStatus.forward:
-          break;
-        case AnimationStatus.reverse:
-          break;
-        case AnimationStatus.completed:
-          Navigator.of(context).pop();
-          break;
+      if (status == AnimationStatus.completed) {
+        Navigator.of(context).pop(true);
       }
     });
-    completeController.addListener(() {
-      onUpdate?.call(calculateProgress());
-    });
+    completeController.addListener(() => onUpdate?.call(calculateProgress()));
     if (!needUploadProgress) {
       animationController.forward();
     } else {
@@ -139,10 +119,10 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
 
   @override
   void dispose() {
-    super.dispose();
     completeController.dispose();
     animationController.dispose();
     uploadAnimController.dispose();
+    super.dispose();
   }
 
   double calculateProgress() {
@@ -219,6 +199,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
 class SimulateProgressBarController {
   Function? _completeCall;
   Function? _uploadCompleteCall;
+  Function? _onErrorCall;
 
   loadComplete() {
     _completeCall?.call();
@@ -226,5 +207,11 @@ class SimulateProgressBarController {
 
   uploadComplete() {
     _uploadCompleteCall?.call();
+  }
+
+  onError() {
+    delay(() {
+      _onErrorCall?.call();
+    }, milliseconds: 32);
   }
 }

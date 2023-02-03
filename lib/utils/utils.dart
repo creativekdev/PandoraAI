@@ -12,9 +12,8 @@ import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image/image.dart' as im;
 import 'package:path_provider/path_provider.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> loginBack(BuildContext context) async {
@@ -64,7 +63,7 @@ bool isShowAdsNew({required AdType type}) {
       apiOpen = true;
       break;
   }
-  if(!apiOpen) {
+  if (!apiOpen) {
     return false;
   }
   if (manager.isNeedLogin) {
@@ -371,12 +370,13 @@ int faceRatio(Size originalSize, Size faceSize) {
   return (oriArea / faceArea).round();
 }
 
-Future<File> heicToImage(Medium media) async {
-  var sourceFile = await media.getFile();
+Future<File?> heicToImage(AssetEntity media) async {
+  var sourceFile = await media.file;
   return heicFileToImage(sourceFile);
 }
 
-Future<File> heicFileToImage(File file) async {
+Future<File?> heicFileToImage(File? file) async {
+  if (file == null) return null;
   if (Platform.isIOS) {
     const platform = MethodChannel(PLATFORM_CHANNEL);
     final String outPath = await platform.invokeMethod('heic2jpg', file.path);

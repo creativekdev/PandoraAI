@@ -1910,30 +1910,30 @@ class S {
     );
   }
 
-  /// `Make a cartoon profile picture`
+  /// `Generate magic avatars using AI`
   String get welcome_title1 {
     return Intl.message(
-      'Make a cartoon profile picture',
+      'Generate magic avatars using AI',
       name: 'welcome_title1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Add artistic touch to your photo`
+  /// `Make your personal AI avatars`
   String get welcome_title2 {
     return Intl.message(
-      'Add artistic touch to your photo',
+      'Make your personal AI avatars',
       name: 'welcome_title2',
       desc: '',
       args: [],
     );
   }
 
-  /// `Create cartoon stickers for yourself`
+  /// `One-click selfies to anime`
   String get welcome_title3 {
     return Intl.message(
-      'Create cartoon stickers for yourself',
+      'One-click selfies to anime',
       name: 'welcome_title3',
       desc: '',
       args: [],
@@ -2820,16 +2820,6 @@ class S {
     );
   }
 
-  /// `Look at you in the AI world`
-  String get another_me_tips {
-    return Intl.message(
-      'Look at you in the AI world',
-      name: 'another_me_tips',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Generate again`
   String get generate_again {
     return Intl.message(
@@ -2925,6 +2915,46 @@ class S {
     return Intl.message(
       'Wrong Image File',
       name: 'wrong_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save into the album`
+  String get save_into_album {
+    return Intl.message(
+      'Save into the album',
+      name: 'save_into_album',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save HD, watermark-free image`
+  String get save_hd_image {
+    return Intl.message(
+      'Save HD, watermark-free image',
+      name: 'save_hd_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure to save %d images`
+  String get save_album_tips {
+    return Intl.message(
+      'Are you sure to save %d images',
+      name: 'save_album_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App Version`
+  String get current_version {
+    return Intl.message(
+      'App Version',
+      name: 'current_version',
       desc: '',
       args: [],
     );

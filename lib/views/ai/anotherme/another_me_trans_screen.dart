@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -15,7 +15,6 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
@@ -27,16 +26,18 @@ import 'package:common_utils/common_utils.dart';
 import 'anotherme.dart';
 import 'widgets/am_opt_container.dart';
 
-const axisRatioFlag = 0.75;
+const axisRatioFlag = 0.8;
 
 class AnotherMeTransScreen extends StatefulWidget {
-  XFile file;
+  File file;
   double ratio;
+  File? resultFile;
 
   AnotherMeTransScreen({
     Key? key,
     required this.file,
     required this.ratio,
+    this.resultFile,
   }) : super(key: key);
 
   @override
@@ -44,10 +45,11 @@ class AnotherMeTransScreen extends StatefulWidget {
 }
 
 class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
-  late XFile file;
+  late File file;
   late double ratio;
   AnotherMeController controller = Get.find();
   UploadImageController uploadImageController = Get.find();
+  RecentController recentController = Get.find();
   GlobalKey<AMOptContainerState> optKey = GlobalKey();
   late double resultCardWidth;
   late double resultCardHeight;
@@ -62,40 +64,56 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     resultCardWidth = ScreenUtil.screenSize.width - $(32);
     resultCardHeight = ratio > axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
     file = widget.file;
+    transResult = widget.resultFile;
     delay(() {
-      generate(context, controller, true);
+      if (transResult == null) {
+        generate(context, controller);
+      } else {
+        controller.sourcePhoto = file;
+        controller.transKey = transResult!.path;
+        controller.onSuccess();
+      }
     });
   }
 
-  void generate(BuildContext context, AnotherMeController controller, bool needUpload) {
+  void generate(BuildContext context, AnotherMeController controller) async {
+    var key = await md5File(file);
+    var needUpload = await uploadImageController.needUploadByKey(key);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,
       needUploadProgress: needUpload,
       controller: simulateProgressBarController,
     ).then((value) {
-      controller.update();
+      if (value ?? false) {
+        controller.onSuccess();
+      } else {
+        controller.onError();
+      }
     });
-    if (needUpload) {
-      controller.onTakePhoto(file, uploadImageController).then((value) {
-        simulateProgressBarController.uploadComplete();
-        if (value) {
-          controller.startTransfer(uploadImageController.imageUrl.value).then((value) {
-            simulateProgressBarController.loadComplete();
+    controller.onTakePhoto(file, uploadImageController, key).then((value) {
+      simulateProgressBarController.uploadComplete();
+      if (value) {
+        uploadImageController.getCachedIdByKey(key).then((cachedId) {
+          controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
+            if (value != null) {
+              uploadImageController.updateCachedId(file, value.cacheId ?? '');
+              recentController.onMetaverseUsed(file, File(controller.transKey!));
+              simulateProgressBarController.loadComplete();
+            } else {
+              simulateProgressBarController.onError();
+            }
           });
-        } else {
-          simulateProgressBarController.loadComplete();
-        }
-      });
-    } else {
-      controller.startTransfer(uploadImageController.imageUrl.value).then((value) {
-        simulateProgressBarController.loadComplete();
-      });
-    }
+        });
+      } else {
+        simulateProgressBarController.onError();
+      }
+    });
   }
 
   @override
-  Widget buildWidget(BuildContext context) => GetBuilder<AnotherMeController>(
+  Widget buildWidget(BuildContext context) => WillPopScope(
+      child: GetBuilder<AnotherMeController>(
         init: controller,
         builder: (controller) {
           if (TextUtil.isEmpty(controller.transKey)) {
@@ -121,6 +139,37 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                       .intoGestureDetector(onTap: () {
                     Navigator.pop(context, true);
                   }),
+                  controller.error()
+                      ? Positioned(
+                          bottom: ScreenUtil.getBottomPadding(context, padding: 32),
+                          child: OutlineWidget(
+                            radius: $(12),
+                            strokeWidth: $(2),
+                            gradient: LinearGradient(
+                              colors: [Color(0xFF04F1F9), Color(0xFF7F97F3), Color(0xFFEC5DD8)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            child: Text(
+                              S.of(context).generate_again,
+                              style: TextStyle(
+                                color: ColorConstant.White,
+                                fontSize: $(17),
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ).intoContainer(
+                              height: $(48),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(color: Color(0x44000000), borderRadius: BorderRadius.circular($(12))),
+                              padding: EdgeInsets.all($(2)),
+                            ),
+                          ).intoGestureDetector(onTap: () {
+                            controller.clearTransKey();
+                            generate(context, controller);
+                          }).intoContainer(width: ScreenUtil.screenSize.width - $(160), margin: EdgeInsets.symmetric(horizontal: $(80))),
+                        )
+                      : Container(),
                 ]));
           }
           return Scaffold(
@@ -132,7 +181,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     Expanded(
                       child: ClipRRect(
                         child: TransResultNewCard(
-                          originalImage: File(file.path),
+                          originalImage: file,
                           resultImage: File(controller.transKey!),
                           width: resultCardWidth,
                           height: resultCardHeight,
@@ -146,7 +195,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           )
                           .intoCenter()
                           .intoContainer(
-                        padding: EdgeInsets.only(top: 48),
+                              padding: EdgeInsets.only(top: 48),
                               margin: EdgeInsets.only(right: 14, left: 14, top: 44 + ScreenUtil.getStatusBarHeight(), bottom: $(16)),
                               decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_trans_result_bg), fit: BoxFit.fill))),
                     ),
@@ -155,12 +204,12 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                       onChoosePhotoTap: () {
                         optKey.currentState!.dismiss().whenComplete(() {
                           controller.clear(uploadImageController);
-                          Navigator.of(context).pop(true);
+                          Navigator.of(context).pop(false);
                         });
                       },
                       onDownloadTap: () async {
                         await showLoading();
-                        var uint8list = await printImageData(File(file.path), File(controller.transKey!));
+                        var uint8list = await printImageData(file, File(controller.transKey!));
                         var list = uint8list.toList();
                         var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
                         var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
@@ -171,7 +220,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                       },
                       onGenerateAgainTap: () {
                         controller.clearTransKey();
-                        generate(context, controller, false);
+                        generate(context, controller);
                       },
                       onShareDiscoveryTap: () async {
                         if (TextUtil.isEmpty(controller.transKey)) {
@@ -187,7 +236,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           category: DiscoveryCategory.another_me,
                         ).then((value) {
                           if (value ?? false) {
-                            showShareResult();
+                            showShareSuccessDialog(context);
                           }
                         });
                       },
@@ -196,7 +245,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         if (TextUtil.isEmpty(controller.transKey)) {
                           return;
                         }
-                        var uint8list = await printImageData(File(file.path), File(controller.transKey!));
+                        var uint8list = await printImageData(file, File(controller.transKey!));
                         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                         await hideLoading();
                         ShareScreen.startShare(
@@ -227,7 +276,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     )
                     .hero(tag: AnotherMe.logoBackTag)
                     .intoGestureDetector(onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 }),
               ],
             ).intoContainer(
@@ -236,21 +285,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg)))),
           );
         },
-      );
-
-  void showShareResult() {
-    showShareMetaverseSuccessDialog(context).then((value) {
-      if (value ?? false) {
-        EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id()]));
-        Navigator.of(context).pop();
-        //todo 这里不用popUntil是因为trans页面和上一级页面是同一个业务逻辑上的页面，
-        //todo trans返回时什么也不带就会自动关闭上一级页面，后续需要优化。
-      }
-    });
-  }
+      ),
+      onWillPop: () async {
+        Navigator.of(context).pop(true);
+        return false;
+      });
 
   ///375 设计宽度下，对应输出1080宽度下缩放比2.88
-  ///appIcon宽度40，二维码宽度68，标题字体17，描述文案字体13
+  ///appIcon宽度64，二维码宽度64，标题字体17，描述文案字体13
   ///底部app推广高度105
   Future<Uint8List> printImageData(File originalImage, File resultImage) async {
     double scaleSize = 2.88; //1080/375;

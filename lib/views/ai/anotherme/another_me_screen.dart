@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Common/photo_introduction_config.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/camera/app_camera.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
@@ -15,16 +15,20 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
-import 'package:photo_gallery/photo_gallery.dart';
+import 'package:common_utils/common_utils.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 import 'anotherme.dart';
 import 'widgets/take_photo_button.dart';
 
 class AnotherMeScreen extends StatefulWidget {
-  const AnotherMeScreen({Key? key}) : super(key: key);
+  RecentMetaverseEntity? entity;
+
+  AnotherMeScreen({Key? key, this.entity}) : super(key: key);
 
   @override
   State<AnotherMeScreen> createState() => _AnotherMeScreenState();
@@ -35,6 +39,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   late double galleryImageSize;
   late double cameraWidth;
   late double cameraHeight;
+  late double appBarHeight;
+  late double bottomBarHeight;
+  CacheManager cacheManager = AppDelegate().getManager();
   AnotherMeController controller = Get.put(AnotherMeController());
   UploadImageController uploadImageController = Get.put(UploadImageController());
   CameraController? cameraController;
@@ -50,6 +57,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   late AnimationController _animationController;
   late CurvedAnimation _anim;
   List<String> loadFailedList = [];
+  double zoomLevel = 1;
 
   @override
   void initState() {
@@ -59,8 +67,10 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
     sourceImageSize = ScreenUtil.screenSize.width;
     galleryImageSize = ScreenUtil.screenSize.width / 7.5;
+    appBarHeight = 44 + ScreenUtil.getStatusBarHeight();
+    bottomBarHeight = $(198);
     cameraWidth = ScreenUtil.screenSize.width;
-    cameraHeight = ScreenUtil.screenSize.height;
+    cameraHeight = ScreenUtil.screenSize.height - appBarHeight - bottomBarHeight + $(66);
     widgetDirection = cameraWidth / cameraHeight > 1 ? Axis.horizontal : Axis.vertical;
     availableCameras().then((value) {
       if (!mounted) {
@@ -81,7 +91,13 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       });
     });
     delay(() {
-      controller.initialConfig = anotherMeInitialConfig(context);
+      if (widget.entity != null) {
+        var file = File(widget.entity!.filePath.first);
+        SyncFileImage(file: file).getImage().then((value) {
+          var ratio = value.image.height / value.image.width;
+          startTransfer(context, File(widget.entity!.originalPath!), ratio, file);
+        });
+      }
     });
   }
 
@@ -124,68 +140,104 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          FutureBuilder<void>(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              const defaultWidget = const Center(child: CircularProgressIndicator());
-              if (cameraController == null) {
-                return defaultWidget;
-              }
-              try {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
-                  if (cameraController != null) {
-                    cameraController!.startImageStream((image) {
-                      if (takingPhoto) {
-                        return;
-                      }
-                      var currentTime = DateTime.now().millisecondsSinceEpoch;
-                      if (currentTime - lastScreenShotStamp > 200) {
-                        lastScreenShot = image;
-                        lastScreenShotStamp = currentTime;
-                      }
-                    }).onError((error, stackTrace) {});
-                  }
-                  // If the Future is complete, display the preview.
-                  var ratio = cameraController?.value.aspectRatio ?? ScreenUtil.screenSize.height / ScreenUtil.screenSize.width;
-                  var surfaceWidth = cameraHeight / ratio;
-                  var offsetX = (surfaceWidth - cameraWidth) / 2;
-                  var surface = cameraController!.buildPreview().intoContainer(
-                        width: surfaceWidth,
-                        height: cameraHeight,
-                      );
-                  var scrollController = ScrollController(initialScrollOffset: offsetX);
-                  var view = SingleChildScrollView(
-                    child: RepaintBoundary(key: screenShotKey, child: surface),
-                    controller: scrollController,
-                    physics: NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                  );
-                  return view;
-                } else {
+          Positioned(
+            child: FutureBuilder<void>(
+              future: _initializeControllerFuture,
+              builder: (context, snapshot) {
+                var defaultWidget = Center(child: CircularProgressIndicator()).intoContainer(
+                  width: cameraWidth,
+                  height: cameraHeight,
+                );
+                if (cameraController == null) {
                   return defaultWidget;
                 }
-              } on CameraException catch (e) {
-                return defaultWidget;
-              }
-            },
-          ).hero(tag: AnotherMe.takeItemTag),
-          Image.asset(
-            Images.ic_back,
-            height: $(24),
-            width: $(24),
-          )
-              .intoContainer(
-                padding: EdgeInsets.all($(10)),
-                margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
-              )
-              .hero(tag: AnotherMe.logoBackTag)
-              .intoGestureDetector(onTap: () {
-            Navigator.pop(context);
-          }),
+                try {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
+                    if (cameraController != null) {
+                      cameraController!.startImageStream((image) {
+                        if (takingPhoto) {
+                          return;
+                        }
+                        var currentTime = DateTime.now().millisecondsSinceEpoch;
+                        if (currentTime - lastScreenShotStamp > 200) {
+                          lastScreenShot = image;
+                          lastScreenShotStamp = currentTime;
+                        }
+                      }).onError((error, stackTrace) {});
+                    }
+                    // If the Future is complete, display the preview.
+                    var ratio = cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth;
+                    var surfaceWidth = cameraHeight / ratio;
+                    var offsetX = (surfaceWidth - cameraWidth) / 2;
+                    var surface = cameraController!.buildPreview().intoContainer(
+                          width: surfaceWidth,
+                          height: cameraHeight,
+                        );
+                    var scrollController = ScrollController(initialScrollOffset: offsetX);
+                    var view = SingleChildScrollView(
+                      child: RepaintBoundary(key: screenShotKey, child: surface),
+                      controller: scrollController,
+                      physics: NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                    );
+                    return view;
+                  } else {
+                    return defaultWidget;
+                  }
+                } on CameraException catch (e) {
+                  return defaultWidget;
+                }
+              },
+            ).hero(tag: AnotherMe.takeItemTag),
+            top: appBarHeight,
+            bottom: bottomBarHeight - $(66),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(
+              '${zoomLevel}x',
+              style: TextStyle(color: Colors.white, fontSize: $(13)),
+            )
+                .intoContainer(
+                    width: $(38),
+                    height: $(38),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(bottom: $(215)),
+                    decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
+                .intoGestureDetector(onTap: () {
+              cameraController?.getMaxZoomLevel().then((value) {
+                if (zoomLevel >= min(value, 5)) {
+                  zoomLevel = 1;
+                } else {
+                  zoomLevel += 0.5;
+                }
+                cameraController?.setZoomLevel(zoomLevel);
+                setState(() {});
+              });
+              //cameraController!.setZoomLevel(zoom)
+            }),
+          ),
           Positioned(
-            bottom: ScreenUtil.getBottomPadding(context) + 10,
+            child: Image.asset(
+              Images.ic_back,
+              height: $(24),
+              width: $(24),
+            )
+                .intoContainer(
+                  padding: EdgeInsets.all($(10)),
+                  margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
+                )
+                .hero(tag: AnotherMe.logoBackTag)
+                .intoGestureDetector(onTap: () {
+              Navigator.pop(context);
+            }),
+            top: 0,
+          ),
+          Positioned(
+            bottom: 0,
             child: GetBuilder<AnotherMeController>(
               init: controller,
               builder: (controller) {
@@ -227,7 +279,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                               takePhoto().then((value) {
                                 if (value != null) {
                                   _animationController.forward();
-                                  delay(() => startTransfer(context, value.value, value.key), milliseconds: 300);
+                                  delay(() async => startTransfer(context, await saveIfNotExist(value.value), value.key, null), milliseconds: 300);
                                 } else {
                                   CommonExtension().showToast('Take Photo Failed');
                                 }
@@ -258,6 +310,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                   ],
                 ).intoContainer(
                   width: ScreenUtil.screenSize.width,
+                  height: bottomBarHeight,
+                  alignment: Alignment.topCenter,
                 );
               },
             ),
@@ -289,7 +343,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             width: 2,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black),
           ),
-          FutureBuilder<List<Medium>>(
+          FutureBuilder<List<AssetEntity>>(
             builder: (context, snap) {
               var list = snap.data ?? [];
               return Container(
@@ -319,15 +373,15 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                       borderRadius: BorderRadius.circular(4),
                     ).intoGestureDetector(onTap: () async {
                       var medium = list[index];
-                      if (loadFailedList.contains(medium.id)) {
+                      var file = await medium.file;
+                      if (file == null || loadFailedList.contains(medium.id)) {
                         CommonExtension().showToast(S.of(context).wrong_image);
                         return;
                       }
-                      var file = await medium.getFile();
                       var xFile = XFile((file).path);
                       var imageInfo = await SyncFileImage(file: file).getImage();
                       var ratio = imageInfo.image.height / imageInfo.image.width;
-                      startTransfer(context, xFile, ratio);
+                      startTransfer(context, await saveIfNotExist(xFile), ratio, null);
                     }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
                   },
                   itemCount: list.length,
@@ -345,21 +399,40 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             color: Color(0x88010101),
           ));
 
-  startTransfer(BuildContext context, XFile xFile, double ratio) {
+  Future<File> saveIfNotExist(XFile file) async {
+    var fileName = EncryptUtil.encodeMd5(file.path);
+    var newFileName = cacheManager.storageOperator.recordMetaverseDir.path + fileName + '.' + getFileType(file.path);
+    var result = File(newFileName);
+    var bool = await result.exists();
+    if (bool) {
+      return result;
+    }
+    var source = File(file.path);
+    await source.copy(newFileName);
+    // if (source.path.contains(cacheManager.storageOperator.mainPath)) {
+    //   source.delete();
+    // }
+    return result;
+  }
+
+  startTransfer(BuildContext context, File file, double ratio, File? result) {
     controller.clear(uploadImageController);
     Navigator.of(context)
         .push<bool>(
       FadeRouter(
           child: AnotherMeTransScreen(
-        file: xFile,
+        file: file,
         ratio: ratio,
+        resultFile: result,
       )),
     )
         .then((value) {
-      if (value == null) {
-        Navigator.of(context).pop();
-      } else {
-        _animationController.reverse();
+      if (value != null) {
+        if (value) {
+          Navigator.of(context).pop();
+        } else {
+          _animationController.reverse();
+        }
       }
     });
   }
@@ -372,10 +445,13 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     ).then((value) async {
       if (value != null && value.isNotEmpty) {
         var medium = value.first;
-        var file = await medium.getFile();
+        var file = await medium.file;
+        if (file == null) {
+          return;
+        }
         var xFile = XFile((file).path);
         var imageInfo = await SyncFileImage(file: file).getImage();
-        startTransfer(context, xFile, imageInfo.image.height / imageInfo.image.width);
+        startTransfer(context, await saveIfNotExist(xFile), imageInfo.image.height / imageInfo.image.width, null);
       }
     });
   }
@@ -392,6 +468,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
               ResolutionPreset.medium,
               imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
             );
+            zoomLevel = 1;
             _initializeControllerFuture = cameraController!.initialize();
           });
         });

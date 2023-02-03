@@ -173,7 +173,7 @@ class UserManager extends BaseManager {
       if (autoExec && !isNeedLogin) {
         callback?.call();
       } else {
-        // todo 非正常登录流程下，此时不一定及时获取到用户信息，需要更新一次。此代码需要在后续所有登录流程优化后删除。
+        // 非正常登录流程下，此时不一定及时获取到用户信息，需要更新一次。此代码需要在后续所有登录流程优化后删除。
         refreshUser().then((value) {
           if (autoExec && !isNeedLogin) {
             callback?.call();

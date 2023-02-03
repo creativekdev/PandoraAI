@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent_controller.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
@@ -231,7 +231,6 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   });
                 });
           } else {
-            recentController.updateOriginData(_.data!.allEffectList());
             tabConfig.clear();
             hasHashTag = !dataController.tagList.isEmpty;
             for (var value in _.data!.data.keys) {
@@ -360,7 +359,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset(
-                              Images.ic_camera,
+                              Images.ic_avatar_camera,
                               width: $(24),
                             ),
                             SizedBox(width: 4),

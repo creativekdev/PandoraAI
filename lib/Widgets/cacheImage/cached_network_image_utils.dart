@@ -62,7 +62,7 @@ class CachedNetworkImageUtils {
     if (TextUtil.isEmpty(imageUrl.trim())) {
       return errorWidget.call(context, imageUrl, Exception('image url is empty'));
     }
-    if (useOld) {
+    if (useOld || imageUrl.contains('.webp')) {
       return CachedNetworkImage(
         key: key is GlobalKey<FutureLoadingImageState> ? null : key,
         imageUrl: imageUrl,

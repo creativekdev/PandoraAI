@@ -6,9 +6,11 @@ class Images {
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
+   static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
+   static const String ic_avatar_camera = 'assets/images/ic_avatar_camera.png';
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';
    static const String ic_avatar_bad_example = 'assets/images/ic_avatar_bad_example.png';
    static const String ic_avatar_good_example = 'assets/images/ic_avatar_good_example.png';

@@ -3,11 +3,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import '../images-res.dart';
 import 'images-res.dart' as introImages;
 
-anotherMeInitialConfig(BuildContext context) => {
-      'image': introImages.Images.ic_am_initial_header,
-      'text': S.of(context).another_me_tips,
-    };
-
 const PhotoIntroductionConfig = {
   '3d_cartoon': {
     'image': introImages.Images.Cartoon3d,
