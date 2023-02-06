@@ -58,7 +58,8 @@ class MediumImage extends ImageProvider<MediumImage> {
 
     try {
       Uint8List bytes;
-      var byte = await medium.thumbnailDataWithSize(ThumbnailSize(width, height));
+      // size * 3 解决缩略图模糊的问题
+      var byte = await medium.thumbnailDataWithSize(ThumbnailSize(width * 3, height * 3));
       if (byte == null) {
         return await getWrongData(decode, decodeDeprecated);
       }

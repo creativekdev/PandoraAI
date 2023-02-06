@@ -195,31 +195,31 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             top: appBarHeight,
             bottom: bottomBarHeight - $(66),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Text(
-              '${zoomLevel}x',
-              style: TextStyle(color: Colors.white, fontSize: $(13)),
-            )
-                .intoContainer(
-                    width: $(38),
-                    height: $(38),
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.only(bottom: $(215)),
-                    decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
-                .intoGestureDetector(onTap: () {
-              cameraController?.getMaxZoomLevel().then((value) {
-                if (zoomLevel >= min(value, 5)) {
-                  zoomLevel = 1;
-                } else {
-                  zoomLevel += 0.5;
-                }
-                cameraController?.setZoomLevel(zoomLevel);
-                setState(() {});
-              });
-              //cameraController!.setZoomLevel(zoom)
-            }),
-          ),
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: Text(
+          //     '${zoomLevel}x',
+          //     style: TextStyle(color: Colors.white, fontSize: $(13)),
+          //   )
+          //       .intoContainer(
+          //           width: $(38),
+          //           height: $(38),
+          //           alignment: Alignment.center,
+          //           margin: EdgeInsets.only(bottom: $(215)),
+          //           decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
+          //       .intoGestureDetector(onTap: () {
+          //     cameraController?.getMaxZoomLevel().then((value) {
+          //       if (zoomLevel >= min(value, 5)) {
+          //         zoomLevel = 1;
+          //       } else {
+          //         zoomLevel += 0.5;
+          //       }
+          //       cameraController?.setZoomLevel(zoomLevel);
+          //       setState(() {});
+          //     });
+          //     //cameraController!.setZoomLevel(zoom)
+          //   }),
+          // ),
           Positioned(
             child: Image.asset(
               Images.ic_back,

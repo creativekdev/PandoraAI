@@ -241,7 +241,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
 
   Future<String> appVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    return packageInfo.version;
+    return '${packageInfo.version} (${packageInfo.buildNumber})';
   }
 
   Widget functions(String title, {GestureTapCallback? onTap, Widget? training}) {

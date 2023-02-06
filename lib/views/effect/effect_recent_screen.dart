@@ -126,6 +126,10 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
       "page": "recent",
     });
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
+
+    // todo: 需检查为啥 recently 里面的文件会被删除，这里在跳转之前先做了判断，如果文件不存在就跳转的时候不传 recentEffectModel
+    var fileExist = await File(pick!.originalPath ?? "").exists();
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -134,7 +138,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
           tabPos: tabPos,
           pos: categoryPos,
           itemPos: itemP,
-          recentEffectModel: pick,
+          recentEffectModel: fileExist ? pick : null,
         ),
       ),
     );
