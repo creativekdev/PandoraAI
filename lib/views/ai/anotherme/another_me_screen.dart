@@ -1,7 +1,11 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:cartoonizer/utils/sensor_helper.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 import 'libcopy/camera_controller.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -22,6 +26,7 @@ import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:image/image.dart' as imglib;
 
 import 'anotherme.dart';
 import 'widgets/take_photo_button.dart';
@@ -35,7 +40,7 @@ class AnotherMeScreen extends StatefulWidget {
   State<AnotherMeScreen> createState() => _AnotherMeScreenState();
 }
 
-class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindingObserver, TickerProviderStateMixin {
   late double sourceImageSize;
   late double galleryImageSize;
   late double cameraWidth;
@@ -61,12 +66,17 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   double zoomLevel = 1;
   List<AssetEntity> assetList = [];
 
+  late AnimationController _rotateAnimController;
+
+  late PoseState pose;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
+    _rotateAnimController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     sourceImageSize = ScreenUtil.screenSize.width;
     galleryImageSize = ScreenUtil.screenSize.width / 7.5;
     appBarHeight = 44 + ScreenUtil.getStatusBarHeight();
@@ -74,6 +84,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     cameraWidth = ScreenUtil.screenSize.width;
     cameraHeight = ScreenUtil.screenSize.height - appBarHeight - bottomBarHeight + $(66);
     widgetDirection = cameraWidth / cameraHeight > 1 ? Axis.horizontal : Axis.vertical;
+    pose = PoseState.stand;
     availableCameras().then((value) {
       if (!mounted) {
         return;
@@ -106,6 +117,21 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         });
       });
     });
+    delay(() {
+      accelerometerEvents.listen((AccelerometerEvent event) {
+        var nextPose = SensorHelper.getPose(event.x, event.y, event.z);
+        if (nextPose != null) {
+          if (nextPose != this.pose) {
+            print(pose);
+            if (mounted) {
+              setState(() {
+                pose = nextPose;
+              });
+            }
+          }
+        }
+      });
+    });
   }
 
   @override
@@ -115,6 +141,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     cameraController?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
       cameraController?.dispose();
     });
+    _animationController.dispose();
+    _rotateAnimController.dispose();
+    accelerometerEvents.listen(null);
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
@@ -240,9 +269,12 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Text(
-              '${zoomLevel.toStringAsFixed(1)}x',
-              style: TextStyle(color: Colors.white, fontSize: $(13)),
+            child: Transform.rotate(
+              angle: pose.rotate(),
+              child: Text(
+                '${zoomLevel.toStringAsFixed(1)}x',
+                style: TextStyle(color: Colors.white, fontSize: $(13)),
+              ),
             )
                 .intoContainer(
                     width: $(38),
@@ -341,14 +373,18 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                             },
                             maxSecond: 8,
                           ),
-                          Image.asset(
-                            Images.ic_camera_switch,
-                            width: 44,
-                            height: 44,
-                          ).intoContainer(width: 44, height: 44, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
-                              onTap: () {
-                            switchCamera();
-                          }),
+                          Transform.rotate(
+                            angle: pose.rotate(),
+                            child: Image.asset(
+                              Images.ic_camera_switch,
+                              width: 44,
+                              height: 44,
+                            )
+                                .intoContainer(width: 44, height: 44, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32)))
+                                .intoGestureDetector(onTap: () {
+                              switchCamera();
+                            }),
+                          ),
                         ],
                       ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                     ),
@@ -505,10 +541,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     if (cameraController == null || cameraController?.disposed()) {
       return;
     }
-    // if (switching) {
-    //   return;
-    // }
-    // switching = true;
     cameraController?.stopImageStream().whenComplete(() {
       cameraController?.dispose().whenComplete(() {
         availableCameras().then((value) {
@@ -562,6 +594,15 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       rect,
       filePath,
     );
+    if (pose != PoseState.stand) {
+      var im = (await SyncFileImage(file: file).getImage()).image;
+      var bytes = (await im.toByteData())!.buffer.asUint8List();
+      var orImg = imglib.Image.fromBytes(im.width, im.height, bytes);
+      var resImg = imglib.copyRotate(orImg, pose.coefficient());
+      var encodePng = imglib.encodePng(resImg);
+      await file.writeAsBytes(encodePng);
+      ratio = 1 / ratio;
+    }
     takingPhoto = false;
     return MapEntry(ratio, XFile(file.path));
   }

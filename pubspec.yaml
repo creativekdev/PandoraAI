@@ -94,6 +94,7 @@ dependencies:
   custom_pop_up_menu: 1.2.4
   camera: 0.10.1
   image: 3.2.2
+  sensors_plus: 2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
