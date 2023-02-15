@@ -40,7 +40,7 @@ class StorageOperator {
   Directory get recordCartoonizeDir => Directory('$_mainPath$_recordDir$_recordCartoonize');
 
   Future<bool> initializeDir() async {
-    Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
+    Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationSupportDirectory();
     if (directory == null) return false;
     await _mkdirs(directory.path, [_appDir]);
     _mainPath = '${directory.path}$_appDir';

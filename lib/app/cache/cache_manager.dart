@@ -11,8 +11,8 @@ import 'image_scale_operator.dart';
 
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
-  static const keyRecentEffects = "recent_effect";
-  static const keyRecentMetaverse = "recent_metaverse";
+  static const keyRecentEffects = "recent_effect_file";
+  static const keyRecentMetaverse = "recent_metaverse_file";
   static const keyLastVideoAdsShowTime = "LAST_ADS_SHOW_TIME";
   static const keyLoginCookie = "login_cookie";
   static const keyCurrentUser = "user_info";

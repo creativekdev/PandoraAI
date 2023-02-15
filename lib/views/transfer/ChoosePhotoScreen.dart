@@ -13,12 +13,11 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/api/uploader.dart';
+import 'package:cartoonizer/api/transform_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -78,6 +77,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   var algoName = "";
   var urlFinal = "";
   var _image = "";
+  late var rootPath;
 
   set image(String data) {
     _image = data;
@@ -91,6 +91,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late ImagePicker imagePicker;
   UserManager userManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   final EffectDataController effectDataController = Get.find();
   ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
   UploadImageController uploadImageController = Get.put(UploadImageController());
@@ -124,16 +125,16 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   late double imgContainerWidth;
   late double imgContainerHeight;
 
-  Widget get cachedImage {
+  Widget? get cachedImage {
     if (_cachedImage != null) {
       return _cachedImage!;
     }
-    var imageUint8List = base64Decode(image);
+    var file = File(image);
     if (lastBuildType == _BuildType.waterMark) {
       _cachedImage = Stack(
         children: [
-          Image.memory(
-            imageUint8List,
+          Image.file(
+            file,
             width: imgContainerWidth,
             height: imgContainerHeight - 24,
             fit: BoxFit.cover,
@@ -164,8 +165,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         maintainAnimation: true,
                       )
                     : Container(),
-                Image.memory(
-                  imageUint8List,
+                Image.file(
+                  file,
                   width: double.maxFinite,
                   height: imageSize?.height ?? imgContainerHeight,
                 ),
@@ -183,13 +184,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         ],
       ).intoContainer(width: imgContainerWidth, height: imgContainerHeight);
       if (imageSize == null) {
-        asyncRefreshImageSize(imageUint8List);
+        asyncRefreshImageSize(file);
       }
     } else {
       _cachedImage = Stack(
         children: [
-          Image.memory(
-            imageUint8List,
+          Image.file(
+            file,
             width: imgContainerWidth,
             height: imgContainerHeight - 24,
             fit: BoxFit.fill,
@@ -216,8 +217,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   maintainAnimation: true,
                 )
               : Container(),
-          Image.memory(
-            imageUint8List,
+          Image.file(
+            file,
             width: imgContainerWidth,
             height: imgContainerHeight,
           ),
@@ -225,10 +226,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         ],
       ).intoContainer(width: imgContainerWidth, height: imgContainerHeight);
       if (imageSize == null) {
-        asyncRefreshImageSize(imageUint8List);
+        asyncRefreshImageSize(file);
       }
     }
-    return _cachedImage!;
+    return _cachedImage;
   }
 
   Widget buildCropContainer() {
@@ -249,8 +250,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         : Container();
   }
 
-  asyncRefreshImageSize(Uint8List imageUint8List) {
-    var resolve = MemoryImage(imageUint8List).resolve(ImageConfiguration.empty);
+  asyncRefreshImageSize(File imageFile) {
+    var resolve = FileImage(imageFile).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       var scale = image.image.width / image.image.height;
       if (scale < 0.9) {
@@ -265,34 +266,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         imageSize = Size(imgContainerWidth, imgContainerWidth);
       }
       _cachedImage = null;
-      setState(() {});
+      delay(() => setState(() {}));
     }));
   }
 
   bool lastChangeByTap = false;
 
-  late Uploader api;
-
-  @override
-  void dispose() {
-    super.dispose();
-    Get.delete<ChoosePhotoScreenController>();
-    Get.delete<UploadImageController>();
-    api.unbind();
-    thirdpartManager.adsHolder.ignore = false;
-    _videoPlayerController?.dispose();
-    rewardAdsHolder.onDispose();
-    userChangeListener.cancel();
-    userLoginListener.cancel();
-    itemScrollPositionsListener.itemPositions.removeListener(itemScrollPositionsListen);
-  }
+  late TransformApi transformApi;
 
   @override
   void initState() {
     super.initState();
     logEvent(Events.upload_page_loading);
     recentController = Get.find();
-    api = Uploader().bindState(this);
+    transformApi = TransformApi()..bind(this);
+    rootPath = cacheManager.storageOperator.recordCartoonizeDir.path;
     tabList = effectDataController.tabList;
     tabTitleList = effectDataController.tabTitleList;
     tabItemList = effectDataController.tabItemList;
@@ -315,6 +303,20 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     imagePicker = ImagePicker();
     initTabBar();
     judgeAiServers();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete<ChoosePhotoScreenController>();
+    Get.delete<UploadImageController>();
+    transformApi.unbind();
+    thirdpartManager.adsHolder.ignore = false;
+    _videoPlayerController?.dispose();
+    rewardAdsHolder.onDispose();
+    userChangeListener.cancel();
+    userLoginListener.cancel();
+    itemScrollPositionsListener.itemPositions.removeListener(itemScrollPositionsListen);
   }
 
   void judgeAiServers() {
@@ -349,14 +351,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: lastBuildType == _BuildType.waterMark, localVideo: true));
             } else {
               if (!value.hasWatermark) {
-                offlineEffect.addIf(!offlineEffect.containsKey(value.key), value.key!, OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: false));
+                offlineEffect.addIf(
+                  !offlineEffect.containsKey(value.key),
+                  value.key!,
+                  OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: false),
+                );
               } else {
-                offlineEffect.addIf(!offlineEffect.containsKey(value.key), value.key!,
-                    OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
+                offlineEffect.addIf(
+                  !offlineEffect.containsKey(value.key),
+                  value.key!,
+                  OfflineEffectModel(data: value.imageData!, imageUrl: '', message: "", hasWatermark: lastBuildType == _BuildType.waterMark),
+                );
               }
             }
           }
           controller.changeIsLoading(true);
+          controller.changeIsPhotoSelect(true);
           getCartoon(context);
         } else {
           if (!controller.isPhotoSelect.value) {
@@ -641,8 +651,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showFailedToast(context);
       }
     } else {
+      var imageData = (await SyncFileImage(file: File(image)).getImage()).image;
       if (lastBuildType == _BuildType.waterMark) {
-        var imageData = await decodeImageFromList(base64Decode(image));
         var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
         assetImage.addListener(ImageStreamListener((image, synchronousCall) async {
           ui.Image? cropImage;
@@ -659,7 +669,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           CommonExtension().showImageSavedOkToast(context);
         }));
       } else {
-        var imageData = await decodeImageFromList(base64Decode(image));
         ui.Image? cropImage;
         if ((controller.cropImage.value != null && includeOriginalFace())) {
           if (cropKey.currentContext != null) {
@@ -804,7 +813,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                           ? Container(
                               child: (controller.isVideo.value && _videoPlayerController != null)
                                   ? ChooseVideoContainer(videoPlayerController: _videoPlayerController!, width: imgContainerWidth, height: imgContainerWidth)
-                                  : Center(child: cachedImage),
+                                  : Center(child: cachedImage ?? SizedBox.shrink()),
                             )
                           : controller.isPhotoSelect.value
                               ? Stack(
@@ -1511,7 +1520,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               dataBody['cache_id'] = cachedId!;
             }
             selectedEffect.handleApiParams(dataBody);
-            var baseEntity = await api.post(aiHost.cartoonizeApi, params: dataBody);
+            var rootPath = cacheManager.storageOperator.recordCartoonizeDir.path;
+            var baseEntity = await transformApi.transform(
+              aiHost.cartoonizeApi,
+              rootPath,
+              dataBody,
+              aiHost: aiHost,
+            );
             if (baseEntity != null) {
               final Map parsed = baseEntity.data;
               var cachedId = parsed['cache_id']?.toString();
@@ -1519,6 +1534,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 uploadImageController.updateCachedId(controller.image.value, cachedId!);
               }
               var dataString = parsed['data'].toString();
+              var dataEncode = EncryptUtil.encodeMd5(dataString);
               if (TextUtil.isEmpty(dataString)) {
                 logEvent(Events.transform_img_failed, eventValues: {
                   'code': parsed['code'],
@@ -1554,9 +1570,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               } else {
                 successForward = () async {
                   progressBarController.onError();
+                  var fileName = transformApi.getFileName(rootPath, dataEncode);
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
-                  image = parsed['data'];
+                      OfflineEffectModel(data: fileName, imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
+                  image = fileName;
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
                   controller.changeIsPhotoDone(true);
@@ -1590,11 +1607,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'hide_watermark': 1,
             };
             selectedEffect.handleApiParams(dataBody);
-            final cartoonizeResponse = await API.post("${aiHost}/api/image/cartoonize/token", body: dataBody);
-            print(cartoonizeResponse.statusCode);
-            print(cartoonizeResponse.body.toString());
-            if (cartoonizeResponse.statusCode == 200) {
-              final Map parsed = json.decode(cartoonizeResponse.body.toString());
+            var baseEntity = await transformApi.transform('${aiHost}/api/image/cartoonize/token', rootPath, dataBody, aiHost: aiHost);
+            if (baseEntity != null) {
+              final Map parsed = baseEntity.data;
+              var dataEncode = EncryptUtil.encodeMd5(parsed['data'].toString());
               if (parsed['data'].toString().startsWith('<')) {
                 successForward = () async {
                   progressBarController.onError();
@@ -1621,11 +1637,12 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   controller.changeIsVideo(true);
                 };
               } else {
+                var fileName = transformApi.getFileName(rootPath, dataEncode);
                 successForward = () async {
                   progressBarController.onError();
                   offlineEffect.addIf(!offlineEffect.containsKey(key), key,
-                      OfflineEffectModel(data: parsed['data'], imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
-                  image = parsed['data'];
+                      OfflineEffectModel(data: fileName, imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
+                  image = fileName;
                   urlFinal = imageUrl;
                   algoName = selectedEffect.algoname;
                   controller.changeIsPhotoDone(true);
@@ -1643,7 +1660,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             } else {
               progressBarController.onError();
               controller.changeTransingImage(false);
-              CommonExtension().showToast('Error while processing image, HttpCode: ${cartoonizeResponse.statusCode}');
             }
           }
         } else {
@@ -1671,14 +1687,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           "category": category.key,
           "original_face": includeOriginalFace() ? 1 : 0,
         });
-        //todo 这一步在视频类型记录的时候老是获取不到视频文件controller.videoFile。还没来得及调试，Xia哥有空的话可以帮我看下
-        recentController.onEffectUsed(
-          selectedEffect,
-          original: controller.image.value!,
-          imageData: controller.isVideo.value ? controller.videoFile.value!.path : _image,
-          isVideo: controller.isVideo.value,
-          hasWatermark: lastBuildType == _BuildType.waterMark,
-        );
+        if (resultSuccess == 1) {
+          recentController.onEffectUsed(
+            selectedEffect,
+            original: controller.image.value!,
+            imageData: controller.isVideo.value ? controller.videoFile.value!.path : _image,
+            isVideo: controller.isVideo.value,
+            hasWatermark: lastBuildType == _BuildType.waterMark,
+          );
+        }
       } catch (e) {
         print(e);
         progressBarController.onError();
@@ -1789,7 +1806,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<String> composeImageWithWatermark() async {
-    var imageData = await decodeImageFromList(base64Decode(image));
+    var imageData = (await SyncFileImage(file: File(image)).getImage()).image;
     ui.Image? cropImage;
     if ((controller.cropImage.value != null && includeOriginalFace())) {
       if (cropKey.currentContext != null) {
@@ -1808,12 +1825,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future initVideoPlayerFromNet(String aiHost) async {
     var url = '${aiHost}/resource/' + controller.videoUrl.value;
-    var file = await SyncDownloadVideo(url: url, type: 'mp4').getVideo();
-    if (file != null) {
-      await initVideoPlayerFromFile(file);
-    } else {
-      controller.changeIsLoading(false);
-    }
+    var fileName = EncryptUtil.encodeMd5(url);
+    var videoDir = cacheManager.storageOperator.videoDir;
+    var savePath = videoDir.path + fileName + '.mp4';
+    await initVideoPlayerFromFile(File(savePath));
   }
 
   Future initVideoPlayerFromFile(File file) async {

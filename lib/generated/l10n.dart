@@ -1250,11 +1250,21 @@ class S {
     );
   }
 
-  /// `This app needs photo library access to choose pictures for upload user profile photo`
+  /// `This app needs photo library access. Go to settings?`
   String get permissionPhotoLibraryContent {
     return Intl.message(
-      'This app needs photo library access to choose pictures for upload user profile photo',
+      'This app needs photo library access. Go to settings?',
       name: 'permissionPhotoLibraryContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to settings`
+  String get permissionPhotoToSettings {
+    return Intl.message(
+      'Go to settings',
+      name: 'permissionPhotoToSettings',
       desc: '',
       args: [],
     );
@@ -2260,20 +2270,20 @@ class S {
     );
   }
 
-  /// `Your post has been submitted successfully`
+  /// `Your have shared \nsuccessfully`
   String get your_post_has_been_submitted_successfully {
     return Intl.message(
-      'Your post has been submitted successfully',
+      'Your have shared \nsuccessfully',
       name: 'your_post_has_been_submitted_successfully',
       desc: '',
       args: [],
     );
   }
 
-  /// `See it now`
+  /// `Check`
   String get see_it_now {
     return Intl.message(
-      'See it now',
+      'Check',
       name: 'see_it_now',
       desc: '',
       args: [],
@@ -2955,6 +2965,56 @@ class S {
     return Intl.message(
       'App Version',
       name: 'current_version',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select photos`
+  String get please_select_photos {
+    return Intl.message(
+      'Please select photos',
+      name: 'please_select_photos',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `To add more photos please`
+  String get album_to_settings_tips {
+    return Intl.message(
+      'To add more photos please',
+      name: 'album_to_settings_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Go to settings`
+  String get album_to_settings_button {
+    return Intl.message(
+      'Go to settings',
+      name: 'album_to_settings_button',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Preview`
+  String get preview {
+    return Intl.message(
+      'Preview',
+      name: 'preview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select at least %d photos`
+  String get select_min_photos_hint {
+    return Intl.message(
+      'Please select at least %d photos',
+      name: 'select_min_photos_hint',
       desc: '',
       args: [],
     );

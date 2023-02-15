@@ -30,6 +30,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
+        "album_to_settings_button":
+            MessageLookupByLibrary.simpleMessage("现在去设置"),
+        "album_to_settings_tips":
+            MessageLookupByLibrary.simpleMessage("要添加更多图片"),
         "all": MessageLookupByLibrary.simpleMessage("全部"),
         "all_plans": MessageLookupByLibrary.simpleMessage("所有任务"),
         "already_account": MessageLookupByLibrary.simpleMessage("已有账号？ "),
@@ -240,7 +244,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("这个应用程序需要使用相机为上传用户资料照片拍照"),
         "permissionPhotoLibrary": MessageLookupByLibrary.simpleMessage("相册权限"),
         "permissionPhotoLibraryContent":
-            MessageLookupByLibrary.simpleMessage("这个应用程序需要访问相册选择图片上传用户资料照片"),
+            MessageLookupByLibrary.simpleMessage("这个应用程序需要访问相册权限，是否去设置打开？"),
+        "permissionPhotoToSettings":
+            MessageLookupByLibrary.simpleMessage("去设置"),
         "photo_delete_already":
             MessageLookupByLibrary.simpleMessage("该图片已经被删除"),
         "photo_select_already":
@@ -249,9 +255,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
+        "please_select_photos": MessageLookupByLibrary.simpleMessage("请选择图片"),
         "popular": MessageLookupByLibrary.simpleMessage("热门"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI 专业版"),
         "premium": MessageLookupByLibrary.simpleMessage("专业版"),
+        "preview": MessageLookupByLibrary.simpleMessage("预览"),
         "privacy_policy": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
@@ -284,6 +292,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_completed": MessageLookupByLibrary.simpleMessage("选择完成"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),
+        "select_min_photos_hint":
+            MessageLookupByLibrary.simpleMessage("请至少选择 %d 张图片"),
         "select_more_photos": MessageLookupByLibrary.simpleMessage("选择更多照片"),
         "select_style": MessageLookupByLibrary.simpleMessage("选择风格"),
         "selfies": MessageLookupByLibrary.simpleMessage("自拍"),

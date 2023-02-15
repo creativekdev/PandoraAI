@@ -44,6 +44,10 @@ RecentEffectItem $RecentEffectItemFromJson(Map<String, dynamic> json) {
 	if (isVideo != null) {
 		recentEffectItem.isVideo = isVideo;
 	}
+	final bool? hasWatermark = jsonConvert.convert<bool>(json['hasWatermark']);
+	if (hasWatermark != null) {
+		recentEffectItem.hasWatermark = hasWatermark;
+	}
 	return recentEffectItem;
 }
 
@@ -53,6 +57,7 @@ Map<String, dynamic> $RecentEffectItemToJson(RecentEffectItem entity) {
 	data['createDt'] = entity.createDt;
 	data['imageData'] = entity.imageData;
 	data['isVideo'] = entity.isVideo;
+	data['hasWatermark'] = entity.hasWatermark;
 	return data;
 }
 

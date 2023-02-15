@@ -34,6 +34,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Cartoonizer."),
+        "album_to_settings_button":
+            MessageLookupByLibrary.simpleMessage("Go to settings"),
+        "album_to_settings_tips":
+            MessageLookupByLibrary.simpleMessage("To add more photos please"),
         "all": MessageLookupByLibrary.simpleMessage("All"),
         "all_plans": MessageLookupByLibrary.simpleMessage("All Plans"),
         "already_account":
@@ -292,7 +296,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "permissionPhotoLibrary":
             MessageLookupByLibrary.simpleMessage("PhotoLibrary Permission"),
         "permissionPhotoLibraryContent": MessageLookupByLibrary.simpleMessage(
-            "This app needs photo library access to choose pictures for upload user profile photo"),
+            "This app needs photo library access. Go to settings?"),
+        "permissionPhotoToSettings":
+            MessageLookupByLibrary.simpleMessage("Go to settings"),
         "photo_delete_already": MessageLookupByLibrary.simpleMessage(
             "This photo has been deleted already"),
         "photo_select_already": MessageLookupByLibrary.simpleMessage(
@@ -302,9 +308,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
         "please_login_first":
             MessageLookupByLibrary.simpleMessage("Please login first"),
+        "please_select_photos":
+            MessageLookupByLibrary.simpleMessage("Please select photos"),
         "popular": MessageLookupByLibrary.simpleMessage("Popular"),
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
         "premium": MessageLookupByLibrary.simpleMessage("Premium"),
+        "preview": MessageLookupByLibrary.simpleMessage("Preview"),
         "privacy_policy":
             MessageLookupByLibrary.simpleMessage(" Privacy Policy"),
         "privacy_policy1":
@@ -344,7 +353,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scary content alert!"),
         "scary_content_alert_open_it": MessageLookupByLibrary.simpleMessage(
             "Scary content alert! Tap to show it"),
-        "see_it_now": MessageLookupByLibrary.simpleMessage("See it now"),
+        "see_it_now": MessageLookupByLibrary.simpleMessage("Check"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
@@ -352,6 +361,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Select Completed"),
         "select_from_album":
             MessageLookupByLibrary.simpleMessage("Select from album"),
+        "select_min_photos_hint": MessageLookupByLibrary.simpleMessage(
+            "Please select at least %d photos"),
         "select_more_photos":
             MessageLookupByLibrary.simpleMessage("Select more photos"),
         "select_style": MessageLookupByLibrary.simpleMessage("Select Style"),
@@ -451,7 +462,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "You have not posted anything"),
         "your_post_has_been_submitted_successfully":
             MessageLookupByLibrary.simpleMessage(
-                "Your post has been submitted successfully"),
+                "Your have shared \nsuccessfully"),
         "youtube":
             MessageLookupByLibrary.simpleMessage("Continue with You Tube"),
         "zip_code": MessageLookupByLibrary.simpleMessage("Zip Code"),

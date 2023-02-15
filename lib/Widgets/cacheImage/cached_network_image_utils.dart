@@ -286,7 +286,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
       var cacheScale = cacheManager.imageScaleOperator.getScale(url);
       if (cacheScale == null) {
         if (scale > 1.05) {
-          cacheScale = 1.25;
+          cacheScale = 1.5;
         } else if (scale < 0.95) {
           cacheScale = 0.75;
         } else {

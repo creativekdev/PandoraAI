@@ -7,17 +7,12 @@ class PickAlbumHelper {
     if (list.isEmpty) {
       return [];
     }
-    var cameraAlbum = list.pick((t) => (t.name ?? '').toLowerCase().contains('camera'));
     AssetPathEntity? totalAlbum = null;
-    if (cameraAlbum != null) {
-      totalAlbum = cameraAlbum;
-    } else {
-      for (var value in list) {
-        var count = await value.assetCountAsync;
-        var totalCount = await totalAlbum?.assetCountAsync;
-        if (count > (totalCount ?? 0)) {
-          totalAlbum = value;
-        }
+    for (var value in list) {
+      var count = await value.assetCountAsync;
+      var totalCount = await totalAlbum?.assetCountAsync;
+      if (count > (totalCount ?? 0)) {
+        totalAlbum = value;
       }
     }
     if (totalAlbum == null) {

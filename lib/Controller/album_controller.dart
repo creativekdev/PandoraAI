@@ -38,19 +38,6 @@ class AlbumController extends GetxController {
     onClearCacheListener.cancel();
   }
 
-  Future<bool> checkPermissions() async {
-    final PermissionState _ps = await PhotoManager.requestPermissionExtend();
-    if (_ps.isAuth) {
-      // Granted.
-      return true;
-    } else {
-      // Limited(iOS) or Rejected, use `==` for more precise judgements.
-      CommonExtension().showToast('Please grant all permissions');
-      await PhotoManager.openSetting();
-      return false;
-    }
-  }
-
   Future<AssetPathEntity?> getTotalAlbum() async {
     if (album != null) return album;
     List<AssetPathEntity> list = await PhotoManager.getAssetPathList(type: RequestType.image);

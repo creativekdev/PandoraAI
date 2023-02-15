@@ -26,7 +26,7 @@ import 'package:share_plus/share_plus.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
-    AppTabId tabId;
+  AppTabId tabId;
 
   MineFragment({Key? key, required this.tabId}) : super(key: key);
 
@@ -119,12 +119,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 }
               }),
               Container(height: $(12)),
-              ImageTextBarWidget(
-                S.of(context).recently,
-                Images.ic_recently,
-                true,
-                color: Color(0xfff95f5f)
-              ).intoGestureDetector(onTap: () {
+              ImageTextBarWidget(S.of(context).recently, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
                 logEvent(Events.recent_loading);
                 Navigator.push(
                     context,
@@ -288,7 +283,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                         launchURL("https://www.facebook.com/pandoraaiapp/");
                       },
                       child: Image.asset(
-                        ImagesConstant.ic_share_facebook,
+                        ImagesConstant.ic_facebook,
                         height: 14.w,
                         width: 14.w,
                       ),

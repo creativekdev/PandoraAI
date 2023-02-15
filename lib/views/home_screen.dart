@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
       }
     });
-    albumController.checkPermissions().then((value) {
+    AnotherMe.checkPermissions().then((value) {
       if (value) {
         albumController.getTotalAlbum();
       }
@@ -177,6 +177,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               AnotherMe.checkPermissions().then((value) {
                                 if (value) {
                                   AnotherMe.open(context);
+                                } else {
+                                  showPhotoLibraryPermissionDialog(context);
                                 }
                               });
                             } else {

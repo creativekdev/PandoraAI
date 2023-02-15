@@ -196,7 +196,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           .intoCenter()
                           .intoContainer(
                               padding: EdgeInsets.only(top: 48),
-                              margin: EdgeInsets.only(right: 14, left: 14, top: 44 + ScreenUtil.getStatusBarHeight(), bottom: $(16)),
+                              margin: EdgeInsets.only(right: 14, left: 14, top: 50 + ScreenUtil.getStatusBarHeight(), bottom: $(13)),
                               decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_trans_result_bg), fit: BoxFit.fill))),
                     ),
                     AMOptContainer(
@@ -259,7 +259,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         );
                         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                       },
-                    ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context, padding: 32)))
+                    ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
                   ],
                 ).intoContainer(
                   width: ScreenUtil.screenSize.width,

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
@@ -75,8 +74,8 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                               pickEffectItemAndOpen(context, data);
                             });
                           } else {
-                            return Image.memory(
-                              base64Decode(data.itemList.first.imageData ?? ''),
+                            return Image.file(
+                              File(data.itemList.first.imageData ?? ''),
                               fit: BoxFit.cover,
                             ).intoGestureDetector(onTap: () {
                               pickEffectItemAndOpen(context, data);
@@ -86,8 +85,14 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                           return Image.file(
                             File(data.filePath.first),
                             fit: BoxFit.cover,
-                          ).hero(tag: data.filePath.first).intoGestureDetector(onTap: () {
-                            AnotherMe.open(context, entity: data);
+                          ).intoGestureDetector(onTap: () {
+                            AnotherMe.checkPermissions().then((value) {
+                              if (value) {
+                                AnotherMe.open(context, entity: data);
+                              } else {
+                                showPhotoLibraryPermissionDialog(context);
+                              }
+                            });
                           });
                         }
                         return Container();

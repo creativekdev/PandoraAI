@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:camera/camera.dart';
+import 'libcopy/camera_controller.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -44,7 +45,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   CacheManager cacheManager = AppDelegate().getManager();
   AnotherMeController controller = Get.put(AnotherMeController());
   UploadImageController uploadImageController = Get.put(UploadImageController());
-  CameraController? cameraController;
+  CustomCameraController? cameraController;
   Future<void>? _initializeControllerFuture;
   GlobalKey screenShotKey = GlobalKey();
   bool isFront = true;
@@ -58,6 +59,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   late CurvedAnimation _anim;
   List<String> loadFailedList = [];
   double zoomLevel = 1;
+  List<AssetEntity> assetList = [];
 
   @override
   void initState() {
@@ -82,7 +84,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       var pick = value.pick((t) => t.lensDirection == CameraLensDirection.front) ?? value.first;
       setState(() {
         isFront = pick.lensDirection == CameraLensDirection.front;
-        cameraController = CameraController(
+        cameraController = CustomCameraController(
           pick,
           ResolutionPreset.medium,
           imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
@@ -98,6 +100,11 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
           startTransfer(context, File(widget.entity!.originalPath!), ratio, file);
         });
       }
+      PickAlbumHelper.getNewest().then((value) {
+        setState(() {
+          assetList = value;
+        });
+      });
     });
   }
 
@@ -115,7 +122,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    final CameraController? cc = cameraController;
+    final CustomCameraController? cc = cameraController;
 
     // App state changed before we got the chance to initialize.
     if (cc == null || !cc.value.isInitialized) {
@@ -125,7 +132,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     if (state == AppLifecycleState.inactive) {
       cc.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      cameraController = CameraController(
+      cameraController = CustomCameraController(
         cc.description,
         ResolutionPreset.medium,
         imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
@@ -158,6 +165,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                     lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
                     if (cameraController != null) {
                       cameraController!.startImageStream((image) {
+                        if (cameraController?.disposed()) {
+                          return;
+                        }
                         if (takingPhoto) {
                           return;
                         }
@@ -172,18 +182,51 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                     var ratio = cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth;
                     var surfaceWidth = cameraHeight / ratio;
                     var offsetX = (surfaceWidth - cameraWidth) / 2;
-                    var surface = cameraController!.buildPreview().intoContainer(
+                    var surface = cameraController!.buildPreview().intoCenter().intoContainer(
                           width: surfaceWidth,
                           height: cameraHeight,
+                          transform: Matrix4.translationValues(-offsetX, 0, 0),
+                          alignment: Alignment.center,
                         );
-                    var scrollController = ScrollController(initialScrollOffset: offsetX);
-                    var view = SingleChildScrollView(
-                      child: RepaintBoundary(key: screenShotKey, child: surface),
-                      controller: scrollController,
-                      physics: NeverScrollableScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
+                    var view = RepaintBoundary(key: screenShotKey, child: surface);
+                    return GestureDetector(
+                      child: view,
+                      onScaleUpdate: (details) {
+                        if (cameraController == null || cameraController?.disposed()) {
+                          return;
+                        }
+                        var scale = details.scale;
+                        if (scale == 1) {
+                          return;
+                        }
+                        var zoom = zoomLevel;
+                        if (scale > 1) {
+                          if (zoom == 2) {
+                            return;
+                          }
+                          zoom = zoomLevel + scale * 0.01;
+                          if (zoom > 2) {
+                            zoom = 2;
+                          }
+                        } else {
+                          if (zoom == 1) {
+                            return;
+                          }
+                          zoom = zoomLevel - scale * 0.01;
+                          if (zoom < 1) {
+                            zoom = 1;
+                          }
+                        }
+                        if (cameraController != null) {
+                          if (!cameraController!.disposed()) {
+                            cameraController?.setZoomLevel(zoom).onError((error, stackTrace) {});
+                            setState(() {
+                              zoomLevel = zoom;
+                            });
+                          }
+                        }
+                      },
                     );
-                    return view;
                   } else {
                     return defaultWidget;
                   }
@@ -195,31 +238,33 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             top: appBarHeight,
             bottom: bottomBarHeight - $(66),
           ),
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: Text(
-          //     '${zoomLevel}x',
-          //     style: TextStyle(color: Colors.white, fontSize: $(13)),
-          //   )
-          //       .intoContainer(
-          //           width: $(38),
-          //           height: $(38),
-          //           alignment: Alignment.center,
-          //           margin: EdgeInsets.only(bottom: $(215)),
-          //           decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
-          //       .intoGestureDetector(onTap: () {
-          //     cameraController?.getMaxZoomLevel().then((value) {
-          //       if (zoomLevel >= min(value, 5)) {
-          //         zoomLevel = 1;
-          //       } else {
-          //         zoomLevel += 0.5;
-          //       }
-          //       cameraController?.setZoomLevel(zoomLevel);
-          //       setState(() {});
-          //     });
-          //     //cameraController!.setZoomLevel(zoom)
-          //   }),
-          // ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(
+              '${zoomLevel.toStringAsFixed(1)}x',
+              style: TextStyle(color: Colors.white, fontSize: $(13)),
+            )
+                .intoContainer(
+                    width: $(38),
+                    height: $(38),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(bottom: $(215)),
+                    decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
+                .intoGestureDetector(onTap: () {
+              cameraController?.getMaxZoomLevel().then((value) {
+                if (zoomLevel >= min(value, 2)) {
+                  zoomLevel = 1;
+                } else {
+                  zoomLevel += 0.5;
+                }
+                if (zoomLevel > 2) {
+                  zoomLevel = 2;
+                }
+                cameraController?.setZoomLevel(zoomLevel);
+                setState(() {});
+              });
+            }),
+          ),
           Positioned(
             child: Image.asset(
               Images.ic_back,
@@ -343,52 +388,46 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             width: 2,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black),
           ),
-          FutureBuilder<List<AssetEntity>>(
-            builder: (context, snap) {
-              var list = snap.data ?? [];
-              return Container(
-                width: ScreenUtil.screenSize.width - 2 - galleryImageSize - $(28),
-                height: galleryImageSize + $(12),
-                padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(6)),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return ClipRRect(
-                      child: Image(
-                        image: MediumImage(
-                          list[index],
-                          width: 256,
-                          height: 256,
-                          failedImageAssets: Images.ic_netimage_failed,
-                          onError: (medium) {
-                            if (!loadFailedList.contains(medium.id)) {
-                              loadFailedList.add(medium.id);
-                            }
-                          },
-                        ),
-                        width: galleryImageSize,
-                        height: galleryImageSize,
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ).intoGestureDetector(onTap: () async {
-                      var medium = list[index];
-                      var file = await medium.file;
-                      if (file == null || loadFailedList.contains(medium.id)) {
-                        CommonExtension().showToast(S.of(context).wrong_image);
-                        return;
-                      }
-                      var xFile = XFile((file).path);
-                      var imageInfo = await SyncFileImage(file: file).getImage();
-                      var ratio = imageInfo.image.height / imageInfo.image.width;
-                      startTransfer(context, await saveIfNotExist(xFile), ratio, null);
-                    }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
-                  },
-                  itemCount: list.length,
-                ),
-              );
-            },
-            future: PickAlbumHelper.getNewest(),
+          Container(
+            width: ScreenUtil.screenSize.width - 2 - galleryImageSize - $(28),
+            height: galleryImageSize + $(12),
+            padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(6)),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return ClipRRect(
+                  child: Image(
+                    image: MediumImage(
+                      assetList[index],
+                      width: 256,
+                      height: 256,
+                      failedImageAssets: Images.ic_netimage_failed,
+                      onError: (medium) {
+                        if (!loadFailedList.contains(medium.id)) {
+                          loadFailedList.add(medium.id);
+                        }
+                      },
+                    ),
+                    width: galleryImageSize,
+                    height: galleryImageSize,
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ).intoGestureDetector(onTap: () async {
+                  var medium = assetList[index];
+                  var file = await medium.file;
+                  if (file == null || loadFailedList.contains(medium.id)) {
+                    CommonExtension().showToast(S.of(context).wrong_image);
+                    return;
+                  }
+                  var xFile = XFile((file).path);
+                  var imageInfo = await SyncFileImage(file: file).getImage();
+                  var ratio = imageInfo.image.height / imageInfo.image.width;
+                  startTransfer(context, await saveIfNotExist(xFile), ratio, null);
+                }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
+              },
+              itemCount: assetList.length,
+            ),
           ),
         ],
       ).intoContainer(
@@ -438,32 +477,45 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   }
 
   choosePhoto(BuildContext context, AnotherMeController controller) async {
-    PickAlbumScreen.pickImage(
-      context,
-      count: 1,
-      switchAlbum: true,
-    ).then((value) async {
-      if (value != null && value.isNotEmpty) {
-        var medium = value.first;
-        var file = await medium.file;
-        if (file == null) {
-          return;
-        }
-        var xFile = XFile((file).path);
-        var imageInfo = await SyncFileImage(file: file).getImage();
-        startTransfer(context, await saveIfNotExist(xFile), imageInfo.image.height / imageInfo.image.width, null);
+    AnotherMe.checkPermissions().then((value) {
+      if (value) {
+        PickAlbumScreen.pickImage(
+          context,
+          count: 1,
+          switchAlbum: true,
+        ).then((value) async {
+          if (value != null && value.isNotEmpty) {
+            var medium = value.first;
+            var file = await medium.file;
+            if (file == null) {
+              return;
+            }
+            var xFile = XFile((file).path);
+            var imageInfo = await SyncFileImage(file: file).getImage();
+            startTransfer(context, await saveIfNotExist(xFile), imageInfo.image.height / imageInfo.image.width, null);
+          }
+        });
+      } else {
+        showPhotoLibraryPermissionDialog(context);
       }
     });
   }
 
   switchCamera() {
+    if (cameraController == null || cameraController?.disposed()) {
+      return;
+    }
+    // if (switching) {
+    //   return;
+    // }
+    // switching = true;
     cameraController?.stopImageStream().whenComplete(() {
       cameraController?.dispose().whenComplete(() {
         availableCameras().then((value) {
           var pick = value.pick((t) => isFront ? t.lensDirection != CameraLensDirection.front : t.lensDirection == CameraLensDirection.front) ?? value.first;
           setState(() {
             isFront = pick.lensDirection == CameraLensDirection.front;
-            cameraController = CameraController(
+            cameraController = CustomCameraController(
               pick,
               ResolutionPreset.medium,
               imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,

@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
+import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 import 'albums_popup.dart';
@@ -23,13 +27,8 @@ class PickAlbumScreen {
     int minCount = 1,
     bool switchAlbum = false,
   }) async {
-    Map<Permission, PermissionStatus> map = await [Permission.photos, Permission.storage].request();
-    for (var key in map.keys) {
-      var value = map[key];
-      if (value!.isDenied || value.isPermanentlyDenied) {
-        CommonExtension().showToast('Please grant $key permission');
-        return [];
-      }
+    if (!await AnotherMe.checkPermissions()) {
+      return [];
     }
     return Navigator.of(context).push<List<AssetEntity>>(MaterialPageRoute(
       builder: (context) => _PickAlbumScreen(
@@ -83,6 +82,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   late double spacing;
   late int crossCount;
   List<String> loadFailedList = [];
+  int albumCount = 0;
 
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
@@ -93,17 +93,10 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     super.initState();
     maxCount = widget.maxCount;
     minCount = widget.minCount;
-    if (maxCount == 1) {
-      crossCount = 4;
-      spacing = $(4);
-      imageSize = (ScreenUtil.screenSize.width - $(12)) / crossCount;
-      padding = EdgeInsets.zero;
-    } else {
-      crossCount = 3;
-      spacing = $(6);
-      imageSize = (ScreenUtil.screenSize.width - $(48)) / crossCount;
-      padding = EdgeInsets.all($(12));
-    }
+    crossCount = 4;
+    spacing = $(2);
+    imageSize = (ScreenUtil.screenSize.width - $(12)) / crossCount;
+    padding = EdgeInsets.zero;
     selectedList = [...widget.selectedList];
     badList = [...widget.badList];
     switchAlbum = widget.switchAlbum;
@@ -143,6 +136,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     selectAlbum = s;
                   }
                 }
+                selectAlbum?.assetCountAsync.then((value) {
+                  albumCount = value;
+                });
               }
               setState(() {});
               if (selectAlbum != null) {
@@ -213,17 +209,6 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
               height: $(22),
               width: $(22),
             ).hero(tag: leadingTag),
-            leading: maxCount == 1
-                ? null
-                : Text(
-                    '${selectedList.length}/${maxCount}',
-                    style: TextStyle(color: Colors.white),
-                  ).intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: selectedList.isEmpty ? ColorConstant.CardColor : ColorConstant.EffectCardColor,
-                    )),
             middle: albums.isNotEmpty && switchAlbum
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
@@ -241,7 +226,15 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                               ),
                             );
                           }
-                          return Container();
+                          return Text(
+                            '${selectAlbum?.name} (${albumCount})' ?? '',
+                            style: TextStyle(
+                              color: ColorConstant.White,
+                              fontSize: $(17),
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Poppins',
+                            ),
+                          );
                         },
                         future: selectAlbum!.assetCountAsync,
                       ).intoMaterial(color: Colors.transparent),
@@ -277,24 +270,6 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     });
                   })
                 : TitleTextWidget(S.of(context).choose_photo, ColorConstant.White, FontWeight.w500, $(17)),
-            trailing: maxCount == 1
-                ? null
-                : Text(
-                    S.of(context).ok,
-                    style: TextStyle(color: Colors.white),
-                  )
-                    .intoContainer(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: selectedList.length < minCount ? ColorConstant.CardColor : ColorConstant.BlueColor,
-                        ))
-                    .intoGestureDetector(onTap: () {
-                    if (selectedList.length < minCount) {
-                      return;
-                    }
-                    Navigator.of(context).pop(selectedList);
-                  }),
           ),
           Expanded(
               child: GridView.builder(
@@ -311,6 +286,84 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             },
             itemCount: dataList.length,
           )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                S.of(context).album_to_settings_tips,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: $(12),
+                  color: Color(0xff9f9f9f),
+                ),
+              ),
+              SizedBox(width: 6),
+              Text(
+                S.of(context).album_to_settings_button,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: $(12),
+                  color: Color(0xff2778FF),
+                ),
+              ).intoGestureDetector(onTap: () {
+                openAppSettings();
+              }),
+            ],
+          )
+              .intoContainer(
+                  padding: EdgeInsets.only(
+                top: $(10),
+                bottom: maxCount > 1 ? $(15) : ScreenUtil.getBottomPadding(context) + $(15),
+              ))
+              .offstage(offstage: !Platform.isIOS),
+          Row(
+            children: [
+              Text(
+                S.of(context).preview,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: $(14),
+                  fontFamily: 'Poppins',
+                ),
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () async {
+                List<String> list = [];
+                for (var value in selectedList) {
+                  var file = await value.file;
+                  if (file != null) {
+                    list.add(file.path);
+                  }
+                }
+                openImage(context, 0, list);
+              }),
+              Expanded(child: Container()),
+              Text(
+                S.of(context).ok,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: $(14),
+                  fontFamily: 'Poppins',
+                ),
+              )
+                  .intoContainer(
+                      padding: EdgeInsets.symmetric(horizontal: $(30), vertical: $(8)),
+                      decoration:
+                          BoxDecoration(color: selectedList.length < minCount ? ColorConstant.CardColor : ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
+                      margin: EdgeInsets.only(right: $(15)))
+                  .intoGestureDetector(onTap: () {
+                if (selectedList.length < minCount) {
+                  CommonExtension().showToast(S.of(context).select_min_photos_hint.replaceAll('%d', '$minCount'));
+                  return;
+                }
+                Navigator.of(context).pop(selectedList);
+              })
+            ],
+          )
+              .intoContainer(
+                  padding: EdgeInsets.only(
+                top: $(10),
+                bottom: ScreenUtil.getBottomPadding(context) + $(15),
+              ))
+              .visibility(visible: maxCount > 1),
         ],
       ),
     );
@@ -320,6 +373,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     var data = dataList[index];
     bool isBad = badList.exist((t) => t.id == data.id);
     bool selected = selectedList.exist((t) => t.id == data.id);
+    int pos = (selectedList.findPosition((t) => t.id == data.id) ?? 0) + 1;
     return Container(
       child: Stack(
         children: [
@@ -357,28 +411,44 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     )
                   : selected
                       ? Positioned(
-                          child: Icon(
-                            Icons.check_circle,
-                            color: Colors.green,
-                            size: $(22),
+                          child: Text(
+                            '$pos',
+                            style: TextStyle(color: Colors.white),
                           ),
                           top: 4,
-                          right: 4,
+                          left: 6,
                         )
-                      : Positioned(
-                          child: Icon(
-                            Icons.check,
-                            color: ColorConstant.White,
-                            size: $(16),
-                          ).intoContainer(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(32),
-                              border: Border.all(color: selected ? Colors.green : ColorConstant.White),
-                            ),
-                          ),
-                          top: 6,
-                          right: 6,
+                      : SizedBox.shrink(),
+          maxCount == 1
+              ? Container()
+              : isBad
+                  ? Container(
+                      width: imageSize,
+                      height: imageSize,
+                      color: Color(0x66000000),
+                      child: Image.asset(
+                        Images.ic_image_failed,
+                        width: $(32),
+                        height: $(32),
+                        color: ColorConstant.Red,
+                      ).intoCenter(),
+                    )
+                  : Positioned(
+                      child: Icon(
+                        Icons.check,
+                        color: ColorConstant.White,
+                        size: $(12),
+                      ).intoContainer(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          color: selected ? Color.fromARGB(255, 39, 120, 255) : Colors.transparent,
+                          border: Border.all(color: selected ? Color.fromARGB(255, 39, 120, 255) : ColorConstant.White),
                         ),
+                      ),
+                      top: 6,
+                      right: 6,
+                    ),
         ],
       ),
       width: imageSize,
@@ -404,5 +474,22 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         }
       }
     });
+  }
+
+  void openImage(BuildContext context, final int index, List<String> files) {
+    List<AnyPhotoItem> images = files.transfer((e, index) => AnyPhotoItem(type: AnyPhotoType.file, uri: e));
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) => AnyGalleryPhotoViewWrapper(
+          galleryItems: images,
+          backgroundDecoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+          initialIndex: index >= images.length ? 0 : index,
+        ),
+      ),
+    );
   }
 }

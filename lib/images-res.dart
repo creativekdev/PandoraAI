@@ -3,16 +3,16 @@ class Images {
    static const String american_express = 'assets/images/american_express.png';
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
-   static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
-   static const String ic_avatar_camera = 'assets/images/ic_avatar_camera.png';
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';
    static const String ic_avatar_bad_example = 'assets/images/ic_avatar_bad_example.png';
+   static const String ic_avatar_camera = 'assets/images/ic_avatar_camera.png';
    static const String ic_avatar_good_example = 'assets/images/ic_avatar_good_example.png';
    static const String ic_avatar_sample_cat = 'assets/images/ic_avatar_sample_cat.png';
    static const String ic_avatar_sample_dog = 'assets/images/ic_avatar_sample_dog.png';
@@ -66,7 +66,7 @@ class Images {
    static const String ic_instagram = 'assets/images/ic_instagram.png';
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
-   static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.jpg';
+   static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
    static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
    static const String ic_login_cartoon = 'assets/images/ic_login_cartoon.png';
    static const String ic_logout = 'assets/images/ic_logout.png';

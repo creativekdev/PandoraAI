@@ -1,4 +1,5 @@
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/home_card_entity.dart';
 
 import 'EffectModel.dart';
 
@@ -6,15 +7,18 @@ class EffectMap {
   late Map<String, dynamic> data;
   late Map<String, dynamic> locale;
   CampaignTab? campaignTab;
-  late List<String> tags;
+  List<String> tags = [];
+  List<HomeCardEntity> homeCards = [];
 
   EffectMap({
     required this.data,
     required this.locale,
     this.campaignTab,
     List<String>? tags,
+    List<HomeCardEntity>? homeCards,
   }) {
     this.tags = tags ?? [];
+    this.homeCards = homeCards ?? [];
   }
 
   EffectMap.fromJson(Map<String, dynamic> json) {
@@ -25,6 +29,9 @@ class EffectMap {
     }
     if (json['tags'] != null) {
       this.tags = (json['tags'] as List).map((e) => e.toString()).toList();
+    }
+    if (json['home_functions'] != null) {
+      this.homeCards = (json['home_functions'] as List).map((e) => HomeCardEntity.fromJson(e)).toList();
     }
   }
 
@@ -37,6 +44,7 @@ class EffectMap {
     if (campaignTab != null) {
       map['campaign_tab'] = campaignTab!.toJson();
     }
+    map['home_functions'] = homeCards.map((e) => e.toJson()).toList();
     return map;
   }
 }

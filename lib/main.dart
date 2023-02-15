@@ -265,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      // backgroundColor: Colors.black,
       body: Platform.isIOS
           ? Image.asset(
               Images.ic_launcher_bg,
@@ -285,15 +285,27 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Expanded(
                     child: Image.asset(
-                  Images.launch_icon,
-                  width: ScreenUtil.screenSize.width * 0.4,
+                  Images.ic_app,
+                  width: ScreenUtil.screenSize.width * 7 / 30,
                 )),
                 Image.asset(
                   Images.launch_branding,
                   width: ScreenUtil.screenSize.width * 0.42,
                 ),
               ],
-            ).intoContainer(width: double.maxFinite, height: double.maxFinite),
+            ).intoContainer(
+              width: double.maxFinite,
+              height: double.maxFinite,
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  Color(0xffFF01FA),
+                  Color(0xff0065FF),
+                  Color(0xff00F8EF),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ))),
     );
   }
 }

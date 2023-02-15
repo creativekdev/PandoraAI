@@ -11,6 +11,7 @@ import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
@@ -34,6 +35,7 @@ class JsonConvert {
 		(DiscoveryCommentListEntity).toString(): DiscoveryCommentListEntity.fromJson,
 		(DiscoveryListEntity).toString(): DiscoveryListEntity.fromJson,
 		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
+		(HomeCardEntity).toString(): HomeCardEntity.fromJson,
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
 		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
@@ -148,6 +150,9 @@ class JsonConvert {
 		}
 		if(<DiscoveryResource>[] is M){
 			return data.map<DiscoveryResource>((Map<String, dynamic> e) => DiscoveryResource.fromJson(e)).toList() as M;
+		}
+		if(<HomeCardEntity>[] is M){
+			return data.map<HomeCardEntity>((Map<String, dynamic> e) => HomeCardEntity.fromJson(e)).toList() as M;
 		}
 		if(<MsgEntity>[] is M){
 			return data.map<MsgEntity>((Map<String, dynamic> e) => MsgEntity.fromJson(e)).toList() as M;

@@ -393,6 +393,8 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                           AnotherMe.checkPermissions().then((value) {
                             if (value) {
                               AnotherMe.open(context);
+                            } else {
+                              showPhotoLibraryPermissionDialog(context);
                             }
                           });
                         }),

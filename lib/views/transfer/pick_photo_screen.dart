@@ -11,6 +11,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:vibration/vibration.dart';
@@ -272,7 +273,7 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                                                       tabList: tabs.map((e) => e.title(context).toString()).toList(),
                                                       onTabClick: (index) {
                                                         if (tabs[index].isAiSource()) {
-                                                          albumController.checkPermissions().then((value) {
+                                                          AnotherMe.checkPermissions().then((value) {
                                                             if (value) {
                                                               albumController.getTotalAlbum().then((value) {
                                                                 albumController.loadData();
@@ -280,6 +281,8 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                                                               setState(() {
                                                                 currentIndex = index;
                                                               });
+                                                            } else {
+                                                              showPhotoLibraryPermissionDialog(context);
                                                             }
                                                           });
                                                         } else {

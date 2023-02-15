@@ -16,6 +16,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
+import 'package:cartoonizer/views/ai/avatar/save_avatars_screen.dart';
 import 'package:cartoonizer/views/share/ShareUrlScreen.dart';
 import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
@@ -178,12 +179,12 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
             //         .intoContainer(
             //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             //             decoration: BoxDecoration(
-            //               color: ColorConstant.White,
+            //               color: Color(0xc2222222),
             //               borderRadius: BorderRadius.circular(6),
             //             ))
             //         .intoMaterial(
             //           elevation: 3,
-            //           color: ColorConstant.White,
+            //           color: Color(0xc2222222),
             //           borderRadius: BorderRadius.circular(6),
             //         ),
             //   ),
@@ -224,11 +225,13 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                 )
                     .intoGestureDetector(
                   onTap: () {
-                    saveAllPhoto(context);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => SaveAvatarsScreen(outputImages: entity.outputImages)),
+                    );
                   },
                 ).intoContainer(
                   color: ColorConstant.BackgroundColorBlur,
-                  padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
+                  padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context), left: $(15), right: $(15)),
                 ),
               ),
             ),
@@ -268,7 +271,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
         Image.asset(
           icon,
           width: $(22),
-          color: Colors.black,
+          color: Colors.white,
         ),
         SizedBox(width: 6),
         Text(
@@ -276,7 +279,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
           style: TextStyle(
             fontFamily: 'Poppins',
             fontSize: $(15),
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ],
@@ -285,94 +288,6 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
           padding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         )
         .intoGestureDetector(onTap: onTap);
-  }
-
-  Future<void> saveAllPhoto(BuildContext context) async {
-    showSaveAlertDialog(context, count: entity.outputImages.length).then((value) {
-      if (value ?? false) {
-        showLoading().whenComplete(() async {
-          var saveList = entity.outputImages;
-          for (int i = 0; i < saveList.length; i++) {
-            var item = saveList[i];
-            var file = await SyncDownloadImage(url: item.url, type: 'png').getImage();
-            if (file != null) {
-              showLoading(
-                  progressWidget: Text(
-                '${i + 1}/${entity.outputImages.length}',
-                style: TextStyle(
-                  color: ColorConstant.White,
-                  fontFamily: 'Poppins',
-                ),
-              ));
-              await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
-            }
-          }
-          hideLoading().whenComplete(() {
-            CommonExtension().showImageSavedOkToast(context);
-          });
-        });
-      }
-    });
-  }
-
-  Future<bool?> showSaveAlertDialog(BuildContext context, {required int count}) async {
-    return showDialog<bool>(
-      context: context,
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            S.of(context).save_album_tips.replaceAll('%d', '${count}'),
-            style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
-            textAlign: TextAlign.center,
-          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
-          Row(
-            children: [
-              Expanded(
-                  child: Text(
-                S.of(context).cancel,
-                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
-              )
-                      .intoContainer(
-                          padding: EdgeInsets.all(10),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
-                          )))
-                      .intoGestureDetector(onTap: () {
-                Navigator.pop(context, false);
-              })),
-              Expanded(
-                  child: Text(
-                S.of(context).confirm,
-                style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: ColorConstant.BlueColor),
-              )
-                      .intoContainer(
-                          padding: EdgeInsets.all(10),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              border: Border(
-                            top: BorderSide(color: ColorConstant.LineColor, width: 1),
-                            right: BorderSide(color: ColorConstant.LineColor, width: 1),
-                          )))
-                      .intoGestureDetector(onTap: () async {
-                Navigator.pop(context, true);
-              })),
-            ],
-          ),
-        ],
-      )
-          .intoMaterial(
-            color: ColorConstant.EffectFunctionGrey,
-            borderRadius: BorderRadius.circular($(16)),
-          )
-          .intoContainer(
-            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-            margin: EdgeInsets.symmetric(horizontal: $(35)),
-          )
-          .intoCenter(),
-    );
   }
 
   void openImage(BuildContext context, AvatarChildEntity data) {

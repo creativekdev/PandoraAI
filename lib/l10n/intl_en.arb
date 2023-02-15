@@ -119,7 +119,8 @@
   "permissionCamera": "Camera Permission",
   "permissionCameraContent": "This app needs camera access to take pictures for upload user profile photo",
   "permissionPhotoLibrary": "PhotoLibrary Permission",
-  "permissionPhotoLibraryContent": "This app needs photo library access to choose pictures for upload user profile photo",
+  "permissionPhotoLibraryContent": "This app needs photo library access. Go to settings?",
+  "permissionPhotoToSettings": "Go to settings",
   "please_enter_an_avatar_name": "Please enter an avatar name",
   "please_login_first": "Please login first",
   "ppmPro": "Pandora AI Pro",
@@ -220,8 +221,8 @@
   "click_logout": "Click logout",
   "sent_email_already": "We sent reset password link to registered email",
   "okay": "Okay",
-  "your_post_has_been_submitted_successfully": "Your post has been submitted successfully",
-  "see_it_now": "See it now",
+  "your_post_has_been_submitted_successfully": "Your have shared \nsuccessfully",
+  "see_it_now": "Check",
   "template_not_available": "This template is not available now",
   "comment_posted": "Comment posted",
   "newest": "Newest",
@@ -289,5 +290,10 @@
   "save_into_album": "Save into the album",
   "save_hd_image": "Save HD, watermark-free image",
   "save_album_tips": "Are you sure to save %d images",
-  "current_version": "App Version"
+  "current_version": "App Version",
+  "please_select_photos": "Please select photos",
+  "album_to_settings_tips": "To add more photos please",
+  "album_to_settings_button": "Go to settings",
+  "preview": "Preview",
+  "select_min_photos_hint": "Please select at least %d photos"
 }

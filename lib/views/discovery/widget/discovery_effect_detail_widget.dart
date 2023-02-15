@@ -247,6 +247,8 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                 AnotherMe.checkPermissions().then((value) {
                   if (value) {
                     AnotherMe.open(context);
+                  } else {
+                    showPhotoLibraryPermissionDialog(context);
                   }
                 });
               }
