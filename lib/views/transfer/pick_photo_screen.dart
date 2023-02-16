@@ -323,7 +323,7 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                               },
                               middle: Text(
                                 S.of(context).choose_photo,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: Colors.white, fontSize: $(17)),
                               ),
                               trailing: TitleTextWidget(
                                 selectedMode ? S.of(context).cancel : S.of(context).edit,

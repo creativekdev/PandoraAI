@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           inactiveColor: ColorConstant.White,
                           // backgroundColor: ColorConstant.BackgroundColorBlur,
                           backgroundColor: Color.fromARGB(180, 14, 16, 17),
-                          iconSize: $(24),
+                          iconSize: $(22),
                           onTap: (pos) {
                             if (tabItems[pos].id == AppTabId.AI.id()) {
                               AnotherMe.checkPermissions().then((value) {

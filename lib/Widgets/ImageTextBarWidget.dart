@@ -15,7 +15,7 @@ Widget ImageTextBarWidget(String text, String image, bool isShowArrow, {Color? c
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TitleTextWidget(text, Colors.white, FontWeight.w400, 15),
+              TitleTextWidget(text, Colors.white, FontWeight.w400, $(15)),
             ],
           ),
         ),

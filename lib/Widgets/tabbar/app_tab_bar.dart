@@ -177,10 +177,11 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
                         onLongPress!(index);
                       }
                     : null,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 6, top: 6),
+                child: Container(
+                  // padding: const EdgeInsets.only(bottom: 6, top: 6),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: _buildSingleTabItem(items[index], active),
                   ),
                 ),

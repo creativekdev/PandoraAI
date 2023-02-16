@@ -123,7 +123,10 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
             return Stack(
               children: [
                 ListView.builder(
-                  padding: EdgeInsets.only(top: 55 + ScreenUtil.getStatusBarHeight()),
+                  padding: EdgeInsets.only(
+                    top: 55 + ScreenUtil.getStatusBarHeight(),
+                    bottom: ScreenUtil.getBottomPadding(context) + 70,
+                  ),
                   itemBuilder: (context, index) {
                     var config = list[index];
                     var type = HomeCardTypeUtils.build(config.type);
@@ -148,7 +151,7 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                             ),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.center,
-                        ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8))),
+                        ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8), top: $(18))),
                         ClipRRect(
                           child: CachedNetworkImageUtils.custom(
                             context: context,

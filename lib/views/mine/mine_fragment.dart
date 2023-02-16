@@ -273,52 +273,56 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.5.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: $(25)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/pandoraaiapp/");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_facebook,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
+                          launchURL("https://www.facebook.com/pandoraaiapp/");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_facebook,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/pandoraai.app/");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_instagram,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
+                          launchURL("https://www.instagram.com/pandoraai.app/");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_instagram,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/PandoraAI_App");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_twitter,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
+                          launchURL("https://twitter.com/PandoraAI_App");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_twitter,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://www.tiktok.com/@pandoraapp");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_tiktok,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
+                          launchURL("https://www.tiktok.com/@pandoraapp");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_tiktok,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                   ],
