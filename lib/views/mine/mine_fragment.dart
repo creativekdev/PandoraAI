@@ -21,6 +21,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'widget/user_base_info_widget.dart';
@@ -166,10 +167,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 logEvent(Events.share_app);
-                final box = context.findRenderObject() as RenderBox?;
                 var appLink = Config.getStoreLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                await FlutterShareMe().shareToSystem(msg: appLink);
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               Container(
