@@ -19,7 +19,7 @@ class WelcomeWidgets extends StatelessWidget {
               Container(
                 width: 100.w,
                 height: 100.h,
-                child: Image.asset(image!, fit: BoxFit.cover),
+                child: Image.asset(image!, fit: BoxFit.contain),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,

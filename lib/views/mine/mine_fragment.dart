@@ -21,6 +21,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
+import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'widget/user_base_info_widget.dart';
@@ -166,10 +167,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 logEvent(Events.share_app);
-                final box = context.findRenderObject() as RenderBox?;
                 var appLink = Config.getStoreLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                await FlutterShareMe().shareToSystem(msg: appLink);
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               Container(
@@ -273,52 +273,56 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.5.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: $(25)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
-                        launchURL("https://www.facebook.com/pandoraaiapp/");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_facebook,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
+                          launchURL("https://www.facebook.com/pandoraaiapp/");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_facebook,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
-                        launchURL("https://www.instagram.com/pandoraai.app/");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_instagram,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
+                          launchURL("https://www.instagram.com/pandoraai.app/");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_instagram,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
-                        launchURL("https://twitter.com/PandoraAI_App");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_twitter,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
+                          launchURL("https://twitter.com/PandoraAI_App");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_twitter,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
-                        launchURL("https://www.tiktok.com/@pandoraapp");
-                      },
-                      child: Image.asset(
-                        ImagesConstant.ic_share_tiktok,
-                        height: 14.w,
-                        width: 14.w,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
+                          launchURL("https://www.tiktok.com/@pandoraapp");
+                        },
+                        child: Image.asset(
+                          ImagesConstant.ic_share_tiktok,
+                          width: double.maxFinite,
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                   ],
