@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_video_build_dialog.dart';
 
 class TransResultCard extends StatefulWidget {
   double width;
@@ -193,7 +195,7 @@ class TransResultNewCard extends StatelessWidget {
     );
   }
 
-  void openImage(BuildContext context, final int index) {
+  void openImage(BuildContext context, final int index) async {
     List<AnyPhotoItem> images =
         [originalImage, resultImage].transfer((e, index) => AnyPhotoItem(type: AnyPhotoType.file, uri: e.path, tag: index == 0 ? AnotherMe.takeItemTag : null));
     Navigator.push(

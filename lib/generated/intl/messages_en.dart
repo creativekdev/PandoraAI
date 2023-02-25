@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Are you sure to delete this post?"),
         "august": MessageLookupByLibrary.simpleMessage("August"),
+        "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
+            "You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?"),
         "avatars": MessageLookupByLibrary.simpleMessage(" avatars"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
             "Group shots, only photos looking INTO the camera, covered faces/sunglasses, monotonous pics, nudes, kids(ONLY 12+ ADULTS)"),
@@ -83,6 +85,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "change_pwd_successfully": MessageLookupByLibrary.simpleMessage(
             "Password change successfully."),
         "checkout": MessageLookupByLibrary.simpleMessage("Check out"),
+        "choose_another":
+            MessageLookupByLibrary.simpleMessage("Choose another"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("Choose Photo"),
         "choose_photo_bad_images_desc":
             MessageLookupByLibrary.simpleMessage(" with %badCount invalid"),
@@ -180,6 +184,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
+        "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
+            "Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium"),
+        "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
+            "Generate action has reached the upper limit\nPlease try again tomorrow"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
@@ -221,6 +229,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "march": MessageLookupByLibrary.simpleMessage("March"),
         "may": MessageLookupByLibrary.simpleMessage("May"),
         "meTaverse": MessageLookupByLibrary.simpleMessage("Me-taverse"),
+        "metaverse_save_image":
+            MessageLookupByLibrary.simpleMessage("Save Image"),
+        "metaverse_save_video":
+            MessageLookupByLibrary.simpleMessage("Save Video"),
+        "metaverse_share_image":
+            MessageLookupByLibrary.simpleMessage("Share Image"),
+        "metaverse_share_video":
+            MessageLookupByLibrary.simpleMessage("Share Video"),
         "month": MessageLookupByLibrary.simpleMessage("Month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
         "more": MessageLookupByLibrary.simpleMessage("More"),
@@ -328,8 +344,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":
             MessageLookupByLibrary.simpleMessage("Rate us on the play store"),
+        "read_all": MessageLookupByLibrary.simpleMessage("Read All"),
         "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),
+        "remind": MessageLookupByLibrary.simpleMessage("Remind"),
         "reply": MessageLookupByLibrary.simpleMessage("reply"),
         "resend": MessageLookupByLibrary.simpleMessage("Resend"),
         "resend_failed":
@@ -458,6 +476,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "wrong_image": MessageLookupByLibrary.simpleMessage("Wrong Image File"),
         "year": MessageLookupByLibrary.simpleMessage("Year"),
         "yearly": MessageLookupByLibrary.simpleMessage("Yearly"),
+        "yes": MessageLookupByLibrary.simpleMessage("Yes"),
         "you_have_not_posted_anything": MessageLookupByLibrary.simpleMessage(
             "You have not posted anything"),
         "your_post_has_been_submitted_successfully":

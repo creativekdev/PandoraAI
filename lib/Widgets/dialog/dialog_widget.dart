@@ -42,7 +42,6 @@ Future<bool?> showOpenNsfwDialog(BuildContext context) async {
                           right: BorderSide(color: ColorConstant.LineColor, width: 1),
                         )))
                     .intoGestureDetector(onTap: () async {
-              logEvent(Events.logout);
               Navigator.pop(context, false);
             })),
             Expanded(

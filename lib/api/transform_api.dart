@@ -29,10 +29,6 @@ class TransformApi {
     if (baseEntity != null) {
       var dataString = baseEntity.data['data'].toString();
       if (TextUtil.isEmpty(dataString)) {
-        logEvent(Events.transform_img_failed, eventValues: {
-          'code': baseEntity.data['code'],
-          'message': baseEntity.data['message'],
-        });
         return baseEntity;
       }
       if (dataString.contains('.mp4')) {

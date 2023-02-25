@@ -103,7 +103,6 @@ class RateNoticeOperator {
   judgeAndShowNotice(BuildContext context) {
     LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
     if (shouldRate()) {
-      logEvent(Events.rate_dialog_loading);
       showDialog<bool>(
         context: context,
         barrierDismissible: false,
@@ -152,7 +151,6 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
-          logEvent(Events.rate_us);
           rateApp();
           // var url = Config.getStoreLink(toRate: true);
           // launchURL(url);
@@ -192,7 +190,6 @@ class RateNoticeOperator {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
-          logEvent(Events.rate_no_thanks);
           Navigator.pop(context, false);
         }),
       ],

@@ -44,7 +44,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   };
   @override
   void initState() {
-    logEvent(Events.premium_page_loading);
     delay(() {
       subscriptions = {
         "monthly": {
@@ -126,11 +125,6 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
     if (paymentResult != null && paymentResult as bool == true) {
       initStoreInfo();
       GetStorage().remove("payment_result");
-
-      logEvent(
-        Events.paid_success,
-        eventValues: {"plan_id": subscription["plan_id"], "product_id": subscription["id"], "price": subscription["price"].toString(), "currency": "USD", "quantity": 1},
-      );
     }
   }
 

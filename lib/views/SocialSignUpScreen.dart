@@ -248,7 +248,6 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            logEvent(Events.signup, eventValues: {"method": "google", "signup_through": GetStorage().read('signup_through') ?? ""});
                             await onLoginSuccess(context);
                           }
                         } else if (widget.channel == "youtube" || widget.channel == "instagram" || (widget.channel == "tiktok" && widget.additionalUserInfo['no_post'] != true)) {
@@ -288,7 +287,6 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
 
-                            logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                             await onLoginSuccess(context);
                           } else {
                             final Map parsed = json.decode(access_response.body.toString());
@@ -326,7 +324,6 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
                             }
                             prefs.setBool("isLogin", true);
                             prefs.setString("login_cookie", id.split("=")[1]);
-                            logEvent(Events.signup, eventValues: {"method": widget.channel, "signup_through": GetStorage().read('signup_through') ?? ""});
                             onLoginSuccess(context);
                           } else {
                             final Map parsed = json.decode(appleResponse.body.toString());

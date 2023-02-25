@@ -295,5 +295,16 @@
   "album_to_settings_tips": "要添加更多图片",
   "album_to_settings_button": "现在去设置",
   "preview": "预览",
-  "select_min_photos_hint": "请至少选择 %d 张图片"
+  "select_min_photos_hint": "请至少选择 %d 张图片",
+  "metaverse_save_video": "保存视频",
+  "metaverse_save_image": "保存图片",
+  "metaverse_share_video": "分享视频",
+  "metaverse_share_image": "分享图片",
+  "remind": "提示",
+  "avatar_create_ensure_hint": "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？",
+  "yes": "确定",
+  "choose_another": "重新选择",
+  "generate_reached_limit": "创建次数已达当日上限\n请明天再试或购买专业版",
+  "generate_reached_limit_vip": "创建次数已达当日上限\n请明天再试",
+  "read_all": "全部已读"
 }

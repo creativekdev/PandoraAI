@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:image/image.dart' as imglib;
 
@@ -188,7 +189,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
       return null;
     }
     takingPhoto = true;
-    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection);
+    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection, PoseState.stand);
     if (list == null) {
       takingPhoto = false;
       return null;
@@ -256,7 +257,7 @@ abstract class AppCameraController {
 }
 
 /// imgLib -> Image package from https://pub.dartlang.org/packages/image
-Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widgetDirection) async {
+Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widgetDirection, PoseState pose) async {
   try {
     imglib.Image img;
     if (image.format.group == ImageFormatGroup.yuv420) {
@@ -298,6 +299,14 @@ Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widge
       img = _convertBGRA8888(image);
     } else {
       return null;
+    }
+    if (image.width > image.height) {
+      //screen design to por, if is land(width>height), need to rotate
+      if (pose == PoseState.leftDumped) {
+        img = imglib.copyRotate(img, 90);
+      } else if (pose == PoseState.rightDumped) {
+        img = imglib.copyRotate(img, 270);
+      }
     }
     imglib.PngEncoder pngEncoder = imglib.PngEncoder();
     List<int> png = pngEncoder.encodeImage(img);

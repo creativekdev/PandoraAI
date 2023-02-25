@@ -55,7 +55,6 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   @override
   void initState() {
     super.initState();
-    logEvent(Events.discovery_detail_loading);
     scrollController = ScrollController();
     api = CartoonizerApi().bindState(this);
     discoveryEntity = widget.discoveryEntity.copy();

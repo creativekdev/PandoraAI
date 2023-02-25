@@ -488,6 +488,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
             color: Colors.black,
           ),
           initialIndex: index >= images.length ? 0 : index,
+          needSave: false,
         ),
       ),
     );

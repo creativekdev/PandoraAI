@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/discovery_list_controller.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -15,7 +16,6 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
-import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -91,11 +91,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   void onAttached() {
     super.onAttached();
     userManager.refreshUser();
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${listController.tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.tab_discovery_loading);
-    }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${listController.tabId.id()}', currentTime);
     var nsfw = cacheManager.getBool(CacheManager.nsfwOpen);
     if (nsfwOpen != nsfw) {

@@ -78,11 +78,7 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
   @override
   void onAttached() {
     super.onAttached();
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.tab_effect_loading);
-    }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 

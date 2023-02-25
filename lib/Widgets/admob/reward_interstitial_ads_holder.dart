@@ -46,13 +46,6 @@ class RewardInterstitialAdsHolder extends PageAdsHolder {
             cache.putAds(key, ad);
             _interstitialAd = ad;
             _numInterstitialLoadAttempts = 0;
-            var mediationAdapterClassName = _interstitialAd?.responseInfo?.mediationAdapterClassName;
-            if (!TextUtil.isEmpty(mediationAdapterClassName)) {
-              logEvent(Events.admob_source_data, eventValues: {
-                'id': _interstitialAd?.responseInfo?.responseId,
-                'mediationClassName': mediationAdapterClassName,
-              });
-            }
             onReady();
           },
           onAdFailedToLoad: (LoadAdError error) {

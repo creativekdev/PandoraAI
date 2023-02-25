@@ -42,7 +42,6 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
   @override
   void initState() {
     super.initState();
-    logEvent(Events.discovery_secondary_comment_loading);
     api = CartoonizerApi().bindState(this);
     parentComment = widget.parentComment.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {

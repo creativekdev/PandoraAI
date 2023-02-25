@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
@@ -11,7 +10,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -26,7 +24,12 @@ class GalleryPhotoViewWrapper extends StatefulWidget {
     required this.galleryItems,
     this.scrollDirection = Axis.horizontal,
     this.shareEnable = false,
+    this.onDownloadImage,
+    this.onShareImage,
   }) : pageController = PageController(initialPage: initialIndex);
+
+  final Function(String url)? onDownloadImage;
+  final Function(String url, String platform)? onShareImage;
 
   final LoadingBuilder? loadingBuilder;
   final BoxDecoration? backgroundDecoration;
@@ -93,6 +96,7 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                           var file = await SyncDownloadImage(url: widget.galleryItems[currentIndex], type: 'png').getImage();
                           if (file != null) {
                             await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
+                            widget.onDownloadImage?.call(widget.galleryItems[currentIndex]);
                             hideLoading().whenComplete(() {
                               CommonExtension().showImageSavedOkToast(context);
                             });
@@ -130,6 +134,9 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                                 originalUrl: null,
                                 effectKey: 'PandoraAI',
                                 needDiscovery: true,
+                                onShareSuccess: (platform) {
+                                  widget.onShareImage?.call(widget.galleryItems[currentIndex],platform);
+                                }
                               ).then((value) {
                                 if (value ?? false) {
                                   showShareSuccessDialog(context);

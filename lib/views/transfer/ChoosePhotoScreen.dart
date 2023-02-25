@@ -237,6 +237,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         ? (controller.cropImage.value != null && includeOriginalFace())
             ? Positioned(
                 child: RepaintBoundary(
+                  key: cropKey,
                   child: ClipOval(
                       child: Image.file(
                     controller.cropImage.value!,
@@ -277,7 +278,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    logEvent(Events.upload_page_loading);
     recentController = Get.find();
     transformApi = TransformApi()..bind(this);
     rootPath = cacheManager.storageOperator.recordCartoonizeDir.path;
@@ -593,7 +593,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () async {
                   Navigator.of(context).pop();
-                  logEvent(Events.result_signup_get_credit);
                   GetStorage().write('signup_through', 'result_signup_get_credit');
                   GetStorage().write('login_back_page', '/ChoosePhotoScreen');
                   Navigator.push(
@@ -638,7 +637,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<void> saveToAlbum() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
-    logEvent(Events.result_download, eventValues: {"effect": selectedEffect.key});
 
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
@@ -687,7 +685,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<void> shareOut() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
-    logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
     if (controller.isVideo.value) {
       controller.changeIsLoading(true);
       await GallerySaver.saveVideo('${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value, false).then((value) async {
@@ -742,7 +739,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<void> shareToDiscovery() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
-    logEvent(Events.result_share, eventValues: {"effect": selectedEffect.key});
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
       if (controller.isVideo.value) {
         var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
@@ -1300,7 +1296,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<bool> pickImageFromGallery(BuildContext context, {String from = "center", File? file, UploadRecordEntity? entity}) async {
-    logEvent(Events.upload_photo, eventValues: {"method": "photo", "from": from});
     var source = ImageSource.gallery;
     try {
       File compressedImage;
@@ -1352,7 +1347,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   }
 
   Future<bool> pickImageFromCamera(BuildContext context, {String from = "center"}) async {
-    logEvent(Events.upload_photo, eventValues: {"method": "camera", "from": from});
     var source = ImageSource.camera;
     try {
       XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
@@ -1535,12 +1529,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               }
               var dataString = parsed['data'].toString();
               var dataEncode = EncryptUtil.encodeMd5(dataString);
-              if (TextUtil.isEmpty(dataString)) {
-                logEvent(Events.transform_img_failed, eventValues: {
-                  'code': parsed['code'],
-                  'message': parsed['message'],
-                });
-              }
               if (dataString.startsWith('<')) {
                 successForward = () async {
                   progressBarController.onError();
@@ -1680,13 +1668,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         }
 
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
-        logEvent(Events.photo_cartoon_result, eventValues: {
-          "success": resultSuccess,
-          "effect": selectedEffect.key,
-          "sticker_name": selectedEffect.stickerName,
-          "category": category.key,
-          "original_face": includeOriginalFace() ? 1 : 0,
-        });
+
         if (resultSuccess == 1) {
           recentController.onEffectUsed(
             selectedEffect,

@@ -193,12 +193,6 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     var itemP = effectDataController.tabItemList.findPosition((d) => d.data.key == data.item!.key)!;
 
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-      "category": effectModel.key,
-      "style": effectModel.style,
-      "page": 'campaign',
-    });
-
     await Navigator.push(
       context,
       MaterialPageRoute(

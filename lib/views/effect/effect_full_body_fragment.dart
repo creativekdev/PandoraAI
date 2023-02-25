@@ -225,12 +225,6 @@ class EffectFullBodyFragmentState extends State<EffectFullBodyFragment> with Aut
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
 
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-      "category": effectModel.key,
-      "style": effectModel.style,
-      "page": widget.tabString,
-    });
-
     await Navigator.push(
       context,
       MaterialPageRoute(

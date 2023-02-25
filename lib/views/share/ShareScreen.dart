@@ -12,7 +12,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum ShareType {
@@ -45,7 +44,7 @@ extension ShareTypeEx on ShareType {
     }
   }
 
-  String title(BuildContext context) {
+  String title({required BuildContext context}) {
     switch (this) {
       case ShareType.discovery:
         return S.of(context).tabDiscovery;
@@ -63,6 +62,25 @@ extension ShareTypeEx on ShareType {
         return S.of(context).more;
     }
   }
+
+  String value() {
+    switch (this) {
+      case ShareType.discovery:
+        return 'Discovery';
+      case ShareType.facebook:
+        return 'Facebook';
+      case ShareType.instagram:
+        return 'Instagram';
+      case ShareType.whatsapp:
+        return 'Whatsapp';
+      case ShareType.email:
+        return 'Email';
+      case ShareType.twitter:
+        return 'Twitter';
+      case ShareType.system:
+        return 'System';
+    }
+  }
 }
 
 class ShareScreen extends StatefulWidget {
@@ -75,6 +93,7 @@ class ShareScreen extends StatefulWidget {
     required String? originalUrl,
     required String effectKey,
     bool needDiscovery = false,
+    Function(String platform)? onShareSuccess,
   }) {
     return showModalBottomSheet<bool>(
         context: context,
@@ -92,6 +111,7 @@ class ShareScreen extends StatefulWidget {
         backgroundColor: backgroundColor);
   }
 
+  final Function(String platform)? onShareSuccess;
   final String style;
   final String image;
   final bool isVideo;
@@ -108,6 +128,7 @@ class ShareScreen extends StatefulWidget {
     required this.originalUrl,
     required this.backgroundColor,
     required this.effectKey,
+    this.onShareSuccess,
     required this.needDiscovery,
   }) : super(key: key);
 
@@ -195,11 +216,6 @@ class _ShareScreenState extends State<ShareScreen> {
 
     final FlutterShareMe flutterShareMe = FlutterShareMe();
 
-    logEvent(Events.result_share, eventValues: {
-      "effect": widget.style,
-      "channel": shareType.name,
-    });
-
     switch (shareType) {
       case ShareType.discovery:
         AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
@@ -212,6 +228,7 @@ class _ShareScreenState extends State<ShareScreen> {
             category: DiscoveryCategory.ai_avatar,
           ).then((value) {
             if (value ?? false) {
+              widget.onShareSuccess?.call(shareType.value());
               Navigator.of(context).pop(true);
             }
           });
@@ -230,14 +247,17 @@ class _ShareScreenState extends State<ShareScreen> {
         //   }
         // }
         _openShareAction(context, [file.path]);
+        widget.onShareSuccess?.call(shareType.value());
         Navigator.of(context).pop();
         break;
       case ShareType.instagram:
         await flutterShareMe.shareToInstagram(filePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        widget.onShareSuccess?.call(shareType.value());
         Navigator.of(context).pop();
         break;
       case ShareType.whatsapp:
         await flutterShareMe.shareToWhatsApp(msg: S.of(context).share_title, imagePath: file.path, fileType: widget.isVideo ? FileType.video : FileType.image);
+        widget.onShareSuccess?.call(shareType.value());
         Navigator.of(context).pop();
         break;
       case ShareType.email:
@@ -249,12 +269,15 @@ class _ShareScreenState extends State<ShareScreen> {
           attachmentPaths: paths,
         );
         await FlutterEmailSender.send(email);
+        widget.onShareSuccess?.call(shareType.value());
         Navigator.of(context).pop();
         break;
       case ShareType.system:
+        widget.onShareSuccess?.call(shareType.value());
         _openShareAction(context, [file.path]);
         break;
       case ShareType.twitter:
+        widget.onShareSuccess?.call(shareType.value());
         Navigator.of(context).pop();
         break;
     }
@@ -327,7 +350,7 @@ class _FunctionCard extends StatelessWidget {
               )
             : Image.asset(type.imageRes(), width: $(50), height: $(50)),
         SizedBox(height: $(6)),
-        TitleTextWidget(type.title(context), ColorConstant.White, FontWeight.normal, $(12)),
+        TitleTextWidget(type.title(context: context), ColorConstant.White, FontWeight.normal, $(12)),
       ],
     ).intoContainer(constraints: BoxConstraints(minWidth: ScreenUtil.screenSize.width / 4.65)).intoGestureDetector(onTap: onTap);
   }

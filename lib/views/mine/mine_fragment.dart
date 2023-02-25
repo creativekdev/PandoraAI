@@ -22,7 +22,6 @@ import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:share_plus/share_plus.dart';
 
 import 'widget/user_base_info_widget.dart';
 
@@ -68,11 +67,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
   void onAttached() {
     super.onAttached();
     userManager.refreshUser();
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.tab_me_loading);
-    }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 
@@ -121,7 +116,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               }),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).recently, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
-                logEvent(Events.recent_loading);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -142,7 +136,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 Images.ic_setting_my_discovery,
                 true,
               ).intoGestureDetector(onTap: () {
-                logEvent(Events.open_my_discovery);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -166,7 +159,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   )
                   .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
-                logEvent(Events.share_app);
                 var appLink = Config.getStoreLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 await FlutterShareMe().shareToSystem(msg: appLink);
@@ -182,7 +174,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ),
               ImageTextBarWidget(Platform.isAndroid ? S.of(context).rate_us1 : S.of(context).rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
-                  logEvent(Events.rate_us);
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                   rateApp().then((value) {
                     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
@@ -201,7 +192,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ),
               ImageTextBarWidget('Pandora Avatar', Images.ic_avatar_ai, true).intoGestureDetector(
                 onTap: () async {
-                  Avatar.open(context);
+                  Avatar.open(context, source: 'my');
                 },
               ),
               Container(
@@ -280,7 +271,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "facebook"});
                           launchURL("https://www.facebook.com/pandoraaiapp/");
                         },
                         child: Image.asset(
@@ -292,7 +282,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "instagram"});
                           launchURL("https://www.instagram.com/pandoraai.app/");
                         },
                         child: Image.asset(
@@ -304,7 +293,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "twitter"});
                           launchURL("https://twitter.com/PandoraAI_App");
                         },
                         child: Image.asset(
@@ -316,7 +304,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     Expanded(
                       child: GestureDetector(
                         onTap: () async {
-                          logEvent(Events.contact_socialmedia, eventValues: {"channel": "tiktok"});
                           launchURL("https://www.tiktok.com/@pandoraapp");
                         },
                         child: Image.asset(

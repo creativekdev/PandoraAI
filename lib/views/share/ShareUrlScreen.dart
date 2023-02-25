@@ -10,12 +10,12 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
 
 class ShareUrlScreen extends StatefulWidget {
-  static Future<bool?> startShare(
+  static Future<String?> startShare(
     BuildContext context, {
     Color backgroundColor = Colors.transparent,
     required String url,
   }) {
-    return showModalBottomSheet<bool>(
+    return showModalBottomSheet<String>(
         context: context,
         builder: (context) {
           return ShareUrlScreen(
@@ -54,6 +54,7 @@ class _ShareScreenState extends State<ShareUrlScreen> {
 
   void _openShareAction(BuildContext context, String url) async {
     await FlutterShareMe().shareToSystem(msg: url);
+    Navigator.of(context).pop(ShareType.system.value());
   }
 
   onShareClick(ShareType shareType) async {
@@ -101,15 +102,10 @@ class _ShareScreenState extends State<ShareUrlScreen> {
   Future<void> onShareButtonTap({required ShareType shareType}) async {
     final FlutterShareMe flutterShareMe = FlutterShareMe();
 
-    logEvent(Events.result_url_share, eventValues: {
-      "url": widget.url,
-      "channel": shareType.name,
-    });
-
     switch (shareType) {
       case ShareType.facebook:
         await flutterShareMe.shareToFacebook(msg: '', url: widget.url);
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(shareType.value());
         break;
       // case ShareType.instagram:
       //   await flutterShareMe.shareToInstagram(filePath: widget.url, fileType: FileType.image);
@@ -126,16 +122,19 @@ class _ShareScreenState extends State<ShareUrlScreen> {
           recipients: [''],
         );
         await FlutterEmailSender.send(email);
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(shareType.value());
         break;
       case ShareType.twitter:
         await flutterShareMe.shareToTwitter(msg: '', url: widget.url);
+        Navigator.of(context).pop(shareType.value());
         break;
       case ShareType.system:
         await flutterShareMe.shareToSystem(msg: widget.url);
+        Navigator.of(context).pop(shareType.value());
         break;
       case ShareType.whatsapp:
         flutterShareMe.shareToWhatsApp(msg: widget.url);
+        Navigator.of(context).pop(shareType.value());
         break;
       default:
         _openShareAction(context, widget.url);
@@ -210,7 +209,7 @@ class _FunctionCard extends StatelessWidget {
               )
             : Image.asset(type.imageRes(), width: $(50), height: $(50)),
         SizedBox(height: $(6)),
-        TitleTextWidget(type.title(context), ColorConstant.White, FontWeight.normal, $(12)),
+        TitleTextWidget(type.title(context: context), ColorConstant.White, FontWeight.normal, $(12)),
       ],
     ).intoContainer(constraints: BoxConstraints(minWidth: ScreenUtil.screenSize.width / 4.65)).intoGestureDetector(onTap: onTap);
   }

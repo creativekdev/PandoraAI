@@ -20,7 +20,6 @@ import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
-import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
@@ -121,11 +120,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
     if (tabConfig.isNotEmpty) {
       tabConfig[currentIndex].key.currentState?.onAttached();
     }
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastTabAttached}_${tabId.id()}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.tab_effect_loading);
-    }
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 
@@ -177,13 +172,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
     }
     _tabController?.index = currentIndex;
     var title = tabConfig[index].title;
-    var lastTime = cacheManager.getInt('${CacheManager.keyLastEffectTabAttached}_${title}');
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastTime > 5000) {
-      logEvent(Events.effect_child_tab_switch, eventValues: {
-        'type': title,
-      });
-    }
     cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${title}', currentTime);
   }
 

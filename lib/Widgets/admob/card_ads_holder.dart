@@ -2,7 +2,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ads_holder.dart';
@@ -92,13 +91,6 @@ class CardAdsHolder extends WidgetAdsHolder {
               _bannerAd = bannerAd;
               _isLoaded = true;
               _adSize = size;
-              var mediationAdapterClassName = _bannerAd?.responseInfo?.mediationAdapterClassName;
-              if (!TextUtil.isEmpty(mediationAdapterClassName)) {
-                logEvent(Events.admob_source_data, eventValues: {
-                  'id': _bannerAd?.responseInfo?.responseId,
-                  'mediationClassName': mediationAdapterClassName,
-                });
-              }
               onReady();
             }, onAdFailedToLoad: (Ad ad, LoadAdError error) {
               print('Inline adaptive banner failedToLoad: $error');

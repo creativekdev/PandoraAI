@@ -17,14 +17,13 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 import 'discovery_attr_holder.dart';
@@ -242,7 +241,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               if (data.category == DiscoveryCategory.cartoonize.name) {
                 toChoosePage();
               } else if (data.category == DiscoveryCategory.ai_avatar.name) {
-                Avatar.intro(context);
+                Avatar.open(context, source: 'discovery');
               } else if (data.category == DiscoveryCategory.another_me.name) {
                 AnotherMe.checkPermissions().then((value) {
                   if (value) {
@@ -424,11 +423,6 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     }
     categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-      "category": targetSeries.value[index].key,
-      "style": targetSeries.value[index].style,
-      "page": 'discovery',
-    });
     Navigator.push(
       context,
       MaterialPageRoute(

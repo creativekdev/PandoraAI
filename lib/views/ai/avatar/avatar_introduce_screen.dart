@@ -7,16 +7,21 @@ import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'avatar.dart';
 
 class AvatarIntroduceScreen extends StatefulWidget {
+  String source;
+
   AvatarIntroduceScreen({
     Key? key,
+    required this.source,
   }) : super(key: key);
 
   @override
@@ -28,11 +33,12 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
   Size? size;
   int selectedStyleIndex = 0;
   late StreamSubscription streamSubscription;
+  CacheManager cacheManager = AppDelegate().getManager();
 
   @override
   void initState() {
     super.initState();
-    logEvent(Events.avatar_introduce_loading);
+    Events.avatarCreate(source: widget.source);
     streamSubscription = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       if (mounted) {
         Navigator.of(context).pop();
@@ -102,9 +108,16 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                 }
                 var config = snapShot.data! as AvatarConfig;
                 var roles = config.getRoles();
+                var lastAvatarConfig = cacheManager.getJson(CacheManager.lastCreateAvatar);
+                var selectedStyle = lastAvatarConfig['style']?.toString();
+                if (roles.contains(selectedStyle ?? '')) {
+                  selectedStyleIndex = roles.indexOf(selectedStyle!);
+                } else {
+                  selectedStyleIndex = 0;
+                }
+                var roleImages = config.getRoleImages().values.toList();
                 var style = roles[selectedStyleIndex];
                 var examples = config.examples(style);
-                var roleImages = config.getRoleImages().values.toList();
                 return Column(
                   children: [
                     SizedBox(height: $(10)),
@@ -113,8 +126,12 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                         tabList: roleImages,
                         currentIndex: selectedStyleIndex,
                         onTabClick: (index) {
-                          setState(() {
-                            selectedStyleIndex = index;
+                          var lastAvatarConfig = cacheManager.getJson(CacheManager.lastCreateAvatar);
+                          lastAvatarConfig['style'] = roles[index];
+                          cacheManager.setJson(CacheManager.lastCreateAvatar, lastAvatarConfig).then((value) {
+                            setState(() {
+                              selectedStyleIndex = index;
+                            });
                           });
                         },
                         itemBuilder: (context, index, value, checked) {
@@ -172,9 +189,9 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
           .intoGestureDetector(onTap: () {
         Function createAction = () {};
         createAction = () {
-          SubmitAvatarDialog.push(context, name: '').then((nameStyle) {
+          SubmitAvatarDialog.push(context).then((nameStyle) {
             if (nameStyle != null) {
-              Avatar.create(context, name: nameStyle.key, style: nameStyle.value, state: this, onCancel: () {
+              Avatar.create(context, source: widget.source, name: nameStyle.key, style: nameStyle.value, state: this, onCancel: () {
                 createAction.call();
               });
             }

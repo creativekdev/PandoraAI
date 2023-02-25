@@ -16,11 +16,6 @@ mixin EffectTabState<T extends StatefulWidget> on State<T> {
     if(model == null) {
       return;
     }
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-    "category": pushExtraEntity.category,
-    "style": model.style,
-    "page": pushExtraEntity.tab,
-    });
     int tabPos = controller.tabList.findPosition((data) => data.key == pushExtraEntity.tab)!;
     var categoryPos = controller.tabTitleList.findPosition((data) => data.categoryKey == pushExtraEntity.category)!;
     int itemPos;

@@ -1,12 +1,7 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:camera/camera.dart';
-import 'package:cartoonizer/utils/sensor_helper.dart';
-import 'package:sensors_plus/sensors_plus.dart';
-import 'libcopy/camera_controller.dart';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -21,14 +16,18 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:image/image.dart' as imglib;
+import 'package:photo_manager/photo_manager.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 import 'anotherme.dart';
+import 'libcopy/camera_controller.dart';
+import 'libcopy/camera_preview.dart';
 import 'widgets/take_photo_button.dart';
 
 class AnotherMeScreen extends StatefulWidget {
@@ -122,7 +121,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         var nextPose = SensorHelper.getPose(event.x, event.y, event.z);
         if (nextPose != null) {
           if (nextPose != this.pose) {
-            print(pose);
             if (mounted) {
               setState(() {
                 pose = nextPose;
@@ -194,7 +192,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                     lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
                     if (cameraController != null) {
                       cameraController!.startImageStream((image) {
-                        if (cameraController?.disposed()) {
+                        if (cameraController?.disposed() ?? true) {
                           return;
                         }
                         if (takingPhoto) {
@@ -211,7 +209,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                     var ratio = cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth;
                     var surfaceWidth = cameraHeight / ratio;
                     var offsetX = (surfaceWidth - cameraWidth) / 2;
-                    var surface = cameraController!.buildPreview().intoCenter().intoContainer(
+                    var surface = CustomIOSCameraPreview(
+                      cameraController!,
+                    ).intoCenter().intoContainer(
                           width: surfaceWidth,
                           height: cameraHeight,
                           transform: Matrix4.translationValues(-offsetX, 0, 0),
@@ -221,7 +221,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                     return GestureDetector(
                       child: view,
                       onScaleUpdate: (details) {
-                        if (cameraController == null || cameraController?.disposed()) {
+                        if (cameraController == null || (cameraController?.disposed() ?? true)) {
                           return;
                         }
                         var scale = details.scale;
@@ -233,7 +233,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                           if (zoom == 2) {
                             return;
                           }
-                          zoom = zoomLevel + scale * 0.01;
+                          zoom = zoomLevel + scale * 0.02;
                           if (zoom > 2) {
                             zoom = 2;
                           }
@@ -241,7 +241,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                           if (zoom == 1) {
                             return;
                           }
-                          zoom = zoomLevel - scale * 0.01;
+                          zoom = zoomLevel - scale * 0.02;
                           if (zoom < 1) {
                             zoom = 1;
                           }
@@ -263,7 +263,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                   return defaultWidget;
                 }
               },
-            ).hero(tag: AnotherMe.takeItemTag),
+            ),
             top: appBarHeight,
             bottom: bottomBarHeight - $(66),
           ),
@@ -538,7 +538,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   }
 
   switchCamera() {
-    if (cameraController == null || cameraController?.disposed()) {
+    if (cameraController == null || (cameraController?.disposed() ?? true)) {
       return;
     }
     cameraController?.stopImageStream().whenComplete(() {
@@ -568,7 +568,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       return null;
     }
     takingPhoto = true;
-    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection);
+    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection, pose);
     if (list == null) {
       takingPhoto = false;
       return null;

@@ -8,11 +8,9 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -144,6 +142,7 @@ class AvatarAiController extends GetxController {
     }
     isLoading = false;
     update();
+    Events.avatarSelectOk(photoCount: goodList.length);
     return photos.isNotEmpty;
   }
 
@@ -194,13 +193,11 @@ class AvatarAiController extends GetxController {
       uploadedList.add(url);
       update();
     }
-    logEvent(Events.avatar_submit_photos);
     return true;
   }
 
   void stopUpload() {
     stop = true;
-    logEvent(Events.avatar_cancel_submit_photos);
   }
 
   Future<BaseEntity?> submit() async {
@@ -216,6 +213,7 @@ class AvatarAiController extends GetxController {
     }
     isLoading = false;
     update();
+    Events.avatarUploadSuccess();
     await AppDelegate.instance.getManager<UserManager>().refreshUser();
     return baseEntity;
   }

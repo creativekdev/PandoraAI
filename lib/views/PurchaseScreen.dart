@@ -47,7 +47,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   void initState() {
-    logEvent(Events.premium_page_loading);
     loadPurchase();
     super.initState();
   }
@@ -114,10 +113,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       });
     }
     EventBusHelper().eventBus.fire(OnPaySuccessEvent());
-    logEvent(
-      Events.paid_success,
-      eventValues: {"product_id": purchaseDetails.productID, "price": (isYear ? 39.99 : 3.99).toString(), "currency": "USD", "quantity": 1},
-    );
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -255,10 +250,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
     return GestureDetector(
       onTap: () async {
-        logEvent(Events.premium_continue, eventValues: {"plan_type": isYear ? "yearly" : "monthly"});
-
-        var sharedPrefs = await SharedPreferences.getInstance();
-
         if (userManager.isNeedLogin) {
           CommonExtension().showToast(S.of(context).please_login_first);
           Navigator.push(

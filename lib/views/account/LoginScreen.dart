@@ -42,7 +42,6 @@ class _LoginScreenState extends AppState<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.login_page_loading);
     thirdpartManager.adsHolder.ignore = true;
     delay(() {
       if (widget.toSignUp) {
@@ -65,7 +64,6 @@ class _LoginScreenState extends AppState<LoginScreen> {
       signInWithApple().then((value) {
         if (value) {
           hideLoading().whenComplete(() async {
-            logEvent(Events.login, eventValues: {"method": "apple"});
             onLoginSuccess(context);
           });
         } else {
@@ -124,7 +122,6 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     }
                   });
                 } else {
-                  logEvent(Events.login, eventValues: {"method": "google"});
                   onLoginSuccess(context);
                 }
               }
@@ -226,7 +223,6 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     if (baseEntity != null) {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setBool("isLogin", true);
-                      logEvent(Events.login, eventValues: {"method": "email"});
                       onLoginSuccess(context);
                     }
                     if (mounted) {

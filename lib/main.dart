@@ -222,8 +222,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _checkIntroductionPage() {
-    // log app open
-    logSystemEvent(Events.open_app);
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion().then((value) {

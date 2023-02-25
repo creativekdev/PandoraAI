@@ -36,7 +36,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.edit_profile_page_loading);
     thirdpartManager.adsHolder.ignore = true;
     imagePicker = new ImagePicker();
   }

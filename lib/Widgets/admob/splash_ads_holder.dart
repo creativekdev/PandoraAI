@@ -75,13 +75,6 @@ class SplashAdsHolder extends PageAdsHolder {
           _appOpenLoadTime = DateTime.now();
           _appOpenAd = ad;
           isLoadingAd = false;
-          var mediationAdapterClassName = _appOpenAd?.responseInfo?.mediationAdapterClassName;
-          if (!TextUtil.isEmpty(mediationAdapterClassName)) {
-            logEvent(Events.admob_source_data, eventValues: {
-              'id': _appOpenAd?.responseInfo?.responseId,
-              'mediationClassName': mediationAdapterClassName,
-            });
-          }
         },
         onAdFailedToLoad: (error) {
           print('AppOpenAd failed to load: $error');

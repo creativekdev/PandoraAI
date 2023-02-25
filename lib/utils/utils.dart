@@ -15,6 +15,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image/image.dart' as imgLib;
 
 Future<void> loginBack(BuildContext context) async {
   final box = GetStorage();
@@ -74,6 +75,19 @@ bool isShowAdsNew({required AdType type}) {
     return false;
   }
   return true;
+}
+
+bool isVip() {
+  UserManager userManager = AppDelegate().getManager();
+  if (userManager.isNeedLogin) {
+    return false;
+  } else {
+    if (userManager.user!.userSubscription.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 }
 
 String getFileName(String url) {
@@ -384,4 +398,15 @@ Future<File?> heicFileToImage(File? file) async {
   } else {
     return file;
   }
+}
+
+Future<ui.Image> getImage(File file) async {
+  var imageInfo = await SyncFileImage(file: file).getImage();
+  var image = imageInfo.image;
+  return image;
+}
+
+Future<imgLib.Image> getLibImage(ui.Image image) async {
+  var byteData = await image.toByteData();
+  return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
 }

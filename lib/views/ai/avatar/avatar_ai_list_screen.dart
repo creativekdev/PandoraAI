@@ -15,7 +15,12 @@ import 'avatar.dart';
 import 'avatar_detail_screen.dart';
 
 class AvatarAiListScreen extends StatefulWidget {
-  const AvatarAiListScreen({Key? key}) : super(key: key);
+  String source;
+
+  AvatarAiListScreen({
+    Key? key,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<AvatarAiListScreen> createState() => _AvatarAiListScreenState();
@@ -35,12 +40,14 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     AvatarStatus.bought,
   ];
   int currentIndex = 0;
+  late String source;
 
   @override
   initState() {
     super.initState();
+    Events.avatarResultShow();
+    source = widget.source;
     avatarAiManager.listPageAlive = true;
-    logEvent(Events.avatar_list_loading);
     imageSize = (ScreenUtil.screenSize.width - $(32)) / 3;
     listListen = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       _refreshController.callRefresh();
@@ -91,7 +98,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   borderRadius: BorderRadius.circular(32),
                 ))
             .intoGestureDetector(onTap: () {
-          Avatar.intro(context);
+          Avatar.intro(context, source: source);
         }),
         child: Theme(
             data: ThemeData(
@@ -359,7 +366,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
           ),
         )
             .intoGestureDetector(onTap: () {
-          Avatar.intro(context);
+          Avatar.intro(context, source: source);
         });
         break;
       case AvatarStatus.UNDEFINED:

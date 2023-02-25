@@ -3019,6 +3019,116 @@ class S {
       args: [],
     );
   }
+
+  /// `Save Video`
+  String get metaverse_save_video {
+    return Intl.message(
+      'Save Video',
+      name: 'metaverse_save_video',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Image`
+  String get metaverse_save_image {
+    return Intl.message(
+      'Save Image',
+      name: 'metaverse_save_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share Video`
+  String get metaverse_share_video {
+    return Intl.message(
+      'Share Video',
+      name: 'metaverse_share_video',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share Image`
+  String get metaverse_share_image {
+    return Intl.message(
+      'Share Image',
+      name: 'metaverse_share_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remind`
+  String get remind {
+    return Intl.message(
+      'Remind',
+      name: 'remind',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?`
+  String get avatar_create_ensure_hint {
+    return Intl.message(
+      'You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?',
+      name: 'avatar_create_ensure_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message(
+      'Yes',
+      name: 'yes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose another`
+  String get choose_another {
+    return Intl.message(
+      'Choose another',
+      name: 'choose_another',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium`
+  String get generate_reached_limit {
+    return Intl.message(
+      'Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium',
+      name: 'generate_reached_limit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate action has reached the upper limit\nPlease try again tomorrow`
+  String get generate_reached_limit_vip {
+    return Intl.message(
+      'Generate action has reached the upper limit\nPlease try again tomorrow',
+      name: 'generate_reached_limit_vip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read All`
+  String get read_all {
+    return Intl.message(
+      'Read All',
+      name: 'read_all',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

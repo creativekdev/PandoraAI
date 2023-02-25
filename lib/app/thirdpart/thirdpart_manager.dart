@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/splash_ads_holder.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -56,6 +57,7 @@ class ThirdpartManager extends BaseManager {
 
   void _onAppStateChanged(AppState appState) {
     if (appState == AppState.foreground) {
+      AppDelegate.instance.getManager<UserManager>().refreshUser();
       adsHolder.show();
       appBackground = false;
     } else if (appState == AppState.background) {

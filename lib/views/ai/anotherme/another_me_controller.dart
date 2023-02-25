@@ -62,6 +62,7 @@ class AnotherMeController extends GetxController {
   }
 
   late Uploader api;
+  late CartoonizerApi cartoonizerApi;
   bool _viewInit = false;
 
   set viewInit(bool value) {
@@ -77,6 +78,7 @@ class AnotherMeController extends GetxController {
   void onInit() {
     super.onInit();
     api = Uploader().bindController(this);
+    cartoonizerApi = CartoonizerApi().bindController(this);
   }
 
   @override
@@ -88,6 +90,7 @@ class AnotherMeController extends GetxController {
   void dispose() {
     super.dispose();
     api.unbind();
+    cartoonizerApi.unbind();
   }
 
   bool hasChoosePhoto() => _sourcePhoto != null;
@@ -97,6 +100,17 @@ class AnotherMeController extends GetxController {
   Future<AnotherMeResultEntity?> startTransfer(String imageUrl, String? cachedId) async {
     if (TextUtil.isEmpty(imageUrl)) {
       return null;
+    }
+    var metaverseLimitEntity = await cartoonizerApi.getMetaverseLimit();
+    if (metaverseLimitEntity != null) {
+      if (metaverseLimitEntity.usedCount == metaverseLimitEntity.dailyLimit) {
+        if (isVip()) {
+          CommonExtension().showToast(S.of(Get.context!).generate_reached_limit_vip);
+        } else {
+          CommonExtension().showToast(S.of(Get.context!).generate_reached_limit);
+        }
+        return null;
+      }
     }
     if (_mFaceRatio == null) {
       int faceRatio = 0;

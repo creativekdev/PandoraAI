@@ -295,5 +295,16 @@
   "album_to_settings_tips": "To add more photos please",
   "album_to_settings_button": "Go to settings",
   "preview": "Preview",
-  "select_min_photos_hint": "Please select at least %d photos"
+  "select_min_photos_hint": "Please select at least %d photos",
+  "metaverse_save_video": "Save Video",
+  "metaverse_save_image": "Save Image",
+  "metaverse_share_video": "Share Video",
+  "metaverse_share_image": "Share Image",
+  "remind": "Remind",
+  "avatar_create_ensure_hint": "You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?",
+  "yes": "Yes",
+  "choose_another": "Choose another",
+  "generate_reached_limit": "Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium",
+  "generate_reached_limit_vip": "Generate action has reached the upper limit\nPlease try again tomorrow",
+  "read_all": "Read All"
 }

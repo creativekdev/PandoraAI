@@ -36,7 +36,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.avatar_create_loading);
+    Events.avatarStyleContinue(style: widget.style);
     controller = AvatarAiController(
       name: widget.name,
       style: widget.style,
@@ -207,6 +207,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                       ),
                     )
                         .intoGestureDetector(onTap: () {
+                      Events.avatarPhotoSelect();
                       if (controller.imageList.isEmpty) {
                         controller.pickImageFromGallery(context).then((value) {
                           if (value) {
@@ -319,6 +320,8 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
       PayAvatarPage.push(context).then((payStatus) {
         if (payStatus ?? false) {
           forward.call();
+        } else {
+          Events.avatarPlanLeave();
         }
       });
     }
@@ -390,17 +393,23 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
           return AddPhotosDialog(
             controller: controller,
             onAddMoreTap: () {
-              Navigator.of(_).pop();
+              Navigator.of(_).pop(true);
+              Events.avatarPhotoMoreClick();
               controller.pickImageFromGallery(context).then((value) {
                 showChosenDialog(context, controller);
               });
             },
             onUploadTap: () {
-              Navigator.of(_).pop();
+              Navigator.of(_).pop(true);
+              Events.avatarPhotoUploadClick();
               startUpload(context, controller);
             },
           );
-        });
+        }).then((value) {
+          if(value == null) {
+            Events.avatarPhotoCancelClick();
+          }
+    });
   }
 
   Widget buildExamples(BuildContext context, List<String> examples) {
@@ -465,45 +474,3 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
     );
   }
 }
-
-Future<bool?> showTakePhotoOptDialog(BuildContext context, AvatarAiController controller) async => showModalBottomSheet<bool>(
-    context: context,
-    builder: (context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TitleTextWidget('Take photo now', ColorConstant.White, FontWeight.normal, $(17))
-              .intoContainer(
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(vertical: $(10)),
-            color: Colors.transparent,
-          )
-              .intoGestureDetector(onTap: () {
-            // controller.pickImageFromCamera().then((value) {
-            //   Navigator.of(context).pop(value);
-            // });
-          }),
-          Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
-          TitleTextWidget('Choose from album', ColorConstant.White, FontWeight.normal, $(17))
-              .intoContainer(
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(vertical: $(10)),
-            color: Colors.transparent,
-          )
-              .intoGestureDetector(onTap: () {
-            controller.pickImageFromGallery(context).then((value) {
-              Navigator.of(context).pop(value);
-            });
-          }),
-          SizedBox(height: 10),
-        ],
-      ).intoContainer(
-          padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-          decoration: BoxDecoration(
-              color: ColorConstant.EffectFunctionGrey,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular($(24)),
-                topRight: Radius.circular($(24)),
-              )));
-    },
-    backgroundColor: Colors.transparent);

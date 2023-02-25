@@ -125,14 +125,8 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
     }
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-      "category": effectModel.key,
-      "style": effectModel.style,
-      "page": "recent",
-    });
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
 
-    // todo: 需检查为啥 recently 里面的文件会被删除，这里在跳转之前先做了判断，如果文件不存在就跳转的时候不传 recentEffectModel
     var fileExist = await File(pick!.originalPath ?? "").exists();
 
     await Navigator.push(

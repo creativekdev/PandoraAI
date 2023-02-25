@@ -239,6 +239,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
               await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
             }
           }
+          Events.avatarResultDownloadOkClick(saveType: selectedList.length == outputImages.length ? "Save All" : "Save Select");
           hideLoading().whenComplete(() {
             CommonExtension().showImageSavedOkToast(context);
           });
@@ -319,6 +320,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
             color: Colors.black,
           ),
           initialIndex: index >= images.length ? 0 : index,
+          needSave: false,
         ),
       ),
     );

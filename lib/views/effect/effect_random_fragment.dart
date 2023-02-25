@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
+import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/nsfw_card.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -15,8 +16,6 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/effect/effect_tab_state.dart';
-import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
@@ -341,12 +340,6 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     var itemP = effectDataController.tabItemList.findPosition((d) => d.data.key == data.item!.key)!;
-
-    logEvent(Events.choose_home_cartoon_type, eventValues: {
-      "category": effectModel.key,
-      "style": effectModel.style,
-      "page": widget.tabString,
-    });
 
     await Navigator.push(
       context,

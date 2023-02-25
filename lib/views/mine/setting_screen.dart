@@ -38,7 +38,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
 
   @override
   void initState() {
-    logEvent(Events.setting_page_loading);
     super.initState();
     getCacheSize();
   }
@@ -80,7 +79,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                logEvent(Events.open_help_center);
                 launchURL("https://socialbook.io/help/");
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
@@ -88,7 +86,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                logEvent(Events.open_terms);
                 launchURL("https://socialbook.io/terms");
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
@@ -96,7 +93,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                logEvent(Events.open_privacy);
                 launchURL("https://socialbook.io/privacy/cartoonizer");
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
@@ -104,7 +100,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).feedback, onTap: () {
-                logEvent(Events.feed_back_loading);
                 showDialog<bool>(
                   context: context,
                   barrierDismissible: true,
@@ -290,7 +285,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
                             right: BorderSide(color: ColorConstant.LineColor, width: 1),
                           )))
                       .intoGestureDetector(onTap: () async {
-                logEvent(Events.logout);
                 await userManager.logout();
                 Navigator.pop(context, true);
               })),
@@ -423,7 +417,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
   Future<bool> deleteAccount() async {
     var result = await CartoonizerApi().deleteAccount();
     if (result != null) {
-      logEvent(Events.delete_account);
       userManager.logout();
       return true;
     }

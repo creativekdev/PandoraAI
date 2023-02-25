@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/models/metaverse_limit_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
@@ -116,7 +117,6 @@ class CartoonizerApi extends BaseRequester {
     required String category,
   }) async {
     var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
-    logEvent(Events.create_discovery_share);
     return post('/social_post/create', params: {
       'resources': encode,
       'text': description,
@@ -395,5 +395,10 @@ class CartoonizerApi extends BaseRequester {
     } else {
       return {"need_update": false};
     }
+  }
+
+  Future<MetaverseLimitEntity?> getMetaverseLimit() async {
+    var baseEntity = await get('/tool/anotherme/usage');
+    return jsonConvert.convert<MetaverseLimitEntity>(baseEntity?.data['data']);
   }
 }

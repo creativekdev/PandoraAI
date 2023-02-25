@@ -20,6 +20,7 @@ class AnyGalleryPhotoViewWrapper extends StatefulWidget {
   final int initialIndex;
   final PageController pageController;
   final List<AnyPhotoItem> galleryItems;
+  final bool needSave;
 
   AnyGalleryPhotoViewWrapper({
     this.loadingBuilder,
@@ -28,6 +29,7 @@ class AnyGalleryPhotoViewWrapper extends StatefulWidget {
     this.maxScale,
     this.initialIndex = 0,
     required this.galleryItems,
+    this.needSave = true,
   }) : pageController = PageController(initialPage: initialIndex);
 
   @override
@@ -38,6 +40,13 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
   late int currentIndex = widget.initialIndex;
 
   bool optVisible = true;
+  late bool needSave;
+
+  @override
+  void initState() {
+    super.initState();
+    needSave = widget.needSave;
+  }
 
   void onPageChanged(int index) {
     setState(() {
@@ -69,7 +78,7 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
           ).intoGestureDetector(onTap: () {
             Navigator.of(context).pop();
           }),
-          optVisible
+          optVisible && needSave
               ? Positioned(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

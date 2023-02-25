@@ -96,7 +96,7 @@ class MsgListState extends AppState<MsgListScreen> {
         showLoading().whenComplete(() {
           AppDelegate.instance.getManager<AvatarAiManager>().listAllAvatarAi().then((value) {
             hideLoading().whenComplete(() {
-              Avatar.open(context);
+              Avatar.open(context, source: 'msgList');
             });
           });
         });
@@ -124,7 +124,7 @@ class MsgListState extends AppState<MsgListScreen> {
         backgroundColor: ColorConstant.CardColor,
         blurAble: false,
         middle: TitleTextWidget(S.of(context).msgTitle, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-        trailing: TitleTextWidget('Read All', ColorConstant.White, FontWeight.normal, $(15)).intoGestureDetector(
+        trailing: TitleTextWidget(S.of(context).read_all, ColorConstant.White, FontWeight.normal, $(15)).intoGestureDetector(
           onTap: () {
             readAll();
           },

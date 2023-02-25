@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
-import 'package:cartoonizer/Widgets/input_text.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
@@ -44,7 +43,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.signup_page_loading);
     api = CartoonizerApi().bindState(this);
   }
 
@@ -154,7 +152,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
     api.signUp(name: name, email: email, password: pass).then((value) async {
       await hideLoading();
       if (value != null) {
-        logEvent(Events.signup, eventValues: {"method": 'email', "signup_through": GetStorage().read('signup_through') ?? ""});
         onLoginSuccess(context);
       }
     });
@@ -175,7 +172,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
       try {
         var result = await signInWithApple();
         if (result) {
-          logEvent(Events.signup, eventValues: {"method": "apple", "signup_through": GetStorage().read('signup_through') ?? ""});
           await onLoginSuccess(context);
         } else {
           CommonExtension().showToast("Oops! Something went wrong");
@@ -255,7 +251,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
             }
             prefs.setBool("isLogin", true);
             prefs.setString("login_cookie", id.split("=")[1]);
-            logEvent(Events.login, eventValues: {"method": "google"});
             await onLoginSuccess(context);
           }
         } else {
@@ -328,7 +323,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
             }
             prefs.setBool("isLogin", true);
             prefs.setString("login_cookie", id.split("=")[1]);
-            logEvent(Events.login, eventValues: {"method": "youtube"});
             onLoginSuccess(context);
           }
         } else {

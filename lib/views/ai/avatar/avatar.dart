@@ -14,42 +14,44 @@ class Avatar {
   static String logoBackTag = 'avatar_back_logo';
   static String aiTag = 'ai_tag';
 
-  static openFromHome(BuildContext context) {
+  static openFromHome(BuildContext context, {String source = 'home'}) {
     UserManager userManager = AppDelegate.instance.getManager();
     if (userManager.isNeedLogin) {
-      intro(context);
+      intro(context, source: source);
     } else {
       AvatarAiManager aiManager = AppDelegate.instance.getManager();
       if (aiManager.dataList.isNotEmpty) {
-        open(context);
+        open(context, source: source);
       } else {
-        intro(context);
+        intro(context, source: source);
       }
     }
   }
 
-  static intro(BuildContext context) {
+  static intro(BuildContext context, {required String source}) {
     Navigator.push(
         context,
         MaterialPageRoute(
           settings: RouteSettings(name: "/AvatarIntroduceScreen"),
-          builder: (context) => AvatarIntroduceScreen(),
+          builder: (context) => AvatarIntroduceScreen(
+            source: source,
+          ),
         ));
   }
 
-  static open(BuildContext context) {
+  static open(BuildContext context, {required String source}) {
     UserManager userManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () {
       Navigator.push(
           context,
           MaterialPageRoute(
             settings: RouteSettings(name: "/AvatarAiListScreen"),
-            builder: (context) => AvatarAiListScreen(),
+            builder: (context) => AvatarAiListScreen(source: source),
           ));
     }, autoExec: true);
   }
 
-  static create(BuildContext context, {required String name, required String style, AppState? state, required Function onCancel}) async {
+  static create(BuildContext context, {required String name, required String style, AppState? state, required Function onCancel, required String source}) async {
     UserManager userManager = AppDelegate().getManager();
     AvatarAiManager aiManager = AppDelegate().getManager();
     userManager.doOnLogin(context, callback: () async {
@@ -57,6 +59,9 @@ class Avatar {
       await aiManager.listAllAvatarAi();
       await state?.hideLoading();
       var forward = () {
+        var json = AppDelegate.instance.getManager<CacheManager>().getJson(CacheManager.lastCreateAvatar);
+        var isChangeTemplate = json['isChangeTemplate'] ?? false;
+        Events.avatarWhatToExpectContinue(isChangeTemplate: isChangeTemplate);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -70,7 +75,7 @@ class Avatar {
             AppDelegate.instance.getManager<CacheManager>().setJson(CacheManager.lastCreateAvatar, null);
             EventBusHelper().eventBus.fire(OnCreateAvatarAiEvent());
             if (!aiManager.listPageAlive) {
-              delay(() => open(context), milliseconds: 64);
+              delay(() => open(context, source: source), milliseconds: 64);
             }
           } else {
             onCancel.call();

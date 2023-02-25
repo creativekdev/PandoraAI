@@ -141,7 +141,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
     }
     try {
       await CameraPlatform.instance.pausePreview(_cameraId);
-      value = value.copyWith(isPreviewPaused: true, previewPauseOrientation: value.lockedCaptureOrientation ?? value.deviceOrientation);
+      value = value.copyWith(isPreviewPaused: true, previewPauseOrientation: Optional<DeviceOrientation>.of(value.lockedCaptureOrientation ?? value.deviceOrientation));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -154,7 +154,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
     }
     try {
       await CameraPlatform.instance.resumePreview(_cameraId);
-      value = value.copyWith(isPreviewPaused: false);
+      value = value.copyWith(isPreviewPaused: false, previewPauseOrientation: const Optional<DeviceOrientation>.absent());
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -235,12 +235,6 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
   Future<void> stopImageStream() async {
     assert(defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
     _throwIfNotInitialized('stopImageStream');
-    if (value.isRecordingVideo) {
-      throw CameraException(
-        'A video recording is already started.',
-        'stopImageStream was called while a video is being recorded.',
-      );
-    }
     if (!value.isStreamingImages) {
       throw CameraException(
         'No camera is streaming images',
@@ -259,9 +253,12 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
 
   /// Start a video recording.
   ///
+  /// You may optionally pass an [onAvailable] callback to also have the
+  /// video frames streamed to this callback.
+  ///
   /// The video is returned as a [XFile] after calling [stopVideoRecording].
   /// Throws a [CameraException] if the capture fails.
-  Future<void> startVideoRecording() async {
+  Future<void> startVideoRecording({onLatestImageAvailable? onAvailable}) async {
     _throwIfNotInitialized('startVideoRecording');
     if (value.isRecordingVideo) {
       throw CameraException(
@@ -269,16 +266,21 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
         'startVideoRecording was called when a recording is already started.',
       );
     }
-    if (value.isStreamingImages) {
-      throw CameraException(
-        'A camera has started streaming images.',
-        'startVideoRecording was called while a camera was streaming images.',
-      );
+
+    Function(CameraImageData image)? streamCallback;
+    if (onAvailable != null) {
+      streamCallback = (CameraImageData imageData) {
+        onAvailable(CameraImage.fromPlatformInterface(imageData));
+      };
     }
 
     try {
-      await CameraPlatform.instance.startVideoRecording(_cameraId);
-      value = value.copyWith(isRecordingVideo: true, isRecordingPaused: false, recordingOrientation: value.lockedCaptureOrientation ?? value.deviceOrientation);
+      await CameraPlatform.instance.startVideoCapturing(VideoCaptureOptions(_cameraId, streamCallback: streamCallback));
+      value = value.copyWith(
+          isRecordingVideo: true,
+          isRecordingPaused: false,
+          recordingOrientation: Optional<DeviceOrientation>.of(value.lockedCaptureOrientation ?? value.deviceOrientation),
+          isStreamingImages: onAvailable != null);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -295,9 +297,17 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
         'stopVideoRecording was called when no video is recording.',
       );
     }
+
+    if (value.isStreamingImages) {
+      stopImageStream();
+    }
+
     try {
       final XFile file = await CameraPlatform.instance.stopVideoRecording(_cameraId);
-      value = value.copyWith(isRecordingVideo: false);
+      value = value.copyWith(
+        isRecordingVideo: false,
+        recordingOrientation: const Optional<DeviceOrientation>.absent(),
+      );
       return file;
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
@@ -510,7 +520,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
   Future<void> lockCaptureOrientation([DeviceOrientation? orientation]) async {
     try {
       await CameraPlatform.instance.lockCaptureOrientation(_cameraId, orientation ?? value.deviceOrientation);
-      value = value.copyWith(lockedCaptureOrientation: orientation ?? value.deviceOrientation);
+      value = value.copyWith(lockedCaptureOrientation: Optional<DeviceOrientation>.of(orientation ?? value.deviceOrientation));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -530,7 +540,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
   Future<void> unlockCaptureOrientation() async {
     try {
       await CameraPlatform.instance.unlockCaptureOrientation(_cameraId);
-      value = value.copyWith();
+      value = value.copyWith(lockedCaptureOrientation: const Optional<DeviceOrientation>.absent());
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

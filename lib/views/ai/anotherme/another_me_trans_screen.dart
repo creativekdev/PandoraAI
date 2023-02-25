@@ -8,6 +8,7 @@ import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -24,7 +25,9 @@ import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'anotherme.dart';
+import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
+import 'widgets/trans_result_video_build_dialog.dart';
 
 const axisRatioFlag = 0.8;
 
@@ -76,17 +79,20 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     });
   }
 
-  void generate(BuildContext context, AnotherMeController controller) async {
+  void generate(BuildContext _context, AnotherMeController controller) async {
     var key = await md5File(file);
     var needUpload = await uploadImageController.needUploadByKey(key);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
-      context,
+      _context,
       needUploadProgress: needUpload,
       controller: simulateProgressBarController,
     ).then((value) {
       if (value ?? false) {
         controller.onSuccess();
+        setState(() {
+          showAnim(context);
+        });
       } else {
         controller.onError();
       }
@@ -98,7 +104,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
             if (value != null) {
               uploadImageController.updateCachedId(file, value.cacheId ?? '');
-              recentController.onMetaverseUsed(file, File(controller.transKey!));
+              var image = File(controller.transKey!);
+              recentController.onMetaverseUsed(file, image);
+              transResult = image;
               simulateProgressBarController.loadComplete();
             } else {
               simulateProgressBarController.onError();
@@ -109,6 +117,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         simulateProgressBarController.onError();
       }
     });
+  }
+
+  Future<void> showAnim(BuildContext context) async {
+    return Navigator.of(context).push<void>(NoAnimRouter(TransResultAnimScreen(
+      origin: file,
+      result: transResult!,
+      ratio: ratio,
+    )));
   }
 
   @override
@@ -208,15 +224,31 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         });
                       },
                       onDownloadTap: () async {
-                        await showLoading();
-                        var uint8list = await printImageData(file, File(controller.transKey!));
-                        var list = uint8list.toList();
-                        var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-                        var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-                        await File(imgPath).writeAsBytes(list);
-                        await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
-                        await hideLoading();
-                        CommonExtension().showImageSavedOkToast(context);
+                        showSaveDialog(context, true).then((value) async {
+                          if (value != null) {
+                            if (value) {
+                              showDialog(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
+                                  .then((value) async {
+                                if (!TextUtil.isEmpty(value)) {
+                                  await showLoading();
+                                  await GallerySaver.saveVideo(value!.toString(), true, toDcim: true, albumName: saveAlbumName);
+                                  await hideLoading();
+                                  CommonExtension().showImageSavedOkToast(context);
+                                }
+                              });
+                            } else {
+                              await showLoading();
+                              var uint8list = await printImageData(file, File(controller.transKey!));
+                              var list = uint8list.toList();
+                              var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+                              var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+                              await File(imgPath).writeAsBytes(list);
+                              await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+                              await hideLoading();
+                              CommonExtension().showImageSavedOkToast(context);
+                            }
+                          }
+                        });
                       },
                       onGenerateAgainTap: () {
                         controller.clearTransKey();
@@ -241,23 +273,52 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         });
                       },
                       onShareTap: () async {
-                        await showLoading();
-                        if (TextUtil.isEmpty(controller.transKey)) {
-                          return;
-                        }
-                        var uint8list = await printImageData(file, File(controller.transKey!));
-                        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                        await hideLoading();
-                        ShareScreen.startShare(
-                          context,
-                          backgroundColor: Color(0x77000000),
-                          style: 'Me-taverse',
-                          image: base64Encode(uint8list),
-                          isVideo: false,
-                          originalUrl: null,
-                          effectKey: 'Me-taverse',
-                        );
-                        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                        showSaveDialog(context, false).then((value) async {
+                          if (value != null) {
+                            if (value) {
+                              showDialog(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
+                                  .then((value) async {
+                                if (!TextUtil.isEmpty(value)) {
+                                  await showLoading();
+                                  if (TextUtil.isEmpty(value)) {
+                                    await hideLoading();
+                                    return;
+                                  }
+                                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                                  await hideLoading();
+                                  ShareScreen.startShare(
+                                    context,
+                                    backgroundColor: Color(0x77000000),
+                                    style: 'Me-taverse',
+                                    image: value,
+                                    isVideo: true,
+                                    originalUrl: null,
+                                    effectKey: 'Me-taverse',
+                                  );
+                                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                                }
+                              });
+                            } else {
+                              await showLoading();
+                              if (TextUtil.isEmpty(controller.transKey)) {
+                                return;
+                              }
+                              var uint8list = await printImageData(file, File(controller.transKey!));
+                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                              await hideLoading();
+                              ShareScreen.startShare(
+                                context,
+                                backgroundColor: Color(0x77000000),
+                                style: 'Me-taverse',
+                                image: base64Encode(uint8list),
+                                isVideo: false,
+                                originalUrl: null,
+                                effectKey: 'Me-taverse',
+                              );
+                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                            }
+                          }
+                        });
                       },
                     ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
                   ],
@@ -418,5 +479,44 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
     // var outBytes = await img.toByteData();
     return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
+  }
+
+  Future<bool?> showSaveDialog(BuildContext context, bool isSave) {
+    return showModalBottomSheet<bool>(
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TitleTextWidget(isSave ? S.of(context).metaverse_save_video : S.of(context).metaverse_share_video, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop(true);
+              }),
+              Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(25))),
+              TitleTextWidget(isSave ? S.of(context).metaverse_save_image : S.of(context).metaverse_share_image, ColorConstant.White, FontWeight.normal, $(17))
+                  .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(10)),
+                color: Colors.transparent,
+              )
+                  .intoGestureDetector(onTap: () {
+                Navigator.of(context).pop(false);
+              }),
+            ],
+          ).intoContainer(
+              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              decoration: BoxDecoration(
+                  color: ColorConstant.EffectFunctionGrey,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular($(24)),
+                    topRight: Radius.circular($(24)),
+                  )));
+        },
+        backgroundColor: Colors.transparent);
   }
 }

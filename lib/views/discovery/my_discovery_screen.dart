@@ -46,7 +46,6 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.user_discovery_loading);
     userId = widget.userId;
     delay(() {
       setState(() {

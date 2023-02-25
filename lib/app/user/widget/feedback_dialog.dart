@@ -34,7 +34,6 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
       CommonExtension().showToast('Please input feedback');
       return;
     }
-    logEvent(Events.feed_back_loading);
     showLoading().whenComplete(() {
       api.feedback(content).then((value) {
         hideLoading().whenComplete(() {

@@ -44,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "are_you_sure_to_delete_this_post":
             MessageLookupByLibrary.simpleMessage("您确定要删除这条分享么"),
         "august": MessageLookupByLibrary.simpleMessage("八月"),
+        "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
+            "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？"),
         "avatars": MessageLookupByLibrary.simpleMessage("张肖像"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
             "集体照，只有注视镜头的照片，遮脸/太阳镜，单调的照片，裸体，孩子（12周岁以下）"),
@@ -69,6 +71,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "change_pwd_successfully":
             MessageLookupByLibrary.simpleMessage("修改密码成功"),
         "checkout": MessageLookupByLibrary.simpleMessage("支付"),
+        "choose_another": MessageLookupByLibrary.simpleMessage("重新选择"),
         "choose_photo": MessageLookupByLibrary.simpleMessage("选择图片"),
         "choose_photo_bad_images_desc":
             MessageLookupByLibrary.simpleMessage("有 %badCount 张无效，"),
@@ -151,6 +154,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_your_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
+        "generate_reached_limit":
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限\n请明天再试或购买专业版"),
+        "generate_reached_limit_vip":
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限\n请明天再试"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
@@ -184,6 +191,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "march": MessageLookupByLibrary.simpleMessage("三月"),
         "may": MessageLookupByLibrary.simpleMessage("五月"),
         "meTaverse": MessageLookupByLibrary.simpleMessage("Me-taverse"),
+        "metaverse_save_image": MessageLookupByLibrary.simpleMessage("保存图片"),
+        "metaverse_save_video": MessageLookupByLibrary.simpleMessage("保存视频"),
+        "metaverse_share_image": MessageLookupByLibrary.simpleMessage("分享图片"),
+        "metaverse_share_video": MessageLookupByLibrary.simpleMessage("分享视频"),
         "month": MessageLookupByLibrary.simpleMessage("月"),
         "monthly": MessageLookupByLibrary.simpleMessage("月付"),
         "more": MessageLookupByLibrary.simpleMessage("更多"),
@@ -269,8 +280,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate_pandora_avatar": MessageLookupByLibrary.simpleMessage("给我们评分"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
+        "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),
         "recent": MessageLookupByLibrary.simpleMessage("最近"),
         "recently": MessageLookupByLibrary.simpleMessage("最近使用"),
+        "remind": MessageLookupByLibrary.simpleMessage("提示"),
         "reply": MessageLookupByLibrary.simpleMessage("回复"),
         "resend": MessageLookupByLibrary.simpleMessage("重新发送"),
         "resend_failed": MessageLookupByLibrary.simpleMessage("发送失败"),
@@ -370,6 +383,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "wrong_image": MessageLookupByLibrary.simpleMessage("图片无效"),
         "year": MessageLookupByLibrary.simpleMessage("年"),
         "yearly": MessageLookupByLibrary.simpleMessage("年付"),
+        "yes": MessageLookupByLibrary.simpleMessage("确定"),
         "you_have_not_posted_anything":
             MessageLookupByLibrary.simpleMessage("您还没有分享任何内容"),
         "your_post_has_been_submitted_successfully":

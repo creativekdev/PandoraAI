@@ -1,19 +1,15 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/save_avatars_screen.dart';
@@ -46,7 +42,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   @override
   void initState() {
     super.initState();
-    logEvent(Events.avatar_detail_loading);
+    Events.avatarResultDetailShow();
     api = CartoonizerApi().bindState(this);
     entity = widget.entity;
     itemSize = (ScreenUtil.screenSize.width - $(35)) / 2;
@@ -200,7 +196,11 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
               ShareUrlScreen.startShare(
                 context,
                 url: Config.instance.host + "/avatar-playground?token=" + entity.token,
-              );
+              ).then((value) {
+                if (value != null) {
+                  Events.avatarResultDetailMediaShareSuccess(platform: value);
+                }
+              });
             }),
           ).intoContainer(height: $(46) + ScreenUtil.getStatusBarHeight()),
           Align(
@@ -308,6 +308,12 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
           ),
           initialIndex: pos >= images.length ? 0 : pos,
           scrollDirection: Axis.horizontal,
+          onDownloadImage: (url) {
+            Events.avatarResultDetailPreviewSave(url: url, style: outImageStyle(url)!);
+          },
+          onShareImage: (url, platform) {
+            Events.avatarResultDetailPreviewShareChoose(style: outImageStyle(url)!, url: url, platform: platform);
+          },
         ),
       ),
     ).then((value) {
@@ -315,5 +321,14 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
         FlutterForbidshot.setAndroidForbidOff();
       }
     });
+  }
+
+  String? outImageStyle(String url) {
+    for (var value in entity.outputImages) {
+      if (value.url == url) {
+        return value.style;
+      }
+    }
+    return null;
   }
 }

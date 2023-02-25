@@ -107,13 +107,6 @@ class BannerAdsHolder extends WidgetAdsHolder {
 
           cache.putAds(key, bannerAd);
           _inlineAdaptiveAd = bannerAd;
-          var mediationAdapterClassName = _inlineAdaptiveAd?.responseInfo?.mediationAdapterClassName;
-          if (!TextUtil.isEmpty(mediationAdapterClassName)) {
-            logEvent(Events.admob_source_data, eventValues: {
-              'id': _inlineAdaptiveAd?.responseInfo?.responseId,
-              'mediationClassName': mediationAdapterClassName,
-            });
-          }
           delay(() {
             _isLoaded = true;
             _adSize = size;

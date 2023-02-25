@@ -36,6 +36,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
   @override
   void initState() {
     super.initState();
+    Events.avatarPlanShow();
     api = CartoonizerApi().bindState(this);
     delay(() {
       showLoading().whenComplete(() {
@@ -121,6 +122,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
                 PayAvatarAndroid(planId: selected!.id.toString()).startPay(context, (result) {
                   hideLoading().whenComplete(() {
                     if (result) {
+                      Events.avatarPlanPurchase(plan: selected!.id.toString());
                       Navigator.of(context).pop(true);
                     }
                   });
@@ -136,6 +138,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
                   hideLoading().whenComplete(() {
                     avatarIOS?.dispose();
                     if (result) {
+                      Events.avatarPlanPurchase(plan: selected!.appleStorePlanId);
                       Navigator.of(context).pop(true);
                     }
                   });
