@@ -278,7 +278,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
-              onLikeTap: () => userManager.doOnLogin(context, callback: () {
+              onLikeTap: () => userManager
+                  .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
                 onLikeTap(listController.dataList[index].data!);
               }, autoExec: false),
             )

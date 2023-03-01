@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 enum AvatarStatus {
   pending,
   processing,
+  generating,
   completed,
   subscribed,
   bought,
@@ -17,6 +18,8 @@ class AvatarStatusUtils {
         return AvatarStatus.pending;
       case 'processing':
         return AvatarStatus.processing;
+      case 'generating':
+        return AvatarStatus.generating;
       case 'subscribed':
         return AvatarStatus.subscribed;
       case 'completed':
@@ -44,6 +47,8 @@ extension AvatarStatusEx on AvatarStatus {
         return null;
       case AvatarStatus.bought:
         return 'bought';
+      case AvatarStatus.generating:
+        return 'generating';
     }
   }
 
@@ -59,6 +64,8 @@ extension AvatarStatusEx on AvatarStatus {
         return S.of(context).all;
       case AvatarStatus.bought:
         return S.of(context).bought;
+      case AvatarStatus.generating:
+        return S.of(context).generating;
     }
   }
 }

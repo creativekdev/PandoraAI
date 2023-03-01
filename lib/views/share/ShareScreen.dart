@@ -9,9 +9,12 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum ShareType {
@@ -159,8 +162,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
   void _openShareAction(BuildContext context, List<String> paths) {
     final box = context.findRenderObject() as RenderBox?;
-    Share.shareXFiles(paths.map((e) => XFile(e)).toList(), sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
-    // Share.shareFiles(paths, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size, text: S.of(context).share_title);
+    Share.shareXFiles(paths.map((e) => XFile(e)).toList(), sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
   }
 
   onShareClick(ShareType shareType) async {
@@ -218,7 +220,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
     switch (shareType) {
       case ShareType.discovery:
-        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction:'share_discovery_from_ai_avatar',callback: () {
           ShareDiscoveryScreen.push(
             context,
             effectKey: widget.effectKey,

@@ -42,6 +42,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
   int firstFrameCount = 24;
 
   int imageNameCount = 24;
+  late String fileName;
 
   @override
   void initState() {
@@ -53,9 +54,10 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     designHeight = designWidth * ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
-    if (File('$savePath/output.mp4').existsSync()) {
+    fileName = '$savePath/${EncryptUtil.encodeMd5(savePath)}.mp4';
+    if (File(fileName).existsSync()) {
       delay(() {
-        Navigator.of(context).pop('$savePath/output.mp4');
+        Navigator.of(context).pop(fileName);
       });
       return;
     } else {
@@ -162,18 +164,19 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
   Future<void> buildVideo() async {
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
-    if (File('$savePath/output.mp4').existsSync()) {
-      Navigator.of(context).pop('$savePath/output.mp4');
+    if (File(fileName).existsSync()) {
+      Navigator.of(context).pop(fileName);
     } else {
       var command = FFmpegUtil.commandImage2Video(
         mainDir: savePath,
+        outputPath: fileName,
         framePerSecond: 24,
       );
       FFmpegKit.execute(command).then((session) {
         session.getState().then((value) {
           value == SessionState.completed;
           FFmpegKit.cancel(session.getSessionId());
-          Navigator.of(context).pop('$savePath/output.mp4');
+          Navigator.of(context).pop(fileName);
         });
       });
     }

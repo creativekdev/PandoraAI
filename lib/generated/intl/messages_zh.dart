@@ -159,6 +159,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_reached_limit_vip":
             MessageLookupByLibrary.simpleMessage("创建次数已达当日上限\n请明天再试"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
+        "generating": MessageLookupByLibrary.simpleMessage("制作中"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
         "go_premium": MessageLookupByLibrary.simpleMessage("获取专业版"),
@@ -175,10 +176,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),
         "input_feedback": MessageLookupByLibrary.simpleMessage("请输入您的意见"),
+        "input_invited_code": MessageLookupByLibrary.simpleMessage("邀请码填写"),
         "input_name": MessageLookupByLibrary.simpleMessage("输入名称"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
         "invalid_password": MessageLookupByLibrary.simpleMessage("密码错误"),
+        "invited_code": MessageLookupByLibrary.simpleMessage("邀请码"),
         "january": MessageLookupByLibrary.simpleMessage("一月"),
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
@@ -265,6 +268,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
+        "please_input_invited_code":
+            MessageLookupByLibrary.simpleMessage("请输入邀请码"),
         "please_login_first": MessageLookupByLibrary.simpleMessage("请先登录"),
         "please_select_photos": MessageLookupByLibrary.simpleMessage("请选择图片"),
         "popular": MessageLookupByLibrary.simpleMessage("热门"),

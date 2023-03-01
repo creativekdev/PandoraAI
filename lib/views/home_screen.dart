@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         if (userManager.lastLauncherLoginStatus) {
           if (!value.loginSuccess) {
             userManager.logout().then((value) {
-              userManager.doOnLogin(context);
+              userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
             });
           } else {
             delay(() {

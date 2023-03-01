@@ -83,6 +83,7 @@ class UploadImageController extends GetxController {
   bool needUploadByKey(String key) {
     var cacheFile = imageUploadCache.pick((t) => t.key == key);
     if (cacheFile != null && !cacheFile.urlExpired()) {
+      updateImageUrl(cacheFile.url);
       return false;
     }
     return true;

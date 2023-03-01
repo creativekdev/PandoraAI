@@ -243,6 +243,7 @@
   "create_avatar": "创建头像",
   "waiting": "等待生成",
   "created": "完成",
+  "generating": "制作中",
   "all": "全部",
   "bought": "已购买",
   "no_messages_yet": "暂无新消息",
@@ -306,5 +307,8 @@
   "choose_another": "重新选择",
   "generate_reached_limit": "创建次数已达当日上限\n请明天再试或购买专业版",
   "generate_reached_limit_vip": "创建次数已达当日上限\n请明天再试",
-  "read_all": "全部已读"
+  "read_all": "全部已读",
+  "input_invited_code": "邀请码填写",
+  "invited_code": "邀请码",
+  "please_input_invited_code": "请输入邀请码"
 }

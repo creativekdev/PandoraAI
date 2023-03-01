@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/auth.dart';
@@ -36,13 +37,17 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends AppState<SignupScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
-
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
   double blueAreaHeight = 100;
 
   @override
   void initState() {
     super.initState();
+    Events.signupShow(
+      source: cacheManager.getString(CacheManager.preSignupAction),
+      prePage: cacheManager.getString(CacheManager.preLoginAction),
+    );
     api = CartoonizerApi().bindState(this);
   }
 
@@ -612,10 +617,16 @@ class _SignupScreenState extends AppState<SignupScreen> {
         ),
       ).then((value) async {
         if (value ?? false) {
+          var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
+          var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+          Events.signupOkShow(source: action, prePage: prePage);
           await loginBack(context);
         }
       });
     } else {
+      var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
+      var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+      Events.signupOkShow(source: action, prePage: prePage);
       await loginBack(context);
     }
   }

@@ -103,20 +103,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       });
     });
     delay(() {
-      if (widget.entity != null) {
-        var file = File(widget.entity!.filePath.first);
-        SyncFileImage(file: file).getImage().then((value) {
-          var ratio = value.image.height / value.image.width;
-          startTransfer(context, File(widget.entity!.originalPath!), ratio, file);
-        });
-      }
-      PickAlbumHelper.getNewest().then((value) {
-        setState(() {
-          assetList = value;
-        });
-      });
-    });
-    delay(() {
       accelerometerEvents.listen((AccelerometerEvent event) {
         var nextPose = SensorHelper.getPose(event.x, event.y, event.z);
         if (nextPose != null) {
@@ -128,6 +114,18 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             }
           }
         }
+      });
+      if (widget.entity != null) {
+        var file = File(widget.entity!.filePath.first);
+        SyncFileImage(file: file).getImage().then((value) {
+          var ratio = value.image.height / value.image.width;
+          startTransfer(context, File(widget.entity!.originalPath!), ratio, file);
+        });
+      }
+      PickAlbumHelper.getNewest().then((value) {
+        setState(() {
+          assetList = value;
+        });
       });
     });
   }
@@ -190,7 +188,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                 try {
                   if (snapshot.connectionState == ConnectionState.done) {
                     lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
-                    if (cameraController != null) {
+                    if (cameraController != null && !cameraController!.disposed()) {
                       cameraController!.startImageStream((image) {
                         if (cameraController?.disposed() ?? true) {
                           return;

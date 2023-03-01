@@ -170,7 +170,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       });
 
   onCreateCommentClick({int? replySocialPostCommentId, String? userName}) {
-    userManager.doOnLogin(context, callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: 'pre_create_comment', callback: () {
       Navigator.push(
           context,
           PageRouteBuilder(
@@ -193,7 +193,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
         socialPostId: discoveryEntity.id,
         replySocialPostCommentId: replySocialPostCommentId,
         onUserExpired: () {
-          userManager.doOnLogin(context);
+          userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
         });
     await hideLoading();
     if (baseEntity != null) {
@@ -204,7 +204,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   }
 
   onCommentLikeTap(DiscoveryCommentListEntity entity) {
-    userManager.doOnLogin(context, callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: entity.likeId == null ? 'pre_comment_like' : 'pre_comment_unlike', callback: () {
       showLoading().whenComplete(() {
         if (entity.likeId == null) {
           api.commentLike(entity.id).then((value) {
@@ -220,7 +220,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   }
 
   onDiscoveryLikeTap() {
-    userManager.doOnLogin(context, callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
       showLoading().whenComplete(() {
         if (discoveryEntity.likeId == null) {
           api.discoveryLike(discoveryEntity.id).then((value) {

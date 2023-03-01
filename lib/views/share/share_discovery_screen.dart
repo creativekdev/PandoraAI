@@ -180,7 +180,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         resources: list,
                         category: widget.category.name,
                         onUserExpired: () {
-                          AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                          AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'token_expired', callback: () {
                             submit();
                           }, autoExec: true);
                         })
@@ -247,7 +247,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       resources: list,
                       category: widget.category.name,
                       onUserExpired: () {
-                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, callback: () {
+                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'token_expired', callback: () {
                           submit();
                         }, autoExec: true);
                       })

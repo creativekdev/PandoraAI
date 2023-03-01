@@ -15,6 +15,7 @@ import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/save_avatars_screen.dart';
 import 'package:cartoonizer/views/share/ShareUrlScreen.dart';
 import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 class AvatarDetailScreen extends StatefulWidget {
@@ -36,6 +37,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   late CartoonizerApi api;
   AvatarAiManager aiManager = AppDelegate.instance.getManager();
   CustomPopupMenuController customPopupMenuController = CustomPopupMenuController();
+  EasyRefreshController _refreshController = EasyRefreshController();
 
   _AvatarDetailScreenState() : super(canCancelOnLoading: false);
 
@@ -72,137 +74,154 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     api.unbind();
   }
 
+  reloadData() {
+    api.getAvatarAiDetail(token: entity.token, useCache: false).then((value) {
+      if (value != null) {
+        setState(() {
+          entity = value;
+        });
+      }
+      _refreshController.finishRefresh();
+    });
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
+      appBar: AppNavigationBar(
+        backgroundColor: ColorConstant.BackgroundColorBlur,
+        blurAble: true,
+        middle: TitleTextWidget(entity.name, ColorConstant.White, FontWeight.w600, $(17)),
+        // trailing: CustomPopupMenu(
+        //   controller: customPopupMenuController,
+        //   arrowColor: Colors.transparent,
+        //   child: Icon(
+        //     Icons.more_horiz,
+        //     size: $(24),
+        //     color: Colors.white,
+        //   ),
+        //   menuBuilder: () => IntrinsicWidth(
+        //     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        //       buildPopupItem(context, title: S.of(context).share, icon: Images.ic_share, onTap: () {
+        //         ShareUrlScreen.startShare(
+        //           context,
+        //           url: Config.instance.host + "/avatar-playground?token=" + entity.token,
+        //         );
+        //         customPopupMenuController.hideMenu();
+        //       }),
+        //       Divider(height: 1, color: ColorConstant.LineColor),
+        //       buildPopupItem(context, title: S.of(context).download, icon: Images.ic_download, onTap: () {
+        //         customPopupMenuController.hideMenu();
+        //       }),
+        //     ])
+        //         .intoContainer(
+        //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        //             decoration: BoxDecoration(
+        //               color: Color(0xc2222222),
+        //               borderRadius: BorderRadius.circular(6),
+        //             ))
+        //         .intoMaterial(
+        //           elevation: 3,
+        //           color: Color(0xc2222222),
+        //           borderRadius: BorderRadius.circular(6),
+        //         ),
+        //   ),
+        //   verticalMargin: -5,
+        //   horizontalMargin: 15,
+        //   pressType: PressType.singleClick,
+        // ),
+        trailing: Image.asset(
+          Images.ic_share,
+          color: ColorConstant.White,
+          width: $(24),
+        ).hero(tag: 'share').intoGestureDetector(onTap: () {
+          ShareUrlScreen.startShare(
+            context,
+            url: Config.instance.host + "/avatar-playground?token=" + entity.token,
+          ).then((value) {
+            if (value != null) {
+              Events.avatarResultDetailMediaShareSuccess(platform: value);
+            }
+          });
+        }),
+      ),
       body: Stack(
         children: [
-          ListView.builder(
+          EasyRefresh.custom(
+            onRefresh: () async => reloadData(),
+            controller: _refreshController,
+            enableControlFinishRefresh: true,
+            enableControlFinishLoad: false,
+            slivers: [
+              SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                var list = dataList[index];
+                if (index == 0 || dataList[index - 1].first.style != list.first.style) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: $(10)),
+                      TitleTextWidget(
+                        aiManager.config?.styleTitle('', list.first.style) ?? list.first.style,
+                        ColorConstant.White,
+                        FontWeight.w500,
+                        $(16),
+                      ),
+                      SizedBox(height: $(8)),
+                      Wrap(
+                        children: list
+                            .map((e) => CachedNetworkImageUtils.custom(
+                                  useOld: true,
+                                  context: context,
+                                  imageUrl: e.url,
+                                  width: itemSize,
+                                  height: itemSize,
+                                )
+                                    .hero(tag: e.url)
+                                    .intoContainer(
+                                      width: itemSize,
+                                      height: itemSize,
+                                    )
+                                    .intoGestureDetector(onTap: () {
+                                  openImage(context, e);
+                                }))
+                            .toList(),
+                        spacing: $(4),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Wrap(
+                    children: list
+                        .map((e) => CachedNetworkImageUtils.custom(
+                              useOld: true,
+                              context: context,
+                              imageUrl: e.url,
+                              width: itemSize,
+                              height: itemSize,
+                            )
+                                .hero(tag: e.url)
+                                .intoContainer(
+                                  width: itemSize,
+                                  height: itemSize,
+                                )
+                                .intoGestureDetector(onTap: () {
+                              openImage(context, e);
+                            }))
+                        .toList(),
+                    spacing: $(4),
+                  ).intoContainer(margin: EdgeInsets.only(top: $(4)));
+                }
+              }, childCount: dataList.length))
+            ],
+          ).intoContainer(
             padding: EdgeInsets.only(
               left: $(15),
               right: $(15),
               bottom: $(82) + ScreenUtil.getBottomPadding(context),
-              top: $(46) + ScreenUtil.getStatusBarHeight(),
             ),
-            itemBuilder: (context, index) {
-              var list = dataList[index];
-              if (index == 0 || dataList[index - 1].first.style != list.first.style) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: $(10)),
-                    TitleTextWidget(
-                      aiManager.config?.styleTitle('', list.first.style) ?? list.first.style,
-                      ColorConstant.White,
-                      FontWeight.w500,
-                      $(16),
-                    ),
-                    SizedBox(height: $(8)),
-                    Wrap(
-                      children: list
-                          .map((e) => CachedNetworkImageUtils.custom(
-                                useOld: true,
-                                context: context,
-                                imageUrl: e.url,
-                                width: itemSize,
-                                height: itemSize,
-                              )
-                                  .hero(tag: e.url)
-                                  .intoContainer(
-                                    width: itemSize,
-                                    height: itemSize,
-                                  )
-                                  .intoGestureDetector(onTap: () {
-                                openImage(context, e);
-                              }))
-                          .toList(),
-                      spacing: $(4),
-                    ),
-                  ],
-                );
-              } else {
-                return Wrap(
-                  children: list
-                      .map((e) => CachedNetworkImageUtils.custom(
-                            useOld: true,
-                            context: context,
-                            imageUrl: e.url,
-                            width: itemSize,
-                            height: itemSize,
-                          )
-                              .hero(tag: e.url)
-                              .intoContainer(
-                                width: itemSize,
-                                height: itemSize,
-                              )
-                              .intoGestureDetector(onTap: () {
-                            openImage(context, e);
-                          }))
-                      .toList(),
-                  spacing: $(4),
-                ).intoContainer(margin: EdgeInsets.only(top: $(4)));
-              }
-            },
-            itemCount: dataList.length,
           ),
-          AppNavigationBar(
-            backgroundColor: ColorConstant.BackgroundColorBlur,
-            blurAble: true,
-            middle: TitleTextWidget(entity.name, ColorConstant.White, FontWeight.w600, $(17)),
-            // trailing: CustomPopupMenu(
-            //   controller: customPopupMenuController,
-            //   arrowColor: Colors.transparent,
-            //   child: Icon(
-            //     Icons.more_horiz,
-            //     size: $(24),
-            //     color: Colors.white,
-            //   ),
-            //   menuBuilder: () => IntrinsicWidth(
-            //     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            //       buildPopupItem(context, title: S.of(context).share, icon: Images.ic_share, onTap: () {
-            //         ShareUrlScreen.startShare(
-            //           context,
-            //           url: Config.instance.host + "/avatar-playground?token=" + entity.token,
-            //         );
-            //         customPopupMenuController.hideMenu();
-            //       }),
-            //       Divider(height: 1, color: ColorConstant.LineColor),
-            //       buildPopupItem(context, title: S.of(context).download, icon: Images.ic_download, onTap: () {
-            //         customPopupMenuController.hideMenu();
-            //       }),
-            //     ])
-            //         .intoContainer(
-            //             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            //             decoration: BoxDecoration(
-            //               color: Color(0xc2222222),
-            //               borderRadius: BorderRadius.circular(6),
-            //             ))
-            //         .intoMaterial(
-            //           elevation: 3,
-            //           color: Color(0xc2222222),
-            //           borderRadius: BorderRadius.circular(6),
-            //         ),
-            //   ),
-            //   verticalMargin: -5,
-            //   horizontalMargin: 15,
-            //   pressType: PressType.singleClick,
-            // ),
-            trailing: Image.asset(
-              Images.ic_share,
-              color: ColorConstant.White,
-              width: $(24),
-            ).hero(tag: 'share').intoGestureDetector(onTap: () {
-              ShareUrlScreen.startShare(
-                context,
-                url: Config.instance.host + "/avatar-playground?token=" + entity.token,
-              ).then((value) {
-                if (value != null) {
-                  Events.avatarResultDetailMediaShareSuccess(platform: value);
-                }
-              });
-            }),
-          ).intoContainer(height: $(46) + ScreenUtil.getStatusBarHeight()),
           Align(
             alignment: Alignment.bottomCenter,
             child: ClipRect(

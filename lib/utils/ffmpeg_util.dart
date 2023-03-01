@@ -5,13 +5,9 @@ class FFmpegUtil {
   ///
   static String commandImage2Video({
     required String mainDir,
-    String? outputDir,
+    required String outputPath,
     int framePerSecond = 24,
   }) {
-    if (outputDir == null) {
-      outputDir = mainDir;
-    }
-    return '-f image2 -i "$mainDir/%d.png" -b:v 1536k "$outputDir/output.mp4"';
-    // return '-f image2 -i $mainDir/%d.png -r $framePerSecond -b:v 4M -s 480x640 $outputDir/output.mp4';
+    return '-y -r $framePerSecond -f image2 -i "$mainDir/%d.png" -b:v 2048k -c:v mpeg4 "$outputPath"';
   }
 }

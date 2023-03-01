@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -357,10 +358,16 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
         ),
       ).then((value) async {
         if (value ?? false) {
+          var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
+          var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+          Events.signupOkShow(source: action, prePage: prePage);
           await loginBack(context);
         }
       });
     } else {
+      var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preSignupAction);
+      var prePage = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+      Events.signupOkShow(source: action, prePage: prePage);
       await loginBack(context);
     }
   }

@@ -10,6 +10,7 @@ class SocialUserInfo {
   int cartoonizeCredit = 0;
   int aiAvatarCredit = 0;
   MemberInfo? member;
+  bool isReferred = false;
 
   Map<String, dynamic> userSubscription = {};
   List<dynamic> creditcards = [];
@@ -36,6 +37,7 @@ class SocialUserInfo {
     cartoonizeCredit = json['cartoonize_credit'] ?? 0;
     creditcards = json['creditcards'] ?? [];
     aiAvatarCredit = json['ai_avatar_credit'] ?? 0;
+    isReferred = json['is_referred'] ?? false;
     var subscription = json['user_subscription'] ?? [];
 
     for (int i = 0; i < subscription.length; i++) {
@@ -61,6 +63,7 @@ class SocialUserInfo {
       'cartoonize_credit': cartoonizeCredit,
       'creditcards': creditcards,
       'ai_avatar_credit': aiAvatarCredit,
+      'is_referred': isReferred,
     };
     if (userSubscription.keys.isEmpty) {
       map['user_subscription'] = [];

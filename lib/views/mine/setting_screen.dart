@@ -11,6 +11,8 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/mine/submit_invited_code_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -36,9 +38,18 @@ class _SettingScreenState extends AppState<SettingScreen> {
     cacheManager.setBool(CacheManager.nsfwOpen, value);
   }
 
+  late StreamSubscription onUserChangeListen;
+  late StreamSubscription onLoginStateChangeListen;
+
   @override
   void initState() {
     super.initState();
+    onUserChangeListen = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
+      setState(() {});
+    });
+    onLoginStateChangeListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      setState(() {});
+    });
     getCacheSize();
   }
 
@@ -52,6 +63,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
 
   @override
   void dispose() {
+    onUserChangeListen.cancel();
+    onLoginStateChangeListen.cancel();
     super.dispose();
   }
 
@@ -78,6 +91,16 @@ class _SettingScreenState extends AppState<SettingScreen> {
                     color: ColorConstant.BackgroundColor,
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
+              functions(S.of(context).input_invited_code, onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SubmitInvitedCodeScreen()));
+              }).offstage(
+                offstage: userManager.isNeedLogin || (userManager.user?.isReferred ?? false),
+              ),
+              Container(width: double.maxFinite, height: 1, color: Color(0xff323232))
+                  .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15)), color: ColorConstant.BackgroundColor)
+                  .offstage(
+                    offstage: userManager.isNeedLogin || (userManager.user?.isReferred ?? false),
+                  ),
               functions(S.of(context).help, onTap: () {
                 launchURL("https://socialbook.io/help/");
               }),
@@ -203,7 +226,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 showLogoutAlertDialog().then((value) {
                   setState(() {});
                   if (value ?? false) {
-                    userManager.doOnLogin(context);
+                    userManager.doOnLogin(context, logPreLoginAction: 'logout_after');
                   }
                 });
               }).offstage(offstage: userManager.isNeedLogin),

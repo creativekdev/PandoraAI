@@ -35,6 +35,8 @@ class CacheManager extends BaseManager {
   static const avatarHistory = 'avatar_history';
   static const lastCreateAvatar = 'last_create_avatar';
   static const lastAlbum = 'last_album';
+  static const preLoginAction = 'pre_login_action';
+  static const preSignupAction = 'pre_signup_action';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

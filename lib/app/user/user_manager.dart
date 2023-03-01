@@ -152,11 +152,12 @@ class UserManager extends BaseManager {
     EventBusHelper().eventBus.fire(LoginStateEvent(data: _user != null));
   }
 
-  doOnLogin(BuildContext context, {String? currentPageRoute, Function()? callback, bool autoExec = true, bool toSignUp = false}) {
+  doOnLogin(BuildContext context, {required String logPreLoginAction, String? currentPageRoute, Function()? callback, bool autoExec = true, bool toSignUp = false}) {
     if (!isNeedLogin) {
       callback?.call();
       return;
     }
+    cacheManager.setString(CacheManager.preLoginAction, logPreLoginAction);
     if (currentPageRoute == null) {
       GetStorage().remove('login_back_page');
     } else {
@@ -170,6 +171,7 @@ class UserManager extends BaseManager {
           ),
           settings: RouteSettings(name: "/LoginScreen"),
         )).then((value) async {
+      cacheManager.setString(CacheManager.preLoginAction, null);
       if (autoExec && !isNeedLogin) {
         callback?.call();
       } else {

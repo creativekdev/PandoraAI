@@ -129,7 +129,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
       });
 
   onCreateCommentClick({int? replySocialPostCommentId, String? userName}) {
-    userManager.doOnLogin(context, callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: 'pre_create_secondary_comment', callback: () {
       Navigator.push(
           context,
           PageRouteBuilder(
@@ -152,7 +152,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
       socialPostId: parentComment.socialPostId,
       replySocialPostCommentId: replySocialPostCommentId,
       onUserExpired: () {
-        userManager.doOnLogin(context);
+        userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
       },
     );
     await hideLoading();
@@ -164,7 +164,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
   }
 
   onCommentLikeTap(DiscoveryCommentListEntity entity) {
-    userManager.doOnLogin(context, callback: () {
+    userManager.doOnLogin(context, logPreLoginAction: entity.likeId == null ? 'pre_secondary_comment_like' : 'pre_secondary_comment_unlike', callback: () {
       showLoading().whenComplete(() {
         if (entity.likeId == null) {
           api.commentLike(entity.id).then((value) {

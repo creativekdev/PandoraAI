@@ -4,6 +4,8 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
@@ -132,25 +134,29 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                                         ),
                                       ))
                                   .intoGestureDetector(onTap: () {
-                                if (Platform.isIOS) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        settings: RouteSettings(name: "/PurchaseScreen"),
-                                        builder: (context) => PurchaseScreen(),
-                                      )).then((value) {
-                                    Navigator.of(context).pop(hasReward);
-                                  });
-                                } else {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                                        builder: (context) => StripeSubscriptionScreen(),
-                                      )).then((value) {
-                                    Navigator.of(context).pop(hasReward);
-                                  });
-                                }
+                                AppDelegate.instance.getManager<UserManager>().doOnLogin(context,
+                                    logPreLoginAction: 'reward_advertisement_dialog',
+                                    callback: () {
+                                  if (Platform.isIOS) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          settings: RouteSettings(name: "/PurchaseScreen"),
+                                          builder: (context) => PurchaseScreen(),
+                                        )).then((value) {
+                                      Navigator.of(context).pop(hasReward);
+                                    });
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          settings: RouteSettings(name: "/StripeSubscriptionScreen"),
+                                          builder: (context) => StripeSubscriptionScreen(),
+                                        )).then((value) {
+                                      Navigator.of(context).pop(hasReward);
+                                    });
+                                  }
+                                }, autoExec: true);
                               }).intoContainer(
                                 margin: EdgeInsets.symmetric(horizontal: $(24)),
                               ),

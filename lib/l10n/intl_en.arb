@@ -243,6 +243,7 @@
   "create_avatar": "Create Avatar",
   "waiting": "Waiting",
   "created": "Created",
+  "generating": "Creating",
   "all": "All",
   "bought": "Bought",
   "no_messages_yet": "There are no messages yet",
@@ -306,5 +307,8 @@
   "choose_another": "Choose another",
   "generate_reached_limit": "Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium",
   "generate_reached_limit_vip": "Generate action has reached the upper limit\nPlease try again tomorrow",
-  "read_all": "Read All"
+  "read_all": "Read All",
+  "input_invited_code": "Input invitation Code",
+  "invited_code": "Invitation Code",
+  "please_input_invited_code": "Please enter the invitation code"
 }

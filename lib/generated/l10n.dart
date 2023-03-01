@@ -2490,6 +2490,16 @@ class S {
     );
   }
 
+  /// `Creating`
+  String get generating {
+    return Intl.message(
+      'Creating',
+      name: 'generating',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `All`
   String get all {
     return Intl.message(
@@ -3125,6 +3135,36 @@ class S {
     return Intl.message(
       'Read All',
       name: 'read_all',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input invitation Code`
+  String get input_invited_code {
+    return Intl.message(
+      'Input invitation Code',
+      name: 'input_invited_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invitation Code`
+  String get invited_code {
+    return Intl.message(
+      'Invitation Code',
+      name: 'invited_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter the invitation code`
+  String get please_input_invited_code {
+    return Intl.message(
+      'Please enter the invitation code',
+      name: 'please_input_invited_code',
       desc: '',
       args: [],
     );

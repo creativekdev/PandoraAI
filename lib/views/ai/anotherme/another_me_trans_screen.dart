@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -72,6 +73,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       if (transResult == null) {
         generate(context, controller);
       } else {
+        md5File(file).then((value) {
+          uploadImageController.needUploadByKey(value);
+        });
         controller.sourcePhoto = file;
         controller.transKey = transResult!.path;
         controller.onSuccess();
@@ -233,7 +237,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                   await showLoading();
                                   await GallerySaver.saveVideo(value!.toString(), true, toDcim: true, albumName: saveAlbumName);
                                   await hideLoading();
-                                  CommonExtension().showImageSavedOkToast(context);
+                                  CommonExtension().showVideoSavedOkToast(context);
                                 }
                               });
                             } else {
@@ -258,19 +262,23 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         if (TextUtil.isEmpty(controller.transKey)) {
                           return;
                         }
-                        var file = File(controller.transKey!);
-                        ShareDiscoveryScreen.push(
-                          context,
-                          effectKey: 'Me-taverse',
-                          originalUrl: uploadImageController.imageUrl.value,
-                          image: base64Encode(file.readAsBytesSync()),
-                          isVideo: false,
-                          category: DiscoveryCategory.another_me,
-                        ).then((value) {
-                          if (value ?? false) {
-                            showShareSuccessDialog(context);
-                          }
-                        });
+                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context,
+                            logPreLoginAction: 'share_discovery_from_metaverse',
+                            callback: () {
+                          var file = File(controller.transKey!);
+                          ShareDiscoveryScreen.push(
+                            context,
+                            effectKey: 'Me-taverse',
+                            originalUrl: uploadImageController.imageUrl.value,
+                            image: base64Encode(file.readAsBytesSync()),
+                            isVideo: false,
+                            category: DiscoveryCategory.another_me,
+                          ).then((value) {
+                            if (value ?? false) {
+                              showShareSuccessDialog(context);
+                            }
+                          });
+                        }, autoExec: true);
                       },
                       onShareTap: () async {
                         showSaveDialog(context, false).then((value) async {
@@ -509,7 +517,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
               }),
             ],
           ).intoContainer(
-              padding: EdgeInsets.only(top: $(19), bottom: $(10)),
+              padding: EdgeInsets.only(top: $(15), bottom: $(10) + ScreenUtil.getBottomPadding(context)),
               decoration: BoxDecoration(
                   color: ColorConstant.EffectFunctionGrey,
                   borderRadius: BorderRadius.only(

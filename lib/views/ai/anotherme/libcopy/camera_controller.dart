@@ -51,7 +51,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
 
   bool _isDisposed = false;
 
-  disposed() => _isDisposed;
+  bool disposed() => _isDisposed;
 
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
   FutureOr<bool>? _initCalled;

@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/record_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:common_utils/common_utils.dart';
 
 ///
 /// Recent effect data manager
@@ -38,6 +39,7 @@ class RecentController extends GetxController {
     List<RecentEffectModel> effects = [];
     effectList.forEach((element) {
       effects.addAll(element.itemList
+          .filter((t) => !TextUtil.isEmpty(t.imageData) && File(t.imageData ?? '').existsSync())
           .map((e) => RecentEffectModel()
             ..updateDt = element.updateDt
             ..originalPath = element.originalPath
@@ -46,7 +48,7 @@ class RecentController extends GetxController {
     });
     List<RecentMetaverseEntity> metaverses = [];
     metaverseList.forEach((element) {
-      metaverses.addAll(element.filePath.map((e) => RecentMetaverseEntity()
+      metaverses.addAll(element.filePath.filter((t) => !TextUtil.isEmpty(t) && File(t ?? '').existsSync()).map((e) => RecentMetaverseEntity()
         ..updateDt = element.updateDt
         ..originalPath = element.originalPath
         ..filePath = [e]));

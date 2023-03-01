@@ -190,6 +190,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Generate action has reached the upper limit\nPlease try again tomorrow"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
+        "generating": MessageLookupByLibrary.simpleMessage("Creating"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("Give Feedback"),
         "go_premium": MessageLookupByLibrary.simpleMessage("Go Premium"),
@@ -209,12 +210,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "in_original": MessageLookupByLibrary.simpleMessage("Include original"),
         "input_feedback":
             MessageLookupByLibrary.simpleMessage("input feedback"),
+        "input_invited_code":
+            MessageLookupByLibrary.simpleMessage("Input invitation Code"),
         "input_name": MessageLookupByLibrary.simpleMessage("Input name"),
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram":
             MessageLookupByLibrary.simpleMessage("Continue with Instagram"),
         "invalid_password":
             MessageLookupByLibrary.simpleMessage("Invalid Password"),
+        "invited_code": MessageLookupByLibrary.simpleMessage("Invitation Code"),
         "january": MessageLookupByLibrary.simpleMessage("January"),
         "july": MessageLookupByLibrary.simpleMessage("July"),
         "june": MessageLookupByLibrary.simpleMessage("June"),
@@ -322,6 +326,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
+        "please_input_invited_code": MessageLookupByLibrary.simpleMessage(
+            "Please enter the invitation code"),
         "please_login_first":
             MessageLookupByLibrary.simpleMessage("Please login first"),
         "please_select_photos":

@@ -595,6 +595,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   Navigator.of(context).pop();
                   GetStorage().write('signup_through', 'result_signup_get_credit');
                   GetStorage().write('login_back_page', '/ChoosePhotoScreen');
+                  cacheManager.setString(CacheManager.preSignupAction, 'result_signup_get_credit');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -739,7 +740,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Future<void> shareToDiscovery() async {
     var selectedEffect = tabItemList[currentItemIndex.value].data;
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, currentPageRoute: '/ChoosePhotoScreen', callback: () async {
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_facetoon', currentPageRoute: '/ChoosePhotoScreen',
+        callback: () async {
       if (controller.isVideo.value) {
         var videoUrl = '${_getAiHostByStyle(selectedEffect)}/resource/' + controller.videoUrl.value;
         ShareDiscoveryScreen.push(
@@ -1670,6 +1672,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
 
         if (resultSuccess == 1) {
+          if (TextUtil.isEmpty(controller.videoFile.value?.path) || TextUtil.isEmpty(_image)) {
+            return;
+          }
           recentController.onEffectUsed(
             selectedEffect,
             original: controller.image.value!,
@@ -1731,6 +1736,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   GestureDetector(
                     onTap: () async {
                       Navigator.pop(context);
+                      cacheManager.setString(CacheManager.preSignupAction, 'facetoon_daily_limit');
                       GetStorage().write('login_back_page', '/ChoosePhotoScreen');
                       await Navigator.push(
                           context,

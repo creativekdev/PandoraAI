@@ -74,6 +74,27 @@ class Events {
     required String saveType,
   }) =>
       logEvent('avatar_result_download_ok_click', eventValues: {'source': saveType});
+
+  static Future<void> loginShow({
+    required String source,
+  }) =>
+      logEvent('sign_in_show', eventValues: {'source': source});
+
+  static Future<void> loginSuccessShow({
+    required String source,
+  }) =>
+      logEvent('sign_in_ok_click', eventValues: {'source': source});
+
+  static Future<void> signupShow({
+    required String source,
+    String? prePage,
+  }) =>
+      logEvent('sign_up_click', eventValues: {'source': source, 'pre_page': prePage});
+  static Future<void> signupOkShow({
+    required String source,
+    String? prePage,
+  }) =>
+      logEvent('sign_up_ok_click', eventValues: {'source': source, 'pre_page': prePage});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

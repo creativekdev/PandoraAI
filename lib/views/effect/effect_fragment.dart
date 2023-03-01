@@ -535,7 +535,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                             ),
                           ))
                       .intoGestureDetector(onTap: () {
-                    userManager.doOnLogin(context, callback: () {
+                    userManager.doOnLogin(context, logPreLoginAction: 'purchase_pro_click', callback: () {
                       if (Platform.isIOS) {
                         Navigator.push(
                           context,
@@ -567,7 +567,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                       color: Colors.white,
                     ),
                   )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
-                userManager.doOnLogin(context, callback: () {
+                userManager.doOnLogin(context, logPreLoginAction: 'msg_list_click', callback: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

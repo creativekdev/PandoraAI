@@ -36,6 +36,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   List<AvatarStatus> statusList = [
     AvatarStatus.UNDEFINED,
     AvatarStatus.pending,
+    AvatarStatus.generating,
     AvatarStatus.completed,
     AvatarStatus.bought,
   ];
@@ -107,6 +108,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             ),
             child: TabBar(
               indicatorColor: Colors.transparent,
+              isScrollable: true,
               tabs: statusList
                   .map((e) => Text(
                         e.title(context),
@@ -228,6 +230,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
         break;
       case AvatarStatus.completed:
       case AvatarStatus.subscribed:
+      case AvatarStatus.generating:
         var coverImage = data.coverImage();
         var list = coverImage.length > 5 ? coverImage.sublist(0, 5) : coverImage;
         item = Column(

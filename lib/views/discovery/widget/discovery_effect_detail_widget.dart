@@ -204,7 +204,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               value: data.likes,
               axis: Axis.horizontal,
               onTap: () {
-                userManager.doOnLogin(context, callback: () {
+                userManager.doOnLogin(context, logPreLoginAction: data.likeId == null ? 'pre_like' : 'pre_unlike', callback: () {
                   onLikeTap();
                 }, autoExec: false);
               },

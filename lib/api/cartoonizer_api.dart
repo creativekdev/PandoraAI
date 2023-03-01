@@ -342,10 +342,10 @@ class CartoonizerApi extends BaseRequester {
     return jsonConvert.convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']);
   }
 
-  Future<AvatarAiListEntity?> getAvatarAiDetail({required String token}) async {
+  Future<AvatarAiListEntity?> getAvatarAiDetail({required String token, bool useCache = true}) async {
     var cacheManager = AppDelegate.instance.getManager<CacheManager>();
     var json = cacheManager.getJson(CacheManager.avatarHistory + token);
-    if (json == null || TextUtil.isEmpty(json['share_code']?.toString()) || json['output_images'] == null || (json['output_images'] as List).isEmpty) {
+    if (!useCache || (json == null || TextUtil.isEmpty(json['share_code']?.toString()) || json['output_images'] == null || (json['output_images'] as List).isEmpty)) {
       var baseEntity = await get('/ai_avatar/get', params: {
         'token': token,
       });
@@ -400,5 +400,13 @@ class CartoonizerApi extends BaseRequester {
   Future<MetaverseLimitEntity?> getMetaverseLimit() async {
     var baseEntity = await get('/tool/anotherme/usage');
     return jsonConvert.convert<MetaverseLimitEntity>(baseEntity?.data['data']);
+  }
+
+  Future<String?> submitInvitedCode(String invitedCode) async {
+    var baseEntity = await post('/refer/create', params: {
+      'rf': invitedCode,
+      'rf_product': APP_NAME,
+    });
+    return baseEntity?.data['data'];
   }
 }

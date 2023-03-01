@@ -1,14 +1,15 @@
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/auth.dart';
 import 'package:cartoonizer/Widgets/auth/auth_api.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/auth.dart';
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
@@ -37,11 +38,13 @@ class _LoginScreenState extends AppState<LoginScreen> {
   // var token;
   // var tokenId;
   UserManager userManager = AppDelegate.instance.getManager();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
     super.initState();
+    Events.loginShow(source: cacheManager.getString(CacheManager.preLoginAction));
     thirdpartManager.adsHolder.ignore = true;
     delay(() {
       if (widget.toSignUp) {
@@ -305,6 +308,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
     if (prefixPage == 'signup') {
       Navigator.pop(context);
     } else {
+      cacheManager.setString(CacheManager.preSignupAction, 'from_login');
       Navigator.push<bool>(
         context,
         MaterialPageRoute(
@@ -330,10 +334,14 @@ class _LoginScreenState extends AppState<LoginScreen> {
         ),
       ).then((value) async {
         if (value ?? false) {
+          var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+          Events.loginSuccessShow(source: action);
           await loginBack(context);
         }
       });
     } else {
+      var action = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.preLoginAction);
+      Events.loginSuccessShow(source: action);
       await loginBack(context);
     }
   }
