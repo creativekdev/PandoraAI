@@ -9,27 +9,16 @@ import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class Events {
-  static Future<void> avatarCreate({
-    required String source,
-  }) =>
-      logEvent("avatar_create", eventValues: {'source': source});
+  static Future<void> avatarCreate({required String source}) => logEvent("avatar_create", eventValues: {'source': source});
 
-  static Future<void> avatarWhatToExpectContinue({
-    required bool isChangeTemplate,
-  }) =>
+  static Future<void> avatarWhatToExpectContinue({required bool isChangeTemplate}) =>
       logEvent("whattoexpect_continue_click", eventValues: {'is_change_template': isChangeTemplate ? 1 : 0});
 
-  static Future<void> avatarStyleContinue({
-    required String style,
-  }) =>
-      logEvent('avatarstyle_continue_click', eventValues: {'style': style});
+  static Future<void> avatarStyleContinue({required String style}) => logEvent('avatarstyle_continue_click', eventValues: {'style': style});
 
   static Future<void> avatarPhotoSelect() => logEvent('avatarphoto_select-click');
 
-  static Future<void> avatarSelectOk({
-    required int photoCount,
-  }) =>
-      logEvent('avatarphoto_select_ok_click', eventValues: {'chosen_photos': photoCount});
+  static Future<void> avatarSelectOk({required int photoCount}) => logEvent('avatarphoto_select_ok_click', eventValues: {'chosen_photos': photoCount});
 
   static Future<void> avatarPhotoUploadClick() => logEvent('avatarphoto_upload_click');
 
@@ -37,14 +26,11 @@ class Events {
 
   static Future<void> avatarPhotoCancelClick() => logEvent('avatarphoto_cancel_click');
 
-  static Future<void> avatarPlanShow() => logEvent('avatar_plan_show');
+  static Future<void> avatarPlanShow() => logEvent('avatar_plan_loading');
 
   static Future<void> avatarPlanLeave() => logEvent('avatar_plan_leave');
 
-  static Future<void> avatarPlanPurchase({
-    required String plan,
-  }) =>
-      logEvent('avatar_plan_purchase_click', eventValues: {'plan': plan});
+  static Future<void> avatarPlanPurchase({required String plan}) => logEvent('avatar_plan_purchase_click', eventValues: {'plan': plan});
 
   static Future<void> avatarUploadSuccess() => logEvent('avatar_upload_success');
 
@@ -52,10 +38,7 @@ class Events {
 
   static Future<void> avatarResultDetailShow() => logEvent('avatar_result_detail_show');
 
-  static Future<void> avatarResultDetailMediaShareSuccess({
-    required String platform,
-  }) =>
-      logEvent('avatar_result_detail_mediashare_success', eventValues: {'platform': platform});
+  static Future<void> avatarResultDetailMediaShareSuccess({required String platform}) => logEvent('avatar_result_detail_mediashare_success', eventValues: {'platform': platform});
 
   static Future<void> avatarResultDetailPreviewSave({
     required String url,
@@ -70,31 +53,92 @@ class Events {
   }) =>
       logEvent('avatar_result_detail_preview_share_choose', eventValues: {'url': url, 'style': style, 'platform': platform});
 
-  static Future<void> avatarResultDownloadOkClick({
-    required String saveType,
-  }) =>
-      logEvent('avatar_result_download_ok_click', eventValues: {'source': saveType});
+  static Future<void> avatarResultDownloadOkClick({required String saveType}) => logEvent('avatar_result_download_ok_click', eventValues: {'source': saveType});
 
-  static Future<void> loginShow({
-    required String source,
-  }) =>
-      logEvent('sign_in_show', eventValues: {'source': source});
+  static Future<void> loginShow({required String source}) => logEvent('sign_in_show', eventValues: {'source': source});
 
-  static Future<void> loginSuccessShow({
-    required String source,
-  }) =>
-      logEvent('sign_in_ok_click', eventValues: {'source': source});
+  static Future<void> loginSuccessShow({required String source}) => logEvent('sign_in_ok_click', eventValues: {'source': source});
 
   static Future<void> signupShow({
     required String source,
     String? prePage,
   }) =>
       logEvent('sign_up_click', eventValues: {'source': source, 'pre_page': prePage});
+
   static Future<void> signupOkShow({
     required String source,
     String? prePage,
   }) =>
       logEvent('sign_up_ok_click', eventValues: {'source': source, 'pre_page': prePage});
+
+  static Future<void> payShow({required String source}) => logEvent('subscribe_loading', eventValues: {'source': source});
+
+  static Future<void> paySuccess({required String source}) => logEvent('subscribe_loading', eventValues: {'source': source});
+
+  static Future<void> noticeLoading() => logEvent('notice_loading');
+
+  static Future<void> facetoonLoading({required String source}) => logEvent('facetoon_loading', eventValues: {'source': source});
+
+  static Future<void> facetoonGenerated({required String style}) => logEvent('facetoon_generate', eventValues: {'style': style});
+
+  static Future<void> facetoonResultShare({required String platform}) => logEvent('facetoon_result_share', eventValues: {'platform': platform});
+
+  static Future<void> facetoonResultSave({required String type}) => logEvent('facetoon_result_save', eventValues: {'type': type});
+
+  static Future<void> metaverseLoading({required String source}) => logEvent('metaverse_loading', eventValues: {'source': source});
+
+  static Future<void> metaverseCompleteSuccess({required String photo}) => logEvent('metaverse_completed_success', eventValues: {'photo': photo});
+
+  static Future<void> metaverseCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('metaverse_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> metaverseCompleteDownload({required String type}) => logEvent('metaverse_completed_download', eventValues: {'type': type});
+
+  static Future<void> metaverseCompleteGenerateAgain({required int time}) => logEvent('metaverse_completed_generateagain', eventValues: {'time': '${time}'});
+
+  static Future<void> metaverseCompleteTakeAgain() => logEvent('metaverse_completed_takeagain');
+
+  static Future<void> metaverseCompletePreview() => logEvent('metaverse_completed_preview');
+
+  static Future<void> discoveryLoading() => logEvent('discovery_loading');
+
+  static Future<void> discoveryDetailLoading({
+    required String source,
+    required String style,
+  }) =>
+      logEvent('discovery_detail_loading', eventValues: {'source': source, 'style': style});
+
+  static Future<void> discoveryTemplateClick({
+    required String source,
+    required String style,
+  }) =>
+      logEvent('discovery_template_click', eventValues: {'source': source, 'style': style});
+
+  static Future<void> discoveryLikeClick({
+    required String source,
+    required String style,
+  }) =>
+      logEvent('discovery_detail_like_click', eventValues: {'source': source, 'style': style});
+
+  static Future<void> discoveryCommentClick({
+    required String source,
+    required String style,
+  }) =>
+      logEvent('discovery_detail_comment_click', eventValues: {'source': source, 'style': style});
+
+  static Future<void> recentlyLoading() => logEvent('recently_loading');
+
+  static Future<void> shareApp() => logEvent('shareapp_click');
+
+  static Future<void> rateUs() => logEvent('rate_us');
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

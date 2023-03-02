@@ -91,6 +91,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "commonFailedToast": MessageLookupByLibrary.simpleMessage("操作失败"),
         "confirm": MessageLookupByLibrary.simpleMessage("确认"),
         "confirm_pass": MessageLookupByLibrary.simpleMessage("确认密码"),
+        "congratulations": MessageLookupByLibrary.simpleMessage("祝贺你!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
         "create": MessageLookupByLibrary.simpleMessage("创建"),
@@ -155,9 +156,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
         "generate_reached_limit":
-            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限\n请明天再试或购买专业版"),
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限，请明天再试或购买专业版"),
         "generate_reached_limit_vip":
-            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限\n请明天再试"),
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限，请明天再试"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
         "generating": MessageLookupByLibrary.simpleMessage("制作中"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
@@ -181,6 +182,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "insta_login": MessageLookupByLibrary.simpleMessage("Instagram"),
         "instagram": MessageLookupByLibrary.simpleMessage("使用Instagram账号"),
         "invalid_password": MessageLookupByLibrary.simpleMessage("密码错误"),
+        "invitation_desc":
+            MessageLookupByLibrary.simpleMessage("现在使用它们来生成无水印的高分辨率卡通图像"),
         "invited_code": MessageLookupByLibrary.simpleMessage("邀请码"),
         "january": MessageLookupByLibrary.simpleMessage("一月"),
         "july": MessageLookupByLibrary.simpleMessage("七月"),
@@ -358,6 +361,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "toastVideoSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
         "trans_painting": MessageLookupByLibrary.simpleMessage("AI作画中..."),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("正在上传..."),
+        "try_it_now": MessageLookupByLibrary.simpleMessage("现在就去"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),

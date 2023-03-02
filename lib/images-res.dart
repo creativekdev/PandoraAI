@@ -5,6 +5,8 @@ class Images {
    static const String ic_add = 'assets/images/ic_add.png';
    static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
+   static const String ic_another_arrow_down = 'assets/images/ic_another_arrow_down.png';
+   static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
@@ -65,6 +67,7 @@ class Images {
    static const String ic_image_saved = 'assets/images/ic_image_saved.png';
    static const String ic_instagram = 'assets/images/ic_instagram.png';
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
+   static const String ic_invitation_dialog_bg = 'assets/images/ic_invitation_dialog_bg.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
    static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
    static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
@@ -73,6 +76,9 @@ class Images {
    static const String ic_man = 'assets/images/ic_man.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_list = 'assets/images/ic_msg_list.png';
+   static const String ic_mt_result_bottom = 'assets/images/ic_mt_result_bottom.png';
+   static const String ic_mt_result_middle = 'assets/images/ic_mt_result_middle.png';
+   static const String ic_mt_result_top = 'assets/images/ic_mt_result_top.png';
    static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';

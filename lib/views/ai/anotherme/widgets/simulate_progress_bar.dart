@@ -3,13 +3,13 @@ import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'dart:math' as math;
 
 class SimulateProgressBar {
-  static Future<bool?> startLoading(
+  static Future<List<dynamic>?> startLoading(
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
     Function(double progress)? onUpdate,
   }) {
-    return showDialog<bool>(
+    return showDialog<List<dynamic>>(
       context: context,
       builder: (context) {
         return _SimulateProgressBar(
@@ -81,7 +81,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         animationController.forward();
       }
     };
-    controller._onErrorCall = () => Navigator.of(context).pop(false);
+    controller._onErrorCall = (error) => Navigator.of(context).pop([false, error]);
     uploadAnimController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     uploadAnimController.addStatusListener((status) {
       if (!needUploadProgress) {
@@ -106,7 +106,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
     animationController.addListener(() => onUpdate?.call(calculateProgress()));
     completeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigator.of(context).pop(true);
+        Navigator.of(context).pop([true, null]);
       }
     });
     completeController.addListener(() => onUpdate?.call(calculateProgress()));
@@ -199,7 +199,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
 class SimulateProgressBarController {
   Function? _completeCall;
   Function? _uploadCompleteCall;
-  Function? _onErrorCall;
+  Function(String? error)? _onErrorCall;
 
   loadComplete() {
     _completeCall?.call();
@@ -209,9 +209,9 @@ class SimulateProgressBarController {
     _uploadCompleteCall?.call();
   }
 
-  onError() {
+  onError({String? error}) {
     delay(() {
-      _onErrorCall?.call();
+      _onErrorCall?.call(error);
     }, milliseconds: 32);
   }
 }

@@ -196,6 +196,7 @@ class TransResultNewCard extends StatelessWidget {
   }
 
   void openImage(BuildContext context, final int index) async {
+    Events.metaverseCompletePreview();
     List<AnyPhotoItem> images =
         [originalImage, resultImage].transfer((e, index) => AnyPhotoItem(type: AnyPhotoType.file, uri: e.path, tag: index == 0 ? AnotherMe.takeItemTag : null));
     Navigator.push(

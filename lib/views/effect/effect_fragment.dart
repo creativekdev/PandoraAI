@@ -27,6 +27,7 @@ import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:cartoonizer/views/payment.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -381,7 +382,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                             .intoGestureDetector(onTap: () {
                           AnotherMe.checkPermissions().then((value) {
                             if (value) {
-                              AnotherMe.open(context);
+                              AnotherMe.open(context, source: 'home_page');
                             } else {
                               showPhotoLibraryPermissionDialog(context);
                             }
@@ -536,23 +537,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                           ))
                       .intoGestureDetector(onTap: () {
                     userManager.doOnLogin(context, logPreLoginAction: 'purchase_pro_click', callback: () {
-                      if (Platform.isIOS) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/PurchaseScreen"),
-                            builder: (context) => PurchaseScreen(),
-                          ),
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                            builder: (context) => StripeSubscriptionScreen(),
-                          ),
-                        );
-                      }
+                      PaymentUtils.pay(context, 'home_page');
                     });
                   }),
                 ],

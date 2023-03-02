@@ -3110,20 +3110,20 @@ class S {
     );
   }
 
-  /// `Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium`
+  /// `Generate action has reached the upper limit, Please try again tomorrow or buy Premium`
   String get generate_reached_limit {
     return Intl.message(
-      'Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium',
+      'Generate action has reached the upper limit, Please try again tomorrow or buy Premium',
       name: 'generate_reached_limit',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generate action has reached the upper limit\nPlease try again tomorrow`
+  /// `Generate action has reached the upper limit, Please try again tomorrow`
   String get generate_reached_limit_vip {
     return Intl.message(
-      'Generate action has reached the upper limit\nPlease try again tomorrow',
+      'Generate action has reached the upper limit, Please try again tomorrow',
       name: 'generate_reached_limit_vip',
       desc: '',
       args: [],
@@ -3165,6 +3165,36 @@ class S {
     return Intl.message(
       'Please enter the invitation code',
       name: 'please_input_invited_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Congratulations!`
+  String get congratulations {
+    return Intl.message(
+      'Congratulations!',
+      name: 'congratulations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use them now to generate high-resolution cartoonized images without watermarks`
+  String get invitation_desc {
+    return Intl.message(
+      'Use them now to generate high-resolution cartoonized images without watermarks',
+      name: 'invitation_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try it now`
+  String get try_it_now {
+    return Intl.message(
+      'Try it now',
+      name: 'try_it_now',
       desc: '',
       args: [],
     );

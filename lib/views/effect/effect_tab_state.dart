@@ -25,6 +25,7 @@ mixin EffectTabState<T extends StatefulWidget> on State<T> {
     } else {
       itemPos = controller.tabItemList.findPosition((data) => data.data.key == pushExtraEntity.effect)!;
     }
+    Events.facetoonLoading(source: 'push_click');
     await Navigator.push(
       context,
       MaterialPageRoute(

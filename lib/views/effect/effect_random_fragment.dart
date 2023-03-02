@@ -340,6 +340,7 @@ class EffectRandomFragmentState extends State<EffectRandomFragment> with Automat
     var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     var itemP = effectDataController.tabItemList.findPosition((d) => d.data.key == data.item!.key)!;
+    Events.facetoonLoading(source: 'home_page');
 
     await Navigator.push(
       context,

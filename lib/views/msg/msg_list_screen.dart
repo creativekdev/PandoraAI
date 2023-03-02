@@ -30,6 +30,7 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   void initState() {
     super.initState();
+    Events.noticeLoading();
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());
   }
@@ -71,7 +72,12 @@ class MsgListState extends AppState<MsgListScreen> {
             hideLoading().whenComplete(() {
               if (value != null) {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(discoveryEntity: value)),
+                  MaterialPageRoute(
+                      builder: (_) => DiscoveryEffectDetailScreen(
+                            discoveryEntity: value,
+                            prePage: 'msg_page',
+                            dataType: 'msg_page',
+                          )),
                 );
               }
             });
@@ -85,7 +91,12 @@ class MsgListState extends AppState<MsgListScreen> {
             hideLoading().whenComplete(() {
               if (value != null) {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => DiscoveryEffectDetailScreen(discoveryEntity: value)),
+                  MaterialPageRoute(
+                      builder: (_) => DiscoveryEffectDetailScreen(
+                            discoveryEntity: value,
+                            prePage: 'msg_page',
+                            dataType: 'msg_page',
+                          )),
                 );
               }
             });

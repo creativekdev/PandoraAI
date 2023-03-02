@@ -21,6 +21,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
+import 'package:cartoonizer/views/payment.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
 
 import 'widget/user_base_info_widget.dart';
@@ -161,6 +162,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 var appLink = Config.getStoreLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                Events.shareApp();
                 await FlutterShareMe().shareToSystem(msg: appLink);
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
@@ -205,27 +207,9 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               ),
               ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                if (Platform.isIOS) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/PurchaseScreen"),
-                      builder: (context) => PurchaseScreen(),
-                    ),
-                  ).then((value) {
-                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                  });
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                      builder: (context) => StripeSubscriptionScreen(),
-                    ),
-                  ).then((value) {
-                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                  });
-                }
+                PaymentUtils.pay(context, 'my_page').then((value) {
+                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                });
               }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(

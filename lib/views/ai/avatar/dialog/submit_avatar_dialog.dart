@@ -130,6 +130,9 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
               return;
             }
             var json = cacheManager.getJson(CacheManager.lastCreateAvatar);
+            if (json == null) {
+              json = {};
+            }
             json['name'] = controller.text;
             json['style'] = selectedStyle;
             await cacheManager.setJson(CacheManager.lastCreateAvatar, json);

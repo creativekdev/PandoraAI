@@ -8,7 +8,8 @@ class AnotherMe {
   static String logoBackTag = 'am_back_logo';
   static String takeItemTag = 'am_take_item';
 
-  static Future<void> open(BuildContext context, {RecentMetaverseEntity? entity}) async {
+  static Future<void> open(BuildContext context, {RecentMetaverseEntity? entity, required String source}) async {
+    Events.metaverseLoading(source: source);
     return await Navigator.push<void>(
       context,
       MaterialPageRoute(

@@ -3,6 +3,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/splash_ads_holder.dart';
 import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -21,6 +22,7 @@ class ThirdpartManager extends BaseManager {
   }
 
   bool get appBackground => _appBackground;
+  late StreamSubscription onPayStatusListen;
 
   @override
   Future<void> onCreate() async {
@@ -31,6 +33,18 @@ class ThirdpartManager extends BaseManager {
     LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode, maxLen: 256);
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
     EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
+    onPayStatusListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
+      var string = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.prePaymentAction);
+      if (!TextUtil.isEmpty(string)) {
+        Events.paySuccess(source: string);
+      }
+    });
+  }
+
+  @override
+  Future<void> onDestroy() async {
+    await super.onDestroy();
+    onPayStatusListen.cancel();
   }
 
   initRefresh(Locale? result) {

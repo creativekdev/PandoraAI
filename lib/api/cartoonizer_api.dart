@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/events.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ThemeConstant.dart';
-import 'package:cartoonizer/common/events.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
@@ -154,6 +154,8 @@ class CartoonizerApi extends BaseRequester {
     required int socialPostId,
     int? replySocialPostCommentId,
     Function? onUserExpired,
+    required String source,
+    required String style,
   }) async {
     var map = {
       'text': comment,
@@ -172,6 +174,7 @@ class CartoonizerApi extends BaseRequester {
       if (replySocialPostCommentId != null) {
         data.add(replySocialPostCommentId);
       }
+      Events.discoveryCommentClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnCreateCommentEvent(data: data));
     }
     return baseEntity;
@@ -213,6 +216,8 @@ class CartoonizerApi extends BaseRequester {
   Future<int?> commentLike(
     int id, {
     Function? onUserExpired,
+    required String source,
+    required String style,
   }) async {
     var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id}, onFailed: (response) {
       if (response.statusCode == 401) {
@@ -221,6 +226,7 @@ class CartoonizerApi extends BaseRequester {
     });
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
+      Events.discoveryLikeClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
     }

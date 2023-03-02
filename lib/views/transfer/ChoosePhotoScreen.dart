@@ -531,6 +531,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   showSavePhotoDialog(BuildContext context) {
     if (lastBuildType == _BuildType.hdImage || controller.isVideo.value) {
+      Events.facetoonResultSave(type: lastBuildType.name);
       saveToAlbum();
     } else {
       showModalBottomSheet(
@@ -547,6 +548,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () async {
                   Navigator.of(context).pop();
+                  Events.facetoonResultSave(type: lastBuildType.name);
                   await saveToAlbum();
                 }),
                 Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
@@ -576,6 +578,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         _cachedImage = null;
                         imageSize = null;
                       });
+                      Events.facetoonResultSave(type: 'watch_ad_hdImage');
                       saveToAlbum();
                     }
                   });
@@ -608,6 +611,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     }
                     if (lastBuildType == _BuildType.waterMark && getBuildType() == _BuildType.hdImage) {
                       controller.changeIsLoading(true);
+                      Events.facetoonResultSave(type: 'sign_hdImage');
                       getCartoon(context, rebuild: true);
                     }
                   });
@@ -693,15 +697,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         videoPath = value as String;
         if (value != "") {
           AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-          ShareScreen.startShare(
-            context,
-            backgroundColor: Color(0x77000000),
-            style: selectedEffect.key,
-            image: (controller.isVideo.value) ? videoPath : image,
-            isVideo: controller.isVideo.value,
-            originalUrl: urlFinal,
-            effectKey: selectedEffect.key,
-          );
+          ShareScreen.startShare(context,
+              backgroundColor: Color(0x77000000),
+              style: selectedEffect.key,
+              image: (controller.isVideo.value) ? videoPath : image,
+              isVideo: controller.isVideo.value,
+              originalUrl: urlFinal,
+              effectKey: selectedEffect.key, onShareSuccess: (platform) {
+            Events.facetoonResultShare(platform: platform);
+          });
           AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         } else {
           CommonExtension().showToast(S.of(context).commonFailedToast);
@@ -712,15 +716,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       controller.changeIsLoading(true);
       var newImage = await composeImageWithWatermark();
       controller.changeIsLoading(false);
-      ShareScreen.startShare(
-        context,
-        backgroundColor: Color(0x77000000),
-        style: selectedEffect.key,
-        image: (controller.isVideo.value) ? videoPath : newImage,
-        isVideo: controller.isVideo.value,
-        originalUrl: urlFinal,
-        effectKey: selectedEffect.key,
-      ).then((value) {
+      ShareScreen.startShare(context,
+          backgroundColor: Color(0x77000000),
+          style: selectedEffect.key,
+          image: (controller.isVideo.value) ? videoPath : newImage,
+          isVideo: controller.isVideo.value,
+          originalUrl: urlFinal,
+          effectKey: selectedEffect.key, onShareSuccess: (platform) {
+        Events.facetoonResultShare(platform: platform);
+      }).then((value) {
         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
       });
     }
@@ -753,6 +757,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: DiscoveryCategory.cartoonize,
         ).then((value) {
           if (value ?? false) {
+            Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -769,6 +774,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: DiscoveryCategory.cartoonize,
         ).then((value) {
           if (value ?? false) {
+            Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -1672,6 +1678,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
 
         if (resultSuccess == 1) {
+          Events.facetoonGenerated(style: selectedEffect.key);
           if (TextUtil.isEmpty(controller.videoFile.value?.path) || TextUtil.isEmpty(_image)) {
             return;
           }

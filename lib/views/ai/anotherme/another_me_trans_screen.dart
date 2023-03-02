@@ -6,6 +6,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
@@ -36,12 +37,14 @@ class AnotherMeTransScreen extends StatefulWidget {
   File file;
   double ratio;
   File? resultFile;
+  String photoType;
 
   AnotherMeTransScreen({
     Key? key,
     required this.file,
     required this.ratio,
     this.resultFile,
+    required this.photoType,
   }) : super(key: key);
 
   @override
@@ -51,6 +54,7 @@ class AnotherMeTransScreen extends StatefulWidget {
 class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   late File file;
   late double ratio;
+  UserManager userManager = AppDelegate().getManager();
   AnotherMeController controller = Get.find();
   UploadImageController uploadImageController = Get.find();
   RecentController recentController = Get.find();
@@ -59,11 +63,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   late double resultCardHeight;
   late double dividerSize;
   File? transResult;
+  late String photoType;
+  int generateCount = 0;
 
   @override
   void initState() {
     super.initState();
     ratio = widget.ratio;
+    photoType = widget.photoType;
     dividerSize = $(8);
     resultCardWidth = ScreenUtil.screenSize.width - $(32);
     resultCardHeight = ratio > axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
@@ -83,6 +90,42 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     });
   }
 
+  showLimitDialog(BuildContext context, String content) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TitleTextWidget(
+                  content,
+                  ColorConstant.White,
+                  FontWeight.w500,
+                  $(16),
+                  maxLines: 100,
+                ).intoContainer(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.symmetric(vertical: $(15), horizontal: $(10)),
+                  alignment: Alignment.center,
+                ),
+                Container(height: 1, color: ColorConstant.LineColor),
+                Text(
+                  S.of(context).ok,
+                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
+                )
+                    .intoContainer(
+                  width: double.maxFinite,
+                  color: Colors.transparent,
+                  padding: EdgeInsets.only(top: $(10), bottom: $(12)),
+                  alignment: Alignment.center,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.pop(_);
+                }),
+              ],
+            ).customDialogStyle());
+  }
+
   void generate(BuildContext _context, AnotherMeController controller) async {
     var key = await md5File(file);
     var needUpload = await uploadImageController.needUploadByKey(key);
@@ -92,12 +135,24 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       needUploadProgress: needUpload,
       controller: simulateProgressBarController,
     ).then((value) {
-      if (value ?? false) {
+      if (value == null || value.isEmpty) {
+        controller.onError();
+      } else if (value.first ?? false) {
+        Events.metaverseCompleteSuccess(photo: photoType);
+        generateCount++;
+        if (generateCount - 1 > 0) {
+          Events.metaverseCompleteGenerateAgain(time: generateCount - 1);
+        }
         controller.onSuccess();
         setState(() {
           showAnim(context);
         });
       } else {
+        if (value.length == 2) {
+          if (!TextUtil.isEmpty(value.last)) {
+            showLimitDialog(context, value.last);
+          }
+        }
         controller.onError();
       }
     });
@@ -107,11 +162,15 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         uploadImageController.getCachedIdByKey(key).then((cachedId) {
           controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
             if (value != null) {
-              uploadImageController.updateCachedId(file, value.cacheId ?? '');
-              var image = File(controller.transKey!);
-              recentController.onMetaverseUsed(file, image);
-              transResult = image;
-              simulateProgressBarController.loadComplete();
+              if (value.entity != null) {
+                uploadImageController.updateCachedId(file, value.entity!.cacheId ?? '');
+                var image = File(controller.transKey!);
+                recentController.onMetaverseUsed(file, image);
+                transResult = image;
+                simulateProgressBarController.loadComplete();
+              } else {
+                simulateProgressBarController.onError(error: value.msg);
+              }
             } else {
               simulateProgressBarController.onError();
             }
@@ -224,6 +283,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                       onChoosePhotoTap: () {
                         optKey.currentState!.dismiss().whenComplete(() {
                           controller.clear(uploadImageController);
+                          Events.metaverseCompleteTakeAgain();
                           Navigator.of(context).pop(false);
                         });
                       },
@@ -242,7 +302,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               });
                             } else {
                               await showLoading();
-                              var uint8list = await printImageData(file, File(controller.transKey!));
+                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownEmail() ?? 'Pandora User'}');
                               var list = uint8list.toList();
                               var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
                               var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
@@ -262,9 +322,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         if (TextUtil.isEmpty(controller.transKey)) {
                           return;
                         }
-                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context,
-                            logPreLoginAction: 'share_discovery_from_metaverse',
-                            callback: () {
+                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
                           var file = File(controller.transKey!);
                           ShareDiscoveryScreen.push(
                             context,
@@ -275,6 +333,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                             category: DiscoveryCategory.another_me,
                           ).then((value) {
                             if (value ?? false) {
+                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
                               showShareSuccessDialog(context);
                             }
                           });
@@ -294,15 +353,15 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                   }
                                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                                   await hideLoading();
-                                  ShareScreen.startShare(
-                                    context,
-                                    backgroundColor: Color(0x77000000),
-                                    style: 'Me-taverse',
-                                    image: value,
-                                    isVideo: true,
-                                    originalUrl: null,
-                                    effectKey: 'Me-taverse',
-                                  );
+                                  ShareScreen.startShare(context,
+                                      backgroundColor: Color(0x77000000),
+                                      style: 'Me-taverse',
+                                      image: value,
+                                      isVideo: true,
+                                      originalUrl: null,
+                                      effectKey: 'Me-taverse', onShareSuccess: (platform) {
+                                    Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
+                                  });
                                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                                 }
                               });
@@ -311,18 +370,18 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
-                              var uint8list = await printImageData(file, File(controller.transKey!));
+                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownEmail() ?? 'Pandora User'}');
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               await hideLoading();
-                              ShareScreen.startShare(
-                                context,
-                                backgroundColor: Color(0x77000000),
-                                style: 'Me-taverse',
-                                image: base64Encode(uint8list),
-                                isVideo: false,
-                                originalUrl: null,
-                                effectKey: 'Me-taverse',
-                              );
+                              ShareScreen.startShare(context,
+                                  backgroundColor: Color(0x77000000),
+                                  style: 'Me-taverse',
+                                  image: base64Encode(uint8list),
+                                  isVideo: false,
+                                  originalUrl: null,
+                                  effectKey: 'Me-taverse', onShareSuccess: (platform) {
+                                Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'image');
+                              });
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                             }
                           }
@@ -351,7 +410,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
             ).intoContainer(
                 height: ScreenUtil.screenSize.height,
                 width: ScreenUtil.screenSize.width,
-                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg)))),
+                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill))),
           );
         },
       ),
@@ -360,86 +419,146 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         return false;
       });
 
+  double scaleSize = 1080 / 375;
+
+  double dp(double source) => source * scaleSize;
+
   ///375 设计宽度下，对应输出1080宽度下缩放比2.88
   ///appIcon宽度64，二维码宽度64，标题字体17，描述文案字体13
   ///底部app推广高度105
-  Future<Uint8List> printImageData(File originalImage, File resultImage) async {
-    double scaleSize = 2.88; //1080/375;
+  Future<Uint8List> printImageData(File originalImage, File resultImage, String userEmail) async {
+    var bgSource = await SyncAssetImage(assets: Images.ic_another_me_trans_bg).getImage();
+    var bgHeadInfo = await SyncAssetImage(assets: Images.ic_mt_result_top).getImage();
+    var bgMiddleInfo = await SyncAssetImage(assets: Images.ic_mt_result_middle).getImage();
+    var bgBottomInfo = await SyncAssetImage(assets: Images.ic_mt_result_bottom).getImage();
     var originalImageInfo = await SyncFileImage(file: originalImage).getImage();
     var resultImageInfo = await SyncFileImage(file: resultImage).getImage();
     var appIconImageInfo = await SyncAssetImage(assets: Images.ic_app).getImage();
     var qrCodeImageInfo = await SyncAssetImage(assets: Images.ic_app_qrcode).getImage();
-    double appIconSize = 64 * scaleSize; //40*scaleSize
-    double qrcodeSize = 64 * scaleSize;
-    double titleSize = 17 * scaleSize;
-    double descSize = 13 * scaleSize;
-    double width = 1080;
-    double dividerSize = 8 * scaleSize;
-    double padding = 16 * scaleSize;
-    double bottomSize = 105 * scaleSize;
+    var arrowRightImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_right).getImage();
+    var arrowDownImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_down).getImage();
+
+    double width = dp(375);
+    double headWidth = dp(360);
+    double headBgHeight = headWidth * bgHeadInfo.image.height / bgHeadInfo.image.width;
+    Offset userNamePos = Offset(dp(25), dp(70));
+    double headHeight = dp(100);
+    double bottomBgHeight = headWidth * bgBottomInfo.image.height / bgBottomInfo.image.width;
+    double bottomHeight = dp(105);
+
+    double imageContainerWidth = dp(324);
+
+    double appIconSize = dp(64);
+    double qrcodeSize = dp(64);
+    double titleSize = dp(17);
+    double nameSize = dp(13);
+    double descSize = dp(13);
+    double dividerSize = dp(8);
+    double padding = dp(16);
+
     var imageWidth;
     var imageHeight;
     var ratio = originalImageInfo.image.height / originalImageInfo.image.width;
     if (ratio > axisRatioFlag) {
-      imageWidth = (width - dividerSize - padding * 2) / 2;
+      imageWidth = (imageContainerWidth - dividerSize) / 2;
       imageHeight = imageWidth * ratio;
     } else {
-      imageWidth = width - padding * 2;
+      imageWidth = imageContainerWidth;
       imageHeight = imageWidth * ratio * 2 + dividerSize;
     }
-    double height = imageHeight + padding * 2 + bottomSize; //105*2.88
+    double height = imageHeight + headHeight + bottomHeight + padding * 2;
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(width, height)));
-    //绘制背景渐变色
-    Paint colorfulPaint = Paint();
-    var colorfulRect = Rect.fromLTWH(0, 0, width, imageHeight + padding * 2);
-    colorfulPaint.shader = LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-      colors: [
-        Color(0xFF04F1F9),
-        Color(0xFF7F97F3),
-        Color(0xFFEC5DD8),
-      ],
-    ).createShader(colorfulRect);
-    canvas.drawRect(colorfulRect, colorfulPaint);
+
+    //绘制背景
+    var bgSrcRect = Rect.fromLTWH(0, 0, bgSource.image.width.toDouble(), bgSource.image.height.toDouble());
+    var bgDstRect = Rect.fromLTWH(0, 0, width, height);
+    canvas.drawImageRect(bgSource.image, bgSrcRect, bgDstRect, Paint());
+
+    var headSrcRect = Rect.fromLTWH(0, 0, bgHeadInfo.image.width.toDouble(), bgHeadInfo.image.height.toDouble());
+    var headDstRect = Rect.fromLTWH(dp(8), padding, headWidth, headBgHeight);
+    canvas.drawImageRect(bgHeadInfo.image, headSrcRect, headDstRect, Paint());
+
+    var middleSrcRect = Rect.fromLTWH(0, 0, bgMiddleInfo.image.width.toDouble(), bgMiddleInfo.image.height.toDouble());
+    var middleHeight = height - headBgHeight - padding * 2 - bottomBgHeight;
+    var middleDstRect = Rect.fromLTWH(dp(8), headBgHeight + padding, headWidth, middleHeight);
+    canvas.drawImageRect(bgMiddleInfo.image, middleSrcRect, middleDstRect, Paint());
+
+    var bottomSrcRect = Rect.fromLTWH(0, 0, bgBottomInfo.image.width.toDouble(), bgBottomInfo.image.height.toDouble());
+    var bottomDstRect = Rect.fromLTWH(dp(8), headBgHeight + padding + middleHeight, headWidth, bottomBgHeight);
+    canvas.drawImageRect(bgBottomInfo.image, bottomSrcRect, bottomDstRect, Paint());
+
+    // 绘制标题文本
+    var emailPainter = TextPainter(
+      text: TextSpan(
+          text: userEmail,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+            color: ColorConstant.White,
+            fontSize: nameSize,
+          )),
+      ellipsis: '...',
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.justify,
+      textWidthBasis: TextWidthBasis.longestLine,
+      maxLines: 2,
+    )..layout(maxWidth: headWidth);
+    emailPainter.paint(canvas, userNamePos);
 
     //绘制原图
     var originalImageSrcRect = Rect.fromLTWH(0, 0, originalImageInfo.image.width.toDouble(), originalImageInfo.image.height.toDouble());
-    var originalImageDstRect = Rect.fromLTWH(padding, padding, imageWidth, imageWidth * ratio);
+    var originalImageDstRect = Rect.fromLTWH(dp(25), headHeight, imageWidth, imageWidth * ratio);
     canvas.drawImageRect(originalImageInfo.image, originalImageSrcRect, originalImageDstRect, Paint());
 
     //绘制结果图
     var resultImageSrcRect = Rect.fromLTWH(0, 0, resultImageInfo.image.width.toDouble(), resultImageInfo.image.height.toDouble());
     Rect resultImageDstRect;
     if (ratio > axisRatioFlag) {
-      resultImageDstRect = Rect.fromLTWH(padding + imageWidth + dividerSize, padding, imageWidth, imageWidth * ratio);
+      resultImageDstRect = Rect.fromLTWH(dp(25) + imageWidth + dividerSize, headHeight, imageWidth, imageWidth * ratio);
     } else {
-      resultImageDstRect = Rect.fromLTWH(padding, padding + imageWidth * ratio + dividerSize, imageWidth, imageWidth * ratio);
+      resultImageDstRect = Rect.fromLTWH(dp(25), headHeight + imageWidth * ratio + dividerSize, imageWidth, imageWidth * ratio);
     }
     canvas.drawImageRect(resultImageInfo.image, resultImageSrcRect, resultImageDstRect, Paint());
 
+    // 绘制箭头
+    if (ratio > axisRatioFlag) {
+      Rect arrowRightSrcRect = Rect.fromLTWH(0, 0, arrowRightImageInfo.image.width.toDouble(), arrowRightImageInfo.image.height.toDouble());
+      Rect arrowRightDstRect = Rect.fromLTWH(dp(20) + imageWidth, headHeight + imageHeight / 2 - dp(10), dp(20), dp(20));
+      canvas.drawImageRect(arrowRightImageInfo.image, arrowRightSrcRect, arrowRightDstRect, Paint());
+    } else {
+      Rect arrowDownSrcRect = Rect.fromLTWH(0, 0, arrowDownImageInfo.image.width.toDouble(), arrowDownImageInfo.image.height.toDouble());
+      Rect arrowDownDstRect = Rect.fromLTWH(width / 2 - dp(10), headHeight + imageHeight / 2 - dp(10), dp(20), dp(20));
+      canvas.drawImageRect(arrowDownImageInfo.image, arrowDownSrcRect, arrowDownDstRect, Paint());
+    }
+
     // 绘制底部白色块
-    canvas.drawRect(
-        Rect.fromLTWH(0, height - bottomSize, width, bottomSize),
+    canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(dp(25), height - bottomHeight - padding - dividerSize, imageContainerWidth, dp(90)),
+          topLeft: Radius.circular(dp(4)),
+          topRight: Radius.circular(dp(4)),
+          bottomLeft: Radius.circular(dp(4)),
+          bottomRight: Radius.circular(dp(4)),
+        ),
         Paint()
-          ..color = Colors.white
+          ..color = Color(0x2bffffff)
           ..style = PaintingStyle.fill);
 
     // 绘制appicon
-    double appIconY = height - bottomSize + 21 * scaleSize;
+    double appIconY = height - bottomHeight - padding + dp(5);
     canvas.drawImageRect(
       appIconImageInfo.image,
       Rect.fromLTWH(0, 0, appIconImageInfo.image.width.toDouble(), appIconImageInfo.image.height.toDouble()),
-      Rect.fromLTWH(padding, appIconY, appIconSize, appIconSize),
+      Rect.fromLTWH(dp(33), appIconY, appIconSize, appIconSize),
       Paint(),
     );
     // 绘制二维码
-    double qrCodeY = height - bottomSize + 16 * scaleSize;
+    double qrCodeY = height - bottomHeight - padding + dp(5);
     canvas.drawImageRect(
       qrCodeImageInfo.image,
       Rect.fromLTWH(0, 0, qrCodeImageInfo.image.width.toDouble(), qrCodeImageInfo.image.height.toDouble()),
-      Rect.fromLTWH(width - padding - qrcodeSize, qrCodeY, qrcodeSize, qrcodeSize),
+      Rect.fromLTWH(width - qrcodeSize - dp(33), qrCodeY, qrcodeSize, qrcodeSize),
       Paint(),
     );
 
@@ -450,7 +569,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           style: TextStyle(
             fontFamily: 'Poppins',
             fontWeight: FontWeight.bold,
-            color: Color(0xff323232),
+            color: Colors.white,
             fontSize: titleSize,
           )),
       ellipsis: '...',
@@ -458,9 +577,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: width - padding * 2 - appIconSize - qrcodeSize - 8 * scaleSize);
-    double titleY = height - bottomSize + 18 * scaleSize;
-    textPainter.paint(canvas, Offset(padding + 8 * scaleSize + appIconSize, titleY));
+    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
+    double titleY = height - bottomHeight - padding + dp(8);
+    textPainter.paint(canvas, Offset(dp(41) + appIconSize, titleY));
 
     // 绘制描述文本
     var descPainter = TextPainter(
@@ -469,7 +588,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           style: TextStyle(
             fontFamily: 'Poppins',
             fontWeight: FontWeight.normal,
-            color: Color(0xff323232),
+            color: Colors.white,
             fontSize: descSize,
             height: 1.1,
           )),
@@ -478,9 +597,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: width - padding * 2 - appIconSize - qrcodeSize - 24 * scaleSize);
-    double descY = height - bottomSize + 50 * scaleSize;
-    descPainter.paint(canvas, Offset(padding + 8 * scaleSize + appIconSize, descY));
+    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
+    double descY = height - bottomHeight + dp(20);
+    descPainter.paint(canvas, Offset(dp(41) + appIconSize, descY));
 
     final picture = recorder.endRecording();
     final img = await picture.toImage(width.toInt(), height.toInt());

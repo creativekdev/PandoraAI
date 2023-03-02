@@ -1,26 +1,34 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/discovery/discovery_secondary_comment_list_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widget.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity discoveryEntity;
+  String prePage;
+  String dataType;
 
   DiscoveryEffectDetailScreen({
     Key? key,
     required this.discoveryEntity,
+    required this.prePage,
+    required this.dataType,
   }) : super(key: key);
 
   @override
@@ -43,6 +51,8 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   late StreamSubscription onDiscoveryUnlikeEventListener;
   late StreamSubscription onCreateCommentListener;
   late ScrollController scrollController;
+  late String prePage;
+  late String dataType;
 
   DiscoveryEffectDetailScreenState() : super(canCancelOnLoading: false);
 
@@ -55,6 +65,8 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   @override
   void initState() {
     super.initState();
+    prePage = widget.prePage;
+    dataType = widget.dataType;
     scrollController = ScrollController();
     api = CartoonizerApi().bindState(this);
     discoveryEntity = widget.discoveryEntity.copy();
@@ -116,6 +128,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
         setState(() {});
       }
     });
+    logLoading();
     delay(() => _refreshController.callRefresh());
   }
 
@@ -190,6 +203,8 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     await showLoading();
     var baseEntity = await api.createDiscoveryComment(
         comment: comment,
+        source: dataType,
+        style: style,
         socialPostId: discoveryEntity.id,
         replySocialPostCommentId: replySocialPostCommentId,
         onUserExpired: () {
@@ -207,7 +222,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     userManager.doOnLogin(context, logPreLoginAction: entity.likeId == null ? 'pre_comment_like' : 'pre_comment_unlike', callback: () {
       showLoading().whenComplete(() {
         if (entity.likeId == null) {
-          api.commentLike(entity.id).then((value) {
+          api.commentLike(entity.id, source: dataType, style: style).then((value) {
             hideLoading();
           });
         } else {
@@ -234,6 +249,53 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       });
     }, autoExec: false);
   }
+
+  logLoading() {
+    if (discoveryEntity.category == DiscoveryCategory.cartoonize.name) {
+      EffectDataController effectDataController = Get.find();
+      if (effectDataController.data == null) {
+        return;
+      }
+      String key = discoveryEntity.cartoonizeKey;
+      int tabPos = effectDataController.data!.tabPos(key);
+      if (tabPos == -1) {
+        CommonExtension().showToast(S.of(context).template_not_available);
+        return;
+      }
+      var targetSeries = effectDataController.data!.targetSeries(key)!;
+      EffectModel? effectModel;
+      EffectItem? effectItem;
+      int index = 0;
+      for (int i = 0; i < targetSeries.value.length; i++) {
+        if (effectModel != null) {
+          break;
+        }
+        var model = targetSeries.value[i];
+        var list = model.effects.values.toList();
+        for (int j = 0; j < list.length; j++) {
+          var item = list[j];
+          if (item.key == key) {
+            effectModel = model;
+            effectItem = item;
+            index = i;
+            break;
+          }
+        }
+      }
+      if (effectItem == null) {
+        CommonExtension().showToast(S.of(context).template_not_available);
+        return;
+      }
+      style = 'facetoon-${effectItem.key}';
+    } else if (discoveryEntity.category == DiscoveryCategory.ai_avatar.name) {
+      style = 'avatar';
+    } else if (discoveryEntity.category == DiscoveryCategory.another_me.name) {
+      style = 'metaverse';
+    }
+    Events.discoveryDetailLoading(source: dataType, style: style);
+  }
+
+  late String style;
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -266,6 +328,8 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                         onCommentTap: () {
                           onCreateCommentClick();
                         },
+                        source: prePage + '-discovery',
+                        dataType: dataType,
                       );
                     } else {
                       var index = i - 1;

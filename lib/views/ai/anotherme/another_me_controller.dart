@@ -97,7 +97,7 @@ class AnotherMeController extends GetxController {
 
   bool hasTransRecord() => _transKey != null;
 
-  Future<AnotherMeResultEntity?> startTransfer(String imageUrl, String? cachedId) async {
+  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId) async {
     if (TextUtil.isEmpty(imageUrl)) {
       return null;
     }
@@ -105,11 +105,10 @@ class AnotherMeController extends GetxController {
     if (metaverseLimitEntity != null) {
       if (metaverseLimitEntity.usedCount == metaverseLimitEntity.dailyLimit) {
         if (isVip()) {
-          CommonExtension().showToast(S.of(Get.context!).generate_reached_limit_vip);
+          return TransferResult()..msg = S.of(Get.context!).generate_reached_limit_vip;
         } else {
-          CommonExtension().showToast(S.of(Get.context!).generate_reached_limit);
+          return TransferResult()..msg = S.of(Get.context!).generate_reached_limit;
         }
-        return null;
       }
     }
     if (_mFaceRatio == null) {
@@ -150,7 +149,7 @@ class AnotherMeController extends GetxController {
       'face_ratio': _mFaceRatio,
       'result_id': baseEntity.s,
     });
-    return baseEntity;
+    return TransferResult()..entity = baseEntity;
   }
 
   Future<bool> _uploadAndSave(
@@ -181,4 +180,11 @@ class AnotherMeController extends GetxController {
     File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
     return _uploadAndSave(key, compressedImage, uploadImageController, sourceFile: file);
   }
+}
+
+class TransferResult {
+  AnotherMeResultEntity? entity;
+  String? msg;
+
+  TransferResult();
 }

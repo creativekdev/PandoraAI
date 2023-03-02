@@ -32,12 +32,16 @@ class DiscoveryEffectDetailWidget extends StatefulWidget {
   DiscoveryListEntity data;
   LoadingAction loadingAction;
   Function() onCommentTap;
+  String source;
+  String dataType;
 
   DiscoveryEffectDetailWidget({
     Key? key,
     required this.data,
     required this.loadingAction,
     required this.onCommentTap,
+    required this.source,
+    required this.dataType,
   }) : super(key: key);
 
   @override
@@ -58,10 +62,14 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   late StreamSubscription onCreateCommentListener;
   List<DiscoveryResource> resources = [];
   EffectDataController effectDataController = Get.find();
+  late String source;
+  late String dataType;
 
   @override
   void initState() {
     super.initState();
+    source = widget.source;
+    dataType = widget.dataType;
     api = CartoonizerApi().bindState(this);
     loadingAction = widget.loadingAction;
     data = widget.data.copy();
@@ -241,11 +249,13 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               if (data.category == DiscoveryCategory.cartoonize.name) {
                 toChoosePage();
               } else if (data.category == DiscoveryCategory.ai_avatar.name) {
+                Events.discoveryTemplateClick(source: dataType, style: 'avatar');
                 Avatar.open(context, source: 'discovery');
               } else if (data.category == DiscoveryCategory.another_me.name) {
                 AnotherMe.checkPermissions().then((value) {
                   if (value) {
-                    AnotherMe.open(context);
+                    Events.discoveryTemplateClick(source: dataType, style: 'metaverse');
+                    AnotherMe.open(context, source: source + '-try-template');
                   } else {
                     showPhotoLibraryPermissionDialog(context);
                   }
@@ -423,6 +433,8 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     }
     categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
+    Events.facetoonLoading(source: source + '-try-template');
+    Events.discoveryTemplateClick(source: dataType, style: 'facetoon-${effectItem.key}');
     Navigator.push(
       context,
       MaterialPageRoute(

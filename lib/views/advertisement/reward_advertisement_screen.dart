@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/views/payment.dart';
 
 class RewardAdvertisementScreen extends StatefulWidget {
   RewardInterstitialAdsHolder adsHolder;
@@ -134,28 +135,10 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
                                         ),
                                       ))
                                   .intoGestureDetector(onTap: () {
-                                AppDelegate.instance.getManager<UserManager>().doOnLogin(context,
-                                    logPreLoginAction: 'reward_advertisement_dialog',
-                                    callback: () {
-                                  if (Platform.isIOS) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          settings: RouteSettings(name: "/PurchaseScreen"),
-                                          builder: (context) => PurchaseScreen(),
-                                        )).then((value) {
-                                      Navigator.of(context).pop(hasReward);
-                                    });
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          settings: RouteSettings(name: "/StripeSubscriptionScreen"),
-                                          builder: (context) => StripeSubscriptionScreen(),
-                                        )).then((value) {
-                                      Navigator.of(context).pop(hasReward);
-                                    });
-                                  }
+                                AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'reward_advertisement_dialog', callback: () {
+                                  PaymentUtils.pay(context, 'reward_advertisement').then((value) {
+                                    Navigator.of(context).pop(hasReward);
+                                  });
                                 }, autoExec: true);
                               }).intoContainer(
                                 margin: EdgeInsets.symmetric(horizontal: $(24)),

@@ -201,6 +201,7 @@ class EffectFaceFragmentState extends State<EffectFaceFragment> with AutomaticKe
     var tabPos = effectDataController.tabList.findPosition((data) => data.key == widget.tabString)!;
     var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
     var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
+    Events.facetoonLoading(source: 'home_page');
     await Navigator.push(
       context,
       MaterialPageRoute(

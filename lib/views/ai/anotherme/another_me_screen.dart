@@ -119,7 +119,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         var file = File(widget.entity!.filePath.first);
         SyncFileImage(file: file).getImage().then((value) {
           var ratio = value.image.height / value.image.width;
-          startTransfer(context, File(widget.entity!.originalPath!), ratio, file);
+          startTransfer(context, File(widget.entity!.originalPath!), ratio, file, 'recently');
         });
       }
       PickAlbumHelper.getNewest().then((value) {
@@ -354,7 +354,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                               takePhoto().then((value) {
                                 if (value != null) {
                                   _animationController.forward();
-                                  delay(() async => startTransfer(context, await saveIfNotExist(value.value), value.key, null), milliseconds: 300);
+                                  delay(() async => startTransfer(context, await saveIfNotExist(value.value), value.key, null, 'camera'), milliseconds: 300);
                                 } else {
                                   CommonExtension().showToast('Take Photo Failed');
                                 }
@@ -457,7 +457,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                   var xFile = XFile((file).path);
                   var imageInfo = await SyncFileImage(file: file).getImage();
                   var ratio = imageInfo.image.height / imageInfo.image.width;
-                  startTransfer(context, await saveIfNotExist(xFile), ratio, null);
+                  startTransfer(context, await saveIfNotExist(xFile), ratio, null, 'album');
                 }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
               },
               itemCount: assetList.length,
@@ -488,7 +488,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     return result;
   }
 
-  startTransfer(BuildContext context, File file, double ratio, File? result) {
+  startTransfer(BuildContext context, File file, double ratio, File? result, String photoType) {
     controller.clear(uploadImageController);
     Navigator.of(context)
         .push<bool>(
@@ -497,6 +497,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         file: file,
         ratio: ratio,
         resultFile: result,
+        photoType: photoType,
       )),
     )
         .then((value) {
@@ -526,7 +527,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             }
             var xFile = XFile((file).path);
             var imageInfo = await SyncFileImage(file: file).getImage();
-            startTransfer(context, await saveIfNotExist(xFile), imageInfo.image.height / imageInfo.image.width, null);
+            startTransfer(context, await saveIfNotExist(xFile), imageInfo.image.height / imageInfo.image.width, null, 'album');
           }
         });
       } else {

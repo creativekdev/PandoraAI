@@ -109,7 +109,10 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                 var config = snapShot.data! as AvatarConfig;
                 var roles = config.getRoles();
                 var lastAvatarConfig = cacheManager.getJson(CacheManager.lastCreateAvatar);
-                var selectedStyle = lastAvatarConfig['style']?.toString();
+                String? selectedStyle;
+                if (lastAvatarConfig != null) {
+                  selectedStyle = lastAvatarConfig['style']?.toString();
+                }
                 if (roles.contains(selectedStyle ?? '')) {
                   selectedStyleIndex = roles.indexOf(selectedStyle!);
                 } else {

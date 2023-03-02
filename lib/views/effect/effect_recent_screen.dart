@@ -28,6 +28,11 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
   ScrollController scrollController = ScrollController();
 
   @override
+  void initState() {
+    super.initState();
+    Events.recentlyLoading();
+  }
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
@@ -88,7 +93,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                           ).intoGestureDetector(onTap: () {
                             AnotherMe.checkPermissions().then((value) {
                               if (value) {
-                                AnotherMe.open(context, entity: data);
+                                AnotherMe.open(context, entity: data, source: 'recently');
                               } else {
                                 showPhotoLibraryPermissionDialog(context);
                               }
@@ -128,7 +133,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
 
     var fileExist = await File(pick!.originalPath ?? "").exists();
-
+    Events.facetoonLoading(source: 'recently');
     await Navigator.push(
       context,
       MaterialPageRoute(

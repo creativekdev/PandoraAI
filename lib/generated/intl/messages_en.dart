@@ -109,6 +109,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "confirm_pass":
             MessageLookupByLibrary.simpleMessage("Confirm Password"),
+        "congratulations":
+            MessageLookupByLibrary.simpleMessage("Congratulations!"),
         "connect_with_us":
             MessageLookupByLibrary.simpleMessage("Connect with us"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage(
@@ -185,9 +187,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
-            "Generate action has reached the upper limit\nPlease try again tomorrow or buy Premium"),
+            "Generate action has reached the upper limit, Please try again tomorrow or buy Premium"),
         "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
-            "Generate action has reached the upper limit\nPlease try again tomorrow"),
+            "Generate action has reached the upper limit, Please try again tomorrow"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
         "generating": MessageLookupByLibrary.simpleMessage("Creating"),
@@ -218,6 +220,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Continue with Instagram"),
         "invalid_password":
             MessageLookupByLibrary.simpleMessage("Invalid Password"),
+        "invitation_desc": MessageLookupByLibrary.simpleMessage(
+            "Use them now to generate high-resolution cartoonized images without watermarks"),
         "invited_code": MessageLookupByLibrary.simpleMessage("Invitation Code"),
         "january": MessageLookupByLibrary.simpleMessage("January"),
         "july": MessageLookupByLibrary.simpleMessage("July"),
@@ -443,6 +447,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_painting":
             MessageLookupByLibrary.simpleMessage("Ai Painting..."),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
+        "try_it_now": MessageLookupByLibrary.simpleMessage("Try it now"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),

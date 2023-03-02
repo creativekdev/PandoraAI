@@ -14,7 +14,7 @@ class Avatar {
   static String logoBackTag = 'avatar_back_logo';
   static String aiTag = 'ai_tag';
 
-  static openFromHome(BuildContext context, {String source = 'home'}) {
+  static openFromHome(BuildContext context, {String source = 'home_page'}) {
     UserManager userManager = AppDelegate.instance.getManager();
     if (userManager.isNeedLogin) {
       intro(context, source: source);

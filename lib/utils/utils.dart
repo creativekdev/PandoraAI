@@ -365,6 +365,7 @@ Future<ui.Image?> getBitmapFromContext(BuildContext context, {double pixelRatio 
 }
 
 Future<void> rateApp() async {
+  Events.rateUs();
   if (Platform.isIOS) {
     launchURL(Config.getStoreLink(toRate: true));
   } else {

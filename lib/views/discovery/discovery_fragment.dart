@@ -274,7 +274,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!),
+                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery',dataType: listController.currentTab.sort.value()),
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),

@@ -37,6 +37,7 @@ class CacheManager extends BaseManager {
   static const lastAlbum = 'last_album';
   static const preLoginAction = 'pre_login_action';
   static const preSignupAction = 'pre_signup_action';
+  static const prePaymentAction = 'pre_payment_action';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

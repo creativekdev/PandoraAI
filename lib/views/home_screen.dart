@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             if (tabItems[pos].id == AppTabId.AI.id()) {
                               AnotherMe.checkPermissions().then((value) {
                                 if (value) {
-                                  AnotherMe.open(context);
+                                  AnotherMe.open(context, source: 'home_page');
                                 } else {
                                   showPhotoLibraryPermissionDialog(context);
                                 }

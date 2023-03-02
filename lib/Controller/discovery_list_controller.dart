@@ -193,6 +193,7 @@ class DiscoveryListController extends GetxController {
       }, milliseconds: 1500);
       easyRefreshController.finishRefresh();
       if (value != null) {
+        Events.discoveryLoading();
         page = 0;
         dataList.clear();
         var list = value.getDataList<DiscoveryListEntity>();
