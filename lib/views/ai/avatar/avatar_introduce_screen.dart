@@ -130,6 +130,9 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
                         currentIndex: selectedStyleIndex,
                         onTabClick: (index) {
                           var lastAvatarConfig = cacheManager.getJson(CacheManager.lastCreateAvatar);
+                          if (lastAvatarConfig == null) {
+                            lastAvatarConfig = {};
+                          }
                           lastAvatarConfig['style'] = roles[index];
                           cacheManager.setJson(CacheManager.lastCreateAvatar, lastAvatarConfig).then((value) {
                             setState(() {

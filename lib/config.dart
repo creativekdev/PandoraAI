@@ -112,6 +112,10 @@ class Config {
     }
   }
 
+  static String getAppLink() {
+    return 'https://allsha.re/a/pandoraai';
+  }
+
   static String getStoreLink({bool toRate = false}) {
     if (Platform.isIOS) {
       return toRate ? IOS_LINK + "?action=write-review" : IOS_LINK;

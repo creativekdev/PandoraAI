@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -43,6 +43,8 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
 
   int imageNameCount = 24;
   late String fileName;
+  List<DealData> dealList = [];
+  var startTime = DateTime.now().millisecondsSinceEpoch;
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     origin = widget.origin;
     result = widget.result;
     ratio = widget.ratio;
-    designWidth = 480;
+    designWidth = 360;
     designHeight = designWidth * ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
@@ -66,8 +68,9 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
           buildVideo();
         }, onError: () {
           CommonExtension().showToast('build failed');
+          Navigator.of(context).pop();
         });
-      }, milliseconds: 1000);
+      }, milliseconds: 100);
     }
   }
 
@@ -120,11 +123,6 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       onError.call();
       return;
     }
-    var image = await getBitmapFromContext(cropKey.currentContext!);
-    if (image == null) {
-      onError.call();
-      return;
-    }
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
     var directory = Directory(savePath);
@@ -133,7 +131,12 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       await mkdir(directory);
     }
     if (progress == 0) {
-      var byteData = await image.toByteData(format: ImageByteFormat.png);
+      var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 1.5);
+      if (image == null) {
+        onError.call();
+        return;
+      }
+      var byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       var asUint8List = byteData!.buffer.asUint8List();
       for (int i = 0; i < firstFrameCount; i++) {
         var file = File(savePath + '/${i}.png');
@@ -142,12 +145,18 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 3 == 0 || progress == 100) {
-        var file = File(savePath + '/${imageNameCount}.png');
+      if (progress % 5 == 0 || progress == 100) {
+        String fileName = savePath + '/${imageNameCount}.png';
+        var file = File(fileName);
         if (!file.existsSync()) {
-          var byteData = await image.toByteData(format: ImageByteFormat.png);
-          var asUint8List = byteData!.buffer.asUint8List();
-          await file.writeAsBytes(asUint8List.toList());
+          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.7);
+          if (image == null) {
+            onError.call();
+            return;
+          }
+          dealList.add(DealData()
+            ..image = image
+            ..name = fileName);
           imageNameCount++;
         }
       }
@@ -155,6 +164,10 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     progress++;
     setState(() {});
     if (progress == 100) {
+      List<DealData> result = await convertImagesToPngBytes(dealList);
+      for (var dealData in result) {
+        await File(dealData.name!).writeAsBytes(dealData.data!.buffer.asUint8List().toList());
+      }
       onSuccess.call();
     } else {
       startRecord(onSuccess: onSuccess, onError: onError);
@@ -162,6 +175,8 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
   }
 
   Future<void> buildVideo() async {
+    var endTime = DateTime.now().millisecondsSinceEpoch;
+    print('spend time: ${endTime - startTime}');
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
     if (File(fileName).existsSync()) {
@@ -170,7 +185,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       var command = FFmpegUtil.commandImage2Video(
         mainDir: savePath,
         outputPath: fileName,
-        framePerSecond: 24,
+        framePerSecond: 20,
       );
       FFmpegKit.execute(command).then((session) {
         session.getState().then((value) {
@@ -181,4 +196,23 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       });
     }
   }
+}
+
+class DealData {
+  String? name;
+  ui.Image? image;
+  Uint8List? data;
+
+  DealData();
+}
+
+Future<List<DealData>> convertImagesToPngBytes(List<DealData> images) async {
+  List<Future<DealData>> futures = images.map((e) => _getImage(e)).toList();
+  return await Future.wait<DealData>(futures);
+}
+
+Future<DealData> _getImage(DealData image) async {
+  var img = image.image!;
+  image.data = (await img.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+  return image;
 }

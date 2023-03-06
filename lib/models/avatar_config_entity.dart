@@ -122,6 +122,10 @@ class AvatarConfigData {
   late Map<String, dynamic> roles;
   @JSONField(name: 'face_check_ratio')
   late int faceCheckRatio = 36;
+  @JSONField(name: 'max_image_count')
+  late int maxImageCount = 8;
+  @JSONField(name: 'min_image_count')
+  late int minImageCount = 5;
 
   AvatarConfigData();
 

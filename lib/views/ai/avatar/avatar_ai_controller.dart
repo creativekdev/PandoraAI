@@ -40,6 +40,8 @@ class AvatarAiController extends GetxController {
   void onInit() {
     super.onInit();
     api = CartoonizerApi().bindController(this);
+    minSize = aiManager.config?.data.minImageCount ?? 5;
+    maxSize = aiManager.config?.data.maxImageCount ?? 8;
   }
 
   @override
@@ -154,14 +156,14 @@ class AvatarAiController extends GetxController {
       }
       var media = imageList[i];
       File? originalFile = await media.file;
-      if(originalFile == null) {
+      if (originalFile == null) {
         continue;
       }
       File file;
       if (Platform.isIOS) {
         if ((originalFile.path ?? '').toUpperCase().contains('.HEIC')) {
           File? sourceFile = await heicToImage(media);
-          if(sourceFile == null) {
+          if (sourceFile == null) {
             continue;
           }
           file = await imageCompressAndGetFile(sourceFile, imageSize: 512);

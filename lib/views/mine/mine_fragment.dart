@@ -160,7 +160,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   )
                   .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
-                var appLink = Config.getStoreLink();
+                var appLink = Config.getAppLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
                 await FlutterShareMe().shareToSystem(msg: appLink);

@@ -356,7 +356,10 @@ Future<ui.Image?> createImageFromWidget(Widget widget, {Duration? wait, required
 Future<ui.Image?> getBitmapFromContext(BuildContext context, {double pixelRatio = 1.0}) async {
   try {
     RenderRepaintBoundary boundary = context.findRenderObject() as RenderRepaintBoundary;
+    var start = DateTime.now().millisecondsSinceEpoch;
     var image = await boundary.toImage(pixelRatio: pixelRatio);
+    var end = DateTime.now().millisecondsSinceEpoch;
+    // print('crop spend ${end - start}millisecond');
     return image;
   } catch (e) {
     print(e);

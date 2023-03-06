@@ -39,6 +39,14 @@ AvatarConfigData $AvatarConfigDataFromJson(Map<String, dynamic> json) {
 	if (faceCheckRatio != null) {
 		avatarConfigData.faceCheckRatio = faceCheckRatio;
 	}
+	final int? maxImageCount = jsonConvert.convert<int>(json['max_image_count']);
+	if (maxImageCount != null) {
+		avatarConfigData.maxImageCount = maxImageCount;
+	}
+	final int? minImageCount = jsonConvert.convert<int>(json['min_image_count']);
+	if (minImageCount != null) {
+		avatarConfigData.minImageCount = minImageCount;
+	}
 	return avatarConfigData;
 }
 
@@ -47,5 +55,7 @@ Map<String, dynamic> $AvatarConfigDataToJson(AvatarConfigData entity) {
 	data['pending_time'] = entity.pendingTime;
 	data['roles'] = entity.roles;
 	data['face_check_ratio'] = entity.faceCheckRatio;
+	data['max_image_count'] = entity.maxImageCount;
+	data['min_image_count'] = entity.minImageCount;
 	return data;
 }

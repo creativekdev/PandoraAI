@@ -123,7 +123,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                   Navigator.pop(_);
                 }),
               ],
-            ).customDialogStyle());
+            ).customDialogStyle()).then((value) {
+              userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit');
+    });
   }
 
   void generate(BuildContext _context, AnotherMeController controller) async {
