@@ -199,6 +199,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       _context,
       needUploadProgress: needUpload,
       controller: simulateProgressBarController,
+      config: SimulateProgressBarConfig.anotherMe(),
     ).then((value) {
       if (value == null || value.isEmpty) {
         controller.onError();

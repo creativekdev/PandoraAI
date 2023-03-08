@@ -2,12 +2,49 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'dart:math' as math;
 
+class SimulateProgressBarConfig {
+  late SimulateProgressBarConfigItem upload;
+  late SimulateProgressBarConfigItem processing;
+  late SimulateProgressBarConfigItem complete;
+
+  SimulateProgressBarConfig();
+
+  factory SimulateProgressBarConfig.anotherMe() {
+    return SimulateProgressBarConfig()
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+  }
+
+  factory SimulateProgressBarConfig.cartoonize() {
+    return SimulateProgressBarConfig()
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+  }
+
+  factory SimulateProgressBarConfig.aiGround() {
+    return SimulateProgressBarConfig()
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.95)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+  }
+}
+
+class SimulateProgressBarConfigItem {
+  Duration duration;
+  double rate;
+
+  SimulateProgressBarConfigItem({required this.duration, required this.rate});
+}
+
 class SimulateProgressBar {
   static Future<List<dynamic>?> startLoading(
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
     Function(double progress)? onUpdate,
+    required SimulateProgressBarConfig config,
   }) {
     return showDialog<List<dynamic>>(
       context: context,
@@ -16,6 +53,7 @@ class SimulateProgressBar {
           controller: controller,
           needUploadProgress: needUploadProgress,
           onUpdate: onUpdate,
+          config: config,
         );
       },
       barrierDismissible: false,
@@ -27,12 +65,14 @@ class _SimulateProgressBar extends StatefulWidget {
   SimulateProgressBarController controller;
   bool needUploadProgress;
   Function(double progress)? onUpdate;
+  SimulateProgressBarConfig config;
 
   _SimulateProgressBar({
     Key? key,
     required this.needUploadProgress,
     required this.controller,
     required this.onUpdate,
+    required this.config,
   }) : super(key: key);
 
   @override
@@ -46,6 +86,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   late CurvedAnimation animationControllerCurved;
   late AnimationController completeController;
   late bool needUploadProgress;
+  late SimulateProgressBarConfig config;
   Function(double progress)? onUpdate;
   bool completed = false;
   bool uploaded = false;
@@ -64,6 +105,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   @override
   void initState() {
     super.initState();
+    config = widget.config;
     needUploadProgress = widget.needUploadProgress;
     onUpdate = widget.onUpdate;
     controller = widget.controller;
@@ -82,7 +124,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
       }
     };
     controller._onErrorCall = (title, content) => Navigator.of(context).pop([false, title, content]);
-    uploadAnimController = AnimationController(vsync: this, duration: Duration(seconds: 3));
+    uploadAnimController = AnimationController(vsync: this, duration: config.upload.duration);
     uploadAnimController.addStatusListener((status) {
       if (!needUploadProgress) {
         return;
@@ -95,9 +137,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
       }
     });
     uploadAnimController.addListener(() => onUpdate?.call(calculateProgress()));
-    animationController = AnimationController(vsync: this, duration: Duration(seconds: 5));
+    animationController = AnimationController(vsync: this, duration: config.processing.duration);
     animationControllerCurved = CurvedAnimation(parent: animationController, curve: curves[math.Random().nextInt(curves.length)]);
-    completeController = AnimationController(vsync: this, duration: Duration(seconds: 1));
+    completeController = AnimationController(vsync: this, duration: config.complete.duration);
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed && completed) {
         completeController.forward();
@@ -130,9 +172,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   double calculateProgress() {
     var progress;
     if (needUploadProgress) {
-      progress = uploadAnimController.value * 0.2 + animationControllerCurved.value * 0.75 + completeController.value * 0.05;
+      progress = uploadAnimController.value * config.upload.rate + animationControllerCurved.value * config.processing.rate + completeController.value * config.complete.rate;
     } else {
-      progress = animationControllerCurved.value * 0.95 + completeController.value * 0.05;
+      progress = animationControllerCurved.value * (config.upload.rate + config.processing.rate) + completeController.value * config.complete.rate;
     }
     return progress;
   }

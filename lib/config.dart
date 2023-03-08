@@ -57,6 +57,7 @@ abstract class BaseConfig {
 
   late String stripePublishableKey;
   late String appsflyerKey;
+  late String text2imageHost;
 
 // appsflyer config
 // {"ios":{"id":id1604123460, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
@@ -83,6 +84,7 @@ class DevelopmentConfig implements BaseConfig {
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
   String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
+  String text2imageHost = "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/sd";
 }
 
 class ProductionConfig implements BaseConfig {
@@ -92,6 +94,7 @@ class ProductionConfig implements BaseConfig {
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_live_Rhji9hzPepvF00Mfh7GpWyeE';
   String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
+  String text2imageHost = "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/sd";
 }
 
 class Config {

@@ -1487,7 +1487,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsLoading(false);
         controller.changeTransingImage(true);
         bool needUpload = await uploadImageController.needUpload(controller.image.value);
-        SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: progressBarController);
+        SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: progressBarController, config: SimulateProgressBarConfig.cartoonize());
         if (imageUrl == "") {
           await uploadImageController.uploadCompressedImage(controller.image.value);
           controller.updateImageUrl(uploadImageController.imageUrl.value);

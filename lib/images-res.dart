@@ -9,6 +9,7 @@ class Images {
    static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
+   static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';

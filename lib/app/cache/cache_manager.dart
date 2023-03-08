@@ -38,6 +38,7 @@ class CacheManager extends BaseManager {
   static const preLoginAction = 'pre_login_action';
   static const preSignupAction = 'pre_signup_action';
   static const prePaymentAction = 'pre_payment_action';
+  static const aiGroundStyles = 'ai_ground_styles';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

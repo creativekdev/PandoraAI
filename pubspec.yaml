@@ -29,7 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   sizer: ^2.0.15
   simple_shadow: ^0.3.0
-  dotted_border: ^2.0.0
+  dotted_border: 2.0.0+3
   image_picker: 0.8.6
   #  images_picker: 1.2.11
   http: ^0.13.4

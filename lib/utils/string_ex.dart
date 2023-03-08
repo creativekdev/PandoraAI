@@ -21,9 +21,17 @@ extension StringEx on String {
   }
 
   bool get isGoogleAccount {
-    if(TextUtil.isEmpty(this.trim())) {
+    if (TextUtil.isEmpty(this.trim())) {
       return false;
     }
     return this.contains('googleusercontent.com');
+  }
+
+  String get toUpperCaseFirst {
+    if (TextUtil.isEmpty(this)) {
+      return this;
+    }
+    var s = this[0];
+    return s.toUpperCase() + this.substring(1);
   }
 }
