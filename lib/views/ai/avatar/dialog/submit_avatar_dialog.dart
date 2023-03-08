@@ -36,7 +36,7 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
     super.initState();
     var json = cacheManager.getJson(CacheManager.lastCreateAvatar);
     if (json != null) {
-      controller.text = json['name'];
+      controller.text = json['name']?.toString() ?? '';
       selectedStyle = json['style'] ?? aiManager.config?.getRoles()[0];
     }
   }

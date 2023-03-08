@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'avatar.dart';
 import 'avatar_detail_screen.dart';
@@ -46,6 +47,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   @override
   initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'avatar_ai_list_screen');
     Events.avatarResultShow();
     source = widget.source;
     avatarAiManager.listPageAlive = true;
@@ -75,6 +77,9 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
         setState(() {
           dataList = value;
         });
+        if (value.isEmpty) {
+          Avatar.intro(context, source: source);
+        }
       }
     });
   }

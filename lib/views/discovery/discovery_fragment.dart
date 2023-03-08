@@ -18,6 +18,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
 import '../../Widgets/indicator/line_tab_indicator.dart';
@@ -55,6 +56,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'discovery_fragment');
     initAnimator();
     nsfwOpen = cacheManager.getBool(CacheManager.nsfwOpen);
     listController = Get.put(DiscoveryListController(

@@ -11,6 +11,7 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class DiscoverySecondaryCommentsListScreen extends StatefulWidget {
   DiscoveryCommentListEntity parentComment;
@@ -42,6 +43,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'discovery_comment_list_screen');
     api = CartoonizerApi().bindState(this);
     parentComment = widget.parentComment.copy();
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {

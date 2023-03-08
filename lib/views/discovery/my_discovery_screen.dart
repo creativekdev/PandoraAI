@@ -9,6 +9,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'discovery_effect_detail_screen.dart';
 import 'widget/my_discovery_list_card.dart';
@@ -47,6 +48,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   void initState() {
     super.initState();
     userId = widget.userId;
+    Posthog().screenWithUser(screenName: 'user_discovery_list_screen');
     delay(() {
       setState(() {
         title = widget.title ?? S.of(context).tabDiscovery;

@@ -305,13 +305,15 @@
   "avatar_create_ensure_hint": "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？",
   "yes": "确定",
   "choose_another": "重新选择",
-  "generate_reached_limit": "创建次数已达当日上限，请明天再试或购买专业版",
-  "generate_reached_limit_vip": "创建次数已达当日上限，请明天再试",
+  "generate_reached_limit_title": "创建次数已达当日上限",
+  "generate_reached_limit": "请明天再试或购买专业版",
+  "generate_reached_limit_vip": "请明天再试",
   "read_all": "全部已读",
   "input_invited_code": "邀请码填写",
   "invited_code": "邀请码",
   "please_input_invited_code": "请输入邀请码",
   "congratulations": "祝贺你!",
   "invitation_desc": "现在使用它们来生成无水印的高分辨率卡通图像",
-  "try_it_now": "现在就去"
+  "try_it_now": "现在就去",
+  "buy": "购买"
 }

@@ -18,6 +18,7 @@ import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class DiscoveryEffectDetailScreen extends StatefulWidget {
   DiscoveryListEntity discoveryEntity;
@@ -65,6 +66,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'discovery_detail_screen');
     prePage = widget.prePage;
     dataType = widget.dataType;
     scrollController = ScrollController();

@@ -3110,20 +3110,30 @@ class S {
     );
   }
 
-  /// `Generate action has reached the upper limit, Please try again tomorrow or buy Premium`
+  /// `Generate action has reached the upper limit`
+  String get generate_reached_limit_title {
+    return Intl.message(
+      'Generate action has reached the upper limit',
+      name: 'generate_reached_limit_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please try again tomorrow or buy Premium`
   String get generate_reached_limit {
     return Intl.message(
-      'Generate action has reached the upper limit, Please try again tomorrow or buy Premium',
+      'Please try again tomorrow or buy Premium',
       name: 'generate_reached_limit',
       desc: '',
       args: [],
     );
   }
 
-  /// `Generate action has reached the upper limit, Please try again tomorrow`
+  /// `Please try again tomorrow`
   String get generate_reached_limit_vip {
     return Intl.message(
-      'Generate action has reached the upper limit, Please try again tomorrow',
+      'Please try again tomorrow',
       name: 'generate_reached_limit_vip',
       desc: '',
       args: [],
@@ -3195,6 +3205,16 @@ class S {
     return Intl.message(
       'Try it now',
       name: 'try_it_now',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Buy`
+  String get buy {
+    return Intl.message(
+      'Buy',
+      name: 'buy',
       desc: '',
       args: [],
     );

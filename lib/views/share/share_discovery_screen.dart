@@ -23,6 +23,7 @@ import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:path/path.dart' as path;
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 enum DiscoveryCategory {
   ai_avatar,
@@ -94,6 +95,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'share_discovery_screen');
     api = CartoonizerApi().bindState(this);
     textEditingController = TextEditingController();
     // canSubmit = textEditingController.text.trim().isNotEmpty;

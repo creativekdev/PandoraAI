@@ -23,6 +23,7 @@ import 'package:cartoonizer/views/ai/anotherme/another_me_trans_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:photo_manager/photo_manager.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 import 'anotherme.dart';
@@ -72,6 +73,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'metaverse_camera_screen');
     WidgetsBinding.instance.addObserver(this);
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);

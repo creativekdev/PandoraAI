@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_plans_screen.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'pay_avatar_android.dart';
 import 'pay_avatar_ios.dart';
@@ -36,6 +37,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'avatar_plan_pay_screen');
     Events.avatarPlanShow();
     api = CartoonizerApi().bindState(this);
     delay(() {

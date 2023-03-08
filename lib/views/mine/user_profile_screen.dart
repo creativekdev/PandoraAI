@@ -3,6 +3,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class UserProfileScreen extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class UserProfileState extends State<UserProfileScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'user_profile_screen');
     // logEvent(Events.profile_page_loading);
   }
 

@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -20,6 +21,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final passController = TextEditingController();
   final cPassController = TextEditingController();
   bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Posthog().screenWithUser(screenName: 'change_password_screen');
+  }
 
   @override
   void dispose() {

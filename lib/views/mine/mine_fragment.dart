@@ -23,6 +23,8 @@ import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'widget/user_base_info_widget.dart';
 
@@ -45,6 +47,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'mine_fragment');
     tabId = widget.tabId;
     userLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       setState(() {});
@@ -163,7 +166,8 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 var appLink = Config.getAppLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
-                await FlutterShareMe().shareToSystem(msg: appLink);
+                final box = context.findRenderObject() as RenderBox?;
+                await Share.share(appLink, subject: 'Pandora AI', sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               Container(

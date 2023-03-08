@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../common/instagram_constant.dart';
@@ -18,6 +19,7 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'instagram_login_screen');
     if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 

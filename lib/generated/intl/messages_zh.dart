@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……"),
         "bought": MessageLookupByLibrary.simpleMessage("已购买"),
+        "buy": MessageLookupByLibrary.simpleMessage("购买"),
         "buyAttrFasterSpeed": MessageLookupByLibrary.simpleMessage("更快速转化"),
         "buyAttrHDImages": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "buyAttrNoAds": MessageLookupByLibrary.simpleMessage("无广告"),
@@ -156,9 +157,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
         "generate_reached_limit":
-            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限，请明天再试或购买专业版"),
+            MessageLookupByLibrary.simpleMessage("请明天再试或购买专业版"),
+        "generate_reached_limit_title":
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限"),
         "generate_reached_limit_vip":
-            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限，请明天再试"),
+            MessageLookupByLibrary.simpleMessage("请明天再试"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
         "generating": MessageLookupByLibrary.simpleMessage("制作中"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),

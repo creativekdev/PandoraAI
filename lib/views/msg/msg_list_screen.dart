@@ -12,6 +12,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_card.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class MsgListScreen extends StatefulWidget {
   @override
@@ -30,6 +31,7 @@ class MsgListState extends AppState<MsgListScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'msg_list_screen');
     Events.noticeLoading();
     api = CartoonizerApi().bindState(this);
     delay(() => _refreshController.callRefresh());

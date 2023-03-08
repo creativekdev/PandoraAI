@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -16,14 +15,15 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
-import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class NewEffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -51,6 +51,7 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'home_fragment');
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (!mounted) return;
@@ -117,6 +118,7 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                 });
           } else {
             var list = _.data?.homeCards ?? [];
+            list.add(HomeCardEntity()..type = 'text2image'..url='https://pics5.baidu.com/feed/730e0cf3d7ca7bcbed4d7ac9beeeb868f724a811.png@f_auto?token=c6789aa944d3f2f28fe125154e7a3203');
             return Stack(
               children: [
                 ListView.builder(
@@ -199,6 +201,15 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                           break;
                         case HomeCardType.ai_avatar:
                           Avatar.openFromHome(context);
+                          break;
+                        case HomeCardType.text2image:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/AiGroundScreen"),
+                              builder: (context) => AiGroundScreen(),
+                            ),
+                          );
                           break;
                         case HomeCardType.UNDEFINED:
                           break;

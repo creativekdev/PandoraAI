@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import './EmailVerificationScreen.dart';
 import '../common/Extension.dart';
@@ -38,6 +39,7 @@ class _SocialSignUpScreenState extends State<SocialSignUpScreen> {
 
   @override
   void initState() {
+    Posthog().screenWithUser(screenName: 'social_signup_screen');
     if (widget.additionalUserInfo != null && widget.channel != 'tiktok') {
       emailController.text = widget.additionalUserInfo.profile!['email'];
     }

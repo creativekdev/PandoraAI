@@ -25,7 +25,7 @@ class CustomIOSCameraPreview extends StatelessWidget {
     if (controller?.disposed() ?? true) {
       return Container();
     }
-    if(!Platform.isIOS) {
+    if (!Platform.isIOS) {
       return controller!.buildPreview();
     }
     return controller!.value.isInitialized
@@ -37,7 +37,7 @@ class CustomIOSCameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    _wrapInRotatedBox(child: controller!.buildPreview()),
+                    controller!.disposed() ? Container() : _wrapInRotatedBox(child: controller!.buildPreview()),
                     child ?? Container(),
                   ],
                 ),

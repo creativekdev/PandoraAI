@@ -15,6 +15,7 @@ import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../common/Extension.dart';
 
@@ -36,6 +37,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'edit_profile_screen');
     thirdpartManager.adsHolder.ignore = true;
     imagePicker = new ImagePicker();
   }

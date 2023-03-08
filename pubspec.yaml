@@ -97,6 +97,7 @@ dependencies:
   sensors_plus: 2.0.2
   #  opencv_4: 1.0.0
   ffmpeg_kit_flutter: 5.1.0
+  posthog_flutter: 2.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

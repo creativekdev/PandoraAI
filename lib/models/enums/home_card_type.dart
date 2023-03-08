@@ -3,6 +3,7 @@ enum HomeCardType {
   cartoonize,
   anotherme,
   ai_avatar,
+  text2image,
   UNDEFINED,
 }
 
@@ -15,6 +16,8 @@ class HomeCardTypeUtils {
         return HomeCardType.anotherme;
       case 'ai_avatar':
         return HomeCardType.ai_avatar;
+      case 'text2image':
+        return HomeCardType.text2image;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -30,6 +33,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'anotherme';
       case HomeCardType.ai_avatar:
         return 'ai_avatar';
+      case HomeCardType.text2image:
+        return 'text2image';
       case HomeCardType.UNDEFINED:
         return null;
     }
@@ -45,6 +50,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'Pandora Avatar';
       case HomeCardType.UNDEFINED:
         return '';
+      case HomeCardType.text2image:
+        return 'Text to Image';
     }
   }
 }

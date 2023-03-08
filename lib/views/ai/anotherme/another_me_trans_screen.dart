@@ -22,9 +22,11 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
+import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
@@ -69,6 +71,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'metaverse_generate_screen');
     ratio = widget.ratio;
     photoType = widget.photoType;
     dividerSize = $(8);
@@ -90,41 +93,101 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     });
   }
 
-  showLimitDialog(BuildContext context, String content) {
-    showDialog(
+  showLimitDialog(BuildContext context, String title, String content) {
+    showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(height: $(27)),
+                Image.asset(
+                  Images.ic_warning,
+                  width: $(32),
+                  color: Color(0xFFFD4245),
+                ).intoContainer(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Color(0xFFFD4245), width: 1),
+                      borderRadius: BorderRadius.circular($(48)),
+                    )),
+                SizedBox(height: $(20)),
+                TitleTextWidget(
+                  title,
+                  Color(0xFFFD4245),
+                  FontWeight.w500,
+                  $(17),
+                  maxLines: 100,
+                  align: TextAlign.center,
+                ).intoContainer(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.symmetric(horizontal: $(30)),
+                  alignment: Alignment.center,
+                ),
+                SizedBox(height: $(8)),
                 TitleTextWidget(
                   content,
                   ColorConstant.White,
                   FontWeight.w500,
-                  $(16),
+                  $(13),
                   maxLines: 100,
+                  align: TextAlign.center,
                 ).intoContainer(
                   width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(vertical: $(15), horizontal: $(10)),
+                  padding: EdgeInsets.only(
+                    bottom: $(40),
+                    left: $(30),
+                    right: $(30),
+                  ),
                   alignment: Alignment.center,
                 ),
                 Container(height: 1, color: ColorConstant.LineColor),
-                Text(
-                  S.of(context).ok,
-                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
-                )
-                    .intoContainer(
-                  width: double.maxFinite,
-                  color: Colors.transparent,
-                  padding: EdgeInsets.only(top: $(10), bottom: $(12)),
-                  alignment: Alignment.center,
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.pop(_);
-                }),
+                Row(
+                  children: [
+                    isVip()
+                        ? SizedBox.shrink()
+                        : Expanded(
+                            child: Text(
+                              S.of(context).buy,
+                              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
+                            )
+                                .intoContainer(
+                              width: double.maxFinite,
+                              color: Colors.transparent,
+                              padding: EdgeInsets.only(top: $(10), bottom: $(12)),
+                              alignment: Alignment.center,
+                            )
+                                .intoGestureDetector(onTap: () {
+                              Navigator.pop(_, true);
+                            }),
+                          ),
+                    isVip() ? SizedBox.shrink() : Container(height: $(48), color: ColorConstant.LineColor, width: 1),
+                    Expanded(
+                      child: Text(
+                        S.of(context).ok,
+                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
+                      )
+                          .intoContainer(
+                        width: double.maxFinite,
+                        color: Colors.transparent,
+                        padding: EdgeInsets.only(top: $(10), bottom: $(12)),
+                        alignment: Alignment.center,
+                      )
+                          .intoGestureDetector(onTap: () {
+                        Navigator.pop(_, false);
+                      }),
+                    ),
+                  ],
+                ),
               ],
             ).customDialogStyle()).then((value) {
-              userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit');
+      if (value ?? false) {
+        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
+          PaymentUtils.pay(context, 'metaverse_result_page');
+        }, autoExec: true);
+      } else {
+        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit');
+      }
     });
   }
 
@@ -150,9 +213,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           showAnim(context);
         });
       } else {
-        if (value.length == 2) {
+        if (value.length == 3) {
           if (!TextUtil.isEmpty(value.last)) {
-            showLimitDialog(context, value.last);
+            showLimitDialog(context, value[1], value[2]);
           }
         }
         controller.onError();
@@ -171,7 +234,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 transResult = image;
                 simulateProgressBarController.loadComplete();
               } else {
-                simulateProgressBarController.onError(error: value.msg);
+                simulateProgressBarController.onError(errorTitle: value.msgTitle, errorContent: value.msgContent);
               }
             } else {
               simulateProgressBarController.onError();

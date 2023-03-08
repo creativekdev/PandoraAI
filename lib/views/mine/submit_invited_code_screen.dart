@@ -11,6 +11,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class SubmitInvitedCodeScreen extends StatefulWidget {
   const SubmitInvitedCodeScreen({Key? key}) : super(key: key);
@@ -29,6 +30,7 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'submit_invitation_code_screen');
     api = CartoonizerApi().bindState(this);
     delay(() {
       FocusScope.of(context).requestFocus(node);

@@ -17,6 +17,7 @@ import 'package:cartoonizer/views/share/ShareUrlScreen.dart';
 import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class AvatarDetailScreen extends StatefulWidget {
   AvatarAiListEntity entity;
@@ -44,6 +45,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'avatar_ai_detail_screen');
     Events.avatarResultDetailShow();
     api = CartoonizerApi().bindState(this);
     entity = widget.entity;
@@ -255,23 +257,6 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
               ),
             ),
           ),
-          // Text(
-          //   S.of(context).play_ground,
-          //   style: TextStyle(color: Colors.white, fontSize: $(17)),
-          // )
-          //     .intoContainer(
-          //   padding: EdgeInsets.symmetric(vertical: $(12)),
-          //   margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15)),
-          //   width: double.maxFinite,
-          //   alignment: Alignment.center,
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular($(8)),
-          //     color: ColorConstant.BlueColor,
-          //   ),
-          // )
-          //     .intoGestureDetector(onTap: () {
-          //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => AiGroundScreen()));
-          // }),
         ],
       ),
     );

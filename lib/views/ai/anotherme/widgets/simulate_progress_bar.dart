@@ -81,7 +81,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         animationController.forward();
       }
     };
-    controller._onErrorCall = (error) => Navigator.of(context).pop([false, error]);
+    controller._onErrorCall = (title, content) => Navigator.of(context).pop([false, title, content]);
     uploadAnimController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     uploadAnimController.addStatusListener((status) {
       if (!needUploadProgress) {
@@ -106,7 +106,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
     animationController.addListener(() => onUpdate?.call(calculateProgress()));
     completeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigator.of(context).pop([true, null]);
+        if (mounted) {
+          Navigator.of(context).pop([true]);
+        }
       }
     });
     completeController.addListener(() => onUpdate?.call(calculateProgress()));
@@ -199,7 +201,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
 class SimulateProgressBarController {
   Function? _completeCall;
   Function? _uploadCompleteCall;
-  Function(String? error)? _onErrorCall;
+  Function(String? errorTitle, String? errotContent)? _onErrorCall;
 
   loadComplete() {
     _completeCall?.call();
@@ -209,9 +211,9 @@ class SimulateProgressBarController {
     _uploadCompleteCall?.call();
   }
 
-  onError({String? error}) {
+  onError({String? errorTitle, String? errorContent}) {
     delay(() {
-      _onErrorCall?.call(error);
+      _onErrorCall?.call(errorTitle, errorContent);
     }, milliseconds: 32);
   }
 }

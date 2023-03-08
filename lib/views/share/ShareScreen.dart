@@ -15,6 +15,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 enum ShareType {
@@ -155,6 +156,7 @@ class _ShareScreenState extends State<ShareScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'share_screen');
     if (widget.needDiscovery) {
       typeList.insert(0, ShareType.discovery);
     }

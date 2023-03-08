@@ -15,6 +15,7 @@ import 'package:cartoonizer/views/mine/submit_invited_code_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
@@ -44,6 +45,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'setting_screen');
     onUserChangeListen = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
     });

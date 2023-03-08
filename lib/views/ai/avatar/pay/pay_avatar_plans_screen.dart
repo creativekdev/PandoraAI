@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class PayAvatarPlansScreen extends StatefulWidget {
   List<PayPlanEntity> dataList = [];
@@ -20,6 +21,7 @@ class _PayAvatarPlansScreenState extends State<PayAvatarPlansScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'avatar_all_plans_screen');
     dataList = widget.dataList;
   }
 

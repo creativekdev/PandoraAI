@@ -24,6 +24,10 @@
 		<package android:name="com.ss.android.ugc.trill" />
 	</queries>
 	<application android:label="@string/app_name" android:name="${applicationName}" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:requestLegacyExternalStorage="true">
+		<meta-data android:name="com.posthog.posthog.API_KEY" android:value="phc_6pNrIRbwkIEXsGQQXbJFu5RxwaCebL5GD7JN7w07cqC" />
+		<meta-data android:name="com.posthog.posthog.POSTHOG_HOST" android:value="https://app.posthog.com" />
+		<meta-data android:name="com.posthog.posthog.TRACK_APPLICATION_LIFECYCLE_EVENTS" android:value="false" />
+		<meta-data android:name="com.posthog.posthog.DEBUG" android:value="false" />
 		<meta-data
 			android:name="com.google.android.gms.ads.APPLICATION_ID"
 			android:value="@string/admob_app_key"/>

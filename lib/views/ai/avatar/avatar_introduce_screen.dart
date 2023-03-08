@@ -13,6 +13,7 @@ import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
 import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'avatar.dart';
 
@@ -38,6 +39,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'avatar_ai_introduction_screen');
     Events.avatarCreate(source: widget.source);
     streamSubscription = EventBusHelper().eventBus.on<OnCreateAvatarAiEvent>().listen((event) {
       if (mounted) {

@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/welcome_widgets.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class IntroductionScreen extends StatefulWidget {
   const IntroductionScreen({Key? key}) : super(key: key);
@@ -23,6 +24,7 @@ class IntroductionScreenState extends State<IntroductionScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'introduction_screen');
     pageController = PageController(initialPage: 0);
     delay(() {
       setState(() {

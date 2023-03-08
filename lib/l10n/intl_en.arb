@@ -305,13 +305,15 @@
   "avatar_create_ensure_hint": "You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?",
   "yes": "Yes",
   "choose_another": "Choose another",
-  "generate_reached_limit": "Generate action has reached the upper limit, Please try again tomorrow or buy Premium",
-  "generate_reached_limit_vip": "Generate action has reached the upper limit, Please try again tomorrow",
+  "generate_reached_limit_title": "Generate action has reached the upper limit",
+  "generate_reached_limit": "Please try again tomorrow or buy Premium",
+  "generate_reached_limit_vip": "Please try again tomorrow",
   "read_all": "Read All",
   "input_invited_code": "Input invitation Code",
   "invited_code": "Invitation Code",
   "please_input_invited_code": "Please enter the invitation code",
   "congratulations": "Congratulations!",
   "invitation_desc": "Use them now to generate high-resolution cartoonized images without watermarks",
-  "try_it_now": "Try it now"
+  "try_it_now": "Try it now",
+  "buy": "Buy"
 }

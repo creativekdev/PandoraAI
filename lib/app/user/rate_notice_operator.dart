@@ -1,12 +1,10 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
-import 'widget/feedback_dialog.dart';
+import 'widget/rate_notice_dialog_content.dart';
 
 const int second = 1000;
 const int minute = second * 60;
@@ -105,7 +103,7 @@ class RateNoticeOperator {
       showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder: (context) => _noticeDialogWidget(context),
+        builder: (context) => RateNoticeDialogContent(),
       ).then((value) {
         if (value ?? false) {
           // 3 month later
@@ -120,78 +118,5 @@ class RateNoticeOperator {
         saveConfig(configEntity!);
       });
     }
-  }
-
-  Widget _noticeDialogWidget(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        TitleTextWidget(S.of(context).rate_pandora_avatar, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
-          padding: EdgeInsets.only(top: $(20), bottom: $(15), left: $(15), right: $(15)),
-        ),
-        TitleTextWidget(
-          S.of(context).rate_description,
-          ColorConstant.White,
-          FontWeight.normal,
-          $(14),
-          maxLines: 10,
-        ).intoContainer(
-          padding: EdgeInsets.only(bottom: $(15), left: $(15), right: $(15)),
-        ),
-        Container(height: 1, color: ColorConstant.LineColor),
-        Text(
-          S.of(context).looveit,
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
-        )
-            .intoContainer(
-          width: double.maxFinite,
-          color: Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: $(10)),
-          alignment: Alignment.center,
-        )
-            .intoGestureDetector(onTap: () {
-          rateApp();
-          // var url = Config.getStoreLink(toRate: true);
-          // launchURL(url);
-          Navigator.pop(context, true);
-        }),
-        Container(height: 1, color: ColorConstant.LineColor),
-        Text(
-          S.of(context).give_feedback,
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
-        )
-            .intoContainer(
-          width: double.maxFinite,
-          color: Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: $(10)),
-          alignment: Alignment.center,
-        )
-            .intoGestureDetector(onTap: () {
-          showDialog<bool>(
-            context: context,
-            barrierDismissible: true,
-            builder: (context) => FeedbackDialog(),
-          ).then((value) {
-            if (value ?? false) {
-              Navigator.pop(context, true);
-            }
-          });
-        }),
-        Container(height: 1, color: ColorConstant.LineColor),
-        Text(
-          S.of(context).no_thanks,
-          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(16)),
-        )
-            .intoContainer(
-          width: double.maxFinite,
-          color: Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: $(10)),
-          alignment: Alignment.center,
-        )
-            .intoGestureDetector(onTap: () {
-          Navigator.pop(context, false);
-        }),
-      ],
-    ).intoContainer(width: double.maxFinite).customDialogStyle();
   }
 }

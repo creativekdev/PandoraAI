@@ -5,10 +5,12 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class PaymentUtils {
   static Future pay(BuildContext context, String source) async {
     AppDelegate.instance.getManager<CacheManager>().setString(CacheManager.prePaymentAction, source);
+    Posthog().screenWithUser(screenName: 'pay_pro_screen');
     Events.payShow(source: source);
     if (Platform.isIOS) {
       return Navigator.push(

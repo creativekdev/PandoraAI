@@ -165,6 +165,19 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
         resources.length > 1
             ? Row(
                 children: [
+                  imageSize != null
+                      ? buildResourceItem(
+                          resources[1],
+                          fit: BoxFit.contain,
+                          width: (imageListWidth - $(2)) / 2,
+                          height: imageSize!.height,
+                        ).intoGestureDetector(onTap: () {
+                          if (resources[1].type == 'image') {
+                            openImage(context, 0);
+                          }
+                        })
+                      : Container(),
+                  SizedBox(width: $(2)),
                   buildResourceItem(
                     resources[0],
                     width: (imageListWidth - $(2)) / 2,
@@ -176,22 +189,9 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                     }
                   }).intoGestureDetector(onTap: () {
                     if (resources[0].type == 'image') {
-                      openImage(context, 0);
+                      openImage(context, 1);
                     }
                   }),
-                  SizedBox(width: $(2)).offstage(offstage: resources.length <= 1),
-                  imageSize != null
-                      ? buildResourceItem(
-                          resources[1],
-                          fit: BoxFit.contain,
-                          width: (imageListWidth - $(2)) / 2,
-                          height: imageSize!.height,
-                        ).intoGestureDetector(onTap: () {
-                          if (resources[1].type == 'image') {
-                            openImage(context, 1);
-                          }
-                        })
-                      : Container(),
                 ],
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
             : buildResourceItem(resources[0], width: imageListWidth).intoGestureDetector(onTap: () {
@@ -362,7 +362,14 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     if (Platform.isAndroid) {
       FlutterForbidshot.setAndroidForbidOn();
     }
-    List<String> images = resources.filter((t) => t.type == DiscoveryResourceType.image.value()).map((e) => e.url ?? '').toList();
+    List<String> images = resources
+        .filter(
+          (t) => t.type == DiscoveryResourceType.image.value(),
+        )
+        .map((e) => e.url ?? '')
+        .toList()
+        .reversed
+        .toList();
     Navigator.push(
       context,
       PageRouteBuilder(

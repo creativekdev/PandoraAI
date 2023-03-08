@@ -60,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "Please don\'t upload photos of more than one pet; don\'t cover your pet\'s face; don\'t use photos where your pet curls up into a ball."),
         "bought": MessageLookupByLibrary.simpleMessage("Bought"),
+        "buy": MessageLookupByLibrary.simpleMessage("Buy"),
         "buyAttrFasterSpeed":
             MessageLookupByLibrary.simpleMessage("Faster speed"),
         "buyAttrHDImages":
@@ -187,9 +188,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
-            "Generate action has reached the upper limit, Please try again tomorrow or buy Premium"),
-        "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
-            "Generate action has reached the upper limit, Please try again tomorrow"),
+            "Please try again tomorrow or buy Premium"),
+        "generate_reached_limit_title": MessageLookupByLibrary.simpleMessage(
+            "Generate action has reached the upper limit"),
+        "generate_reached_limit_vip":
+            MessageLookupByLibrary.simpleMessage("Please try again tomorrow"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
         "generating": MessageLookupByLibrary.simpleMessage("Creating"),

@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class SaveAvatarsScreen extends StatefulWidget {
   List<AvatarChildEntity> outputImages;
@@ -30,6 +31,7 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'save_avatars_screen');
     outputImages = widget.outputImages;
     imageSize = (ScreenUtil.screenSize.width - $(6)) / 3;
   }

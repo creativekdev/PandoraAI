@@ -5,6 +5,8 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/progress/progress_bar.dart';
 import 'dart:math' as math;
 
+import 'package:posthog_flutter/posthog_flutter.dart';
+
 const int minDuration = 10000; //at least shown time duration.
 
 class ProcessingAdvertisementScreen extends StatefulWidget {
@@ -61,6 +63,7 @@ class ProcessingAdvertisementState extends State<ProcessingAdvertisementScreen> 
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'processing_advertisement_screen');
     adsHolder = widget.adsHolder;
     hasAd = adsHolder.adsReady;
     animationController = AnimationController(

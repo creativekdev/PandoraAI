@@ -3,6 +3,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cartoonizer/api/api.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void dispose() {
     emailController.dispose();
     super.dispose();
+    Posthog().screenWithUser(screenName: 'forgot_password_screen');
   }
 
   @override

@@ -39,9 +39,9 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
   int progress = 0;
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
-  int firstFrameCount = 24;
+  int firstFrameCount = 33;
 
-  int imageNameCount = 24;
+  int imageNameCount = 33;
   late String fileName;
   List<DealData> dealList = [];
   var startTime = DateTime.now().millisecondsSinceEpoch;
@@ -145,11 +145,11 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 5 == 0 || progress == 100) {
+      if (progress % 3 == 0 || progress == 100) {
         String fileName = savePath + '/${imageNameCount}.png';
         var file = File(fileName);
         if (!file.existsSync()) {
-          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.7);
+          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.75);
           if (image == null) {
             onError.call();
             return;
@@ -185,7 +185,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       var command = FFmpegUtil.commandImage2Video(
         mainDir: savePath,
         outputPath: fileName,
-        framePerSecond: 20,
+        framePerSecond: 30,
       );
       FFmpegKit.execute(command).then((session) {
         session.getState().then((value) {

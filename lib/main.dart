@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'app/app.dart';
 import 'config.dart';
@@ -145,6 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'entry_screen');
     onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
       if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
         openApp();

@@ -15,6 +15,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../ForgotPasswordScreen.dart';
@@ -44,6 +45,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'login_screen');
     Events.loginShow(source: cacheManager.getString(CacheManager.preLoginAction));
     thirdpartManager.adsHolder.ignore = true;
     delay(() {

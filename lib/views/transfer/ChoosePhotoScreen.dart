@@ -40,6 +40,7 @@ import 'package:cartoonizer/views/transfer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../gallery_saver.dart';
@@ -278,6 +279,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'cartoonize_detail_screen');
     recentController = Get.find();
     transformApi = TransformApi()..bind(this);
     rootPath = cacheManager.storageOperator.recordCartoonizeDir.path;

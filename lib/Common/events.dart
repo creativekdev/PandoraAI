@@ -7,6 +7,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class Events {
   static Future<void> avatarCreate({required String source}) => logEvent("avatar_create", eventValues: {'source': source});
@@ -160,6 +161,7 @@ Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) asy
   logKochavaEvent(eventName, eventValues: values);
   // log firebase analytics
   FirebaseAnalytics.instance.logEvent(name: eventName, parameters: values);
+  Posthog().capture(eventName: eventName, properties: values);
 }
 
 logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) {

@@ -10,6 +10,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/PurchaseScreen.dart';
 import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class RewardAdvertisementScreen extends StatefulWidget {
   RewardInterstitialAdsHolder adsHolder;
@@ -51,6 +52,7 @@ class RewardAdvertisementState extends State<RewardAdvertisementScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'reward_advertisement_screen');
     adsHolder = widget.adsHolder;
     hasAd = adsHolder.adsReady;
     adsHolder.onRewardCall = () {

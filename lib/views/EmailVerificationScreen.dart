@@ -6,6 +6,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../common/Extension.dart';
 
@@ -34,6 +35,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
     super.initState();
+    Posthog().screenWithUser(screenName: 'verify_email_screen');
   }
 
   @override

@@ -30,3 +30,4 @@ export 'package:cartoonizer/utils/array_util.dart';
 export 'package:cartoonizer/utils/dialog_util.dart';
 export 'package:cartoonizer/utils/num_util.dart';
 export 'package:cartoonizer/Widgets/widget_extensions.dart';
+export 'package:cartoonizer/utils/posthog_ex.dart';

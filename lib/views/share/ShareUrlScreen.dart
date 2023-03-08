@@ -8,6 +8,7 @@ import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class ShareUrlScreen extends StatefulWidget {
   static Future<String?> startShare(
@@ -51,6 +52,12 @@ class _ShareScreenState extends State<ShareUrlScreen> {
     ShareType.email,
     ShareType.system,
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    Posthog().screenWithUser(screenName: 'share_screen');
+  }
 
   void _openShareAction(BuildContext context, String url) async {
     await FlutterShareMe().shareToSystem(msg: url);
