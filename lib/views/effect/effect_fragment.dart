@@ -18,8 +18,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
-import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
@@ -105,7 +103,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
       var pushExtraEntity = event.data!;
       for (int i = 0; i < tabConfig.length; i++) {
         var config = tabConfig[i];
-        if (config.tabString == pushExtraEntity.tab) {
+        if  (config.tabString == pushExtraEntity.tab) {
           _tabController?.index = i;
           setIndex(i);
           onEffectClick(pushExtraEntity);

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/api/text2image_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/models/ai_ground_style_entity.dart';
@@ -17,21 +19,28 @@ import 'ai_ground_result_screen.dart';
 class AiGroundController extends GetxController {
   late Text2ImageApi api;
   TextEditingController editingController = TextEditingController();
-  int maxLength = 200;
+  int maxLength = 1000;
 
-  String? imageBase64;
+  int imgWidth = 512;
+  int height = 512;
+  String? filePath;
+  File? initFile;
 
   List<String>? promptList = null;
-  Map<String, List<AiGroundStyleEntity>>? styleMap = null;
-  List<String>? categoryList = null;
-  int selectedCategoryIndex = 0;
+  List<AiGroundStyleEntity> styleList = [];
   AiGroundStyleEntity? selectedStyle;
 
   ScrollController scrollController = ScrollController();
+  CacheManager cacheManager = AppDelegate().getManager();
+  RecentController recentController = Get.find();
 
   @override
   void onInit() {
     super.onInit();
+    var d = ScreenUtil.screenSize.height - $(168) - ScreenUtil.getBottomPadding(Get.context!);
+    var scale = d / ScreenUtil.screenSize.width;
+    var ht = imgWidth * scale;
+    height = (ht ~/ 64) * 64;
     api = Text2ImageApi().bindController(this);
   }
 
@@ -45,14 +54,14 @@ class AiGroundController extends GetxController {
       api.randomPrompt(),
       api.randomPrompt(),
     ]).then((value) {
-      promptList = value.filter((t) => t != null).map((e) => e!.split(' ').first).toList();
+      promptList = value.filter((t) => t != null).map((e) => e!).toList();
       update();
     });
     api.artists().then((value) {
       if (value != null) {
-        styleMap = value;
-        categoryList = styleMap!.keys.toList();
+        styleList = value;
         update();
+        EventBusHelper().eventBus.fire(OnAiGroundStyleUpdateEvent());
       }
     });
   }
@@ -64,16 +73,8 @@ class AiGroundController extends GetxController {
   }
 
   void onPromptClick(String prompt) {
-    var oldText = editingController.text;
-    if (oldText.endsWith(prompt)) {
-      return;
-    }
-    oldText += prompt;
-    if (oldText.length > maxLength) {
-      oldText = oldText.substring(0, maxLength);
-    }
-    editingController.text = oldText;
-    editingController.selection = TextSelection(baseOffset: oldText.length, extentOffset: oldText.length);
+    editingController.text = prompt;
+    editingController.selection = TextSelection(baseOffset: prompt.length, extentOffset: prompt.length);
     update();
   }
 
@@ -100,10 +101,20 @@ class AiGroundController extends GetxController {
         });
       }
     });
-    api.text2image(prompt: text, initImage: initImageUrl).then((value) {
+    var rootPath = cacheManager.storageOperator.recordAiGroundDir.path;
+    api
+        .text2image(
+      prompt: text,
+      directoryPath: rootPath,
+      initImage: initImageUrl,
+      width: imgWidth,
+      height: height,
+    )
+        .then((value) {
       if (value != null) {
-        imageBase64 = value;
+        filePath = value;
         progressController.loadComplete();
+        recentController.onAiGroundUsed(filePath!, text, initFile?.path, selectedStyle?.name);
         update();
       } else {
         progressController.onError();
@@ -112,11 +123,6 @@ class AiGroundController extends GetxController {
   }
 
   Future saveToGallery() async {
-    var uint8list = base64Decode(imageBase64!);
-    var list = uint8list.toList();
-    var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-    var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-    await File(imgPath).writeAsBytes(list);
-    await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+    await GallerySaver.saveImage(filePath!, albumName: saveAlbumName);
   }
 }

@@ -3,10 +3,6 @@ import 'package:cartoonizer/Widgets/toast/ok_toast.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {
-  bool isValidEmail(String email) {
-    return RegExp(r'^.+@[a-zA-Z]+\.{1}[a-zA-Z]+(\.{0,1}[a-zA-Z]+)$').hasMatch(email);
-  }
-
   void showToast(String text) {
     Fluttertoast.showToast(
         msg: text,

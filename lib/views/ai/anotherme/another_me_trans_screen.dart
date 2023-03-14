@@ -363,6 +363,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                   await showLoading();
                                   await GallerySaver.saveVideo(value!.toString(), true, toDcim: true, albumName: saveAlbumName);
                                   await hideLoading();
+                                  Events.metaverseCompleteDownload(type: 'video');
                                   CommonExtension().showVideoSavedOkToast(context);
                                 }
                               });
@@ -375,6 +376,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               await File(imgPath).writeAsBytes(list);
                               await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
                               await hideLoading();
+                              Events.metaverseCompleteDownload(type: 'image');
                               CommonExtension().showImageSavedOkToast(context);
                             }
                           }

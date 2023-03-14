@@ -14,9 +14,11 @@ import 'package:common_utils/common_utils.dart';
 class RecentController extends GetxController {
   late EffectRecordHolder effectRecordHolder;
   late MetaverseHolder metaverseHolder;
+  late AIGroundRecordHolder aiGroundHolder;
 
   List<RecentEffectModel> effectList = [];
   List<RecentMetaverseEntity> metaverseList = [];
+  List<RecentGroundEntity> groundList = [];
 
   List<dynamic> recordList = [];
 
@@ -25,12 +27,14 @@ class RecentController extends GetxController {
     super.onInit();
     effectRecordHolder = EffectRecordHolder();
     metaverseHolder = MetaverseHolder();
+    aiGroundHolder = AIGroundRecordHolder();
     loadingFromCache();
   }
 
   Future<void> loadingFromCache() async {
     effectList = await effectRecordHolder.loadFromCache();
     metaverseList = await metaverseHolder.loadFromCache();
+    groundList = await aiGroundHolder.loadFromCache();
     sortList();
     update();
   }
@@ -53,7 +57,7 @@ class RecentController extends GetxController {
         ..originalPath = element.originalPath
         ..filePath = [e]));
     });
-    recordList = [...effects, ...metaverses];
+    recordList = [...effects, ...metaverses, ...groundList];
     recordList.sort((a1, a2) => a1.updateDt < a2.updateDt ? 1 : -1);
   }
 
@@ -88,6 +92,20 @@ class RecentController extends GetxController {
         ..filePath = [image.path]
         ..updateDt = DateTime.now().millisecondsSinceEpoch
         ..originalPath = original.path,
+    );
+    sortList();
+    update();
+  }
+
+  onAiGroundUsed(String filePath, String prompt, String? initPath, String? styleKey) {
+    aiGroundHolder.record(
+      groundList,
+      RecentGroundEntity()
+        ..filePath = filePath
+        ..updateDt = DateTime.now().millisecondsSinceEpoch
+        ..styleKey = styleKey
+        ..prompt = prompt
+        ..initImageFilePath = initPath,
     );
     sortList();
     update();

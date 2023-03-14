@@ -12,6 +12,7 @@ const String APP_NAME = 'ppm';
 const String KOCHAVA_ANDROID_ID = 'koprofilepicmaker-cartoon-photo-2wd2';
 const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
 const String PLATFORM_CHANNEL = 'io.socialbook/cartoonizer';
+const String APP_TITLE = 'Pandora AI';
 
 class AdMobConfig {
   static bool _debug = false;

@@ -65,16 +65,16 @@ class _SignupScreenState extends AppState<SignupScreen> {
   static const platform = MethodChannel(PLATFORM_CHANNEL);
 
   Future<dynamic> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
-    // Obtain the auth details from the request
-    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-    token = googleAuth?.accessToken;
-    tokenId = googleAuth?.idToken;
-
-    var credential;
     try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      // Obtain the auth details from the request
+      GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      token = googleAuth?.accessToken;
+      tokenId = googleAuth?.idToken;
+
+      var credential;
       if (googleAuth?.accessToken != null || googleAuth?.idToken != null) {
         credential = GoogleAuthProvider.credential(
           accessToken: googleAuth?.accessToken,

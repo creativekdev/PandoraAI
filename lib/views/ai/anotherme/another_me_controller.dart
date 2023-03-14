@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
@@ -10,11 +9,9 @@ import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
-import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AnotherMeController extends GetxController {
   File? _sourcePhoto;
@@ -103,7 +100,7 @@ class AnotherMeController extends GetxController {
     }
     var metaverseLimitEntity = await cartoonizerApi.getMetaverseLimit();
     if (metaverseLimitEntity != null) {
-      if (metaverseLimitEntity.usedCount == metaverseLimitEntity.dailyLimit) {
+      if (metaverseLimitEntity.usedCount >= metaverseLimitEntity.dailyLimit) {
         if (isVip()) {
           return TransferResult()
             ..msgTitle = S.of(Get.context!).generate_reached_limit_title

@@ -103,14 +103,14 @@ class TransProgressScreenShotWidget extends StatelessWidget {
       children: [
         Image.file(
           origin,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
           width: width,
           height: height,
         ).hero(tag: AnotherMe.takeItemTag),
         TransProgressImage(
             child: Image.file(
               result,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
               width: width,
               height: height,
             ),

@@ -82,6 +82,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "您选择了 %selected 张照片，%badImages最少需要 %minSize 张照片。"),
         "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
             "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？"),
+        "choose_your_style": MessageLookupByLibrary.simpleMessage("选择风格（可选）"),
         "clear": MessageLookupByLibrary.simpleMessage("清除"),
         "clear_cache_tips":
             MessageLookupByLibrary.simpleMessage("确定要清除所有缓存？\n 共：%d"),
@@ -155,6 +156,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("请在下面输入您的注册邮箱以接收密码重置指令"),
         "forgot_your_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
+        "generate": MessageLookupByLibrary.simpleMessage("创建"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
         "generate_reached_limit":
             MessageLookupByLibrary.simpleMessage("请明天再试或购买专业版"),
@@ -294,6 +296,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),
         "recent": MessageLookupByLibrary.simpleMessage("最近"),
         "recently": MessageLookupByLibrary.simpleMessage("最近使用"),
+        "reference_image": MessageLookupByLibrary.simpleMessage("参考图片（可选）"),
+        "reference_image_tips":
+            MessageLookupByLibrary.simpleMessage("参考图片将影响最终结果"),
         "remind": MessageLookupByLibrary.simpleMessage("提示"),
         "reply": MessageLookupByLibrary.simpleMessage("回复"),
         "resend": MessageLookupByLibrary.simpleMessage("重新发送"),
@@ -356,6 +361,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("此模板已经不再可用"),
         "term_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
         "terms_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
+        "text_2_image_input_hint":
+            MessageLookupByLibrary.simpleMessage("描述你的图片"),
+        "text_2_image_input_tips":
+            MessageLookupByLibrary.simpleMessage("输入描述让AI开始作图，下面是一些可输入的建议。"),
+        "text_2_image_prompt_title":
+            MessageLookupByLibrary.simpleMessage("输入描述"),
         "this_user_has_not_posted_anything":
             MessageLookupByLibrary.simpleMessage("该用户还没有分享任何内容"),
         "tiktok": MessageLookupByLibrary.simpleMessage("使用TikTok账号"),
@@ -373,6 +384,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile_successfully":
             MessageLookupByLibrary.simpleMessage("信息更新成功"),
         "upload": MessageLookupByLibrary.simpleMessage("上传"),
+        "upload_image": MessageLookupByLibrary.simpleMessage("上传图片"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
         "uploading_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
         "variations_of_styles":

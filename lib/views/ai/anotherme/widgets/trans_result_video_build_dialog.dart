@@ -52,7 +52,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     origin = widget.origin;
     result = widget.result;
     ratio = widget.ratio;
-    designWidth = 360;
+    designWidth = 480;
     designHeight = designWidth * ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
@@ -65,6 +65,9 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     } else {
       delay(() {
         startRecord(onSuccess: () {
+          setState(() {
+            progress = 100;
+          });
           buildVideo();
         }, onError: () {
           CommonExtension().showToast('build failed');
@@ -131,7 +134,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       await mkdir(directory);
     }
     if (progress == 0) {
-      var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 1.5);
+      var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 1);
       if (image == null) {
         onError.call();
         return;
@@ -145,11 +148,11 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 3 == 0 || progress == 100) {
+      if (progress % 4 == 0 || progress == 99) {
         String fileName = savePath + '/${imageNameCount}.png';
         var file = File(fileName);
         if (!file.existsSync()) {
-          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.75);
+          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.7);
           if (image == null) {
             onError.call();
             return;
@@ -163,7 +166,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     }
     progress++;
     setState(() {});
-    if (progress == 100) {
+    if (progress == 99) {
       List<DealData> result = await convertImagesToPngBytes(dealList);
       for (var dealData in result) {
         await File(dealData.name!).writeAsBytes(dealData.data!.buffer.asUint8List().toList());

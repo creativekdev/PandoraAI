@@ -195,28 +195,29 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).scary_content_alert,
-                  training: FlutterSwitch(
-                    value: nsfwOpen,
-                    onToggle: (value) {
-                      if (value) {
-                        showOpenNsfwDialog(context).then((result) {
-                          if (result ?? false) {
+                      training: FlutterSwitch(
+                        value: nsfwOpen,
+                        onToggle: (value) {
+                          if (value) {
+                            showOpenNsfwDialog(context).then((result) {
+                              if (result ?? false) {
+                                setState(() {
+                                  nsfwOpen = true;
+                                });
+                              }
+                            });
+                          } else {
                             setState(() {
-                              nsfwOpen = true;
+                              nsfwOpen = value;
                             });
                           }
-                        });
-                      } else {
-                        setState(() {
-                          nsfwOpen = value;
-                        });
-                      }
-                    },
-                    activeColor: ColorConstant.BlueColor,
-                    inactiveColor: ColorConstant.EffectGrey,
-                    width: $(50),
-                    height: $(24),
-                  ).intoContainer(margin: EdgeInsets.only(right: $(12)))),
+                        },
+                        activeColor: ColorConstant.BlueColor,
+                        inactiveColor: ColorConstant.EffectGrey,
+                        width: $(50),
+                        height: $(24),
+                      ).intoContainer(margin: EdgeInsets.only(right: $(12))))
+                  .visibility(visible: false),
               SizedBox(height: $(35)),
               TitleTextWidget(S.of(context).logout, ColorConstant.Red, FontWeight.normal, $(18))
                   .intoContainer(

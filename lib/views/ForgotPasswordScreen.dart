@@ -69,7 +69,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onTap: () async {
                     if (emailController.text.trim().isEmpty) {
                       CommonExtension().showToast(S.of(context).email_validation);
-                    } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
+                    } else if (!emailController.text.trim().isEmail) {
                       CommonExtension().showToast(S.of(context).email_validation1);
                     } else {
                       setState(() {

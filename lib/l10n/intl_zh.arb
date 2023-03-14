@@ -315,5 +315,13 @@
   "congratulations": "祝贺你!",
   "invitation_desc": "现在使用它们来生成无水印的高分辨率卡通图像",
   "try_it_now": "现在就去",
-  "buy": "购买"
+  "buy": "购买",
+  "choose_your_style": "选择风格（可选）",
+  "reference_image": "参考图片（可选）",
+  "reference_image_tips": "参考图片将影响最终结果",
+  "upload_image": "上传图片",
+  "text_2_image_input_hint": "描述你的图片",
+  "text_2_image_input_tips": "输入描述让AI开始作图，下面是一些可输入的建议。",
+  "text_2_image_prompt_title": "输入描述",
+  "generate": "创建"
 }

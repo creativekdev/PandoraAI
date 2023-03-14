@@ -78,8 +78,8 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
           theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
-          title: 'Pandora AI',
-          home: MyHomePage(title: 'Pandora AI'),
+          title: APP_TITLE,
+          home: MyHomePage(title: APP_TITLE),
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             S.delegate,
@@ -146,7 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    Posthog().screenWithUser(screenName: 'entry_screen');
     onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
       if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
         openApp();
@@ -224,6 +223,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _checkIntroductionPage() {
+    Posthog().screenWithUser(screenName: 'entry_screen');
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion().then((value) {
@@ -284,9 +284,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   maintainAnimation: true,
                 ),
                 Expanded(
-                    child: Image.asset(
-                  Images.ic_app,
-                  width: ScreenUtil.screenSize.width * 7 / 30,
+                    child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      Images.ic_app,
+                      width: ScreenUtil.screenSize.width * 7 / 30,
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      APP_TITLE,
+                      style: TextStyle(
+                        color: ColorConstant.White,
+                        fontSize: $(19),
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
                 )),
                 Image.asset(
                   Images.launch_branding,

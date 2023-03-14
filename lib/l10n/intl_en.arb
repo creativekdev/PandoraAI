@@ -315,5 +315,13 @@
   "congratulations": "Congratulations!",
   "invitation_desc": "Use them now to generate high-resolution cartoonized images without watermarks",
   "try_it_now": "Try it now",
-  "buy": "Buy"
+  "buy": "Buy",
+  "choose_your_style": "Choose your style (optional)",
+  "reference_image": "Reference image (optional)",
+  "reference_image_tips": "The image you select will be used as a reference for the final",
+  "upload_image": "Upload Image",
+  "text_2_image_input_hint": "Describe the image you want to see",
+  "text_2_image_input_tips": "Enter a prompt to inspire the generation process. Below are some suggestions to help you get started.",
+  "text_2_image_prompt_title": "Enter prompt",
+  "generate": "Generate"
 }

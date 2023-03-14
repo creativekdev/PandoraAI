@@ -13,7 +13,7 @@ const int day = hour * 24;
 
 // in production
 const int maxSwitchCount = 10;
-const int maxDuration = 2 * day;
+const int maxDuration = 15 * day;
 const int nextActivatePositive = 2160; // 90 * 24; hour
 const int nextActivateNegative = 720; // 30 * 24; hour
 

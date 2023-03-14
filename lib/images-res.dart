@@ -3,13 +3,13 @@ class Images {
    static const String american_express = 'assets/images/american_express.png';
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
    static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
    static const String ic_another_arrow_down = 'assets/images/ic_another_arrow_down.png';
    static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
-   static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
@@ -83,6 +83,7 @@ class Images {
    static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
+   static const String ic_no_avatar = 'assets/images/ic_no_avatar.png';
    static const String ic_no_watermark = 'assets/images/ic_no_watermark.png';
    static const String ic_password = 'assets/images/ic_password.png';
    static const String ic_password_hide = 'assets/images/ic_password_hide.png';

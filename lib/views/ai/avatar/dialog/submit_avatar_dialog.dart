@@ -90,15 +90,17 @@ class _SubmitAvatarDialogState extends AppState<_SubmitAvatarDialog> {
             ],
           ).intoContainer(color: Color(0xff242830), padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(20)),
-          SelectStyleCard(
-            style: selectedStyle,
-            onSelect: (style) {
-              setState(() {
-                selectedStyle = style;
-              });
-            },
-            config: aiManager.config!,
-          ),
+          aiManager.config != null
+              ? SelectStyleCard(
+                  style: selectedStyle,
+                  onSelect: (style) {
+                    setState(() {
+                      selectedStyle = style;
+                    });
+                  },
+                  config: aiManager.config!,
+                )
+              : SizedBox.shrink(),
           SizedBox(height: $(10)),
           Expanded(child: Container()),
           TitleTextWidget(

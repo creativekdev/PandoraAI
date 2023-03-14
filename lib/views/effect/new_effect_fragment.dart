@@ -118,7 +118,6 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                 });
           } else {
             var list = _.data?.homeCards ?? [];
-            list.add(HomeCardEntity()..type = 'text2image'..url='https://pics5.baidu.com/feed/730e0cf3d7ca7bcbed4d7ac9beeeb868f724a811.png@f_auto?token=c6789aa944d3f2f28fe125154e7a3203');
             return Stack(
               children: [
                 ListView.builder(
@@ -129,6 +128,9 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                   itemBuilder: (context, index) {
                     var config = list[index];
                     var type = HomeCardTypeUtils.build(config.type);
+                    if (type == HomeCardType.UNDEFINED) {
+                      return Container();
+                    }
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -216,7 +218,7 @@ class NewEffectFragmentState extends State<NewEffectFragment> with AppTabState, 
                       }
                     });
                   },
-                  itemCount: list.length ?? 0,
+                  itemCount: list.length,
                 ),
                 header(context),
               ],

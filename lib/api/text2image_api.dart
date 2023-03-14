@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -28,6 +29,7 @@ class Text2ImageApi extends BaseRequester {
 
   Future<String?> text2image({
     required String prompt,
+    required String directoryPath,
     String? initImage,
     int width = 512,
     int height = 512,
@@ -41,15 +43,25 @@ class Text2ImageApi extends BaseRequester {
       'seed': seed,
       'steps': steps,
     };
+    var api = '/sdapi/v1/txt2img';
     if (!TextUtil.isEmpty(initImage)) {
       params['init_images'] = [initImage];
+      api = '/sdapi/v1/img2img';
     }
-    var baseEntity = await post('/sdapi/v1/txt2img', params: params);
+    var baseEntity = await post(api, params: params);
     List<String>? images = (baseEntity?.data['images'] as List?)?.map((e) => e.toString()).toList();
-    return images?.first;
+    if(images != null && images.isNotEmpty) {
+      var dataString = images.first;
+      String key = EncryptUtil.encodeMd5(dataString);
+      String filePath = getFileName(directoryPath, key);
+      var base64decode = await base64Decode(dataString);
+      await File(filePath).writeAsBytes(base64decode.toList());
+      return filePath;
+    }
+    return null;
   }
 
-  Future<Map<String, List<AiGroundStyleEntity>>?> artists() async {
+  Future<List<AiGroundStyleEntity>?> artists() async {
     var json = cacheManager.getJson(CacheManager.aiGroundStyles);
     if (json != null) {
       var list = jsonConvert.convertListNotNull<AiGroundStyleEntity>(json);
@@ -59,19 +71,13 @@ class Text2ImageApi extends BaseRequester {
       list.forEach((element) {
         element.url = '${Config.instance.text2imageHost}/${element.category}/${element.slug}.jpg';
       });
-      Map<String, List<AiGroundStyleEntity>> result = {};
-      for (var entity in list) {
-        List<AiGroundStyleEntity> children = result[entity.category] ?? [];
-        children.add(entity);
-        result[entity.category] = children;
-      }
       _getFromNet();
-      return result;
+      return list;
     }
     return await _getFromNet();
   }
 
-  Future<Map<String, List<AiGroundStyleEntity>>?> _getFromNet() async {
+  Future<List<AiGroundStyleEntity>?> _getFromNet() async {
     var baseEntity = await get('/sdapi/v1/artists');
     if (baseEntity == null) {
       return null;
@@ -84,12 +90,11 @@ class Text2ImageApi extends BaseRequester {
     list.forEach((element) {
       element.url = '${Config.instance.text2imageHost}/${element.category}/${element.slug}.jpg';
     });
-    Map<String, List<AiGroundStyleEntity>> result = {};
-    for (var entity in list) {
-      List<AiGroundStyleEntity> children = result[entity.category] ?? [];
-      children.add(entity);
-      result[entity.category] = children;
-    }
-    return result;
+    return list;
+  }
+
+
+  String getFileName(String directoryPath, String encode) {
+    return '${directoryPath}$encode.png';
   }
 }

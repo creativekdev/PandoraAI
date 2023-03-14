@@ -1,4 +1,5 @@
 package io.socialbook.cartoonizer.converter;
+
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -13,9 +14,10 @@ import java.util.List;
 public class YuvConverter {
     /**
      * Converts an NV21 image into JPEG compressed.
-     * @param nv21 byte[] of the input image in NV21 format
-     * @param width Width of the image.
-     * @param height Height of the image.
+     *
+     * @param nv21    byte[] of the input image in NV21 format
+     * @param width   Width of the image.
+     * @param height  Height of the image.
      * @param quality Quality of compressed image(0-100)
      * @return byte[] of a compressed Jpeg image.
      */
@@ -30,6 +32,7 @@ public class YuvConverter {
     /**
      * Format YUV_420 planes in to NV21.
      * Removes strides from planes and combines the result to single NV21 byte array.
+     *
      * @param planes  List of Bytes list
      * @param strides contains the strides of each plane. The structure :
      *                strideRowFirstPlane,stridePixelFirstPlane, strideRowSecondPlane
@@ -38,7 +41,7 @@ public class YuvConverter {
      * @return NV21 image byte[].
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static byte[] YUVtoNV21 (List<byte[]> planes, int[] strides, int width, int height) {
+    public static byte[] YUVtoNV21(List<byte[]> planes, int[] strides, int width, int height) {
         Rect crop = new Rect(0, 0, width, height);
         int format = ImageFormat.YUV_420_888;
         byte[] data = new byte[width * height * ImageFormat.getBitsPerPixel(format) / 8];
@@ -64,13 +67,12 @@ public class YuvConverter {
             ByteBuffer buffer = ByteBuffer.wrap(planes.get(i));
             int rowStride;
             int pixelStride;
-            if(i ==0 ) {
+            if (i == 0) {
                 rowStride = strides[i];
-                pixelStride = strides[i+1];
-            }
-            else {
-                rowStride = strides[i *2 ];
-                pixelStride = strides[i *2 +1];
+                pixelStride = strides[i + 1];
+            } else {
+                rowStride = strides[i * 2];
+                pixelStride = strides[i * 2 + 1];
             }
             int shift = (i == 0) ? 0 : 1;
             int w = width >> shift;

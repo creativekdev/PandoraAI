@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -7,6 +8,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
@@ -16,9 +18,15 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
 
 import '../../../models/ai_ground_style_entity.dart';
+import 'ai_ground_result_screen.dart';
 
 class AiGroundScreen extends StatefulWidget {
-  const AiGroundScreen({Key? key}) : super(key: key);
+  RecentGroundEntity? history;
+
+  AiGroundScreen({
+    Key? key,
+    this.history,
+  }) : super(key: key);
 
   @override
   State<AiGroundScreen> createState() => _AiGroundScreenState();
@@ -29,16 +37,65 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
   UploadImageController uploadImageController = Get.put(UploadImageController());
 
   late double imageSize;
+  late StreamSubscription onStyleListUpdated;
+  RecentGroundEntity? history;
 
   @override
   void initState() {
     super.initState();
+    Events.txt2imgShow();
     imageSize = (ScreenUtil.screenSize.width - 40) / 2.5;
+    onStyleListUpdated = EventBusHelper().eventBus.on<OnAiGroundStyleUpdateEvent>().listen((event) {
+      aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
+      aiGroundController.update();
+    });
+    history = widget.history;
+    if (history != null) {
+      aiGroundController.editingController.text = history?.prompt ?? '';
+      aiGroundController.filePath = history!.filePath;
+      if (aiGroundController.styleList.isNotEmpty) {
+        aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
+      }
+      delay(() {
+        var forward = () {
+          Navigator.of(context)
+              .push(
+            MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: aiGroundController)),
+          )
+              .then((value) {
+            if (value ?? false) {
+              aiGroundController.onPlayClick(context, uploadImageController.imageUrl.value, );
+            }
+          });
+        };
+        if (!TextUtil.isEmpty(history!.initImageFilePath)) {
+          var file = File(history!.initImageFilePath!);
+          if (file.existsSync()) {
+            aiGroundController.initFile = file;
+            showLoading().whenComplete(() {
+              imageCompressAndGetFile(file, imageSize: 768).then((value) {
+                uploadImageController.uploadCompressedImage(value).then((value) {
+                  hideLoading().whenComplete(() {
+                    forward.call();
+                    uploadImageController.update();
+                  });
+                });
+              });
+            });
+          } else {
+            forward.call();
+          }
+        } else {
+          forward.call();
+        }
+      });
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+    onStyleListUpdated.cancel();
     Get.delete<AiGroundController>();
     Get.delete<UploadImageController>();
   }
@@ -50,7 +107,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: TitleTextWidget(
-          'Text-Image',
+          'AI Artist',
           ColorConstant.White,
           FontWeight.w600,
           $(17),
@@ -59,7 +116,6 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
       body: GetBuilder<AiGroundController>(
         init: aiGroundController,
         builder: (controller) {
-          List<AiGroundStyleEntity>? styleShownList = controller.styleMap?[controller.categoryList?[controller.selectedCategoryIndex]];
           return Stack(
             children: [
               SingleChildScrollView(
@@ -69,7 +125,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                     Row(
                       children: [
                         Text(
-                          'Enter prompt',
+                          S.of(context).text_2_image_prompt_title,
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: $(15),
@@ -94,7 +150,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                         SizedBox(width: $(4)),
                         Expanded(
                           child: Text(
-                            'Enter a prompt to inspire the generation process. Below are some suggestions to help you get started.',
+                            S.of(context).text_2_image_input_tips,
                             style: TextStyle(fontSize: $(13), color: Color(0xFF2778FF)),
                           ),
                         ),
@@ -104,7 +160,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                     TextField(
                       controller: aiGroundController.editingController,
                       decoration: InputDecoration(
-                        hintText: 'Describe the image you want to see',
+                        hintText: S.of(context).text_2_image_input_hint,
                         hintStyle: TextStyle(color: Colors.grey.shade500),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
@@ -133,10 +189,12 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                             itemBuilder: (context, index) {
                               return Text(
                                 controller.promptList![index],
-                                style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(17), fontWeight: FontWeight.w500),
+                                style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(14), fontWeight: FontWeight.w500),
+                                overflow: TextOverflow.ellipsis,
                               )
                                   .intoContainer(
-                                padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(4)),
+                                constraints: BoxConstraints(maxWidth: $(160)),
+                                padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(4)),
                                 decoration: BoxDecoration(color: Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(32)),
                                 margin: EdgeInsets.only(right: $(15)),
                               )
@@ -146,49 +204,16 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                             },
                             itemCount: controller.promptList!.length,
                           ).intoContainer(height: $(56)),
-                    OrLine()
-                        .intoContainer(
-                          margin: EdgeInsets.only(
-                            left: $(15),
-                            right: $(15),
-                            top: $(32),
-                            bottom: $(24),
-                          ),
-                        )
-                        .intoMaterial(color: Colors.transparent),
-                    TitleTextWidget('Choose your style (Optional)', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
-                        margin: EdgeInsets.only(
-                      left: $(15),
-                      right: $(15),
-                    )),
-                    controller.styleMap == null
+                    TitleTextWidget(
+                      S.of(context).choose_your_style,
+                      ColorConstant.White,
+                      FontWeight.w600,
+                      $(17),
+                    ).intoContainer(
+                      margin: EdgeInsets.only(left: $(15), right: $(15)),
+                    ),
+                    controller.styleList.isEmpty
                         ? CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(height: $(56))
-                        : ScrollablePositionedList.builder(
-                            padding: EdgeInsets.only(left: $(15), right: $(7)),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.styleMap!.length,
-                            itemBuilder: (context, index) {
-                              bool checked = controller.selectedCategoryIndex == index;
-                              return Text(
-                                controller.categoryList![index].toUpperCaseFirst,
-                                style: TextStyle(fontFamily: 'Poppins', fontSize: $(17), color: ColorConstant.White),
-                              )
-                                  .intoContainer(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(color: checked ? Color(0xff3E60FF) : Color(0xff2c2c2e), borderRadius: BorderRadius.circular($(6))),
-                                      padding: EdgeInsets.symmetric(horizontal: $(16)),
-                                      margin: EdgeInsets.only(right: $(8), top: $(12), bottom: $(12)))
-                                  .intoGestureDetector(onTap: () {
-                                if (!checked) {
-                                  controller.selectedCategoryIndex = index;
-                                  controller.selectedStyle = null;
-                                  controller.scrollController.jumpTo(0);
-                                  controller.update();
-                                }
-                              });
-                            }).intoContainer(height: 64),
-                    controller.styleMap == null
-                        ? Container()
                         : GridView.builder(
                             controller: controller.scrollController,
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -199,9 +224,9 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                             ),
                             padding: EdgeInsets.only(left: $(12), right: $(7)),
                             scrollDirection: Axis.horizontal,
-                            itemCount: styleShownList!.length,
+                            itemCount: controller.styleList.length,
                             itemBuilder: (context, index) {
-                              var data = styleShownList[index];
+                              var data = controller.styleList[index];
                               bool checked = controller.selectedStyle == data;
                               return Column(
                                 children: [
@@ -235,18 +260,11 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                                   controller.update();
                                 }
                               });
-                            }).intoContainer(height: imageSize * 2.6),
-                    OrLine()
-                        .intoContainer(
-                          margin: EdgeInsets.only(
-                            left: $(15),
-                            right: $(15),
-                            top: $(32),
-                            bottom: $(24),
+                            }).intoContainer(
+                            height: imageSize * 2.6,
+                            margin: EdgeInsets.only(top: $(15)),
                           ),
-                        )
-                        .intoMaterial(color: Colors.transparent),
-                    TitleTextWidget('Reference image (Optional)', ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+                    TitleTextWidget(S.of(context).reference_image, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
                         margin: EdgeInsets.only(
                       left: $(15),
                       right: $(15),
@@ -262,7 +280,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                         SizedBox(width: $(4)),
                         Expanded(
                           child: Text(
-                            'The image you select will be used as a reference for the final',
+                            S.of(context).reference_image_tips,
                             style: TextStyle(fontSize: $(13), color: Color(0xFF2778FF)),
                           ),
                         ),
@@ -287,7 +305,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                                           ),
                                           SizedBox(width: $(4)),
                                           Text(
-                                            'Upload Image',
+                                            S.of(context).upload_image,
                                             style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
                                           ),
                                         ],
@@ -328,6 +346,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                                 if (value != null && value.isNotEmpty) {
                                   File? source = await value.first.file;
                                   if (source != null) {
+                                    controller.initFile = source;
                                     showLoading().whenComplete(() async {
                                       File compressedImage = await imageCompressAndGetFile(source, imageSize: 768);
                                       await uploadController.uploadCompressedImage(compressedImage);
@@ -347,7 +366,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
               ),
               Positioned(
                 child: Text(
-                  'Play Ground',
+                  S.of(context).generate,
                   style: TextStyle(color: Colors.white, fontSize: $(17), fontFamily: 'Poppins'),
                 )
                     .intoContainer(

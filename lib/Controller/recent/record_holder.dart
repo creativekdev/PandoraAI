@@ -87,3 +87,32 @@ class EffectRecordHolder extends RecordHolder<RecentEffectModel> {
     );
   }
 }
+
+class AIGroundRecordHolder extends RecordHolder<RecentGroundEntity> {
+  @override
+  Future<List<RecentGroundEntity>> loadFromCache() async {
+    List<RecentGroundEntity> result = [];
+    try {
+      var json = _cacheManager.getJson(CacheManager.keyRecentAiGround);
+      result = (json as List<dynamic>).map((e) => RecentGroundEntity.fromJson(e)).toList();
+    } catch (e) {}
+    return result;
+  }
+
+  @override
+  Future<bool> record(List<RecentGroundEntity> source, RecentGroundEntity data, {bool toCache = true}) async {
+    source.insert(0, data);
+    if (toCache) {
+      await saveToCache(source);
+    }
+    return true;
+  }
+
+  @override
+  Future<bool> saveToCache(List<RecentGroundEntity> data) async {
+    return await _cacheManager.setJson(
+      CacheManager.keyRecentAiGround,
+      data.map((e) => e.toJson()).toList(),
+    );
+  }
+}

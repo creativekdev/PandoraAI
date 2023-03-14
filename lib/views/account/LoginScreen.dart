@@ -219,7 +219,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                   CommonExtension().showToast(S.of(context).email_validation);
                 } else if (passController.text.trim().isEmpty) {
                   CommonExtension().showToast(S.of(context).pass_validation);
-                } else if (!CommonExtension().isValidEmail(emailController.text.trim())) {
+                } else if (!emailController.text.trim().isEmail) {
                   CommonExtension().showToast(S.of(context).email_validation1);
                 } else {
                   FocusManager.instance.primaryFocus?.unfocus();

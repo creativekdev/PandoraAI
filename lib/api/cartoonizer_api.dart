@@ -183,14 +183,17 @@ class CartoonizerApi extends BaseRequester {
   Future<int?> discoveryLike(
     int id, {
     Function? onUserExpired,
+    required String source,
+    required String style,
   }) async {
     var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id}, onFailed: (response) {
       if (response.statusCode == 401) {
         onUserExpired?.call();
       }
-    });
+    }, toastOnFailed: false);
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
+      Events.discoveryLikeClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
     }
@@ -206,7 +209,7 @@ class CartoonizerApi extends BaseRequester {
       if (response.statusCode == 401) {
         onUserExpired?.call();
       }
-    });
+    }, toastOnFailed: false);
     if (baseEntity != null) {
       EventBusHelper().eventBus.fire(OnDiscoveryUnlikeEvent(data: id));
     }
@@ -216,8 +219,6 @@ class CartoonizerApi extends BaseRequester {
   Future<int?> commentLike(
     int id, {
     Function? onUserExpired,
-    required String source,
-    required String style,
   }) async {
     var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id}, onFailed: (response) {
       if (response.statusCode == 401) {
@@ -226,7 +227,6 @@ class CartoonizerApi extends BaseRequester {
     });
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
-      Events.discoveryLikeClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
     }
@@ -298,7 +298,7 @@ class CartoonizerApi extends BaseRequester {
   }
 
   Future<EffectMap?> getHomeConfig() async {
-    var baseEntity = await get("/tool/cartoonize_config/v5");
+    var baseEntity = await get("/tool/cartoonize_config/v6");
     if (baseEntity == null) return null;
     return EffectMap.fromJson(baseEntity.data);
   }

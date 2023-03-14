@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -31,6 +32,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   EasyRefreshController _refreshController = EasyRefreshController();
   AvatarAiManager avatarAiManager = AppDelegate().getManager();
   List<AvatarAiListEntity> dataList = [];
+  List<AvatarAiListEntity> shownList = [];
   late StreamSubscription listListen;
   late double imageSize;
   late TabController tabController;
@@ -70,12 +72,45 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     listListen.cancel();
   }
 
+  refreshShownList() {
+    var status = statusList[currentIndex];
+    shownList = dataList.filter((t) {
+      var tStatus = AvatarStatusUtils.build(t.status);
+      if (status == AvatarStatus.UNDEFINED) {
+        return true;
+      }
+      switch (status) {
+        case AvatarStatus.pending:
+        case AvatarStatus.processing:
+          if (tStatus == AvatarStatus.pending || tStatus == AvatarStatus.processing) {
+            return true;
+          } else {
+            return false;
+          }
+        case AvatarStatus.generating:
+        case AvatarStatus.bought:
+          return tStatus == status;
+        case AvatarStatus.completed:
+        case AvatarStatus.subscribed:
+          if (tStatus == AvatarStatus.completed || tStatus == AvatarStatus.subscribed) {
+            return true;
+          } else {
+            return false;
+          }
+        case AvatarStatus.UNDEFINED:
+          return false;
+      }
+    });
+    var s = '';
+  }
+
   loadFirstPage() {
     avatarAiManager.listAllAvatarAi().then((value) {
       _refreshController.finishRefresh();
       if (value != null) {
         setState(() {
           dataList = value;
+          refreshShownList();
         });
         if (value.isEmpty) {
           Avatar.intro(context, source: source);
@@ -87,9 +122,9 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: Colors.black,
       appBar: AppNavigationBar(
-        backgroundColor: ColorConstant.BackgroundColor,
+        backgroundColor: Colors.black,
         trailing: Icon(
           Icons.add,
           color: Colors.white,
@@ -127,6 +162,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
               onTap: (index) {
                 setState(() {
                   currentIndex = index;
+                  refreshShownList();
                 });
               },
             )),
@@ -137,11 +173,24 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
         enableControlFinishLoad: false,
         onRefresh: () async => loadFirstPage(),
         controller: _refreshController,
+        emptyWidget: shownList.isEmpty?Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              Images.ic_no_avatar,
+              width: $(114),
+            ),
+            SizedBox(height: $(8)),
+            Text('You have no related orders',style: TextStyle(color: Color(0xFF939398),fontFamily: ''
+                'Poppins',fontSize: $(13)),)
+          ],
+        ).intoCenter():null,
         slivers: [
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) => buildItem(context, index),
-            childCount: dataList.length,
+            childCount: shownList.length,
           ))
         ],
       ),
@@ -149,15 +198,8 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   }
 
   Widget buildItem(BuildContext context, int index) {
-    var data = dataList[index];
+    var data = shownList[index];
     var status = AvatarStatusUtils.build(data.status);
-    var currentStatus = statusList[currentIndex];
-    if (currentStatus != AvatarStatus.UNDEFINED) {
-      if (status == AvatarStatus.subscribed && currentStatus == AvatarStatus.completed) {
-      } else if (status != currentStatus) {
-        return Container();
-      }
-    }
     Widget item;
     switch (status) {
       case AvatarStatus.pending:
@@ -382,7 +424,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     }
     return item.intoContainer(
       padding: EdgeInsets.only(
-        bottom: index == dataList.length - 1 ? ScreenUtil.getBottomPadding(context, padding: $(32)) : 0,
+        bottom: index == shownList.length - 1 ? ScreenUtil.getBottomPadding(context, padding: $(32)) : 0,
       ),
     );
   }

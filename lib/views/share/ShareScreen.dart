@@ -110,6 +110,7 @@ class ShareScreen extends StatefulWidget {
             backgroundColor: backgroundColor,
             effectKey: effectKey,
             needDiscovery: needDiscovery,
+            onShareSuccess: onShareSuccess,
           );
         },
         backgroundColor: backgroundColor);

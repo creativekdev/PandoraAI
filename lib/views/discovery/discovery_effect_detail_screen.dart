@@ -54,6 +54,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   late ScrollController scrollController;
   late String prePage;
   late String dataType;
+  late String style = '';
 
   DiscoveryEffectDetailScreenState() : super(canCancelOnLoading: false);
 
@@ -224,7 +225,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     userManager.doOnLogin(context, logPreLoginAction: entity.likeId == null ? 'pre_comment_like' : 'pre_comment_unlike', callback: () {
       showLoading().whenComplete(() {
         if (entity.likeId == null) {
-          api.commentLike(entity.id, source: dataType, style: style).then((value) {
+          api.commentLike(entity.id).then((value) {
             hideLoading();
           });
         } else {
@@ -240,7 +241,13 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     userManager.doOnLogin(context, logPreLoginAction: discoveryEntity.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
       showLoading().whenComplete(() {
         if (discoveryEntity.likeId == null) {
-          api.discoveryLike(discoveryEntity.id).then((value) {
+          api
+              .discoveryLike(
+            discoveryEntity.id,
+            style: style,
+            source: dataType,
+          )
+              .then((value) {
             hideLoading();
           });
         } else {
@@ -293,11 +300,11 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       style = 'avatar';
     } else if (discoveryEntity.category == DiscoveryCategory.another_me.name) {
       style = 'metaverse';
+    } else if (discoveryEntity.category == DiscoveryCategory.txt2img.name) {
+      style = 'txt2img';
     }
     Events.discoveryDetailLoading(source: dataType, style: style);
   }
-
-  late String style;
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -332,6 +339,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                         },
                         source: prePage + '-discovery',
                         dataType: dataType,
+                        style: style,
                       );
                     } else {
                       var index = i - 1;

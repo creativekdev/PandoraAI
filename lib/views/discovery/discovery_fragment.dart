@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/discovery_list_controller.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/admob/card_ads_widget.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -10,12 +12,15 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/ad_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -103,17 +108,17 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     }
   }
 
-  onLikeTap(DiscoveryListEntity entity) => showLoading().whenComplete(() {
-        if (entity.likeId == null) {
-          listController.api.discoveryLike(entity.id).then((value) {
-            hideLoading();
-          });
-        } else {
-          listController.api.discoveryUnLike(entity.id, entity.likeId!).then((value) {
-            hideLoading();
-          });
-        }
+  onLikeTap(DiscoveryListEntity entity) {
+    if (entity.likeId == null) {
+      listController.api.discoveryLike(entity.id, source: listController.currentTab.sort.value(), style: getStyle(entity)).then((value) {
+        hideLoading();
       });
+    } else {
+      listController.api.discoveryUnLike(entity.id, entity.likeId!).then((value) {
+        hideLoading();
+      });
+    }
+  }
 
   onDragStart(DragStartDetails details) {
     canBeDragged = animationController.isDismissed || animationController.isCompleted;
@@ -276,7 +281,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery',dataType: listController.currentTab.sort.value()),
+                  builder: (BuildContext context) =>
+                      DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery', dataType: listController.currentTab.sort.value()),
                   settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
                 ),
               ),
@@ -315,6 +321,53 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     }
     return Container();
+  }
+
+  String getStyle(
+    DiscoveryListEntity discoveryEntity,
+  ) {
+    if (discoveryEntity.category == DiscoveryCategory.cartoonize.name) {
+      EffectDataController effectDataController = Get.find();
+      if (effectDataController.data == null) {
+        return '';
+      }
+      String key = discoveryEntity.cartoonizeKey;
+      int tabPos = effectDataController.data!.tabPos(key);
+      if (tabPos == -1) {
+        CommonExtension().showToast(S.of(context).template_not_available);
+        return '';
+      }
+      var targetSeries = effectDataController.data!.targetSeries(key)!;
+      EffectModel? effectModel;
+      EffectItem? effectItem;
+      int index = 0;
+      for (int i = 0; i < targetSeries.value.length; i++) {
+        if (effectModel != null) {
+          break;
+        }
+        var model = targetSeries.value[i];
+        var list = model.effects.values.toList();
+        for (int j = 0; j < list.length; j++) {
+          var item = list[j];
+          if (item.key == key) {
+            effectModel = model;
+            effectItem = item;
+            index = i;
+            break;
+          }
+        }
+      }
+      if (effectItem == null) {
+        CommonExtension().showToast(S.of(context).template_not_available);
+        return '';
+      }
+      return 'facetoon-${effectItem.key}';
+    } else if (discoveryEntity.category == DiscoveryCategory.ai_avatar.name) {
+      return 'avatar';
+    } else if (discoveryEntity.category == DiscoveryCategory.another_me.name) {
+      return 'metaverse';
+    }
+    return '';
   }
 }
 

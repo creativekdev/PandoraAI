@@ -49,6 +49,7 @@ class JsonConvert {
 		(RecentEffectModel).toString(): RecentEffectModel.fromJson,
 		(RecentEffectItem).toString(): RecentEffectItem.fromJson,
 		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
+		(RecentGroundEntity).toString(): RecentGroundEntity.fromJson,
 		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
 	};
 
@@ -84,9 +85,6 @@ class JsonConvert {
   }
 
   T? asT<T extends Object?>(dynamic value) {
-    if(value == null){
-      return null;
-    }
     if (value is T) {
       return value;
     }
@@ -193,6 +191,9 @@ class JsonConvert {
 		}
 		if(<RecentMetaverseEntity>[] is M){
 			return data.map<RecentMetaverseEntity>((Map<String, dynamic> e) => RecentMetaverseEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentGroundEntity>[] is M){
+			return data.map<RecentGroundEntity>((Map<String, dynamic> e) => RecentGroundEntity.fromJson(e)).toList() as M;
 		}
 		if(<UploadRecordEntity>[] is M){
 			return data.map<UploadRecordEntity>((Map<String, dynamic> e) => UploadRecordEntity.fromJson(e)).toList() as M;

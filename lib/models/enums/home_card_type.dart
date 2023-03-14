@@ -16,7 +16,7 @@ class HomeCardTypeUtils {
         return HomeCardType.anotherme;
       case 'ai_avatar':
         return HomeCardType.ai_avatar;
-      case 'text2image':
+      case 'txt2img':
         return HomeCardType.text2image;
       default:
         return HomeCardType.UNDEFINED;
@@ -34,7 +34,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.ai_avatar:
         return 'ai_avatar';
       case HomeCardType.text2image:
-        return 'text2image';
+        return 'txt2img';
       case HomeCardType.UNDEFINED:
         return null;
     }
@@ -51,7 +51,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.UNDEFINED:
         return '';
       case HomeCardType.text2image:
-        return 'Text to Image';
+        return 'AI Artist';
     }
   }
 }

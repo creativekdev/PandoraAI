@@ -11,6 +11,7 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 
 class EffectRecentScreen extends StatefulWidget {
@@ -32,6 +33,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
     super.initState();
     Events.recentlyLoading();
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -98,6 +100,16 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                                 showPhotoLibraryPermissionDialog(context);
                               }
                             });
+                          });
+                        } else if (data is RecentGroundEntity) {
+                          return Image.file(
+                            File(data.filePath!),
+                            fit: BoxFit.cover,
+                          ).intoGestureDetector(onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => AiGroundScreen(
+                                      history: data,
+                                    )));
                           });
                         }
                         return Container();

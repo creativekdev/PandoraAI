@@ -97,6 +97,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "You\'ve selected %selected photos%badImages of %minSize minimum required."),
         "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
             "You\'ve selected %selected photos%badImages\n Are you sure to upload these %goodCount photos?"),
+        "choose_your_style": MessageLookupByLibrary.simpleMessage(
+            "Choose your style (optional)"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
         "clear_cache_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to clear all cache?\n total: %d"),
@@ -185,6 +187,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Forgot Your Password?"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
+        "generate": MessageLookupByLibrary.simpleMessage("Generate"),
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
@@ -360,6 +363,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "read_all": MessageLookupByLibrary.simpleMessage("Read All"),
         "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),
+        "reference_image":
+            MessageLookupByLibrary.simpleMessage("Reference image (optional)"),
+        "reference_image_tips": MessageLookupByLibrary.simpleMessage(
+            "The image you select will be used as a reference for the final"),
         "remind": MessageLookupByLibrary.simpleMessage("Remind"),
         "reply": MessageLookupByLibrary.simpleMessage("reply"),
         "resend": MessageLookupByLibrary.simpleMessage("Resend"),
@@ -440,6 +447,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Terms and conditions"),
         "terms_condition":
             MessageLookupByLibrary.simpleMessage(" Terms & Conditions"),
+        "text_2_image_input_hint": MessageLookupByLibrary.simpleMessage(
+            "Describe the image you want to see"),
+        "text_2_image_input_tips": MessageLookupByLibrary.simpleMessage(
+            "Enter a prompt to inspire the generation process. Below are some suggestions to help you get started."),
+        "text_2_image_prompt_title":
+            MessageLookupByLibrary.simpleMessage("Enter prompt"),
         "this_user_has_not_posted_anything":
             MessageLookupByLibrary.simpleMessage(
                 "This user has not posted anything"),
@@ -461,6 +474,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile_successfully": MessageLookupByLibrary.simpleMessage(
             "Profile update successfully!"),
         "upload": MessageLookupByLibrary.simpleMessage("Upload"),
+        "upload_image": MessageLookupByLibrary.simpleMessage("Upload Image"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("Upload photos"),
         "uploading_photos":
             MessageLookupByLibrary.simpleMessage("Uploading photos"),

@@ -1,5 +1,6 @@
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
+import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:event_bus/event_bus.dart';
 
 /// EventBusHelper
@@ -129,3 +130,9 @@ class OnHashTagChangeEvent extends BaseEvent<String> {
 class OnClearCacheEvent extends BaseEvent {}
 
 class OnCreateAvatarAiEvent extends BaseEvent {}
+
+class OnPoseStateChangeEvent extends BaseEvent<PoseState> {
+  OnPoseStateChangeEvent({required PoseState pose}) : super(data: pose);
+}
+
+class OnAiGroundStyleUpdateEvent extends BaseEvent {}

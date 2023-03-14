@@ -171,7 +171,7 @@ class DiscoverySecondaryCommentsListState extends AppState<DiscoverySecondaryCom
     userManager.doOnLogin(context, logPreLoginAction: entity.likeId == null ? 'pre_secondary_comment_like' : 'pre_secondary_comment_unlike', callback: () {
       showLoading().whenComplete(() {
         if (entity.likeId == null) {
-          api.commentLike(entity.id, source: '', style: '').then((value) {
+          api.commentLike(entity.id).then((value) {
             hideLoading();
           });
         } else {

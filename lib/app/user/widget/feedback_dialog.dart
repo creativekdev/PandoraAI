@@ -3,6 +3,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 
 class FeedbackDialog extends StatefulWidget {
   @override
@@ -34,16 +36,18 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
       CommonExtension().showToast('Please input feedback');
       return;
     }
-    showLoading().whenComplete(() {
-      api.feedback(content).then((value) {
-        hideLoading().whenComplete(() {
-          if (value != null) {
-            CommonExtension().showToast('Thanks for your opinions');
-            Navigator.pop(context, true);
-          }
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: "pre_feedback", callback: () {
+      showLoading().whenComplete(() {
+        api.feedback(content).then((value) {
+          hideLoading().whenComplete(() {
+            if (value != null) {
+              CommonExtension().showToast('Thanks for your opinions');
+              Navigator.pop(context, true);
+            }
+          });
         });
       });
-    });
+    }, autoExec: true);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/camera/app_camera.dart';
@@ -29,6 +30,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'anotherme.dart';
 import 'libcopy/camera_controller.dart';
 import 'libcopy/camera_preview.dart';
+import 'widgets/rotate_widget.dart';
 import 'widgets/take_photo_button.dart';
 
 class AnotherMeScreen extends StatefulWidget {
@@ -110,6 +112,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         if (nextPose != null) {
           if (nextPose != this.pose) {
             if (mounted) {
+              EventBusHelper().eventBus.fire(OnPoseStateChangeEvent(pose: nextPose));
               setState(() {
                 pose = nextPose;
               });
@@ -269,8 +272,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Transform.rotate(
-              angle: pose.rotate(),
+            child: RotateWidget(
+              pose: pose,
               child: Text(
                 '${zoomLevel.toStringAsFixed(1)}x',
                 style: TextStyle(color: Colors.white, fontSize: $(13)),
@@ -373,8 +376,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
                             },
                             maxSecond: 8,
                           ),
-                          Transform.rotate(
-                            angle: pose.rotate(),
+                          RotateWidget(
+                            pose: pose,
                             child: Image.asset(
                               Images.ic_camera_switch,
                               width: 44,
@@ -431,25 +434,27 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return ClipRRect(
-                  child: Image(
-                    image: MediumImage(
-                      assetList[index],
-                      width: 256,
-                      height: 256,
-                      failedImageAssets: Images.ic_netimage_failed,
-                      onError: (medium) {
-                        if (!loadFailedList.contains(medium.id)) {
-                          loadFailedList.add(medium.id);
-                        }
-                      },
-                    ),
-                    width: galleryImageSize,
-                    height: galleryImageSize,
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                ).intoGestureDetector(onTap: () async {
+                return RotateWidget(
+                    pose: pose,
+                    child: ClipRRect(
+                      child: Image(
+                        image: MediumImage(
+                          assetList[index],
+                          width: 256,
+                          height: 256,
+                          failedImageAssets: Images.ic_netimage_failed,
+                          onError: (medium) {
+                            if (!loadFailedList.contains(medium.id)) {
+                              loadFailedList.add(medium.id);
+                            }
+                          },
+                        ),
+                        width: galleryImageSize,
+                        height: galleryImageSize,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    )).intoGestureDetector(onTap: () async {
                   var medium = assetList[index];
                   var file = await medium.file;
                   if (file == null || loadFailedList.contains(medium.id)) {

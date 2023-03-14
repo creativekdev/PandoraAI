@@ -292,15 +292,15 @@ Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widge
           return plane.bytes;
         }).toList();
         Uint8List tempData;
-        tempData = await platform.invokeMethod("YUVTransform",
-            {'data': data, 'height': image.height, 'width': image.width, 'strides': strides, 'quality': 100, 'isVertical': widgetDirection == Axis.vertical, 'isFront': isFront});
-        // if (widgetDirection == Axis.vertical && image.width > image.height) {
-        //   tempData = await platform.invokeMethod("YUVTransform",
-        //       {'data': data, 'height': image.width, 'width': image.height, 'strides': strides, 'quality': 100, 'isVertical': widgetDirection == Axis.vertical, 'isFront': isFront});
-        // } else {
-        //   tempData = await platform.invokeMethod("YUVTransform",
-        //       {'data': data, 'height': image.height, 'width': image.width, 'strides': strides, 'quality': 100, 'isVertical': widgetDirection == Axis.vertical, 'isFront': isFront});
-        // }
+        tempData = await platform.invokeMethod("YUVTransform", {
+          'data': data,
+          'height': image.height,
+          'width': image.width,
+          'strides': strides,
+          'quality': 100,
+          'isVertical': widgetDirection == Axis.vertical,
+          'isFront': isFront,
+        });
         return tempData.toList();
       }
     } else if (image.format.group == ImageFormatGroup.bgra8888) {

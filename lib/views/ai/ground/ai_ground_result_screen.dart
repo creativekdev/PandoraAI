@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -8,7 +9,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/ai/anotherme/widgets/am_opt_container.dart';
 import 'package:cartoonizer/views/ai/ground/ai_ground_controller.dart';
 import 'package:cartoonizer/views/ai/ground/widget/agopt_container.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
@@ -33,15 +33,16 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
   @override
   void initState() {
     super.initState();
+    Events.txt2imgResultShow();
     controller = widget.controller;
   }
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: ColorConstant.BackgroundColor,
       ),
       body: GetBuilder<AiGroundController>(
         init: controller,
@@ -49,8 +50,8 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
           return Column(
             children: [
               Expanded(
-                  child: Image.memory(
-                base64Decode(controller.imageBase64!),
+                  child: Image.file(
+                File(controller.filePath!),
                 fit: BoxFit.contain,
               )),
               AGOptContainer(
@@ -59,6 +60,7 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
                   showLoading().whenComplete(() {
                     controller.saveToGallery().whenComplete(() {
                       hideLoading().whenComplete(() {
+                        Events.txt2imgCompleteDownload(type: 'image');
                         CommonExtension().showImageSavedOkToast(context);
                       });
                     });
@@ -73,22 +75,37 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                   ShareScreen.startShare(context,
                       backgroundColor: Color(0x77000000),
-                      style: 'Me-taverse',
-                      image: controller.imageBase64 ?? '',
+                      style: 'txt2img',
+                      image: base64Encode(File(controller.filePath!).readAsBytesSync()),
                       isVideo: false,
                       originalUrl: null,
-                      effectKey: 'Me-taverse',
-                      onShareSuccess: (platform) {});
+                      effectKey: 'Me-taverse', onShareSuccess: (platform) {
+                    Events.txt2imgCompleteShare(source: 'txt2img', platform: platform, type: 'image');
+                  });
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                 },
-              ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35))),
+                onShareDiscoveryTap: () async {
+                  AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_txt2img', callback: () {
+                    ShareDiscoveryScreen.push(
+                      context,
+                      effectKey: 'txt2img',
+                      originalUrl: null,
+                      image: base64Encode(File(controller.filePath!).readAsBytesSync()),
+                      isVideo: false,
+                      category: DiscoveryCategory.txt2img,
+                    ).then((value) {
+                      if (value ?? false) {
+                        Events.txt2imgCompleteShare(source: 'txt2img', platform: 'discovery', type: 'image');
+                        showShareSuccessDialog(context);
+                      }
+                    });
+                  }, autoExec: true);
+                },
+              ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(12))),
             ],
           );
         },
       ),
-    ).intoContainer(
-        height: ScreenUtil.screenSize.height,
-        width: ScreenUtil.screenSize.width,
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill)));
+    );
   }
 }

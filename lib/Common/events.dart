@@ -35,9 +35,9 @@ class Events {
 
   static Future<void> avatarUploadSuccess() => logEvent('avatar_upload_success');
 
-  static Future<void> avatarResultShow() => logEvent('avatar_result_show');
+  static Future<void> avatarResultShow() => logEvent('avatar_result_loading');
 
-  static Future<void> avatarResultDetailShow() => logEvent('avatar_result_detail_show');
+  static Future<void> avatarResultDetailShow() => logEvent('avatar_result_detail_loading');
 
   static Future<void> avatarResultDetailMediaShareSuccess({required String platform}) => logEvent('avatar_result_detail_mediashare_success', eventValues: {'platform': platform});
 
@@ -56,7 +56,7 @@ class Events {
 
   static Future<void> avatarResultDownloadOkClick({required String saveType}) => logEvent('avatar_result_download_ok_click', eventValues: {'source': saveType});
 
-  static Future<void> loginShow({required String source}) => logEvent('sign_in_show', eventValues: {'source': source});
+  static Future<void> loginShow({required String source}) => logEvent('sign_in_loading', eventValues: {'source': source});
 
   static Future<void> loginSuccessShow({required String source}) => logEvent('sign_in_ok_click', eventValues: {'source': source});
 
@@ -64,7 +64,7 @@ class Events {
     required String source,
     String? prePage,
   }) =>
-      logEvent('sign_up_click', eventValues: {'source': source, 'pre_page': prePage});
+      logEvent('sign_up_loading', eventValues: {'source': source, 'pre_page': prePage});
 
   static Future<void> signupOkShow({
     required String source,
@@ -109,6 +109,39 @@ class Events {
 
   static Future<void> metaverseCompletePreview() => logEvent('metaverse_completed_preview');
 
+  static Future<void> txt2imgShow() async {
+    return;
+    logEvent('txt2img_loading');
+  }
+
+  static Future<void> txt2imgResultShow() async {
+    return;
+    logEvent('txt2img_result_loading');
+  }
+
+  static Future<void> txt2imgCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) async {
+    return;
+    logEvent('txt2img_completed_share', eventValues: {
+      'source': source,
+      'platform': platform,
+      'type': type,
+    });
+  }
+
+  static Future<void> txt2imgCompleteDownload({required String type}) async {
+    return;
+    logEvent('txt2img_completed_download', eventValues: {'type': type});
+  }
+
+  static Future<void> txt2imgCompleteGenerateAgain() async {
+    return;
+    logEvent('txt2img_completed_generate_again');
+  }
+
   static Future<void> discoveryLoading() => logEvent('discovery_loading');
 
   static Future<void> discoveryDetailLoading({
@@ -121,7 +154,7 @@ class Events {
     required String source,
     required String style,
   }) =>
-      logEvent('discovery_template_click', eventValues: {'source': source, 'style': style});
+      logEvent('discovery_detail_trytemplate_click', eventValues: {'source': source, 'style': style});
 
   static Future<void> discoveryLikeClick({
     required String source,

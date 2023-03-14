@@ -29,6 +29,7 @@ enum DiscoveryCategory {
   ai_avatar,
   cartoonize,
   another_me,
+  txt2img,
 }
 
 const int _maxInputLength = 512;

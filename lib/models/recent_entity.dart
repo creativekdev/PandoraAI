@@ -62,3 +62,23 @@ class RecentMetaverseEntity {
     return jsonEncode(this);
   }
 }
+
+@JsonSerializable()
+class RecentGroundEntity {
+  int updateDt = 0;
+  String? prompt;
+  String? filePath;
+  String? styleKey;
+  String? initImageFilePath;
+
+  RecentGroundEntity();
+
+  factory RecentGroundEntity.fromJson(Map<String, dynamic> json) => $RecentGroundEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $RecentGroundEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}

@@ -85,3 +85,38 @@ Map<String, dynamic> $RecentMetaverseEntityToJson(RecentMetaverseEntity entity) 
 	data['filePath'] =  entity.filePath;
 	return data;
 }
+
+RecentGroundEntity $RecentGroundEntityFromJson(Map<String, dynamic> json) {
+	final RecentGroundEntity recentGroundEntity = RecentGroundEntity();
+	final int? updateDt = jsonConvert.convert<int>(json['updateDt']);
+	if (updateDt != null) {
+		recentGroundEntity.updateDt = updateDt;
+	}
+	final String? prompt = jsonConvert.convert<String>(json['prompt']);
+	if (prompt != null) {
+		recentGroundEntity.prompt = prompt;
+	}
+	final String? filePath = jsonConvert.convert<String>(json['filePath']);
+	if (filePath != null) {
+		recentGroundEntity.filePath = filePath;
+	}
+	final String? styleKey = jsonConvert.convert<String>(json['styleKey']);
+	if (styleKey != null) {
+		recentGroundEntity.styleKey = styleKey;
+	}
+	final String? initImageFilePath = jsonConvert.convert<String>(json['initImageFilePath']);
+	if (initImageFilePath != null) {
+		recentGroundEntity.initImageFilePath = initImageFilePath;
+	}
+	return recentGroundEntity;
+}
+
+Map<String, dynamic> $RecentGroundEntityToJson(RecentGroundEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['updateDt'] = entity.updateDt;
+	data['prompt'] = entity.prompt;
+	data['filePath'] = entity.filePath;
+	data['styleKey'] = entity.styleKey;
+	data['initImageFilePath'] = entity.initImageFilePath;
+	return data;
+}

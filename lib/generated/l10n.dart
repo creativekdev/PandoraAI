@@ -3219,6 +3219,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Choose your style (optional)`
+  String get choose_your_style {
+    return Intl.message(
+      'Choose your style (optional)',
+      name: 'choose_your_style',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reference image (optional)`
+  String get reference_image {
+    return Intl.message(
+      'Reference image (optional)',
+      name: 'reference_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The image you select will be used as a reference for the final`
+  String get reference_image_tips {
+    return Intl.message(
+      'The image you select will be used as a reference for the final',
+      name: 'reference_image_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upload Image`
+  String get upload_image {
+    return Intl.message(
+      'Upload Image',
+      name: 'upload_image',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Describe the image you want to see`
+  String get text_2_image_input_hint {
+    return Intl.message(
+      'Describe the image you want to see',
+      name: 'text_2_image_input_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter a prompt to inspire the generation process. Below are some suggestions to help you get started.`
+  String get text_2_image_input_tips {
+    return Intl.message(
+      'Enter a prompt to inspire the generation process. Below are some suggestions to help you get started.',
+      name: 'text_2_image_input_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter prompt`
+  String get text_2_image_prompt_title {
+    return Intl.message(
+      'Enter prompt',
+      name: 'text_2_image_prompt_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Generate`
+  String get generate {
+    return Intl.message(
+      'Generate',
+      name: 'generate',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

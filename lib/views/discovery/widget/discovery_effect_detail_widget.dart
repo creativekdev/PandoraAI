@@ -17,8 +17,10 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
@@ -34,6 +36,7 @@ class DiscoveryEffectDetailWidget extends StatefulWidget {
   Function() onCommentTap;
   String source;
   String dataType;
+  String style;
 
   DiscoveryEffectDetailWidget({
     Key? key,
@@ -42,6 +45,7 @@ class DiscoveryEffectDetailWidget extends StatefulWidget {
     required this.onCommentTap,
     required this.source,
     required this.dataType,
+    required this.style,
   }) : super(key: key);
 
   @override
@@ -64,12 +68,14 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   EffectDataController effectDataController = Get.find();
   late String source;
   late String dataType;
+  late String style;
 
   @override
   void initState() {
     super.initState();
     source = widget.source;
     dataType = widget.dataType;
+    style = widget.style;
     api = CartoonizerApi().bindState(this);
     loadingAction = widget.loadingAction;
     data = widget.data.copy();
@@ -260,6 +266,8 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                     showPhotoLibraryPermissionDialog(context);
                   }
                 });
+              } else if (data.category == DiscoveryCategory.txt2img.name) {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AiGroundScreen()));
               }
             })
             .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))
@@ -392,7 +400,13 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
 
   onLikeTap() => loadingAction.showLoadingBar().whenComplete(() {
         if (data.likeId == null) {
-          api.discoveryLike(data.id).then((value) {
+          api
+              .discoveryLike(
+            data.id,
+            source: dataType,
+            style: style,
+          )
+              .then((value) {
             loadingAction.hideLoadingBar();
           });
         } else {
