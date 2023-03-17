@@ -17,6 +17,7 @@ import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widge
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -54,7 +55,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   late ScrollController scrollController;
   late String prePage;
   late String dataType;
-  late String style = '';
+  String style = '';
 
   DiscoveryEffectDetailScreenState() : super(canCancelOnLoading: false);
 
@@ -302,6 +303,9 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       style = 'metaverse';
     } else if (discoveryEntity.category == DiscoveryCategory.txt2img.name) {
       style = 'txt2img';
+    }
+    if (TextUtil.isEmpty(style)) {
+      return;
     }
     Events.discoveryDetailLoading(source: dataType, style: style);
   }

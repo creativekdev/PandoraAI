@@ -1,20 +1,20 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/metaverse_limit_entity.dart';
+import 'package:cartoonizer/models/generate_limit_entity.dart';
 
-MetaverseLimitEntity $MetaverseLimitEntityFromJson(Map<String, dynamic> json) {
-	final MetaverseLimitEntity metaverseLimitEntity = MetaverseLimitEntity();
+GenerateLimitEntity $GenerateLimitEntityFromJson(Map<String, dynamic> json) {
+	final GenerateLimitEntity generateLimitEntity = GenerateLimitEntity();
 	final int? dailyLimit = jsonConvert.convert<int>(json['daily_limit']);
 	if (dailyLimit != null) {
-		metaverseLimitEntity.dailyLimit = dailyLimit;
+		generateLimitEntity.dailyLimit = dailyLimit;
 	}
 	final int? usedCount = jsonConvert.convert<int>(json['used_count']);
 	if (usedCount != null) {
-		metaverseLimitEntity.usedCount = usedCount;
+		generateLimitEntity.usedCount = usedCount;
 	}
-	return metaverseLimitEntity;
+	return generateLimitEntity;
 }
 
-Map<String, dynamic> $MetaverseLimitEntityToJson(MetaverseLimitEntity entity) {
+Map<String, dynamic> $GenerateLimitEntityToJson(GenerateLimitEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['daily_limit'] = entity.dailyLimit;
 	data['used_count'] = entity.usedCount;

@@ -51,6 +51,12 @@ class _RotateWidgetState extends State<RotateWidget> with SingleTickerProviderSt
   }
 
   @override
+  void didUpdateWidget(covariant RotateWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    child = widget.child;
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     poseListen.cancel();

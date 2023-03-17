@@ -2,10 +2,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/views/ai/tab_ai_fragment.dart';
 import 'package:cartoonizer/views/discovery/discovery_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_fragment.dart';
-import 'package:cartoonizer/views/effect/new_effect_fragment.dart';
 import 'package:cartoonizer/views/mine/mine_fragment.dart';
 
 ///
@@ -17,8 +15,8 @@ List<AppRoleTabItem> buildTabItem() => [
         normalIcon: Images.ic_tab_effect_normal,
         selectedIcon: Images.ic_tab_effect,
         titleBuilder: (context) => S.of(context).tabHome,
-        keyBuilder: () => GlobalKey<NewEffectFragmentState>(),
-        fragmentBuilder: (key) => NewEffectFragment(
+        keyBuilder: () => GlobalKey<EffectFragmentState>(),
+        fragmentBuilder: (key) => EffectFragment(
           key: key,
           tabId: AppTabId.HOME,
         ),

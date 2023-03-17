@@ -16,6 +16,13 @@ class SimulateProgressBarConfig {
       ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
   }
 
+  factory SimulateProgressBarConfig.anotherMeVideo() {
+    return SimulateProgressBarConfig()
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 4), rate: 0.75)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+  }
+
   factory SimulateProgressBarConfig.cartoonize() {
     return SimulateProgressBarConfig()
       ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2)
@@ -26,8 +33,8 @@ class SimulateProgressBarConfig {
   factory SimulateProgressBarConfig.aiGround() {
     return SimulateProgressBarConfig()
       ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.95)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.95)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05);
   }
 }
 

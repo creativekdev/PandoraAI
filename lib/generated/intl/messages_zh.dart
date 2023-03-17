@@ -59,6 +59,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "buyAttrNoAds": MessageLookupByLibrary.simpleMessage("无广告"),
         "buyAttrNoWatermark": MessageLookupByLibrary.simpleMessage("无水印"),
         "buyNow": MessageLookupByLibrary.simpleMessage("现在购买"),
+        "buy_attr_ai_artist":
+            MessageLookupByLibrary.simpleMessage("%d 次AI Artist转化 / 天"),
+        "buy_attr_metaverse":
+            MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
         "c_password": MessageLookupByLibrary.simpleMessage("确认密码"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "card_number": MessageLookupByLibrary.simpleMessage("卡号"),
@@ -82,6 +86,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "您选择了 %selected 张照片，%badImages最少需要 %minSize 张照片。"),
         "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
             "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？"),
+        "choose_your_scale": MessageLookupByLibrary.simpleMessage("尺寸"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage("选择风格（可选）"),
         "clear": MessageLookupByLibrary.simpleMessage("清除"),
         "clear_cache_tips":
@@ -122,6 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("分享些东西吧"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提交"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("取消"),
+        "display_text": MessageLookupByLibrary.simpleMessage("显示文案"),
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "edit": MessageLookupByLibrary.simpleMessage("编辑"),
@@ -151,6 +157,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "faster_speed": MessageLookupByLibrary.simpleMessage("更快速转化"),
         "february": MessageLookupByLibrary.simpleMessage("二月"),
         "feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
+        "feedback_empty": MessageLookupByLibrary.simpleMessage("请填写您的反馈"),
+        "feedback_out_date":
+            MessageLookupByLibrary.simpleMessage("您已经反馈过了，请明天再试"),
+        "feedback_thanks": MessageLookupByLibrary.simpleMessage("感谢您的反馈"),
         "forgot_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "forgot_password_text":
             MessageLookupByLibrary.simpleMessage("请在下面输入您的注册邮箱以接收密码重置指令"),
@@ -361,6 +371,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("此模板已经不再可用"),
         "term_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
         "terms_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),
+        "text2img_prompt_empty_hint":
+            MessageLookupByLibrary.simpleMessage("请输入描述"),
         "text_2_image_input_hint":
             MessageLookupByLibrary.simpleMessage("描述你的图片"),
         "text_2_image_input_tips":

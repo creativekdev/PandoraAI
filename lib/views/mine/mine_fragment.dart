@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -163,11 +165,22 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   )
                   .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
-                var appLink = Config.getAppLink();
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
                 final box = context.findRenderObject() as RenderBox?;
-                await Share.share(appLink, subject: 'Pandora AI', sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                var file = File(cacheManager.storageOperator.tempDir.path + 'appQR.png');
+                if (!file.existsSync()) {
+                  var imageInfo = await SyncAssetImage(assets: Images.ic_share_app_image).getImage();
+                  var byteData = await imageInfo.image.toByteData(format: ImageByteFormat.png);
+                  file.writeAsBytes(byteData!.buffer.asUint8List());
+                }
+                await Share.shareXFiles([XFile(file.path)], subject: APP_TITLE, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                // var appLink = Config.getAppLink();
+                // if (Platform.isIOS) {
+                //   await FlutterShareMe().shareToSystem(msg: appLink);
+                // } else {
+                //   await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+                // }
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               Container(

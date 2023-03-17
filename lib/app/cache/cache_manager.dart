@@ -19,6 +19,7 @@ class CacheManager extends BaseManager {
   static const keyCurrentUser = "user_info";
   static const keyAiServer = "ai_servers";
   static const keyAdConfig = "ad_config";
+  static const limitRule = "limit_rule";
   static const keyCacheInput = "cache_input";
   static const keyLastTabAttached = "last_tab_attached";
   static const keyLastEffectTabAttached = "last_effect_tab_attached";
@@ -40,6 +41,7 @@ class CacheManager extends BaseManager {
   static const preSignupAction = 'pre_signup_action';
   static const prePaymentAction = 'pre_payment_action';
   static const aiGroundStyles = 'ai_ground_styles';
+  static const lastFeedback = 'last_feed_back';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

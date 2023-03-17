@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/reward_interstitial_ads_holder.dart';
@@ -7,8 +5,6 @@ import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
-import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 

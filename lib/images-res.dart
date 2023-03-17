@@ -28,9 +28,13 @@ class Images {
    static const String ic_background = 'assets/images/ic_background.png';
    static const String ic_bg_premium = 'assets/images/ic_bg_premium.png';
    static const String ic_bug_no_ad = 'assets/images/ic_bug_no_ad.png';
+   static const String ic_buy_ai_artist = 'assets/images/ic_buy_ai_artist.png';
    static const String ic_buy_background = 'assets/images/ic_buy_background.png';
+   static const String ic_buy_bg = 'assets/images/ic_buy_bg.png';
    static const String ic_buy_faster_convert = 'assets/images/ic_buy_faster_convert.png';
    static const String ic_buy_hd_image = 'assets/images/ic_buy_hd_image.png';
+   static const String ic_buy_item_arrow = 'assets/images/ic_buy_item_arrow.png';
+   static const String ic_buy_metaverse = 'assets/images/ic_buy_metaverse.png';
    static const String ic_buy_no_watermark = 'assets/images/ic_buy_no_watermark.png';
    static const String ic_camera = 'assets/images/ic_camera.png';
    static const String ic_camera_switch = 'assets/images/ic_camera_switch.png';
@@ -90,7 +94,8 @@ class Images {
    static const String ic_password_show = 'assets/images/ic_password_show.png';
    static const String ic_policy = 'assets/images/ic_policy.png';
    static const String ic_premium = 'assets/images/ic_premium.png';
-   static const String ic_purchase_emoji = 'assets/images/ic_purchase_emoji.png';
+   static const String ic_prompt_clear = 'assets/images/ic_prompt_clear.png';
+   static const String ic_prompt_tripple_arrow = 'assets/images/ic_prompt_tripple_arrow.png';
    static const String ic_radio_off = 'assets/images/ic_radio_off.png';
    static const String ic_radio_on = 'assets/images/ic_radio_on.png';
    static const String ic_rate_us = 'assets/images/ic_rate_us.png';
@@ -107,6 +112,7 @@ class Images {
    static const String ic_settings = 'assets/images/ic_settings.png';
    static const String ic_share = 'assets/images/ic_share.png';
    static const String ic_share_app = 'assets/images/ic_share_app.png';
+   static const String ic_share_app_image = 'assets/images/ic_share_app_image.png';
    static const String ic_share_discovery = 'assets/images/ic_share_discovery.png';
    static const String ic_share_email = 'assets/images/ic_share_email.png';
    static const String ic_share_facebook = 'assets/images/ic_share_facebook.png';

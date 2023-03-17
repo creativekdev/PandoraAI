@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/trans_result_anim_screen.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter/session_state.dart';
@@ -39,9 +40,9 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
   int progress = 0;
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
-  int firstFrameCount = 33;
+  int firstFrameCount = 30;
 
-  int imageNameCount = 33;
+  int imageNameCount = 30;
   late String fileName;
   List<DealData> dealList = [];
   var startTime = DateTime.now().millisecondsSinceEpoch;
@@ -52,7 +53,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     origin = widget.origin;
     result = widget.result;
     ratio = widget.ratio;
-    designWidth = 480;
+    designWidth = 420;
     designHeight = designWidth * ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
@@ -64,14 +65,24 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       return;
     } else {
       delay(() {
+        SimulateProgressBarController controller = SimulateProgressBarController();
+        SimulateProgressBar.startLoading(context, needUploadProgress: false, controller: controller, config: SimulateProgressBarConfig.anotherMeVideo()).then((value) {
+          if (value != null && value.first) {
+            buildVideo();
+          } else {
+            Navigator.of(context).pop();
+          }
+        });
         startRecord(onSuccess: () {
           setState(() {
             progress = 100;
           });
-          buildVideo();
+          controller.loadComplete();
+          // buildVideo();
         }, onError: () {
+          controller.onError();
           CommonExtension().showToast('build failed');
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
         });
       }, milliseconds: 100);
     }
@@ -99,21 +110,21 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
             ],
           ),
         ).intoContainer(height: 1),
-        AppCircleProgressBar(
-          size: $(60),
-          ringWidth: $(6),
-          backgroundColor: Color.fromRGBO(255, 255, 255, 0.3),
-          progress: progress / 100,
-          loadingColors: ColorConstant.progressBarColors,
-        ).intoCenter(),
-        Text(
-          '${progress}%',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: $(13),
-            fontFamily: 'Poppins',
-          ),
-        ).intoCenter(),
+        // AppCircleProgressBar(
+        //   size: $(60),
+        //   ringWidth: $(6),
+        //   backgroundColor: Color.fromRGBO(255, 255, 255, 0.3),
+        //   progress: progress / 100,
+        //   loadingColors: ColorConstant.progressBarColors,
+        // ).intoCenter(),
+        // Text(
+        //   '${progress}%',
+        //   style: TextStyle(
+        //     color: Colors.white,
+        //     fontSize: $(13),
+        //     fontFamily: 'Poppins',
+        //   ),
+        // ).intoCenter(),
       ],
     ).intoCenter().intoMaterial(color: Colors.transparent);
   }
@@ -148,7 +159,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 4 == 0 || progress == 99) {
+      if (progress % 7 == 0 || progress % 7 == 3 || progress == 99) {
         String fileName = savePath + '/${imageNameCount}.png';
         var file = File(fileName);
         if (!file.existsSync()) {
@@ -179,7 +190,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
 
   Future<void> buildVideo() async {
     var endTime = DateTime.now().millisecondsSinceEpoch;
-    print('spend time: ${endTime - startTime}');
+    debugPrint('build video spend time: ${endTime - startTime}');
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
     if (File(fileName).existsSync()) {

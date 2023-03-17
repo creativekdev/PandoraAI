@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -22,10 +23,12 @@ import 'ai_ground_result_screen.dart';
 
 class AiGroundScreen extends StatefulWidget {
   RecentGroundEntity? history;
+  String source;
 
   AiGroundScreen({
     Key? key,
     this.history,
+    required this.source,
   }) : super(key: key);
 
   @override
@@ -33,7 +36,7 @@ class AiGroundScreen extends StatefulWidget {
 }
 
 class _AiGroundScreenState extends AppState<AiGroundScreen> {
-  AiGroundController aiGroundController = Get.put(AiGroundController());
+  late AiGroundController aiGroundController;
   UploadImageController uploadImageController = Get.put(UploadImageController());
 
   late double imageSize;
@@ -43,7 +46,8 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
   @override
   void initState() {
     super.initState();
-    Events.txt2imgShow();
+    Events.txt2imgShow(source: widget.source);
+    aiGroundController = Get.put(AiGroundController(uploadImageController: uploadImageController));
     imageSize = (ScreenUtil.screenSize.width - 40) / 2.5;
     onStyleListUpdated = EventBusHelper().eventBus.on<OnAiGroundStyleUpdateEvent>().listen((event) {
       aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
@@ -53,20 +57,15 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
     if (history != null) {
       aiGroundController.editingController.text = history?.prompt ?? '';
       aiGroundController.filePath = history!.filePath;
+      aiGroundController.parameters = history!.parameters;
       if (aiGroundController.styleList.isNotEmpty) {
         aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
       }
       delay(() {
         var forward = () {
-          Navigator.of(context)
-              .push(
+          Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: aiGroundController)),
-          )
-              .then((value) {
-            if (value ?? false) {
-              aiGroundController.onPlayClick(context, uploadImageController.imageUrl.value, );
-            }
-          });
+          );
         };
         if (!TextUtil.isEmpty(history!.initImageFilePath)) {
           var file = File(history!.initImageFilePath!);
@@ -166,10 +165,18 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                         contentPadding: EdgeInsets.zero,
                       ),
                       style: TextStyle(color: ColorConstant.White),
-                      maxLines: 6,
+                      maxLines: 4,
                       maxLength: aiGroundController.maxLength,
                       buildCounter: (context, {required currentLength, required isFocused, maxLength}) {
-                        return Container();
+                        return currentLength != 0
+                            ? Image.asset(
+                                Images.ic_prompt_clear,
+                                width: $(16),
+                              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(6))).intoGestureDetector(onTap: () {
+                                controller.editingController.text = '';
+                                controller.update();
+                              })
+                            : SizedBox(height: $(28), width: 1);
                       },
                       onChanged: (text) {
                         aiGroundController.update();
@@ -205,10 +212,78 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                             itemCount: controller.promptList!.length,
                           ).intoContainer(height: $(56)),
                     TitleTextWidget(
+                      S.of(context).choose_your_scale,
+                      ColorConstant.White,
+                      FontWeight.w600,
+                      $(15),
+                    ).intoContainer(
+                      margin: EdgeInsets.only(left: $(15), right: $(15)),
+                    ),
+                    Row(
+                      children: controller.imageScaleList.transfer(
+                        (e, index) {
+                          var size = e.getSize($(20));
+                          return Expanded(
+                            child: Container(
+                                    width: size.width,
+                                    height: size.height,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular($(4)),
+                                      color: controller.imageScale == e ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                                      border: Border.all(color: Colors.white, width: 2),
+                                    ))
+                                .intoContainer(
+                                    alignment: Alignment.center,
+                                    width: double.maxFinite,
+                                    margin: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
+                                    height: $(32),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular($(4)),
+                                      color: controller.imageScale == e ? ColorConstant.DiscoveryBtn : Colors.transparent,
+                                    ))
+                                .intoGestureDetector(onTap: () {
+                              if (controller.imageScale == e) {
+                                return;
+                              }
+                              controller.imageScale = e;
+                              controller.update();
+                            }),
+                          );
+                        },
+                      ),
+                    ).intoContainer(
+                        margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(8)),
+                        decoration: BoxDecoration(
+                          color: Color(0x11ffffff),
+                          borderRadius: BorderRadius.circular($(4)),
+                        )),
+                    Row(
+                      children: controller.imageScaleList.transfer(
+                        (e, index) => Expanded(
+                          child: Text(
+                            e.scaleString,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: $(14),
+                            ),
+                            textAlign: TextAlign.center,
+                          ).intoGestureDetector(onTap: () {
+                            if (controller.imageScale == e) {
+                              return;
+                            }
+                            controller.imageScale = e;
+                            controller.update();
+                          }),
+                        ),
+                      ),
+                    ).intoContainer(
+                      padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(8)),
+                    ),
+                    TitleTextWidget(
                       S.of(context).choose_your_style,
                       ColorConstant.White,
                       FontWeight.w600,
-                      $(17),
+                      $(15),
                     ).intoContainer(
                       margin: EdgeInsets.only(left: $(15), right: $(15)),
                     ),
@@ -233,7 +308,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                                   ClipRRect(
                                     child: CachedNetworkImageUtils.custom(
                                       context: context,
-                                      imageUrl: data.url!,
+                                      imageUrl: data.url!.appendHash,
                                       width: imageSize - $(4),
                                       height: imageSize - $(4),
                                       fit: BoxFit.cover,
@@ -264,7 +339,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                             height: imageSize * 2.6,
                             margin: EdgeInsets.only(top: $(15)),
                           ),
-                    TitleTextWidget(S.of(context).reference_image, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+                    TitleTextWidget(S.of(context).reference_image, ColorConstant.White, FontWeight.w600, $(15)).intoContainer(
                         margin: EdgeInsets.only(
                       left: $(15),
                       right: $(15),
@@ -380,7 +455,15 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                       margin: EdgeInsets.symmetric(horizontal: $(15)),
                     )
                     .intoGestureDetector(onTap: () {
-                      controller.onPlayClick(context, uploadImageController.imageUrl.value);
+                      controller.filePath = null;
+                      var text = controller.editingController.text.trim();
+                      if (TextUtil.isEmpty(text)) {
+                        CommonExtension().showToast(S.of(context).text2img_prompt_empty_hint);
+                        return;
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: controller)),
+                      );
                     })
                     .intoContainer(
                       color: Color(0xaa111111),

@@ -7,13 +7,17 @@ class AGOptContainer extends StatefulWidget {
   GestureTapCallback onShareDiscoveryTap;
   GestureTapCallback onDownloadTap;
   GestureTapCallback onGenerateAgainTap;
+  GestureTapCallback onDisplayTap;
+  bool displayText;
 
   AGOptContainer({
     Key? key,
+    required this.onDisplayTap,
     required this.onDownloadTap,
     required this.onGenerateAgainTap,
     required this.onShareTap,
     required this.onShareDiscoveryTap,
+    required this.displayText,
   }) : super(key: key);
 
   @override
@@ -21,18 +25,21 @@ class AGOptContainer extends StatefulWidget {
 }
 
 class AGOptContainerState extends State<AGOptContainer> with SingleTickerProviderStateMixin {
-  late GestureTapCallback onChoosePhotoTap;
   late GestureTapCallback onShareTap;
   late GestureTapCallback onDownloadTap;
   late GestureTapCallback onGenerateAgainTap;
   late GestureTapCallback onShareDiscoveryTap;
+  late GestureTapCallback onDisplayTap;
   late AnimationController _animationController;
   late CurvedAnimation _anim;
+  late bool displayText;
   Completer<void>? completer;
 
   @override
   void initState() {
     super.initState();
+    displayText = widget.displayText;
+    onDisplayTap = widget.onDisplayTap;
     onShareTap = widget.onShareTap;
     onDownloadTap = widget.onDownloadTap;
     onGenerateAgainTap = widget.onGenerateAgainTap;
@@ -50,6 +57,12 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
         }
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant AGOptContainer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    displayText = widget.displayText;
   }
 
   @override
@@ -78,6 +91,27 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
         children: [
           Row(
             children: [
+              SizedBox(width: $(16)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(width: $(10)),
+                  Image.asset(
+                    displayText ? ImagesConstant.ic_checked : ImagesConstant.ic_unchecked,
+                    width: 17,
+                    height: 17,
+                  ),
+                  SizedBox(width: $(6)),
+                  TitleTextWidget(S.of(context).display_text, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                  SizedBox(width: $(10)),
+                ],
+              ).intoGestureDetector(onTap: onDisplayTap),
+              SizedBox(width: $(16)),
+              Container(
+                width: 1,
+                height: $(20),
+                color: ColorConstant.White,
+              ),
               SizedBox(width: $(16)),
               Expanded(
                 child: Image.asset(

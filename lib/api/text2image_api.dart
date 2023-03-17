@@ -5,7 +5,9 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/ai_ground_result_entity.dart';
 import 'package:cartoonizer/models/ai_ground_style_entity.dart';
+import 'package:cartoonizer/models/generate_limit_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -27,7 +29,7 @@ class Text2ImageApi extends BaseRequester {
     return baseEntity?.data['data'];
   }
 
-  Future<String?> text2image({
+  Future<AiGroundResultEntity?> text2image({
     required String prompt,
     required String directoryPath,
     String? initImage,
@@ -49,16 +51,21 @@ class Text2ImageApi extends BaseRequester {
       api = '/sdapi/v1/img2img';
     }
     var baseEntity = await post(api, params: params);
-    List<String>? images = (baseEntity?.data['images'] as List?)?.map((e) => e.toString()).toList();
-    if(images != null && images.isNotEmpty) {
-      var dataString = images.first;
-      String key = EncryptUtil.encodeMd5(dataString);
-      String filePath = getFileName(directoryPath, key);
-      var base64decode = await base64Decode(dataString);
-      await File(filePath).writeAsBytes(base64decode.toList());
-      return filePath;
+    AiGroundResultEntity? result = jsonConvert.convert<AiGroundResultEntity>(baseEntity?.data);
+    if (result == null) {
+      return null;
     }
-    return null;
+    if (result.images.isEmpty) {
+      return null;
+    }
+    var dataString = result.images.first;
+    String key = EncryptUtil.encodeMd5(dataString);
+    String filePath = getFileName(directoryPath, key);
+    var base64decode = await base64Decode(dataString);
+    await File(filePath).writeAsBytes(base64decode.toList());
+    result.filePath = filePath;
+    result.s = baseEntity!.s;
+    return result;
   }
 
   Future<List<AiGroundStyleEntity>?> artists() async {
@@ -92,7 +99,6 @@ class Text2ImageApi extends BaseRequester {
     });
     return list;
   }
-
 
   String getFileName(String directoryPath, String encode) {
     return '${directoryPath}$encode.png';

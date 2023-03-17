@@ -9,6 +9,7 @@ class EffectMap {
   CampaignTab? campaignTab;
   List<String> tags = [];
   List<HomeCardEntity> homeCards = [];
+  String? hash;
 
   EffectMap({
     required this.data,
@@ -32,6 +33,9 @@ class EffectMap {
     }
     if (json['home_functions'] != null) {
       this.homeCards = (json['home_functions'] as List).map((e) => HomeCardEntity.fromJson(e)).toList();
+    }
+    if(json['hash'] != null) {
+      this.hash = json['hash'];
     }
   }
 

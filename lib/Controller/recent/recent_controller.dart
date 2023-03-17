@@ -97,7 +97,7 @@ class RecentController extends GetxController {
     update();
   }
 
-  onAiGroundUsed(String filePath, String prompt, String? initPath, String? styleKey) {
+  onAiGroundUsed(String filePath, String prompt, String? initPath, String? styleKey, Map<String, dynamic> parameters) {
     aiGroundHolder.record(
       groundList,
       RecentGroundEntity()
@@ -105,6 +105,7 @@ class RecentController extends GetxController {
         ..updateDt = DateTime.now().millisecondsSinceEpoch
         ..styleKey = styleKey
         ..prompt = prompt
+        ..parameters = parameters
         ..initImageFilePath = initPath,
     );
     sortList();

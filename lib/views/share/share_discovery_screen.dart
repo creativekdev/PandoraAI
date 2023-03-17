@@ -42,6 +42,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
     required bool isVideo,
     required String effectKey,
     required DiscoveryCategory category,
+    String? payload,
   }) {
     return Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -51,6 +52,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
           image: image,
           effectKey: effectKey,
           category: category,
+          payload: payload,
         ),
         settings: RouteSettings(name: "/ShareDiscoveryScreen"),
       ),
@@ -61,6 +63,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
   String image;
   bool isVideo;
   String effectKey;
+  String? payload;
   DiscoveryCategory category;
 
   ShareDiscoveryScreen({
@@ -70,6 +73,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
     required this.isVideo,
     required this.effectKey,
     required this.category,
+    this.payload,
   }) : super(key: key);
 
   @override
@@ -92,6 +96,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   FocusNode focusNode = new FocusNode();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   String textHint = '';
+  String? payload;
 
   @override
   void initState() {
@@ -104,6 +109,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     image = widget.image;
     originalUrl = widget.originalUrl;
     effectKey = widget.effectKey;
+    payload = widget.payload;
     if (!isVideo) {
       imageData = base64Decode(image);
     }
@@ -116,6 +122,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
           break;
         case DiscoveryCategory.another_me:
+        case DiscoveryCategory.txt2img:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
           break;
       }
@@ -182,6 +189,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         effectKey: effectKey,
                         resources: list,
                         category: widget.category.name,
+                        payload: payload,
                         onUserExpired: () {
                           AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'token_expired', callback: () {
                             submit();
@@ -249,6 +257,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                       effectKey: effectKey,
                       resources: list,
                       category: widget.category.name,
+                      payload: payload,
                       onUserExpired: () {
                         AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'token_expired', callback: () {
                           submit();

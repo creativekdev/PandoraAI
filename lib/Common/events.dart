@@ -109,37 +109,50 @@ class Events {
 
   static Future<void> metaverseCompletePreview() => logEvent('metaverse_completed_preview');
 
-  static Future<void> txt2imgShow() async {
-    return;
-    logEvent('txt2img_loading');
+  static Future<void> txt2imgShow({
+    required String source,
+  }) async {
+    logEvent('txt2img_loading', eventValues: {'source': source});
   }
 
-  static Future<void> txt2imgResultShow() async {
-    return;
-    logEvent('txt2img_result_loading');
+  static Future<void> txt2imgResultShow({
+    required bool isUseSuggestion,
+    required String? style,
+    required bool isUploadReference,
+  }) async {
+    logEvent('txt2img_result_loading', eventValues: {
+      'is_use_suggestion': isUseSuggestion ? 1 : 0,
+      'style': style ?? 'none',
+      'is_upload_reference': isUploadReference ? 1 : 0,
+    });
   }
 
   static Future<void> txt2imgCompleteShare({
     required String source,
     required String platform,
     required String type,
+    required bool textDisplay,
   }) async {
-    return;
     logEvent('txt2img_completed_share', eventValues: {
       'source': source,
       'platform': platform,
       'type': type,
+      'text_display': textDisplay ? 1 : 0,
     });
   }
 
-  static Future<void> txt2imgCompleteDownload({required String type}) async {
-    return;
-    logEvent('txt2img_completed_download', eventValues: {'type': type});
+  static Future<void> txt2imgCompleteDownload({
+    required String type,
+    required bool textDisplay,
+  }) async {
+    logEvent('txt2img_completed_download', eventValues: {
+      'type': type,
+      'text_display': textDisplay ? 1 : 0,
+    });
   }
 
-  static Future<void> txt2imgCompleteGenerateAgain() async {
-    return;
-    logEvent('txt2img_completed_generate_again');
+  static Future<void> txt2imgCompleteGenerateAgain({required int time}) async {
+    logEvent('txt2img_completed_generate_again', eventValues: {'time': '${time}'});
   }
 
   static Future<void> discoveryLoading() => logEvent('discovery_loading');

@@ -3299,6 +3299,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Please input prompt to generate image`
+  String get text2img_prompt_empty_hint {
+    return Intl.message(
+      'Please input prompt to generate image',
+      name: 'text2img_prompt_empty_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display Text`
+  String get display_text {
+    return Intl.message(
+      'Display Text',
+      name: 'display_text',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Size`
+  String get choose_your_scale {
+    return Intl.message(
+      'Size',
+      name: 'choose_your_scale',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `%d Quota of Me-Taverse per day`
+  String get buy_attr_metaverse {
+    return Intl.message(
+      '%d Quota of Me-Taverse per day',
+      name: 'buy_attr_metaverse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `%d Quota of AI Artist per day`
+  String get buy_attr_ai_artist {
+    return Intl.message(
+      '%d Quota of AI Artist per day',
+      name: 'buy_attr_ai_artist',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please input feedback`
+  String get feedback_empty {
+    return Intl.message(
+      'Please input feedback',
+      name: 'feedback_empty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You've been submitted, please try again tomorrow`
+  String get feedback_out_date {
+    return Intl.message(
+      'You\'ve been submitted, please try again tomorrow',
+      name: 'feedback_out_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Thanks for your opinions`
+  String get feedback_thanks {
+    return Intl.message(
+      'Thanks for your opinions',
+      name: 'feedback_thanks',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

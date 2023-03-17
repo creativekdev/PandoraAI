@@ -1,3 +1,7 @@
+import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -33,5 +37,13 @@ extension StringEx on String {
     }
     var s = this[0];
     return s.toUpperCase() + this.substring(1);
+  }
+
+  String get appendHash {
+    EffectDataController effectDataController = Get.find();
+    if (effectDataController.data?.hash == null) {
+      return this;
+    }
+    return '${this}?hash=${effectDataController.data?.hash}';
   }
 }

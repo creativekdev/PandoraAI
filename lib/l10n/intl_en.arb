@@ -323,5 +323,13 @@
   "text_2_image_input_hint": "Describe the image you want to see",
   "text_2_image_input_tips": "Enter a prompt to inspire the generation process. Below are some suggestions to help you get started.",
   "text_2_image_prompt_title": "Enter prompt",
-  "generate": "Generate"
+  "generate": "Generate",
+  "text2img_prompt_empty_hint": "Please input prompt to generate image",
+  "display_text": "Display Text",
+  "choose_your_scale": "Size",
+  "buy_attr_metaverse": "%d Quota of Me-Taverse per day",
+  "buy_attr_ai_artist": "%d Quota of AI Artist per day",
+  "feedback_empty": "Please input feedback",
+  "feedback_out_date": "You've been submitted, please try again tomorrow",
+  "feedback_thanks": "Thanks for your opinions"
 }

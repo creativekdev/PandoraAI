@@ -267,7 +267,9 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                   }
                 });
               } else if (data.category == DiscoveryCategory.txt2img.name) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AiGroundScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AiGroundScreen(source: source + '-try-template'),
+                ));
               }
             })
             .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))

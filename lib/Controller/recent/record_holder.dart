@@ -95,6 +95,12 @@ class AIGroundRecordHolder extends RecordHolder<RecentGroundEntity> {
     try {
       var json = _cacheManager.getJson(CacheManager.keyRecentAiGround);
       result = (json as List<dynamic>).map((e) => RecentGroundEntity.fromJson(e)).toList();
+      result = await result.filterSync((t) async {
+        if (File(t.filePath ?? '').existsSync()) {
+          return true;
+        }
+        return false;
+      });
     } catch (e) {}
     return result;
   }

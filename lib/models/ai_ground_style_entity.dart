@@ -4,14 +4,22 @@ import 'dart:convert';
 
 @JsonSerializable()
 class AiGroundStyleEntity {
-
-	late String name;
-	dynamic score;
-	late String category;
-	late String slug;
+  late String name;
+  dynamic score;
+  late String category;
+  late String slug;
   String? url;
-  
-  AiGroundStyleEntity();
+
+  AiGroundStyleEntity({
+    String? name,
+    String? category,
+    String? slug,
+    String? hash,
+  }) {
+    this.name = name ?? '';
+    this.category = category ?? '';
+    this.slug = slug ?? '';
+  }
 
   factory AiGroundStyleEntity.fromJson(Map<String, dynamic> json) => $AiGroundStyleEntityFromJson(json);
 

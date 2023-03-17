@@ -70,6 +70,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "buyAttrNoWatermark":
             MessageLookupByLibrary.simpleMessage("No watermark"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Buy now"),
+        "buy_attr_ai_artist": MessageLookupByLibrary.simpleMessage(
+            "%d Quota of AI Artist per day"),
+        "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
+            "%d Quota of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "card_number": MessageLookupByLibrary.simpleMessage("Card Number"),
@@ -97,6 +101,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "You\'ve selected %selected photos%badImages of %minSize minimum required."),
         "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
             "You\'ve selected %selected photos%badImages\n Are you sure to upload these %goodCount photos?"),
+        "choose_your_scale": MessageLookupByLibrary.simpleMessage("Size"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage(
             "Choose your style (optional)"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -147,6 +152,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Add some text"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("Submit"),
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Unlike"),
+        "display_text": MessageLookupByLibrary.simpleMessage("Display Text"),
         "dog": MessageLookupByLibrary.simpleMessage("dog"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -180,6 +186,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "faster_speed": MessageLookupByLibrary.simpleMessage("Faster Speed"),
         "february": MessageLookupByLibrary.simpleMessage("February"),
         "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "feedback_empty":
+            MessageLookupByLibrary.simpleMessage("Please input feedback"),
+        "feedback_out_date": MessageLookupByLibrary.simpleMessage(
+            "You\'ve been submitted, please try again tomorrow"),
+        "feedback_thanks":
+            MessageLookupByLibrary.simpleMessage("Thanks for your opinions"),
         "forgot_password":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
         "forgot_password_text": MessageLookupByLibrary.simpleMessage(
@@ -447,6 +459,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Terms and conditions"),
         "terms_condition":
             MessageLookupByLibrary.simpleMessage(" Terms & Conditions"),
+        "text2img_prompt_empty_hint": MessageLookupByLibrary.simpleMessage(
+            "Please input prompt to generate image"),
         "text_2_image_input_hint": MessageLookupByLibrary.simpleMessage(
             "Describe the image you want to see"),
         "text_2_image_input_tips": MessageLookupByLibrary.simpleMessage(

@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -243,9 +244,18 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     });
   }
 
-  Widget _buildPurchaseButton(year, month) {
+  Widget _buildPurchaseButton() {
     if (_showPurchasePlan) {
       return Container();
+    }
+
+    var year, month;
+    for (int i = 0; i < _products.length; i++) {
+      if (_products[i].id == _kConsumableId) {
+        month = _products[i];
+      } else if (_products[i].id == _kUpgradeId) {
+        year = _products[i];
+      }
     }
 
     return GestureDetector(
@@ -274,7 +284,23 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           }
         }
       },
-      child: _showPurchasePlan ? null : ButtonWidget(S.of(context).txtContinue),
+      child: _showPurchasePlan
+          ? null
+          : RichText(
+              text: TextSpan(text: 'Selected: ', style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)), children: [
+              TextSpan(
+                text: '${(isYear ? year : month)?.price}',
+                style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(23)),
+              )
+            ])).intoContainer(
+              width: double.maxFinite,
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(horizontal: $(24)),
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+              decoration: BoxDecoration(
+                color: ColorConstant.DiscoveryBtn,
+                borderRadius: BorderRadius.circular($(8)),
+              )),
     );
   }
 
@@ -355,126 +381,34 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       ]);
     }
 
-    return Column(
+    return Row(
       children: [
-        Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w),
-              child: GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    isYear = !isYear;
-                  })
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorConstant.CardColor,
-                    borderRadius: BorderRadius.circular(2.w),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 26,
-                          width: 26,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TitleTextWidget("${Platform.isAndroid ? year?.description ?? '' : year?.title ?? ''} : ${year?.price}/${S.of(context).year}", ColorConstant.White,
-                                  FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
-                              // TitleTextWidget("Just ${(year.rawPrice) / 12}/Month", ColorConstant.PrimaryColor, FontWeight.w400, 10.sp),
-                            ],
-                          ),
-                        ),
-                        Expanded(child: SizedBox()),
-                        Visibility(
-                          visible: false,
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
-                              TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 2.h,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.w),
-              child: GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    isYear = !isYear;
-                  })
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorConstant.CardColor,
-                    borderRadius: BorderRadius.circular(2.w),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          !isYear ? ImagesConstant.ic_radio_on : ImagesConstant.ic_radio_off,
-                          height: 26,
-                          width: 26,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              TitleTextWidget("${Platform.isAndroid ? month?.description ?? '' : month?.title ?? ''} : ${month?.price}/${S.of(context).month}", ColorConstant.White,
-                                  FontWeight.w500, 12.sp,
-                                  align: TextAlign.start),
-                            ],
-                          ),
-                        ),
-                        Expanded(child: SizedBox()),
-                        Visibility(
-                          visible: false,
-                          maintainSize: true,
-                          maintainAnimation: true,
-                          maintainState: true,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              TitleTextWidget("50%", ColorConstant.PrimaryColor, FontWeight.w600, 12.sp),
-                              TitleTextWidget("OFF", ColorConstant.PrimaryColor, FontWeight.w500, 10.sp),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 4.h,
-            ),
-            _buildPurchaseButton(year, month),
-          ],
-        )
+        SizedBox(width: $(24)),
+        Expanded(
+            child: buyPlanItem(
+          context,
+          plan: month,
+          checked: !isYear,
+          popular: true,
+        ).intoGestureDetector(onTap: () {
+          if (!isYear) {
+            return;
+          }
+          setState(() {
+            isYear = false;
+          });
+        })),
+        SizedBox(width: $(20)),
+        Expanded(
+            child: buyPlanItem(context, plan: year, checked: isYear).intoGestureDetector(onTap: () {
+          if (isYear) {
+            return;
+          }
+          setState(() {
+            isYear = true;
+          });
+        })),
+        SizedBox(width: $(24)),
       ],
     );
   }
@@ -491,179 +425,176 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      body: Stack(
-        children: [
-          Image.asset(
-            ImagesConstant.ic_bg_premium,
-            width: 100.w,
-            height: 50.h,
-            fit: BoxFit.fill,
-          ),
-          SafeArea(
-            child: LoadingOverlay(
-                isLoading: _loading,
+    return LoadingOverlay(
+      isLoading: _loading,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            Row(
+              children: [
+                Image.asset(
+                  Images.ic_back,
+                  height: $(24),
+                  width: $(24),
+                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop();
+                }),
+                Expanded(
+                  child: SizedBox(),
+                ),
+                if (_isAvailable)
+                  GestureDetector(
+                    onTap: () async {
+                      var sharedPrefs = await SharedPreferences.getInstance();
+                      if (!(sharedPrefs.getBool("isLogin") ?? false)) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/LoginScreen"),
+                            builder: (context) => LoginScreen(),
+                          ),
+                        ).then((value) => Navigator.pop(context, value));
+                      } else {
+                        // setState(() {
+                        //   _loading = true;
+                        // });
+                        _inAppPurchase.restorePurchases();
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(255, 255, 255, 0.8),
+                        borderRadius: BorderRadius.circular(1.w),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
+                        child: TitleTextWidget(S.of(context).restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
+                      ),
+                    ),
+                  ),
+                SizedBox(width: $(24)),
+              ],
+            ).intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight())),
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
-                      child: Row(
+                    Card(
+                      color: Color(0xcc000000),
+                      shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3.w),
+                      ),
+                      margin: EdgeInsets.only(top: $(100), left: $(24), right: $(24)),
+                      elevation: 2.h,
+                      child: Column(
                         children: [
-                          GestureDetector(
-                            onTap: () => {Navigator.pop(context)},
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: $(24),
-                            ).intoContainer(padding: EdgeInsets.all(3)),
-                          ),
-                          Expanded(
-                            child: SizedBox(),
-                          ),
-                          if (_isAvailable)
-                            GestureDetector(
-                              onTap: () async {
-                                var sharedPrefs = await SharedPreferences.getInstance();
-                                if (!(sharedPrefs.getBool("isLogin") ?? false)) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      settings: RouteSettings(name: "/LoginScreen"),
-                                      builder: (context) => LoginScreen(),
-                                    ),
-                                  ).then((value) => Navigator.pop(context, value));
-                                } else {
-                                  // setState(() {
-                                  //   _loading = true;
-                                  // });
-                                  _inAppPurchase.restorePurchases();
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Color.fromRGBO(255, 255, 255, 0.8),
-                                  borderRadius: BorderRadius.circular(1.w),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
-                                  child: TitleTextWidget(S.of(context).restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
-                                ),
-                              ),
-                            ),
+                          TitleTextWidget('Pandora AI Pro', Colors.white, FontWeight.w500, $(23)),
+                          SizedBox(height: $(10)),
+                          attrItem(context, title: S.of(context).no_ads, imageRes: Images.ic_no_ads),
+                          SizedBox(height: $(10)),
+                          attrItem(context, title: S.of(context).no_watermark1, imageRes: Images.ic_no_watermark),
+                          SizedBox(height: $(10)),
+                          attrItem(context, title: S.of(context).high_resolution, imageRes: Images.ic_hd),
+                          SizedBox(height: $(10)),
+                          attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
+                          SizedBox(height: $(10)),
+                          attrItem(context,
+                              title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${userManager.limitRule.anotherme?.plan ?? 0}'), imageRes: Images.ic_buy_metaverse),
+                          SizedBox(height: $(10)),
+                          attrItem(context,
+                              title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${userManager.limitRule.txt2img?.plan ?? 0}'), imageRes: Images.ic_buy_ai_artist),
                         ],
-                      ),
+                      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15))),
                     ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 3.h,
-                            ),
-                            Image.asset(
-                              ImagesConstant.ic_purchase_emoji,
-                              width: 40.w,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            SizedBox(
-                              height: 1.h,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
-                              child: Card(
-                                color: ColorConstant.CardColor,
-                                shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(3.w),
-                                ),
-                                elevation: 2.h,
-                                child: Padding(
-                                  padding: EdgeInsets.all(5.w),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            ImagesConstant.ic_no_ads,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(S.of(context).no_ads, ColorConstant.White, FontWeight.w400, 14),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 2.h,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            ImagesConstant.ic_no_watermark,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(S.of(context).no_watermark1, ColorConstant.White, FontWeight.w400, 14),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 2.h,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            ImagesConstant.ic_hd,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(S.of(context).high_resolution, ColorConstant.White, FontWeight.w400, 14),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 2.h,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Image.asset(
-                                            ImagesConstant.ic_rocket,
-                                            height: 24,
-                                            width: 24,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                                            child: TitleTextWidget(S.of(context).faster_speed, ColorConstant.White, FontWeight.w400, 14),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                            _buildProductList(),
-                            SizedBox(
-                              height: 2.h,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    SizedBox(height: 2.h),
+                    _buildProductList(),
                   ],
-                )),
-          ),
-        ],
+                ),
+              ),
+            ),
+            _buildPurchaseButton(),
+            SizedBox(height: ScreenUtil.getBottomPadding(context) + $(15))
+          ],
+        ),
+      ).intoContainer(
+        decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_buy_bg), fit: BoxFit.fill)),
       ),
+    );
+  }
+
+  Widget attrItem(BuildContext context, {required title, required String imageRes}) {
+    return Row(
+      children: [
+        Image.asset(
+          imageRes,
+          height: 24,
+          width: 24,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.w),
+          child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, 14),
+        ),
+      ],
+    );
+  }
+
+  Widget buyPlanItem(
+    BuildContext context, {
+    required plan,
+    required bool checked,
+    bool popular = false,
+  }) {
+    double width = (ScreenUtil.screenSize.width - $(68)) / 2;
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: $(24)),
+            TitleTextWidget("${plan.title}", ColorConstant.White, FontWeight.w500, $(14), align: TextAlign.center),
+            SizedBox(height: $(16)),
+            TitleTextWidget("${plan.price}", ColorConstant.White, FontWeight.w500, $(26), align: TextAlign.center),
+            SizedBox(height: $(16)),
+            Text(
+              S.of(context).most_popular,
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Poppins',
+                fontSize: $(10),
+              ),
+            )
+                .intoContainer(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: $(4)),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFED700),
+                      borderRadius: BorderRadius.circular($(4)),
+                    ))
+                .visibility(
+                  visible: popular,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  maintainSemantics: true,
+                ),
+            SizedBox(height: $(12)),
+          ],
+        ).intoContainer(
+          padding: EdgeInsets.symmetric(horizontal: $(10)),
+          margin: EdgeInsets.only(bottom: $(7.5)),
+          decoration: BoxDecoration(
+            color: Color(0xcdcd16191E),
+            borderRadius: BorderRadius.circular($(12)),
+            border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Color(0xFF16191E), width: $(1.5)),
+          ),
+        ),
+        Positioned(
+          child: Image.asset(Images.ic_buy_item_arrow, height: $(9)).intoContainer(width: width, height: $(9), alignment: Alignment.center).visibility(visible: checked),
+          bottom: 0,
+        ),
+      ],
     );
   }
 }

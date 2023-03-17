@@ -13,10 +13,11 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
-import 'package:cartoonizer/models/metaverse_limit_entity.dart';
+import 'package:cartoonizer/models/generate_limit_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
@@ -65,15 +66,17 @@ class CartoonizerApi extends BaseRequester {
           user = SocialUserInfo.fromJson(data['data']);
         }
         AdConfigEntity adConfig = AdConfigEntity.fromJson(data['ads_config'] ?? {});
+        DailyLimitRuleEntity dailyLimitRuleEntity = DailyLimitRuleEntity.fromJson(data['daily_limit_rules'] ?? {});
         return OnlineModel(
           user: user,
           loginSuccess: login,
           aiServers: data['ai_servers'],
           adConfig: adConfig,
+          dailyLimitRuleEntity: dailyLimitRuleEntity,
         );
       }
     }
-    return OnlineModel(user: null, loginSuccess: false, aiServers: {}, adConfig: AdConfigEntity());
+    return OnlineModel(user: null, loginSuccess: false, aiServers: {}, adConfig: AdConfigEntity(), dailyLimitRuleEntity: DailyLimitRuleEntity());
   }
 
   Future<BaseEntity?> deleteAccount() async {
@@ -115,14 +118,19 @@ class CartoonizerApi extends BaseRequester {
     required String effectKey,
     required Function onUserExpired,
     required String category,
+    required String? payload,
   }) async {
     var encode = jsonEncode(resources.map((e) => e.toJson()).toList());
-    return post('/social_post/create', params: {
+    var params = <String, dynamic>{
       'resources': encode,
       'text': description,
       'cartoonize_key': effectKey,
       'category': category,
-    }, onFailed: (response) {
+    };
+    if (payload != null) {
+      params['payload'] = payload;
+    }
+    return post('/social_post/create', params: params, onFailed: (response) {
       if (response.statusCode == 401) {
         onUserExpired.call();
       }
@@ -388,6 +396,14 @@ class CartoonizerApi extends BaseRequester {
     return await get('/log/anotherme', params: params);
   }
 
+  Future<BaseEntity?> logTxt2Img(Map<String, dynamic> params) async {
+    if (params.containsKey('init_images')) {
+      return await get('/log/img2img', params: params);
+    } else {
+      return await get('/log/txt2img', params: params);
+    }
+  }
+
   Future<Map> checkAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     var baseEntity = await get('/check_app_version');
@@ -403,9 +419,14 @@ class CartoonizerApi extends BaseRequester {
     }
   }
 
-  Future<MetaverseLimitEntity?> getMetaverseLimit() async {
+  Future<GenerateLimitEntity?> getMetaverseLimit() async {
     var baseEntity = await get('/tool/anotherme/usage');
-    return jsonConvert.convert<MetaverseLimitEntity>(baseEntity?.data['data']);
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+
+  Future<GenerateLimitEntity?> getTxt2ImgLimit() async {
+    var baseEntity = await get('/tool/txt2img/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 
   Future<String?> submitInvitedCode(String invitedCode) async {

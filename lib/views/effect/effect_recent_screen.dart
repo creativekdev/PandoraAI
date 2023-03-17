@@ -109,6 +109,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => AiGroundScreen(
                                       history: data,
+                                  source: 'recently',
                                     )));
                           });
                         }

@@ -4,6 +4,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
+import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -25,6 +26,16 @@ class UserManager extends BaseManager {
   Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
   set aiServers(Map<String, dynamic> data) => cacheManager.setJson(CacheManager.keyAiServer, data);
+
+  DailyLimitRuleEntity get limitRule {
+    var data = cacheManager.getJson(CacheManager.limitRule);
+    if (data == null) {
+      return DailyLimitRuleEntity();
+    }
+    return DailyLimitRuleEntity.fromJson(data);
+  }
+
+  set limitRule(DailyLimitRuleEntity entity) => cacheManager.setJson(CacheManager.limitRule, entity.toJson());
 
   AdConfigEntity get adConfig {
     var data = cacheManager.getJson(CacheManager.keyAdConfig);
@@ -116,6 +127,7 @@ class UserManager extends BaseManager {
       aiServers = value.aiServers;
     }
     adConfig = value.adConfig;
+    limitRule = value.dailyLimitRuleEntity;
     if (value.loginSuccess) {
       user = value.user!;
       if (context != null && user!.status != 'activated') {

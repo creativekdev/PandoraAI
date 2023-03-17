@@ -70,8 +70,11 @@ class RecentGroundEntity {
   String? filePath;
   String? styleKey;
   String? initImageFilePath;
+  late Map<String, dynamic> parameters;
 
-  RecentGroundEntity();
+  RecentGroundEntity({Map<String, dynamic>? parameters}) {
+    this.parameters = parameters ?? {};
+  }
 
   factory RecentGroundEntity.fromJson(Map<String, dynamic> json) => $RecentGroundEntityFromJson(json);
 

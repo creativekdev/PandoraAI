@@ -4,18 +4,37 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 
-class FeedbackDialog extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return FeedbackDialogState();
+class FeedbackUtils {
+  static Future<bool?> open(BuildContext context) async {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var timeStamp = cacheManager.getInt(CacheManager.lastFeedback);
+    if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(timeStamp), DateTime.now())) {
+      CommonExtension().showToast(S.of(context).feedback_out_date);
+      return false;
+    } else {
+      return showDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => _FeedbackDialog(),
+      );
+    }
   }
 }
 
-class FeedbackDialogState extends AppState<FeedbackDialog> {
+class _FeedbackDialog extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _FeedbackDialogState();
+  }
+}
+
+class _FeedbackDialogState extends AppState<_FeedbackDialog> {
   late CartoonizerApi api;
   late TextEditingController textEditingController;
+  CacheManager cacheManager = AppDelegate().getManager();
 
   @override
   void initState() {
@@ -33,7 +52,7 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
   submit() {
     var content = textEditingController.text.trim();
     if (content.isEmpty) {
-      CommonExtension().showToast('Please input feedback');
+      CommonExtension().showToast(S.of(context).feedback_empty);
       return;
     }
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: "pre_feedback", callback: () {
@@ -41,7 +60,8 @@ class FeedbackDialogState extends AppState<FeedbackDialog> {
         api.feedback(content).then((value) {
           hideLoading().whenComplete(() {
             if (value != null) {
-              CommonExtension().showToast('Thanks for your opinions');
+              cacheManager.setInt(CacheManager.lastFeedback, DateTime.now().millisecondsSinceEpoch);
+              CommonExtension().showToast(S.of(context).feedback_thanks);
               Navigator.pop(context, true);
             }
           });

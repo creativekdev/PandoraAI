@@ -214,12 +214,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           showAnim(context);
         });
       } else {
+        controller.onError();
         if (value.length == 3) {
           if (!TextUtil.isEmpty(value.last)) {
             showLimitDialog(context, value[1], value[2]);
           }
+        } else {
+          Navigator.of(context).pop();
         }
-        controller.onError();
       }
     });
     controller.onTakePhoto(file, uploadImageController, key).then((value) {

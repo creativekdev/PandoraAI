@@ -58,11 +58,7 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
           alignment: Alignment.center,
         )
             .intoGestureDetector(onTap: () {
-          showDialog<bool>(
-            context: context,
-            barrierDismissible: true,
-            builder: (context) => FeedbackDialog(),
-          ).then((value) {
+          FeedbackUtils.open(context).then((value) {
             if (value ?? false) {
               if (mounted) {
                 Navigator.pop(context, true);

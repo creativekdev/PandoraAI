@@ -1,31 +1,30 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
-import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/effect/effect_face_fragment.dart';
-import 'package:cartoonizer/views/effect/effect_full_body_fragment.dart';
-import 'package:cartoonizer/views/effect/effect_random_fragment.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -36,47 +35,24 @@ class EffectFragment extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => EffectFragmentState();
+  State<EffectFragment> createState() => EffectFragmentState();
 }
 
-class EffectFragmentState extends State<EffectFragment> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin, AppTabState, EffectTabState {
+class EffectFragmentState extends State<EffectFragment> with AppTabState, EffectTabState {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdPartManager = AppDelegate().getManager();
   EffectDataController dataController = Get.find();
-  RecentController recentController = Get.find();
   late AppTabId tabId;
-
-  int currentIndex = 0;
-  PageController? _pageController;
-  TabController? _tabController;
-  List<HomeTabConfig> tabConfig = [];
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
-  late StreamSubscription onPushDataListener;
   bool proVisible = false;
-  double headerHeight = 0;
-  bool hasHashTag = false;
-  bool hashTagBlurOpen = false;
-  int? selectedTagIndex;
-
-  String? get selectedTag => selectedTagIndex == null ? null : dataController.tagList[selectedTagIndex!];
-
-  setSelectedTagIndex(int? index) {
-    setState(() {
-      if (index == null) {
-        selectedTagIndex = null;
-      } else {
-        selectedTagIndex = index;
-      }
-    });
-    EventBusHelper().eventBus.fire(OnHashTagChangeEvent(data: selectedTag));
-  }
 
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'home_fragment');
     tabId = widget.tabId;
     _connectivity.onConnectivityChanged.listen((event) {
       if (!mounted) return;
@@ -98,37 +74,15 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
         refreshProVisible();
       });
     });
-    onPushDataListener = EventBusHelper().eventBus.on<OnEffectPushClickEvent>().listen((event) {
-      if (!mounted) return;
-      var pushExtraEntity = event.data!;
-      for (int i = 0; i < tabConfig.length; i++) {
-        var config = tabConfig[i];
-        if  (config.tabString == pushExtraEntity.tab) {
-          _tabController?.index = i;
-          setIndex(i);
-          onEffectClick(pushExtraEntity);
-        }
-      }
-    });
+
     refreshProVisible();
   }
 
   @override
   void onAttached() {
     super.onAttached();
-    if (tabConfig.isNotEmpty) {
-      tabConfig[currentIndex].key.currentState?.onAttached();
-    }
     var currentTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
-  }
-
-  @override
-  void onDetached() {
-    super.onDetached();
-    if (tabConfig.isNotEmpty) {
-      tabConfig[currentIndex].key.currentState?.onDetached();
-    }
   }
 
   refreshProVisible() {
@@ -144,62 +98,7 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    _pageController?.dispose();
-    _tabController?.dispose();
-    onUserStateChangeListener.cancel();
-  }
-
-  void _pageChange(int index) {
-    if (currentIndex != index) {
-      currentIndex = index;
-      for (var i = 0; i < tabConfig.length; i++) {
-        var key = tabConfig[i].key;
-        if (i == currentIndex) {
-          if (tabConfig[i].tabString == 'template') {
-            openHashTagBlur();
-          }
-          key.currentState?.onAttached();
-        } else {
-          if (tabConfig[i].tabString == 'template') {
-            hideHashTagBlur();
-          }
-          key.currentState?.onDetached();
-        }
-      }
-    }
-    _tabController?.index = currentIndex;
-    var title = tabConfig[index].title;
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    cacheManager.setInt('${CacheManager.keyLastEffectTabAttached}_${title}', currentTime);
-  }
-
-  void setIndex(int index) {
-    if (currentIndex != index) {
-      _pageController?.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.ease);
-    }
-  }
-
-  openHashTagBlur() {
-    if (hasHashTag && !hashTagBlurOpen) {
-      setState(() {
-        hashTagBlurOpen = true;
-      });
-    }
-  }
-
-  hideHashTagBlur() {
-    if (hashTagBlurOpen) {
-      setState(() {
-        hashTagBlurOpen = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
@@ -219,165 +118,82 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                   });
                 });
           } else {
-            tabConfig.clear();
-            hasHashTag = !dataController.tagList.isEmpty;
-            for (var value in _.data!.data.keys) {
-              var key = GlobalKey<AppTabState>();
-              if (value == 'face') {
-                tabConfig.add(
-                  HomeTabConfig(
-                    key: key,
-                    item: EffectFaceFragment(
-                      key: key,
-                      tabId: tabId.id(),
-                      dataList: _.data!.effectList(value),
-                      recentController: recentController,
-                      tabString: value,
-                      headerHeight: headerHeight,
-                    ),
-                    title: _.data!.localeName(value),
-                    tabString: value,
-                  ),
-                );
-              } else if (value == 'full_body') {
-                tabConfig.add(
-                  HomeTabConfig(
-                    key: key,
-                    item: EffectFullBodyFragment(
-                      key: key,
-                      tabId: tabId.id(),
-                      dataList: _.data!.effectList(value),
-                      recentController: recentController,
-                      tabString: value,
-                      headerHeight: headerHeight,
-                    ),
-                    title: _.data!.localeName(value),
-                    tabString: value,
-                  ),
-                );
-              } else if (value == 'template') {
-                tabConfig.add(HomeTabConfig(
-                  key: key,
-                  item: EffectRandomFragment(
-                    key: key,
-                    tabString: value,
-                    tabId: tabId.id(),
-                    recentController: recentController,
-                    dataController: dataController,
-                    headerHeight: headerHeight,
-                    selectedTag: selectedTag,
-                  ),
-                  title: _.data!.localeName(value),
-                  tabString: value,
-                ));
-              } else {
-                tabConfig.add(
-                  HomeTabConfig(
-                    key: key,
-                    item: EffectFaceFragment(
-                      key: key,
-                      tabId: tabId.id(),
-                      dataList: _.data!.effectList(value),
-                      recentController: recentController,
-                      hasOriginalFace: false,
-                      tabString: value,
-                      headerHeight: headerHeight,
-                    ),
-                    title: _.data!.localeName(value),
-                    tabString: value,
-                  ),
-                );
-              }
-            }
-            _pageController = PageController(initialPage: currentIndex, keepPage: true);
-            _tabController = TabController(length: tabConfig.length, vsync: this, initialIndex: currentIndex);
-            hashTagBlurOpen = tabConfig[currentIndex].tabString == 'template';
+            var list = _.data?.homeCards ?? [];
             return Stack(
               children: [
-                PageView(
-                  onPageChanged: _pageChange,
-                  controller: _pageController,
-                  children: tabConfig.map((e) => e.item).toList(),
-                ),
-                header(context),
-                Positioned(
-                  child: ClipRect(
-                      child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                    child: Row(
+                ListView.builder(
+                  padding: EdgeInsets.only(
+                    top: 55 + ScreenUtil.getStatusBarHeight(),
+                    bottom: ScreenUtil.getBottomPadding(context) + 70,
+                  ),
+                  itemBuilder: (context, index) {
+                    var config = list[index];
+                    var type = HomeCardTypeUtils.build(config.type);
+                    if (type == HomeCardType.UNDEFINED) {
+                      return Container();
+                    }
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              Images.ic_am_icon,
-                              width: $(24),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              S.of(context).pandora_avatar,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: ColorConstant.White,
-                                fontWeight: FontWeight.w500,
-                                fontSize: $(15),
+                            Expanded(
+                              child: TitleTextWidget(
+                                type.title(),
+                                ColorConstant.White,
+                                FontWeight.w500,
+                                $(17),
+                                align: TextAlign.start,
                               ),
-                              textAlign: TextAlign.center,
+                            ),
+                            Icon(
+                              Icons.keyboard_arrow_right,
+                              color: Colors.white,
+                              size: $(22),
                             ),
                           ],
-                        )
-                            .intoContainer(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular($(6)),
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                        ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8), top: $(18))),
+                        ClipRRect(
+                          child: CachedNetworkImageUtils.custom(
+                            context: context,
+                            useOld: true,
+                            imageUrl: config.url.appendHash,
+                            fit: BoxFit.cover,
+                            width: double.maxFinite,
+                            placeholder: (context, url) => CircularProgressIndicator()
+                                .intoContainer(
+                                  width: $(25),
+                                  height: $(25),
+                                )
+                                .intoCenter()
+                                .intoContainer(
+                                  width: double.maxFinite,
+                                  height: $(150),
                                 ),
-                                height: $(44),
-                                width: (ScreenUtil.screenSize.width - $(38)) / 2,
-                                padding: EdgeInsets.symmetric(vertical: $(8), horizontal: 2),
-                                margin: EdgeInsets.only(left: $(15), right: $(4), top: $(12)))
-                            .intoGestureDetector(onTap: () {
-                          Avatar.openFromHome(context);
-                        }),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              Images.ic_avatar_camera,
-                              width: $(24),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              S.of(context).meTaverse,
-                              style: TextStyle(
-                                fontFamily: 'Poppins',
-                                color: ColorConstant.White,
-                                fontWeight: FontWeight.w500,
-                                fontSize: $(15),
+                          ),
+                          borderRadius: BorderRadius.circular($(8)),
+                        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                      ],
+                    ).intoGestureDetector(onTap: () {
+                      switch (type) {
+                        case HomeCardType.cartoonize:
+                          Events.facetoonLoading(source: 'home_page');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/ChoosePhotoScreen"),
+                              builder: (context) => ChoosePhotoScreen(
+                                tabPos: 0,
+                                pos: 0,
+                                itemPos: 0,
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                          ],
-                        )
-                            .intoContainer(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular($(6)),
-                                  gradient: LinearGradient(
-                                    colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                ),
-                                height: $(44),
-                                width: (ScreenUtil.screenSize.width - $(38)) / 2,
-                                padding: EdgeInsets.symmetric(vertical: $(8), horizontal: 2),
-                                margin: EdgeInsets.only(left: $(4), right: $(15), top: $(12)))
-                            .intoGestureDetector(onTap: () {
+                          ).then((value) {
+                            userManager.refreshUser();
+                          });
+                          break;
+                        case HomeCardType.anotherme:
                           AnotherMe.checkPermissions().then((value) {
                             if (value) {
                               AnotherMe.open(context, source: 'home_page');
@@ -385,16 +201,27 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
                               showPhotoLibraryPermissionDialog(context);
                             }
                           });
-                        }),
-                      ],
-                    ).intoContainer(
-                      height: $(56),
-                      margin: EdgeInsets.only(bottom: AppTabBarHeight + MediaQuery.of(context).padding.bottom),
-                      color: ColorConstant.BackgroundColorBlur,
-                    ),
-                  )),
-                  bottom: 0,
+                          break;
+                        case HomeCardType.ai_avatar:
+                          Avatar.openFromHome(context);
+                          break;
+                        case HomeCardType.text2image:
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: RouteSettings(name: "/AiGroundScreen"),
+                              builder: (context) => AiGroundScreen(source: 'home_page',),
+                            ),
+                          );
+                          break;
+                        case HomeCardType.UNDEFINED:
+                          break;
+                      }
+                    });
+                  },
+                  itemCount: list.length,
                 ),
+                header(context),
               ],
             );
           }
@@ -406,105 +233,10 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
   Widget header(BuildContext context) => ClipRect(
           child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              children: [
-                navbar(context),
-                SizedBox(height: $(10)),
-                Theme(
-                    data: ThemeData(splashColor: Colors.transparent, highlightColor: Colors.transparent),
-                    child: TabBar(
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicator: LineTabIndicator(
-                        width: $(20),
-                        strokeCap: StrokeCap.butt,
-                        borderSide: BorderSide(width: $(3), color: ColorConstant.BlueColor),
-                      ),
-                      isScrollable: tabConfig.length > 4,
-                      labelColor: ColorConstant.PrimaryColor,
-                      labelPadding: EdgeInsets.symmetric(horizontal: 0),
-                      labelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.bold),
-                      unselectedLabelColor: ColorConstant.PrimaryColor,
-                      unselectedLabelStyle: TextStyle(fontSize: $(15), fontWeight: FontWeight.w500),
-                      controller: _tabController,
-                      onTap: (index) {
-                        setIndex(index);
-                      },
-                      tabs: tabConfig
-                          .map((e) => Text(thirdPartManager.getLocaleString(context, e.title)).intoContainer(padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(0))))
-                          .toList(),
-                    ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))),
-                SizedBox(height: $(8))
-              ],
-            ).listenSizeChanged(onSizeChanged: (size) {
-              setState(() {
-                headerHeight = size.height;
-              });
-            }),
-            Container(width: double.maxFinite, height: hashTagBlurOpen ? $(44) : $(0), child: buildHashTagList(dataController)),
-          ],
-        ).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(
-            onTap: () {},
-            onDoubleTap: Platform.isIOS
-                ? () {
-                    EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabId.id()));
-                  }
-                : null),
+        child: navbar(context).intoContainer(color: ColorConstant.BackgroundColorBlur).intoGestureDetector(
+              onTap: () {},
+            ),
       ));
-
-  Widget buildHashTagList(EffectDataController dataController) {
-    if (dataController.tagList.isEmpty) {
-      return Container(height: 0);
-    }
-    return ScrollablePositionedList.builder(
-        scrollDirection: Axis.horizontal,
-        initialScrollIndex: 0,
-        padding: EdgeInsets.only(left: $(8), right: $(8)),
-        physics: ClampingScrollPhysics(),
-        itemCount: dataController.tagList.length,
-        itemBuilder: (context, index) {
-          var selected = index == selectedTagIndex;
-          return (selected
-                  ? ShaderMask(
-                      shaderCallback: (Rect bounds) => LinearGradient(
-                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomRight,
-                      ).createShader(Offset.zero & bounds.size),
-                      blendMode: BlendMode.srcATop,
-                      child: Text(
-                        '# ${dataController.tagList[index]}',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          color: ColorConstant.White,
-                          fontSize: $(13),
-                        ),
-                      ),
-                    )
-                  : Text(
-                      '# ${dataController.tagList[index]}',
-                      style: TextStyle(
-                        fontSize: $(13),
-                        fontFamily: 'Poppins',
-                        color: ColorConstant.BlueColor,
-                      ),
-                    ))
-              .intoContainer(padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)))
-              .intoGestureDetector(onTap: () {
-            if (selected) {
-              setSelectedTagIndex(null);
-            } else {
-              setSelectedTagIndex(index);
-            }
-          });
-        }).intoContainer(
-      height: $(44),
-      alignment: Alignment.center,
-      color: Colors.transparent,
-    );
-  }
 
   Widget navbar(BuildContext context) => Container(
         // margin: EdgeInsets.only(top: $(10)),
@@ -569,7 +301,4 @@ class EffectFragmentState extends State<EffectFragment> with TickerProviderState
     var connectivityResult = await (Connectivity().checkConnectivity());
     return (connectivityResult != ConnectivityResult.none);
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

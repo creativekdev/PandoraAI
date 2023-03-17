@@ -108,6 +108,10 @@ RecentGroundEntity $RecentGroundEntityFromJson(Map<String, dynamic> json) {
 	if (initImageFilePath != null) {
 		recentGroundEntity.initImageFilePath = initImageFilePath;
 	}
+	final Map<String, dynamic>? parameters = jsonConvert.convert<Map<String, dynamic>>(json['parameters']);
+	if (parameters != null) {
+		recentGroundEntity.parameters = parameters;
+	}
 	return recentGroundEntity;
 }
 
@@ -118,5 +122,6 @@ Map<String, dynamic> $RecentGroundEntityToJson(RecentGroundEntity entity) {
 	data['filePath'] = entity.filePath;
 	data['styleKey'] = entity.styleKey;
 	data['initImageFilePath'] = entity.initImageFilePath;
+	data['parameters'] = entity.parameters;
 	return data;
 }

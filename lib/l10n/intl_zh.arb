@@ -323,5 +323,13 @@
   "text_2_image_input_hint": "描述你的图片",
   "text_2_image_input_tips": "输入描述让AI开始作图，下面是一些可输入的建议。",
   "text_2_image_prompt_title": "输入描述",
-  "generate": "创建"
+  "generate": "创建",
+  "text2img_prompt_empty_hint": "请输入描述",
+  "display_text": "显示文案",
+  "choose_your_scale": "尺寸",
+  "buy_attr_metaverse": "%d 次Me-Taverse转化 / 天",
+  "buy_attr_ai_artist": "%d 次AI Artist转化 / 天",
+  "feedback_empty": "请填写您的反馈",
+  "feedback_out_date": "您已经反馈过了，请明天再试",
+  "feedback_thanks": "感谢您的反馈"
 }

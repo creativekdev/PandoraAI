@@ -8,15 +8,13 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/submit_invited_code_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-
+import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
 
@@ -125,11 +123,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).feedback, onTap: () {
-                showDialog<bool>(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) => FeedbackDialog(),
-                );
+                FeedbackUtils.open(context);
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
