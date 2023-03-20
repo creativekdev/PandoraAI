@@ -270,14 +270,16 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               nsfwShown: effectManager.effectNsfw(data.data!.cartoonizeKey) && !nsfwOpen,
               data: data.data!,
               width: listController.cardWidth,
-              onNsfwTap: () => showOpenNsfwDialog(context).then((result) {
-                if (result ?? false) {
-                  setState(() {
-                    nsfwOpen = true;
-                    cacheManager.setBool(CacheManager.nsfwOpen, true);
-                  });
-                }
-              }),
+              onNsfwTap: () {
+                showOpenNsfwDialog(context).then((result) {
+                  if (result ?? false) {
+                    setState(() {
+                      nsfwOpen = true;
+                      cacheManager.setBool(CacheManager.nsfwOpen, true);
+                    });
+                  }
+                });
+              },
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(

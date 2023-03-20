@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
@@ -36,7 +37,7 @@ class AiGroundController extends GetxController {
   Map<String, dynamic>? parameters;
   File? initFile;
 
-  List<String>? promptList = null;
+  List<String> promptList = [];
   List<AiGroundStyleEntity> styleList = [];
   AiGroundStyleEntity? selectedStyle;
 
@@ -58,22 +59,27 @@ class AiGroundController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    rootBundle.loadString('assets/images/prompts.txt').then((value) {
+      var split = value.split('\n');
+      List<int> posList = [];
+      while (posList.length < 5) {
+        var nextInt = Random().nextInt(split.length);
+        if (!posList.contains(nextInt)) {
+          posList.add(nextInt);
+        }
+      }
+      promptList.clear();
+      for (var pos in posList) {
+        promptList.add(split[pos]);
+      }
+      update();
+    });
     api = Text2ImageApi().bindController(this);
   }
 
   @override
   void onReady() {
     super.onReady();
-    Future.wait([
-      api.randomPrompt(),
-      api.randomPrompt(),
-      api.randomPrompt(),
-      api.randomPrompt(),
-      api.randomPrompt(),
-    ]).then((value) {
-      promptList = value.filter((t) => t != null).map((e) => e!).toList();
-      update();
-    });
     api.artists().then((value) {
       if (value != null) {
         styleList = value;

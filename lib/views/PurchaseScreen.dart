@@ -349,10 +349,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
       return Column(children: [
         Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.w),
+            padding: EdgeInsets.symmetric(horizontal: $(24)),
             child: Container(
               decoration: BoxDecoration(
-                color: Color.fromRGBO(235, 232, 255, 1),
+                color: Color(0x99ffffff),
                 borderRadius: BorderRadius.circular(2.w),
               ),
               child: Padding(
@@ -360,7 +360,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 child: Row(
                   children: [
                     Image.asset(
-                      ImagesConstant.ic_radio_on,
+                      Images.ic_radio_on,
                       height: 26,
                       width: 26,
                     ),
@@ -369,7 +369,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}/${isMonthlyPlan ? "Month" : "Year"}", ColorConstant.White, FontWeight.w500, 14,
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}", ColorConstant.White, FontWeight.w500, 14,
                               align: TextAlign.start),
                         ],
                       ),

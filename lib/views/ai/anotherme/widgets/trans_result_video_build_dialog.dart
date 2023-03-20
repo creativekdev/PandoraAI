@@ -44,7 +44,6 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
 
   int imageNameCount = 30;
   late String fileName;
-  List<DealData> dealList = [];
   var startTime = DateTime.now().millisecondsSinceEpoch;
 
   @override
@@ -159,7 +158,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 4 == 0 || progress == 100) {
+      if (progress % 3 == 0 || progress == 100) {
         String fileName = savePath + '/${imageNameCount}.png';
         var file = File(fileName);
         if (!file.existsSync()) {
@@ -168,9 +167,8 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
             onError.call();
             return;
           }
-          dealList.add(DealData()
-            ..image = image
-            ..name = fileName);
+          var data = (await image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+          await file.writeAsBytes(data);
           imageNameCount++;
         }
       }
@@ -178,10 +176,6 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     progress++;
     setState(() {});
     if (progress == 100) {
-      List<DealData> result = await convertImagesToPngBytes(dealList);
-      for (var dealData in result) {
-        await File(dealData.name!).writeAsBytes(dealData.data!.buffer.asUint8List().toList());
-      }
       onSuccess.call();
     } else {
       startRecord(onSuccess: onSuccess, onError: onError);
