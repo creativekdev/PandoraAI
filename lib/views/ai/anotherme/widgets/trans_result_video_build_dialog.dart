@@ -57,7 +57,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     designHeight = designWidth * ratio;
     String dirName = EncryptUtil.encodeMd5(result.path);
     var savePath = cacheManager.storageOperator.recordMetaverseDir.path + dirName;
-    fileName = '$savePath/${EncryptUtil.encodeMd5(savePath)}.mp4';
+    fileName = '$savePath/${EncryptUtil.encodeMd5(savePath).substring(0, 8)}.mp4';
     if (File(fileName).existsSync()) {
       delay(() {
         Navigator.of(context).pop(fileName);
@@ -159,11 +159,11 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
         }
       }
     } else {
-      if (progress % 7 == 0 || progress % 7 == 3 || progress == 99) {
+      if (progress % 4 == 0 || progress == 100) {
         String fileName = savePath + '/${imageNameCount}.png';
         var file = File(fileName);
         if (!file.existsSync()) {
-          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.7);
+          var image = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 0.8);
           if (image == null) {
             onError.call();
             return;
@@ -177,7 +177,7 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     }
     progress++;
     setState(() {});
-    if (progress == 99) {
+    if (progress == 100) {
       List<DealData> result = await convertImagesToPngBytes(dealList);
       for (var dealData in result) {
         await File(dealData.name!).writeAsBytes(dealData.data!.buffer.asUint8List().toList());
@@ -221,8 +221,13 @@ class DealData {
 }
 
 Future<List<DealData>> convertImagesToPngBytes(List<DealData> images) async {
-  List<Future<DealData>> futures = images.map((e) => _getImage(e)).toList();
-  return await Future.wait<DealData>(futures);
+  List<DealData> result = [];
+  // List<Future<DealData>> futures = images.map((e) => _getImage(e)).toList();
+  // return await Future.wait<DealData>(futures);
+  for (var value in images) {
+    result.add(await _getImage(value));
+  }
+  return result;
 }
 
 Future<DealData> _getImage(DealData image) async {

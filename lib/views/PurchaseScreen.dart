@@ -287,7 +287,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
       child: _showPurchasePlan
           ? null
           : RichText(
-              text: TextSpan(text: 'Selected: ', style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)), children: [
+              text: TextSpan(text: S.of(context).selected, style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)), children: [
               TextSpan(
                 text: '${(isYear ? year : month)?.price}',
                 style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(23)),
@@ -526,15 +526,14 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   Widget attrItem(BuildContext context, {required title, required String imageRes}) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Image.asset(
-          imageRes,
-          height: 24,
-          width: 24,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 2.w),
-          child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, 14),
+        Image.asset(imageRes, height: 24, width: 24),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2.w),
+            child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, 14, maxLines: 2, align: TextAlign.start),
+          ),
         ),
       ],
     );

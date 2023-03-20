@@ -306,7 +306,7 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
                         ? SizedBox.shrink()
                         : Expanded(
                             child: Text(
-                              S.of(context).buy,
+                              S.of(context).upgrade,
                               style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
                             )
                                 .intoContainer(
@@ -322,7 +322,7 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
                     isVip() ? SizedBox.shrink() : Container(height: $(48), color: ColorConstant.LineColor, width: 1),
                     Expanded(
                       child: Text(
-                        S.of(context).ok,
+                        S.of(context).ok1,
                         style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
                       )
                           .intoContainer(
@@ -341,10 +341,14 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
             ).customDialogStyle()).then((value) {
       if (value ?? false) {
         userManager.doOnLogin(context, logPreLoginAction: 'txt2img_generate_limit', callback: () {
-          PaymentUtils.pay(context, 'txt2img_result_page');
+          PaymentUtils.pay(context, 'txt2img_result_page').then((value) {
+            Navigator.of(context).pop();
+          });
         }, autoExec: true);
       } else {
-        userManager.doOnLogin(context, logPreLoginAction: 'txt2img_generate_limit');
+        userManager.doOnLogin(context, logPreLoginAction: 'txt2img_generate_limit', callback: () {
+          Navigator.of(context).pop();
+        }, autoExec: true);
       }
     });
   }

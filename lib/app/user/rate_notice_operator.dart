@@ -97,14 +97,21 @@ class RateNoticeOperator {
     judgeAndShowNotice(context);
   }
 
+  bool _dialogShown = false;
+
   judgeAndShowNotice(BuildContext context) {
+    if (_dialogShown) {
+      return;
+    }
     LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
     if (shouldRate()) {
+      _dialogShown = true;
       showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (context) => RateNoticeDialogContent(),
       ).then((value) {
+        _dialogShown = false;
         if (value ?? false) {
           // 3 month later
           configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;

@@ -169,9 +169,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate": MessageLookupByLibrary.simpleMessage("创建"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
         "generate_reached_limit":
-            MessageLookupByLibrary.simpleMessage("请明天再试或购买专业版"),
+            MessageLookupByLibrary.simpleMessage("请明天再试或升级为专业版以获得更多的 %s 配额。"),
         "generate_reached_limit_title":
-            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限"),
+            MessageLookupByLibrary.simpleMessage("%s 创建次数已达当日上限"),
         "generate_reached_limit_vip":
             MessageLookupByLibrary.simpleMessage("请明天再试"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
@@ -241,6 +241,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "november": MessageLookupByLibrary.simpleMessage("十一月"),
         "october": MessageLookupByLibrary.simpleMessage("十月"),
         "ok": MessageLookupByLibrary.simpleMessage("好的"),
+        "ok1": MessageLookupByLibrary.simpleMessage("好的"),
         "okay": MessageLookupByLibrary.simpleMessage("好的"),
         "or": MessageLookupByLibrary.simpleMessage("或"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
@@ -335,6 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("请至少选择 %d 张图片"),
         "select_more_photos": MessageLookupByLibrary.simpleMessage("选择更多照片"),
         "select_style": MessageLookupByLibrary.simpleMessage("选择风格"),
+        "selected": MessageLookupByLibrary.simpleMessage("已选择："),
         "selfies": MessageLookupByLibrary.simpleMessage("自拍"),
         "send": MessageLookupByLibrary.simpleMessage("发送"),
         "sent_email_already":
@@ -395,6 +397,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile": MessageLookupByLibrary.simpleMessage("更新个人信息"),
         "update_profile_successfully":
             MessageLookupByLibrary.simpleMessage("信息更新成功"),
+        "upgrade": MessageLookupByLibrary.simpleMessage("升级"),
         "upload": MessageLookupByLibrary.simpleMessage("上传"),
         "upload_image": MessageLookupByLibrary.simpleMessage("上传图片"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("上传图片"),

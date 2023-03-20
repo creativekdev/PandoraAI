@@ -71,9 +71,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("No watermark"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Buy now"),
         "buy_attr_ai_artist": MessageLookupByLibrary.simpleMessage(
-            "%d Quota of AI Artist per day"),
+            "%d Conversions of AI Artist per day"),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
-            "%d Quota of Me-Taverse per day"),
+            "%d Conversions of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "card_number": MessageLookupByLibrary.simpleMessage("Card Number"),
@@ -203,11 +203,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
-            "Please try again tomorrow or buy Premium"),
+            "Come back tomorrow or upgrade to PRO to get more %s quota"),
         "generate_reached_limit_title": MessageLookupByLibrary.simpleMessage(
-            "Generate action has reached the upper limit"),
+            "You\'ve reached your %s limit today. "),
         "generate_reached_limit_vip":
-            MessageLookupByLibrary.simpleMessage("Please try again tomorrow"),
+            MessageLookupByLibrary.simpleMessage("Come back tomorrow"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
         "generating": MessageLookupByLibrary.simpleMessage("Creating"),
@@ -294,6 +294,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "november": MessageLookupByLibrary.simpleMessage("November"),
         "october": MessageLookupByLibrary.simpleMessage("October"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
+        "ok1": MessageLookupByLibrary.simpleMessage("OK"),
         "okay": MessageLookupByLibrary.simpleMessage("Okay"),
         "or": MessageLookupByLibrary.simpleMessage("Or"),
         "other_replies":
@@ -416,6 +417,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "select_more_photos":
             MessageLookupByLibrary.simpleMessage("Select more photos"),
         "select_style": MessageLookupByLibrary.simpleMessage("Select Style"),
+        "selected": MessageLookupByLibrary.simpleMessage("Selected: "),
         "selfies": MessageLookupByLibrary.simpleMessage("selfies"),
         "send": MessageLookupByLibrary.simpleMessage("Send"),
         "sent_email_already": MessageLookupByLibrary.simpleMessage(
@@ -487,6 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Update Your Profile"),
         "update_profile_successfully": MessageLookupByLibrary.simpleMessage(
             "Profile update successfully!"),
+        "upgrade": MessageLookupByLibrary.simpleMessage("Upgrade"),
         "upload": MessageLookupByLibrary.simpleMessage("Upload"),
         "upload_image": MessageLookupByLibrary.simpleMessage("Upload Image"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("Upload photos"),

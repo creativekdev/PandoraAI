@@ -1070,6 +1070,16 @@ class S {
     );
   }
 
+  /// `OK`
+  String get ok1 {
+    return Intl.message(
+      'OK',
+      name: 'ok1',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Or`
   String get or {
     return Intl.message(
@@ -3110,30 +3120,30 @@ class S {
     );
   }
 
-  /// `Generate action has reached the upper limit`
+  /// `You've reached your %s limit today. `
   String get generate_reached_limit_title {
     return Intl.message(
-      'Generate action has reached the upper limit',
+      'You\'ve reached your %s limit today. ',
       name: 'generate_reached_limit_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Please try again tomorrow or buy Premium`
+  /// `Come back tomorrow or upgrade to PRO to get more %s quota`
   String get generate_reached_limit {
     return Intl.message(
-      'Please try again tomorrow or buy Premium',
+      'Come back tomorrow or upgrade to PRO to get more %s quota',
       name: 'generate_reached_limit',
       desc: '',
       args: [],
     );
   }
 
-  /// `Please try again tomorrow`
+  /// `Come back tomorrow`
   String get generate_reached_limit_vip {
     return Intl.message(
-      'Please try again tomorrow',
+      'Come back tomorrow',
       name: 'generate_reached_limit_vip',
       desc: '',
       args: [],
@@ -3215,6 +3225,16 @@ class S {
     return Intl.message(
       'Buy',
       name: 'buy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upgrade`
+  String get upgrade {
+    return Intl.message(
+      'Upgrade',
+      name: 'upgrade',
       desc: '',
       args: [],
     );
@@ -3330,20 +3350,20 @@ class S {
     );
   }
 
-  /// `%d Quota of Me-Taverse per day`
+  /// `%d Conversions of Me-Taverse per day`
   String get buy_attr_metaverse {
     return Intl.message(
-      '%d Quota of Me-Taverse per day',
+      '%d Conversions of Me-Taverse per day',
       name: 'buy_attr_metaverse',
       desc: '',
       args: [],
     );
   }
 
-  /// `%d Quota of AI Artist per day`
+  /// `%d Conversions of AI Artist per day`
   String get buy_attr_ai_artist {
     return Intl.message(
-      '%d Quota of AI Artist per day',
+      '%d Conversions of AI Artist per day',
       name: 'buy_attr_ai_artist',
       desc: '',
       args: [],
@@ -3375,6 +3395,16 @@ class S {
     return Intl.message(
       'Thanks for your opinions',
       name: 'feedback_thanks',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected: `
+  String get selected {
+    return Intl.message(
+      'Selected: ',
+      name: 'selected',
       desc: '',
       args: [],
     );

@@ -152,7 +152,7 @@ class TransProgressImage extends StatelessWidget {
             progress: progress,
             x: 0.7,
             y: 0.9,
-            m: 0.3,
+            m: 0.7,
           ),
           child: child,
         ),

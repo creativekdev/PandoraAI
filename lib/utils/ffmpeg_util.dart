@@ -8,7 +8,7 @@ class FFmpegUtil {
     required String outputPath,
     int framePerSecond = 24,
   }) {
-    // return '-y -r $framePerSecond -f image2 -i "$mainDir/%d.png" -b:v 1568k -c:v mpeg4 "$outputPath"';
-    return '-y -r $framePerSecond -f image2 -i "$mainDir/%d.png" -b:v 1568k "$outputPath"';
+    return '-y -framerate $framePerSecond -f image2 -i "$mainDir/%d.png" -b:v 1568k -c:v mpeg4 "$outputPath"';
+    // return '-y -r $framePerSecond -f image2 -i "$mainDir/%d.png" -b:v 1568k "$outputPath"';
   }
 }

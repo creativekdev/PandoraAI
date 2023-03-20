@@ -101,6 +101,7 @@
   "no_watermark1": "无水印",
   "not_enough_photos": "照片数目不够",
   "ok": "好的",
+  "ok1": "好的",
   "or": "或",
   "other_replies": "共%d条评论 >",
   "packages_purchased": "已购买",
@@ -305,8 +306,8 @@
   "avatar_create_ensure_hint": "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？",
   "yes": "确定",
   "choose_another": "重新选择",
-  "generate_reached_limit_title": "创建次数已达当日上限",
-  "generate_reached_limit": "请明天再试或购买专业版",
+  "generate_reached_limit_title": "%s 创建次数已达当日上限",
+  "generate_reached_limit": "请明天再试或升级为专业版以获得更多的 %s 配额。",
   "generate_reached_limit_vip": "请明天再试",
   "read_all": "全部已读",
   "input_invited_code": "邀请码填写",
@@ -316,6 +317,7 @@
   "invitation_desc": "现在使用它们来生成无水印的高分辨率卡通图像",
   "try_it_now": "现在就去",
   "buy": "购买",
+  "upgrade": "升级",
   "choose_your_style": "选择风格（可选）",
   "reference_image": "参考图片（可选）",
   "reference_image_tips": "参考图片将影响最终结果",
@@ -331,5 +333,6 @@
   "buy_attr_ai_artist": "%d 次AI Artist转化 / 天",
   "feedback_empty": "请填写您的反馈",
   "feedback_out_date": "您已经反馈过了，请明天再试",
-  "feedback_thanks": "感谢您的反馈"
+  "feedback_thanks": "感谢您的反馈",
+  "selected": "已选择："
 }

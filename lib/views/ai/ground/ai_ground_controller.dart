@@ -109,12 +109,12 @@ class AiGroundController extends GetxController {
       if (groundLimitEntity.usedCount >= groundLimitEntity.dailyLimit) {
         if (isVip()) {
           return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title
-            ..msgContent = S.of(Get.context!).generate_reached_limit_vip;
+            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'AI Artist')
+            ..msgContent = S.of(Get.context!).generate_reached_limit_vip.replaceAll('%s', 'AI Artist');
         } else {
           return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title
-            ..msgContent = S.of(Get.context!).generate_reached_limit;
+            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'AI Artist')
+            ..msgContent = S.of(Get.context!).generate_reached_limit.replaceAll('%s', 'AI Artist');
         }
       }
     }

@@ -63,10 +63,10 @@ class UserBaseInfoWidget extends StatelessWidget {
   List<Widget> children(BuildContext context) {
     if (userInfo != null) {
       return [
-        TitleTextWidget(userInfo!.getShownEmail(), Colors.white, FontWeight.w500, $(17), align: TextAlign.start),
+        TitleTextWidget(userInfo!.getShownName(), Colors.white, FontWeight.w500, $(17), align: TextAlign.start),
         Row(
           children: [
-            Expanded(child: TitleTextWidget(userInfo!.getShownName(), Colors.white, FontWeight.w400, $(13), align: TextAlign.start)),
+            Expanded(child: TitleTextWidget(userInfo!.getShownEmail(), Colors.white, FontWeight.w400, $(13), align: TextAlign.start)),
             Image.asset(
               ImagesConstant.ic_right_arrow,
               height: $(28),

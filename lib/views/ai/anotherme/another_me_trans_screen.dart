@@ -148,7 +148,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         ? SizedBox.shrink()
                         : Expanded(
                             child: Text(
-                              S.of(context).buy,
+                              S.of(context).upgrade,
                               style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
                             )
                                 .intoContainer(
@@ -164,7 +164,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     isVip() ? SizedBox.shrink() : Container(height: $(48), color: ColorConstant.LineColor, width: 1),
                     Expanded(
                       child: Text(
-                        S.of(context).ok,
+                        S.of(context).ok1,
                         style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
                       )
                           .intoContainer(
@@ -326,25 +326,53 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 Column(
                   children: [
                     Expanded(
-                      child: ClipRRect(
-                        child: TransResultNewCard(
-                          originalImage: file,
-                          resultImage: File(controller.transKey!),
-                          width: resultCardWidth,
-                          height: resultCardHeight,
-                          direction: ratio > axisRatioFlag ? Axis.horizontal : Axis.vertical,
-                          dividerSize: dividerSize,
-                        ),
-                        borderRadius: BorderRadius.circular($(12)),
-                      )
-                          .intoContainer(
-                            margin: EdgeInsets.only(right: 2, left: 2),
+                      child: Stack(
+                        children: [
+                          Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Image.asset(Images.ic_mt_result_top),
+                                  Text(
+                                    '@${userManager.user?.getShownName() ?? 'Pandora User'}',
+                                    style: TextStyle(
+                                      color: ColorConstant.White,
+                                      fontFamily: 'Poppins',
+                                      fontSize: $(14),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ).marginOnly(left: $(16), top: $(50)),
+                                ],
+                              ),
+                              Expanded(
+                                child: Image.asset(
+                                  Images.ic_mt_result_middle,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              Image.asset(Images.ic_mt_result_bottom),
+                            ],
+                          ),
+                          ClipRRect(
+                            child: TransResultNewCard(
+                              originalImage: file,
+                              resultImage: File(controller.transKey!),
+                              width: resultCardWidth,
+                              height: resultCardHeight,
+                              direction: ratio > axisRatioFlag ? Axis.horizontal : Axis.vertical,
+                              dividerSize: dividerSize,
+                            ),
+                            borderRadius: BorderRadius.circular($(12)),
                           )
-                          .intoCenter()
-                          .intoContainer(
-                              padding: EdgeInsets.only(top: 48),
-                              margin: EdgeInsets.only(right: 14, left: 14, top: 50 + ScreenUtil.getStatusBarHeight(), bottom: $(13)),
-                              decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_trans_result_bg), fit: BoxFit.fill))),
+                              .intoContainer(
+                                margin: EdgeInsets.only(right: 2, left: 2),
+                              )
+                              .intoCenter()
+                              .intoContainer(padding: EdgeInsets.only(top: 48)),
+                        ],
+                      ).intoContainer(
+                        margin: EdgeInsets.only(right: 14, left: 14, top: 50 + ScreenUtil.getStatusBarHeight(), bottom: $(13)),
+                      ),
                     ),
                     AMOptContainer(
                       key: optKey,
@@ -371,7 +399,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               });
                             } else {
                               await showLoading();
-                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownEmail() ?? 'Pandora User'}');
+                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
                               var list = uint8list.toList();
                               var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
                               var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
@@ -440,7 +468,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
-                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownEmail() ?? 'Pandora User'}');
+                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               await hideLoading();
                               ShareScreen.startShare(context,

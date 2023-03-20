@@ -43,7 +43,9 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
             .intoGestureDetector(onTap: () {
           if (mounted) {
             rateApp();
-            Navigator.pop(context, true);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context, true);
+            }
           }
         }),
         Container(height: 1, color: ColorConstant.LineColor),
@@ -61,7 +63,9 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
           FeedbackUtils.open(context).then((value) {
             if (value ?? false) {
               if (mounted) {
-                Navigator.pop(context, true);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context, true);
+                }
               }
             }
           });
@@ -79,7 +83,9 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
         )
             .intoGestureDetector(onTap: () {
           if (mounted) {
-            Navigator.pop(context, false);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context, false);
+            }
           }
         }),
       ],

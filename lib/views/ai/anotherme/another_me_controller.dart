@@ -103,12 +103,12 @@ class AnotherMeController extends GetxController {
       if (metaverseLimitEntity.usedCount >= metaverseLimitEntity.dailyLimit) {
         if (isVip()) {
           return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title
-            ..msgContent = S.of(Get.context!).generate_reached_limit_vip;
+            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'Me-taverse')
+            ..msgContent = S.of(Get.context!).generate_reached_limit_vip.replaceAll('%s', 'Me-taverse');
         } else {
           return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title
-            ..msgContent = S.of(Get.context!).generate_reached_limit;
+            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'Me-taverse')
+            ..msgContent = S.of(Get.context!).generate_reached_limit.replaceAll('%s', 'Me-taverse');
         }
       }
     }
