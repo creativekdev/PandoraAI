@@ -88,7 +88,8 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
                         width: $(20),
                       )
                           .intoContainer(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all($(6)),
+                        margin: EdgeInsets.all($(6)),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade800,
                           borderRadius: BorderRadius.circular(32),
@@ -120,9 +121,21 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
                         });
                       }),
                     ],
-                  ),
-                  bottom: ScreenUtil.getBottomPadding(context, padding: 15),
-                  right: 15,
+                  )
+                      .intoContainer(
+                          alignment: Alignment.centerRight,
+                          width: double.maxFinite,
+                          color: Colors.transparent,
+                          padding: EdgeInsets.only(
+                            bottom: ScreenUtil.getBottomPadding(context, padding: 15),
+                            top: $(10),
+                            left: $(10),
+                            right: $(15),
+                          ))
+                      .intoGestureDetector(onTap: () {}),
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                 )
               : SizedBox.shrink(),
         ],

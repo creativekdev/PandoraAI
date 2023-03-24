@@ -71,14 +71,16 @@ class AvatarConfigEntity extends AvatarConfig {
   @override
   String styleTitle(String role, String style) {
     if (!TextUtil.isEmpty(role)) {
-      return locale[role]['styles'][style] ?? style;
+      return locale[role]?['styles']?[style] ?? style;
     }
     String? result;
     for (var value in locale.values) {
-      var res = value['styles'][style];
-      if (res != null) {
-        result = res;
-        break;
+      if (value is Map) {
+        var res = value['styles']?[style];
+        if (res != null) {
+          result = res;
+          break;
+        }
       }
     }
     return result ?? style;

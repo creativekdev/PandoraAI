@@ -60,6 +60,7 @@ class Images {
    static const String ic_email = 'assets/images/ic_email.png';
    static const String ic_emoji1 = 'assets/images/ic_emoji1.png';
    static const String ic_emoji2 = 'assets/images/ic_emoji2.png';
+   static const String ic_expand_arrow_down = 'assets/images/ic_expand_arrow_down.png';
    static const String ic_eye = 'assets/images/ic_eye.png';
    static const String ic_eye_close = 'assets/images/ic_eye_close.png';
    static const String ic_facebook = 'assets/images/ic_facebook.png';

@@ -74,7 +74,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     Posthog().screenWithUser(screenName: 'metaverse_generate_screen');
     ratio = widget.ratio;
     photoType = widget.photoType;
-    dividerSize = $(8);
+    dividerSize = $(4);
     resultCardWidth = ScreenUtil.screenSize.width - $(32);
     resultCardHeight = ratio > axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
     file = widget.file;
@@ -199,11 +199,11 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       _context,
       needUploadProgress: needUpload,
       controller: simulateProgressBarController,
-      config: SimulateProgressBarConfig.anotherMe(),
+      config: SimulateProgressBarConfig.anotherMe(context),
     ).then((value) {
-      if (value == null || value.isEmpty) {
+      if (value == null) {
         controller.onError();
-      } else if (value.first ?? false) {
+      } else if (value.result) {
         Events.metaverseCompleteSuccess(photo: photoType);
         generateCount++;
         if (generateCount - 1 > 0) {
@@ -215,10 +215,8 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         });
       } else {
         controller.onError();
-        if (value.length == 3) {
-          if (!TextUtil.isEmpty(value.last)) {
-            showLimitDialog(context, value[1], value[2]);
-          }
+        if (value.errorTitle != null && value.errorContent != null) {
+          showLimitDialog(context, value.errorTitle!, value.errorContent!);
         } else {
           Navigator.of(context).pop();
         }
@@ -369,6 +367,13 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               )
                               .intoCenter()
                               .intoContainer(padding: EdgeInsets.only(top: 48)),
+                          Image.asset(
+                            ratio > axisRatioFlag ? Images.ic_another_arrow_right : Images.ic_another_arrow_down,
+                            width: $(18),
+                          ).intoContainer(
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: $(48)),
+                          ),
                         ],
                       ).intoContainer(
                         margin: EdgeInsets.only(right: 14, left: 14, top: 50 + ScreenUtil.getStatusBarHeight(), bottom: $(13)),
@@ -395,6 +400,10 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                   await hideLoading();
                                   Events.metaverseCompleteDownload(type: 'video');
                                   CommonExtension().showVideoSavedOkToast(context);
+                                  delay(() {
+                                    UserManager userManager = AppDelegate.instance.getManager();
+                                    userManager.rateNoticeOperator.onSwitch(context);
+                                  }, milliseconds: 2000);
                                 }
                               });
                             } else {
@@ -408,6 +417,10 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               await hideLoading();
                               Events.metaverseCompleteDownload(type: 'image');
                               CommonExtension().showImageSavedOkToast(context);
+                              delay(() {
+                                UserManager userManager = AppDelegate.instance.getManager();
+                                userManager.rateNoticeOperator.onSwitch(context);
+                              }, milliseconds: 2000);
                             }
                           }
                         });

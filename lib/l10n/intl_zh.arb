@@ -45,7 +45,7 @@
   "discoveryDetails": "详情",
   "discoveryDetailsUseSameTemplate": "使用此模板",
   "discoveryLike": "点赞",
-  "discoveryShareInputHint": "我正在使用 %s 创建",
+  "discoveryShareInputHint": "I created this using %s",
   "discoveryShareInputTitle": "分享些东西吧",
   "discoveryShareSubmit": "提交",
   "discoveryUnlike": "取消",
@@ -275,7 +275,7 @@
   "give_feedback": "意见反馈",
   "input_feedback": "请输入您的意见",
   "no_thanks": "暂时不用了",
-  "rate_pandora_avatar": "给我们评分",
+  "rate_pandora_ai": "给我们评分",
   "rate_description": "您的使用体验如何？愿意给我们评分么？",
   "looveit": "很喜欢，现在去评分",
   "more": "更多",
@@ -288,6 +288,8 @@
   "invalid_password": "密码错误",
   "trans_uploading": "正在上传...",
   "trans_painting": "AI作画中...",
+  "trans_success": "完成",
+  "trans_saving": "保存中...",
   "wrong_image": "图片无效",
   "save_into_album": "保存到相册",
   "save_hd_image": "保存高清无水印图片",
@@ -334,5 +336,9 @@
   "feedback_empty": "请填写您的反馈",
   "feedback_out_date": "您已经反馈过了，请明天再试",
   "feedback_thanks": "感谢您的反馈",
-  "selected": "已选择："
+  "selected": "已选择：",
+  "view_all_comment": "查看所有 %d 条评论 >",
+  "all_likes": "%d 赞",
+  "expand": "展开",
+  "collapse": "收起"
 }

@@ -85,7 +85,8 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                         width: $(20),
                       )
                           .intoContainer(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all($(6)),
+                        margin: EdgeInsets.all($(6)),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade800,
                           borderRadius: BorderRadius.circular(32),
@@ -112,7 +113,8 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                         width: $(20),
                       )
                           .intoContainer(
-                        padding: EdgeInsets.all(6),
+                        padding: EdgeInsets.all($(6)),
+                        margin: EdgeInsets.all($(6)),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade800,
                           borderRadius: BorderRadius.circular(32),
@@ -125,19 +127,16 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                             hideLoading().whenComplete(() {
                               var imageString = base64Encode(image!.readAsBytesSync());
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                              ShareScreen.startShare(
-                                context,
-                                backgroundColor: Color(0x77000000),
-                                style: 'PandoraAI',
-                                image: imageString,
-                                isVideo: false,
-                                originalUrl: null,
-                                effectKey: 'PandoraAI',
-                                needDiscovery: true,
-                                onShareSuccess: (platform) {
-                                  widget.onShareImage?.call(widget.galleryItems[currentIndex],platform);
-                                }
-                              ).then((value) {
+                              ShareScreen.startShare(context,
+                                  backgroundColor: Color(0x77000000),
+                                  style: 'PandoraAI',
+                                  image: imageString,
+                                  isVideo: false,
+                                  originalUrl: null,
+                                  effectKey: 'PandoraAI',
+                                  needDiscovery: true, onShareSuccess: (platform) {
+                                widget.onShareImage?.call(widget.galleryItems[currentIndex], platform);
+                              }).then((value) {
                                 if (value ?? false) {
                                   showShareSuccessDialog(context);
                                 }
@@ -148,9 +147,21 @@ class _GalleryPhotoViewWrapperState extends AppState<GalleryPhotoViewWrapper> {
                         });
                       }),
                     ],
-                  ),
-                  bottom: ScreenUtil.getBottomPadding(context, padding: 15),
-                  right: 15,
+                  )
+                      .intoContainer(
+                          alignment: Alignment.centerRight,
+                          width: double.maxFinite,
+                          color: Colors.transparent,
+                          padding: EdgeInsets.only(
+                            bottom: ScreenUtil.getBottomPadding(context, padding: 15),
+                            top: $(10),
+                            left: $(10),
+                            right: $(15),
+                          ))
+                      .intoGestureDetector(onTap: () {}),
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                 )
               : Container(),
         ],

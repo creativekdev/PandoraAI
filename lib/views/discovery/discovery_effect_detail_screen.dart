@@ -133,12 +133,11 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
       }
     });
     logLoading();
-    delay(() => _refreshController.callRefresh());
+    delay(() => loadFirstPage());
   }
 
   @override
   void dispose() {
-    super.dispose();
     api.unbind();
     _refreshController.dispose();
     onUnlikeEventListener.cancel();
@@ -147,6 +146,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
     onDiscoveryLikeEventListener.cancel();
     onDiscoveryUnlikeEventListener.cancel();
     onCreateCommentListener.cancel();
+    super.dispose();
   }
 
   loadFirstPage() => api
@@ -160,9 +160,11 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
         if (value != null) {
           page = 0;
           var list = value.getDataList<DiscoveryCommentListEntity>();
-          setState(() {
-            dataList = list;
-          });
+          if (mounted) {
+            setState(() {
+              dataList = list;
+            });
+          }
           _refreshController.finishLoad(noMore: dataList.length != pageSize);
         }
       });

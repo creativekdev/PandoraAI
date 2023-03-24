@@ -22,6 +22,7 @@ class PromptBorder extends StatelessWidget {
       children: [
         child.intoContainer(
           padding: padding,
+          width: double.maxFinite,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(radius),

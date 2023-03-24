@@ -19,11 +19,13 @@ import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
 import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class EffectFragment extends StatefulWidget {
@@ -178,20 +180,13 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                     ).intoGestureDetector(onTap: () {
                       switch (type) {
                         case HomeCardType.cartoonize:
-                          Events.facetoonLoading(source: 'home_page');
-                          Navigator.push(
+                          Cartoonize.open(
                             context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/ChoosePhotoScreen"),
-                              builder: (context) => ChoosePhotoScreen(
-                                tabPos: 0,
-                                pos: 0,
-                                itemPos: 0,
-                              ),
-                            ),
-                          ).then((value) {
-                            userManager.refreshUser();
-                          });
+                            source: 'home_page',
+                            categoryPos: 0,
+                            itemPos: 0,
+                            tabPos: 0,
+                          );
                           break;
                         case HomeCardType.anotherme:
                           AnotherMe.checkPermissions().then((value) {
@@ -206,13 +201,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                           Avatar.openFromHome(context);
                           break;
                         case HomeCardType.text2image:
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              settings: RouteSettings(name: "/AiGroundScreen"),
-                              builder: (context) => AiGroundScreen(source: 'home_page',),
-                            ),
-                          );
+                          AiGround.open(context, source: 'home_page');
                           break;
                         case HomeCardType.UNDEFINED:
                           break;

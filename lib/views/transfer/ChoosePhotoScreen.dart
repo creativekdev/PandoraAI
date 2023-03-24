@@ -688,6 +688,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         CommonExtension().showImageSavedOkToast(context);
       }
     }
+    delay(() => userManager.rateNoticeOperator.onSwitch(context), milliseconds: 2000);
   }
 
   Future<void> shareOut() async {
@@ -1255,7 +1256,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: false,
+      useOld: true,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,
@@ -1487,7 +1488,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.changeIsLoading(false);
         controller.changeTransingImage(true);
         bool needUpload = await uploadImageController.needUpload(controller.image.value);
-        SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: progressBarController, config: SimulateProgressBarConfig.cartoonize());
+        SimulateProgressBar.startLoading(context, needUploadProgress: needUpload, controller: progressBarController, config: SimulateProgressBarConfig.cartoonize(context));
         if (imageUrl == "") {
           await uploadImageController.uploadCompressedImage(controller.image.value);
           controller.updateImageUrl(uploadImageController.imageUrl.value);
@@ -1773,7 +1774,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       userManager.user = user;
       refreshLastBuildType();
     }
-    userManager.rateNoticeOperator.onSwitch(context);
   }
 
   Future<void> pickFromRecent(BuildContext context) async {

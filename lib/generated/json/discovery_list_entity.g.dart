@@ -85,6 +85,10 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (removed != null) {
 		discoveryListEntity.removed = removed;
 	}
+	final String? payload = jsonConvert.convert<String>(json['payload']);
+	if (payload != null) {
+		discoveryListEntity.payload = payload;
+	}
 	return discoveryListEntity;
 }
 
@@ -110,6 +114,7 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['like_id'] = entity.likeId;
 	data['resources'] = entity.resources;
 	data['removed'] = entity.removed;
+	data['payload'] = entity.payload;
 	return data;
 }
 

@@ -7,28 +7,28 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/ground/ai_ground_controller.dart';
-import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dotted_border/dotted_border.dart';
 
-import '../../../models/ai_ground_style_entity.dart';
 import 'ai_ground_result_screen.dart';
 
 class AiGroundScreen extends StatefulWidget {
   RecentGroundEntity? history;
+  AiGroundInitData? initData;
   String source;
 
   AiGroundScreen({
     Key? key,
     this.history,
     required this.source,
+    this.initData,
   }) : super(key: key);
 
   @override
@@ -37,24 +37,30 @@ class AiGroundScreen extends StatefulWidget {
 
 class _AiGroundScreenState extends AppState<AiGroundScreen> {
   late AiGroundController aiGroundController;
-  UploadImageController uploadImageController = Get.put(UploadImageController());
 
   late double imageSize;
   late StreamSubscription onStyleListUpdated;
   RecentGroundEntity? history;
+  String? initStyle;
 
   @override
   void initState() {
     super.initState();
     Events.txt2imgShow(source: widget.source);
-    aiGroundController = Get.put(AiGroundController(uploadImageController: uploadImageController));
+    aiGroundController = AiGroundController();
     imageSize = (ScreenUtil.screenSize.width - 40) / 2.5;
     onStyleListUpdated = EventBusHelper().eventBus.on<OnAiGroundStyleUpdateEvent>().listen((event) {
-      aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
+      if (initStyle != null) {
+        aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == initStyle);
+      } else if (history != null) {
+        aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == history?.styleKey);
+      }
       aiGroundController.update();
     });
     history = widget.history;
-    if (history != null) {
+    if (widget.initData != null) {
+      initFromDiscovery(widget.initData!);
+    } else if (history != null) {
       aiGroundController.editingController.text = history?.prompt ?? '';
       aiGroundController.filePath = history!.filePath;
       aiGroundController.parameters = history!.parameters;
@@ -64,7 +70,7 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
       delay(() {
         var forward = () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: aiGroundController)),
+            FadeRouter(child: AiGroundResultScreen(controller: aiGroundController)),
           );
         };
         if (!TextUtil.isEmpty(history!.initImageFilePath)) {
@@ -73,10 +79,10 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
             aiGroundController.initFile = file;
             showLoading().whenComplete(() {
               imageCompressAndGetFile(file, imageSize: 768).then((value) {
-                uploadImageController.uploadCompressedImage(value).then((value) {
+                aiGroundController.uploadImageController.uploadCompressedImage(value).then((value) {
                   hideLoading().whenComplete(() {
                     forward.call();
-                    uploadImageController.update();
+                    aiGroundController.uploadImageController.update();
                   });
                 });
               });
@@ -91,12 +97,30 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
     }
   }
 
+  void initFromDiscovery(AiGroundInitData initData) {
+    var reg = RegExp(r'\(art by (.+)\)$');
+    RegExpMatch? match = reg.firstMatch(initData.prompt ?? '');
+    if (match != null && match.group(1) != null) {
+      initStyle = match.group(1);
+      String? prompt = initData.prompt?.replaceAll(match.group(0) ?? '', '');
+      aiGroundController.editingController.text = prompt ?? '';
+      if (aiGroundController.styleList.isNotEmpty) {
+        aiGroundController.selectedStyle = aiGroundController.styleList.pick((t) => t.name == initStyle);
+      }
+    } else {
+      aiGroundController.editingController.text = initData.prompt ?? '';
+    }
+    var imageScale = aiGroundController.imageScaleList.pick((t) => t.width == initData.width && t.height == initData.height);
+    if (imageScale != null) {
+      aiGroundController.imageScale = imageScale;
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
     onStyleListUpdated.cancel();
-    Get.delete<AiGroundController>();
-    Get.delete<UploadImageController>();
+    aiGroundController.dispose();
   }
 
   @override
@@ -188,29 +212,27 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                         ),
                         padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(6)),
                         margin: EdgeInsets.symmetric(horizontal: $(15))),
-                    controller.promptList == null
-                        ? CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(height: $(56))
-                        : ListView.builder(
-                            padding: EdgeInsets.only(left: $(15), top: $(12), bottom: $(12)),
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Text(
-                                controller.promptList![index],
-                                style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(14), fontWeight: FontWeight.w500),
-                                overflow: TextOverflow.ellipsis,
-                              )
-                                  .intoContainer(
-                                constraints: BoxConstraints(maxWidth: $(160)),
-                                padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(4)),
-                                decoration: BoxDecoration(color: Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(32)),
-                                margin: EdgeInsets.only(right: $(15)),
-                              )
-                                  .intoGestureDetector(onTap: () {
-                                controller.onPromptClick(controller.promptList![index]);
-                              });
-                            },
-                            itemCount: controller.promptList!.length,
-                          ).intoContainer(height: $(56)),
+                    ListView.builder(
+                      padding: EdgeInsets.only(left: $(15), top: $(12), bottom: $(12)),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return Text(
+                          controller.promptList[index],
+                          style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(14), fontWeight: FontWeight.w500),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                            .intoContainer(
+                          constraints: BoxConstraints(maxWidth: $(160)),
+                          padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(4)),
+                          decoration: BoxDecoration(color: Color(0xFF2C2C2E), borderRadius: BorderRadius.circular(32)),
+                          margin: EdgeInsets.only(right: $(15)),
+                        )
+                            .intoGestureDetector(onTap: () {
+                          controller.onPromptClick(controller.promptList[index]);
+                        });
+                      },
+                      itemCount: controller.promptList.length,
+                    ).intoContainer(height: $(56)),
                     TitleTextWidget(
                       S.of(context).choose_your_scale,
                       ColorConstant.White,
@@ -363,77 +385,75 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                     SizedBox(height: 12),
                     GetBuilder<UploadImageController>(
-                      builder: (uploadController) {
-                        return DottedBorder(
-                            radius: Radius.circular($(6)),
-                            color: ColorConstant.White,
-                            strokeWidth: 1.5,
-                            dashPattern: [5, 5],
-                            child: (TextUtil.isEmpty(uploadController.imageUrl.value)
-                                    ? Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            Images.ic_ai_ground_upload,
-                                            width: $(20),
-                                          ),
-                                          SizedBox(width: $(4)),
-                                          Text(
-                                            S.of(context).upload_image,
-                                            style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                                          ),
-                                        ],
-                                      ).intoContainer(
-                                        padding: EdgeInsets.symmetric(vertical: $(50)),
-                                        width: double.maxFinite,
-                                      )
-                                    : Stack(
-                                        children: [
-                                          CachedNetworkImageUtils.custom(context: context, imageUrl: uploadController.imageUrl.value, height: $(150), fit: BoxFit.contain),
-                                          Positioned(
-                                            child: Icon(
-                                              Icons.close,
-                                              size: $(18),
-                                              color: ColorConstant.White,
-                                            )
-                                                .intoContainer(
-                                                    padding: EdgeInsets.all(3),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius: BorderRadius.circular(16),
-                                                      color: Color(0x99000000),
-                                                    ))
-                                                .intoGestureDetector(onTap: () {
-                                              uploadImageController.updateImageUrl('');
-                                              uploadImageController.update();
-                                            }),
-                                            top: 2,
-                                            right: 2,
+                      builder: (uploadController) => DottedBorder(
+                          radius: Radius.circular($(6)),
+                          color: ColorConstant.White,
+                          strokeWidth: 1.5,
+                          dashPattern: [5, 5],
+                          child: (TextUtil.isEmpty(uploadController.imageUrl.value)
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          Images.ic_ai_ground_upload,
+                                          width: $(20),
+                                        ),
+                                        SizedBox(width: $(4)),
+                                        Text(
+                                          S.of(context).upload_image,
+                                          style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                                        ),
+                                      ],
+                                    ).intoContainer(
+                                      padding: EdgeInsets.symmetric(vertical: $(50)),
+                                      width: double.maxFinite,
+                                    )
+                                  : Stack(
+                                      children: [
+                                        CachedNetworkImageUtils.custom(context: context, imageUrl: uploadController.imageUrl.value, height: $(150), fit: BoxFit.contain),
+                                        Positioned(
+                                          child: Icon(
+                                            Icons.close,
+                                            size: $(18),
+                                            color: ColorConstant.White,
                                           )
-                                        ],
-                                      ).intoContainer(
-                                        width: double.maxFinite,
-                                        height: $(150),
-                                        alignment: Alignment.center,
-                                      ))
-                                .intoGestureDetector(onTap: () {
-                              PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true).then((value) async {
-                                if (value != null && value.isNotEmpty) {
-                                  File? source = await value.first.file;
-                                  if (source != null) {
-                                    controller.initFile = source;
-                                    showLoading().whenComplete(() async {
-                                      File compressedImage = await imageCompressAndGetFile(source, imageSize: 768);
-                                      await uploadController.uploadCompressedImage(compressedImage);
-                                      uploadController.update();
-                                      hideLoading();
-                                    });
-                                  }
+                                              .intoContainer(
+                                                  padding: EdgeInsets.all(3),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(16),
+                                                    color: Color(0x99000000),
+                                                  ))
+                                              .intoGestureDetector(onTap: () {
+                                            aiGroundController.uploadImageController.updateImageUrl('');
+                                            aiGroundController.uploadImageController.update();
+                                          }),
+                                          top: 2,
+                                          right: 2,
+                                        )
+                                      ],
+                                    ).intoContainer(
+                                      width: double.maxFinite,
+                                      height: $(150),
+                                      alignment: Alignment.center,
+                                    ))
+                              .intoGestureDetector(onTap: () {
+                            PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true).then((value) async {
+                              if (value != null && value.isNotEmpty) {
+                                File? source = await value.first.file;
+                                if (source != null) {
+                                  controller.initFile = source;
+                                  showLoading().whenComplete(() async {
+                                    File compressedImage = await imageCompressAndGetFile(source, imageSize: 768);
+                                    await uploadController.uploadCompressedImage(compressedImage);
+                                    uploadController.update();
+                                    hideLoading();
+                                  });
                                 }
-                              });
-                            }));
-                      },
-                      init: uploadImageController,
+                              }
+                            });
+                          })),
+                      init: aiGroundController.uploadImageController,
                     ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
                     SizedBox(height: $(80) + ScreenUtil.getBottomPadding(context)),
                   ],
@@ -462,8 +482,14 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
                         return;
                       }
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: controller)),
+                        FadeRouter(
+                          child: AiGroundResultScreen(controller: aiGroundController),
+                          opaque: false,
+                        ),
                       );
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(builder: (context) => AiGroundResultScreen(controller: controller)),
+                      // );
                     })
                     .intoContainer(
                       color: Color(0xaa111111),
@@ -481,31 +507,10 @@ class _AiGroundScreenState extends AppState<AiGroundScreen> {
   }
 }
 
-class OrLine extends StatelessWidget {
-  const OrLine({Key? key}) : super(key: key);
+class AiGroundInitData {
+  String? prompt;
+  int? width;
+  int? height;
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Divider(
-            color: ColorConstant.DividerColor,
-            thickness: 0.1.h,
-          ),
-        ),
-        SizedBox(width: 3.w),
-        TitleTextWidget(S.of(context).or, ColorConstant.loginTitleColor, FontWeight.w500, 12),
-        SizedBox(width: 3.w),
-        Expanded(
-          child: Divider(
-            color: ColorConstant.DividerColor,
-            thickness: 0.1.h,
-          ),
-        ),
-      ],
-    );
-  }
+  AiGroundInitData();
 }

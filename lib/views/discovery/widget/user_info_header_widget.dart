@@ -45,7 +45,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
             cacheManager: CachedImageCacheManager(),
           ),
         ).intoContainer(width: $(45), height: $(45)),
-        SizedBox(width: $(10)),
+        SizedBox(width: $(12)),
         Expanded(
           child: TitleTextWidget(name, ColorConstant.White, FontWeight.normal, $(16), align: TextAlign.start),
         ),

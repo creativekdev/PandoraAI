@@ -117,7 +117,7 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
                               : Stack(
                                   children: [
                                     CachedNetworkImageUtils.custom(
-                                        useOld: false,
+                                        useOld: true,
                                         context: context,
                                         imageUrl: data.item!.imageUrl,
                                         width: cardWidth,

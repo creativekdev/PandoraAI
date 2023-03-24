@@ -9,51 +9,56 @@ class SimulateProgressBarConfig {
 
   SimulateProgressBarConfig();
 
-  factory SimulateProgressBarConfig.anotherMe() {
+  factory SimulateProgressBarConfig.anotherMe(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2, text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75, text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
   }
 
-  factory SimulateProgressBarConfig.anotherMeVideo() {
+  factory SimulateProgressBarConfig.anotherMeVideo(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 4), rate: 0.75)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2, text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 4), rate: 0.75, text: S.of(context).trans_saving)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
   }
 
-  factory SimulateProgressBarConfig.cartoonize() {
+  factory SimulateProgressBarConfig.cartoonize(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05);
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.2, text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75, text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
   }
 
-  factory SimulateProgressBarConfig.aiGround() {
+  factory SimulateProgressBarConfig.aiGround(BuildContext context) {
     return SimulateProgressBarConfig()
-      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.95)
-      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05);
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0, text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.95, text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05, text: S.of(context).trans_success);
   }
 }
 
 class SimulateProgressBarConfigItem {
   Duration duration;
   double rate;
+  String text;
 
-  SimulateProgressBarConfigItem({required this.duration, required this.rate});
+  SimulateProgressBarConfigItem({
+    required this.duration,
+    required this.rate,
+    required this.text,
+  });
 }
 
 class SimulateProgressBar {
-  static Future<List<dynamic>?> startLoading(
+  static Future<SimulateProgressResult?> startLoading(
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
     Function(double progress)? onUpdate,
     required SimulateProgressBarConfig config,
   }) {
-    return showDialog<List<dynamic>>(
+    return showDialog<SimulateProgressResult>(
       context: context,
       builder: (context) {
         return _SimulateProgressBar(
@@ -130,7 +135,12 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         animationController.forward();
       }
     };
-    controller._onErrorCall = (title, content) => Navigator.of(context).pop([false, title, content]);
+    controller._onErrorCall = (title, content) => Navigator.of(context).pop(
+          SimulateProgressResult()
+            ..result = false
+            ..errorTitle = title
+            ..errorContent = content,
+        );
     uploadAnimController = AnimationController(vsync: this, duration: config.upload.duration);
     uploadAnimController.addStatusListener((status) {
       if (!needUploadProgress) {
@@ -156,7 +166,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
     completeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         if (mounted) {
-          Navigator.of(context).pop([true]);
+          Navigator.of(context).pop(SimulateProgressResult()..result = true);
         }
       }
     });
@@ -245,6 +255,14 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
       color: Colors.transparent,
     );
   }
+}
+
+class SimulateProgressResult {
+  bool result = false;
+  String? errorTitle;
+  String? errorContent;
+
+  SimulateProgressResult();
 }
 
 class SimulateProgressBarController {

@@ -30,6 +30,7 @@ class DiscoveryListEntity {
   int? likeId;
   late String resources;
   bool removed;
+  String? payload;
 
   DiscoveryListEntity({
     this.userId = 0,
@@ -51,6 +52,7 @@ class DiscoveryListEntity {
     this.likeId,
     this.resources = '',
     this.removed = false,
+    this.payload,
   });
 
   factory DiscoveryListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryListEntityFromJson(json);

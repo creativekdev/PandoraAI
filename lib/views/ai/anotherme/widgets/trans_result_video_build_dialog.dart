@@ -65,8 +65,13 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
     } else {
       delay(() {
         SimulateProgressBarController controller = SimulateProgressBarController();
-        SimulateProgressBar.startLoading(context, needUploadProgress: false, controller: controller, config: SimulateProgressBarConfig.anotherMeVideo()).then((value) {
-          if (value != null && value.first) {
+        SimulateProgressBar.startLoading(
+          context,
+          needUploadProgress: false,
+          controller: controller,
+          config: SimulateProgressBarConfig.anotherMeVideo(context),
+        ).then((value) {
+          if (value != null && value.result) {
             buildVideo();
           } else {
             Navigator.of(context).pop();
@@ -200,9 +205,23 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
           value == SessionState.completed;
           FFmpegKit.cancel(session.getSessionId());
           Navigator.of(context).pop(fileName);
+          deleteFiles(savePath, filter: 'png');
         });
       });
     }
+  }
+
+  Future deleteFiles(String path, {required String filter}) async {
+    Directory directory = Directory(path);
+    if (!directory.existsSync()) {
+      return;
+    }
+    var stream = await directory.list();
+    await stream.forEach((element) async {
+      if (element.path.endsWith(filter)) {
+        element.delete(recursive: true);
+      }
+    });
   }
 }
 

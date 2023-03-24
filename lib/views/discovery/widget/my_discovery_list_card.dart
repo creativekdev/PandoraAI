@@ -63,7 +63,7 @@ class MyDiscoveryListCard extends StatelessWidget {
           fontFamily: 'Poppins',
           fontSize: $(14),
         ),
-      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(16), vertical: $(8))),
+      ).intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), bottom: $(8))),
       GridView.count(
         crossAxisCount: 3,
         physics: NeverScrollableScrollPhysics(),

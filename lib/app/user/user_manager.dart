@@ -10,6 +10,8 @@ import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'rate_notice_operator.dart';
 
@@ -91,6 +93,7 @@ class UserManager extends BaseManager {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
       } else {
+        Posthog().reset();
         _rateNoticeOperator.dispose();
         _rateNoticeOperator.init();
       }
@@ -107,18 +110,21 @@ class UserManager extends BaseManager {
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
     cacheManager = AppDelegate.instance.getManager();
-    initUser();
+    await initUser();
     _rateNoticeOperator = RateNoticeOperator(cacheManager: cacheManager);
     _rateNoticeOperator.init();
   }
 
-  initUser() {
+  initUser() async {
     var json = cacheManager.getJson(CacheManager.keyCurrentUser);
     if (json != null) {
       _user = SocialUserInfo.fromJson(json);
       lastLauncherLoginStatus = true;
     }
     refreshUser();
+    if (_user != null) {
+      Posthog().identify(userId: _user?.getShownEmail());
+    }
   }
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
@@ -128,6 +134,7 @@ class UserManager extends BaseManager {
     }
     adConfig = value.adConfig;
     limitRule = value.dailyLimitRuleEntity;
+    cacheManager.featureOperator.refreshFeature(value.feature);
     if (value.loginSuccess) {
       user = value.user!;
       if (context != null && user!.status != 'activated') {

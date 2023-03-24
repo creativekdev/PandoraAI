@@ -9,7 +9,12 @@ class DiscoveryAttrHolder {
     GestureTapCallback? onTap,
     Color color = Colors.white,
     Color? iconColor,
+    bool hasCount = true,
+    double? iconSize,
   }) {
+    if (iconSize == null) {
+      iconSize = $(18);
+    }
     iconColor ??= color;
     var alignment = CrossAxisAlignment.center;
     if (value > 10) {
@@ -21,14 +26,14 @@ class DiscoveryAttrHolder {
                 children: [
                   Image.asset(
                     iconRes,
-                    width: $(18),
+                    width: iconSize,
                     color: iconColor,
                   ),
                   SizedBox(height: $(4)),
                   Text(
                     value.socialize,
                     style: TextStyle(color: color, fontSize: $(14)),
-                  ),
+                  ).offstage(offstage: !hasCount),
                 ],
               )
             : Row(
@@ -36,14 +41,14 @@ class DiscoveryAttrHolder {
                 children: [
                   Image.asset(
                     iconRes,
-                    width: $(18),
+                    width: iconSize,
                     color: iconColor,
                   ),
                   SizedBox(width: $(4)),
                   Text(
                     value.socialize,
                     style: TextStyle(color: color, fontSize: $(14)),
-                  ),
+                  ).offstage(offstage: !hasCount),
                 ],
               ))
         .intoContainer(

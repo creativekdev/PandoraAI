@@ -275,8 +275,8 @@
   "give_feedback": "Give Feedback",
   "input_feedback": "input feedback",
   "no_thanks": "No, thanks",
-  "rate_pandora_avatar": "Rate Pandora Avatar",
-  "rate_description": "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?",
+  "rate_pandora_ai": "Rate Pandora AI",
+  "rate_description": "If you enjoy using Pandora AI, would you mind taking a moment to rate it?",
   "looveit": "Looove it! rate now",
   "more": "More",
   "generate_again": "Generate again",
@@ -288,6 +288,8 @@
   "invalid_password": "Invalid Password",
   "trans_uploading": "Uploading...",
   "trans_painting": "Ai Painting...",
+  "trans_success": "Completed",
+  "trans_saving": "Saving...",
   "wrong_image": "Wrong Image File",
   "save_into_album": "Save into the album",
   "save_hd_image": "Save HD, watermark-free image",
@@ -334,5 +336,9 @@
   "feedback_empty": "Please input feedback",
   "feedback_out_date": "You've been submitted, please try again tomorrow",
   "feedback_thanks": "Thanks for your opinions",
-  "selected": "Selected: "
+  "selected": "Selected: ",
+  "view_all_comment":"View all %d comments >",
+  "all_likes": "%d likes",
+  "expand": "Expand",
+  "collapse": "Collapse"
 }

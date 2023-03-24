@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -18,14 +19,19 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
 import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
+import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 import 'discovery_attr_holder.dart';
@@ -114,7 +120,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
         }
       }
     });
-    imageListWidth = ScreenUtil.screenSize.width - $(30);
+    imageListWidth = (ScreenUtil.screenSize.width - $(31)) / 2;
   }
 
   @override
@@ -145,86 +151,80 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   Widget build(BuildContext context) {
     return Column(
       children: [
-        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName).intoGestureDetector(onTap: () {
-          UserManager userManager = AppDelegate.instance.getManager();
-          bool isMe = userManager.user?.id == data.userId;
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => MyDiscoveryScreen(
-                userId: data.userId,
-                title: isMe ? S.of(context).setting_my_discovery : null,
-              ),
-              settings: RouteSettings(name: "/UserDiscoveryScreen"),
+        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName)
+            .intoGestureDetector(onTap: () {
+              UserManager userManager = AppDelegate.instance.getManager();
+              bool isMe = userManager.user?.id == data.userId;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MyDiscoveryScreen(
+                    userId: data.userId,
+                    title: isMe ? S.of(context).setting_my_discovery : null,
+                  ),
+                  settings: RouteSettings(name: "/UserDiscoveryScreen"),
+                ),
+              );
+            })
+            .hero(tag: '${data.userAvatar}${data.userName}${data.id}')
+            .intoContainer(
+              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
             ),
-          );
-        }).intoContainer(
-          margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: 0),
-        ),
-        Text(
-          data.text,
-          style: TextStyle(color: ColorConstant.White, fontSize: $(15), fontFamily: 'Poppins'),
-        ).intoContainer(
-          alignment: Alignment.centerLeft,
-          padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(15)),
-        ),
-        resources.length > 1
-            ? Row(
-                children: [
-                  imageSize != null
-                      ? buildResourceItem(
-                          resources[1],
-                          fit: BoxFit.contain,
-                          width: (imageListWidth - $(2)) / 2,
-                          height: imageSize!.height,
-                        ).intoGestureDetector(onTap: () {
-                          if (resources[1].type == 'image') {
-                            openImage(context, 0);
+        resources.length != 1
+            ? Wrap(
+                spacing: $(1),
+                children: resources
+                    .transfer((e, index) => buildResourceItem(e, width: imageListWidth).intoGestureDetector(onTap: () {
+                          if (e.type == 'image') {
+                            openImage(context, index);
                           }
-                        })
-                      : Container(),
-                  SizedBox(width: $(2)),
-                  buildResourceItem(
-                    resources[0],
-                    width: (imageListWidth - $(2)) / 2,
-                  ).listenSizeChanged(onSizeChanged: (size) {
-                    if (size.height < 1920) {
-                      setState(() {
-                        imageSize = size;
-                      });
-                    }
-                  }).intoGestureDetector(onTap: () {
-                    if (resources[0].type == 'image') {
-                      openImage(context, 1);
-                    }
-                  }),
-                ],
-              ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
-            : buildResourceItem(resources[0], width: imageListWidth).intoGestureDetector(onTap: () {
-                if (resources[0].type == 'image') {
+                        }))
+                    .toList()
+                    .reversed
+                    .toList(),
+                alignment: WrapAlignment.start,
+              ).intoContainer(
+                width: ScreenUtil.screenSize.width,
+                alignment: Alignment.center,
+              )
+            : buildResourceItem(
+                resources.first,
+                width: imageListWidth * 2 + $(1),
+              ).intoGestureDetector(onTap: () {
+                if (resources.first.type == 'image') {
                   openImage(context, 0);
                 }
               }),
         Row(
           children: [
-            buildAttr(context, iconRes: Images.ic_discovery_comment, value: data.comments, axis: Axis.horizontal, onTap: () {
-              widget.onCommentTap.call();
-            }),
-            SizedBox(width: $(10)),
+            buildAttr(
+              context,
+              iconRes: Images.ic_discovery_comment,
+              value: data.comments,
+              iconSize: $(24),
+            ),
             buildAttr(
               context,
               iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
               iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
               value: data.likes,
-              axis: Axis.horizontal,
-              onTap: () {
-                userManager.doOnLogin(context, logPreLoginAction: data.likeId == null ? 'pre_like' : 'pre_unlike', callback: () {
-                  onLikeTap();
-                }, autoExec: false);
-              },
+              onTap: onLikeTap,
+              iconSize: $(24),
             ),
           ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(6))),
+        ).intoContainer(margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(9))).hero(tag: Discovery.attrTag(data.id)),
+        Text(
+          data.text,
+          style: TextStyle(color: ColorConstant.White, fontSize: $(14), fontFamily: 'Poppins'),
+          maxLines: 9999,
+          overflow: TextOverflow.ellipsis,
+        )
+            .intoContainer(
+              alignment: Alignment.centerLeft,
+              padding: EdgeInsets.symmetric(horizontal: $(15)),
+            )
+            .hero(tag: Discovery.textTag(data.id)),
+        SizedBox(height: $(32)),
         OutlineWidget(
           strokeWidth: $(2),
           radius: $(6),
@@ -250,43 +250,53 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               padding: EdgeInsets.symmetric(horizontal: $(10), vertical: $(10)),
             ),
           ),
-        )
-            .intoGestureDetector(onTap: () {
-              if (data.category == DiscoveryCategory.cartoonize.name) {
-                toChoosePage();
-              } else if (data.category == DiscoveryCategory.ai_avatar.name) {
-                Events.discoveryTemplateClick(source: dataType, style: 'avatar');
-                Avatar.open(context, source: 'discovery');
-              } else if (data.category == DiscoveryCategory.another_me.name) {
-                AnotherMe.checkPermissions().then((value) {
-                  if (value) {
-                    Events.discoveryTemplateClick(source: dataType, style: 'metaverse');
-                    AnotherMe.open(context, source: source + '-try-template');
-                  } else {
-                    showPhotoLibraryPermissionDialog(context);
-                  }
-                });
-              } else if (data.category == DiscoveryCategory.txt2img.name) {
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AiGroundScreen(source: source + '-try-template'),
-                ));
+        ).intoGestureDetector(onTap: () {
+          if (data.category == DiscoveryCategory.cartoonize.name) {
+            toChoosePage();
+          } else if (data.category == DiscoveryCategory.ai_avatar.name) {
+            Events.discoveryTemplateClick(source: dataType, style: 'avatar');
+            Avatar.open(context, source: 'discovery');
+          } else if (data.category == DiscoveryCategory.another_me.name) {
+            AnotherMe.checkPermissions().then((value) {
+              if (value) {
+                Events.discoveryTemplateClick(source: dataType, style: 'metaverse');
+                AnotherMe.open(context, source: source + '-try-template');
+              } else {
+                showPhotoLibraryPermissionDialog(context);
               }
-            })
-            .intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(8)))
-            .visibility(visible: imageSize != null || resources.length == 1),
+            });
+          } else if (data.category == DiscoveryCategory.txt2img.name) {
+            Map? payload;
+            try {
+              payload = json.decode(data.payload ?? '');
+            } catch (e) {}
+            AiGroundInitData? initData;
+            if (payload != null && payload['txt2img_params'] != null) {
+              var params = payload['txt2img_params'];
+              int width = params['width'] ?? 512;
+              int height = params['height'] ?? 512;
+              initData = AiGroundInitData()
+                ..prompt = params['prompt']
+                ..width = width
+                ..height = height;
+            }
+            AiGround.open(context, source: source + '-try-template', initData: initData);
+          }
+        }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(32))),
       ],
     );
   }
 
   Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height, BoxFit fit = BoxFit.cover}) {
     if (resource.type == DiscoveryResourceType.video.value()) {
-      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2);
+      return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2).hero(tag: resource.url ?? '');
     } else {
       if (fit == BoxFit.contain) {
         return Stack(
           children: [
             CachedNetworkImageUtils.custom(
                 context: context,
+                useOld: false,
                 imageUrl: resource.url ?? '',
                 fit: BoxFit.fill,
                 width: width,
@@ -313,6 +323,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             Container().blur(),
             CachedNetworkImageUtils.custom(
                 context: context,
+                useOld: false,
                 imageUrl: resource.url ?? '',
                 fit: fit,
                 width: width,
@@ -341,6 +352,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       } else {
         return CachedNetworkImageUtils.custom(
             context: context,
+            useOld: false,
             imageUrl: resource.url ?? '',
             fit: fit,
             width: width,
@@ -456,19 +468,14 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     }
     categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
     itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
-    Events.facetoonLoading(source: source + '-try-template');
     Events.discoveryTemplateClick(source: dataType, style: 'facetoon-${effectItem.key}');
-    Navigator.push(
+    Cartoonize.open(
       context,
-      MaterialPageRoute(
-        settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(
-          tabPos: tabPos,
-          pos: categoryPos,
-          itemPos: itemPos,
-          entrySource: EntrySource.fromDiscovery,
-        ),
-      ),
+      source: source + '-try-template',
+      tabPos: tabPos,
+      categoryPos: categoryPos,
+      itemPos: itemPos,
+      entrySource: EntrySource.fromDiscovery,
     );
   }
 }

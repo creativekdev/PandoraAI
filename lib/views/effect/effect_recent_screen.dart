@@ -11,8 +11,10 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
 import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/cartoonize.dart';
 
 class EffectRecentScreen extends StatefulWidget {
   EffectRecentScreen({
@@ -106,11 +108,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             File(data.filePath!),
                             fit: BoxFit.cover,
                           ).intoGestureDetector(onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => AiGroundScreen(
-                                      history: data,
-                                  source: 'recently',
-                                    )));
+                            AiGround.open(context, source: 'recently');
                           });
                         }
                         return Container();
@@ -146,18 +144,13 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
 
     var fileExist = await File(pick!.originalPath ?? "").exists();
-    Events.facetoonLoading(source: 'recently');
-    await Navigator.push(
+    Cartoonize.open(
       context,
-      MaterialPageRoute(
-        settings: RouteSettings(name: "/ChoosePhotoScreen"),
-        builder: (context) => ChoosePhotoScreen(
-          tabPos: tabPos,
-          pos: categoryPos,
-          itemPos: itemP,
-          recentEffectModel: fileExist ? pick : null,
-        ),
-      ),
+      source: 'recently',
+      categoryPos: categoryPos,
+      itemPos: itemP,
+      tabPos: tabPos,
+      recentEffectModel: fileExist ? pick : null,
     );
     AppDelegate.instance.getManager<UserManager>().refreshUser(context: context).then((value) {
       setState(() {});

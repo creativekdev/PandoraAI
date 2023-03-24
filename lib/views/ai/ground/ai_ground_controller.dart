@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/images-res.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -21,6 +19,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
 class AiGroundController extends GetxController {
+  late UploadImageController uploadImageController;
   final List<ImageScale> imageScaleList = [
     ImageScale.square(),
     ImageScale.fourToThree(),
@@ -44,10 +43,9 @@ class AiGroundController extends GetxController {
   ScrollController scrollController = ScrollController();
   CacheManager cacheManager = AppDelegate().getManager();
   RecentController recentController = Get.find();
-  UploadImageController uploadImageController;
   bool _displayText = false;
 
-  AiGroundController({required this.uploadImageController});
+  AiGroundController();
 
   set displayText(bool value) {
     _displayText = value;
@@ -59,6 +57,7 @@ class AiGroundController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    uploadImageController = UploadImageController();
     rootBundle.loadString('assets/images/prompts.txt').then((value) {
       var split = value.split('\n');
       List<int> posList = [];
@@ -93,6 +92,7 @@ class AiGroundController extends GetxController {
   void dispose() {
     super.dispose();
     api.unbind();
+    uploadImageController.dispose();
   }
 
   void onPromptClick(String prompt) {
@@ -108,7 +108,11 @@ class AiGroundController extends GetxController {
       return null;
     }
     if (selectedStyle != null) {
-      text += '(art by ${selectedStyle!.name})';
+      if(text.endsWith(',')) {
+        text += ' (art by ${selectedStyle!.name})';
+      } else {
+        text += ', (art by ${selectedStyle!.name})';
+      }
     }
     var groundLimitEntity = await CartoonizerApi().getTxt2ImgLimit();
     if (groundLimitEntity != null) {

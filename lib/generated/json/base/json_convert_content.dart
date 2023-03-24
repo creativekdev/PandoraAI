@@ -8,6 +8,7 @@ import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/ai_ground_result_entity.dart';
 import 'package:cartoonizer/models/ai_ground_style_entity.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
+import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/crop_record_entity.dart';
@@ -33,6 +34,8 @@ class JsonConvert {
 		(AiGroundResultEntity).toString(): AiGroundResultEntity.fromJson,
 		(AiGroundStyleEntity).toString(): AiGroundStyleEntity.fromJson,
 		(AnotherMeResultEntity).toString(): AnotherMeResultEntity.fromJson,
+		(AppFeatureEntity).toString(): AppFeatureEntity.fromJson,
+		(AppFeaturePayload).toString(): AppFeaturePayload.fromJson,
 		(AvatarAiListEntity).toString(): AvatarAiListEntity.fromJson,
 		(AvatarChildEntity).toString(): AvatarChildEntity.fromJson,
 		(AvatarConfigEntity).toString(): AvatarConfigEntity.fromJson,
@@ -142,6 +145,12 @@ class JsonConvert {
 		}
 		if(<AnotherMeResultEntity>[] is M){
 			return data.map<AnotherMeResultEntity>((Map<String, dynamic> e) => AnotherMeResultEntity.fromJson(e)).toList() as M;
+		}
+		if(<AppFeatureEntity>[] is M){
+			return data.map<AppFeatureEntity>((Map<String, dynamic> e) => AppFeatureEntity.fromJson(e)).toList() as M;
+		}
+		if(<AppFeaturePayload>[] is M){
+			return data.map<AppFeaturePayload>((Map<String, dynamic> e) => AppFeaturePayload.fromJson(e)).toList() as M;
 		}
 		if(<AvatarAiListEntity>[] is M){
 			return data.map<AvatarAiListEntity>((Map<String, dynamic> e) => AvatarAiListEntity.fromJson(e)).toList() as M;

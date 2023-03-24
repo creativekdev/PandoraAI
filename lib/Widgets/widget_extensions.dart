@@ -238,7 +238,7 @@ extension WidgetExtension on Widget {
         ),
       );
 
-  Hero hero({Key? key, required Object tag}) => Hero(tag: tag, child: this);
+  Hero hero({Key? key, required Object tag}) => Hero(tag: tag, child: this.intoMaterial(color: Colors.transparent));
 }
 
 typedef DelayCallback<T> = T Function();

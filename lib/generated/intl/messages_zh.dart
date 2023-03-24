@@ -35,6 +35,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "album_to_settings_tips":
             MessageLookupByLibrary.simpleMessage("要添加更多图片"),
         "all": MessageLookupByLibrary.simpleMessage("全部"),
+        "all_likes": MessageLookupByLibrary.simpleMessage("%d 赞"),
         "all_plans": MessageLookupByLibrary.simpleMessage("所有任务"),
         "already_account": MessageLookupByLibrary.simpleMessage("已有账号？ "),
         "and": MessageLookupByLibrary.simpleMessage("和"),
@@ -94,6 +95,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "click_logout": MessageLookupByLibrary.simpleMessage("单击退出登录"),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("您的验证码已经发送到"),
+        "collapse": MessageLookupByLibrary.simpleMessage("收起"),
         "comment_posted": MessageLookupByLibrary.simpleMessage("评论已提交"),
         "commonFailedToast": MessageLookupByLibrary.simpleMessage("操作失败"),
         "confirm": MessageLookupByLibrary.simpleMessage("确认"),
@@ -122,7 +124,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("使用此模板"),
         "discoveryLike": MessageLookupByLibrary.simpleMessage("点赞"),
         "discoveryShareInputHint":
-            MessageLookupByLibrary.simpleMessage("我正在使用 %s 创建"),
+            MessageLookupByLibrary.simpleMessage("I created this using %s"),
         "discoveryShareInputTitle":
             MessageLookupByLibrary.simpleMessage("分享些东西吧"),
         "discoveryShareSubmit": MessageLookupByLibrary.simpleMessage("提交"),
@@ -145,6 +147,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "exit_editing": MessageLookupByLibrary.simpleMessage("退出编辑"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("退出编辑"),
         "exit_msg1": MessageLookupByLibrary.simpleMessage("您将会失去全部进度"),
+        "expand": MessageLookupByLibrary.simpleMessage("展开"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "人工智能产出的照片不可预测，可能含有裸露、残缺等令人不适的图像，这是超出我们控制范围的。因此，请确保您已知晓全部风险，再点击继续"),
         "expired_date": MessageLookupByLibrary.simpleMessage("有效期至"),
@@ -301,7 +304,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "q1": MessageLookupByLibrary.simpleMessage("？"),
         "rate_description":
             MessageLookupByLibrary.simpleMessage("您的使用体验如何？愿意给我们评分么？"),
-        "rate_pandora_avatar": MessageLookupByLibrary.simpleMessage("给我们评分"),
+        "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("给我们评分"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
         "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),
@@ -388,6 +391,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "toastImageSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
         "toastVideoSaved": MessageLookupByLibrary.simpleMessage("保存成功"),
         "trans_painting": MessageLookupByLibrary.simpleMessage("AI作画中..."),
+        "trans_saving": MessageLookupByLibrary.simpleMessage("保存中..."),
+        "trans_success": MessageLookupByLibrary.simpleMessage("完成"),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("正在上传..."),
         "try_it_now": MessageLookupByLibrary.simpleMessage("现在就去"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
@@ -405,6 +410,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "variations_of_styles":
             MessageLookupByLibrary.simpleMessage("10种风格，每种10张变化"),
         "view_all": MessageLookupByLibrary.simpleMessage("查看全部"),
+        "view_all_comment":
+            MessageLookupByLibrary.simpleMessage("查看所有 %d 条评论 >"),
         "waiting": MessageLookupByLibrary.simpleMessage("等待生成"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
         "watchAdText": MessageLookupByLibrary.simpleMessage("下载高清\n无水印图片"),

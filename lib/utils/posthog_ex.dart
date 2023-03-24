@@ -16,11 +16,6 @@ extension PosthogEx on Posthog {
     if (user != null) {
       defaultValues["user_id"] = user.id.toString();
       defaultValues["user_email"] = user.getShownEmail();
-    } else {
-      var deviceInfoPlugin = DeviceInfoPlugin();
-      final deviceInfo = await deviceInfoPlugin.deviceInfo;
-      var data = deviceInfo.data;
-      print(data);
     }
     var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
     screen(screenName: screenName, properties: values);

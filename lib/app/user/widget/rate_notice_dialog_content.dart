@@ -5,19 +5,32 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'feedback_dialog.dart';
 
 class RateNoticeDialogContent extends StatefulWidget {
-  const RateNoticeDialogContent({Key? key}) : super(key: key);
+  Function(bool value) onResult;
+
+  RateNoticeDialogContent({
+    Key? key,
+    required this.onResult,
+  }) : super(key: key);
 
   @override
   State<RateNoticeDialogContent> createState() => _RateNoticeDialogContentState();
 }
 
 class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
+  late Function(bool value) onResult;
+
+  @override
+  void initState() {
+    super.initState();
+    onResult = widget.onResult;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TitleTextWidget(S.of(context).rate_pandora_avatar, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
+        TitleTextWidget(S.of(context).rate_pandora_ai, ColorConstant.White, FontWeight.w600, $(17)).intoContainer(
           padding: EdgeInsets.only(top: $(20), bottom: $(15), left: $(15), right: $(15)),
         ),
         TitleTextWidget(
@@ -44,7 +57,8 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
           if (mounted) {
             rateApp();
             if (Navigator.canPop(context)) {
-              Navigator.pop(context, true);
+              Navigator.pop(context);
+              onResult.call(true);
             }
           }
         }),
@@ -64,7 +78,8 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
             if (value ?? false) {
               if (mounted) {
                 if (Navigator.canPop(context)) {
-                  Navigator.pop(context, true);
+                  Navigator.pop(context);
+                  onResult.call(true);
                 }
               }
             }
@@ -84,7 +99,8 @@ class _RateNoticeDialogContentState extends State<RateNoticeDialogContent> {
             .intoGestureDetector(onTap: () {
           if (mounted) {
             if (Navigator.canPop(context)) {
-              Navigator.pop(context, false);
+              Navigator.pop(context);
+              onResult.call(false);
             }
           }
         }),

@@ -14,7 +14,7 @@ import 'image_cache_manager.dart';
 
 class CachedNetworkImageUtils {
   static Widget custom({
-    bool useOld = false,
+    bool useOld = true,
     bool useCachedScale = false,
     required BuildContext context,
     Key? key,

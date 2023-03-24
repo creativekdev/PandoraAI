@@ -2810,20 +2810,20 @@ class S {
     );
   }
 
-  /// `Rate Pandora Avatar`
-  String get rate_pandora_avatar {
+  /// `Rate Pandora AI`
+  String get rate_pandora_ai {
     return Intl.message(
-      'Rate Pandora Avatar',
-      name: 'rate_pandora_avatar',
+      'Rate Pandora AI',
+      name: 'rate_pandora_ai',
       desc: '',
       args: [],
     );
   }
 
-  /// `If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?`
+  /// `If you enjoy using Pandora AI, would you mind taking a moment to rate it?`
   String get rate_description {
     return Intl.message(
-      'If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?',
+      'If you enjoy using Pandora AI, would you mind taking a moment to rate it?',
       name: 'rate_description',
       desc: '',
       args: [],
@@ -2935,6 +2935,26 @@ class S {
     return Intl.message(
       'Ai Painting...',
       name: 'trans_painting',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Completed`
+  String get trans_success {
+    return Intl.message(
+      'Completed',
+      name: 'trans_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saving...`
+  String get trans_saving {
+    return Intl.message(
+      'Saving...',
+      name: 'trans_saving',
       desc: '',
       args: [],
     );
@@ -3405,6 +3425,46 @@ class S {
     return Intl.message(
       'Selected: ',
       name: 'selected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View all %d comments >`
+  String get view_all_comment {
+    return Intl.message(
+      'View all %d comments >',
+      name: 'view_all_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `%d likes`
+  String get all_likes {
+    return Intl.message(
+      '%d likes',
+      name: 'all_likes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expand`
+  String get expand {
+    return Intl.message(
+      'Expand',
+      name: 'expand',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Collapse`
+  String get collapse {
+    return Intl.message(
+      'Collapse',
+      name: 'collapse',
       desc: '',
       args: [],
     );

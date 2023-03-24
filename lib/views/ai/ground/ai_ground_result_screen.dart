@@ -55,27 +55,25 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
       context,
       needUploadProgress: false,
       controller: progressController,
-      config: SimulateProgressBarConfig.aiGround(),
+      config: SimulateProgressBarConfig.aiGround(context),
     ).then((value) {
-      if (value == null || value.isEmpty) {
+      if (value == null) {
         Navigator.of(context).pop();
-      } else if (value.first ?? false) {
+      } else if (value.result) {
         Events.txt2imgResultShow(
           style: controller.selectedStyle?.name,
           isUploadReference: controller.initFile != null,
-          isUseSuggestion: controller.promptList?.contains(controller.editingController.text.toString()) ?? false,
+          isUseSuggestion: controller.promptList.contains(controller.editingController.text.toString()),
         );
-        generateCount++;
-        if (generateCount - 1 > 0) {
-          Events.txt2imgCompleteGenerateAgain(time: generateCount - 1);
-        }
-      } else {
-        if (value.length == 3) {
-          if (!TextUtil.isEmpty(value.last)) {
-            showLimitDialog(context, value[1], value[2]);
-          } else {
-            Navigator.of(context).pop();
+        setState(() {
+          generateCount++;
+          if (generateCount - 1 > 0) {
+            Events.txt2imgCompleteGenerateAgain(time: generateCount - 1);
           }
+        });
+      } else {
+        if (value.errorTitle != null && value.errorContent != null) {
+          showLimitDialog(context, value.errorTitle!, value.errorContent!);
         } else {
           Navigator.of(context).pop();
         }
@@ -96,6 +94,9 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
+    if (generateCount == 0 && controller.filePath == null) {
+      return Container();
+    }
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(
@@ -168,6 +169,10 @@ class _AiGroundResultScreenState extends AppState<AiGroundResultScreen> {
                           if (value) {
                             Events.txt2imgCompleteDownload(type: 'image', textDisplay: controller.displayText);
                             CommonExtension().showImageSavedOkToast(context);
+                            delay(() {
+                              UserManager userManager = AppDelegate.instance.getManager();
+                              userManager.rateNoticeOperator.onSwitch(context);
+                            }, milliseconds: 2000);
                           } else {
                             CommonExtension().showToast(S.of(context).commonFailedToast);
                           }

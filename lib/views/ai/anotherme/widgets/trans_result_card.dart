@@ -183,15 +183,15 @@ class TransResultNewCard extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      padding: EdgeInsets.all($(12)),
+      padding: EdgeInsets.all($(10)),
       child: direction == Axis.vertical ? Column(children: children) : Row(children: children),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Color(0xFF04F1F9),
-          Color(0xFF7F97F3),
-          Color(0xFFEC5DD8),
-        ]),
-      ),
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(colors: [
+      //     Color(0xFF04F1F9),
+      //     Color(0xFF7F97F3),
+      //     Color(0xFFEC5DD8),
+      //   ]),
+      // ),
     );
   }
 

@@ -11,6 +11,7 @@ import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
+import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
@@ -67,16 +68,28 @@ class CartoonizerApi extends BaseRequester {
         }
         AdConfigEntity adConfig = AdConfigEntity.fromJson(data['ads_config'] ?? {});
         DailyLimitRuleEntity dailyLimitRuleEntity = DailyLimitRuleEntity.fromJson(data['daily_limit_rules'] ?? {});
+        AppFeatureEntity? featureEntity;
+        if (data['new_feature'] != null) {
+          featureEntity = jsonConvert.convert(data['new_feature']);
+        }
         return OnlineModel(
           user: user,
           loginSuccess: login,
           aiServers: data['ai_servers'],
           adConfig: adConfig,
           dailyLimitRuleEntity: dailyLimitRuleEntity,
+          feature: featureEntity,
         );
       }
     }
-    return OnlineModel(user: null, loginSuccess: false, aiServers: {}, adConfig: AdConfigEntity(), dailyLimitRuleEntity: DailyLimitRuleEntity());
+    return OnlineModel(
+      user: null,
+      loginSuccess: false,
+      aiServers: {},
+      adConfig: AdConfigEntity(),
+      dailyLimitRuleEntity: DailyLimitRuleEntity(),
+      feature: null,
+    );
   }
 
   Future<BaseEntity?> deleteAccount() async {

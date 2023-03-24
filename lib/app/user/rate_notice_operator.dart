@@ -12,7 +12,7 @@ const int hour = minute * 60;
 const int day = hour * 24;
 
 // in production
-const int maxSwitchCount = 10;
+const int maxSwitchCount = 1;
 const int maxDuration = 15 * day;
 const int nextActivatePositive = 2160; // 90 * 24; hour
 const int nextActivateNegative = 720; // 30 * 24; hour
@@ -87,6 +87,7 @@ class RateNoticeOperator {
   }
 
   void onBuy(BuildContext context) {
+    return;
     if (configEntity == null) return;
     if (configEntity!.nextActivateDate != 0) {
       return;
@@ -99,31 +100,37 @@ class RateNoticeOperator {
 
   bool _dialogShown = false;
 
-  judgeAndShowNotice(BuildContext context) {
+  Future<bool> judgeAndShowNotice(BuildContext context) async {
     if (_dialogShown) {
-      return;
+      return false;
     }
     LogUtil.v('${configEntity?.print()}', tag: 'rateConfig');
     if (shouldRate()) {
       _dialogShown = true;
-      showDialog<bool>(
+      showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => RateNoticeDialogContent(),
-      ).then((value) {
-        _dialogShown = false;
-        if (value ?? false) {
-          // 3 month later
-          configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
-          configEntity!.calculateInNextActivate = true;
-        } else {
-          // 1 month later
-          configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivateNegative)).millisecondsSinceEpoch;
-          configEntity!.switchCount = 0;
-          configEntity!.calculateInNextActivate = false;
-        }
-        saveConfig(configEntity!);
-      });
+        builder: (context) => RateNoticeDialogContent(
+          onResult: (value) {
+            delay(() {
+              _dialogShown = false;
+              if (value) {
+                // 3 month later
+                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
+                configEntity!.calculateInNextActivate = true;
+              } else {
+                // 1 month later
+                configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivateNegative)).millisecondsSinceEpoch;
+                configEntity!.switchCount = 0;
+                configEntity!.calculateInNextActivate = false;
+              }
+              saveConfig(configEntity!);
+            }, milliseconds: 100);
+          },
+        ),
+      );
+      return true;
     }
+    return false;
   }
 }

@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "album_to_settings_tips":
             MessageLookupByLibrary.simpleMessage("To add more photos please"),
         "all": MessageLookupByLibrary.simpleMessage("All"),
+        "all_likes": MessageLookupByLibrary.simpleMessage("%d likes"),
         "all_plans": MessageLookupByLibrary.simpleMessage("All Plans"),
         "already_account":
             MessageLookupByLibrary.simpleMessage("Already have an account? "),
@@ -110,6 +111,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "click_logout": MessageLookupByLibrary.simpleMessage("Click logout"),
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("Your code was emailed to "),
+        "collapse": MessageLookupByLibrary.simpleMessage("Collapse"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Comment posted"),
         "commonFailedToast":
@@ -174,6 +176,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "exit_msg": MessageLookupByLibrary.simpleMessage("Exit editing?"),
         "exit_msg1": MessageLookupByLibrary.simpleMessage(
             "You will lose all your progress."),
+        "expand": MessageLookupByLibrary.simpleMessage("Expand"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "The AI that Pandora Avatar uses can generate unpredictable results which may include artistic nudes, defects or shocking images. This is not within our countrol. Please acknowledge and accept full responsibility and risk before continue."),
         "expired_date": MessageLookupByLibrary.simpleMessage("Expired Date"),
@@ -366,9 +369,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
-            "If you enjoy using Pandora Avatar, would you mind taking a moment to rate it?"),
-        "rate_pandora_avatar":
-            MessageLookupByLibrary.simpleMessage("Rate Pandora Avatar"),
+            "If you enjoy using Pandora AI, would you mind taking a moment to rate it?"),
+        "rate_pandora_ai":
+            MessageLookupByLibrary.simpleMessage("Rate Pandora AI"),
         "rate_us":
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":
@@ -478,6 +481,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "toastVideoSaved": MessageLookupByLibrary.simpleMessage("Video Saved"),
         "trans_painting":
             MessageLookupByLibrary.simpleMessage("Ai Painting..."),
+        "trans_saving": MessageLookupByLibrary.simpleMessage("Saving..."),
+        "trans_success": MessageLookupByLibrary.simpleMessage("Completed"),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
         "try_it_now": MessageLookupByLibrary.simpleMessage("Try it now"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
@@ -498,6 +503,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "variations_of_styles":
             MessageLookupByLibrary.simpleMessage("10 variations of 10 styles"),
         "view_all": MessageLookupByLibrary.simpleMessage("View All"),
+        "view_all_comment":
+            MessageLookupByLibrary.simpleMessage("View all %d comments >"),
         "waiting": MessageLookupByLibrary.simpleMessage("Waiting"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage(
             "Watch an ad to remove watermark\n(only this time)"),

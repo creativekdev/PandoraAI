@@ -89,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: Stack(
                             children: [
                               Image.asset(
-                                ImagesConstant.ic_round_top,
+                                Images.ic_round_top,
                                 width: 100.w,
                                 height: 20.h,
                                 fit: BoxFit.fill,
@@ -122,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           fit: BoxFit.fill,
                                                           errorBuilder: (context, error, stackTrace) {
                                                             return Image.asset(
-                                                              ImagesConstant.ic_demo1,
+                                                              Images.ic_demo1,
                                                               fit: BoxFit.fill,
                                                               width: 40.w,
                                                               height: 40.w,
@@ -135,7 +135,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                         imageUrl: (snapshot.hasData) ? (snapshot.data as SocialUserInfo).getShownAvatar() : "",
                                                         width: 40.w,
                                                         height: 40.w,
-                                                        fit: BoxFit.fill,
+                                                        fit: BoxFit.cover,
                                                         errorWidget: (context, url, error) {
                                                           return Image.asset(
                                                             Images.ic_demo1,
@@ -156,7 +156,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               },
                                               child: SimpleShadow(
                                                 child: Image.asset(
-                                                  ImagesConstant.ic_camera_upload,
+                                                  Images.ic_camera_upload,
                                                   height: 10.w,
                                                   width: 10.w,
                                                 ),

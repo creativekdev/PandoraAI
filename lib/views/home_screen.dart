@@ -70,6 +70,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onLogin();
             });
           }
+        } else {
+          delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
         }
       });
     });
@@ -77,7 +79,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void onLogin() {
-    userManager.rateNoticeOperator.judgeAndShowNotice(context);
+    delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
+    // userManager.rateNoticeOperator.judgeAndShowNotice(context).then((value) {
+    //   if (!value) {
+    //     delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
+    //   }
+    // });
     FirebaseMessaging.instance.getInitialMessage().then((value) {
       if (value != null) {
         AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
@@ -88,12 +95,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         albumController.getTotalAlbum();
       }
     });
-  }
-
-  @override
-  didUpdateWidget(HomeScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    delay(() => onLogin());
   }
 
   @override
