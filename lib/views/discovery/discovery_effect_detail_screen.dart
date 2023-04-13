@@ -55,6 +55,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
   late ScrollController scrollController;
   late String prePage;
   late String dataType;
+  bool enableLoad = false;
   String style = '';
 
   DiscoveryEffectDetailScreenState() : super(canCancelOnLoading: false);
@@ -163,6 +164,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
           if (mounted) {
             setState(() {
               dataList = list;
+              enableLoad = dataList.length == pageSize;
             });
           }
           _refreshController.finishLoad(noMore: dataList.length != pageSize);
@@ -329,9 +331,9 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
             controller: _refreshController,
             scrollController: scrollController,
             enableControlFinishRefresh: true,
-            enableControlFinishLoad: false,
+            enableControlFinishLoad: enableLoad,
             onRefresh: () async => loadFirstPage(),
-            onLoad: () async => loadMorePage(),
+            onLoad: enableLoad ? () async => loadMorePage() : null,
             slivers: [
               SliverList(
                 delegate: SliverChildBuilderDelegate(

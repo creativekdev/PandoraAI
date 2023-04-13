@@ -11,9 +11,15 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/mine/refcode/refcode_controller.dart';
+import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
+import 'package:cartoonizer/views/msg/msg_list_controller.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -35,9 +41,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late StreamSubscription onPaySuccessListener;
   late StreamSubscription onTabSwitchListener;
   late StreamSubscription onHomeConfigListener;
+  late StreamSubscription onNewInvitationCodeListener;
+  late StreamSubscription onUserStateChangeListener;
   EffectDataController dataController = Get.put(EffectDataController());
   RecentController recentController = Get.put(RecentController());
   AlbumController albumController = Get.put(AlbumController());
+  MsgListController msgController = Get.put(MsgListController());
 
   @override
   void initState() {
@@ -58,28 +67,57 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     onHomeConfigListener = EventBusHelper().eventBus.on<OnHomeConfigGetEvent>().listen((event) {
       initialTab(true);
     });
+    onUserStateChangeListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+      if (event.data ?? false) {
+        delay(() => judgeInvitationCode(), milliseconds: 2000);
+      }
+    });
+    onNewInvitationCodeListener = EventBusHelper().eventBus.on<OnNewInvitationCodeReceiveEvent>().listen((event) {
+      var currentRoute = MyApp.routeObserver.currentRoute;
+      var currentName = currentRoute?.settings.name;
+      if (currentName == '/HomeScreen') {
+        SubmitInvitedCodeScreen.push(context, code: event.data);
+      } else if (currentName == '/SubmitInvitedCodeScreen') {
+        try {
+          var controller = Get.find<RefCodeController>();
+          if (TextUtil.isEmpty(controller.inputText)) {
+            controller.inputText = event.data ?? '';
+          }
+        } catch (e) {}
+      }
+    });
     delay(() {
       userManager.refreshUser(context: context).then((value) {
         if (userManager.lastLauncherLoginStatus) {
           if (!value.loginSuccess) {
             userManager.logout().then((value) {
-              userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
+              userManager.doOnLogin(context, logPreLoginAction: 'token_expired', callback: () {
+                afterAccountChecked();
+              }, autoExec: true);
             });
           } else {
             delay(() {
-              onLogin();
+              afterAccountChecked();
             });
           }
         } else {
-          delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
+          delay(() {
+            afterAccountChecked();
+          }, milliseconds: 1000);
         }
       });
     });
     PhotoManager.clearFileCache();
   }
 
-  void onLogin() {
-    delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
+  void afterAccountChecked() {
+    delay(
+        () => cacheManager.featureOperator.judgeAndOpenFeaturePage(context).then((value) {
+              if (!value) {
+                judgeInvitationCode();
+              }
+            }),
+        milliseconds: 1000);
     // userManager.rateNoticeOperator.judgeAndShowNotice(context).then((value) {
     //   if (!value) {
     //     delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
@@ -99,10 +137,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    super.dispose();
     onPaySuccessListener.cancel();
     onTabSwitchListener.cancel();
     onHomeConfigListener.cancel();
+    onNewInvitationCodeListener.cancel();
+    onUserStateChangeListener.cancel();
+    super.dispose();
   }
 
   initialTab(bool needSetState) {
@@ -153,7 +193,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    AppDelegate.instance.getManager<NotificationManager>().syncContext(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(

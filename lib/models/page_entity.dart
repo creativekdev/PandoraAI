@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:cartoonizer/Common/importFile.dart';
+
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/page_entity.g.dart';
@@ -9,15 +9,15 @@ class PageEntity {
   late int records;
   late int total;
   late int page;
-  late List<dynamic> rows;
+  late dynamic rows;
 
   PageEntity({
     this.page = 0,
     this.total = 0,
     this.records = 0,
-    List<dynamic>? rows,
+    dynamic rows,
   }) {
-    this.rows = rows ?? [];
+    this.rows = rows ?? <dynamic>[];
   }
 
   factory PageEntity.fromJson(Map<String, dynamic> json) => $PageEntityFromJson(json);
@@ -30,7 +30,15 @@ class PageEntity {
   }
 
   List<T> getDataList<T>() {
-    return rows.map((e) => jsonConvert.convert<T>(e)!).toList();
+    if (rows is List) {
+      List<T> result = [];
+      for (var e in rows) {
+        result.add(jsonConvert.convert<T>(e)!);
+      }
+      return result;
+    } else {
+      return <T>[];
+    }
   }
 }
 
@@ -39,14 +47,14 @@ class MsgPageEntity {
   late int records;
   @JSONField(name: "unread_count")
   late int unreadCount;
-  late List<dynamic> rows;
+  late dynamic rows;
 
   MsgPageEntity({
     this.records = 0,
     this.unreadCount = 0,
-    List<dynamic>? rows,
+    dynamic rows,
   }) {
-    this.rows = rows ?? [];
+    this.rows = rows ?? <dynamic>[];
   }
 
   factory MsgPageEntity.fromJson(Map<String, dynamic> json) => $MsgPageEntityFromJson(json);
@@ -59,6 +67,14 @@ class MsgPageEntity {
   }
 
   List<T> getDataList<T>() {
-    return rows.map((e) => jsonConvert.convert<T>(e)!).toList();
+    if (rows is List) {
+      List<T> result = [];
+      for (var e in rows) {
+        result.add(jsonConvert.convert<T>(e)!);
+      }
+      return result;
+    } else {
+      return <T>[];
+    }
   }
 }

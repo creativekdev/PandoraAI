@@ -7,10 +7,12 @@ import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
+import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/LoginScreen.dart';
-import 'package:device_info_plus/device_info_plus.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'rate_notice_operator.dart';
@@ -24,6 +26,7 @@ import 'rate_notice_operator.dart';
 class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
+  late CartoonizerApi api;
 
   Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
@@ -89,6 +92,7 @@ class UserManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
+    api = CartoonizerApi().bindManager(this);
     _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
@@ -102,8 +106,9 @@ class UserManager extends BaseManager {
 
   @override
   Future<void> onDestroy() async {
-    super.onDestroy();
     _userStataListen.cancel();
+    api.unbind();
+    super.onDestroy();
   }
 
   @override
@@ -128,7 +133,7 @@ class UserManager extends BaseManager {
   }
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
-    var value = await CartoonizerApi().getCurrentUser();
+    var value = await api.getCurrentUser();
     if (value.aiServers.isNotEmpty) {
       aiServers = value.aiServers;
     }
@@ -152,7 +157,7 @@ class UserManager extends BaseManager {
   }
 
   Future<BaseEntity?> login(String email, String password) async {
-    var baseEntity = await CartoonizerApi().login({
+    var baseEntity = await api.login({
       'email': email,
       'password': password,
       // 'type': APP_TYPE,
@@ -171,7 +176,8 @@ class UserManager extends BaseManager {
     EventBusHelper().eventBus.fire(LoginStateEvent(data: _user != null));
   }
 
-  doOnLogin(BuildContext context, {required String logPreLoginAction, String? currentPageRoute, Function()? callback, bool autoExec = true, bool toSignUp = false}) {
+  doOnLogin(BuildContext context,
+      {required String logPreLoginAction, String? currentPageRoute, Function()? callback, bool autoExec = true, bool toSignUp = false, Function? onCancel}) {
     if (!isNeedLogin) {
       callback?.call();
       return;
@@ -191,15 +197,19 @@ class UserManager extends BaseManager {
           settings: RouteSettings(name: "/LoginScreen"),
         )).then((value) async {
       cacheManager.setString(CacheManager.preLoginAction, null);
-      if (autoExec && !isNeedLogin) {
-        callback?.call();
+      if (isNeedLogin) {
+        onCancel?.call();
       } else {
-        // 非正常登录流程下，此时不一定及时获取到用户信息，需要更新一次。此代码需要在后续所有登录流程优化后删除。
-        refreshUser().then((value) {
-          if (autoExec && !isNeedLogin) {
-            callback?.call();
-          }
-        });
+        if (autoExec) {
+          callback?.call();
+        } else {
+          // 非正常登录流程下，此时不一定及时获取到用户信息，需要更新一次。此代码需要在后续所有登录流程优化后删除。
+          refreshUser().then((value) {
+            if (autoExec && !isNeedLogin) {
+              callback?.call();
+            }
+          });
+        }
       }
     });
   }
@@ -208,5 +218,58 @@ class UserManager extends BaseManager {
     user = null;
     sid = null;
     lastLauncherLoginStatus = false;
+  }
+
+  MapEntry<int, int> getAnotherMeLimit() {
+    if (user == null) {
+      return MapEntry(limitRule.anotherme?.anonymous ?? 0, 0);
+    }
+    int base;
+    if (!isVip()) {
+      base = limitRule.anotherme?.user ?? 0;
+    } else {
+      base = limitRule.anotherme?.plan ?? 0;
+    }
+    return MapEntry(base, (user!.payload['anotherme_daily_limit'] ?? 0) as int);
+  }
+
+  MapEntry<int, int> getTxt2ImgLimit() {
+    if (user == null) {
+      return MapEntry(limitRule.txt2img?.anonymous ?? 0, 0);
+    }
+    int base;
+    if (!isVip()) {
+      base = limitRule.txt2img?.user ?? 0;
+    } else {
+      base = limitRule.txt2img?.plan ?? 0;
+    }
+    return MapEntry(base, (user!.payload['txt2img_daily_limit'] ?? 0) as int);
+  }
+
+  Future<UserRefLinkEntity?> getRefCode() async {
+    if (user == null) {
+      return null;
+    }
+    if (!user!.referLinks.isEmpty) {
+      return user!.referLinks.first;
+    }
+    var entity = await api.createRefCode(randomRefCode());
+    if (entity != null) {
+      var newUser = user!;
+      newUser.referLinks.add(entity);
+      user = newUser;
+      return user!.referLinks.first;
+    } else {
+      await refreshUser();
+      if (user?.referLinks.isEmpty ?? true) {
+        return null;
+      }
+      return user!.referLinks.first;
+    }
+  }
+
+  String randomRefCode() {
+    var md5 = EncryptUtil.encodeMd5('${DateTime.now().millisecondsSinceEpoch}');
+    return md5.substring(0, 12).toUpperCase();
   }
 }

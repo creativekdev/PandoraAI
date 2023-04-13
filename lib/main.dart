@@ -7,6 +7,7 @@ import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
+import 'package:cartoonizer/Common/navigator_observer.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -71,12 +72,15 @@ void main() async {
 class MyApp extends StatelessWidget {
   int lastLocaleTime = 0;
 
+  static AppRouteObserver routeObserver = AppRouteObserver();
+
   @override
   Widget build(BuildContext context) {
     AppDelegate.instance.init();
     return Sizer(
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
+          navigatorObservers: [routeObserver],
           theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
           title: APP_TITLE,
           home: MyHomePage(title: APP_TITLE),
@@ -167,9 +171,9 @@ class _MyHomePageState extends State<MyHomePage> {
       return await Get.dialog<bool>(
         CommonDialog(
           height: 385,
-          barrierDismissible: false,
-          dismissAfterConfirm: false,
-          isCancel: false,
+          barrierDismissible: !data['force'],
+          dismissAfterConfirm: !data['force'],
+          isCancel: !data['force'],
           content: ClipRRect(
             borderRadius: BorderRadius.circular($(8)),
             child: Column(children: [
@@ -186,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: EdgeInsets.only(left: 20, right: 20),
                         child: Text(
-                          S.of(context).new_update_dialog_content,
+                          data['force'] ? S.of(context).new_update_dialog_content : S.of(context).new_update_dialog_content_cancellable,
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black, height: 1.3),
                         ),

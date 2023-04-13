@@ -10,4 +10,11 @@ class FFmpegUtil {
   }) {
     return '-y -framerate $framePerSecond -i "$mainDir/%1d.png" -b:v 768k -vcodec mpeg4 "$outputPath"';
   }
+
+  static String commandVideoToInstagram({
+    required String originFile,
+    required String targetFile,
+}) {
+    return '-i "$originFile" -vf scale=640:640 "$targetFile"';
+  }
 }

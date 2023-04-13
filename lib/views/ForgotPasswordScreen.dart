@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -54,7 +55,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   height: 5.h,
                 ),
                 Image.asset(
-                  ImagesConstant.ic_jelly_email,
+                  Images.ic_jelly_email,
                   height: 35.h,
                 ),
                 SizedBox(

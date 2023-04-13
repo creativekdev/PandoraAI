@@ -14,7 +14,7 @@ import 'package:common_utils/common_utils.dart';
 class RecentController extends GetxController {
   late EffectRecordHolder effectRecordHolder;
   late MetaverseHolder metaverseHolder;
-  late AIGroundRecordHolder aiGroundHolder;
+  late Txt2imgRecordHolder txt2imgHolder;
 
   List<RecentEffectModel> effectList = [];
   List<RecentMetaverseEntity> metaverseList = [];
@@ -27,14 +27,14 @@ class RecentController extends GetxController {
     super.onInit();
     effectRecordHolder = EffectRecordHolder();
     metaverseHolder = MetaverseHolder();
-    aiGroundHolder = AIGroundRecordHolder();
+    txt2imgHolder = Txt2imgRecordHolder();
     loadingFromCache();
   }
 
   Future<void> loadingFromCache() async {
     effectList = await effectRecordHolder.loadFromCache();
     metaverseList = await metaverseHolder.loadFromCache();
-    groundList = await aiGroundHolder.loadFromCache();
+    groundList = await txt2imgHolder.loadFromCache();
     sortList();
     update();
   }
@@ -97,8 +97,8 @@ class RecentController extends GetxController {
     update();
   }
 
-  onAiGroundUsed(String filePath, String prompt, String? initPath, String? styleKey, Map<String, dynamic> parameters) {
-    aiGroundHolder.record(
+  onTxt2imgUsed(String filePath, String prompt, String? initPath, String? styleKey, Map<String, dynamic> parameters) {
+    txt2imgHolder.record(
       groundList,
       RecentGroundEntity()
         ..filePath = filePath

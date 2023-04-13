@@ -1,8 +1,5 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/page_entity.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-
-import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 
 
 PageEntity $PageEntityFromJson(Map<String, dynamic> json) {
@@ -19,7 +16,7 @@ PageEntity $PageEntityFromJson(Map<String, dynamic> json) {
 	if (page != null) {
 		pageEntity.page = page;
 	}
-	final List<dynamic>? rows = jsonConvert.convertListNotNull<dynamic>(json['rows']);
+	final dynamic rows = jsonConvert.convert<dynamic>(json['rows']);
 	if (rows != null) {
 		pageEntity.rows = rows;
 	}
@@ -31,7 +28,7 @@ Map<String, dynamic> $PageEntityToJson(PageEntity entity) {
 	data['records'] = entity.records;
 	data['total'] = entity.total;
 	data['page'] = entity.page;
-	data['rows'] =  entity.rows;
+	data['rows'] = entity.rows;
 	return data;
 }
 
@@ -45,7 +42,7 @@ MsgPageEntity $MsgPageEntityFromJson(Map<String, dynamic> json) {
 	if (unreadCount != null) {
 		msgPageEntity.unreadCount = unreadCount;
 	}
-	final List<dynamic>? rows = jsonConvert.convertListNotNull<dynamic>(json['rows']);
+	final dynamic rows = jsonConvert.convert<dynamic>(json['rows']);
 	if (rows != null) {
 		msgPageEntity.rows = rows;
 	}
@@ -56,6 +53,6 @@ Map<String, dynamic> $MsgPageEntityToJson(MsgPageEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['records'] = entity.records;
 	data['unread_count'] = entity.unreadCount;
-	data['rows'] =  entity.rows;
+	data['rows'] = entity.rows;
 	return data;
 }

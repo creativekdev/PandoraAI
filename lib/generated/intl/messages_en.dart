@@ -114,6 +114,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "collapse": MessageLookupByLibrary.simpleMessage("Collapse"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Comment posted"),
+        "comments": MessageLookupByLibrary.simpleMessage("Comments"),
         "commonFailedToast":
             MessageLookupByLibrary.simpleMessage("Oops Failed"),
         "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
@@ -169,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email_validation1":
             MessageLookupByLibrary.simpleMessage("Please enter valid email"),
         "empty_msg": MessageLookupByLibrary.simpleMessage("No Data Found."),
+        "enter_code": MessageLookupByLibrary.simpleMessage("Enter Code"),
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("Enter 6-digit code"),
         "examples": MessageLookupByLibrary.simpleMessage("Examples"),
@@ -180,6 +182,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "The AI that Pandora Avatar uses can generate unpredictable results which may include artistic nudes, defects or shocking images. This is not within our countrol. Please acknowledge and accept full responsibility and risk before continue."),
         "expired_date": MessageLookupByLibrary.simpleMessage("Expired Date"),
+        "explain": MessageLookupByLibrary.simpleMessage("Explain"),
+        "explore_more": MessageLookupByLibrary.simpleMessage("Explore More"),
         "face_toon": MessageLookupByLibrary.simpleMessage("FaceToon"),
         "facebook": MessageLookupByLibrary.simpleMessage(
             "Continue with IG Business(via FB)"),
@@ -206,15 +210,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
-            "Come back tomorrow or upgrade to PRO to get more %s quota"),
+            "You\'ve reached your \$s daily limit! Upgrade your account now for extended access or return tomorrow. Feel free to explore our other exciting features in the meantime."),
+        "generate_reached_limit_guest": MessageLookupByLibrary.simpleMessage(
+            "You\'ve reached your %s daily limit! Sign up now for extended access."),
         "generate_reached_limit_title": MessageLookupByLibrary.simpleMessage(
-            "You\'ve reached your %s limit today. "),
-        "generate_reached_limit_vip":
-            MessageLookupByLibrary.simpleMessage("Come back tomorrow"),
+            "You\'ve reached your %s limit today"),
+        "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
+            "Come back tomorrow or try other functions."),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generate Record"),
         "generating": MessageLookupByLibrary.simpleMessage("Creating"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("Get Inspired"),
+        "get_ref_code_failed": MessageLookupByLibrary.simpleMessage(
+            "Get invitation code failed, click to retry"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("Give Feedback"),
         "go_premium": MessageLookupByLibrary.simpleMessage("Go Premium"),
         "good_photo_description": MessageLookupByLibrary.simpleMessage(
@@ -247,6 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "january": MessageLookupByLibrary.simpleMessage("January"),
         "july": MessageLookupByLibrary.simpleMessage("July"),
         "june": MessageLookupByLibrary.simpleMessage("June"),
+        "like": MessageLookupByLibrary.simpleMessage("Like"),
         "login": MessageLookupByLibrary.simpleMessage("Sign In"),
         "login_or_sign_up":
             MessageLookupByLibrary.simpleMessage("Login / Sign up"),
@@ -271,6 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("More"),
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("Messages"),
+        "my_code": MessageLookupByLibrary.simpleMessage("My Code"),
         "name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "name_hint": MessageLookupByLibrary.simpleMessage("Enter name"),
         "name_validation":
@@ -278,6 +288,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "new_pass": MessageLookupByLibrary.simpleMessage("New Password"),
         "new_update_dialog_content": MessageLookupByLibrary.simpleMessage(
             "A required update is available, the App will not be working until this update is applied."),
+        "new_update_dialog_content_cancellable":
+            MessageLookupByLibrary.simpleMessage(
+                "A required update is available, update to explore new features!"),
         "new_update_dialog_title":
             MessageLookupByLibrary.simpleMessage("New Update Required"),
         "newest": MessageLookupByLibrary.simpleMessage("Newest"),
@@ -294,6 +307,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_watermark1": MessageLookupByLibrary.simpleMessage("No watermark"),
         "not_enough_photos":
             MessageLookupByLibrary.simpleMessage("Not enough photos"),
+        "not_found": MessageLookupByLibrary.simpleMessage("No data exist"),
         "november": MessageLookupByLibrary.simpleMessage("November"),
         "october": MessageLookupByLibrary.simpleMessage("October"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
@@ -322,7 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pandora_transfer_tips": MessageLookupByLibrary.simpleMessage(
             "We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service"),
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
-            "Please waiting, your photos will be generated in about %d minutes. We\'ll send you an email with a link to your AI avatars when it\'s done!"),
+            "Your Pandora Avatars will be generated in about %d minutes. Please explore our other features while waiting!"),
         "pass_validation":
             MessageLookupByLibrary.simpleMessage("Please enter password"),
         "pass_validation1":
@@ -335,6 +349,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "paymentBtn": MessageLookupByLibrary.simpleMessage("Place your order"),
         "payment_successfully":
             MessageLookupByLibrary.simpleMessage("Payment successfully"),
+        "per_day": MessageLookupByLibrary.simpleMessage("/ day"),
         "permissionCamera":
             MessageLookupByLibrary.simpleMessage("Camera Permission"),
         "permissionCameraContent": MessageLookupByLibrary.simpleMessage(
@@ -376,13 +391,26 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Rate us on the app store"),
         "rate_us1":
             MessageLookupByLibrary.simpleMessage("Rate us on the play store"),
+        "reached_limit_content": MessageLookupByLibrary.simpleMessage(
+            "Invite more friends to download the app to unlock your daily limit or upgrade"),
         "read_all": MessageLookupByLibrary.simpleMessage("Read All"),
         "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),
+        "ref_code": MessageLookupByLibrary.simpleMessage("Code"),
+        "ref_code_copied": MessageLookupByLibrary.simpleMessage(
+            "Your invitation code was copied!"),
+        "ref_code_desc": MessageLookupByLibrary.simpleMessage(
+            "Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. "),
+        "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
+            "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
+        "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(
+            "Share your Invitation Code with your friend and you get %1d Metaverse and %2d AI Artist: Text to Image if the Code is used."),
         "reference_image":
             MessageLookupByLibrary.simpleMessage("Reference image (optional)"),
         "reference_image_tips": MessageLookupByLibrary.simpleMessage(
             "The image you select will be used as a reference for the final"),
+        "remaining_credits":
+            MessageLookupByLibrary.simpleMessage("Remaining credits"),
         "remind": MessageLookupByLibrary.simpleMessage("Remind"),
         "reply": MessageLookupByLibrary.simpleMessage("reply"),
         "resend": MessageLookupByLibrary.simpleMessage("Resend"),
@@ -407,7 +435,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scary content alert!"),
         "scary_content_alert_open_it": MessageLookupByLibrary.simpleMessage(
             "Scary content alert! Tap to show it"),
-        "see_it_now": MessageLookupByLibrary.simpleMessage("Check"),
+        "see_it_now": MessageLookupByLibrary.simpleMessage("Check it out"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
@@ -444,6 +472,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "show_it": MessageLookupByLibrary.simpleMessage("Show it"),
         "sign_in": MessageLookupByLibrary.simpleMessage("Sign In"),
         "sign_up": MessageLookupByLibrary.simpleMessage("Sign Up"),
+        "sign_up_now": MessageLookupByLibrary.simpleMessage("Sign Up Now"),
         "signup_text": MessageLookupByLibrary.simpleMessage(
             "Sign Up To Get 1 Image Credit"),
         "signup_text1":
@@ -451,7 +480,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
+        "submit_now": MessageLookupByLibrary.simpleMessage("Submit now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
+        "system": MessageLookupByLibrary.simpleMessage("System"),
+        "system_msg": MessageLookupByLibrary.simpleMessage("System Message"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("Discovery"),
         "tabHome": MessageLookupByLibrary.simpleMessage("Home"),
@@ -495,6 +527,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile_successfully": MessageLookupByLibrary.simpleMessage(
             "Profile update successfully!"),
         "upgrade": MessageLookupByLibrary.simpleMessage("Upgrade"),
+        "upgrade_now": MessageLookupByLibrary.simpleMessage("Upgrade Now"),
         "upload": MessageLookupByLibrary.simpleMessage("Upload"),
         "upload_image": MessageLookupByLibrary.simpleMessage("Upload Image"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("Upload photos"),
@@ -533,7 +566,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "You have not posted anything"),
         "your_post_has_been_submitted_successfully":
             MessageLookupByLibrary.simpleMessage(
-                "Your have shared \nsuccessfully"),
+                "You have successfully shared this post."),
         "youtube":
             MessageLookupByLibrary.simpleMessage("Continue with You Tube"),
         "zip_code": MessageLookupByLibrary.simpleMessage("Zip Code"),

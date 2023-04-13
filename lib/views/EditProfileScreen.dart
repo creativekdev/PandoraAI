@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                                           controller.image.value as File,
                                                           width: 40.w,
                                                           height: 40.w,
-                                                          fit: BoxFit.fill,
+                                                          fit: BoxFit.cover,
                                                           errorBuilder: (context, error, stackTrace) {
                                                             return Image.asset(
                                                               Images.ic_demo1,

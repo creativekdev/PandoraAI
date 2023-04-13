@@ -16,15 +16,12 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EditProfileScreen.dart';
-import 'package:cartoonizer/views/PurchaseScreen.dart';
-import 'package:cartoonizer/views/StripeSubscriptionScreen.dart';
-import 'package:cartoonizer/views/account/LoginScreen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
+import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:flutter_share_me/flutter_share_me.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -104,13 +101,10 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
             children: [
               UserBaseInfoWidget(userInfo: userManager.user).intoGestureDetector(onTap: () {
                 if (userManager.isNeedLogin) {
-                  GetStorage().write('login_back_page', '/HomeScreen');
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: "/LoginScreen"))).then((value) async {
-                    // if (await _getIsLogin()) {
-                    //   await API.getLogin(needLoad: true, context: context);
-                    // }
+                  userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/HomeScreen', callback: () {
+                    EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
                     setState(() {});
-                  });
+                  }, autoExec: true);
                 } else {
                   Navigator.push(
                       context,
@@ -209,6 +203,22 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
+              ImageTextBarWidget((userManager.user?.isReferred ?? false) ? S.of(context).invited_code : S.of(context).input_invited_code, Images.ic_ref_code, true)
+                  .intoGestureDetector(
+                onTap: () {
+                  SubmitInvitedCodeScreen.push(context);
+                },
+              ).offstage(offstage: userManager.isNeedLogin),
+              Container(
+                width: double.maxFinite,
+                height: 1,
+                color: Color(0xff323232),
+              )
+                  .intoContainer(
+                    padding: EdgeInsets.symmetric(horizontal: $(15)),
+                    color: ColorConstant.BackgroundColor,
+                  )
+                  .offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget('Pandora Avatar', Images.ic_avatar_ai, true).intoGestureDetector(
                 onTap: () async {
                   Avatar.open(context, source: 'my');
@@ -324,5 +334,24 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
         ).intoContainer(color: ColorConstant.MineBackgroundColor)),
       ],
     );
+  }
+
+  Widget functions(String title, {GestureTapCallback? onTap, Widget? training}) {
+    if (training == null) {
+      training = Image.asset(Images.ic_right_arrow, width: $(28));
+    }
+    return Row(
+      children: [
+        Expanded(
+          child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, $(15)).intoContainer(alignment: Alignment.centerLeft),
+        ),
+        training,
+      ],
+    )
+        .intoContainer(
+          color: ColorConstant.BackgroundColor,
+          padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(16)),
+        )
+        .intoGestureDetector(onTap: onTap);
   }
 }

@@ -1,7 +1,7 @@
-import 'dart:io';
+// import 'dart:io';
 
-import 'package:cartoonizer/config.dart';
-import 'package:kochava_tracker/kochava_tracker.dart';
+// import 'package:cartoonizer/config.dart';
+// import 'package:kochava_tracker/kochava_tracker.dart';
 
 class KoChaVa {
   factory KoChaVa() => _getInstance();
@@ -19,12 +19,12 @@ class KoChaVa {
   }
 
   init() {
-    if (Platform.isAndroid) {
-      KochavaTracker.instance.registerAndroidAppGuid(KOCHAVA_ANDROID_ID);
-    } else if (Platform.isIOS) {
-      KochavaTracker.instance.registerIosAppGuid(KOCHAVA_IOS_ID);
-    }
-    KochavaTracker.instance.setLogLevel(KochavaTrackerLogLevel.Error);
-    KochavaTracker.instance.start();
+    // if (Platform.isAndroid) {
+    //   KochavaTracker.instance.registerAndroidAppGuid(KOCHAVA_ANDROID_ID);
+    // } else if (Platform.isIOS) {
+    //   KochavaTracker.instance.registerIosAppGuid(KOCHAVA_IOS_ID);
+    // }
+    // KochavaTracker.instance.setLogLevel(KochavaTrackerLogLevel.Error);
+    // KochavaTracker.instance.start();
   }
 }

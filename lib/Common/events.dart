@@ -4,8 +4,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -74,7 +72,7 @@ class Events {
 
   static Future<void> payShow({required String source}) => logEvent('subscribe_loading', eventValues: {'source': source});
 
-  static Future<void> paySuccess({required String source}) => logEvent('subscribe_loading', eventValues: {'source': source});
+  static Future<void> paySuccess({required String source}) => logEvent('subscribe_success', eventValues: {'source': source});
 
   static Future<void> noticeLoading() => logEvent('notice_loading');
 
@@ -206,7 +204,7 @@ Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) asy
 }
 
 logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) {
-  KochavaTracker.instance.sendEventWithDictionary(eventName, eventValues ?? {});
+  // KochavaTracker.instance.sendEventWithDictionary(eventName, eventValues ?? {});
 }
 
 logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {

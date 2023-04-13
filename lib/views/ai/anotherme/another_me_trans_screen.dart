@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -18,14 +19,20 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/account_limit_type.dart';
+import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
+import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter/session_state.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'anotherme.dart';
@@ -93,100 +100,84 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     });
   }
 
-  showLimitDialog(BuildContext context, String title, String content) {
+  showLimitDialog(BuildContext context, AccountLimitType type) {
     showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: $(27)),
-                Image.asset(
-                  Images.ic_warning,
-                  width: $(32),
-                  color: Color(0xFFFD4245),
-                ).intoContainer(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFFD4245), width: 1),
-                      borderRadius: BorderRadius.circular($(48)),
-                    )),
-                SizedBox(height: $(20)),
-                TitleTextWidget(
-                  title,
-                  Color(0xFFFD4245),
-                  FontWeight.w500,
-                  $(17),
-                  maxLines: 100,
-                  align: TextAlign.center,
-                ).intoContainer(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(horizontal: $(30)),
-                  alignment: Alignment.center,
-                ),
-                SizedBox(height: $(8)),
-                TitleTextWidget(
-                  content,
-                  ColorConstant.White,
-                  FontWeight.w500,
-                  $(13),
-                  maxLines: 100,
-                  align: TextAlign.center,
-                ).intoContainer(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.only(
-                    bottom: $(40),
-                    left: $(30),
-                    right: $(30),
-                  ),
-                  alignment: Alignment.center,
-                ),
-                Container(height: 1, color: ColorConstant.LineColor),
-                Row(
-                  children: [
-                    isVip()
-                        ? SizedBox.shrink()
-                        : Expanded(
-                            child: Text(
-                              S.of(context).upgrade,
-                              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
-                            )
-                                .intoContainer(
-                              width: double.maxFinite,
-                              color: Colors.transparent,
-                              padding: EdgeInsets.only(top: $(10), bottom: $(12)),
-                              alignment: Alignment.center,
-                            )
-                                .intoGestureDetector(onTap: () {
-                              Navigator.pop(_, true);
-                            }),
-                          ),
-                    isVip() ? SizedBox.shrink() : Container(height: $(48), color: ColorConstant.LineColor, width: 1),
-                    Expanded(
-                      child: Text(
-                        S.of(context).ok1,
-                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.DiscoveryBtn, fontSize: $(17)),
-                      )
-                          .intoContainer(
-                        width: double.maxFinite,
-                        color: Colors.transparent,
-                        padding: EdgeInsets.only(top: $(10), bottom: $(12)),
-                        alignment: Alignment.center,
-                      )
-                          .intoGestureDetector(onTap: () {
-                        Navigator.pop(_, false);
-                      }),
-                    ),
-                  ],
-                ),
-              ],
-            ).customDialogStyle()).then((value) {
-      if (value ?? false) {
-        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
-          PaymentUtils.pay(context, 'metaverse_result_page');
-        }, autoExec: true);
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: $(27)),
+            Image.asset(
+              Images.ic_limit_icon,
+            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
+            SizedBox(height: $(16)),
+            TitleTextWidget(
+              type.getContent(context, 'AI Artist'),
+              ColorConstant.White,
+              FontWeight.w500,
+              $(13),
+              maxLines: 100,
+              align: TextAlign.center,
+            ).intoContainer(
+              width: double.maxFinite,
+              padding: EdgeInsets.only(
+                bottom: $(30),
+                left: $(30),
+                right: $(30),
+              ),
+              alignment: Alignment.center,
+            ),
+            Text(
+              type.getSubmitText(context),
+              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+            )
+                .intoContainer(
+              width: double.maxFinite,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)),color: ColorConstant.DiscoveryBtn),
+              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+              alignment: Alignment.center,
+            )
+                .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop(false);
+            }),
+            type.getPositiveText(context) != null
+                ? Text(
+              type.getPositiveText(context)!,
+              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+            )
+                .intoContainer(
+              width: double.maxFinite,
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)),color: Color(0xff292929)),
+              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+              margin: EdgeInsets.only(top: $(16), bottom: $(24)),
+              alignment: Alignment.center,
+            )
+                .intoGestureDetector(onTap: () {
+              Navigator.pop(_, true);
+            })
+                : SizedBox.shrink(),
+          ],
+        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
+      if (value == null) {
+      } else if (value) {
+        switch (type) {
+          case AccountLimitType.guest:
+            userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', toSignUp: true);
+            break;
+          case AccountLimitType.normal:
+            userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
+              PaymentUtils.pay(context, 'metaverse_result_page');
+            }, autoExec: true);
+            break;
+          case AccountLimitType.vip:
+            break;
+        }
       } else {
-        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit');
+        Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+        EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
+        delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
+        // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
       }
     });
   }
@@ -215,8 +206,8 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         });
       } else {
         controller.onError();
-        if (value.errorTitle != null && value.errorContent != null) {
-          showLimitDialog(context, value.errorTitle!, value.errorContent!);
+        if (value.error != null) {
+          showLimitDialog(context, value.error!);
         } else {
           Navigator.of(context).pop();
         }
@@ -235,7 +226,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 transResult = image;
                 simulateProgressBarController.loadComplete();
               } else {
-                simulateProgressBarController.onError(errorTitle: value.msgTitle, errorContent: value.msgContent);
+                simulateProgressBarController.onError(error: value.type);
               }
             } else {
               simulateProgressBarController.onError();
@@ -392,11 +383,13 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         showSaveDialog(context, true).then((value) async {
                           if (value != null) {
                             if (value) {
-                              showDialog(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
-                                  .then((value) async {
+                              showDialog<String>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
                                 if (!TextUtil.isEmpty(value)) {
                                   await showLoading();
-                                  await GallerySaver.saveVideo(value!.toString(), true, toDcim: true, albumName: saveAlbumName);
+                                  await GallerySaver.saveVideo(value!, true, toDcim: true, albumName: saveAlbumName);
                                   await hideLoading();
                                   Events.metaverseCompleteDownload(type: 'video');
                                   CommonExtension().showVideoSavedOkToast(context);
@@ -454,8 +447,10 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {
-                              showDialog(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
-                                  .then((value) async {
+                              showDialog<String>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
                                 if (!TextUtil.isEmpty(value)) {
                                   await showLoading();
                                   if (TextUtil.isEmpty(value)) {
@@ -467,12 +462,27 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                   ShareScreen.startShare(context,
                                       backgroundColor: Color(0x77000000),
                                       style: 'Me-taverse',
-                                      image: value,
+                                      image: value!,
                                       isVideo: true,
                                       originalUrl: null,
-                                      effectKey: 'Me-taverse', onShareSuccess: (platform) {
-                                    Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
-                                  });
+                                      preShareVideo: (platform, filePath) async {
+                                        if (Platform.isIOS) {
+                                          var newFile = filePath + '.ins.mp4';
+                                          if (File(newFile).existsSync()) {
+                                            return newFile;
+                                          }
+                                          var command = FFmpegUtil.commandVideoToInstagram(originFile: filePath, targetFile: newFile);
+                                          var session = await FFmpegKit.execute(command);
+                                          FFmpegKit.cancel(session.getSessionId());
+                                          return newFile;
+                                        } else {
+                                          return filePath;
+                                        }
+                                      },
+                                      effectKey: 'Me-taverse',
+                                      onShareSuccess: (platform) {
+                                        Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
+                                      });
                                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                                 }
                               });

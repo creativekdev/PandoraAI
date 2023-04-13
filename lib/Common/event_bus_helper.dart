@@ -113,6 +113,7 @@ class OnDeleteDiscoveryEvent extends BaseEvent<int> {
 class OnSplashAdLoadingChangeEvent extends BaseEvent {}
 
 /// switch home_screen tab
+@Deprecated('可以直接弹出详情，不用通知')
 class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
   OnEffectPushClickEvent({required PushExtraEntity data}) : super(data: data);
 }
@@ -135,4 +136,8 @@ class OnPoseStateChangeEvent extends BaseEvent<PoseState> {
   OnPoseStateChangeEvent({required PoseState pose}) : super(data: pose);
 }
 
-class OnAiGroundStyleUpdateEvent extends BaseEvent {}
+class OnTxt2imgStyleUpdateEvent extends BaseEvent {}
+
+class OnNewInvitationCodeReceiveEvent extends BaseEvent<String> {
+  OnNewInvitationCodeReceiveEvent({required String code}) : super(data: code);
+}

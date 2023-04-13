@@ -45,7 +45,7 @@ class _GradientPainter extends CustomPainter {
 
     // create inner rectangle smaller by strokeWidth
     Rect innerRect = Rect.fromLTWH(strokeWidth, strokeWidth, size.width - strokeWidth * 2, size.height - strokeWidth * 2);
-    var innerRRect = RRect.fromRectAndRadius(innerRect, Radius.circular(radius - strokeWidth));
+    var innerRRect = RRect.fromRectAndRadius(innerRect, Radius.circular((radius - strokeWidth).abs()));
 
     // apply gradient shader
     _paint.shader = gradient.createShader(outerRect);

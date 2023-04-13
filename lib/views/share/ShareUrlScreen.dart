@@ -153,34 +153,28 @@ class _ShareScreenState extends State<ShareUrlScreen> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            SizedBox(width: cancelSize?.width ?? 50),
-            Expanded(child: TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
-            TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(15))
-                .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)))
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
-            }).listenSizeChanged(onSizeChanged: (size) {
-              setState(() => cancelSize = size);
-            })
-          ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8))),
-        Container(
-          height: 0.5,
-          color: ColorConstant.EffectGrey,
-          margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)),
-        ),
+        TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.start).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: typeList.map((e) => _FunctionCard(type: e, onTap: () => onShareClick(e))).toList(),
           ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(30), horizontal: $(6))),
         ),
+        Divider(height: 1, color: ColorConstant.LineColor),
+        TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(15))
+            .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(15)))
+            .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop();
+            })
+            .intoContainer(width: double.maxFinite, alignment: Alignment.center)
+            .listenSizeChanged(onSizeChanged: (size) {
+              setState(() => cancelSize = size);
+            })
       ],
     ).intoContainer(
-        padding: EdgeInsets.symmetric(vertical: $(15)),
+        padding: EdgeInsets.only(top: $(15), bottom: ScreenUtil.getBottomPadding(context) + $(10)),
         decoration: BoxDecoration(
             color: ColorConstant.EffectFunctionGrey,
             borderRadius: BorderRadius.only(

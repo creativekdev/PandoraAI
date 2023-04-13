@@ -15,16 +15,13 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
-import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -174,7 +171,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                   height: $(150),
                                 ),
                           ),
-                          borderRadius: BorderRadius.circular($(8)),
+                          borderRadius: BorderRadius.circular($(20)),
                         ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                       ],
                     ).intoGestureDetector(onTap: () {
@@ -201,7 +198,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                           Avatar.openFromHome(context);
                           break;
                         case HomeCardType.text2image:
-                          AiGround.open(context, source: 'home_page');
+                          Txt2img.open(context, source: 'home_page');
                           break;
                         case HomeCardType.UNDEFINED:
                           break;
@@ -272,13 +269,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                     ),
                   )).intoContainer(padding: EdgeInsets.all(4)).intoGestureDetector(onTap: () {
                 userManager.doOnLogin(context, logPreLoginAction: 'msg_list_click', callback: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/MsgListScreen"),
-                      builder: (context) => MsgListScreen(),
-                    ),
-                  );
+                  MsgListScreen.push(context);
                 }, autoExec: true);
               }),
             ),

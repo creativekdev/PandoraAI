@@ -41,6 +41,7 @@ extension AppFeatureEntityEx on AppFeatureEntity {
 class AppFeaturePayload {
   String? image;
   String? target;
+  String? data;
 
   AppFeaturePayload();
 

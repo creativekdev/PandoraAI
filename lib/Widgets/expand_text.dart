@@ -118,7 +118,7 @@ class _ExpandableTextState extends State<ExpandableText> with SingleTickerProvid
       textScaleFactor: widget.textScaleFactor ?? 1.0,
     )..layout(maxWidth: double.infinity))
         .width;
-    if (oneLineWidth > width) {
+    if (oneLineWidth > width * minLines) {
       var d = width * 1.8 / oneLineWidth;
       var e = (text.length * d).toInt();
       collapseText = text.substring(0, e);

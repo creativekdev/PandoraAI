@@ -9,7 +9,6 @@ import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/models/enums/effect_tag.dart';
 import 'package:common_utils/common_utils.dart';
 
 // dev
@@ -236,6 +235,28 @@ class EffectDataController extends GetxController {
     lastRandomTime = DateTime.now().millisecondsSinceEpoch;
     cacheManager.setInt(CacheManager.effectLastRandomTime, lastRandomTime);
   }
+
+  InitPos findItemPos(String tab, String category, String? effect) {
+    EffectDataController controller = Get.find();
+    List<EffectModel> allEffectList = controller.data?.allEffectList() ?? [];
+    EffectModel? model = allEffectList.pick((t) => t.key == category);
+    if (model == null) {
+      return InitPos();
+    }
+    int tabPos = controller.tabList.findPosition((data) => data.key == tab)!;
+    var categoryPos = controller.tabTitleList.findPosition((data) => data.categoryKey == category)!;
+    int itemPos;
+    if (TextUtil.isEmpty(effect)) {
+      EffectItem item = model.effects.values.toList()[model.getDefaultPos()];
+      itemPos = controller.tabItemList.findPosition((data) => data.data.key == item.key)!;
+    } else {
+      itemPos = controller.tabItemList.findPosition((data) => data.data.key == effect)!;
+    }
+    return InitPos()
+      ..tabPos = tabPos
+      ..categoryPos = categoryPos
+      ..itemPos = itemPos;
+  }
 }
 
 class HomeTabConfig {
@@ -250,4 +271,10 @@ class HomeTabConfig {
     required this.title,
     required this.tabString,
   });
+}
+
+class InitPos {
+  int tabPos = 0;
+  int categoryPos = 0;
+  int itemPos = 0;
 }

@@ -18,12 +18,10 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -31,7 +29,6 @@ import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart'
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 import 'discovery_attr_holder.dart';
@@ -179,8 +176,6 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                             openImage(context, index);
                           }
                         }))
-                    .toList()
-                    .reversed
                     .toList(),
                 alignment: WrapAlignment.start,
               ).intoContainer(
@@ -270,17 +265,17 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             try {
               payload = json.decode(data.payload ?? '');
             } catch (e) {}
-            AiGroundInitData? initData;
+            Txt2imgInitData? initData;
             if (payload != null && payload['txt2img_params'] != null) {
               var params = payload['txt2img_params'];
               int width = params['width'] ?? 512;
               int height = params['height'] ?? 512;
-              initData = AiGroundInitData()
+              initData = Txt2imgInitData()
                 ..prompt = params['prompt']
                 ..width = width
                 ..height = height;
             }
-            AiGround.open(context, source: source + '-try-template', initData: initData);
+            Txt2img.open(context, source: source + '-try-template', initData: initData);
           }
         }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(32))),
       ],
@@ -389,8 +384,6 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
           (t) => t.type == DiscoveryResourceType.image.value(),
         )
         .map((e) => e.url ?? '')
-        .toList()
-        .reversed
         .toList();
     Navigator.push(
       context,

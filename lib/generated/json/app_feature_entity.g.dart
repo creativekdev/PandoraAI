@@ -63,6 +63,10 @@ AppFeaturePayload $AppFeaturePayloadFromJson(Map<String, dynamic> json) {
 	if (target != null) {
 		appFeaturePayload.target = target;
 	}
+	final String? data = jsonConvert.convert<String>(json['data']);
+	if (data != null) {
+		appFeaturePayload.data = data;
+	}
 	return appFeaturePayload;
 }
 
@@ -70,5 +74,6 @@ Map<String, dynamic> $AppFeaturePayloadToJson(AppFeaturePayload entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['image'] = entity.image;
 	data['target'] = entity.target;
+	data['data'] = entity.data;
 	return data;
 }

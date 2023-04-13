@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:http/http.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
@@ -105,19 +106,19 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
       case "MasterCard":
         config = {
           "backgroundColor": [Color.fromRGBO(247, 158, 27, 1), Color.fromRGBO(235, 0, 27, 1)],
-          "icon": "assets/images/mastercard.png",
+          "icon": Images.mastercard,
         };
         break;
       case "American Express":
         config = {
           "backgroundColor": [Color.fromRGBO(50, 197, 255, 1), Color.fromRGBO(39, 120, 255, 1)],
-          "icon": "assets/images/american_express.png",
+          "icon": Images.american_express,
         };
         break;
       case "Discover":
         config = {
           "backgroundColor": [Color.fromRGBO(245, 144, 20, 1), Color.fromRGBO(255, 96, 0, 1)],
-          "icon": "assets/images/discover.png",
+          "icon": Images.discover,
         };
         break;
       default:
@@ -278,7 +279,7 @@ class _StripePaymentScreenState extends State<StripePaymentScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
-                      ImagesConstant.ic_add,
+                      Images.ic_add,
                       width: 38,
                       height: 38,
                       fit: BoxFit.contain,

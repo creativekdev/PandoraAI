@@ -2,6 +2,8 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'dart:math' as math;
 
+import 'package:cartoonizer/models/enums/account_limit_type.dart';
+
 class SimulateProgressBarConfig {
   late SimulateProgressBarConfigItem upload;
   late SimulateProgressBarConfigItem processing;
@@ -30,10 +32,10 @@ class SimulateProgressBarConfig {
       ..complete = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.05, text: S.of(context).trans_success);
   }
 
-  factory SimulateProgressBarConfig.aiGround(BuildContext context) {
+  factory SimulateProgressBarConfig.txt2img(BuildContext context) {
     return SimulateProgressBarConfig()
       ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0, text: S.of(context).trans_uploading)
-      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 3), rate: 0.95, text: S.of(context).trans_painting)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 2), rate: 0.95, text: S.of(context).trans_painting)
       ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05, text: S.of(context).trans_success);
   }
 }
@@ -51,14 +53,14 @@ class SimulateProgressBarConfigItem {
 }
 
 class SimulateProgressBar {
-  static Future<SimulateProgressResult?> startLoading(
+  static Future<SimulateProgressResult<AccountLimitType>?> startLoading(
     BuildContext context, {
     required bool needUploadProgress,
     required SimulateProgressBarController controller,
     Function(double progress)? onUpdate,
     required SimulateProgressBarConfig config,
   }) {
-    return showDialog<SimulateProgressResult>(
+    return showDialog<SimulateProgressResult<AccountLimitType>>(
       context: context,
       builder: (context) {
         return _SimulateProgressBar(
@@ -135,11 +137,10 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         animationController.forward();
       }
     };
-    controller._onErrorCall = (title, content) => Navigator.of(context).pop(
-          SimulateProgressResult()
+    controller._onErrorCall = (error) => Navigator.of(context).pop(
+          SimulateProgressResult<AccountLimitType>()
             ..result = false
-            ..errorTitle = title
-            ..errorContent = content,
+            ..error = error,
         );
     uploadAnimController = AnimationController(vsync: this, duration: config.upload.duration);
     uploadAnimController.addStatusListener((status) {
@@ -166,7 +167,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
     completeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         if (mounted) {
-          Navigator.of(context).pop(SimulateProgressResult()..result = true);
+          Navigator.of(context).pop(SimulateProgressResult<AccountLimitType>()..result = true);
         }
       }
     });
@@ -237,7 +238,11 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
                               ),
                               SizedBox(height: 4),
                               Text(
-                                needUploadProgress && !uploadAnimController.isCompleted ? S.of(context).trans_uploading : S.of(context).trans_painting,
+                                needUploadProgress && !uploadAnimController.isCompleted
+                                    ? config.upload.text
+                                    : !completeController.isCompleted
+                                        ? config.processing.text
+                                        : config.complete.text,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: $(13),
@@ -257,10 +262,9 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
   }
 }
 
-class SimulateProgressResult {
+class SimulateProgressResult<T> {
   bool result = false;
-  String? errorTitle;
-  String? errorContent;
+  T? error;
 
   SimulateProgressResult();
 }
@@ -268,7 +272,7 @@ class SimulateProgressResult {
 class SimulateProgressBarController {
   Function? _completeCall;
   Function? _uploadCompleteCall;
-  Function(String? errorTitle, String? errotContent)? _onErrorCall;
+  Function(dynamic error)? _onErrorCall;
 
   loadComplete() {
     _completeCall?.call();
@@ -278,9 +282,9 @@ class SimulateProgressBarController {
     _uploadCompleteCall?.call();
   }
 
-  onError({String? errorTitle, String? errorContent}) {
+  onError({dynamic error}) {
     delay(() {
-      _onErrorCall?.call(errorTitle, errorContent);
+      _onErrorCall?.call(error);
     }, milliseconds: 32);
   }
 }

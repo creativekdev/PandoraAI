@@ -62,7 +62,7 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         resources.length != 1
             ? Wrap(
                 spacing: $(1),
-                children: resources.map((e) => buildResourceItem(context, e, width: width)).toList().reversed.toList(),
+                children: resources.map((e) => buildResourceItem(context, e, width: width)).toList(),
                 alignment: WrapAlignment.start,
               ).intoContainer(
                 width: ScreenUtil.screenSize.width,
@@ -106,19 +106,16 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
             .hero(tag: Discovery.textTag(data.id)),
         Text(
           S.of(context).view_all_comment.replaceAll('%d', '${data.comments}'),
-          style: TextStyle(
-            color: ColorConstant.DiscoveryBtn,
-            fontSize: $(12),
-            fontFamily: 'Poppins',
-          ),
-        ).visibility(visible: data.comments >= 0).intoContainer(
-            alignment: Alignment.centerLeft,
-            width: double.maxFinite,
-            padding: EdgeInsets.only(
-              left: $(15),
-              right: $(15),
-              bottom: $(20),
-            )),
+          style: TextStyle(color: ColorConstant.DiscoveryBtn, fontSize: $(12), fontFamily: 'Poppins'),
+        )
+            .visibility(
+              visible: data.comments > 0,
+            )
+            .intoContainer(
+              alignment: Alignment.centerLeft,
+              width: double.maxFinite,
+              padding: EdgeInsets.only(left: $(15), right: $(15), bottom: $(20)),
+            ),
       ],
     ).intoGestureDetector(onTap: onTap);
   }

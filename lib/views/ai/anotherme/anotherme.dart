@@ -1,8 +1,6 @@
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
-import 'package:photo_manager/photo_manager.dart';
 
 class AnotherMe {
   static String logoBackTag = 'am_back_logo';

@@ -289,7 +289,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           : RichText(
               text: TextSpan(text: S.of(context).selected, style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)), children: [
               TextSpan(
-                text: '${(isYear ? year : month)?.price}',
+                text: '${(isYear ? year : month)?.price ?? ''}',
                 style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(23)),
               )
             ])).intoContainer(

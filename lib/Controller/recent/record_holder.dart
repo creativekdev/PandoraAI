@@ -88,12 +88,12 @@ class EffectRecordHolder extends RecordHolder<RecentEffectModel> {
   }
 }
 
-class AIGroundRecordHolder extends RecordHolder<RecentGroundEntity> {
+class Txt2imgRecordHolder extends RecordHolder<RecentGroundEntity> {
   @override
   Future<List<RecentGroundEntity>> loadFromCache() async {
     List<RecentGroundEntity> result = [];
     try {
-      var json = _cacheManager.getJson(CacheManager.keyRecentAiGround);
+      var json = _cacheManager.getJson(CacheManager.keyRecentTxt2img);
       result = (json as List<dynamic>).map((e) => RecentGroundEntity.fromJson(e)).toList();
       result = await result.filterSync((t) async {
         if (File(t.filePath ?? '').existsSync()) {
@@ -117,7 +117,7 @@ class AIGroundRecordHolder extends RecordHolder<RecentGroundEntity> {
   @override
   Future<bool> saveToCache(List<RecentGroundEntity> data) async {
     return await _cacheManager.setJson(
-      CacheManager.keyRecentAiGround,
+      CacheManager.keyRecentTxt2img,
       data.map((e) => e.toJson()).toList(),
     );
   }

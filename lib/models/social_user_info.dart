@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/models/user_ref_link_entity.dart';
+
 class SocialUserInfo {
   int id = 0;
   String email = "";
@@ -11,6 +13,8 @@ class SocialUserInfo {
   int aiAvatarCredit = 0;
   MemberInfo? member;
   bool isReferred = false;
+  List<UserRefLinkEntity> referLinks = [];
+  Map<String, dynamic> payload = {};
 
   Map<String, dynamic> userSubscription = {};
   List<dynamic> creditcards = [];
@@ -50,6 +54,17 @@ class SocialUserInfo {
     if (memberJson != null && memberJson is Map<String, dynamic>) {
       member = MemberInfo.fromJson(memberJson);
     }
+
+    if (json['refer_links'] != null) {
+      referLinks = (json['refer_links'] as List).map((e) => UserRefLinkEntity.fromJson(e)).toList();
+    }
+
+    if (json['payload'] != null) {
+      String string = json['payload'];
+      try {
+        payload = jsonDecode(string);
+      } on FormatException catch (e) {}
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -64,6 +79,8 @@ class SocialUserInfo {
       'creditcards': creditcards,
       'ai_avatar_credit': aiAvatarCredit,
       'is_referred': isReferred,
+      'refer_links': referLinks.map((e) => e.toJson()).toList(),
+      'payload': jsonEncode(payload),
     };
     if (userSubscription.keys.isEmpty) {
       map['user_subscription'] = [];

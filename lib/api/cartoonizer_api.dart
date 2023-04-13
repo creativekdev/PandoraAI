@@ -19,19 +19,23 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
+import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
+import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class CartoonizerApi extends BaseRequester {
+  CacheManager cacheManager = AppDelegate().getManager();
+  UserManager userManager = AppDelegate().getManager();
+
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
-    var userManager = AppDelegate.instance.getManager<UserManager>();
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
     return ApiOptions(baseUrl: Config.instance.apiHost, headers: headers);
@@ -119,9 +123,20 @@ class CartoonizerApi extends BaseRequester {
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
-  Future<DiscoveryListEntity?> getDiscoveryDetail(int id) async {
-    var baseEntity = await get('/social_post/get/$id');
-    return jsonConvert.convert(baseEntity?.data['data']);
+  Future<DiscoveryListEntity?> getDiscoveryDetail(int id, {bool useCache = false, bool toast = true}) async {
+    if (useCache) {
+      var json = cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
+      if (json != null) {
+        return jsonConvert.convert<DiscoveryListEntity>(json);
+      }
+    }
+    var baseEntity = await get('/social_post/get/$id', toastOnFailed: toast);
+    if (baseEntity == null) {
+      return null;
+    }
+    var data = baseEntity.data['data'];
+    cacheManager.setJson(CacheManager.cacheDiscoveryListEntity + '$id', data);
+    return jsonConvert.convert<DiscoveryListEntity>(data);
   }
 
   /// share effect to discovery
@@ -296,20 +311,59 @@ class CartoonizerApi extends BaseRequester {
   Future<MsgPageEntity?> listMsg({
     required int from,
     required int size,
+    String? action,
+    bool toast = true,
   }) async {
-    var baseEntity = await get('/notification/all', params: {
+    var params = <String, dynamic>{
       'from': from,
       'size': size,
-    });
+    };
+    if (action != null) {
+      params['action'] = action;
+    }
+    var baseEntity = await get('/notification/all', params: params, toastOnFailed: toast);
     return jsonConvert.convert<MsgPageEntity>(baseEntity?.data['data']);
+  }
+
+  Future<PageEntity?> listAllCommentEvent({
+    required int from,
+    required int size,
+  }) async {
+    var params = <String, dynamic>{
+      'from': from,
+      'size': size,
+    };
+    var baseEntity = await get('/social_post_comment/all_for_author', params: params);
+    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
+  }
+
+  Future<PageEntity?> listAllLikeEvent({
+    required int from,
+    required int size,
+  }) async {
+    var params = <String, dynamic>{
+      'from': from,
+      'size': size,
+    };
+    var baseEntity = await get('/social_post_like/all_for_author', params: params);
+    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
+  }
+
+  Future<List<MsgCountEntity>?> getAllUnreadCount() async {
+    var baseEntity = await get('/notification/action_count');
+    return jsonConvert.convertListNotNull<MsgCountEntity>(baseEntity?.data['data']);
   }
 
   Future<BaseEntity?> readMsg(int id) async {
     return post('/notification/mark_read/$id');
   }
 
-  Future<BaseEntity?> readAllMsg() async {
-    return post('/notification/mark_all_read');
+  Future<BaseEntity?> readAllMsg(List<String>? actions) async {
+    var params = <String, dynamic>{};
+    if (actions != null) {
+      params['actions'] = actions;
+    }
+    return post('/notification/mark_all_read', params: params);
   }
 
   Future<BaseEntity?> feedback(String feedback) async {
@@ -423,12 +477,24 @@ class CartoonizerApi extends BaseRequester {
     if (baseEntity != null) {
       var result = baseEntity.data['data'] as Map;
       int availableBuild = result['available_build'] ?? 0;
-      if (availableBuild > int.parse(packageInfo.buildNumber)) {
+      int latestBuild = result['latest_build'] ?? 0;
+      if (availableBuild > latestBuild) {
+        availableBuild = latestBuild;
+      }
+      var currentBuild = int.parse(packageInfo.buildNumber);
+      if (latestBuild > currentBuild) {
         result["need_update"] = true;
+      } else {
+        result['need_update'] = false;
+      }
+      if (availableBuild > currentBuild) {
+        result["force"] = true;
+      } else {
+        result["force"] = false;
       }
       return result;
     } else {
-      return {"need_update": false};
+      return {"need_update": false, 'force': false};
     }
   }
 
@@ -448,5 +514,12 @@ class CartoonizerApi extends BaseRequester {
       'rf_product': APP_NAME,
     });
     return baseEntity?.data['data'];
+  }
+
+  Future<UserRefLinkEntity?> createRefCode(String refCode) async {
+    var baseEntity = await post('/refer_link/create', params: {
+      'code': refCode,
+    });
+    return jsonConvert.convert<UserRefLinkEntity>(baseEntity?.data['data']);
   }
 }

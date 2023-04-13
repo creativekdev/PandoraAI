@@ -5,9 +5,8 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/ai_ground_result_entity.dart';
-import 'package:cartoonizer/models/ai_ground_style_entity.dart';
-import 'package:cartoonizer/models/generate_limit_entity.dart';
+import 'package:cartoonizer/models/txt2img_result_entity.dart';
+import 'package:cartoonizer/models/txt2img_style_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -29,7 +28,7 @@ class Text2ImageApi extends BaseRequester {
     return baseEntity?.data['data'];
   }
 
-  Future<AiGroundResultEntity?> text2image({
+  Future<Txt2imgResultEntity?> text2image({
     required String prompt,
     required String directoryPath,
     String? initImage,
@@ -51,7 +50,7 @@ class Text2ImageApi extends BaseRequester {
       api = '/sdapi/v1/img2img';
     }
     var baseEntity = await post(api, params: params);
-    AiGroundResultEntity? result = jsonConvert.convert<AiGroundResultEntity>(baseEntity?.data);
+    Txt2imgResultEntity? result = jsonConvert.convert<Txt2imgResultEntity>(baseEntity?.data);
     if (result == null) {
       return null;
     }
@@ -68,10 +67,10 @@ class Text2ImageApi extends BaseRequester {
     return result;
   }
 
-  Future<List<AiGroundStyleEntity>?> artists() async {
-    var json = cacheManager.getJson(CacheManager.aiGroundStyles);
+  Future<List<Txt2imgStyleEntity>?> artists() async {
+    var json = cacheManager.getJson(CacheManager.txt2imgStyles);
     if (json != null) {
-      var list = jsonConvert.convertListNotNull<AiGroundStyleEntity>(json);
+      var list = jsonConvert.convertListNotNull<Txt2imgStyleEntity>(json);
       if (list == null) {
         return null;
       }
@@ -84,13 +83,13 @@ class Text2ImageApi extends BaseRequester {
     return await _getFromNet();
   }
 
-  Future<List<AiGroundStyleEntity>?> _getFromNet() async {
+  Future<List<Txt2imgStyleEntity>?> _getFromNet() async {
     var baseEntity = await get('/sdapi/v1/artists');
     if (baseEntity == null) {
       return null;
     }
-    cacheManager.setJson(CacheManager.aiGroundStyles, baseEntity.data);
-    var list = jsonConvert.convertListNotNull<AiGroundStyleEntity>(baseEntity.data);
+    cacheManager.setJson(CacheManager.txt2imgStyles, baseEntity.data);
+    var list = jsonConvert.convertListNotNull<Txt2imgStyleEntity>(baseEntity.data);
     if (list == null) {
       return null;
     }

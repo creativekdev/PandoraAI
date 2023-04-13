@@ -140,7 +140,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e);
+      onDioError(e, toastOnFailed: toastOnFailed);
       onFailed?.call(e.response!);
       return null;
     }
@@ -175,7 +175,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e);
+      onDioError(e, toastOnFailed: toastOnFailed);
       onFailed?.call(e.response!);
       return null;
     }
@@ -207,7 +207,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e);
+      onDioError(e, toastOnFailed: toastOnFailed);
       onFailed?.call(e.response!);
       return null;
     }
@@ -229,7 +229,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       Response response = await _client.delete(path, data: data, queryParameters: params);
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e);
+      onDioError(e, toastOnFailed: toastOnFailed);
       onFailed?.call(e.response!);
       return null;
     }

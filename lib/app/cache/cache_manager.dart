@@ -5,7 +5,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/app_feature_operator.dart';
 import 'package:cartoonizer/app/cache/photo_source_operator.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +13,7 @@ import 'image_scale_operator.dart';
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
   static const keyRecentEffects = "recent_effect_file";
-  static const keyRecentAiGround = "recent_ai_ground_file";
+  static const keyRecentTxt2img = "recent_ai_ground_file";
   static const keyRecentMetaverse = "recent_metaverse_file";
   static const keyLastVideoAdsShowTime = "LAST_ADS_SHOW_TIME";
   static const keyLoginCookie = "login_cookie";
@@ -42,10 +41,12 @@ class CacheManager extends BaseManager {
   static const preLoginAction = 'pre_login_action';
   static const preSignupAction = 'pre_signup_action';
   static const prePaymentAction = 'pre_payment_action';
-  static const aiGroundStyles = 'ai_ground_styles';
+  static const txt2imgStyles = 'ai_ground_styles';
   static const lastFeedback = 'last_feed_back';
   static const lastAppFeature = 'last_app_feature';
   static const lastShownFeatureSign = 'last_shown_feature_sign';
+  static const cacheDiscoveryListEntity = 'discovery_list_entity';
+  static const lastRefLink = 'last_ref_link';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

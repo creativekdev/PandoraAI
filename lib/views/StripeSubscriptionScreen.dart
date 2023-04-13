@@ -159,7 +159,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           : RichText(
               text: TextSpan(text: S.of(context).selected, style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(17)), children: [
               TextSpan(
-                text: '\$${isYear ? yearly['price'] : monthly['price']}',
+                text: '\$${(isYear ? yearly['price'] : monthly['price']) ?? ''}',
                 style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins', fontSize: $(23)),
               )
             ])).intoContainer(

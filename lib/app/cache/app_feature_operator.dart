@@ -1,11 +1,12 @@
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -35,45 +36,83 @@ class AppFeatureOperator {
     }
   }
 
-  Future<void> judgeAndOpenFeaturePage(BuildContext context) async {
+  Future<bool> judgeAndOpenFeaturePage(BuildContext context) async {
     var feature = _appFeature;
     if (feature == null) {
-      return;
+      return false;
     }
     var oldSign = cacheManager.getString(CacheManager.lastShownFeatureSign);
     var newSign = EncryptUtil.encodeMd5(feature.toString());
     if (oldSign == newSign) {
-      return;
+      return false;
     }
-    Navigator.of(context)
-        .push<bool>(Bottom2TopRouter(
-            child: AppFeaturePage(
+    var result = await Navigator.of(context).push<bool>(Bottom2TopRouter(
+        child: AppFeaturePage(
       entity: feature,
-    )))
-        .then((value) {
-      cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
-      if (value ?? false) {
-        onFeatureTap(context, feature.feature()?.target);
-      }
-    });
+    )));
+    cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
+
+    if (result ?? false) {
+      onFeatureTap(context, feature.feature());
+      return true;
+    }
+    return false;
   }
 
-  onFeatureTap(BuildContext context, String? target) {
-    switch (target?.toLowerCase()) {
-      case 'txt2img':
-        AiGround.open(context, source: 'in_app_messaging');
+  onFeatureTap(BuildContext context, AppFeaturePayload? payload) {
+    var target = _FeatureUtils.build(payload?.target ?? '');
+    switch (target) {
+      case FeatureType.txt2img:
+        Txt2img.open(context, source: 'in_app_messaging');
         break;
-      case 'anotherme':
+      case FeatureType.anotherme:
         AnotherMe.open(context, source: 'in_app_messaging');
         break;
-      case 'facetoon':
-        Cartoonize.open(context, source: 'in_app_messaging');
+      case FeatureType.cartoonize:
+        var split = payload!.data?.split(',');
+        InitPos pos = InitPos();
+        if (split != null && split.length >= 2) {
+          var controller = Get.find<EffectDataController>();
+          pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
+        }
+        Cartoonize.open(
+          context,
+          source: 'in_app_messaging',
+          tabPos: pos.itemPos,
+          categoryPos: pos.categoryPos,
+          itemPos: pos.itemPos,
+        );
         break;
-      case 'pandora-avatar':
+      case FeatureType.ai_avatar:
         Avatar.open(context, source: 'in_app_messaging');
         break;
       default:
         break;
+    }
+  }
+}
+
+enum FeatureType {
+  txt2img,
+  anotherme,
+  cartoonize,
+  ai_avatar,
+  UNDEFINED,
+}
+
+class _FeatureUtils {
+  static FeatureType build(String type) {
+    switch (type.toLowerCase()) {
+      case 'txt2img':
+        return FeatureType.txt2img;
+      case 'anotherme':
+        return FeatureType.anotherme;
+      case 'cartoonize':
+        return FeatureType.cartoonize;
+      case 'ai_avatar':
+        return FeatureType.ai_avatar;
+      default:
+        return FeatureType.UNDEFINED;
     }
   }
 }
@@ -93,12 +132,14 @@ class AppFeaturePage extends StatefulWidget {
 class _AppFeaturePageState extends State<AppFeaturePage> {
   late AppFeatureEntity entity;
   AppFeaturePayload? feature;
+  late FeatureType type;
 
   @override
   void initState() {
     super.initState();
     entity = widget.entity;
     feature = entity.feature();
+    type = _FeatureUtils.build(feature?.target ?? '');
   }
 
   @override
@@ -128,7 +169,7 @@ class _AppFeaturePageState extends State<AppFeaturePage> {
         ),
         Positioned(
           child: Text(
-            S.of(context).try_it_now,
+            type == FeatureType.UNDEFINED ? S.of(context).ok : S.of(context).try_it_now,
             style: TextStyle(
               color: ColorConstant.White,
               fontSize: $(18),

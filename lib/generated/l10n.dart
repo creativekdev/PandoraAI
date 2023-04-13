@@ -990,6 +990,16 @@ class S {
     );
   }
 
+  /// `A required update is available, update to explore new features!`
+  String get new_update_dialog_content_cancellable {
+    return Intl.message(
+      'A required update is available, update to explore new features!',
+      name: 'new_update_dialog_content_cancellable',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `New Update Required`
   String get new_update_dialog_title {
     return Intl.message(
@@ -2280,20 +2290,20 @@ class S {
     );
   }
 
-  /// `Your have shared \nsuccessfully`
+  /// `You have successfully shared this post.`
   String get your_post_has_been_submitted_successfully {
     return Intl.message(
-      'Your have shared \nsuccessfully',
+      'You have successfully shared this post.',
       name: 'your_post_has_been_submitted_successfully',
       desc: '',
       args: [],
     );
   }
 
-  /// `Check`
+  /// `Check it out`
   String get see_it_now {
     return Intl.message(
-      'Check',
+      'Check it out',
       name: 'see_it_now',
       desc: '',
       args: [],
@@ -2720,10 +2730,10 @@ class S {
     );
   }
 
-  /// `Please waiting, your photos will be generated in about %d minutes. We'll send you an email with a link to your AI avatars when it's done!`
+  /// `Your Pandora Avatars will be generated in about %d minutes. Please explore our other features while waiting!`
   String get pandora_waiting_desc {
     return Intl.message(
-      'Please waiting, your photos will be generated in about %d minutes. We\'ll send you an email with a link to your AI avatars when it\'s done!',
+      'Your Pandora Avatars will be generated in about %d minutes. Please explore our other features while waiting!',
       name: 'pandora_waiting_desc',
       desc: '',
       args: [],
@@ -3140,31 +3150,51 @@ class S {
     );
   }
 
-  /// `You've reached your %s limit today. `
+  /// `You've reached your %s limit today`
   String get generate_reached_limit_title {
     return Intl.message(
-      'You\'ve reached your %s limit today. ',
+      'You\'ve reached your %s limit today',
       name: 'generate_reached_limit_title',
       desc: '',
       args: [],
     );
   }
 
-  /// `Come back tomorrow or upgrade to PRO to get more %s quota`
+  /// `You've reached your $s daily limit! Upgrade your account now for extended access or return tomorrow. Feel free to explore our other exciting features in the meantime.`
   String get generate_reached_limit {
     return Intl.message(
-      'Come back tomorrow or upgrade to PRO to get more %s quota',
+      'You\'ve reached your \$s daily limit! Upgrade your account now for extended access or return tomorrow. Feel free to explore our other exciting features in the meantime.',
       name: 'generate_reached_limit',
       desc: '',
       args: [],
     );
   }
 
-  /// `Come back tomorrow`
+  /// `You've reached your %s daily limit! Sign up now for extended access.`
+  String get generate_reached_limit_guest {
+    return Intl.message(
+      'You\'ve reached your %s daily limit! Sign up now for extended access.',
+      name: 'generate_reached_limit_guest',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Come back tomorrow or try other functions.`
   String get generate_reached_limit_vip {
     return Intl.message(
-      'Come back tomorrow',
+      'Come back tomorrow or try other functions.',
       name: 'generate_reached_limit_vip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite more friends to download the app to unlock your daily limit or upgrade`
+  String get reached_limit_content {
+    return Intl.message(
+      'Invite more friends to download the app to unlock your daily limit or upgrade',
+      name: 'reached_limit_content',
       desc: '',
       args: [],
     );
@@ -3465,6 +3495,206 @@ class S {
     return Intl.message(
       'Collapse',
       name: 'collapse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Upgrade Now`
+  String get upgrade_now {
+    return Intl.message(
+      'Upgrade Now',
+      name: 'upgrade_now',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Explore More`
+  String get explore_more {
+    return Intl.message(
+      'Explore More',
+      name: 'explore_more',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign Up Now`
+  String get sign_up_now {
+    return Intl.message(
+      'Sign Up Now',
+      name: 'sign_up_now',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Like`
+  String get like {
+    return Intl.message(
+      'Like',
+      name: 'like',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Comments`
+  String get comments {
+    return Intl.message(
+      'Comments',
+      name: 'comments',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System`
+  String get system {
+    return Intl.message(
+      'System',
+      name: 'system',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System Message`
+  String get system_msg {
+    return Intl.message(
+      'System Message',
+      name: 'system_msg',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data exist`
+  String get not_found {
+    return Intl.message(
+      'No data exist',
+      name: 'not_found',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `/ day`
+  String get per_day {
+    return Intl.message(
+      '/ day',
+      name: 'per_day',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Code`
+  String get ref_code {
+    return Intl.message(
+      'Code',
+      name: 'ref_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get invitation code failed, click to retry`
+  String get get_ref_code_failed {
+    return Intl.message(
+      'Get invitation code failed, click to retry',
+      name: 'get_ref_code_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your invitation code was copied!`
+  String get ref_code_copied {
+    return Intl.message(
+      'Your invitation code was copied!',
+      name: 'ref_code_copied',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Explain`
+  String get explain {
+    return Intl.message(
+      'Explain',
+      name: 'explain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share your Invitation Code with your friend and you get %1d Metaverse and %2d AI Artist: Text to Image if the Code is used.`
+  String get ref_code_share_desc {
+    return Intl.message(
+      'Share your Invitation Code with your friend and you get %1d Metaverse and %2d AI Artist: Text to Image if the Code is used.',
+      name: 'ref_code_share_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image`
+  String get ref_code_get_desc {
+    return Intl.message(
+      'Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image',
+      name: 'ref_code_get_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. `
+  String get ref_code_desc {
+    return Intl.message(
+      'Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. ',
+      name: 'ref_code_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Code`
+  String get enter_code {
+    return Intl.message(
+      'Enter Code',
+      name: 'enter_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Code`
+  String get my_code {
+    return Intl.message(
+      'My Code',
+      name: 'my_code',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remaining credits`
+  String get remaining_credits {
+    return Intl.message(
+      'Remaining credits',
+      name: 'remaining_credits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Submit now`
+  String get submit_now {
+    return Intl.message(
+      'Submit now',
+      name: 'submit_now',
       desc: '',
       args: [],
     );

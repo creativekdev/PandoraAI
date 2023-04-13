@@ -51,7 +51,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.UNDEFINED:
         return '';
       case HomeCardType.text2image:
-        return 'AI Artist';
+        return 'AI Artist: Text to Image';
     }
   }
 }

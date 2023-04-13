@@ -24,6 +24,10 @@ class MsgEntity {
   late int productId;
   @JSONField(name: 'product_assignment_id')
   late int productAssignmentId;
+  @JSONField(name: 'app_name')
+  late String appName;
+  late String role;
+  late String type;
   late String payload;
   late String created;
   late String modified;
@@ -64,5 +68,63 @@ class MsgEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class MsgDiscoveryEntity {
+  @JSONField(name: 'user_id')
+  int userId = 0;
+  @JSONField(name: 'social_post_id')
+  int socialPostId = 0;
+  @JSONField(name: 'comment_social_post_id')
+  int commentSocialPostId = 0;
+  @JSONField(name: 'social_post_comment_id')
+  int socialPostCommentId = 0;
+  @JSONField(name: 'reply_social_post_comment_id')
+  int replySocialPostCommentId = 0;
+  @JSONField(name: 'reply_user_id')
+  int replyUserId = 0;
+  @JSONField(name: 'author_user_id')
+  int authorUserId = 0;
+  String text = '';
+  String created = '';
+  String modified = '';
+  int id = 0;
+  String name = '';
+  String avatar = '';
+  @JSONField(name: 'post_text')
+  String postText = '';
+  @JSONField(name: 'reply_comment_text')
+  String replyCommentText = '';
+  @JSONField(name: 'comment_text')
+  String commentText = '';
+  String ip = '';
+  String country = '';
+  String region = '';
+  String city = '';
+  int likes = 0;
+  int comments = 0;
+  @JSONField(name: 'real_likes')
+  int realLikes = 0;
+
+  MsgDiscoveryEntity();
+
+  factory MsgDiscoveryEntity.fromJson(Map<String, dynamic> json) => $MsgDiscoveryEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $MsgDiscoveryEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+extension MsgDiscoveryEntityEx on MsgDiscoveryEntity {
+  int getPostId() {
+    if (socialPostId == 0) {
+      return commentSocialPostId;
+    }
+    return socialPostId;
   }
 }

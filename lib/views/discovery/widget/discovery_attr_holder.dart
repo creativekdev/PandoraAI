@@ -16,13 +16,9 @@ class DiscoveryAttrHolder {
       iconSize = $(18);
     }
     iconColor ??= color;
-    var alignment = CrossAxisAlignment.center;
-    if (value > 10) {
-      alignment = CrossAxisAlignment.start;
-    }
     return (axis == Axis.vertical
             ? Column(
-                crossAxisAlignment: alignment,
+                crossAxisAlignment: value > 10 ? CrossAxisAlignment.start : CrossAxisAlignment.center,
                 children: [
                   Image.asset(
                     iconRes,
@@ -37,7 +33,7 @@ class DiscoveryAttrHolder {
                 ],
               )
             : Row(
-                crossAxisAlignment: alignment,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
                     iconRes,

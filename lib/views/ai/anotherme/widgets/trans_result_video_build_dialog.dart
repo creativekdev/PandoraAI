@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
@@ -12,7 +11,6 @@ import 'package:cartoonizer/views/ai/anotherme/trans_result_anim_screen.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter/session_state.dart';
 
 class TransResultVideoBuildDialog extends StatefulWidget {
   File origin;
@@ -202,7 +200,6 @@ class _TransResultVideoBuildDialogState extends State<TransResultVideoBuildDialo
       );
       FFmpegKit.execute(command).then((session) {
         session.getState().then((value) {
-          value == SessionState.completed;
           FFmpegKit.cancel(session.getSessionId());
           Navigator.of(context).pop(fileName);
           deleteFiles(savePath, filter: 'png');

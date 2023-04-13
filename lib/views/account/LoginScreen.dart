@@ -228,7 +228,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                     if (baseEntity != null) {
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       prefs.setBool("isLogin", true);
-                      onLoginSuccess(context);
+                      await onLoginSuccess(context);
                     }
                     if (mounted) {
                       hideLoading();

@@ -97,6 +97,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("您的验证码已经发送到"),
         "collapse": MessageLookupByLibrary.simpleMessage("收起"),
         "comment_posted": MessageLookupByLibrary.simpleMessage("评论已提交"),
+        "comments": MessageLookupByLibrary.simpleMessage("评论"),
         "commonFailedToast": MessageLookupByLibrary.simpleMessage("操作失败"),
         "confirm": MessageLookupByLibrary.simpleMessage("确认"),
         "confirm_pass": MessageLookupByLibrary.simpleMessage("确认密码"),
@@ -142,6 +143,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email_validation": MessageLookupByLibrary.simpleMessage("请输入邮箱"),
         "email_validation1": MessageLookupByLibrary.simpleMessage("请输入正确的邮箱"),
         "empty_msg": MessageLookupByLibrary.simpleMessage("暂无数据"),
+        "enter_code": MessageLookupByLibrary.simpleMessage("填写邀请码"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage("输入6位验证码"),
         "examples": MessageLookupByLibrary.simpleMessage("案例"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("退出编辑"),
@@ -151,6 +153,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "人工智能产出的照片不可预测，可能含有裸露、残缺等令人不适的图像，这是超出我们控制范围的。因此，请确保您已知晓全部风险，再点击继续"),
         "expired_date": MessageLookupByLibrary.simpleMessage("有效期至"),
+        "explain": MessageLookupByLibrary.simpleMessage("说明"),
+        "explore_more": MessageLookupByLibrary.simpleMessage("去探索"),
         "face_toon": MessageLookupByLibrary.simpleMessage("人脸卡通"),
         "facebook":
             MessageLookupByLibrary.simpleMessage("使用IG Business(via FB)"),
@@ -171,15 +175,19 @@ class MessageLookup extends MessageLookupByLibrary {
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate": MessageLookupByLibrary.simpleMessage("创建"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
-        "generate_reached_limit":
-            MessageLookupByLibrary.simpleMessage("请明天再试或升级为专业版以获得更多的 %s 配额。"),
+        "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
+            "您已达到了 %s 的每日限制！升级您的账户可以继续使用，或者明天再试。同时，您还可以探索其他功能"),
+        "generate_reached_limit_guest":
+            MessageLookupByLibrary.simpleMessage("您已达到了 %s 的每日限制！现在注册即可获得更多配额"),
         "generate_reached_limit_title":
             MessageLookupByLibrary.simpleMessage("%s 创建次数已达当日上限"),
-        "generate_reached_limit_vip":
-            MessageLookupByLibrary.simpleMessage("请明天再试"),
+        "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
+            "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),
         "generating": MessageLookupByLibrary.simpleMessage("制作中"),
         "get_inspired": MessageLookupByLibrary.simpleMessage("灵感贴纸"),
+        "get_ref_code_failed":
+            MessageLookupByLibrary.simpleMessage("获取邀请码失败，点击重试"),
         "give_feedback": MessageLookupByLibrary.simpleMessage("意见反馈"),
         "go_premium": MessageLookupByLibrary.simpleMessage("获取专业版"),
         "good_photo_description": MessageLookupByLibrary.simpleMessage(
@@ -206,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "january": MessageLookupByLibrary.simpleMessage("一月"),
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
+        "like": MessageLookupByLibrary.simpleMessage("点赞"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
         "login_or_sign_up": MessageLookupByLibrary.simpleMessage("注册/登录"),
         "logout": MessageLookupByLibrary.simpleMessage("登出"),
@@ -224,12 +233,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("更多"),
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
+        "my_code": MessageLookupByLibrary.simpleMessage("我的邀请码"),
         "name": MessageLookupByLibrary.simpleMessage("全名"),
         "name_hint": MessageLookupByLibrary.simpleMessage("输入姓名"),
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),
         "new_pass": MessageLookupByLibrary.simpleMessage("新密码"),
         "new_update_dialog_content":
             MessageLookupByLibrary.simpleMessage("当前版本要求您必须更新，否则将无法使用App"),
+        "new_update_dialog_content_cancellable":
+            MessageLookupByLibrary.simpleMessage("发现新版本，快去探索吧！"),
         "new_update_dialog_title":
             MessageLookupByLibrary.simpleMessage("新版本可用"),
         "newest": MessageLookupByLibrary.simpleMessage("最新"),
@@ -241,6 +253,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "no_watermark": MessageLookupByLibrary.simpleMessage("（高清、无水印图片）"),
         "no_watermark1": MessageLookupByLibrary.simpleMessage("无水印"),
         "not_enough_photos": MessageLookupByLibrary.simpleMessage("照片数目不够"),
+        "not_found": MessageLookupByLibrary.simpleMessage("数据不存在"),
         "november": MessageLookupByLibrary.simpleMessage("十一月"),
         "october": MessageLookupByLibrary.simpleMessage("十月"),
         "ok": MessageLookupByLibrary.simpleMessage("好的"),
@@ -275,6 +288,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "payment": MessageLookupByLibrary.simpleMessage("支付"),
         "paymentBtn": MessageLookupByLibrary.simpleMessage("提交订单"),
         "payment_successfully": MessageLookupByLibrary.simpleMessage("支付成功"),
+        "per_day": MessageLookupByLibrary.simpleMessage("/ 天"),
         "permissionCamera": MessageLookupByLibrary.simpleMessage("相机权限"),
         "permissionCameraContent":
             MessageLookupByLibrary.simpleMessage("这个应用程序需要使用相机为上传用户资料照片拍照"),
@@ -307,12 +321,23 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("给我们评分"),
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
+        "reached_limit_content":
+            MessageLookupByLibrary.simpleMessage("邀请更多的朋友下载应用程序或购买升级来解锁你的每日限制"),
         "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),
         "recent": MessageLookupByLibrary.simpleMessage("最近"),
         "recently": MessageLookupByLibrary.simpleMessage("最近使用"),
+        "ref_code": MessageLookupByLibrary.simpleMessage("邀请码"),
+        "ref_code_copied": MessageLookupByLibrary.simpleMessage("验证码已经复制到剪贴板"),
+        "ref_code_desc": MessageLookupByLibrary.simpleMessage(
+            "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的Me-taverse和AI Artist转化次数！"),
+        "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
+            "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
+        "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(
+            "Share your Invitation Code with your friend and you get %1d Metaverse and %2d AI Artist: Text to Image if the Code is used."),
         "reference_image": MessageLookupByLibrary.simpleMessage("参考图片（可选）"),
         "reference_image_tips":
             MessageLookupByLibrary.simpleMessage("参考图片将影响最终结果"),
+        "remaining_credits": MessageLookupByLibrary.simpleMessage("已获权益"),
         "remind": MessageLookupByLibrary.simpleMessage("提示"),
         "reply": MessageLookupByLibrary.simpleMessage("回复"),
         "resend": MessageLookupByLibrary.simpleMessage("重新发送"),
@@ -360,12 +385,16 @@ class MessageLookup extends MessageLookupByLibrary {
         "show_it": MessageLookupByLibrary.simpleMessage("显示"),
         "sign_in": MessageLookupByLibrary.simpleMessage("登录"),
         "sign_up": MessageLookupByLibrary.simpleMessage("注册"),
+        "sign_up_now": MessageLookupByLibrary.simpleMessage("去注册"),
         "signup_text": MessageLookupByLibrary.simpleMessage("注册账号免费使用一次"),
         "signup_text1": MessageLookupByLibrary.simpleMessage("注册解锁更多功能"),
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "我们很高兴你喜欢我们的工具！现在注册或登录，只需2分钟，你可以体验更多的功能！"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
+        "submit_now": MessageLookupByLibrary.simpleMessage("去邀请"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
+        "system": MessageLookupByLibrary.simpleMessage("系统通知"),
+        "system_msg": MessageLookupByLibrary.simpleMessage("系统消息"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
         "tabDiscovery": MessageLookupByLibrary.simpleMessage("发现"),
         "tabHome": MessageLookupByLibrary.simpleMessage("首页"),
@@ -403,6 +432,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "update_profile_successfully":
             MessageLookupByLibrary.simpleMessage("信息更新成功"),
         "upgrade": MessageLookupByLibrary.simpleMessage("升级"),
+        "upgrade_now": MessageLookupByLibrary.simpleMessage("升级"),
         "upload": MessageLookupByLibrary.simpleMessage("上传"),
         "upload_image": MessageLookupByLibrary.simpleMessage("上传图片"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("上传图片"),

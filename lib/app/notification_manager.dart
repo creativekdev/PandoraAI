@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
@@ -9,7 +10,9 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
+import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -33,12 +36,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationManager extends BaseManager {
-  BuildContext? _context;
   late CacheManager cacheManager;
-
-  syncContext(BuildContext context) {
-    this._context = context;
-  }
 
   @override
   Future<void> onCreate() async {
@@ -111,17 +109,31 @@ class NotificationManager extends BaseManager {
 
   Future<void> onHandleNotificationClick(RemoteMessage message) async {
     if (message.data.containsKey('tab')) {
-      if (_context != null) {
-        Navigator.popUntil(_context!, ModalRoute.withName('/HomeScreen'));
-      }
+      Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       var pushExtraEntity = PushExtraEntity.fromJson(message.data);
       EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
-      EventBusHelper().eventBus.fire(OnEffectPushClickEvent(data: pushExtraEntity));
+      // EventBusHelper().eventBus.fire(OnEffectPushClickEvent(data: pushExtraEntity));
+      if (TextUtil.isEmpty(pushExtraEntity.tab)) return;
+      if (TextUtil.isEmpty(pushExtraEntity.category)) return;
+      EffectDataController controller = Get.find<EffectDataController>();
+      var pos = controller.findItemPos(pushExtraEntity.tab, pushExtraEntity.category, pushExtraEntity.effect);
+      Cartoonize.open(
+        Get.context!,
+        source: 'push_click',
+        tabPos: pos.tabPos,
+        itemPos: pos.itemPos,
+        categoryPos: pos.categoryPos,
+      );
     } else {
-      if (_context != null) {
-        Navigator.popUntil(_context!, ModalRoute.withName('/HomeScreen'));
+      Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
+      try {
+        Get.find<MsgListController>();
+      } catch (e) {
+        Get.put(MsgListController());
       }
-      Get.to(MsgListScreen());
+      if (Get.context != null) {
+        MsgListScreen.push(Get.context!);
+      }
     }
     return null;
   }
@@ -129,7 +141,14 @@ class NotificationManager extends BaseManager {
 
 Future<void> onSelectNotification(String? payload) async {
   LogUtil.d(payload, tag: 'notify-payload');
-  Get.to(MsgListScreen());
+  try {
+    Get.find<MsgListController>();
+  } catch (e) {
+    Get.put(MsgListController());
+  }
+  if (Get.context != null) {
+    MsgListScreen.push(Get.context!);
+  }
 }
 
 Future<void> setupFlutterNotifications() async {
@@ -169,7 +188,7 @@ Future<void> setupFlutterNotifications() async {
 
 Future<void> _showNotification(RemoteMessage message) async {
   if (!AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-    AppDelegate.instance.getManager<MsgManager>().loadFirstPage();
+    AppDelegate.instance.getManager<MsgManager>().loadMsgList(page: 0, pageSize: 1, actions: []);
   }
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = notification?.android;

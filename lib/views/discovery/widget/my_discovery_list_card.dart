@@ -4,6 +4,7 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 
 class MyDiscoveryListCard extends StatelessWidget {
   int time;
@@ -57,7 +58,7 @@ class MyDiscoveryListCard extends StatelessWidget {
         ],
       ).visibility(visible: hasYear),
       Text(
-        thirdpartManager.getLocaleString(context, time.dateMonth),
+        time.dateMonth.intl,
         style: TextStyle(
           color: ColorConstant.White,
           fontFamily: 'Poppins',
@@ -68,7 +69,7 @@ class MyDiscoveryListCard extends StatelessWidget {
         crossAxisCount: 3,
         physics: NeverScrollableScrollPhysics(),
         children: activeList
-            .map((e) => buildResourceItem(context, e.resourceList()[0]).intoGestureDetector(onTap: () {
+            .map((e) => buildResourceItem(context, e.resourceList().last).intoGestureDetector(onTap: () {
                   onItemClick.call(e);
                 }))
             .toList(),

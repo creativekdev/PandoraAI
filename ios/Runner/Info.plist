@@ -30,6 +30,16 @@
     	<string>Pandora AI</string>
 	<key>CFBundleURLTypes</key>
 	<array>
+	    <dict>
+            <key>CFBundleTypeRole</key>
+             <string>Editor</string>
+             <key>CFBundleURLName</key>
+            <string>allsha.re/a/ioscartoonizer</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>http</string>
+            </array>
+        </dict>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>

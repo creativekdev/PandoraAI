@@ -9,14 +9,13 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+
+typedef PreShareVideo = Future<String> Function(ShareType platform, String originFile);
 
 enum ShareType {
   discovery,
@@ -96,9 +95,11 @@ class ShareScreen extends StatefulWidget {
     required bool isVideo,
     required String? originalUrl,
     required String effectKey,
+    PreShareVideo? preShareVideo,
     bool needDiscovery = false,
     Function(String platform)? onShareSuccess,
   }) {
+    if (preShareVideo == null) preShareVideo = (p, f) async => f;
     return showModalBottomSheet<bool>(
         context: context,
         builder: (context) {
@@ -111,6 +112,7 @@ class ShareScreen extends StatefulWidget {
             effectKey: effectKey,
             needDiscovery: needDiscovery,
             onShareSuccess: onShareSuccess,
+            preShareVideo: preShareVideo!,
           );
         },
         backgroundColor: backgroundColor);
@@ -124,6 +126,7 @@ class ShareScreen extends StatefulWidget {
   final Color backgroundColor;
   final String effectKey;
   final bool needDiscovery;
+  final PreShareVideo preShareVideo;
 
   const ShareScreen({
     Key? key,
@@ -135,6 +138,7 @@ class ShareScreen extends StatefulWidget {
     required this.effectKey,
     this.onShareSuccess,
     required this.needDiscovery,
+    required this.preShareVideo,
   }) : super(key: key);
 
   @override
@@ -148,9 +152,9 @@ class _ShareScreenState extends State<ShareScreen> {
   List<ShareType> typeList = [
     // ShareType.discovery,
     // ShareType.facebook,
-    ShareType.instagram,
-    ShareType.whatsapp,
-    ShareType.email,
+    // ShareType.instagram,
+    // ShareType.whatsapp,
+    // ShareType.email,
     ShareType.system,
   ];
 
@@ -158,14 +162,26 @@ class _ShareScreenState extends State<ShareScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'share_screen');
+    if (!widget.isVideo || Platform.isAndroid) {
+      typeList = [
+        ShareType.instagram,
+        ShareType.whatsapp,
+        ShareType.system,
+      ];
+    }
     if (widget.needDiscovery) {
       typeList.insert(0, ShareType.discovery);
     }
+    if (typeList.length == 1) {
+      delay(() {
+        onShareButtonTap(shareType: typeList.first);
+      });
+    }
   }
 
-  void _openShareAction(BuildContext context, List<String> paths) {
+  Future<ShareResult> _openShareAction(BuildContext context, List<String> paths) async {
     final box = context.findRenderObject() as RenderBox?;
-    Share.shareXFiles(paths.map((e) => XFile(e)).toList(), sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+    return await Share.shareXFiles(paths.map((e) => XFile(e)).toList(), sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
   }
 
   onShareClick(ShareType shareType) async {
@@ -210,12 +226,12 @@ class _ShareScreenState extends State<ShareScreen> {
 
   Future<void> onShareButtonTap({required ShareType shareType}) async {
     File file;
-    var dir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-    String fullPath = '$dir${DateTime.now().millisecondsSinceEpoch}.png';
-
     if (widget.isVideo) {
-      file = File(widget.image);
+      var filePath = await widget.preShareVideo.call(shareType, widget.image);
+      file = File(filePath);
     } else {
+      var dir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+      String fullPath = '$dir${DateTime.now().millisecondsSinceEpoch}.png';
       file = await File(fullPath).writeAsBytes(base64Decode(widget.image), flush: true);
     }
 
@@ -223,7 +239,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
     switch (shareType) {
       case ShareType.discovery:
-        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction:'share_discovery_from_ai_avatar',callback: () {
+        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_avatar', callback: () async {
           ShareDiscoveryScreen.push(
             context,
             effectKey: widget.effectKey,
@@ -278,8 +294,11 @@ class _ShareScreenState extends State<ShareScreen> {
         Navigator.of(context).pop();
         break;
       case ShareType.system:
+        await _openShareAction(context, [file.path]);
         widget.onShareSuccess?.call(shareType.value());
-        _openShareAction(context, [file.path]);
+        if (typeList.length <= 1) {
+          Navigator.of(context).pop();
+        }
         break;
       case ShareType.twitter:
         widget.onShareSuccess?.call(shareType.value());
@@ -290,36 +309,36 @@ class _ShareScreenState extends State<ShareScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (typeList.length <= 1) {
+      return SizedBox.shrink();
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            SizedBox(width: cancelSize?.width ?? 50),
-            Expanded(child: TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.center)),
-            TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(15))
-                .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)))
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop();
-            }).listenSizeChanged(onSizeChanged: (size) {
-              setState(() => cancelSize = size);
-            })
-          ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8))),
-        Container(
-          height: 0.5,
-          color: ColorConstant.EffectGrey,
-          margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10)),
+        TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.w600, $(17), align: TextAlign.start).intoContainer(
+          margin: EdgeInsets.only(left: $(15), right: $(15), bottom: $(15)),
         ),
+        Divider(height: 1, color: ColorConstant.LineColor),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: typeList.map((e) => _FunctionCard(type: e, onTap: () => onShareClick(e))).toList(),
           ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(30), horizontal: $(6))),
         ),
+        Divider(height: 1, color: ColorConstant.LineColor),
+        TitleTextWidget(S.of(context).cancel, ColorConstant.White, FontWeight.normal, $(15))
+            .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(15)))
+            .intoGestureDetector(onTap: () {
+              Navigator.of(context).pop();
+            })
+            .intoContainer(width: double.maxFinite, alignment: Alignment.center)
+            .listenSizeChanged(onSizeChanged: (size) {
+              setState(() => cancelSize = size);
+            })
       ],
     ).intoContainer(
-        padding: EdgeInsets.symmetric(vertical: $(15)),
+        padding: EdgeInsets.only(top: $(15), bottom: ScreenUtil.getBottomPadding(context) + $(10)),
         decoration: BoxDecoration(
             color: ColorConstant.EffectFunctionGrey,
             borderRadius: BorderRadius.only(

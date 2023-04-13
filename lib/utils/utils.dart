@@ -1,13 +1,17 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/enums/ad_type.dart';
+import 'package:cartoonizer/utils/ref_code_util.dart';
 import 'package:cartoonizer/views/home_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/rendering.dart';
@@ -413,4 +417,43 @@ Future<ui.Image> getImage(File file) async {
 Future<imgLib.Image> getLibImage(ui.Image image) async {
   var byteData = await image.toByteData();
   return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
+}
+
+Future<bool> judgeInvitationCode() async {
+  var cacheManager = AppDelegate().getManager<CacheManager>();
+  String? code;
+  var data = await Clipboard.getData(Clipboard.kTextPlain);
+  code = RefCodeUtils.pickRefCode(data?.text);
+  if (code == null) {
+    LogUtil.d('inv-code not exist in clipboard', tag: 'clipboard');
+  } else {
+    LogUtil.d('inv-code detected: $code', tag: 'clipboard');
+    cacheManager.setString(CacheManager.lastRefLink, code);
+  }
+  if (TextUtil.isEmpty(code)) {
+    LogUtil.d('clipboard is empty, read from cache', tag: 'clipboard');
+    code = cacheManager.getString(CacheManager.lastRefLink);
+  }
+  if (TextUtil.isEmpty(code)) {
+    LogUtil.d('inv-code is null', tag: 'clipboard');
+    return false;
+  }
+  var manager = AppDelegate.instance.getManager<UserManager>();
+  if (manager.isNeedLogin) {
+    LogUtil.d('user is null', tag: 'clipboard');
+    return false;
+  }
+  if (manager.user!.isReferred) {
+    LogUtil.d('user has referred', tag: 'clipboard');
+    return false;
+  }
+  if (manager.user!.referLinks.contains(code)) {
+    LogUtil.d('is self inv-code', tag: 'clipboard');
+    return false;
+  }
+  delay(() {
+    LogUtil.v('code is $code', tag: 'clipboard');
+    EventBusHelper().eventBus.fire(OnNewInvitationCodeReceiveEvent(code: code!));
+  }, milliseconds: 500);
+  return true;
 }

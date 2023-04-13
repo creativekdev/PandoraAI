@@ -44,4 +44,16 @@ extension MsgTypeEx on MsgType {
         return null;
     }
   }
+
+  bool belongToDiscovery() {
+    return this == MsgType.like_social_post || this == MsgType.like_social_post_comment || this == MsgType.comment_social_post_comment || this == MsgType.comment_social_post;
+  }
+
+  bool isSystem() {
+    return this == MsgType.UNDEFINED || this == MsgType.ai_avatar_completed;
+  }
+
+  bool isLike() {
+    return this == MsgType.like_social_post_comment || this == MsgType.like_social_post;
+  }
 }

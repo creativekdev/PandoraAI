@@ -238,7 +238,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         ? (controller.cropImage.value != null && includeOriginalFace())
             ? Positioned(
                 child: RepaintBoundary(
-                  key: cropKey,
                   child: ClipOval(
                       child: Image.file(
                     controller.cropImage.value!,
@@ -787,147 +786,134 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return _willPopCallback(context);
-      },
-      child: Obx(
-        () => LoadingOverlay(
-            isLoading: controller.isLoading.value,
-            child: Scaffold(
+    var content = Obx(
+      () => LoadingOverlay(
+          isLoading: controller.isLoading.value,
+          child: Scaffold(
+            backgroundColor: ColorConstant.BackgroundColor,
+            appBar: AppNavigationBar(
+              backAction: () async {
+                if (await _willPopCallback(context)) {
+                  Navigator.of(context).pop();
+                }
+              },
               backgroundColor: ColorConstant.BackgroundColor,
-              appBar: AppNavigationBar(
-                backAction: () async {
-                  if (await _willPopCallback(context)) {
-                    Navigator.of(context).pop();
-                  }
-                },
-                backgroundColor: ColorConstant.BackgroundColor,
-                trailing: Image.asset(
-                  Images.ic_share,
-                  width: $(24),
-                ).intoGestureDetector(onTap: () async {
-                  shareOut();
-                }).offstage(offstage: !controller.isPhotoDone.value),
-              ),
-              body: Column(
-                children: [
-                  Expanded(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      controller.isPhotoDone.value
-                          ? Container(
-                              child: (controller.isVideo.value && _videoPlayerController != null)
-                                  ? ChooseVideoContainer(videoPlayerController: _videoPlayerController!, width: imgContainerWidth, height: imgContainerWidth)
-                                  : Center(child: cachedImage ?? SizedBox.shrink()),
-                            )
-                          : controller.isPhotoSelect.value
-                              ? Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    Image.file(
-                                      controller.image.value as File,
-                                      fit: BoxFit.cover,
-                                      width: imgContainerWidth,
-                                      height: imgContainerHeight,
+              trailing: Image.asset(
+                Images.ic_share,
+                width: $(24),
+              ).intoGestureDetector(onTap: () async {
+                shareOut();
+              }).offstage(offstage: !controller.isPhotoDone.value),
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    controller.isPhotoDone.value
+                        ? Container(
+                            child: (controller.isVideo.value && _videoPlayerController != null)
+                                ? ChooseVideoContainer(videoPlayerController: _videoPlayerController!, width: imgContainerWidth, height: imgContainerWidth)
+                                : Center(child: cachedImage ?? SizedBox.shrink()),
+                          )
+                        : controller.isPhotoSelect.value
+                            ? Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  Image.file(
+                                    controller.image.value as File,
+                                    fit: BoxFit.cover,
+                                    width: imgContainerWidth,
+                                    height: imgContainerHeight,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Image.asset(
+                                      Images.ic_loading_filled,
+                                      color: ColorConstant.White,
+                                    )
+                                        .intoContainer(
+                                            padding: EdgeInsets.all(12),
+                                            height: imgContainerWidth / 5.2,
+                                            width: imgContainerWidth / 5.2,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(8),
+                                              color: Color(0x66000000),
+                                            ))
+                                        .intoGestureDetector(onTap: () {
+                                      controller.changeIsLoading(true);
+                                      getCartoon(context);
+                                    }).visibility(visible: !controller.isLoading.value && !controller.transingImage.value),
+                                  ),
+                                ],
+                              ).intoContainer(width: imgContainerWidth, height: imgContainerHeight)
+                            : Expanded(
+                                child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  ClipRRect(
+                                    child: Image.asset(
+                                      (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['image']!,
+                                      height: imgContainerWidth - $(60),
+                                      width: imgContainerWidth - $(60),
                                     ),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Image.asset(
-                                        Images.ic_loading_filled,
-                                        color: ColorConstant.White,
-                                      )
-                                          .intoContainer(
-                                              padding: EdgeInsets.all(12),
-                                              height: imgContainerWidth / 5.2,
-                                              width: imgContainerWidth / 5.2,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(8),
-                                                color: Color(0x66000000),
-                                              ))
-                                          .intoGestureDetector(onTap: () {
-                                        controller.changeIsLoading(true);
-                                        getCartoon(context);
-                                      }).visibility(visible: !controller.isLoading.value && !controller.transingImage.value),
-                                    ),
-                                  ],
-                                ).intoContainer(width: imgContainerWidth, height: imgContainerHeight)
-                              : Expanded(
-                                  child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    ClipRRect(
-                                      child: Image.asset(
-                                        (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['image']!,
-                                        height: imgContainerWidth - $(60),
-                                        width: imgContainerWidth - $(60),
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ).intoContainer(margin: EdgeInsets.only(top: $(25))),
-                                    Expanded(
-                                        child: Text(
-                                      (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['text']!,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        height: 1,
-                                        fontSize: 21,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        shadows: [
-                                          Shadow(
-                                            color: Color(0xffc4400c),
-                                            blurRadius: 6,
-                                            offset: Offset(4, 0),
-                                          ),
-                                          Shadow(
-                                            color: Color(0xffc4400c),
-                                            blurRadius: 6,
-                                            offset: Offset(-4, 0),
-                                          ),
-                                        ],
-                                      ),
-                                    ).intoContainer(
-                                      alignment: Alignment.center,
-                                    )),
-                                  ],
-                                )),
-                    ],
-                  ).listenSizeChanged(onSizeChanged: (size) {
-                    setState(() {
-                      imgContainerWidth = size.width;
-                      imgContainerHeight = size.height - 20;
-                    });
-                  })),
-                  Obx(() => buildSuccessFunctions(context)),
-                  SizedBox(height: $(8)),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabTitleList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: titleScrollController,
-                    itemPositionsListener: titleScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      var checked = currentTitleIndex == index;
-                      return (checked
-                              ? ShaderMask(
-                                  shaderCallback: (Rect bounds) => LinearGradient(
-                                        colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(Offset.zero & bounds.size),
-                                  blendMode: BlendMode.srcATop,
-                                  child: Text(
-                                    tabTitleList[index].title,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ).intoContainer(margin: EdgeInsets.only(top: $(25))),
+                                  Expanded(
+                                      child: Text(
+                                    (PhotoIntroductionConfig[tabTitleList[currentTitleIndex].categoryKey] ?? defaultPhotoIntroductionConfig)['text']!,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-                                      fontSize: $(12),
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: 'Poppins',
+                                      height: 1,
+                                      fontSize: 21,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(
+                                          color: Color(0xffc4400c),
+                                          blurRadius: 6,
+                                          offset: Offset(4, 0),
+                                        ),
+                                        Shadow(
+                                          color: Color(0xffc4400c),
+                                          blurRadius: 6,
+                                          offset: Offset(-4, 0),
+                                        ),
+                                      ],
                                     ),
-                                  ))
-                              : Text(
+                                  ).intoContainer(
+                                    alignment: Alignment.center,
+                                  )),
+                                ],
+                              )),
+                  ],
+                ).listenSizeChanged(onSizeChanged: (size) {
+                  setState(() {
+                    imgContainerWidth = size.width;
+                    imgContainerHeight = size.height - 20;
+                  });
+                })),
+                Obx(() => buildSuccessFunctions(context)),
+                SizedBox(height: $(8)),
+                ScrollablePositionedList.separated(
+                  initialScrollIndex: 0,
+                  itemCount: tabTitleList.length,
+                  scrollDirection: Axis.horizontal,
+                  itemScrollController: titleScrollController,
+                  itemPositionsListener: titleScrollPositionsListener,
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    var checked = currentTitleIndex == index;
+                    return (checked
+                            ? ShaderMask(
+                                shaderCallback: (Rect bounds) => LinearGradient(
+                                      colors: [Color(0xffE31ECD), Color(0xff243CFF)],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(Offset.zero & bounds.size),
+                                blendMode: BlendMode.srcATop,
+                                child: Text(
                                   tabTitleList[index].title,
                                   style: TextStyle(
                                     color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
@@ -936,109 +922,127 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                                     fontFamily: 'Poppins',
                                   ),
                                 ))
-                          .intoGestureDetector(onTap: () {
-                        if (checked) {
-                          return;
+                            : Text(
+                                tabTitleList[index].title,
+                                style: TextStyle(
+                                  color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+                                  fontSize: $(12),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                ),
+                              ))
+                        .intoGestureDetector(onTap: () {
+                      if (checked) {
+                        return;
+                      }
+                      lastChangeByTap = true;
+                      setState(() {
+                        currentTitleIndex = index;
+                        int tabPos = tabList.findPosition((data) => data.key == tabTitleList[currentTitleIndex].tabKey)!;
+                        if (currentTabIndex != tabPos) {
+                          currentTabIndex = tabPos;
                         }
-                        lastChangeByTap = true;
-                        setState(() {
-                          currentTitleIndex = index;
-                          int tabPos = tabList.findPosition((data) => data.key == tabTitleList[currentTitleIndex].tabKey)!;
-                          if (currentTabIndex != tabPos) {
-                            currentTabIndex = tabPos;
-                          }
-                          int itemPos = tabItemList.findPosition((data) => data.categoryIndex == currentTitleIndex)!;
-                          if (itemPos > tabItemList.length - 4) {
-                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                          } else {
-                            itemScrollController.jumpTo(index: itemPos);
-                          }
-                        });
-                        delay(() {
-                          lastChangeByTap = false;
-                        }, milliseconds: 32);
-                      }).intoContainer(
-                              margin: EdgeInsets.only(
-                        left: index == 0 ? $(20) : $(12),
-                        right: index == tabItemList.length - 1 ? $(20) : $(12),
-                      ));
-                    },
-                    separatorBuilder: (context, index) => Container(),
-                  ).intoContainer(
-                    height: $(28),
-                  ),
-                  ScrollablePositionedList.separated(
-                    initialScrollIndex: 0,
-                    itemCount: tabItemList.length,
-                    scrollDirection: Axis.horizontal,
-                    itemScrollController: itemScrollController,
-                    itemPositionsListener: itemScrollPositionsListener,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return _buildTabItem(context, index, itemWidth).intoContainer(
-                          margin: EdgeInsets.only(
-                        left: index == 0 ? $(15) : 0,
-                        right: index == tabItemList.length - 1 ? $(15) : 0,
-                      ));
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      if (index == tabItemList.length - 1) {
+                        int itemPos = tabItemList.findPosition((data) => data.categoryIndex == currentTitleIndex)!;
+                        if (itemPos > tabItemList.length - 4) {
+                          itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                        } else {
+                          itemScrollController.jumpTo(index: itemPos);
+                        }
+                      });
+                      delay(() {
+                        lastChangeByTap = false;
+                      }, milliseconds: 32);
+                    }).intoContainer(
+                            margin: EdgeInsets.only(
+                      left: index == 0 ? $(20) : $(12),
+                      right: index == tabItemList.length - 1 ? $(20) : $(12),
+                    ));
+                  },
+                  separatorBuilder: (context, index) => Container(),
+                ).intoContainer(
+                  height: $(28),
+                ),
+                ScrollablePositionedList.separated(
+                  initialScrollIndex: 0,
+                  itemCount: tabItemList.length,
+                  scrollDirection: Axis.horizontal,
+                  itemScrollController: itemScrollController,
+                  itemPositionsListener: itemScrollPositionsListener,
+                  physics: ClampingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return _buildTabItem(context, index, itemWidth).intoContainer(
+                        margin: EdgeInsets.only(
+                      left: index == 0 ? $(15) : 0,
+                      right: index == tabItemList.length - 1 ? $(15) : 0,
+                    ));
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    if (index == tabItemList.length - 1) {
+                      return Container();
+                    } else {
+                      var current = tabItemList[index];
+                      var next = tabItemList[index + 1];
+                      if (next.categoryKey == current.categoryKey) {
                         return Container();
                       } else {
-                        var current = tabItemList[index];
-                        var next = tabItemList[index + 1];
-                        if (next.categoryKey == current.categoryKey) {
-                          return Container();
-                        } else {
-                          return VerticalDivider(
-                            color: ColorConstant.HintColor,
-                            width: $(3),
-                            indent: $(12),
-                            endIndent: $(12),
-                            thickness: 2,
-                          );
-                        }
+                        return VerticalDivider(
+                          color: ColorConstant.HintColor,
+                          width: $(3),
+                          indent: $(12),
+                          endIndent: $(12),
+                          thickness: 2,
+                        );
                       }
-                    },
-                  ).intoContainer(
-                    height: itemWidth + $(4),
-                  ),
-                  ChooseTabBar(
-                      height: $(36),
-                      tabList: tabList.map((e) => thirdpartManager.getLocaleString(context, e.title)).toList(),
-                      currentIndex: currentTabIndex,
-                      scrollable: tabList.length > 3,
-                      onTabClick: (index) {
-                        lastChangeByTap = true;
-                        setState(() {
-                          currentTabIndex = index;
-                          int categoryPos = tabTitleList.findPosition((data) => data.tabKey == tabList[index].key)!;
-                          if (categoryPos > tabTitleList.length - 4) {
-                            titleScrollController.jumpTo(index: tabTitleList.length - 4, alignment: 0.08);
-                          } else {
-                            titleScrollController.jumpTo(index: categoryPos);
-                          }
-                          currentTitleIndex = categoryPos;
-                          int tabItemPos = tabItemList.findPosition((data) => data.tabKey == tabList[index].key)!;
-                          if (tabItemPos > tabItemList.length - 4) {
-                            itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
-                          } else {
-                            itemScrollController.jumpTo(index: tabItemPos);
-                          }
-                          if (!controller.isPhotoSelect.value) {
-                            currentItemIndex.value = tabItemPos;
-                          }
-                        });
-                        delay(() {
-                          lastChangeByTap = false;
-                        }, milliseconds: 32);
-                      }).visibility(visible: tabList.length > 1),
-                  SizedBox(height: MediaQuery.of(context).padding.bottom),
-                ],
-              ),
-            ).ignore(ignoring: controller.isLoading.value)),
-      ),
+                    }
+                  },
+                ).intoContainer(
+                  height: itemWidth + $(4),
+                ),
+                ChooseTabBar(
+                    height: $(36),
+                    tabList: tabList.map((e) => e.title.intl).toList(),
+                    currentIndex: currentTabIndex,
+                    scrollable: tabList.length > 3,
+                    onTabClick: (index) {
+                      lastChangeByTap = true;
+                      setState(() {
+                        currentTabIndex = index;
+                        int categoryPos = tabTitleList.findPosition((data) => data.tabKey == tabList[index].key)!;
+                        if (categoryPos > tabTitleList.length - 4) {
+                          titleScrollController.jumpTo(index: tabTitleList.length - 4, alignment: 0.08);
+                        } else {
+                          titleScrollController.jumpTo(index: categoryPos);
+                        }
+                        currentTitleIndex = categoryPos;
+                        int tabItemPos = tabItemList.findPosition((data) => data.tabKey == tabList[index].key)!;
+                        if (tabItemPos > tabItemList.length - 4) {
+                          itemScrollController.jumpTo(index: tabItemList.length - 4, alignment: 0.08);
+                        } else {
+                          itemScrollController.jumpTo(index: tabItemPos);
+                        }
+                        if (!controller.isPhotoSelect.value) {
+                          currentItemIndex.value = tabItemPos;
+                        }
+                      });
+                      delay(() {
+                        lastChangeByTap = false;
+                      }, milliseconds: 32);
+                    }).visibility(visible: tabList.length > 1),
+                SizedBox(height: MediaQuery.of(context).padding.bottom),
+              ],
+            ),
+          ).ignore(ignoring: controller.isLoading.value)),
     );
+    if (TextUtil.isEmpty(_image)) {
+      return content;
+    } else {
+      return WillPopScope(
+        onWillPop: () async {
+          return _willPopCallback(context);
+        },
+        child: content,
+      );
+    }
   }
 
   Widget _buildTabItem(BuildContext context, int index, double size) {

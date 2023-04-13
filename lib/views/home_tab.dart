@@ -3,7 +3,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/discovery/discovery_fragment.dart';
-import 'package:cartoonizer/views/discovery/new_discovery_fragment.dart';
 import 'package:cartoonizer/views/effect/effect_fragment.dart';
 import 'package:cartoonizer/views/mine/mine_fragment.dart';
 
@@ -40,8 +39,8 @@ List<AppRoleTabItem> buildTabItem() => [
         normalIcon: Images.ic_tab_discovery_normal,
         selectedIcon: Images.ic_tab_discovery,
         titleBuilder: (context) => S.of(context).tabDiscovery,
-        keyBuilder: () => GlobalKey<NewDiscoveryFragmentState>(),
-        fragmentBuilder: (key) => NewDiscoveryFragment(
+        keyBuilder: () => GlobalKey<DiscoveryFragmentState>(),
+        fragmentBuilder: (key) => DiscoveryFragment(
           key: key,
           tabId: AppTabId.DISCOVERY,
         ),

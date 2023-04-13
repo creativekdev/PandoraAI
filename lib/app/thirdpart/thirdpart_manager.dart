@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/refresh/headers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -71,60 +72,12 @@ class ThirdpartManager extends BaseManager {
 
   void _onAppStateChanged(AppState appState) {
     if (appState == AppState.foreground) {
+      judgeInvitationCode();
       AppDelegate.instance.getManager<UserManager>().refreshUser();
       adsHolder.show();
       appBackground = false;
     } else if (appState == AppState.background) {
       appBackground = true;
-    }
-  }
-
-  String getLocaleString(BuildContext context, String str) {
-    switch (str.toLowerCase()) {
-      case 'invalid password':
-        return S.of(context).invalid_password;
-      case 'recent':
-        return S.of(context).recent;
-      case 'get inspired':
-        return S.of(context).get_inspired;
-      case 'facetoon':
-        return S.of(context).face_toon;
-      case 'effects':
-        return S.of(context).effects;
-      case 'january':
-        return S.of(context).january;
-      case 'february':
-        return S.of(context).february;
-      case 'march':
-        return S.of(context).march;
-      case 'april':
-        return S.of(context).april;
-      case 'may':
-        return S.of(context).may;
-      case 'june':
-        return S.of(context).june;
-      case 'july':
-        return S.of(context).july;
-      case 'august':
-        return S.of(context).august;
-      case 'september':
-        return S.of(context).september;
-      case 'october':
-        return S.of(context).october;
-      case 'november':
-        return S.of(context).november;
-      case 'december':
-        return S.of(context).december;
-      case 'man':
-        return S.of(context).man;
-      case 'woman':
-        return S.of(context).woman;
-      case 'cat':
-        return S.of(context).cat;
-      case 'dog':
-        return S.of(context).dog;
-      default:
-        return str;
     }
   }
 }

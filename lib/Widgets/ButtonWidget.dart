@@ -26,3 +26,28 @@ Widget ButtonWidget(String btnText, {double? radius, EdgeInsets? padding}) {
     ),
   );
 }
+
+Widget SubmitButton(
+  String text, {
+  double? radius,
+  EdgeInsets? padding,
+  EdgeInsets? margin,
+  Color? color,
+  required GestureTapCallback onTap,
+}) {
+  radius ??= $(6);
+  padding ??= EdgeInsets.symmetric(horizontal: $(10), vertical: $(10));
+  margin ??= EdgeInsets.symmetric(horizontal: $(15));
+  color ??= ColorConstant.DiscoveryBtn;
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(radius),
+      color: color,
+    ),
+    child: Center(
+      child: TitleTextWidget(text, ColorConstant.White, FontWeight.w500, $(17)),
+    ),
+    padding: padding,
+    margin: margin,
+  ).intoGestureDetector(onTap: onTap);
+}

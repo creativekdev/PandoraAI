@@ -8,5 +8,9 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+      <array>
+        <string>applinks:allsha.re/a/ioscartoonizer</string>
+      </array>
 </dict>
 </plist>

@@ -111,11 +111,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
                 backgroundColor: blurAble ? Colors.transparent : backgroundColor,
                 leading: showBackItem
                     ? GestureDetector(
-                        child: Container(
-                          color: Colors.transparent,
-                          alignment: Alignment.centerLeft,
-                          child: backIcon,
-                        ),
+                        child: backIcon,
                         onTap: () {
                           backAction == null ? Navigator.pop(context) : backAction!();
                         },

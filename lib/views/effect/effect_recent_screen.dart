@@ -11,9 +11,7 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground.dart';
-import 'package:cartoonizer/views/ai/ground/ai_ground_screen.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 
 class EffectRecentScreen extends StatefulWidget {
@@ -108,7 +106,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             File(data.filePath!),
                             fit: BoxFit.cover,
                           ).intoGestureDetector(onTap: () {
-                            AiGround.open(context, source: 'recently');
+                            Txt2img.open(context, source: 'recently', history: data);
                           });
                         }
                         return Container();

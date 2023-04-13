@@ -116,14 +116,16 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     delay(() {
       switch (widget.category) {
         case DiscoveryCategory.ai_avatar:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#PandoraAI');
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#PandoraAvatar');
           break;
         case DiscoveryCategory.cartoonize:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Cartoonizer");
           break;
         case DiscoveryCategory.another_me:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Me-taverse");
+          break;
         case DiscoveryCategory.txt2img:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#PandoraAI");
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIArtistTextToImage");
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

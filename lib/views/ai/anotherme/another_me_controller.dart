@@ -8,7 +8,9 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
+import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
@@ -101,14 +103,12 @@ class AnotherMeController extends GetxController {
     var metaverseLimitEntity = await cartoonizerApi.getMetaverseLimit();
     if (metaverseLimitEntity != null) {
       if (metaverseLimitEntity.usedCount >= metaverseLimitEntity.dailyLimit) {
-        if (isVip()) {
-          return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'Me-taverse')
-            ..msgContent = S.of(Get.context!).generate_reached_limit_vip.replaceAll('%s', 'Me-taverse');
+        if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+          return TransferResult()..type = AccountLimitType.guest;
+        } else if (isVip()) {
+          return TransferResult()..type = AccountLimitType.vip;
         } else {
-          return TransferResult()
-            ..msgTitle = S.of(Get.context!).generate_reached_limit_title.replaceAll('%s', 'Me-taverse')
-            ..msgContent = S.of(Get.context!).generate_reached_limit.replaceAll('%s', 'Me-taverse');
+          return TransferResult()..type = AccountLimitType.normal;
         }
       }
     }
@@ -185,8 +185,7 @@ class AnotherMeController extends GetxController {
 
 class TransferResult {
   AnotherMeResultEntity? entity;
-  String? msgTitle;
-  String? msgContent;
+  AccountLimitType? type;
 
   TransferResult();
 }
