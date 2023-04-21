@@ -82,6 +82,10 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           setState(() {
             _showPurchasePlan = true;
           });
+        } else {
+          setState(() {
+            _showPurchasePlan = false;
+          });
         }
       }
     });

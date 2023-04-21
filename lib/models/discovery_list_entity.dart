@@ -76,6 +76,22 @@ class DiscoveryListEntity {
   DiscoveryListEntity copy() {
     return DiscoveryListEntity.fromJson(toJson());
   }
+
+  String? getPrompt() {
+    if (category != 'txt2img') {
+      return null;
+    }
+    try {
+      Map<String, dynamic> p = jsonDecode(payload ?? '');
+      if (p['displayText'] ?? false) {
+        return p['txt2img_params']['prompt'];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 @JsonSerializable()

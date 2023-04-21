@@ -51,7 +51,7 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
   void onPageChanged(int index) {
     setState(() {
       currentIndex = index;
-      if (widget.galleryItems[index].type == AnyPhotoType.assets) {
+      if (widget.galleryItems[index].type == AnyPhotoType.assets || widget.galleryItems[index].type == AnyPhotoType.memory) {
         optVisible = false;
       } else {
         optVisible = true;
@@ -109,6 +109,8 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
                             case AnyPhotoType.url:
                               file = await SyncDownloadImage(url: galleryItem.uri, type: 'png').getImage();
                               break;
+                            case AnyPhotoType.memory:
+                              break;
                           }
                           if (file != null) {
                             await GallerySaver.saveImage(file.path, albumName: 'Pandora Avatars');
@@ -159,19 +161,22 @@ class _AnyGalleryPhotoViewWrapperState extends AppState<AnyGalleryPhotoViewWrapp
       case AnyPhotoType.base64:
         provider = MemoryImage(base64Decode(item.uri));
         break;
+      case AnyPhotoType.memory:
+        provider = MemoryImage(item.uri);
+        break;
     }
     return PhotoViewGalleryPageOptions(
       imageProvider: provider,
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * 0.5,
       maxScale: PhotoViewComputedScale.covered * 4.1,
-      heroAttributes: PhotoViewHeroAttributes(tag: item.tag ?? item.uri),
+      heroAttributes: PhotoViewHeroAttributes(tag: item.tag ?? ((item.uri is String) ? item.uri : '')),
     );
   }
 }
 
 class AnyPhotoItem {
-  String uri;
+  dynamic uri;
   AnyPhotoType type;
   String? tag;
 
@@ -187,4 +192,5 @@ enum AnyPhotoType {
   file,
   url,
   base64,
+  memory,
 }

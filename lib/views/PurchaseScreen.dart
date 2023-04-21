@@ -129,9 +129,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           });
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
-          bool valid = await _verifyPurchase(purchaseDetails);
+          // bool valid = await _verifyPurchase(purchaseDetails);
 
-          if (valid) {
+          // if (valid) {
             // reload user by get login
             await userManager.refreshUser();
             var user = userManager.user!;
@@ -139,18 +139,19 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               setState(() {
                 _showPurchasePlan = true;
               });
+            } else {
+              _handleInvalidPurchase(purchaseDetails);
+              setState(() {
+                _loading = false;
+              });
             }
             deliverProduct(purchaseDetails);
             setState(() {
               _loading = false;
             });
-          } else {
-            _handleInvalidPurchase(purchaseDetails);
-            setState(() {
-              _loading = false;
-            });
+          // } else {
             return;
-          }
+          // }
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume) {

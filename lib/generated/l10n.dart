@@ -3699,6 +3699,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Are you sure to unsubscribe?`
+  String get restore_msg {
+    return Intl.message(
+      'Are you sure to unsubscribe?',
+      name: 'restore_msg',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You will lose all of your rights until subscribe again`
+  String get restore_content {
+    return Intl.message(
+      'You will lose all of your rights until subscribe again',
+      name: 'restore_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unsubscribe`
+  String get cancel_subscribe {
+    return Intl.message(
+      'Unsubscribe',
+      name: 'cancel_subscribe',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancelled`
+  String get cancel_subscribe_succeed {
+    return Intl.message(
+      'Cancelled',
+      name: 'cancel_subscribe_succeed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear Successfully`
+  String get clean_successfully {
+    return Intl.message(
+      'Clear Successfully',
+      name: 'clean_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy Successfully`
+  String get copy_successfully {
+    return Intl.message(
+      'Copy Successfully',
+      name: 'copy_successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message(
+      'Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Input your description`
+  String get ai_draw_hint {
+    return Intl.message(
+      'Input your description',
+      name: 'ai_draw_hint',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

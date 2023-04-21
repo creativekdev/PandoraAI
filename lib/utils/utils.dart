@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -138,7 +139,7 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
   var imageInfo = await SyncFileImage(file: file).getImage();
   var image = imageInfo.image;
-  var wideSide = image.width > image.height ? image.width : image.height;
+  var wideSide = max(image.width, image.height);
   File result;
   if (wideSide > imageSize) {
     var scale = imageSize / wideSide;
@@ -317,53 +318,13 @@ Future<Uint8List> addWaterMark({
   return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
 }
 
-///无效方法，flutter2.0以下适用
-Future<ui.Image?> createImageFromWidget(Widget widget, {Duration? wait, required Size imageSize}) async {
-  var devicePixelRatio = ui.window.devicePixelRatio;
-  final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-  final RenderView renderView = RenderView(
-    window: ui.PlatformDispatcher.instance.views.single,
-    child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
-    configuration: ViewConfiguration(
-      size: imageSize,
-      devicePixelRatio: devicePixelRatio,
-    ),
-  );
-
-  final PipelineOwner pipelineOwner = PipelineOwner();
-  final BuildOwner buildOwner = BuildOwner();
-
-  pipelineOwner.rootNode = renderView;
-  renderView.prepareInitialFrame();
-  final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-      container: repaintBoundary,
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: widget,
-      )).attachToRenderTree(buildOwner);
-  if (wait != null) {
-    await Future.delayed(wait);
-  }
-  buildOwner.buildScope(rootElement);
-  buildOwner.finalizeTree();
-
-  pipelineOwner.flushLayout();
-  pipelineOwner.flushCompositingBits();
-  pipelineOwner.flushPaint();
-  final ui.Image image = await repaintBoundary.toImage(pixelRatio: devicePixelRatio);
-  return image;
-}
-
 ///从组件获取位图
 ///@param: context:组件上下文
 ///@param: pixelRatio:根据分辨率展示倍图
 Future<ui.Image?> getBitmapFromContext(BuildContext context, {double pixelRatio = 1.0}) async {
   try {
     RenderRepaintBoundary boundary = context.findRenderObject() as RenderRepaintBoundary;
-    var start = DateTime.now().millisecondsSinceEpoch;
     var image = await boundary.toImage(pixelRatio: pixelRatio);
-    var end = DateTime.now().millisecondsSinceEpoch;
-    // print('crop spend ${end - start}millisecond');
     return image;
   } catch (e) {
     print(e);
@@ -417,6 +378,12 @@ Future<ui.Image> getImage(File file) async {
 Future<imgLib.Image> getLibImage(ui.Image image) async {
   var byteData = await image.toByteData();
   return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
+}
+
+Future<ui.Image> getUiImage(imgLib.Image image) async {
+  var bytes = image.getBytes();
+  var imageInfo = await SyncMemoryImage(list: bytes).getImage();
+  return imageInfo.image;
 }
 
 Future<bool> judgeInvitationCode() async {

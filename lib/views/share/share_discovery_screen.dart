@@ -30,6 +30,7 @@ enum DiscoveryCategory {
   cartoonize,
   another_me,
   txt2img,
+  ai_draw,
 }
 
 const int _maxInputLength = 512;
@@ -126,6 +127,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           break;
         case DiscoveryCategory.txt2img:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIArtistTextToImage");
+          break;
+        case DiscoveryCategory.ai_draw:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIDraw");
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

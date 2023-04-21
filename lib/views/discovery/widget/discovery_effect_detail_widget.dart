@@ -190,6 +190,13 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                   openImage(context, 0);
                 }
               }),
+        data.getPrompt() != null
+            ? TitleTextWidget(data.getPrompt()!, Color(0xffb3b3b3), FontWeight.w500, $(14), maxLines: 99, align: TextAlign.start)
+                .intoContainer(
+                  padding: EdgeInsets.only(left: $(15), right: $(15), top: $(10)),
+                )
+                .hero(tag: data.getPrompt()!)
+            : SizedBox.shrink(),
         Row(
           children: [
             buildAttr(

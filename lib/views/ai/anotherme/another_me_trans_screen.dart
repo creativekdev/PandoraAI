@@ -22,6 +22,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
@@ -32,15 +33,12 @@ import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter/session_state.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
 import 'widgets/trans_result_video_build_dialog.dart';
-
-const axisRatioFlag = 0.8;
 
 class AnotherMeTransScreen extends StatefulWidget {
   File file;
@@ -83,7 +81,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     photoType = widget.photoType;
     dividerSize = $(4);
     resultCardWidth = ScreenUtil.screenSize.width - $(32);
-    resultCardHeight = ratio > axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
+    resultCardHeight = ratio > ImageUtils.axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
     file = widget.file;
     transResult = widget.resultFile;
     delay(() {
@@ -105,60 +103,60 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         context: context,
         barrierDismissible: false,
         builder: (_) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: $(27)),
-            Image.asset(
-              Images.ic_limit_icon,
-            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
-            SizedBox(height: $(16)),
-            TitleTextWidget(
-              type.getContent(context, 'AI Artist'),
-              ColorConstant.White,
-              FontWeight.w500,
-              $(13),
-              maxLines: 100,
-              align: TextAlign.center,
-            ).intoContainer(
-              width: double.maxFinite,
-              padding: EdgeInsets.only(
-                bottom: $(30),
-                left: $(30),
-                right: $(30),
-              ),
-              alignment: Alignment.center,
-            ),
-            Text(
-              type.getSubmitText(context),
-              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-            )
-                .intoContainer(
-              width: double.maxFinite,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)),color: ColorConstant.DiscoveryBtn),
-              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-              alignment: Alignment.center,
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop(false);
-            }),
-            type.getPositiveText(context) != null
-                ? Text(
-              type.getPositiveText(context)!,
-              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-            )
-                .intoContainer(
-              width: double.maxFinite,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)),color: Color(0xff292929)),
-              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-              margin: EdgeInsets.only(top: $(16), bottom: $(24)),
-              alignment: Alignment.center,
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.pop(_, true);
-            })
-                : SizedBox.shrink(),
-          ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: $(27)),
+                Image.asset(
+                  Images.ic_limit_icon,
+                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
+                SizedBox(height: $(16)),
+                TitleTextWidget(
+                  type.getContent(context, 'AI Artist'),
+                  ColorConstant.White,
+                  FontWeight.w500,
+                  $(13),
+                  maxLines: 100,
+                  align: TextAlign.center,
+                ).intoContainer(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.only(
+                    bottom: $(30),
+                    left: $(30),
+                    right: $(30),
+                  ),
+                  alignment: Alignment.center,
+                ),
+                Text(
+                  type.getSubmitText(context),
+                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                )
+                    .intoContainer(
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
+                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+                  alignment: Alignment.center,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop(false);
+                }),
+                type.getPositiveText(context) != null
+                    ? Text(
+                        type.getPositiveText(context)!,
+                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                      )
+                        .intoContainer(
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
+                        padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+                        margin: EdgeInsets.only(top: $(16), bottom: $(24)),
+                        alignment: Alignment.center,
+                      )
+                        .intoGestureDetector(onTap: () {
+                        Navigator.pop(_, true);
+                      })
+                    : SizedBox.shrink(),
+              ],
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
       if (value == null) {
       } else if (value) {
         switch (type) {
@@ -348,7 +346,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               resultImage: File(controller.transKey!),
                               width: resultCardWidth,
                               height: resultCardHeight,
-                              direction: ratio > axisRatioFlag ? Axis.horizontal : Axis.vertical,
+                              direction: ratio > ImageUtils.axisRatioFlag ? Axis.horizontal : Axis.vertical,
                               dividerSize: dividerSize,
                             ),
                             borderRadius: BorderRadius.circular($(12)),
@@ -359,7 +357,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               .intoCenter()
                               .intoContainer(padding: EdgeInsets.only(top: 48)),
                           Image.asset(
-                            ratio > axisRatioFlag ? Images.ic_another_arrow_right : Images.ic_another_arrow_down,
+                            ratio > ImageUtils.axisRatioFlag ? Images.ic_another_arrow_right : Images.ic_another_arrow_down,
                             width: $(18),
                           ).intoContainer(
                             alignment: Alignment.center,
@@ -401,7 +399,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               });
                             } else {
                               await showLoading();
-                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
                               var list = uint8list.toList();
                               var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
                               var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
@@ -491,7 +489,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
-                              var uint8list = await printImageData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               await hideLoading();
                               ShareScreen.startShare(context,
@@ -539,195 +537,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         Navigator.of(context).pop(true);
         return false;
       });
-
-  double scaleSize = 1080 / 375;
-
-  double dp(double source) => source * scaleSize;
-
-  ///375 设计宽度下，对应输出1080宽度下缩放比2.88
-  ///appIcon宽度64，二维码宽度64，标题字体17，描述文案字体13
-  ///底部app推广高度105
-  Future<Uint8List> printImageData(File originalImage, File resultImage, String userEmail) async {
-    var bgSource = await SyncAssetImage(assets: Images.ic_another_me_trans_bg).getImage();
-    var bgHeadInfo = await SyncAssetImage(assets: Images.ic_mt_result_top).getImage();
-    var bgMiddleInfo = await SyncAssetImage(assets: Images.ic_mt_result_middle).getImage();
-    var bgBottomInfo = await SyncAssetImage(assets: Images.ic_mt_result_bottom).getImage();
-    var originalImageInfo = await SyncFileImage(file: originalImage).getImage();
-    var resultImageInfo = await SyncFileImage(file: resultImage).getImage();
-    var appIconImageInfo = await SyncAssetImage(assets: Images.ic_app).getImage();
-    var qrCodeImageInfo = await SyncAssetImage(assets: Images.ic_app_qrcode).getImage();
-    var arrowRightImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_right).getImage();
-    var arrowDownImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_down).getImage();
-
-    double width = dp(375);
-    double headWidth = dp(360);
-    double headBgHeight = headWidth * bgHeadInfo.image.height / bgHeadInfo.image.width;
-    Offset userNamePos = Offset(dp(25), dp(70));
-    double headHeight = dp(100);
-    double bottomBgHeight = headWidth * bgBottomInfo.image.height / bgBottomInfo.image.width;
-    double bottomHeight = dp(105);
-
-    double imageContainerWidth = dp(324);
-
-    double appIconSize = dp(64);
-    double qrcodeSize = dp(64);
-    double titleSize = dp(17);
-    double nameSize = dp(13);
-    double descSize = dp(13);
-    double dividerSize = dp(8);
-    double padding = dp(16);
-
-    var imageWidth;
-    var imageHeight;
-    var ratio = originalImageInfo.image.height / originalImageInfo.image.width;
-    if (ratio > axisRatioFlag) {
-      imageWidth = (imageContainerWidth - dividerSize) / 2;
-      imageHeight = imageWidth * ratio;
-    } else {
-      imageWidth = imageContainerWidth;
-      imageHeight = imageWidth * ratio * 2 + dividerSize;
-    }
-    double height = imageHeight + headHeight + bottomHeight + padding * 2;
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder, Rect.fromPoints(Offset.zero, Offset(width, height)));
-
-    //绘制背景
-    var bgSrcRect = Rect.fromLTWH(0, 0, bgSource.image.width.toDouble(), bgSource.image.height.toDouble());
-    var bgDstRect = Rect.fromLTWH(0, 0, width, height);
-    canvas.drawImageRect(bgSource.image, bgSrcRect, bgDstRect, Paint());
-
-    var headSrcRect = Rect.fromLTWH(0, 0, bgHeadInfo.image.width.toDouble(), bgHeadInfo.image.height.toDouble());
-    var headDstRect = Rect.fromLTWH(dp(8), padding, headWidth, headBgHeight);
-    canvas.drawImageRect(bgHeadInfo.image, headSrcRect, headDstRect, Paint());
-
-    var middleSrcRect = Rect.fromLTWH(0, 0, bgMiddleInfo.image.width.toDouble(), bgMiddleInfo.image.height.toDouble());
-    var middleHeight = height - headBgHeight - padding * 2 - bottomBgHeight;
-    var middleDstRect = Rect.fromLTWH(dp(8), headBgHeight + padding, headWidth, middleHeight);
-    canvas.drawImageRect(bgMiddleInfo.image, middleSrcRect, middleDstRect, Paint());
-
-    var bottomSrcRect = Rect.fromLTWH(0, 0, bgBottomInfo.image.width.toDouble(), bgBottomInfo.image.height.toDouble());
-    var bottomDstRect = Rect.fromLTWH(dp(8), headBgHeight + padding + middleHeight, headWidth, bottomBgHeight);
-    canvas.drawImageRect(bgBottomInfo.image, bottomSrcRect, bottomDstRect, Paint());
-
-    // 绘制标题文本
-    var emailPainter = TextPainter(
-      text: TextSpan(
-          text: userEmail,
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.bold,
-            color: ColorConstant.White,
-            fontSize: nameSize,
-          )),
-      ellipsis: '...',
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.justify,
-      textWidthBasis: TextWidthBasis.longestLine,
-      maxLines: 2,
-    )..layout(maxWidth: headWidth);
-    emailPainter.paint(canvas, userNamePos);
-
-    //绘制原图
-    var originalImageSrcRect = Rect.fromLTWH(0, 0, originalImageInfo.image.width.toDouble(), originalImageInfo.image.height.toDouble());
-    var originalImageDstRect = Rect.fromLTWH(dp(25), headHeight, imageWidth, imageWidth * ratio);
-    canvas.drawImageRect(originalImageInfo.image, originalImageSrcRect, originalImageDstRect, Paint());
-
-    //绘制结果图
-    var resultImageSrcRect = Rect.fromLTWH(0, 0, resultImageInfo.image.width.toDouble(), resultImageInfo.image.height.toDouble());
-    Rect resultImageDstRect;
-    if (ratio > axisRatioFlag) {
-      resultImageDstRect = Rect.fromLTWH(dp(25) + imageWidth + dividerSize, headHeight, imageWidth, imageWidth * ratio);
-    } else {
-      resultImageDstRect = Rect.fromLTWH(dp(25), headHeight + imageWidth * ratio + dividerSize, imageWidth, imageWidth * ratio);
-    }
-    canvas.drawImageRect(resultImageInfo.image, resultImageSrcRect, resultImageDstRect, Paint());
-
-    // 绘制箭头
-    if (ratio > axisRatioFlag) {
-      Rect arrowRightSrcRect = Rect.fromLTWH(0, 0, arrowRightImageInfo.image.width.toDouble(), arrowRightImageInfo.image.height.toDouble());
-      Rect arrowRightDstRect = Rect.fromLTWH(dp(20) + imageWidth, headHeight + imageHeight / 2 - dp(10), dp(20), dp(20));
-      canvas.drawImageRect(arrowRightImageInfo.image, arrowRightSrcRect, arrowRightDstRect, Paint());
-    } else {
-      Rect arrowDownSrcRect = Rect.fromLTWH(0, 0, arrowDownImageInfo.image.width.toDouble(), arrowDownImageInfo.image.height.toDouble());
-      Rect arrowDownDstRect = Rect.fromLTWH(width / 2 - dp(10), headHeight + imageHeight / 2 - dp(10), dp(20), dp(20));
-      canvas.drawImageRect(arrowDownImageInfo.image, arrowDownSrcRect, arrowDownDstRect, Paint());
-    }
-
-    // 绘制底部白色块
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(dp(25), height - bottomHeight - padding - dividerSize, imageContainerWidth, dp(90)),
-          topLeft: Radius.circular(dp(4)),
-          topRight: Radius.circular(dp(4)),
-          bottomLeft: Radius.circular(dp(4)),
-          bottomRight: Radius.circular(dp(4)),
-        ),
-        Paint()
-          ..color = Color(0x2bffffff)
-          ..style = PaintingStyle.fill);
-
-    // 绘制appicon
-    double appIconY = height - bottomHeight - padding + dp(5);
-    canvas.drawImageRect(
-      appIconImageInfo.image,
-      Rect.fromLTWH(0, 0, appIconImageInfo.image.width.toDouble(), appIconImageInfo.image.height.toDouble()),
-      Rect.fromLTWH(dp(33), appIconY, appIconSize, appIconSize),
-      Paint(),
-    );
-    // 绘制二维码
-    double qrCodeY = height - bottomHeight - padding + dp(5);
-    canvas.drawImageRect(
-      qrCodeImageInfo.image,
-      Rect.fromLTWH(0, 0, qrCodeImageInfo.image.width.toDouble(), qrCodeImageInfo.image.height.toDouble()),
-      Rect.fromLTWH(width - qrcodeSize - dp(33), qrCodeY, qrcodeSize, qrcodeSize),
-      Paint(),
-    );
-
-    // 绘制标题文本
-    var textPainter = TextPainter(
-      text: TextSpan(
-          text: "PandoraAi",
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: titleSize,
-          )),
-      ellipsis: '...',
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.justify,
-      textWidthBasis: TextWidthBasis.longestLine,
-      maxLines: 2,
-    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
-    double titleY = height - bottomHeight - padding + dp(8);
-    textPainter.paint(canvas, Offset(dp(41) + appIconSize, titleY));
-
-    // 绘制描述文本
-    var descPainter = TextPainter(
-      text: TextSpan(
-          text: "Discover your own anime alter ego!",
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.normal,
-            color: Colors.white,
-            fontSize: descSize,
-            height: 1.1,
-          )),
-      ellipsis: '...',
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.justify,
-      textWidthBasis: TextWidthBasis.longestLine,
-      maxLines: 2,
-    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
-    double descY = height - bottomHeight + dp(20);
-    descPainter.paint(canvas, Offset(dp(41) + appIconSize, descY));
-
-    final picture = recorder.endRecording();
-    final img = await picture.toImage(width.toInt(), height.toInt());
-    final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
-    // var outBytes = await img.toByteData();
-    return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
-  }
 
   Future<bool?> showSaveDialog(BuildContext context, bool isSave) {
     return showModalBottomSheet<bool>(

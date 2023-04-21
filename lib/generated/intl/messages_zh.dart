@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("请输入描述"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("现在去设置"),
         "album_to_settings_tips":
@@ -66,6 +67,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
         "c_password": MessageLookupByLibrary.simpleMessage("确认密码"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
+        "cancel_subscribe": MessageLookupByLibrary.simpleMessage("取消订阅"),
+        "cancel_subscribe_succeed":
+            MessageLookupByLibrary.simpleMessage("已取消订阅"),
         "card_number": MessageLookupByLibrary.simpleMessage("卡号"),
         "cartoonize": MessageLookupByLibrary.simpleMessage("Cartoonize"),
         "cartoonizeCancelDismiss": MessageLookupByLibrary.simpleMessage("继续转化"),
@@ -89,6 +93,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？"),
         "choose_your_scale": MessageLookupByLibrary.simpleMessage("尺寸"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage("选择风格（可选）"),
+        "clean_successfully": MessageLookupByLibrary.simpleMessage("清除成功"),
         "clear": MessageLookupByLibrary.simpleMessage("清除"),
         "clear_cache_tips":
             MessageLookupByLibrary.simpleMessage("确定要清除所有缓存？\n 共：%d"),
@@ -103,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "confirm_pass": MessageLookupByLibrary.simpleMessage("确认密码"),
         "congratulations": MessageLookupByLibrary.simpleMessage("祝贺你!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
+        "copy_successfully": MessageLookupByLibrary.simpleMessage("已复制到剪贴板"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
         "create": MessageLookupByLibrary.simpleMessage("创建"),
         "createAccount": MessageLookupByLibrary.simpleMessage("创建\n账号"),
@@ -132,6 +138,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("取消"),
         "display_text": MessageLookupByLibrary.simpleMessage("显示文案"),
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
+        "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "edit": MessageLookupByLibrary.simpleMessage("编辑"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("编辑信息"),
@@ -347,6 +354,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "提示：如果没有收到邮件，请检查您的垃圾箱或者点击重试按钮"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
+        "restore_content":
+            MessageLookupByLibrary.simpleMessage("在再次订阅之前，您将失去所有的权益"),
+        "restore_msg": MessageLookupByLibrary.simpleMessage("您确定要取消订阅么？"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage("保存高清无水印图片"),
         "save_into_album": MessageLookupByLibrary.simpleMessage("保存到相册"),

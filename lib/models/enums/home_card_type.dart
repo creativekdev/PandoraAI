@@ -4,6 +4,7 @@ enum HomeCardType {
   anotherme,
   ai_avatar,
   text2image,
+  ai_drawable,
   UNDEFINED,
 }
 
@@ -18,6 +19,8 @@ class HomeCardTypeUtils {
         return HomeCardType.ai_avatar;
       case 'txt2img':
         return HomeCardType.text2image;
+      case 'ai_drawable':
+        return HomeCardType.ai_drawable;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -35,6 +38,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'ai_avatar';
       case HomeCardType.text2image:
         return 'txt2img';
+      case HomeCardType.ai_drawable:
+        return 'ai_drawable';
       case HomeCardType.UNDEFINED:
         return null;
     }
@@ -52,6 +57,8 @@ extension HomeCardTypeEx on HomeCardType {
         return '';
       case HomeCardType.text2image:
         return 'AI Artist: Text to Image';
+      case HomeCardType.ai_drawable:
+        return 'AI Drawable';
     }
   }
 }

@@ -522,4 +522,12 @@ class CartoonizerApi extends BaseRequester {
     });
     return jsonConvert.convert<UserRefLinkEntity>(baseEntity?.data['data']);
   }
+
+  Future<BaseEntity?> unsubscribe(String category) async {
+    return await post('/plan/cancel', params: {'category': category});
+  }
+
+  Future<BaseEntity?> appleBuy(Map<String, dynamic> params)async{
+    return await post('/plan/apple_store/buy', params: params);
+  }
 }

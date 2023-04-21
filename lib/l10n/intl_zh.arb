@@ -363,5 +363,13 @@
   "enter_code": "填写邀请码",
   "my_code": "我的邀请码",
   "remaining_credits": "已获权益",
-  "submit_now": "去邀请"
+  "submit_now": "去邀请",
+  "restore_msg": "您确定要取消订阅么？",
+  "restore_content": "在再次订阅之前，您将失去所有的权益",
+  "cancel_subscribe": "取消订阅",
+  "cancel_subscribe_succeed": "已取消订阅",
+  "clean_successfully": "清除成功",
+  "copy_successfully": "已复制到剪贴板",
+  "done": "完成",
+  "ai_draw_hint": "请输入描述"
 }

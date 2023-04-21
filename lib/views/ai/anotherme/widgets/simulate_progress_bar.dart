@@ -38,6 +38,12 @@ class SimulateProgressBarConfig {
       ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 2), rate: 0.95, text: S.of(context).trans_painting)
       ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05, text: S.of(context).trans_success);
   }
+  factory SimulateProgressBarConfig.aiDraw(BuildContext context) {
+    return SimulateProgressBarConfig()
+      ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2, text: S.of(context).trans_uploading)
+      ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 5), rate: 0.75, text: S.of(context).trans_painting)
+      ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 300), rate: 0.05, text: S.of(context).trans_success);
+  }
 }
 
 class SimulateProgressBarConfigItem {

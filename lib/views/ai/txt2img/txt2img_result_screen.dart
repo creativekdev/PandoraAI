@@ -21,6 +21,7 @@ import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:vibration/vibration.dart';
 
 class Txt2imgResultScreen extends StatefulWidget {
   Txt2imgController controller;
@@ -100,54 +101,17 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
     }
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppNavigationBar(backgroundColor: Colors.black),
+      appBar: AppNavigationBar(
+        backgroundColor: Colors.transparent,
+        blurAble: true,
+      ),
       body: GetBuilder<Txt2imgController>(
         init: controller,
         builder: (controller) {
           return Column(
             children: [
               Expanded(
-                child: TextUtil.isEmpty(controller.filePath)
-                    ? Container()
-                    : RepaintBoundary(
-                        key: key,
-                        child: Stack(
-                          fit: StackFit.passthrough,
-                          children: [
-                            Image.file(
-                              File(controller.filePath!),
-                              fit: BoxFit.contain,
-                            ),
-                            controller.displayText
-                                ? Positioned(
-                                    child: PromptBorder(
-                                      child: Text(
-                                        controller.editingController.text,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: $(14),
-                                        ),
-                                        maxLines: 4,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      color: Color(0x88000000),
-                                      padding: EdgeInsets.symmetric(horizontal: $(10), vertical: $(8)),
-                                      radius: $(4),
-                                    ),
-                                    left: 15,
-                                    right: 15,
-                                    bottom: 20,
-                                  )
-                                : SizedBox.shrink(),
-                          ],
-                        ),
-                      )
-                        .intoContainer(
-                          width: ScreenUtil.screenSize.width,
-                        )
-                        .intoCenter(),
+                child: TextUtil.isEmpty(controller.filePath) ? Container() : buildImage(context, controller),
               ),
               AGOptContainer(
                 key: optKey,
@@ -215,34 +179,31 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                     context,
                     logPreLoginAction: 'share_discovery_from_txt2img',
                     callback: () async {
-                      var image = await getBitmapFromContext(key.currentContext!, pixelRatio: 1.5);
-                      if (image == null) {
-                        hideLoading().whenComplete(() {
-                          CommonExtension().showToast(S.of(context).commonFailedToast);
-                        });
-                      } else {
-                        var byteData = await image.toByteData(format: ImageByteFormat.png);
-                        Uint8List list = byteData!.buffer.asUint8List();
-                        ShareDiscoveryScreen.push(
-                          context,
-                          effectKey: 'txt2img',
-                          originalUrl: null,
-                          image: base64Encode(list),
-                          isVideo: false,
-                          category: DiscoveryCategory.txt2img,
-                          payload: controller.parameters != null ? jsonEncode({"txt2img_params": controller.parameters}) : null,
-                        ).then((value) {
-                          if (value ?? false) {
-                            Events.txt2imgCompleteShare(
-                              source: 'txt2img',
-                              platform: 'discovery',
-                              type: 'image',
-                              textDisplay: controller.displayText,
-                            );
-                            showShareSuccessDialog(context);
-                          }
-                        });
-                      }
+                      Uint8List list = File(controller.filePath!).readAsBytesSync();
+                      ShareDiscoveryScreen.push(
+                        context,
+                        effectKey: 'txt2img',
+                        originalUrl: null,
+                        image: base64Encode(list),
+                        isVideo: false,
+                        category: DiscoveryCategory.txt2img,
+                        payload: controller.parameters != null
+                            ? jsonEncode({
+                                "txt2img_params": controller.parameters,
+                                "displayText": controller.displayText,
+                              })
+                            : null,
+                      ).then((value) {
+                        if (value ?? false) {
+                          Events.txt2imgCompleteShare(
+                            source: 'txt2img',
+                            platform: 'discovery',
+                            type: 'image',
+                            textDisplay: controller.displayText,
+                          );
+                          showShareSuccessDialog(context);
+                        }
+                      });
                     },
                     autoExec: true,
                   );
@@ -349,5 +310,62 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
         Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
       }
     });
+  }
+
+  buildImage(BuildContext context, Txt2imgController controller) {
+    if (controller.displayText) {
+      return SingleChildScrollView(
+        child: RepaintBoundary(
+          key: key,
+          child: Column(
+            children: [
+              Image.file(
+                File(controller.filePath!),
+                fit: BoxFit.contain,
+              ),
+              Text(
+                controller.editingController.text,
+                style: TextStyle(
+                  color: Color(0xffb3b3b3),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                  fontSize: $(14),
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+              )
+                  .intoGestureDetector(
+                    onDoubleTap: Platform.isIOS
+                        ? () {
+                            Clipboard.setData(ClipboardData(text: controller.editingController.text));
+                            CommonExtension().showToast(S.of(context).copy_successfully);
+                          }
+                        : null,
+                    onLongPress: Platform.isAndroid
+                        ? () {
+                            Clipboard.setData(ClipboardData(text: controller.editingController.text));
+                            Vibration.hasVibrator().then((value) {
+                              if (value ?? false) {
+                                CommonExtension().showToast(S.of(context).copy_successfully);
+                                Vibration.vibrate(duration: 50);
+                              }
+                            });
+                          }
+                        : null,
+                  )
+                  .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12))),
+            ],
+          ).intoContainer(color: Colors.black),
+        ),
+      );
+    } else {
+      return RepaintBoundary(
+        key: key,
+        child: Image.file(
+          File(controller.filePath!),
+          fit: BoxFit.contain,
+        ),
+      );
+    }
   }
 }

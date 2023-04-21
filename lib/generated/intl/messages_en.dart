@@ -34,6 +34,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Cartoonizer."),
+        "ai_draw_hint":
+            MessageLookupByLibrary.simpleMessage("Input your description"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("Go to settings"),
         "album_to_settings_tips":
@@ -77,6 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "%d Conversions of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cancel_subscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
+        "cancel_subscribe_succeed":
+            MessageLookupByLibrary.simpleMessage("Cancelled"),
         "card_number": MessageLookupByLibrary.simpleMessage("Card Number"),
         "cartoonize": MessageLookupByLibrary.simpleMessage("Cartoonize"),
         "cartoonizeCancelDismiss":
@@ -105,6 +110,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "choose_your_scale": MessageLookupByLibrary.simpleMessage("Size"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage(
             "Choose your style (optional)"),
+        "clean_successfully":
+            MessageLookupByLibrary.simpleMessage("Clear Successfully"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
         "clear_cache_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to clear all cache?\n total: %d"),
@@ -124,6 +131,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Congratulations!"),
         "connect_with_us":
             MessageLookupByLibrary.simpleMessage("Connect with us"),
+        "copy_successfully":
+            MessageLookupByLibrary.simpleMessage("Copy Successfully"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage(
             "Please enter confirm password"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),
@@ -157,6 +166,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoveryUnlike": MessageLookupByLibrary.simpleMessage("Unlike"),
         "display_text": MessageLookupByLibrary.simpleMessage("Display Text"),
         "dog": MessageLookupByLibrary.simpleMessage("dog"),
+        "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
@@ -423,6 +433,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend."),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
+        "restore_content": MessageLookupByLibrary.simpleMessage(
+            "You will lose all of your rights until subscribe again"),
+        "restore_msg": MessageLookupByLibrary.simpleMessage(
+            "Are you sure to unsubscribe?"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to save %d images"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(

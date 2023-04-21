@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_video_build_dialog.dart';
 
 class TransResultCard extends StatefulWidget {
   double width;

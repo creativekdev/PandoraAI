@@ -8,13 +8,13 @@ import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
+
 import '../../Widgets/dialog/dialog_widget.dart';
 import '../ChangePasswordScreen.dart';
 
@@ -33,9 +33,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
 
   bool get nsfwOpen => cacheManager.getBool(CacheManager.nsfwOpen);
 
-  set nsfwOpen(bool value) {
-    cacheManager.setBool(CacheManager.nsfwOpen, value);
-  }
+  set nsfwOpen(bool value) => cacheManager.setBool(CacheManager.nsfwOpen, value);
 
   late StreamSubscription onUserChangeListen;
   late StreamSubscription onLoginStateChangeListen;
@@ -44,22 +42,14 @@ class _SettingScreenState extends AppState<SettingScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'setting_screen');
-    onUserChangeListen = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
-      setState(() {});
-    });
-    onLoginStateChangeListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
-      setState(() {});
-    });
+    onUserChangeListen = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) => setState(() {}));
+    onLoginStateChangeListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) => setState(() {}));
     getCacheSize();
   }
 
-  Future<Null> getCacheSize() {
-    return cacheManager.storageOperator.totalSize().then((value) {
-      setState(() {
-        totalSize = value;
+  Future<Null> getCacheSize() => cacheManager.storageOperator.totalSize().then((value) {
+        setState(() => totalSize = value);
       });
-    });
-  }
 
   @override
   void dispose() {
@@ -139,7 +129,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
                         ]).whenComplete(() {
                           EventBusHelper().eventBus.fire(OnClearCacheEvent());
                           hideLoading().whenComplete(() {
-                            CommonExtension().showToast('Clear Success');
+                            CommonExtension().showToast(S.of(context).clean_successfully);
                             getCacheSize();
                           });
                         });
@@ -317,14 +307,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
           ),
         ],
       )
-          .intoMaterial(
-            color: ColorConstant.EffectFunctionGrey,
-            borderRadius: BorderRadius.circular($(16)),
-          )
-          .intoContainer(
-            padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-            margin: EdgeInsets.symmetric(horizontal: $(35)),
-          )
+          .intoMaterial(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(16)))
+          .intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)), margin: EdgeInsets.symmetric(horizontal: $(35)))
           .intoCenter(),
     );
   }
@@ -376,14 +360,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
             ),
           ],
         )
-            .intoMaterial(
-              color: ColorConstant.EffectFunctionGrey,
-              borderRadius: BorderRadius.circular($(16)),
-            )
-            .intoContainer(
-              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-              margin: EdgeInsets.symmetric(horizontal: $(35)),
-            )
+            .intoMaterial(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(16)))
+            .intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)), margin: EdgeInsets.symmetric(horizontal: $(35)))
             .intoCenter(),
       );
 
@@ -413,14 +391,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
             }),
           ],
         )
-            .intoMaterial(
-              color: ColorConstant.EffectFunctionGrey,
-              borderRadius: BorderRadius.circular($(16)),
-            )
-            .intoContainer(
-              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-              margin: EdgeInsets.symmetric(horizontal: $(35)),
-            )
+            .intoMaterial(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(16)))
+            .intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)), margin: EdgeInsets.symmetric(horizontal: $(35)))
             .intoCenter(),
       );
 
@@ -446,21 +418,20 @@ class _SettingScreenState extends AppState<SettingScreen> {
             Row(
               children: [
                 Expanded(
-                    child: Text(
-                  S.of(context).clear,
-                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
-                )
-                        .intoContainer(
-                            padding: EdgeInsets.all(10),
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                border: Border(
-                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
-                              right: BorderSide(color: ColorConstant.LineColor, width: 1),
-                            )))
-                        .intoGestureDetector(onTap: () async {
-                  Navigator.pop(context, true);
-                })),
+                  child: Text(S.of(context).clear, style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red))
+                      .intoContainer(
+                    padding: EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        border: Border(
+                      top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                      right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                    )),
+                  )
+                      .intoGestureDetector(onTap: () async {
+                    Navigator.pop(context, true);
+                  }),
+                ),
                 Expanded(
                     child: Text(
                   S.of(context).cancel,
@@ -480,14 +451,8 @@ class _SettingScreenState extends AppState<SettingScreen> {
             ),
           ],
         )
-            .intoMaterial(
-              color: ColorConstant.EffectFunctionGrey,
-              borderRadius: BorderRadius.circular($(16)),
-            )
-            .intoContainer(
-              padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)),
-              margin: EdgeInsets.symmetric(horizontal: $(35)),
-            )
+            .intoMaterial(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(16)))
+            .intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)), margin: EdgeInsets.symmetric(horizontal: $(35)))
             .intoCenter(),
       );
 }

@@ -59,4 +59,6 @@ class ColorConstant {
   static const colorBlue = Color(0xff1f51e9);
   static const colorBlue2 = Color(0xff243cff);
   static const colorBlue3 = Color(0xff0114b1);
+  static const Color aiDrawGrey = Color(0xffe0e0e0);
+  // static const Color aiDrawGrey = Color(0xff1e1f1e);
 }

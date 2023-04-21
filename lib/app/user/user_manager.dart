@@ -272,4 +272,12 @@ class UserManager extends BaseManager {
     var md5 = EncryptUtil.encodeMd5('${DateTime.now().millisecondsSinceEpoch}');
     return md5.substring(0, 12).toUpperCase();
   }
+
+  Future<BaseEntity?> unsubscribe(String planCategory) async {
+    if (!(_user?.userSubscription.containsKey('id') ?? false)) {
+      return null;
+    }
+    var baseEntity = await api.unsubscribe(planCategory);
+    return baseEntity;
+  }
 }

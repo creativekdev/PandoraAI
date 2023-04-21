@@ -153,6 +153,25 @@ class Events {
     logEvent('txt2img_completed_generate_again', eventValues: {'time': '${time}'});
   }
 
+  static Future<void> aidrawLoading({required String source}) => logEvent('aidraw_loading', eventValues: {'source': source});
+
+  static Future<void> aidrawCompleteSuccess({required String photo}) => logEvent('aidraw_completed_success', eventValues: {'photo': photo});
+
+  static Future<void> aidrawCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('aidraw_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> aidrawCompleteDownload({required String type}) => logEvent('aidraw_completed_download', eventValues: {'type': type});
+
+  static Future<void> aidrawCompletePreview() => logEvent('aidraw_completed_preview');
+
   static Future<void> discoveryLoading() => logEvent('discovery_loading');
 
   static Future<void> discoveryDetailLoading({

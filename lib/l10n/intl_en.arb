@@ -363,5 +363,14 @@
   "enter_code": "Enter Code",
   "my_code": "My Code",
   "remaining_credits":"Remaining credits",
-  "submit_now": "Submit now"
+  "submit_now": "Submit now",
+  "restore_msg": "Are you sure to unsubscribe?",
+  "restore_content": "You will lose all of your rights until subscribe again",
+  "cancel_subscribe": "Unsubscribe",
+  "cancel_subscribe_succeed": "Cancelled",
+  "clean_successfully": "Clear Successfully",
+  "copy_successfully": "Copy Successfully",
+  "done": "Done",
+  "ai_draw_hint": "Input your description"
+
 }

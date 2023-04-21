@@ -65,6 +65,9 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
       ).ignore(ignoring: loading);
 
   Future<void> showLoading({Widget? progressWidget}) async {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       this.progressWidget = progressWidget;
       loading = true;
@@ -72,6 +75,9 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
   }
 
   Future<void> hideLoading() async {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       progressWidget = null;
       loading = false;

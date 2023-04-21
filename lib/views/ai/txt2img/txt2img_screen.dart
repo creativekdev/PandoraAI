@@ -393,7 +393,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                 }
                               });
                             }).intoContainer(
-                            height: imageSize * 2.4,
+                            height: imageSize * 2.45,
                             margin: EdgeInsets.only(top: $(15)),
                           ),
                     TitleTextWidget(S.of(context).reference_image, ColorConstant.White, FontWeight.w600, $(15)).intoContainer(
