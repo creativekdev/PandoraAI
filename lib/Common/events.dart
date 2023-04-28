@@ -155,7 +155,7 @@ class Events {
 
   static Future<void> aidrawLoading({required String source}) => logEvent('aidraw_loading', eventValues: {'source': source});
 
-  static Future<void> aidrawCompleteSuccess({required String photo}) => logEvent('aidraw_completed_success', eventValues: {'photo': photo});
+  static Future<void> aidrawCompleteSuccess() => logEvent('aidraw_completed_success');
 
   static Future<void> aidrawCompleteShare({
     required String source,

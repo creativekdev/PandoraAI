@@ -38,6 +38,10 @@ class ReferredCard extends StatelessWidget {
                 Separator(color: Colors.white, space: $(4), dashSize: $(3), degree: $(1)),
                 SizedBox(height: $(20)),
                 buildItem(context, title: 'AI Artist: Text to Image', value: userManager.getTxt2ImgLimit()),
+                SizedBox(height: $(20)),
+                Separator(color: Colors.white, space: $(4), dashSize: $(3), degree: $(1)),
+                SizedBox(height: $(20)),
+                buildItem(context, title: 'AI Scribble', value: userManager.getAiDrawLimit()),
               ],
             ).intoContainer(
               width: double.maxFinite,

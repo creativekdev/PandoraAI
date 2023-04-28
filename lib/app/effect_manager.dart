@@ -62,7 +62,6 @@ class EffectManager extends BaseManager {
         cacheManager.setJson(CacheManager.effectAllData, data.toJson());
       }
     }
-    _data?.homeCards.add(HomeCardEntity()..type='ai_drawable'..url='https://pics7.baidu.com/feed/562c11dfa9ec8a13b3b17f43c13e9683a1ecc0b7.jpeg');
     return _data;
   }
 

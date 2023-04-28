@@ -50,6 +50,7 @@ class ColorConstant {
   static const InputBackground = Color(0xff3a3a3b);
   static const InputContent = Color(0xff565656);
   static const LineColor = Color(0xff404040);
+  static const LightLineColor = Color(0xffcacacb);
   static const WatchAdColor = Color(0xff243cff);
   static const MineBackgroundColor = Color(0xff080809);
   static const SysMsgIconColor = Color(0xff5856D6);
@@ -59,6 +60,7 @@ class ColorConstant {
   static const colorBlue = Color(0xff1f51e9);
   static const colorBlue2 = Color(0xff243cff);
   static const colorBlue3 = Color(0xff0114b1);
-  static const Color aiDrawGrey = Color(0xffe0e0e0);
+  static const Color aiDrawGrey = Color(0xfff5f5f6);
+  static const Color aiDrawBlue = Color(0xff2778ff);
   // static const Color aiDrawGrey = Color(0xff1e1f1e);
 }

@@ -3190,11 +3190,31 @@ class S {
     );
   }
 
-  /// `Invite more friends to download the app to unlock your daily limit or upgrade`
+  /// `Enter, share invitation code or upgrade to get additional usage credits!`
   String get reached_limit_content {
     return Intl.message(
-      'Invite more friends to download the app to unlock your daily limit or upgrade',
+      'Enter, share invitation code or upgrade to get additional usage credits!',
       name: 'reached_limit_content',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter or share invitation code to get additional usage credits!`
+  String get reached_limit_content_vip {
+    return Intl.message(
+      'Enter or share invitation code to get additional usage credits!',
+      name: 'reached_limit_content_vip',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign up and enter invitation code to get additional usage credits!`
+  String get reached_limit_content_guest {
+    return Intl.message(
+      'Sign up and enter invitation code to get additional usage credits!',
+      name: 'reached_limit_content_guest',
       desc: '',
       args: [],
     );
@@ -3690,10 +3710,10 @@ class S {
     );
   }
 
-  /// `Submit now`
+  /// `Enter now`
   String get submit_now {
     return Intl.message(
-      'Submit now',
+      'Enter now',
       name: 'submit_now',
       desc: '',
       args: [],
@@ -3770,11 +3790,51 @@ class S {
     );
   }
 
-  /// `Input your description`
+  /// `Describe your drawing in a few words`
   String get ai_draw_hint {
     return Intl.message(
-      'Input your description',
+      'Describe your drawing in a few words',
       name: 'ai_draw_hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please update your app`
+  String get oldversion_tips {
+    return Intl.message(
+      'Please update your app',
+      name: 'oldversion_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear current drawing`
+  String get ai_draw_reset_tips {
+    return Intl.message(
+      'Clear current drawing',
+      name: 'ai_draw_reset_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By clearing the current drawing, you will lose all of your progress.`
+  String get ai_draw_reset_tips_desc {
+    return Intl.message(
+      'By clearing the current drawing, you will lose all of your progress.',
+      name: 'ai_draw_reset_tips_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear`
+  String get ai_draw_clear_btn {
+    return Intl.message(
+      'Clear',
+      name: 'ai_draw_clear_btn',
       desc: '',
       args: [],
     );

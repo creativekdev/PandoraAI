@@ -3,6 +3,8 @@ class Images {
    static const String american_express = 'assets/images/american_express.png';
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
+   static const String ic_ai_draw_delete = 'assets/images/ic_ai_draw_delete.png';
    static const String ic_ai_draw_top = 'assets/images/ic_ai_draw_top.png';
    static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
    static const String ic_album_checked = 'assets/images/ic_album_checked.png';

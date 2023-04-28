@@ -1,18 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/expand_text.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
+import 'package:path/path.dart';
 
 import 'user_info_header_widget.dart';
 
-class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
+class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late DiscoveryListEntity data;
   GestureTapCallback? onTap;
   GestureTapCallback? onLikeTap;
@@ -21,7 +25,7 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late double width;
   bool hasLine;
 
-  NewDiscoveryListCard({
+  DiscoveryListCard({
     Key? key,
     required this.data,
     this.onTap,
@@ -59,16 +63,7 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
             .intoContainer(
               margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
             ),
-        resources.length != 1
-            ? Wrap(
-                spacing: $(1),
-                children: resources.map((e) => buildResourceItem(context, e, width: width)).toList(),
-                alignment: WrapAlignment.start,
-              ).intoContainer(
-                width: ScreenUtil.screenSize.width,
-                alignment: Alignment.center,
-              )
-            : buildResourceItem(context, resources.first, width: width * 2 + $(1), maxHeight: ScreenUtil.screenSize.height),
+        resources.length != 1 ? buildImages(context) : buildResourceItem(context, resources.first, width: width * 2 + $(1), maxHeight: ScreenUtil.screenSize.height),
         data.getPrompt() != null
             ? TitleTextWidget(data.getPrompt()!, Color(0xffb3b3b3), FontWeight.w500, $(14), maxLines: 99, align: TextAlign.start)
                 .intoContainer(
@@ -127,7 +122,7 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     ).intoGestureDetector(onTap: onTap);
   }
 
-  Widget buildResourceItem(BuildContext context, DiscoveryResource resource, {required double width, double? maxHeight}) {
+  Widget buildResourceItem(BuildContext context, DiscoveryResource resource, {required double width, double? maxHeight, double? height}) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
@@ -135,10 +130,10 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     } else {
       return CachedNetworkImageUtils.custom(
           context: context,
-          useOld: false,
+          useOld: true,
           imageUrl: resource.url ?? '',
           width: width,
-          useCachedScale: true,
+          height: height,
           fit: BoxFit.cover,
           placeholder: (context, url) {
             return CircularProgressIndicator()
@@ -157,7 +152,62 @@ class NewDiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
                 )
                 .intoCenter()
                 .intoContainer(width: width, height: width);
-          }).intoContainer(constraints: BoxConstraints(maxHeight: maxHeight ?? double.infinity)).hero(tag: resource.url ?? '');
+          }).intoContainer(constraints: BoxConstraints(maxHeight: height ?? maxHeight ?? double.infinity)).hero(tag: resource.url ?? '');
+    }
+  }
+
+  Widget buildImages(
+    BuildContext context,
+  ) {
+    var localHeight = getLocalHeight(resources[1].url!, width);
+    return Row(
+      children: [
+        localHeight != null
+            ? buildResourceItem(context, resources[0], width: width, height: localHeight)
+            : FutureBuilder<double?>(
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return buildResourceItem(context, resources[0], width: width, height: snapshot.data);
+                  } else {
+                    return Container(width: width, height: width);
+                  }
+                },
+                future: getHeight(resources[1].url!, width),
+              ).intoContainer(width: width),
+        SizedBox(width: $(1)),
+        buildResourceItem(context, resources[1], width: width)
+      ],
+    ).intoContainer(
+      width: ScreenUtil.screenSize.width,
+      alignment: Alignment.center,
+    );
+  }
+
+  double? getLocalHeight(String url, double width) {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var imgSummaryCache = cacheManager.imgSummaryCache;
+    var scale = imgSummaryCache.getScale(url: url);
+    if (scale != null) {
+      return width / scale;
+    }
+    return null;
+  }
+
+  Future<double?> getHeight(String url, double width) async {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var imgSummaryCache = cacheManager.imgSummaryCache;
+    var scale = imgSummaryCache.getScale(url: url);
+    if (scale != null) {
+      return width / scale;
+    } else {
+      try {
+        var imageInfo = await SyncCachedNetworkImage(url: url).getImage();
+        scale = imageInfo.image.width / imageInfo.image.height;
+        imgSummaryCache.setScale(url: url, scale: scale);
+        return width / scale;
+      } catch (e) {
+        return null;
+      }
     }
   }
 }

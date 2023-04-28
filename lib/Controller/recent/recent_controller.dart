@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/record_holder.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:common_utils/common_utils.dart';
 
 ///
@@ -15,10 +16,12 @@ class RecentController extends GetxController {
   late EffectRecordHolder effectRecordHolder;
   late MetaverseHolder metaverseHolder;
   late Txt2imgRecordHolder txt2imgHolder;
+  late AIDrawRecordHolder aiDrawHolder;
 
   List<RecentEffectModel> effectList = [];
   List<RecentMetaverseEntity> metaverseList = [];
   List<RecentGroundEntity> groundList = [];
+  List<DrawableRecord> aiDrawList = [];
 
   List<dynamic> recordList = [];
 
@@ -28,6 +31,7 @@ class RecentController extends GetxController {
     effectRecordHolder = EffectRecordHolder();
     metaverseHolder = MetaverseHolder();
     txt2imgHolder = Txt2imgRecordHolder();
+    aiDrawHolder = AIDrawRecordHolder();
     loadingFromCache();
   }
 
@@ -35,6 +39,7 @@ class RecentController extends GetxController {
     effectList = await effectRecordHolder.loadFromCache();
     metaverseList = await metaverseHolder.loadFromCache();
     groundList = await txt2imgHolder.loadFromCache();
+    aiDrawList = await aiDrawHolder.loadFromCache();
     sortList();
     update();
   }
@@ -57,7 +62,7 @@ class RecentController extends GetxController {
         ..originalPath = element.originalPath
         ..filePath = [e]));
     });
-    recordList = [...effects, ...metaverses, ...groundList];
+    recordList = [...effects, ...metaverses, ...groundList, ...aiDrawList];
     recordList.sort((a1, a2) => a1.updateDt < a2.updateDt ? 1 : -1);
   }
 
@@ -108,6 +113,13 @@ class RecentController extends GetxController {
         ..parameters = parameters
         ..initImageFilePath = initPath,
     );
+    sortList();
+    update();
+  }
+
+  onAiDrawUsed(DrawableRecord record) {
+    record.updateDt = DateTime.now().millisecondsSinceEpoch;
+    aiDrawHolder.record(aiDrawList, record);
     sortList();
     update();
   }

@@ -23,6 +23,10 @@ DailyLimitRuleEntity $DailyLimitRuleEntityFromJson(Map<String, dynamic> json) {
 	if (txt2img != null) {
 		dailyLimitRuleEntity.txt2img = txt2img;
 	}
+	final VIPPlanDetail? scribble = jsonConvert.convert<VIPPlanDetail>(json['scribble']);
+	if (scribble != null) {
+		dailyLimitRuleEntity.scribble = scribble;
+	}
 	return dailyLimitRuleEntity;
 }
 
@@ -33,6 +37,7 @@ Map<String, dynamic> $DailyLimitRuleEntityToJson(DailyLimitRuleEntity entity) {
 	data['removebg'] = entity.removebg?.toJson();
 	data['anotherme'] = entity.anotherme?.toJson();
 	data['txt2img'] = entity.txt2img?.toJson();
+	data['scribble'] = entity.scribble?.toJson();
 	return data;
 }
 

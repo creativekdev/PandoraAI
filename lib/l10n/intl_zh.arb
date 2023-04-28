@@ -313,7 +313,9 @@
   "generate_reached_limit": "您已达到了 %s 的每日限制！升级您的账户可以继续使用，或者明天再试。同时，您还可以探索其他功能",
   "generate_reached_limit_guest": "您已达到了 %s 的每日限制！现在注册即可获得更多配额",
   "generate_reached_limit_vip": "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能",
-  "reached_limit_content": "邀请更多的朋友下载应用程序或购买升级来解锁你的每日限制",
+  "reached_limit_content": "填写邀请码或者购买升级，以获得额外的使用次数!",
+  "reached_limit_content_vip": "填写邀请码以获得额外的使用次数!",
+  "reached_limit_content_guest": "注册并填写邀请码，以获得额外的使用次数!",
   "read_all": "全部已读",
   "input_invited_code": "邀请码填写",
   "invited_code": "邀请码",
@@ -363,7 +365,7 @@
   "enter_code": "填写邀请码",
   "my_code": "我的邀请码",
   "remaining_credits": "已获权益",
-  "submit_now": "去邀请",
+  "submit_now": "去填写",
   "restore_msg": "您确定要取消订阅么？",
   "restore_content": "在再次订阅之前，您将失去所有的权益",
   "cancel_subscribe": "取消订阅",
@@ -371,5 +373,9 @@
   "clean_successfully": "清除成功",
   "copy_successfully": "已复制到剪贴板",
   "done": "完成",
-  "ai_draw_hint": "请输入描述"
+  "ai_draw_hint": "用几个词描述绘画内容",
+  "oldversion_tips": "当前版本较低，请升级app",
+  "ai_draw_reset_tips": "清除当前画板",
+  "ai_draw_reset_tips_desc": "清除将会丢失当前的所有操作",
+  "ai_draw_clear_btn": "清除"
 }

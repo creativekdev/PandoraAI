@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/common/importFile.dart';
@@ -13,6 +14,36 @@ enum DrawMode {
   floodFill,
 }
 
+extension DrawModeEx on DrawMode {
+  static DrawMode build(String value) {
+    switch (value) {
+      case 'paint':
+        return DrawMode.paint;
+      case 'markPaint':
+        return DrawMode.markPaint;
+      case 'eraser':
+        return DrawMode.eraser;
+      case 'floodFill':
+        return DrawMode.floodFill;
+      default:
+        return DrawMode.paint;
+    }
+  }
+
+  value() {
+    switch (this) {
+      case DrawMode.paint:
+        return 'paint';
+      case DrawMode.markPaint:
+        return 'markPaint';
+      case DrawMode.eraser:
+        return 'eraser';
+      case DrawMode.floodFill:
+        return 'floodFill';
+    }
+  }
+}
+
 class DrawableController {
   _DrawableState? state;
   Color _background = Colors.white;
@@ -21,13 +52,23 @@ class DrawableController {
   Color floodFillColor = Colors.red;
 
   double _eraserWidth = 30;
-  double _paintWidth = 5;
+  double _paintWidth = 9;
   double _markPaintWidth = 10;
   List<DrawablePen> activePens = [];
   List<DrawablePen> checkmatePens = [];
   DrawMode _drawMode = DrawMode.paint;
-  Function? onUpdated;
-  var textEditingController = TextEditingController();
+  Function? onStartDraw;
+  Rx<String> text = ''.obs;
+  List<String> resultFilePaths = [];
+
+  DrawableController({DrawableRecord? data}) {
+    if (data != null) {
+      text.value = data.text;
+      activePens = data.activePens;
+      checkmatePens = data.checkMatePens;
+      resultFilePaths = data.resultPaths;
+    }
+  }
 
   List<Map<String, dynamic>> getPainSize() {
     switch (drawMode) {
@@ -60,7 +101,7 @@ class DrawableController {
     }
   }
 
-  Color currentColor() {
+  Color currentColor(DrawMode drawMode) {
     switch (drawMode) {
       case DrawMode.paint:
         return paintColor;
@@ -73,7 +114,7 @@ class DrawableController {
     }
   }
 
-  StrokeCap currentStrokeCap() {
+  StrokeCap currentStrokeCap(DrawMode drawMode) {
     switch (drawMode) {
       case DrawMode.paint:
         return StrokeCap.round;
@@ -86,7 +127,7 @@ class DrawableController {
     }
   }
 
-  BlendMode currentBlendMode() {
+  BlendMode currentBlendMode(DrawMode drawMode) {
     switch (drawMode) {
       case DrawMode.paint:
         return BlendMode.src;
@@ -99,7 +140,7 @@ class DrawableController {
     }
   }
 
-  PaintingStyle currentPaintingStyle() {
+  PaintingStyle currentPaintingStyle(DrawMode drawMode) {
     switch (drawMode) {
       case DrawMode.paint:
         return PaintingStyle.stroke;
@@ -112,7 +153,7 @@ class DrawableController {
     }
   }
 
-  double currentStrokeWidth() {
+  double currentStrokeWidth(DrawMode drawMode) {
     switch (drawMode) {
       case DrawMode.paint:
         return paintWidth;
@@ -130,7 +171,6 @@ class DrawableController {
   set paintWidth(double value) {
     _paintWidth = value;
     state?.updateState();
-    onUpdated?.call();
   }
 
   double get markPaintWidth => _markPaintWidth;
@@ -138,7 +178,6 @@ class DrawableController {
   set markPaintWidth(double value) {
     _markPaintWidth = value;
     state?.updateState();
-    onUpdated?.call();
   }
 
   double get eraserWidth => _eraserWidth;
@@ -146,14 +185,12 @@ class DrawableController {
   set eraserWidth(double value) {
     _eraserWidth = value;
     state?.updateState();
-    onUpdated?.call();
   }
 
   set drawMode(DrawMode mode) {
     _drawMode = mode;
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
   }
 
   DrawMode get drawMode => _drawMode;
@@ -164,17 +201,6 @@ class DrawableController {
     _background = color;
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
-  }
-
-  Paint currentPaint() {
-    return Paint()
-      ..isAntiAlias = true
-      ..color = currentColor()
-      ..blendMode = currentBlendMode()
-      ..strokeWidth = currentStrokeWidth()
-      ..strokeCap = currentStrokeCap()
-      ..style = currentPaintingStyle();
   }
 
   addPens(DrawablePen pen) {
@@ -182,16 +208,13 @@ class DrawableController {
     checkmatePens.clear();
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
+    isEmpty.value = false;
+    canForward.value = !checkmatePens.isEmpty;
+    canRollback.value = !activePens.isEmpty;
   }
 
-  bool canForward() {
-    return !checkmatePens.isEmpty;
-  }
-
-  bool canRollback() {
-    return !activePens.isEmpty;
-  }
+  Rx<bool> canForward = false.obs;
+  Rx<bool> canRollback = false.obs;
 
   forward() {
     if (!canForward()) {
@@ -201,7 +224,8 @@ class DrawableController {
     activePens.add(first);
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
+    canForward.value = !checkmatePens.isEmpty;
+    canRollback.value = !activePens.isEmpty;
   }
 
   rollback() {
@@ -212,27 +236,30 @@ class DrawableController {
     checkmatePens.insert(0, last);
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
+    canForward.value = !checkmatePens.isEmpty;
+    canRollback.value = !activePens.isEmpty;
   }
 
   reset() {
     activePens.clear();
     checkmatePens.clear();
-    _background = Colors.white;
-    _drawMode = DrawMode.paint;
+    text.value = '';
     state?.updateState();
     state?.updateCanvas();
-    onUpdated?.call();
+    isEmpty.value = true;
+    canForward.value = !checkmatePens.isEmpty;
+    canRollback.value = !activePens.isEmpty;
   }
 
-  Future<List<Uint8List>?> getImage() async {
-    var local = await state?.getImage();
-    var upload = await state?.getImage(toUpload: false);
-    return [local!, upload!];
+  Future<Uint8List?> getImage({double screenShotScale = 1}) async {
+    var local = await state?.getImage(ratio: screenShotScale);
+    return local;
   }
 
-  bool isEmpty() {
-    return activePens.isEmpty && checkmatePens.isEmpty;
+  Rx<bool> isEmpty = true.obs;
+
+  startDraw() {
+    onStartDraw?.call();
   }
 }
 
@@ -271,10 +298,10 @@ class _DrawableState extends State<Drawable> {
     }
   }
 
-  Future<Uint8List?> getImage({bool toUpload = false}) async {
-    var image = await key.currentState!.getScreenShot();
+  Future<Uint8List?> getImage({double ratio = 1, bool toUpload = false}) async {
+    var image = await key.currentState!.getScreenShot(ratio);
+    imgLib.Image pixels = await getLibImage(image!);
     if (toUpload) {
-      imgLib.Image pixels = await getLibImage(image!);
       for (int i = 0; i < pixels.width; i++) {
         for (int j = 0; j < pixels.height; j++) {
           var pixel = pixels.getPixel(i, j);
@@ -285,29 +312,29 @@ class _DrawableState extends State<Drawable> {
           }
         }
       }
-      return Uint8List.fromList(imgLib.encodePng(pixels));
+      return Uint8List.fromList(imgLib.encodeJpg(pixels));
     } else {
-      var byteData = await image!.toByteData(format: ui.ImageByteFormat.png);
-      return byteData!.buffer.asUint8List();
+      return Uint8List.fromList(imgLib.encodeJpg(pixels));
     }
   }
 
   Future<void> getFloodFillPath(Offset offset) async {
-    var image = await key.currentState!.getScreenShot();
+    var image = await key.currentState!.getScreenShot(1);
     var image2 = await getLibImage(image!);
     List<Path> paths = ImageUtils.getBoundaries(image2, offset);
     if (paths.isEmpty) {
       return;
     }
+    return;
     if (paths.length == 1) {
-      _controller.addPens(DrawablePen(paint: _controller.currentPaint(), path: paths.first, drawMode: _controller.drawMode, lastPosition: offset));
+      // _controller.addPens(DrawablePen(paint: _controller.currentPaint(), path: paths.first, drawMode: _controller.drawMode, lastPosition: offset));
     } else {
       for (int i = 0; i < paths.length; i++) {
-        var currentPaint = _controller.currentPaint();
+        // var currentPaint = _controller.currentPaint();
         if (i == 0) {
-          _controller.addPens(DrawablePen(paint: currentPaint, path: paths.first, drawMode: _controller.drawMode, lastPosition: offset));
+          // _controller.addPens(DrawablePen(paint: currentPaint, path: paths.first, drawMode: _controller.drawMode, lastPosition: offset));
         } else {
-          _controller.addPens(DrawablePen(paint: currentPaint..color = _controller.background, path: paths[i], drawMode: _controller.drawMode, lastPosition: offset));
+          // _controller.addPens(DrawablePen(paint: currentPaint..color = _controller.background, path: paths[i], drawMode: _controller.drawMode, lastPosition: offset));
         }
       }
     }
@@ -332,6 +359,7 @@ class _DrawableState extends State<Drawable> {
   }
 
   onPointDown(PointerDownEvent details) {
+    _controller.startDraw();
     if (currentPen != null) {
       return;
     }
@@ -340,15 +368,13 @@ class _DrawableState extends State<Drawable> {
       getFloodFillPath(details.localPosition);
     } else {
       currentPen = DrawablePen(
-        paint: _controller.currentPaint(),
-        path: Path()
-          ..moveTo(
-            details.localPosition.dx,
-            details.localPosition.dy,
-          ),
+        paintWidth: _controller.currentStrokeWidth(_controller.drawMode),
+        paths: [DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy)],
         drawMode: _controller.drawMode,
-        lastPosition: details.localPosition,
-      );
+        lastPosition: DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy),
+      )
+        ..buildPaint(_controller)
+        ..buildPath();
       _controller.addPens(currentPen!);
     }
   }
@@ -359,8 +385,9 @@ class _DrawableState extends State<Drawable> {
     }
     if (_controller.drawMode == DrawMode.floodFill) {
     } else {
-      currentPen!.path.lineTo(details.localPosition.dx, details.localPosition.dy);
-      currentPen!.lastPosition = details.localPosition;
+      currentPen!.path!.lineTo(details.localPosition.dx, details.localPosition.dy);
+      currentPen!.paths.add(DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy));
+      currentPen!.lastPosition = DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy);
       updateCanvas();
     }
   }
@@ -372,7 +399,8 @@ class _DrawableState extends State<Drawable> {
     if (_controller.drawMode == DrawMode.floodFill) {
     } else {
       if (currentPen != null) {
-        currentPen!.path.lineTo(details.localPosition.dx, details.localPosition.dy);
+        currentPen!.path!.lineTo(details.localPosition.dx, details.localPosition.dy);
+        currentPen!.paths.add(DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy));
         updateCanvas();
         currentPen!.lastPosition = null;
         currentPen = null;
@@ -388,7 +416,8 @@ class _DrawableState extends State<Drawable> {
     if (_controller.drawMode == DrawMode.floodFill) {
     } else {
       if (currentPen != null) {
-        currentPen!.path.lineTo(details.localPosition.dx, details.localPosition.dy);
+        currentPen!.path!.lineTo(details.localPosition.dx, details.localPosition.dy);
+        currentPen!.paths.add(DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy));
         updateCanvas();
         currentPen!.lastPosition = null;
         currentPen = null;
@@ -454,8 +483,8 @@ class _CanvasHolderState extends State<_CanvasHolder> {
     setState(() {});
   }
 
-  Future<ui.Image?> getScreenShot() async {
-    var image = await getBitmapFromContext(screenShotKey.currentContext!);
+  Future<ui.Image?> getScreenShot(double ratio) async {
+    var image = await getBitmapFromContext(screenShotKey.currentContext!, pixelRatio: ratio);
     return image;
   }
 
@@ -506,11 +535,15 @@ class DrawablePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(backgroundColor, BlendMode.src);
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = backgroundColor);
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
-    Offset? eraserPosition;
+    DrawPosition? eraserPosition;
     for (var value in pens) {
-      canvas.drawPath(value.path, value.paint);
+      canvas.drawPath(value.path!, value.paint!);
       if (value.drawMode == DrawMode.eraser) {
         if (value.lastPosition != null) {
           eraserPosition = value.lastPosition;
@@ -520,7 +553,7 @@ class DrawablePainter extends CustomPainter {
     canvas.restore();
     if (eraserPosition != null) {
       canvas.drawCircle(
-          eraserPosition,
+          ui.Offset(eraserPosition.x, eraserPosition.y),
           eraserRadius,
           Paint()
             ..color = Colors.black
@@ -535,16 +568,157 @@ class DrawablePainter extends CustomPainter {
   }
 }
 
+class DrawableRecord {
+  String text;
+  late List<DrawablePen> activePens;
+  late List<DrawablePen> checkMatePens;
+  late List<String> resultPaths;
+  int updateDt;
+
+  DrawableRecord({
+    this.text = '',
+    List<DrawablePen>? activePens,
+    List<DrawablePen>? checkMatePens,
+    List<String>? resultPaths,
+    this.updateDt = 0,
+  }) {
+    this.activePens = activePens ?? [];
+    this.checkMatePens = checkMatePens ?? [];
+    this.resultPaths = resultPaths ?? [];
+  }
+
+  factory DrawableRecord.fromJson(Map<String, dynamic> json) {
+    DrawableRecord result = DrawableRecord();
+    if (json['text'] != null) {
+      result.text = json['text'];
+    }
+    if (json['activePens'] != null) {
+      result.activePens = (json['activePens'] as List).map((e) => DrawablePen.fromJson(e)).toList();
+    }
+    if (json['checkMatePens'] != null) {
+      result.checkMatePens = (json['checkMatePens'] as List).map((e) => DrawablePen.fromJson(e)).toList();
+    }
+    if (json['resultPaths'] != null) {
+      result.resultPaths = json['resultPaths'];
+    }
+    if (json['updateDt'] != null) {
+      result.updateDt = json['updateDt'];
+    }
+    return result;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'text': text,
+        'activePens': activePens.map((e) => e.toJson()).toList(),
+        'checkMatePens': checkMatePens.map((e) => e.toJson()).toList(),
+        'resultPaths': resultPaths,
+        'updateDt': updateDt,
+      };
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
+}
+
 class DrawablePen {
-  Paint paint;
-  Path path;
-  DrawMode drawMode;
-  Offset? lastPosition;
+  double paintWidth;
+  late List<DrawPosition> paths;
+  DrawPosition? lastPosition;
+  late DrawMode drawMode;
+  Path? path;
+  Paint? paint;
 
   DrawablePen({
-    required this.paint,
-    required this.path,
-    required this.drawMode,
-    required this.lastPosition,
-  });
+    this.paintWidth = 0,
+    List<DrawPosition>? paths,
+    DrawMode? drawMode,
+    this.lastPosition,
+    this.paint,
+  }) {
+    this.paths = paths ?? [];
+    this.drawMode = drawMode ?? DrawMode.paint;
+  }
+
+  factory DrawablePen.fromJson(Map<String, dynamic> json) {
+    DrawablePen pen = DrawablePen();
+    if (json['paintWidth'] != null) {
+      pen.paintWidth = json['paintWidth'];
+    }
+    if (json['paths'] != null) {
+      pen.paths = (json['paths'] as List).map((e) => DrawPosition.fromJson(e)).toList();
+    }
+    if (json['lastPosition'] != null) {
+      pen.lastPosition = DrawPosition.fromJson(json['lastPosition']);
+    }
+    if (json['drawMode'] != null) {
+      pen.drawMode = DrawModeEx.build(json['drawMode']);
+    }
+    return pen;
+  }
+
+  Map<String, dynamic> toJson() {
+    var result = {
+      'paintWidth': paintWidth,
+      'paths': paths.map((e) => e.toJson()).toList(),
+      'drawMode': drawMode.value(),
+    };
+    if (lastPosition != null) {
+      result['lastPosition'] = lastPosition!.toJson();
+    }
+    return result;
+  }
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
+
+  buildPaint(DrawableController controller) {
+    paint = Paint()
+      ..isAntiAlias = true
+      ..color = controller.currentColor(drawMode)
+      ..blendMode = controller.currentBlendMode(drawMode)
+      ..strokeWidth = paintWidth
+      ..strokeCap = controller.currentStrokeCap(drawMode)
+      ..style = controller.currentPaintingStyle(drawMode);
+  }
+
+  buildPath() {
+    path = Path();
+    if (paths.isNotEmpty) {
+      path!.moveTo(paths.first.x, paths.first.y);
+      for (int i = 0; i < paths.length; i++) {
+        if (i != 0) {
+          var value = paths[i];
+          path!.lineTo(value.x, value.y);
+        }
+      }
+    }
+  }
+}
+
+class DrawPosition {
+  double x;
+  double y;
+
+  DrawPosition({this.x = 0, this.y = 0});
+
+  factory DrawPosition.fromJson(Map<String, dynamic> json) {
+    DrawPosition result = DrawPosition();
+    if (json['x'] != null) {
+      result.x = json['x'];
+    }
+    if (json['y'] != null) {
+      result.y = json['y'];
+    }
+    return result;
+  }
+
+  Map<String, dynamic> toJson() => {'x': x, 'y': y};
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
 }

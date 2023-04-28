@@ -6,11 +6,13 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -20,6 +22,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
@@ -168,17 +171,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
             ),
         resources.length != 1
-            ? Wrap(
-                spacing: $(1),
-                children: resources
-                    .transfer((e, index) => buildResourceItem(e, width: imageListWidth).intoGestureDetector(onTap: () {
-                          if (e.type == 'image') {
-                            openImage(context, index);
-                          }
-                        }))
-                    .toList(),
-                alignment: WrapAlignment.start,
-              ).intoContainer(
+            ? buildImages(context, imageListWidth).intoContainer(
                 width: ScreenUtil.screenSize.width,
                 alignment: Alignment.center,
               )
@@ -283,6 +276,10 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                 ..height = height;
             }
             Txt2img.open(context, source: source + '-try-template', initData: initData);
+          } else if (data.category == DiscoveryCategory.scribble.name) {
+            AiDrawable.open(context, source: source + '-try-template');
+          } else {
+            CommonExtension().showToast(S.of(context).oldversion_tips);
           }
         }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(32))),
       ],
@@ -298,7 +295,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
           children: [
             CachedNetworkImageUtils.custom(
                 context: context,
-                useOld: false,
+                useOld: true,
                 imageUrl: resource.url ?? '',
                 fit: BoxFit.fill,
                 width: width,
@@ -325,7 +322,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             Container().blur(),
             CachedNetworkImageUtils.custom(
                 context: context,
-                useOld: false,
+                useOld: true,
                 imageUrl: resource.url ?? '',
                 fit: fit,
                 width: width,
@@ -354,7 +351,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       } else {
         return CachedNetworkImageUtils.custom(
             context: context,
-            useOld: false,
+            useOld: true,
             imageUrl: resource.url ?? '',
             fit: fit,
             width: width,
@@ -477,5 +474,74 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       itemPos: itemPos,
       entrySource: EntrySource.fromDiscovery,
     );
+  }
+
+  Widget buildImages(
+    BuildContext context,
+    double width,
+  ) {
+    var localHeight = getLocalHeight(resources[1].url!, width);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        localHeight != null
+            ? buildResourceItem(resources[0], width: width, height: localHeight).intoGestureDetector(onTap: () {
+                if (resources[0].type == 'image') {
+                  openImage(context, 0);
+                }
+              })
+            : FutureBuilder<double?>(
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return buildResourceItem(resources[0], width: width, height: snapshot.data).intoGestureDetector(onTap: () {
+                      if (resources[0].type == 'image') {
+                        openImage(context, 0);
+                      }
+                    });
+                  } else {
+                    return Container(width: width, height: width);
+                  }
+                },
+                future: getHeight(resources[1].url!, width),
+              ).intoContainer(width: width),
+        SizedBox(width: $(1)),
+        buildResourceItem(resources[1], width: width).intoGestureDetector(onTap: () {
+          if (resources[1].type == 'image') {
+            openImage(context, 1);
+          }
+        })
+      ],
+    ).intoContainer(
+      width: ScreenUtil.screenSize.width,
+      alignment: Alignment.center,
+    );
+  }
+
+  double? getLocalHeight(String url, double width) {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var imgSummaryCache = cacheManager.imgSummaryCache;
+    var scale = imgSummaryCache.getScale(url: url);
+    if (scale != null) {
+      return width / scale;
+    }
+    return null;
+  }
+
+  Future<double?> getHeight(String url, double width) async {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var imgSummaryCache = cacheManager.imgSummaryCache;
+    var scale = imgSummaryCache.getScale(url: url);
+    if (scale != null) {
+      return width / scale;
+    } else {
+      try {
+        var imageInfo = await SyncCachedNetworkImage(url: url).getImage();
+        scale = imageInfo.image.width / imageInfo.image.height;
+        imgSummaryCache.setScale(url: url, scale: scale);
+        return width / scale;
+      } catch (e) {
+        return null;
+      }
+    }
   }
 }

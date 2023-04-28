@@ -16,7 +16,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
-import 'package:cartoonizer/views/discovery/widget/new_discovery_list_card.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter/gestures.dart';
@@ -172,7 +172,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Color(0xff161719),
       body: GetBuilder<DiscoveryListController>(
         init: listController,
         builder: (listController) {
@@ -205,74 +205,120 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   Widget buildHeader(DiscoveryListController listController) {
     return ClipRect(
-        child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: AnimatedBuilder(
-              animation: animationController,
-              builder: (context, child) {
-                return Opacity(opacity: 1 - animationController.value, child: child);
-              },
-              child: TitleTextWidget(
-                S.of(context).tabDiscovery,
-                ColorConstant.BtnTextColor,
-                FontWeight.w600,
-                $(18),
-              ).intoContainer(alignment: Alignment.center, height: titleHeight, padding: EdgeInsets.only(top: $(4))),
-            ).intoContainer(padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()), height: headerHeight, color: ColorConstant.BackgroundColorBlur)));
+            child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: AnimatedBuilder(
+                  animation: animationController,
+                  builder: (context, child) {
+                    return Opacity(opacity: 1 - animationController.value, child: child);
+                  },
+                  child: TitleTextWidget(
+                    S.of(context).tabDiscovery,
+                    ColorConstant.BtnTextColor,
+                    FontWeight.w600,
+                    $(18),
+                  ).intoContainer(alignment: Alignment.center, height: titleHeight, padding: EdgeInsets.only(top: $(4))),
+                ).intoContainer(padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()), height: headerHeight, color: ColorConstant.BackgroundColorBlur)))
+        .intoGestureDetector(onTap: () {
+      listController.scrollController.jumpTo(0);
+    });
   }
 
   Widget buildRefreshList(DiscoveryListController listController) {
-    return EasyRefresh.custom(
-      controller: easyRefreshController,
-      scrollController: listController.scrollController,
-      enableControlFinishRefresh: true,
-      enableControlFinishLoad: false,
-      emptyWidget: listController.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
-      onRefresh: () async {
-        listController.onLoadFirstPage().then((value) {
-          easyRefreshController.finishRefresh();
-          easyRefreshController.finishLoad(noMore: value);
-        });
-      },
-      onLoad: () async {
-        listController.onLoadMorePage().then((value) {
-          easyRefreshController.finishLoad(noMore: value);
-        });
-      },
-      slivers: [
-        SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            var data = listController.dataList[index];
-            if (data.visible) {
-              return NewDiscoveryListCard(
-                data: data.data!,
-                hasLine: index != 0,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
-                      settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
-                    ),
-                  );
-                },
-                onCommentTap: () => userManager
-                    .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
-                  onCommentTap(listController.dataList[index].data!);
-                }, autoExec: true),
-                onLikeTap: () => userManager
-                    .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
-                  onLikeTap(listController.dataList[index].data!);
-                }, autoExec: false),
-              );
-            } else {
-              return SizedBox.shrink();
-            }
+    return Column(
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: $(15)),
+          child: Row(
+            children: listController.tags.transfer((e, index) {
+              bool checked = listController.currentTag == e;
+              return Text(
+                e.title,
+                style: TextStyle(
+                  color: checked ? Color(0xff3e60ff) : Colors.white,
+                  fontSize: $(13),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+                  .intoContainer(
+                margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)),
+                padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(7)),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  color: Color(0xff1b1b1b),
+                  border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
+                ),
+              )
+                  .intoGestureDetector(onTap: () {
+                if (listController.listLoading) {
+                  return;
+                }
+                if (listController.currentTag == e) {
+                  listController.currentTag = null;
+                } else {
+                  listController.currentTag = e;
+                }
+                easyRefreshController.callRefresh();
+              });
+            }),
+          ),
+        ).intoContainer(height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
+        Expanded(
+            child: EasyRefresh.custom(
+          controller: easyRefreshController,
+          scrollController: listController.scrollController,
+          enableControlFinishRefresh: true,
+          enableControlFinishLoad: false,
+          emptyWidget: listController.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+          onRefresh: () async {
+            listController.onLoadFirstPage().then((value) {
+              easyRefreshController.finishRefresh();
+              easyRefreshController.finishLoad(noMore: value);
+            });
           },
-          childCount: listController.dataList.length,
-        ))
+          onLoad: () async {
+            listController.onLoadMorePage().then((value) {
+              easyRefreshController.finishLoad(noMore: value);
+            });
+          },
+          slivers: [
+            SliverList(
+                delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                var data = listController.dataList[index];
+                if (data.visible) {
+                  return DiscoveryListCard(
+                    data: data.data!,
+                    hasLine: index != 0,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
+                          settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
+                        ),
+                      );
+                    },
+                    onCommentTap: () => userManager
+                        .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
+                      onCommentTap(listController.dataList[index].data!);
+                    }, autoExec: true),
+                    onLikeTap: () => userManager
+                        .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
+                      onLikeTap(listController.dataList[index].data!);
+                    }, autoExec: false),
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+              childCount: listController.dataList.length,
+            ))
+          ],
+        )),
       ],
     ).intoContainer(
         margin: EdgeInsets.only(

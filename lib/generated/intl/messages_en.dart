@@ -34,8 +34,13 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Cartoonizer."),
-        "ai_draw_hint":
-            MessageLookupByLibrary.simpleMessage("Input your description"),
+        "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage(
+            "Describe your drawing in a few words"),
+        "ai_draw_reset_tips":
+            MessageLookupByLibrary.simpleMessage("Clear current drawing"),
+        "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(
+            "By clearing the current drawing, you will lose all of your progress."),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("Go to settings"),
         "album_to_settings_tips":
@@ -323,6 +328,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "ok1": MessageLookupByLibrary.simpleMessage("OK"),
         "okay": MessageLookupByLibrary.simpleMessage("Okay"),
+        "oldversion_tips":
+            MessageLookupByLibrary.simpleMessage("Please update your app"),
         "or": MessageLookupByLibrary.simpleMessage("Or"),
         "other_replies":
             MessageLookupByLibrary.simpleMessage("other %d replies >"),
@@ -402,7 +409,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate_us1":
             MessageLookupByLibrary.simpleMessage("Rate us on the play store"),
         "reached_limit_content": MessageLookupByLibrary.simpleMessage(
-            "Invite more friends to download the app to unlock your daily limit or upgrade"),
+            "Enter, share invitation code or upgrade to get additional usage credits!"),
+        "reached_limit_content_guest": MessageLookupByLibrary.simpleMessage(
+            "Sign up and enter invitation code to get additional usage credits!"),
+        "reached_limit_content_vip": MessageLookupByLibrary.simpleMessage(
+            "Enter or share invitation code to get additional usage credits!"),
         "read_all": MessageLookupByLibrary.simpleMessage("Read All"),
         "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),
@@ -494,7 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("Submit now"),
+        "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "system_msg": MessageLookupByLibrary.simpleMessage("System Message"),

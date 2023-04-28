@@ -107,6 +107,7 @@ class CartoonizerApi extends BaseRequester {
     DiscoverySort sort = DiscoverySort.likes,
     bool isMyPost = false,
     int? userId,
+    String? category,
   }) async {
     var map = {
       'from': from,
@@ -118,6 +119,9 @@ class CartoonizerApi extends BaseRequester {
     }
     if (userId != null) {
       map['user_id'] = userId;
+    }
+    if (category != null) {
+      map['category'] = category;
     }
     var baseEntity = await get('/social_post/all', params: map);
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
@@ -500,6 +504,10 @@ class CartoonizerApi extends BaseRequester {
 
   Future<GenerateLimitEntity?> getMetaverseLimit() async {
     var baseEntity = await get('/tool/anotherme/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+  Future<GenerateLimitEntity?> getAiDrawLimit() async {
+    var baseEntity = await get('/tool/scribble/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 

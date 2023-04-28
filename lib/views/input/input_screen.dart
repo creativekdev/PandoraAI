@@ -9,17 +9,17 @@ typedef InputCallback = Future<bool> Function(String text);
 
 const int _maxInputLength = 280;
 
+/// input screen
+/// content submit after done click
 class InputScreen extends StatefulWidget {
   String? oldString;
   String uniqueId;
   String? hint;
-  bool hasSend;
   InputCallback callback;
 
   InputScreen({
     Key? key,
     this.oldString,
-    this.hasSend = true,
     required this.callback,
     this.uniqueId = '',
     this.hint,
@@ -36,12 +36,10 @@ class InputScreenState extends State<InputScreen> {
   late String uniqueId;
   late InputCallback callback;
   bool ignore = false;
-  bool hasSend = true;
 
   @override
   void initState() {
     super.initState();
-    hasSend = widget.hasSend;
     uniqueId = widget.uniqueId;
     callback = widget.callback;
     hint = widget.hint;
@@ -112,12 +110,12 @@ class InputScreenState extends State<InputScreen> {
                     ).intoContainer(
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: hasSend ? ColorConstant.InputContent : Color(0xff1e1f1e),
+                        color: ColorConstant.InputContent,
                         borderRadius: BorderRadius.circular($(6)),
                       ),
                     ),
                   ),
-                  SizedBox(width: $(8)).visibility(visible: hasSend),
+                  SizedBox(width: $(8)),
                   Text(
                     S.of(context).send,
                     style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins'),
@@ -131,10 +129,10 @@ class InputScreenState extends State<InputScreen> {
                   )
                       .intoGestureDetector(onTap: () {
                     submit();
-                  }).visibility(visible: hasSend),
+                  }),
                 ],
               ).intoContainer(
-                  color: hasSend ? ColorConstant.InputBackground : Colors.black,
+                  color: ColorConstant.InputBackground,
                   padding: EdgeInsets.symmetric(
                     horizontal: $(15),
                     vertical: $(8),

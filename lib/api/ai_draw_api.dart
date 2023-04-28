@@ -17,7 +17,7 @@ class AiDrawApi extends BaseRequester {
     var userManager = AppDelegate.instance.getManager<UserManager>();
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
-    return ApiOptions(baseUrl: userManager.aiServers['sdppm'] ?? 'https://ai.pandoraai.app:50004', headers: headers);
+    return ApiOptions(baseUrl: userManager.aiServers['sdscribble'] ?? 'https://ai.pandoraai.app:50004', headers: headers);
   }
 
   Future<AiDrawResultEntity?> draw({

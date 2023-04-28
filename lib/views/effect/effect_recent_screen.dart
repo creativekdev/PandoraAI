@@ -11,6 +11,8 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 
@@ -107,6 +109,13 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             fit: BoxFit.cover,
                           ).intoGestureDetector(onTap: () {
                             Txt2img.open(context, source: 'recently', history: data);
+                          });
+                        } else if (data is DrawableRecord) {
+                          return Image.file(
+                            File(data.resultPaths.first),
+                            fit: BoxFit.cover,
+                          ).intoGestureDetector(onTap: () {
+                            AiDrawable.open(context, source: 'recently', history: data);
                           });
                         }
                         return Container();

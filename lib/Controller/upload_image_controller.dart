@@ -89,7 +89,7 @@ class UploadImageController extends GetxController {
     return true;
   }
 
-  Future<bool> uploadCompressedImage(File? imageFile, {String? key}) async {
+  Future<bool> uploadCompressedImage(File? imageFile, {String? key, bool cache = true}) async {
     if (imageFile == null) {
       return false;
     }
@@ -136,7 +136,9 @@ class UploadImageController extends GetxController {
     if (baseEntity != null) {
       var imageUrl = url.split("?")[0];
       updateImageUrl(imageUrl);
-      saveUploadHistory(key: key, file: newFile ?? imageFile, url: imageUrl);
+      if (cache) {
+        saveUploadHistory(key: key, file: newFile ?? imageFile, url: imageUrl);
+      }
       return true;
     }
     return false;

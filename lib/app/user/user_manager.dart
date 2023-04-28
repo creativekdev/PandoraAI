@@ -246,6 +246,19 @@ class UserManager extends BaseManager {
     return MapEntry(base, (user!.payload['txt2img_daily_limit'] ?? 0) as int);
   }
 
+  MapEntry<int, int> getAiDrawLimit() {
+    if (user == null) {
+      return MapEntry(limitRule.scribble?.anonymous ?? 0, 0);
+    }
+    int base;
+    if (!isVip()) {
+      base = limitRule.scribble?.user ?? 0;
+    } else {
+      base = limitRule.scribble?.plan ?? 0;
+    }
+    return MapEntry(base, (user!.payload['scribble_daily_limit'] ?? 0) as int);
+  }
+
   Future<UserRefLinkEntity?> getRefCode() async {
     if (user == null) {
       return null;

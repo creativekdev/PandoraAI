@@ -201,7 +201,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                         case HomeCardType.text2image:
                           Txt2img.open(context, source: 'home_page');
                           break;
-                        case HomeCardType.ai_drawable:
+                        case HomeCardType.scribble:
                           AiDrawable.open(context, source: 'home_page');
                           break;
                         case HomeCardType.UNDEFINED:

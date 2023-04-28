@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 
 abstract class SyncImageProvider {
@@ -76,6 +77,23 @@ class SyncAssetImage extends SyncImageProvider {
   @override
   void _loadImage() {
     var resolve = AssetImage(assets).resolve(ImageConfiguration.empty);
+    resolve.addListener(ImageStreamListener((image, synchronousCall) {
+      if (_completer.isCompleted) {
+        return;
+      }
+      _completer.complete(image);
+    }));
+  }
+}
+
+class SyncCachedNetworkImage extends SyncImageProvider {
+  String url;
+
+  SyncCachedNetworkImage({required this.url});
+
+  @override
+  _loadImage() {
+    var resolve = CachedNetworkImageProvider(url).resolve(ImageConfiguration.empty);
     resolve.addListener(ImageStreamListener((image, synchronousCall) {
       if (_completer.isCompleted) {
         return;

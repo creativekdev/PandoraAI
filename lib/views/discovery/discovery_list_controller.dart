@@ -7,6 +7,22 @@ import 'package:cartoonizer/models/enums/discovery_sort.dart';
 class DiscoveryListController extends GetxController {
   late CartoonizerApi api;
 
+  List<TagData> tags = [
+    TagData(title: '# Me-taverse', tag: 'another_me'),
+    TagData(title: '# AITextToImage', tag: 'txt2img'),
+    TagData(title: '# AIScribble', tag: 'scribble'),
+    TagData(title: '# Facetoon', tag: 'cartoonize'),
+    TagData(title: '# PandoraAvatar', tag: 'ai_avatar')
+  ];
+  TagData? _currentTag;
+
+  TagData? get currentTag => _currentTag;
+
+  set currentTag(TagData? data) {
+    _currentTag = data;
+    update();
+  }
+
   int page = 0;
   int pageSize = 10;
   List<ListData> dataList = [];
@@ -150,6 +166,7 @@ class DiscoveryListController extends GetxController {
       from: 0,
       pageSize: pageSize,
       sort: DiscoverySort.newest,
+      category: currentTag?.tag,
     );
     delay(() {
       listLoading = false;
@@ -176,6 +193,7 @@ class DiscoveryListController extends GetxController {
       from: (page + 1) * pageSize,
       pageSize: pageSize,
       sort: DiscoverySort.newest,
+      category: currentTag?.tag,
     );
     delay(() {
       listLoading = false;
@@ -203,5 +221,15 @@ class ListData {
     this.data,
     required this.page,
     this.visible = true,
+  });
+}
+
+class TagData {
+  String tag;
+  String title;
+
+  TagData({
+    required this.title,
+    required this.tag,
   });
 }

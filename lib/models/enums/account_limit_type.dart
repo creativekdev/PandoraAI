@@ -12,14 +12,16 @@ extension AccountLimitTypeEx on AccountLimitType {
   }
 
   String getContent(BuildContext context, String function) {
-    return S.of(context).reached_limit_content;
     switch (this) {
       case AccountLimitType.guest:
-        return S.of(context).generate_reached_limit_guest.replaceAll('%s', function);
+        return S.of(context).reached_limit_content_guest;
+      // return S.of(context).generate_reached_limit_guest.replaceAll('%s', function);
       case AccountLimitType.normal:
-        return S.of(context).generate_reached_limit.replaceAll('%s', function);
+        return S.of(context).reached_limit_content;
+      // return S.of(context).generate_reached_limit.replaceAll('%s', function);
       case AccountLimitType.vip:
-        return S.of(context).generate_reached_limit_vip.replaceAll('%s', function);
+        return S.of(context).reached_limit_content_vip;
+      // return S.of(context).generate_reached_limit_vip.replaceAll('%s', function);
     }
   }
 

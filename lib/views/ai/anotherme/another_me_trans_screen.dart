@@ -172,10 +172,12 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
             break;
         }
       } else {
-        Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-        EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
-        delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
-        // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
+          delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
+          // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+        }, autoExec: true);
       }
     });
   }

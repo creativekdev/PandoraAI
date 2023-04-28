@@ -30,7 +30,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
-        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("请输入描述"),
+        "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("清除"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("用几个词描述绘画内容"),
+        "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage("清除当前画板"),
+        "ai_draw_reset_tips_desc":
+            MessageLookupByLibrary.simpleMessage("清除将会丢失当前的所有操作"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("现在去设置"),
         "album_to_settings_tips":
@@ -266,6 +270,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "ok": MessageLookupByLibrary.simpleMessage("好的"),
         "ok1": MessageLookupByLibrary.simpleMessage("好的"),
         "okay": MessageLookupByLibrary.simpleMessage("好的"),
+        "oldversion_tips":
+            MessageLookupByLibrary.simpleMessage("当前版本较低，请升级app"),
         "or": MessageLookupByLibrary.simpleMessage("或"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("其他"),
@@ -329,7 +335,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate_us": MessageLookupByLibrary.simpleMessage("去AppStore给我们评分"),
         "rate_us1": MessageLookupByLibrary.simpleMessage("去PlayStore给我们评分"),
         "reached_limit_content":
-            MessageLookupByLibrary.simpleMessage("邀请更多的朋友下载应用程序或购买升级来解锁你的每日限制"),
+            MessageLookupByLibrary.simpleMessage("填写邀请码或者购买升级，以获得额外的使用次数!"),
+        "reached_limit_content_guest":
+            MessageLookupByLibrary.simpleMessage("注册并填写邀请码，以获得额外的使用次数!"),
+        "reached_limit_content_vip":
+            MessageLookupByLibrary.simpleMessage("填写邀请码以获得额外的使用次数!"),
         "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),
         "recent": MessageLookupByLibrary.simpleMessage("最近"),
         "recently": MessageLookupByLibrary.simpleMessage("最近使用"),
@@ -401,7 +411,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "我们很高兴你喜欢我们的工具！现在注册或登录，只需2分钟，你可以体验更多的功能！"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("去邀请"),
+        "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "system": MessageLookupByLibrary.simpleMessage("系统通知"),
         "system_msg": MessageLookupByLibrary.simpleMessage("系统消息"),

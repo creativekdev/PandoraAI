@@ -1,10 +1,10 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
 extension DialogWidgetEx on Widget {
-  Widget customDialogStyle() {
+  Widget customDialogStyle({Color color=ColorConstant.EffectFunctionGrey}) {
     return this
         .intoMaterial(
-          color: ColorConstant.EffectFunctionGrey,
+          color: color,
           borderRadius: BorderRadius.circular($(16)),
         )
         .intoContainer(

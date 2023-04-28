@@ -30,7 +30,7 @@ enum DiscoveryCategory {
   cartoonize,
   another_me,
   txt2img,
-  ai_draw,
+  scribble,
 }
 
 const int _maxInputLength = 512;
@@ -126,10 +126,10 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Me-taverse");
           break;
         case DiscoveryCategory.txt2img:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIArtistTextToImage");
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AITextToImage");
           break;
-        case DiscoveryCategory.ai_draw:
-          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIDraw");
+        case DiscoveryCategory.scribble:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIScribble");
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

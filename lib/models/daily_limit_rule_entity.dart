@@ -10,6 +10,7 @@ class DailyLimitRuleEntity {
   VIPPlanDetail? removebg;
   VIPPlanDetail? anotherme;
   VIPPlanDetail? txt2img;
+  VIPPlanDetail? scribble;
 
   DailyLimitRuleEntity();
 

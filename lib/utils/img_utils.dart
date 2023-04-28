@@ -105,8 +105,8 @@ class ImageUtils {
 
   static double dp(double source) => source * scaleSize;
 
-  static Future<Uint8List> printAiDrawData(Uint8List originalImage, File resultImage, String userEmail) async {
-    return printImageData(originalImage, resultImage, userEmail, Images.ic_ai_draw_top);
+  static Future<Uint8List> printAiDrawData(File originalImage, File resultImage, String userEmail) async {
+    return printImageData(originalImage, resultImage, userEmail, Images.ic_ai_draw_top, arrowRes: Images.ic_ai_draw_arrow);
   }
 
   static Future<Uint8List> printAnotherMeData(File originalImage, File resultImage, String userEmail) async {
@@ -116,7 +116,7 @@ class ImageUtils {
   ///375 设计宽度下，对应输出1080宽度下缩放比2.88
   ///appIcon宽度64，二维码宽度64，标题字体17，描述文案字体13
   ///底部app推广高度105
-  static Future<Uint8List> printImageData(dynamic originalImage, File resultImage, String userEmail, String topRes) async {
+  static Future<Uint8List> printImageData(dynamic originalImage, File resultImage, String userEmail, String topRes, {String? arrowRes}) async {
     var bgSource = await SyncAssetImage(assets: Images.ic_another_me_trans_bg).getImage();
     var bgHeadInfo = await SyncAssetImage(assets: topRes).getImage();
     var bgMiddleInfo = await SyncAssetImage(assets: Images.ic_mt_result_middle).getImage();
@@ -132,7 +132,7 @@ class ImageUtils {
     var resultImageInfo = await SyncFileImage(file: resultImage).getImage();
     var appIconImageInfo = await SyncAssetImage(assets: Images.ic_app).getImage();
     var qrCodeImageInfo = await SyncAssetImage(assets: Images.ic_app_qrcode).getImage();
-    var arrowRightImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_right).getImage();
+    var arrowRightImageInfo = await SyncAssetImage(assets: arrowRes ?? Images.ic_another_arrow_right).getImage();
     var arrowDownImageInfo = await SyncAssetImage(assets: Images.ic_another_arrow_down).getImage();
 
     double width = dp(375);

@@ -6,6 +6,7 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
@@ -86,6 +87,9 @@ class AppFeatureOperator {
       case FeatureType.ai_avatar:
         Avatar.open(context, source: 'in_app_messaging');
         break;
+      case FeatureType.scribble:
+        AiDrawable.open(context, source: 'in_app_messaging');
+        break;
       default:
         break;
     }
@@ -97,6 +101,7 @@ enum FeatureType {
   anotherme,
   cartoonize,
   ai_avatar,
+  scribble,
   UNDEFINED,
 }
 
@@ -111,6 +116,8 @@ class _FeatureUtils {
         return FeatureType.cartoonize;
       case 'ai_avatar':
         return FeatureType.ai_avatar;
+      case 'scribble':
+        return FeatureType.scribble;
       default:
         return FeatureType.UNDEFINED;
     }
