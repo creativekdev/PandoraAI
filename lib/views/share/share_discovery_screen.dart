@@ -405,6 +405,21 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                 SizedBox(height: $(60)),
                 Row(
                   children: [
+                    originalUrl == null
+                        ? Container()
+                        : Expanded(
+                            child: includeOriginal && imageSize != null
+                                ? Container(
+                                    width: imageSize!.width,
+                                    height: imageSize!.height,
+                                    child: CachedNetworkImageUtils.custom(
+                                      context: context,
+                                      imageUrl: originalUrl!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                : Container()),
+                    SizedBox(width: $(8)),
                     Expanded(
                         child: (isVideo
                                 ? EffectVideoPlayer(url: image)
@@ -424,21 +439,6 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                         imageSize = size;
                       });
                     })),
-                    SizedBox(width: $(8)),
-                    originalUrl == null
-                        ? Container()
-                        : Expanded(
-                            child: includeOriginal && imageSize != null
-                                ? Container(
-                                    width: imageSize!.width,
-                                    height: imageSize!.height,
-                                    child: CachedNetworkImageUtils.custom(
-                                      context: context,
-                                      imageUrl: originalUrl!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Container()),
                     SizedBox(width: $(8)),
                     Expanded(child: Container()),
                   ],

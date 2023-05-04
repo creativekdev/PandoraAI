@@ -303,21 +303,37 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                                 end: Alignment.bottomCenter,
                               )))
                       .intoGestureDetector(onTap: () {
-                AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_draw', callback: () {
+                AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_draw', callback: () async {
                   var file = File(resultFilePath!);
-                  ShareDiscoveryScreen.push(
-                    context,
-                    effectKey: 'AI_Draw',
-                    originalUrl: uploadImageController.imageUrl.value,
-                    image: base64Encode(file.readAsBytesSync()),
-                    isVideo: false,
-                    category: DiscoveryCategory.scribble,
-                  ).then((value) {
-                    if (value ?? false) {
-                      Events.aidrawCompleteShare(source: photoType == 'recently' ? 'recently' : 'ai_draw', platform: 'discovery', type: 'image');
-                      showShareSuccessDialog(context);
-                    }
-                  });
+                  var forward = () {
+                    ShareDiscoveryScreen.push(
+                      context,
+                      effectKey: 'AI_Draw',
+                      originalUrl: uploadImageController.imageUrl.value,
+                      image: base64Encode(file.readAsBytesSync()),
+                      isVideo: false,
+                      category: DiscoveryCategory.scribble,
+                    ).then((value) {
+                      if (value ?? false) {
+                        Events.aidrawCompleteShare(source: photoType == 'recently' ? 'recently' : 'ai_draw', platform: 'discovery', type: 'image');
+                        showShareSuccessDialog(context);
+                      }
+                    });
+                  };
+                  if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+                    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: 512);
+                    showLoading().whenComplete(() {
+                      uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) {
+                        hideLoading().whenComplete(() {
+                          if (value) {
+                            forward.call();
+                          }
+                        });
+                      });
+                    });
+                  } else {
+                    forward.call();
+                  }
                 }, autoExec: true);
               })),
               Expanded(

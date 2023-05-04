@@ -340,7 +340,7 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                   (context, i) {
                     if (i == 0) {
                       return DiscoveryEffectDetailWidget(
-                        data: discoveryEntity.copy(),
+                        data: discoveryEntity,
                         loadingAction: this,
                         onCommentTap: () {
                           onCreateCommentClick();
