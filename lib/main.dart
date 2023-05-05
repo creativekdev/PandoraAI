@@ -51,14 +51,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
     name: 'cartoonizer',
   );
-  // if (kReleaseMode) {
+  if (kReleaseMode) {
     FlutterError.onError = (FlutterErrorDetails details) {
-      if(details.library == 'image resource service') {
+      if (details.library == 'image resource service') {
         LogUtil.e(details.toString());
+      } else {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
       }
-      FirebaseCrashlytics.instance.recordFlutterFatalError(details);
     };
-  // }
+  }
 
   // init firebase analytics
   FirebaseAnalytics.instance.setDefaultEventParameters({"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber});
