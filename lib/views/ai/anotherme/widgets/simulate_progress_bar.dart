@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'dart:math' as math;
 
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
@@ -38,6 +39,7 @@ class SimulateProgressBarConfig {
       ..processing = SimulateProgressBarConfigItem(duration: Duration(seconds: 2), rate: 0.95, text: S.of(context).trans_painting)
       ..complete = SimulateProgressBarConfigItem(duration: Duration(milliseconds: 500), rate: 0.05, text: S.of(context).trans_success);
   }
+
   factory SimulateProgressBarConfig.aiDraw(BuildContext context) {
     return SimulateProgressBarConfig()
       ..upload = SimulateProgressBarConfigItem(duration: Duration(seconds: 1), rate: 0.2, text: S.of(context).trans_uploading)
@@ -66,17 +68,13 @@ class SimulateProgressBar {
     Function(double progress)? onUpdate,
     required SimulateProgressBarConfig config,
   }) {
-    return showDialog<SimulateProgressResult<AccountLimitType>>(
-      context: context,
-      builder: (context) {
-        return _SimulateProgressBar(
-          controller: controller,
-          needUploadProgress: needUploadProgress,
-          onUpdate: onUpdate,
-          config: config,
-        );
-      },
-      barrierDismissible: false,
+    return Navigator.of(context).push<SimulateProgressResult<AccountLimitType>>(
+      NoAnimRouter(_SimulateProgressBar(
+        controller: controller,
+        needUploadProgress: needUploadProgress,
+        onUpdate: onUpdate,
+        config: config,
+      )),
     );
   }
 }
@@ -263,7 +261,7 @@ class _SimulateProgressBarState extends State<_SimulateProgressBar> with TickerP
         onWillPop: () async {
           return false;
         }).intoMaterial(
-      color: Colors.transparent,
+      color: Color(0x44000000),
     );
   }
 }

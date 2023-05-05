@@ -139,7 +139,11 @@ class AIDrawRecordHolder extends RecordHolder<DrawableRecord> {
             return false;
           }
         });
-        return true;
+        if (t.resultPaths.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
       });
     } catch (e) {}
     return result;

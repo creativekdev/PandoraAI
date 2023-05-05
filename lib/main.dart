@@ -15,6 +15,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -52,6 +53,9 @@ void main() async {
   );
   if (kReleaseMode) {
     FlutterError.onError = (FlutterErrorDetails details) {
+      if(details.library == 'image resource service') {
+        LogUtil.e(details.toString());
+      }
       FirebaseCrashlytics.instance.recordFlutterFatalError(details);
     };
   }

@@ -70,16 +70,16 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       setState(() {});
       if (widget.record != null) {
         delay(() {
-          toResult();
+          toResultWithoutCheck();
         }, milliseconds: 200);
       }
     });
   }
 
   toResult() async {
-    showLoading().whenComplete(() async{
+    showLoading().whenComplete(() async {
       var aiDrawLimitEntity = await CartoonizerApi().getAiDrawLimit();
-      if(aiDrawLimitEntity == null) {
+      if (aiDrawLimitEntity == null) {
         hideLoading();
       } else {
         if (aiDrawLimitEntity.usedCount >= aiDrawLimitEntity.dailyLimit) {
@@ -91,35 +91,39 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
           } else {
             type = AccountLimitType.normal;
           }
-          hideLoading();
-          showLimitDialog(context, type);
-        } else {
-          drawableController.getImage(screenShotScale: screenShotScale).then((value) async {
-            var key = EncryptUtil.encodeMd5(DrawableRecord(activePens: drawableController.activePens).toString());
-            var uploadPath = cacheManager.storageOperator.recordAiDrawDir.path + key + '.jpg';
-            var uploadFile = File(uploadPath);
-            if (uploadFile.existsSync()) {
-              await uploadFile.delete();
-            }
-            await uploadFile.writeAsBytes(value!.toList(), flush: true);
-            var imageInfo = await SyncMemoryImage(list: value).getImage();
-            hideLoading().whenComplete(() {
-              Navigator.of(context).push(
-                FadeRouter(
-                  child: AiDrawableResultScreen(
-                    drawableController: drawableController,
-                    filePath: uploadPath,
-                    scale: imageInfo.image.width / imageInfo.image.height,
-                    photoType: 'ai_draw',
-                  ),
-                  opaque: false,
-                ),
-              );
-            });
+          hideLoading().whenComplete(() {
+            showLimitDialog(context, type);
           });
+        } else {
+          toResultWithoutCheck();
         }
       }
+    });
+  }
 
+  toResultWithoutCheck() {
+    drawableController.getImage(screenShotScale: screenShotScale).then((value) async {
+      var key = EncryptUtil.encodeMd5(DrawableRecord(activePens: drawableController.activePens).toString());
+      var uploadPath = cacheManager.storageOperator.recordAiDrawDir.path + key + '.jpg';
+      var uploadFile = File(uploadPath);
+      if (uploadFile.existsSync()) {
+        await uploadFile.delete();
+      }
+      await uploadFile.writeAsBytes(value!.toList(), flush: true);
+      var imageInfo = await SyncMemoryImage(list: value).getImage();
+      hideLoading().whenComplete(() {
+        Navigator.of(context).push(
+          FadeRouter(
+            child: AiDrawableResultScreen(
+              drawableController: drawableController,
+              filePath: uploadPath,
+              scale: imageInfo.image.width / imageInfo.image.height,
+              photoType: 'ai_draw',
+            ),
+            opaque: false,
+          ),
+        );
+      });
     });
   }
 
@@ -128,60 +132,60 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
         context: context,
         barrierDismissible: false,
         builder: (_) => Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: $(27)),
-            Image.asset(
-              Images.ic_limit_icon,
-            ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
-            SizedBox(height: $(16)),
-            TitleTextWidget(
-              type.getContent(context, 'AI Scribble'),
-              ColorConstant.White,
-              FontWeight.w500,
-              $(13),
-              maxLines: 100,
-              align: TextAlign.center,
-            ).intoContainer(
-              width: double.maxFinite,
-              padding: EdgeInsets.only(
-                bottom: $(30),
-                left: $(30),
-                right: $(30),
-              ),
-              alignment: Alignment.center,
-            ),
-            Text(
-              type.getSubmitText(context),
-              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-            )
-                .intoContainer(
-              width: double.maxFinite,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
-              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-              alignment: Alignment.center,
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop(false);
-            }),
-            type.getPositiveText(context) != null
-                ? Text(
-              type.getPositiveText(context)!,
-              style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-            )
-                .intoContainer(
-              width: double.maxFinite,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
-              padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-              margin: EdgeInsets.only(top: $(16), bottom: $(24)),
-              alignment: Alignment.center,
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.pop(_, true);
-            })
-                : SizedBox.shrink(),
-          ],
-        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: $(27)),
+                Image.asset(
+                  Images.ic_limit_icon,
+                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
+                SizedBox(height: $(16)),
+                TitleTextWidget(
+                  type.getContent(context, 'AI Scribble'),
+                  ColorConstant.White,
+                  FontWeight.w500,
+                  $(13),
+                  maxLines: 100,
+                  align: TextAlign.center,
+                ).intoContainer(
+                  width: double.maxFinite,
+                  padding: EdgeInsets.only(
+                    bottom: $(30),
+                    left: $(30),
+                    right: $(30),
+                  ),
+                  alignment: Alignment.center,
+                ),
+                Text(
+                  type.getSubmitText(context),
+                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                )
+                    .intoContainer(
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
+                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+                  alignment: Alignment.center,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(context).pop(false);
+                }),
+                type.getPositiveText(context) != null
+                    ? Text(
+                        type.getPositiveText(context)!,
+                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                      )
+                        .intoContainer(
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
+                        padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+                        margin: EdgeInsets.only(top: $(16), bottom: $(24)),
+                        alignment: Alignment.center,
+                      )
+                        .intoGestureDetector(onTap: () {
+                        Navigator.pop(_, true);
+                      })
+                    : SizedBox.shrink(),
+              ],
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
       if (value == null) {
       } else if (value) {
         switch (type) {
@@ -206,6 +210,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       }
     });
   }
+
   @override
   void didUpdateWidget(covariant AiDrawableScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -233,7 +238,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             ),
             Text(
               'AI-Scribble',
-              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500, fontSize: $(18), color: ColorConstant.aiDrawBlue),
+              style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500, fontSize: $(17), color: ColorConstant.aiDrawBlue),
             ),
           ],
         ).intoGestureDetector(onTap: () {
@@ -345,7 +350,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
     return WillPopScope(
         child: content,
         onWillPop: () async {
-          if(drawableController.isEmpty.value) {
+          if (drawableController.isEmpty.value) {
             return true;
           }
           _willPopCallback(context);

@@ -1502,6 +1502,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
         if (imageUrl == "") {
           progressBarController.onError();
+          await delay(() => {}, milliseconds: 200);
           controller.changeTransingImage(false);
           EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: false));
           return;
