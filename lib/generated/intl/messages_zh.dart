@@ -301,7 +301,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "payment": MessageLookupByLibrary.simpleMessage("支付"),
         "paymentBtn": MessageLookupByLibrary.simpleMessage("提交订单"),
         "payment_successfully": MessageLookupByLibrary.simpleMessage("支付成功"),
-        "per_day": MessageLookupByLibrary.simpleMessage("/ 天"),
+        "per_day": MessageLookupByLibrary.simpleMessage("次每天"),
         "permissionCamera": MessageLookupByLibrary.simpleMessage("相机权限"),
         "permissionCameraContent":
             MessageLookupByLibrary.simpleMessage("这个应用程序需要使用相机为上传用户资料照片拍照"),

@@ -366,7 +366,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "paymentBtn": MessageLookupByLibrary.simpleMessage("Place your order"),
         "payment_successfully":
             MessageLookupByLibrary.simpleMessage("Payment successfully"),
-        "per_day": MessageLookupByLibrary.simpleMessage("/ day"),
+        "per_day": MessageLookupByLibrary.simpleMessage("Times a day"),
         "permissionCamera":
             MessageLookupByLibrary.simpleMessage("Camera Permission"),
         "permissionCameraContent": MessageLookupByLibrary.simpleMessage(

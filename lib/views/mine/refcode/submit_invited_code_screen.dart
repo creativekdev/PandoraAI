@@ -239,10 +239,9 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: $(24)),
                     Text(
                       S.of(context).ref_code,
-                      style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(14)),
+                      style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontSize: $(16), fontWeight: FontWeight.w500),
                     ),
                     SizedBox(height: $(16)),
                     Row(
@@ -278,30 +277,30 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
                       ],
                     ).intoContainer(
                       width: double.maxFinite,
+                      padding: EdgeInsets.symmetric(horizontal: $(8),vertical: $(12)),
+                      decoration: BoxDecoration(color: Color(0xff17181a), borderRadius: BorderRadius.circular($(8))),
                     ),
                     SizedBox(height: $(32)),
                   ],
                 ).intoContainer(
                   width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(horizontal: $(16)),
-                  decoration: BoxDecoration(color: Color(0xff17181a), borderRadius: BorderRadius.circular($(8))),
-                  margin: EdgeInsets.all($(16)),
+                  margin: EdgeInsets.symmetric(horizontal:$(16)),
                 );
               }),
-          SizedBox(height: $(40)),
+          SizedBox(height: $(26)),
           Separator(
             color: Color(0xffd5d5d5),
             degree: 1,
             dashSize: 2,
             space: 8,
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(32))),
+          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(16))),
           SizedBox(height: $(23)),
           TitleTextWidget(
             S.of(context).explain,
             ColorConstant.White,
             FontWeight.w500,
             $(16),
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(32))),
+          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(16))),
           SizedBox(height: $(16)),
           TitleTextWidget(
             S.of(context).ref_code_desc,
@@ -310,7 +309,7 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
             $(14),
             maxLines: 999,
             align: TextAlign.start,
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(32))),
+          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(16))),
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
       ),

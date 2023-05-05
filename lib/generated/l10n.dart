@@ -3600,10 +3600,10 @@ class S {
     );
   }
 
-  /// `/ day`
+  /// `Times a day`
   String get per_day {
     return Intl.message(
-      '/ day',
+      'Times a day',
       name: 'per_day',
       desc: '',
       args: [],

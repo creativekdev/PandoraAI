@@ -354,7 +354,7 @@
   "system": "System",
   "system_msg": "System Message",
   "not_found": "No data exist",
-  "per_day": "/ day",
+  "per_day": "Times a day",
   "ref_code": "Code",
   "get_ref_code_failed": "Get invitation code failed, click to retry",
   "ref_code_copied": "Your invitation code was copied!",

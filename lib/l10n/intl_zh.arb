@@ -354,7 +354,7 @@
   "system": "系统通知",
   "system_msg": "系统消息",
   "not_found": "数据不存在",
-  "per_day": "/ 天",
+  "per_day": "次每天",
   "ref_code": "邀请码",
   "get_ref_code_failed": "获取邀请码失败，点击重试",
   "ref_code_copied": "验证码已经复制到剪贴板",

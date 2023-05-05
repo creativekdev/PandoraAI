@@ -1,7 +1,6 @@
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/Widgets/separator.dart';
 
 class ReferredCard extends StatelessWidget {
   UserManager userManager = AppDelegate().getManager();
@@ -26,24 +25,10 @@ class ReferredCard extends StatelessWidget {
               color: Color(0x5532C5FF),
               degree: 12,
               offset: -60,
-              width: 80,
+              width: 40,
               space: 20,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildItem(context, title: 'Metaverse', value: userManager.getAnotherMeLimit()),
-                SizedBox(height: $(20)),
-                Separator(color: Colors.white, space: $(4), dashSize: $(3), degree: $(1)),
-                SizedBox(height: $(20)),
-                buildItem(context, title: 'AI Artist: Text to Image', value: userManager.getTxt2ImgLimit()),
-                SizedBox(height: $(20)),
-                Separator(color: Colors.white, space: $(4), dashSize: $(3), degree: $(1)),
-                SizedBox(height: $(20)),
-                buildItem(context, title: 'AI Scribble', value: userManager.getAiDrawLimit()),
-              ],
-            ).intoContainer(
+            child: buildItem(context, title: 'Metaverse', value: userManager.getAnotherMeLimit()).intoContainer(
               width: double.maxFinite,
               padding: EdgeInsets.all($(16)),
               decoration: BoxDecoration(
@@ -51,6 +36,58 @@ class ReferredCard extends StatelessWidget {
                 colors: [
                   Color(0xFF2778FF),
                   Color(0xFF32C5FF),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              )),
+            ),
+          ),
+        ),
+        SizedBox(height: $(8)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular($(6)),
+          child: CustomPaint(
+            foregroundPainter: ForegroundPainter(
+              color: Color(0x99fecd09),
+              degree: 12,
+              offset: -60,
+              width: 40,
+              space: 20,
+            ),
+            child: buildItem(context, title: 'AI Artist: Text to Image', value: userManager.getTxt2ImgLimit()).intoContainer(
+              width: double.maxFinite,
+              padding: EdgeInsets.all($(16)),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  Color(0xFFfa9500),
+                  Color(0xfffecd09),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              )),
+            ),
+          ),
+        ),
+        SizedBox(height: $(8)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular($(6)),
+          child: CustomPaint(
+            foregroundPainter: ForegroundPainter(
+              color: Color(0xff3fdb87),
+              degree: 12,
+              offset: -60,
+              width: 40,
+              space: 20,
+            ),
+            child: buildItem(context, title: 'AI Scribble', value: userManager.getAiDrawLimit()).intoContainer(
+              width: double.maxFinite,
+              padding: EdgeInsets.all($(16)),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [
+                  Color(0xff02be65),
+                  Color(0xFF3fdb87),
                 ],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
@@ -77,10 +114,12 @@ class ReferredCard extends StatelessWidget {
           title,
           style: TextStyle(color: Color(0xb2ffffff), fontSize: $(14)),
         ),
+        SizedBox(height: $(8)),
         Text(
           count,
           style: TextStyle(color: ColorConstant.White, fontSize: $(20)),
         ),
+        SizedBox(height: $(16)),
       ],
     );
   }
@@ -107,8 +146,8 @@ class ForegroundPainter extends CustomPainter {
       Path()
         ..moveTo(size.width - degree + offset, 0)
         ..lineTo(size.width + offset, 0)
-        ..lineTo(size.width / 1.7 + offset, size.height)
-        ..lineTo(size.width / 1.7 - degree + offset, size.height)
+        ..lineTo(size.width / 1.25 + offset, size.height)
+        ..lineTo(size.width / 1.25 - degree + offset, size.height)
         ..close(),
       Paint()..color = color,
     );
@@ -116,8 +155,8 @@ class ForegroundPainter extends CustomPainter {
       Path()
         ..moveTo(size.width + offset + space, 0)
         ..lineTo(size.width + width + offset + space, 0)
-        ..lineTo(size.width / 1.7 + width + offset + space, size.height)
-        ..lineTo(size.width / 1.7 + offset + space, size.height)
+        ..lineTo(size.width / 1.25 + width + offset + space, size.height)
+        ..lineTo(size.width / 1.25 + offset + space, size.height)
         ..close(),
       Paint()..color = color,
     );
