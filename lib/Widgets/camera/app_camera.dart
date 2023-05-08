@@ -265,16 +265,16 @@ Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widge
         img = _convertYUV420(image);
         if (widgetDirection == Axis.vertical) {
           if (img.width > img.height) {
-            img = imglib.copyRotate(img, isFront ? 270 : 90);
+            img = imglib.copyRotate(img, angle: isFront ? 270 : 90);
             if (isFront) {
-              img = imglib.flip(img, imglib.Flip.horizontal);
+              img = imglib.flip(img, direction: imglib.FlipDirection.horizontal);
             }
           }
         } else {
           if (img.width < img.height) {
-            img = imglib.copyRotate(img, isFront ? 270 : 90);
+            img = imglib.copyRotate(img, angle: isFront ? 270 : 90);
             if (isFront) {
-              img = imglib.flip(img, imglib.Flip.horizontal);
+              img = imglib.flip(img, direction: imglib.FlipDirection.horizontal);
             }
           }
         }
@@ -311,13 +311,13 @@ Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widge
     if (image.width > image.height) {
       //screen design to por, if is land(width>height), need to rotate
       if (pose == PoseState.leftDumped) {
-        img = imglib.copyRotate(img, 90);
+        img = imglib.copyRotate(img, angle: 90);
       } else if (pose == PoseState.rightDumped) {
-        img = imglib.copyRotate(img, 270);
+        img = imglib.copyRotate(img, angle: 270);
       }
     }
     imglib.PngEncoder pngEncoder = imglib.PngEncoder();
-    List<int> png = pngEncoder.encodeImage(img);
+    List<int> png = pngEncoder.encode(img);
     return png;
   } catch (e) {
     print(">>>>>>>>>>>> ERROR:" + e.toString());
@@ -329,10 +329,10 @@ Future<List<int>?> convertImagetoPng(bool isFront, CameraImage image, Axis widge
 /// Color
 imglib.Image _convertBGRA8888(CameraImage image) {
   return imglib.Image.fromBytes(
-    (image.planes[0].bytesPerRow / 4).round(),
-    image.height,
-    image.planes[0].bytes,
-    format: imglib.Format.bgra,
+    width: (image.planes[0].bytesPerRow / 4).round(),
+    height: image.height,
+    bytes: image.planes[0].bytes.buffer,
+    // format: imglib.Format.bgra,
   );
 }
 
@@ -345,7 +345,7 @@ imglib.Image _convertYUV420(CameraImage image) {
   final int uvPixelStride = image.planes[1].bytesPerPixel!;
 
   // imgLib -> Image package from https://pub.dartlang.org/packages/image
-  var img = imglib.Image(width, height); // Create Image buffer
+  var img = imglib.Image(width: width, height: height); // Create Image buffer
 
   // Fill image buffer with plane[0] from YUV420_888
   for (int x = 0; x < width; x++) {
@@ -362,7 +362,8 @@ imglib.Image _convertYUV420(CameraImage image) {
       int b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
       // color: 0x FF  FF  FF  FF
       //           A   B   G   R
-      img.data[index] = (0xFF << 24) | (b << 16) | (g << 8) | r;
+      var imageData = img.data!;
+      imageData.setPixel(x, y, imglib.ColorInt16.rgb(r, g, b));
     }
   }
   return img;

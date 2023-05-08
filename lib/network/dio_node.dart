@@ -28,10 +28,12 @@ class DioNode {
 
   Dio build({
     bool logResponseEnable = true,
+    int? receiveTimeout,
+    int? connectTimeout,
   }) {
     BaseOptions options = new BaseOptions();
-    options.receiveTimeout = _receiveTimeout;
-    options.connectTimeout = _connectTimeout;
+    options.receiveTimeout = receiveTimeout ?? _receiveTimeout;
+    options.connectTimeout = connectTimeout ??_connectTimeout;
     options.responseType = _responseType;
     Dio client = Dio(options);
     client.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) {

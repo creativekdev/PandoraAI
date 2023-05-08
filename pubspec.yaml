@@ -43,12 +43,12 @@ dependencies:
   path: ^1.8.0
   path_provider: ^2.0.8
   gallery_saver: 2.3.2
-  share_plus: 6.3.0
+  share_plus: 6.3.4
   url_launcher: ^6.0.18
-  flutter_share_me: 1.3.0
+  flutter_share_me: 1.4.0
   get: ^4.6.3
   get_storage: ^2.0.3
-  scrollable_positioned_list: ^0.3.2
+  scrollable_positioned_list: ^0.3.7
   flutter_email_sender: ^5.0.2
   in_app_purchase: ^2.0.1
   firebase_core: 1.24.0
@@ -60,8 +60,9 @@ dependencies:
   video_player: ^2.2.18
   webview_flutter: ^3.0.0
   connectivity_plus: ^2.2.1
-  permission_handler: 7.1.0
-  cached_network_image: ^3.2.1
+#  permission_handler: 7.1.0
+  permission_handler: 10.2.0
+  cached_network_image: ^3.2.3
   flutter_credit_card: 3.0.1
   package_info_plus: 3.0.3
   device_info_plus: 8.1.0
@@ -71,11 +72,11 @@ dependencies:
   #    git:
   #      url: https://github.com/googleads/googleads-mobile-flutter
   #      path: packages/google_mobile_ads
-  flutter_image_compress: 1.1.3
+  flutter_image_compress: 2.0.1
   flutter_local_notifications: 9.6.1
   common_utils: ^2.1.0
   flutter_easyrefresh: ^2.2.1
-  waterfall_flow: ^3.0.1
+#  waterfall_flow: ^3.0.1
   photo_view: ^0.14.0
   event_bus: ^2.0.0
   flutter_svg: ^1.0.3
@@ -83,22 +84,22 @@ dependencies:
   mmoo_forbidshot: 1.0.3
   flutter_switch: 0.3.2
   vibration: ^1.7.4-nullsafety.0
-  google_mlkit_commons: 0.2.0
-  google_mlkit_face_detection: 0.5.0
-  photo_manager: 2.5.2
+  google_mlkit_commons: 0.3.0
+  google_mlkit_face_detection: 0.6.0
+  photo_manager: 2.6.0
   # intl dependencies
   flutter_localizations:
     sdk: flutter
   custom_pop_up_menu: 1.2.4
-  camera: 0.10.3+1
-  image: 3.2.2
-  sensors_plus: 2.0.2
+  camera: 0.10.5
+  image: 4.0.16
+  sensors_plus: 2.0.5
   #  opencv_4: 1.0.0
   ffmpeg_kit_flutter: 5.1.0
-  posthog_flutter: 2.0.3
+  posthog_flutter: 3.0.4
   uni_links: 0.5.1
-dependency_overrides:
-  intl: 0.17.0
+#dependency_overrides:
+#  intl: 0.18.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

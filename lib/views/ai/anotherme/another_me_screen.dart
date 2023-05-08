@@ -602,9 +602,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     );
     if (pose != PoseState.stand) {
       var im = (await SyncFileImage(file: file).getImage()).image;
-      var bytes = (await im.toByteData())!.buffer.asUint8List();
-      var orImg = imglib.Image.fromBytes(im.width, im.height, bytes);
-      var resImg = imglib.copyRotate(orImg, pose.coefficient());
+      var bytes = (await im.toByteData())!.buffer;
+      var orImg = imglib.Image.fromBytes(width:im.width,height: im.height,bytes: bytes);
+      var resImg = imglib.copyRotate(orImg, angle: pose.coefficient());
       var encodePng = imglib.encodePng(resImg);
       await file.writeAsBytes(encodePng);
       ratio = 1 / ratio;

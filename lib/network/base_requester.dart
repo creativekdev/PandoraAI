@@ -65,14 +65,16 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
   late Dio _client;
 
   BaseRequester({
+    Dio? client,
     bool newInstance = false,
     bool logResponseEnable = true,
   }) {
-    if (newInstance) {
-      _client = DioNode.instance.build(logResponseEnable: logResponseEnable);
-    } else {
-      _client = DioNode.instance.client;
-    }
+    _client = client ?? DioNode.instance.client;
+    // if (newInstance) {
+    //   _client = DioNode.instance.build(logResponseEnable: logResponseEnable);
+    // } else {
+    //   _client = DioNode.instance.client;
+    // }
   }
 
   ///

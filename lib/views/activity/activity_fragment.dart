@@ -16,7 +16,6 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
-import 'package:waterfall_flow/waterfall_flow.dart';
 
 import '../../Widgets/tabbar/app_tab_bar.dart';
 
@@ -72,9 +71,9 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
                   var dataList = dataController.randomList.filter(
                     (t) => t.item!.tagList.contains(dataController.data?.campaignTab?.tag),
                   );
-                  return WaterfallFlow.builder(
+                  return GridView.builder(
                     padding: EdgeInsets.symmetric(horizontal: $(15)),
-                    gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: $(6),
                       crossAxisSpacing: $(6),

@@ -306,9 +306,9 @@ class _DrawableState extends State<Drawable> {
         for (int j = 0; j < pixels.height; j++) {
           var pixel = pixels.getPixel(i, j);
           if (pixel == black32) {
-            pixels.setPixel(i, j, imgLib.getColor(255, 255, 255));
+            pixels.setPixel(i, j, imgLib.ColorInt16.rgb(255, 255, 255));
           } else {
-            pixels.setPixel(i, j, imgLib.getColor(0, 0, 0));
+            pixels.setPixel(i, j, imgLib.ColorInt16.rgb(0, 0, 0));
           }
         }
       }

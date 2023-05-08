@@ -1,9 +1,16 @@
-import 'package:camera/camera.dart';
-import 'package:cartoonizer/Common/importFile.dart';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:collection';
 import 'dart:math';
+
+import 'package:camera/camera.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // TODO(stuartmorgan): Remove this once the package requires 2.10, where the
 // dart:async `unawaited` accepts a nullable future.
@@ -19,14 +26,14 @@ void _unawaited(Future<void>? future) {}
 class CustomCameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CustomCameraController(
-    this.description,
+    CameraDescription description,
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
-  }) : super(const CameraValue.uninitialized());
+  }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
-  final CameraDescription description;
+  CameraDescription get description => value.description;
 
   /// The resolution this controller is targeting.
   ///
@@ -70,7 +77,12 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
   /// Initializes the camera on the device.
   ///
   /// Throws a [CameraException] if the initialization fails.
-  Future<void> initialize() async {
+  Future<void> initialize() => _initializeWithDescription(description);
+
+  /// Initializes the camera on the device with the specified description.
+  ///
+  /// Throws a [CameraException] if the initialization fails.
+  Future<void> _initializeWithDescription(CameraDescription description) async {
     if (_isDisposed) {
       throw CameraException(
         'Disposed CameraController',
@@ -103,6 +115,7 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
 
       value = value.copyWith(
         isInitialized: true,
+        description: description,
         previewSize: await initializeCompleter.future.then((CameraInitializedEvent event) => Size(
               event.previewWidth,
               event.previewHeight,
@@ -157,6 +170,18 @@ class CustomCameraController extends ValueNotifier<CameraValue> {
       value = value.copyWith(isPreviewPaused: false, previewPauseOrientation: const Optional<DeviceOrientation>.absent());
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Sets the description of the camera.
+  ///
+  /// Throws a [CameraException] if setting the description fails.
+  Future<void> setDescription(CameraDescription description) async {
+    if (value.isRecordingVideo) {
+      await CameraPlatform.instance.setDescriptionWhileRecording(description);
+      value = value.copyWith(description: description);
+    } else {
+      await _initializeWithDescription(description);
     }
   }
 

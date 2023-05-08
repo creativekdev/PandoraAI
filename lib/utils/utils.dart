@@ -145,13 +145,14 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
     var scale = imageSize / wideSide;
     int width = (image.width * scale).toInt();
     int height = (image.height * scale).toInt();
-    result = (await FlutterImageCompress.compressAndGetFile(
+    var re = (await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
       minWidth: width,
       minHeight: height,
       quality: quality,
     ))!;
+    result = File(re.path);
   } else {
     result = await file.copy(targetPath);
   }
@@ -168,7 +169,7 @@ Future<File> imageCompress(File file, String targetPath, {CompressFormat format 
   if (length > 512 * 512) {
     quality = (((512 * 512) / length) * 100).toInt();
   }
-  return (await FlutterImageCompress.compressAndGetFile(
+  var re = (await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
     targetPath,
     minWidth: 512,
@@ -176,6 +177,7 @@ Future<File> imageCompress(File file, String targetPath, {CompressFormat format 
     quality: quality,
     format: format,
   ))!;
+  return File(re.path);
 }
 
 Future<File> imageCompressByte(Uint8List image, String targetPath) async {
@@ -377,7 +379,7 @@ Future<ui.Image> getImage(File file) async {
 
 Future<imgLib.Image> getLibImage(ui.Image image) async {
   var byteData = await image.toByteData();
-  return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
+  return imgLib.Image.fromBytes(width: image.width, height: image.height, bytes: byteData!.buffer);
 }
 
 Future<ui.Image> getUiImage(imgLib.Image image) async {
