@@ -99,7 +99,7 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                               if (value) {
                                 AnotherMe.open(context, entity: data, source: 'recently');
                               } else {
-                                showPhotoLibraryPermissionDialog(context);
+                                AnotherMe.permissionDenied(context);
                               }
                             });
                           });

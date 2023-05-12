@@ -50,6 +50,7 @@ class CacheManager extends BaseManager {
   static const cacheDiscoveryListEntity = 'discovery_list_entity';
   static const lastRefLink = 'last_ref_link';
   static const cacheImageSummary = 'image_summary';
+  static const commentList = 'commentList';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

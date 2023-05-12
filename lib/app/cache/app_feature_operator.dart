@@ -67,7 +67,13 @@ class AppFeatureOperator {
         Txt2img.open(context, source: 'in_app_messaging');
         break;
       case FeatureType.anotherme:
-        AnotherMe.open(context, source: 'in_app_messaging');
+        AnotherMe.checkPermissions().then((value) async {
+          if (value) {
+            AnotherMe.open(context, source: 'in_app_messaging');
+          } else {
+            AnotherMe.permissionDenied(context);
+          }
+        });
         break;
       case FeatureType.cartoonize:
         var split = payload!.data?.split(',');

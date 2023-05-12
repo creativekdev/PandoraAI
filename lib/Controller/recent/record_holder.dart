@@ -133,7 +133,7 @@ class AIDrawRecordHolder extends RecordHolder<DrawableRecord> {
       result = (json as List<dynamic>).map((e) => DrawableRecord.fromJson(e)).toList();
       result = await result.filterSync((t) async {
         t.resultPaths = await t.resultPaths.filterSync((p) async {
-          if (File(p ?? '').existsSync()) {
+          if (File(p).existsSync()) {
             return true;
           } else {
             return false;

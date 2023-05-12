@@ -27,10 +27,7 @@ class UserBaseInfoWidget extends StatelessWidget {
                   height: $(56),
                   width: $(56),
                   errorWidget: (context, url, error) {
-                    return Text(
-                      (userInfo?.getShownName() == '' ? ' ' : userInfo!.getShownName())[0].toUpperCase(),
-                      style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
-                    ).intoContainer(
+                    return Image.asset(Images.ic_avatar_default).intoContainer(
                         width: $(45),
                         height: $(45),
                         alignment: Alignment.center,

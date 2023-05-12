@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool?> _checkAppVersion() async {
-    var data = await CartoonizerApi().checkAppVersion();
+    var data = await CartoonizerApi.quickResponse().checkAppVersion();
     if (data["need_update"] == true) {
       return await Get.dialog<bool>(
         CommonDialog(

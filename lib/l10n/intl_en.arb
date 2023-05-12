@@ -1,5 +1,6 @@
 {
   "avatars": " avatars",
+  "author": "author",
   "accountCancelled": "Pandora User",
   "agree_text1": "By registering you agree to",
   "agree_text2": " of the Cartoonizer.",
@@ -109,7 +110,7 @@
   "pandora_create_spend": "Your photos will be generated in about %d minutes",
   "pandora_pay_description": "Pandora Avatars use state of the art AI technology to create magnificent avatars for you! Despite requiring a high amount of resources (GPU), we’ve made it as affordable as possible!",
   "pandora_purchase": "Purchase for ",
-  "pandora_transfer_tips": "We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service",
+  "pandora_transfer_tips": "We only use your photos to train the AI model. Photos will be deleted from our servers within 24 hours",
   "pass_validation": "Please enter password",
   "pass_validation1": "Password not matched",
   "password": "Password",
@@ -118,6 +119,8 @@
   "payment": "Payment",
   "payment_successfully": "Payment successfully",
   "paymentBtn": "Place your order",
+  "permissionMicroPhone": "MicroPhone Permission",
+  "permissionMicroPhoneContent": "This app needs microphone access to preview camera",
   "permissionCamera": "Camera Permission",
   "permissionCameraContent": "This app needs camera access to take pictures for upload user profile photo",
   "permissionPhotoLibrary": "PhotoLibrary Permission",
@@ -377,5 +380,12 @@
   "oldversion_tips": "Please update your app",
   "ai_draw_reset_tips": "Clear current drawing",
   "ai_draw_reset_tips_desc": "By clearing the current drawing, you will lose all of your progress.",
-  "ai_draw_clear_btn": "Clear"
+  "ai_draw_clear_btn": "Clear",
+  "server_exception": "Server Busy",
+  "server_exception_desc": "The server seems busy right now. Please try again in a few minutes.",
+  "net_exception": "Network Anomaly",
+  "net_exception_desc": "Please ensure your internet connection is available",
+  "retry": "Retry",
+  "create_new_avatars":"Create New Avatars",
+  "view_more_comment": "View more %d comments"
 }

@@ -18,7 +18,7 @@ class EffectManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
-    api = CartoonizerApi().bindManager(this);
+    api = CartoonizerApi.quickResponse().bindManager(this);
   }
 
   @override

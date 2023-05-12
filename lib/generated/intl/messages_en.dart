@@ -58,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Are you sure to delete this post?"),
         "august": MessageLookupByLibrary.simpleMessage("August"),
+        "author": MessageLookupByLibrary.simpleMessage("author"),
         "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
             "You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?"),
         "avatars": MessageLookupByLibrary.simpleMessage(" avatars"),
@@ -144,6 +145,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "createAccount":
             MessageLookupByLibrary.simpleMessage("Create\nAccount"),
         "create_avatar": MessageLookupByLibrary.simpleMessage("Create Avatar"),
+        "create_new_avatars":
+            MessageLookupByLibrary.simpleMessage("Create New Avatars"),
         "created": MessageLookupByLibrary.simpleMessage("Created"),
         "current_pass":
             MessageLookupByLibrary.simpleMessage("Current Password"),
@@ -300,6 +303,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "name_hint": MessageLookupByLibrary.simpleMessage("Enter name"),
         "name_validation":
             MessageLookupByLibrary.simpleMessage("Please enter name"),
+        "net_exception":
+            MessageLookupByLibrary.simpleMessage("Network Anomaly"),
+        "net_exception_desc": MessageLookupByLibrary.simpleMessage(
+            "Please ensure your internet connection is available"),
         "new_pass": MessageLookupByLibrary.simpleMessage("New Password"),
         "new_update_dialog_content": MessageLookupByLibrary.simpleMessage(
             "A required update is available, the App will not be working until this update is applied."),
@@ -351,7 +358,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pandora_purchase":
             MessageLookupByLibrary.simpleMessage("Purchase for "),
         "pandora_transfer_tips": MessageLookupByLibrary.simpleMessage(
-            "We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service"),
+            "We only use your photos to train the AI model. Photos will be deleted from our servers within 24 hours"),
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
             "Your Pandora Avatars will be generated in about %d minutes. Please explore our other features while waiting!"),
         "pass_validation":
@@ -371,6 +378,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Camera Permission"),
         "permissionCameraContent": MessageLookupByLibrary.simpleMessage(
             "This app needs camera access to take pictures for upload user profile photo"),
+        "permissionMicroPhone":
+            MessageLookupByLibrary.simpleMessage("MicroPhone Permission"),
+        "permissionMicroPhoneContent": MessageLookupByLibrary.simpleMessage(
+            "This app needs microphone access to preview camera"),
         "permissionPhotoLibrary":
             MessageLookupByLibrary.simpleMessage("PhotoLibrary Permission"),
         "permissionPhotoLibraryContent": MessageLookupByLibrary.simpleMessage(
@@ -448,6 +459,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "You will lose all of your rights until subscribe again"),
         "restore_msg": MessageLookupByLibrary.simpleMessage(
             "Are you sure to unsubscribe?"),
+        "retry": MessageLookupByLibrary.simpleMessage("Retry"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to save %d images"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
@@ -479,6 +491,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "sent_email_already": MessageLookupByLibrary.simpleMessage(
             "We sent reset password link to registered email"),
         "september": MessageLookupByLibrary.simpleMessage("September"),
+        "server_exception": MessageLookupByLibrary.simpleMessage("Server Busy"),
+        "server_exception_desc": MessageLookupByLibrary.simpleMessage(
+            "The server seems busy right now. Please try again in a few minutes."),
         "set_password": MessageLookupByLibrary.simpleMessage("Setup Password"),
         "setting": MessageLookupByLibrary.simpleMessage("Setting"),
         "setting_my_delete_account":
@@ -563,6 +578,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_all": MessageLookupByLibrary.simpleMessage("View All"),
         "view_all_comment":
             MessageLookupByLibrary.simpleMessage("View all %d comments >"),
+        "view_more_comment":
+            MessageLookupByLibrary.simpleMessage("View more %d comments"),
         "waiting": MessageLookupByLibrary.simpleMessage("Waiting"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage(
             "Watch an ad to remove watermark\n(only this time)"),

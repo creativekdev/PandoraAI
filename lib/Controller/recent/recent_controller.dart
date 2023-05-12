@@ -57,7 +57,7 @@ class RecentController extends GetxController {
     });
     List<RecentMetaverseEntity> metaverses = [];
     metaverseList.forEach((element) {
-      metaverses.addAll(element.filePath.filter((t) => !TextUtil.isEmpty(t) && File(t ?? '').existsSync()).map((e) => RecentMetaverseEntity()
+      metaverses.addAll(element.filePath.filter((t) => !TextUtil.isEmpty(t) && File(t).existsSync()).map((e) => RecentMetaverseEntity()
         ..updateDt = element.updateDt
         ..originalPath = element.originalPath
         ..filePath = [e]));

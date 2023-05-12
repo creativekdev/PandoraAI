@@ -38,6 +38,7 @@ class DiscoveryListController extends GetxController {
   late TabController tabController;
 
   late ScrollController scrollController;
+  Rx<bool> likeLocalAddAlready = false.obs;
 
   @override
   void onInit() {
@@ -67,7 +68,11 @@ class DiscoveryListController extends GetxController {
       for (var data in dataList) {
         if (data.data!.id == id) {
           data.data!.likeId = likeId;
-          data.data!.likes++;
+          if (likeLocalAddAlready.value) {
+            likeLocalAddAlready.value = false;
+          } else {
+            data.data!.likes++;
+          }
           update();
         }
       }
@@ -78,7 +83,11 @@ class DiscoveryListController extends GetxController {
       for (var data in dataList) {
         if (data.data!.id == event.data) {
           data.data!.likeId = null;
-          data.data!.likes--;
+          if (likeLocalAddAlready.value) {
+            likeLocalAddAlready.value = false;
+          } else {
+            data.data!.likes--;
+          }
           update();
         }
       }

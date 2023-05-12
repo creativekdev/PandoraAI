@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "are_you_sure_to_delete_this_post":
             MessageLookupByLibrary.simpleMessage("您确定要删除这条分享么"),
         "august": MessageLookupByLibrary.simpleMessage("八月"),
+        "author": MessageLookupByLibrary.simpleMessage("作者"),
         "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
             "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？"),
         "avatars": MessageLookupByLibrary.simpleMessage("张肖像"),
@@ -117,6 +118,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "create": MessageLookupByLibrary.simpleMessage("创建"),
         "createAccount": MessageLookupByLibrary.simpleMessage("创建\n账号"),
         "create_avatar": MessageLookupByLibrary.simpleMessage("创建头像"),
+        "create_new_avatars":
+            MessageLookupByLibrary.simpleMessage("创建新的Avatar"),
         "created": MessageLookupByLibrary.simpleMessage("完成"),
         "current_pass": MessageLookupByLibrary.simpleMessage("当前密码"),
         "current_version": MessageLookupByLibrary.simpleMessage("App版本"),
@@ -248,6 +251,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "name": MessageLookupByLibrary.simpleMessage("全名"),
         "name_hint": MessageLookupByLibrary.simpleMessage("输入姓名"),
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),
+        "net_exception": MessageLookupByLibrary.simpleMessage("网络异常"),
+        "net_exception_desc": MessageLookupByLibrary.simpleMessage("请检查您的网络环境"),
         "new_pass": MessageLookupByLibrary.simpleMessage("新密码"),
         "new_update_dialog_content":
             MessageLookupByLibrary.simpleMessage("当前版本要求您必须更新，否则将无法使用App"),
@@ -290,7 +295,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "我们的人工智能技术和极为强大的算法支撑将为您创造出最华丽的画像！"),
         "pandora_purchase": MessageLookupByLibrary.simpleMessage("购买金额"),
         "pandora_transfer_tips": MessageLookupByLibrary.simpleMessage(
-            "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。你可以选择将AI模型作为高级服务。"),
+            "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。"),
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
             "您的照片将在大约%d分钟内生成，请稍候。生成结束后，我们会给你发送电子邮件，里面有你的PandoraAvatar链接!"),
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
@@ -305,6 +310,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "permissionCamera": MessageLookupByLibrary.simpleMessage("相机权限"),
         "permissionCameraContent":
             MessageLookupByLibrary.simpleMessage("这个应用程序需要使用相机为上传用户资料照片拍照"),
+        "permissionMicroPhone": MessageLookupByLibrary.simpleMessage("麦克风权限"),
+        "permissionMicroPhoneContent":
+            MessageLookupByLibrary.simpleMessage("这个应用程序需要使用麦克风用来预览相机画面"),
         "permissionPhotoLibrary": MessageLookupByLibrary.simpleMessage("相册权限"),
         "permissionPhotoLibraryContent":
             MessageLookupByLibrary.simpleMessage("这个应用程序需要访问相册权限，是否去设置打开？"),
@@ -367,6 +375,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore_content":
             MessageLookupByLibrary.simpleMessage("在再次订阅之前，您将失去所有的权益"),
         "restore_msg": MessageLookupByLibrary.simpleMessage("您确定要取消订阅么？"),
+        "retry": MessageLookupByLibrary.simpleMessage("重试"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage("保存高清无水印图片"),
         "save_into_album": MessageLookupByLibrary.simpleMessage("保存到相册"),
@@ -390,6 +399,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "sent_email_already":
             MessageLookupByLibrary.simpleMessage("已发送验证码到注册邮箱"),
         "september": MessageLookupByLibrary.simpleMessage("九月"),
+        "server_exception": MessageLookupByLibrary.simpleMessage("服务器异常"),
+        "server_exception_desc":
+            MessageLookupByLibrary.simpleMessage("服务器出问题了，请稍后再试"),
         "set_password": MessageLookupByLibrary.simpleMessage("设置密码"),
         "setting": MessageLookupByLibrary.simpleMessage("设置"),
         "setting_my_delete_account":
@@ -462,6 +474,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_all": MessageLookupByLibrary.simpleMessage("查看全部"),
         "view_all_comment":
             MessageLookupByLibrary.simpleMessage("查看所有 %d 条评论 >"),
+        "view_more_comment":
+            MessageLookupByLibrary.simpleMessage("查看更多 %d 条评论"),
         "waiting": MessageLookupByLibrary.simpleMessage("等待生成"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
         "watchAdText": MessageLookupByLibrary.simpleMessage("下载高清\n无水印图片"),

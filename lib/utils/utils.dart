@@ -379,7 +379,7 @@ Future<ui.Image> getImage(File file) async {
 
 Future<imgLib.Image> getLibImage(ui.Image image) async {
   var byteData = await image.toByteData();
-  return imgLib.Image.fromBytes(width: image.width, height: image.height, bytes: byteData!.buffer);
+  return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
 }
 
 Future<ui.Image> getUiImage(imgLib.Image image) async {
@@ -389,6 +389,10 @@ Future<ui.Image> getUiImage(imgLib.Image image) async {
 }
 
 Future<bool> judgeInvitationCode() async {
+  var userManager = AppDelegate().getManager<UserManager>();
+  if (userManager.user?.isReferred ?? false) {
+    return false;
+  }
   var cacheManager = AppDelegate().getManager<CacheManager>();
   String? code;
   var data = await Clipboard.getData(Clipboard.kTextPlain);

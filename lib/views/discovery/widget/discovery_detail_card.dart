@@ -1,165 +1,56 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/like_btn.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
-import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
+import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
-import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
-import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
 import 'discovery_attr_holder.dart';
+import 'user_info_header_widget.dart';
 
-class DiscoveryEffectDetailWidget extends StatefulWidget {
-  DiscoveryListEntity data;
-  LoadingAction loadingAction;
-  Function() onCommentTap;
-  String source;
-  String dataType;
-  String style;
+typedef OnLikeTap = Future<bool> Function(bool liked);
 
-  DiscoveryEffectDetailWidget({
-    Key? key,
-    required this.data,
-    required this.loadingAction,
-    required this.onCommentTap,
-    required this.source,
-    required this.dataType,
-    required this.style,
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => DiscoveryEffectDetailWidgetState();
-}
-
-class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget> with DiscoveryAttrHolder {
-  UserManager userManager = AppDelegate.instance.getManager();
-  EffectManager effectManager = AppDelegate.instance.getManager();
-  late DiscoveryListEntity data;
-  late LoadingAction loadingAction;
-  Size? imageSize;
+class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
+  DiscoveryDetailController controller;
+  Function onCommentTap;
+  OnLikeTap onLikeTap;
+  Function onTryTap;
+  CacheManager cacheManager = AppDelegate().getManager();
   late double imageListWidth;
-  late CartoonizerApi api;
-  late StreamSubscription onLoginEventListener;
-  late StreamSubscription onLikeEventListener;
-  late StreamSubscription onUnlikeEventListener;
-  late StreamSubscription onCreateCommentListener;
-  List<DiscoveryResource> resources = [];
-  EffectDataController effectDataController = Get.find();
-  late String source;
-  late String dataType;
-  late String style;
-  Rx<bool> localAddAlready = false.obs;
+  DateTime? dateTime;
 
-  @override
-  void initState() {
-    super.initState();
-    source = widget.source;
-    dataType = widget.dataType;
-    style = widget.style;
-    api = CartoonizerApi().bindState(this);
-    loadingAction = widget.loadingAction;
-    data = widget.data.copy();
-    resources = data.resourceList();
-    if (resources.isEmpty) {
-      CommonExtension().showToast(S.of(context).commonFailedToast);
-      Navigator.pop(context);
-    }
-    onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
-      if (event.data ?? true) {
-        refreshData();
-      } else {}
-    });
-    onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
-      var id = event.data!.key;
-      var likeId = event.data!.value;
-      if (data.id == id) {
-        data.likeId = likeId;
-        if (localAddAlready.value) {
-          localAddAlready.value = false;
-        } else {
-          data.likes++;
-        }
-        setState(() {});
-      }
-    });
-    onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
-      if (data.id == event.data) {
-        data.likeId = null;
-        if (localAddAlready.value) {
-          localAddAlready.value = false;
-        } else {
-          data.likes--;
-        }
-        setState(() {});
-      }
-    });
-    onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
-      if (event.data?.length == 1) {
-        if (data.id == event.data![0]) {
-          setState(() {
-            data.comments++;
-          });
-        }
-      }
-    });
+  DiscoveryDetailCard({
+    Key? key,
+    required this.controller,
+    required this.onLikeTap,
+    required this.onCommentTap,
+    required this.onTryTap,
+  }) : super(key: key) {
     imageListWidth = (ScreenUtil.screenSize.width - $(31)) / 2;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    api.unbind();
-    onLoginEventListener.cancel();
-    onLikeEventListener.cancel();
-    onUnlikeEventListener.cancel();
-    onCreateCommentListener.cancel();
-  }
-
-  refreshData() {
-    loadingAction.showLoadingBar().whenComplete(() {
-      api.getDiscoveryDetail(data.id).then((value) {
-        loadingAction.hideLoadingBar().whenComplete(() {
-          if (value != null) {
-            setState(() {
-              data = value;
-            });
-          }
-        });
-      });
-    });
+    var date = DateUtil.getDateTime(controller.discoveryEntity.created, isUtc: true);
+    if (date != null) {
+      var timeZoneOffset = DateTime.now().timeZoneOffset;
+      dateTime = date.add(timeZoneOffset);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var data = controller.discoveryEntity;
     return Column(
       children: [
         UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName)
@@ -181,16 +72,17 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             .intoContainer(
               margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
             ),
-        resources.length != 1
+        controller.resources.length != 1
             ? buildImages(context, imageListWidth).intoContainer(
                 width: ScreenUtil.screenSize.width,
                 alignment: Alignment.center,
               )
             : buildResourceItem(
-                resources.first,
+                context,
+                controller.resources.first,
                 width: imageListWidth * 2 + $(1),
               ).intoGestureDetector(onTap: () {
-                if (resources.first.type == 'image') {
+                if (controller.resources.first.type == 'image') {
                   openImage(context, 0);
                 }
               }),
@@ -209,16 +101,36 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               value: data.comments,
               iconSize: $(24),
             ),
-            buildAttr(
-              context,
-              iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-              iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
-              value: data.likes,
-              onTap: onLikeTap,
-              iconSize: $(24),
-            ),
+            Obx(() => LikeButton(
+                  size: $(24),
+                  circleColor: CircleColor(
+                    start: Color(0xfffc2a2a),
+                    end: Color(0xffc30000),
+                  ),
+                  bubblesColor: BubblesColor(
+                    dotPrimaryColor: Color(0xfffc2a2a),
+                    dotSecondaryColor: Color(0xffc30000),
+                  ),
+                  isLiked: controller.liked.value,
+                  likeBuilder: (bool isLiked) {
+                    return Image.asset(
+                      isLiked ? Images.ic_discovery_liked : Images.ic_discovery_like,
+                      width: $(24),
+                      color: isLiked ? Colors.red : Colors.white,
+                    );
+                  },
+                  likeCount: data.likes,
+                  onTap: (liked) async => await onLikeTap.call(liked),
+                  countBuilder: (int? count, bool isLiked, String text) {
+                    count ??= 0;
+                    return Text(
+                      count.socialize,
+                      style: TextStyle(color: Colors.white),
+                    );
+                  },
+                ).ignore(ignoring: controller.likeLocalAddAlready.value)),
           ],
-        ).intoContainer(margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(9))).hero(tag: Discovery.attrTag(data.id)),
+        ).intoContainer(margin: EdgeInsets.only(top: $(8), left: $(9), right: $(9))).hero(tag: Discovery.attrTag(data.id)),
         Text(
           data.text,
           style: TextStyle(color: ColorConstant.White, fontSize: $(14), fontFamily: 'Poppins'),
@@ -230,7 +142,11 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
               padding: EdgeInsets.symmetric(horizontal: $(15)),
             )
             .hero(tag: Discovery.textTag(data.id)),
-        SizedBox(height: $(32)),
+        Text(
+          data.created.isEmpty ? '2022-01-01' : DateUtil.formatDate(dateTime, format: 'yyyy-MM-dd'),
+          style: TextStyle(color: Color(0xff77777a), fontFamily: 'Poppins', fontWeight: FontWeight.normal, fontSize: $(10)),
+        ).intoContainer(alignment: Alignment.centerLeft, padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12))),
+        SizedBox(height: $(12)),
         OutlineWidget(
           strokeWidth: $(2),
           radius: $(6),
@@ -257,47 +173,13 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             ),
           ),
         ).intoGestureDetector(onTap: () {
-          if (data.category == DiscoveryCategory.cartoonize.name) {
-            toChoosePage();
-          } else if (data.category == DiscoveryCategory.ai_avatar.name) {
-            Events.discoveryTemplateClick(source: dataType, style: 'avatar');
-            Avatar.open(context, source: 'discovery');
-          } else if (data.category == DiscoveryCategory.another_me.name) {
-            AnotherMe.checkPermissions().then((value) {
-              if (value) {
-                Events.discoveryTemplateClick(source: dataType, style: 'metaverse');
-                AnotherMe.open(context, source: source + '-try-template');
-              } else {
-                AnotherMe.permissionDenied(context);
-              }
-            });
-          } else if (data.category == DiscoveryCategory.txt2img.name) {
-            Map? payload;
-            try {
-              payload = json.decode(data.payload ?? '');
-            } catch (e) {}
-            Txt2imgInitData? initData;
-            if (payload != null && payload['txt2img_params'] != null) {
-              var params = payload['txt2img_params'];
-              int width = params['width'] ?? 512;
-              int height = params['height'] ?? 512;
-              initData = Txt2imgInitData()
-                ..prompt = params['prompt']
-                ..width = width
-                ..height = height;
-            }
-            Txt2img.open(context, source: source + '-try-template', initData: initData);
-          } else if (data.category == DiscoveryCategory.scribble.name) {
-            AiDrawable.open(context, source: source + '-try-template');
-          } else {
-            CommonExtension().showToast(S.of(context).oldversion_tips);
-          }
-        }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(32))),
+          onTryTap.call();
+        }).intoContainer(margin: EdgeInsets.only(left: $(15), right: $(15), top: $(0), bottom: $(24))),
       ],
     );
   }
 
-  Widget buildResourceItem(DiscoveryResource resource, {required double width, double? height, BoxFit fit = BoxFit.cover}) {
+  Widget buildResourceItem(BuildContext context, DiscoveryResource resource, {required double width, double? height, BoxFit fit = BoxFit.cover}) {
     if (resource.type == DiscoveryResourceType.video.value()) {
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2).hero(tag: resource.url ?? '');
     } else {
@@ -306,7 +188,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
           children: [
             CachedNetworkImageUtils.custom(
                 context: context,
-                useOld: true,
+                useOld: false,
                 imageUrl: resource.url ?? '',
                 fit: BoxFit.fill,
                 width: width,
@@ -394,7 +276,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     if (Platform.isAndroid) {
       FlutterForbidshot.setAndroidForbidOn();
     }
-    List<String> images = resources
+    List<String> images = controller.resources
         .filter(
           (t) => t.type == DiscoveryResourceType.image.value(),
         )
@@ -420,83 +302,17 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
     });
   }
 
-  onLikeTap() => loadingAction.showLoadingBar().whenComplete(() {
-        if (data.likeId == null) {
-          api
-              .discoveryLike(
-            data.id,
-            source: dataType,
-            style: style,
-          )
-              .then((value) {
-            loadingAction.hideLoadingBar();
-          });
-        } else {
-          api.discoveryUnLike(data.id, data.likeId!).then((value) {
-            loadingAction.hideLoadingBar();
-          });
-        }
-      });
-
-  toChoosePage() {
-    if (effectDataController.data == null) {
-      return;
-    }
-    String key = data.cartoonizeKey;
-    int tabPos = effectDataController.data!.tabPos(key);
-    int categoryPos = 0;
-    int itemPos = 0;
-    if (tabPos == -1) {
-      CommonExtension().showToast(S.of(context).template_not_available);
-      return;
-    }
-    var targetSeries = effectDataController.data!.targetSeries(key)!;
-    EffectModel? effectModel;
-    EffectItem? effectItem;
-    int index = 0;
-    for (int i = 0; i < targetSeries.value.length; i++) {
-      if (effectModel != null) {
-        break;
-      }
-      var model = targetSeries.value[i];
-      var list = model.effects.values.toList();
-      for (int j = 0; j < list.length; j++) {
-        var item = list[j];
-        if (item.key == key) {
-          effectModel = model;
-          effectItem = item;
-          index = i;
-          break;
-        }
-      }
-    }
-    if (effectItem == null) {
-      CommonExtension().showToast(S.of(context).template_not_available);
-      return;
-    }
-    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
-    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
-    Events.discoveryTemplateClick(source: dataType, style: 'facetoon-${effectItem.key}');
-    Cartoonize.open(
-      context,
-      source: source + '-try-template',
-      tabPos: tabPos,
-      categoryPos: categoryPos,
-      itemPos: itemPos,
-      entrySource: EntrySource.fromDiscovery,
-    );
-  }
-
   Widget buildImages(
     BuildContext context,
     double width,
   ) {
+    var resources = controller.resources;
     var localHeight = getLocalHeight(resources[1].url!, width);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         localHeight != null
-            ? buildResourceItem(resources[0], width: width, height: localHeight).intoGestureDetector(onTap: () {
+            ? buildResourceItem(context, resources[0], width: width, height: localHeight).intoGestureDetector(onTap: () {
                 if (resources[0].type == 'image') {
                   openImage(context, 0);
                 }
@@ -504,7 +320,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
             : FutureBuilder<double?>(
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    return buildResourceItem(resources[0], width: width, height: snapshot.data).intoGestureDetector(onTap: () {
+                    return buildResourceItem(context, resources[0], width: width, height: snapshot.data).intoGestureDetector(onTap: () {
                       if (resources[0].type == 'image') {
                         openImage(context, 0);
                       }
@@ -516,7 +332,7 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
                 future: getHeight(resources[1].url!, width),
               ).intoContainer(width: width),
         SizedBox(width: $(1)),
-        buildResourceItem(resources[1], width: width).intoGestureDetector(onTap: () {
+        buildResourceItem(context, resources[1], width: width).intoGestureDetector(onTap: () {
           if (resources[1].type == 'image') {
             openImage(context, 1);
           }
@@ -529,7 +345,6 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   }
 
   double? getLocalHeight(String url, double width) {
-    CacheManager cacheManager = AppDelegate().getManager();
     var imgSummaryCache = cacheManager.imgSummaryCache;
     var scale = imgSummaryCache.getScale(url: url);
     if (scale != null) {
@@ -539,7 +354,6 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
   }
 
   Future<double?> getHeight(String url, double width) async {
-    CacheManager cacheManager = AppDelegate().getManager();
     var imgSummaryCache = cacheManager.imgSummaryCache;
     var scale = imgSummaryCache.getScale(url: url);
     if (scale != null) {

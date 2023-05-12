@@ -60,6 +60,16 @@ class S {
     );
   }
 
+  /// `author`
+  String get author {
+    return Intl.message(
+      'author',
+      name: 'author',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Pandora User`
   String get accountCancelled {
     return Intl.message(
@@ -1150,10 +1160,10 @@ class S {
     );
   }
 
-  /// `We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service`
+  /// `We only use your photos to train the AI model. Photos will be deleted from our servers within 24 hours`
   String get pandora_transfer_tips {
     return Intl.message(
-      'We only use your photos to train the AI model and render your avatars Both the input photos and the AI model will be deleted from our servers within 24 hours. You will have the option to keep the AI model as a premium service',
+      'We only use your photos to train the AI model. Photos will be deleted from our servers within 24 hours',
       name: 'pandora_transfer_tips',
       desc: '',
       args: [],
@@ -1235,6 +1245,26 @@ class S {
     return Intl.message(
       'Place your order',
       name: 'paymentBtn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `MicroPhone Permission`
+  String get permissionMicroPhone {
+    return Intl.message(
+      'MicroPhone Permission',
+      name: 'permissionMicroPhone',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This app needs microphone access to preview camera`
+  String get permissionMicroPhoneContent {
+    return Intl.message(
+      'This app needs microphone access to preview camera',
+      name: 'permissionMicroPhoneContent',
       desc: '',
       args: [],
     );
@@ -3835,6 +3865,76 @@ class S {
     return Intl.message(
       'Clear',
       name: 'ai_draw_clear_btn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Server Busy`
+  String get server_exception {
+    return Intl.message(
+      'Server Busy',
+      name: 'server_exception',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The server seems busy right now. Please try again in a few minutes.`
+  String get server_exception_desc {
+    return Intl.message(
+      'The server seems busy right now. Please try again in a few minutes.',
+      name: 'server_exception_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network Anomaly`
+  String get net_exception {
+    return Intl.message(
+      'Network Anomaly',
+      name: 'net_exception',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please ensure your internet connection is available`
+  String get net_exception_desc {
+    return Intl.message(
+      'Please ensure your internet connection is available',
+      name: 'net_exception_desc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message(
+      'Retry',
+      name: 'retry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create New Avatars`
+  String get create_new_avatars {
+    return Intl.message(
+      'Create New Avatars',
+      name: 'create_new_avatars',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View more %d comments`
+  String get view_more_comment {
+    return Intl.message(
+      'View more %d comments',
+      name: 'view_more_comment',
       desc: '',
       args: [],
     );

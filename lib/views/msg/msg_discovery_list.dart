@@ -3,6 +3,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
@@ -127,11 +128,13 @@ class MsgDiscoveryListState extends AppState<MsgDiscoveryList> with AutomaticKee
           if (value != null) {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (_) => DiscoveryEffectDetailScreen(
-                        discoveryEntity: value,
-                        prePage: 'msg_page',
-                        dataType: 'msg_page',
-                      )),
+                builder: (_) => DiscoveryDetailScreen(
+                  discoveryEntity: value,
+                  prePage: 'msg_page',
+                  dataType: 'msg_page',
+                ),
+                settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+              ),
             );
           }
         });

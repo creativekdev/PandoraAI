@@ -46,7 +46,7 @@ class _AlbumPopupState extends State<AlbumPopup> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    selectedAlbum.name ?? '',
+                    selectedAlbum.name,
                     style: TextStyle(
                       color: ColorConstant.White,
                       fontSize: $(17),
@@ -122,7 +122,7 @@ class _AlbumPopupState extends State<AlbumPopup> {
             child: Row(
           children: [
             Text(
-              e.name ?? '',
+              e.name,
               style: TextStyle(
                 color: ColorConstant.White,
                 fontSize: $(15),

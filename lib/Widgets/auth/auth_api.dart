@@ -2,8 +2,9 @@ import 'dart:convert';
 
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/retry_able_requester.dart';
 
-class AuthApi extends BaseRequester {
+class AuthApi extends RetryAbleRequester {
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     return ApiOptions(baseUrl: Config.instance.host, headers: {});

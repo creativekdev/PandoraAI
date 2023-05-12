@@ -101,7 +101,7 @@ class AvatarAiController extends GetxController {
         if (file == null) {
           continue;
         }
-        if ((file.path ?? '').toUpperCase().contains('.HEIC')) {
+        if ((file.path).toUpperCase().contains('.HEIC')) {
           File? sourceFile = await heicToImage(medium);
           if (sourceFile == null) {
             continue;
@@ -161,7 +161,7 @@ class AvatarAiController extends GetxController {
       }
       File file;
       if (Platform.isIOS) {
-        if ((originalFile.path ?? '').toUpperCase().contains('.HEIC')) {
+        if ((originalFile.path).toUpperCase().contains('.HEIC')) {
           File? sourceFile = await heicToImage(media);
           if (sourceFile == null) {
             continue;

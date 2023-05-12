@@ -66,15 +66,8 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
 
   BaseRequester({
     Dio? client,
-    bool newInstance = false,
-    bool logResponseEnable = true,
   }) {
     _client = client ?? DioNode.instance.client;
-    // if (newInstance) {
-    //   _client = DioNode.instance.build(logResponseEnable: logResponseEnable);
-    // } else {
-    //   _client = DioNode.instance.client;
-    // }
   }
 
   ///
@@ -122,14 +115,14 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     _client.options.headers.addAll(options.headers);
   }
 
-  Future<BaseEntity?> get(
+  Future<BaseEntity?> doGet(
     String path, {
     Map<String, String>? headers,
     Map<String, dynamic>? params,
     bool toastOnFailed = true,
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
-    Function(Response response)? onFailed,
+    Function(Response? response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -143,12 +136,12 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e, toastOnFailed: toastOnFailed);
-      onFailed?.call(e.response!);
+      onFailed?.call(e.response);
       return null;
     }
   }
 
-  Future<BaseEntity?> post(
+  Future<BaseEntity?> doPost(
     String path, {
     Map<String, String>? headers,
     Map<String, dynamic>? params,
@@ -157,7 +150,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
-    Function(Response response)? onFailed,
+    Function(Response? response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -178,12 +171,12 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e, toastOnFailed: toastOnFailed);
-      onFailed?.call(e.response!);
+      onFailed?.call(e.response);
       return null;
     }
   }
 
-  Future<BaseEntity?> put(
+  Future<BaseEntity?> doPut(
     String path,
     data, {
     Map<String, String>? headers,
@@ -193,7 +186,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
     Options? options,
-    Function(Response response)? onFailed,
+    Function(Response? response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -210,19 +203,19 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e, toastOnFailed: toastOnFailed);
-      onFailed?.call(e.response!);
+      onFailed?.call(e.response);
       return null;
     }
   }
 
-  Future<BaseEntity?> delete(
+  Future<BaseEntity?> doDelete(
     String path, {
     data,
     Map<String, String>? headers,
     Map<String, dynamic>? params,
     bool toastOnFailed = true,
     bool preHandleRequest = true,
-    Function(Response response)? onFailed,
+    Function(Response? response)? onFailed,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -232,7 +225,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
       onDioError(e, toastOnFailed: toastOnFailed);
-      onFailed?.call(e.response!);
+      onFailed?.call(e.response);
       return null;
     }
   }

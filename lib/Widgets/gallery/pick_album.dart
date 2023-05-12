@@ -119,7 +119,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                 if (selectAlbum == null) {
                   if (switchAlbum) {
                     var lastAlbumId = cacheManager.getString(CacheManager.lastAlbum);
-                    selectAlbum = albums.pick((t) => t.id == lastAlbumId) ?? albums.pick((t) => (t.name ?? '').toLowerCase().contains('camera')) ?? albums.first;
+                    selectAlbum = albums.pick((t) => t.id == lastAlbumId) ?? albums.pick((t) => (t.name).toLowerCase().contains('camera')) ?? albums.first;
                   } else {
                     AssetPathEntity? s;
                     for (var album in albums) {
@@ -217,7 +217,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.done) {
                             return Text(
-                              '${selectAlbum?.name} (${snapshot.data})' ?? '',
+                              '${selectAlbum?.name} (${snapshot.data})',
                               style: TextStyle(
                                 color: ColorConstant.White,
                                 fontSize: $(17),
@@ -227,7 +227,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                             );
                           }
                           return Text(
-                            '${selectAlbum?.name} (${albumCount})' ?? '',
+                            '${selectAlbum?.name} (${albumCount})',
                             style: TextStyle(
                               color: ColorConstant.White,
                               fontSize: $(17),
@@ -321,7 +321,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
               Text(
                 S.of(context).preview,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: selectedList.isEmpty ? Colors.grey : Colors.white,
                   fontSize: $(14),
                   fontFamily: 'Poppins',
                 ),
@@ -332,6 +332,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                   if (file != null) {
                     list.add(file.path);
                   }
+                }
+                if (selectedList.isEmpty) {
+                  return;
                 }
                 openImage(context, 0, list);
               }),

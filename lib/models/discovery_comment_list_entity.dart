@@ -8,6 +8,8 @@ class DiscoveryCommentListEntity {
   late int userId;
   @JSONField(name: "social_post_id")
   late int socialPostId;
+  @JSONField(name: "parent_social_post_comment_id")
+  late int? parentSocialPostCommentId;
   @JSONField(name: "reply_social_post_comment_id")
   late int? replySocialPostCommentId;
   @JSONField(name: "reply_user_id")
@@ -29,6 +31,7 @@ class DiscoveryCommentListEntity {
   late String userAvatar;
   @JSONField(name: "like_id")
   int? likeId;
+  late List<DiscoveryCommentListEntity> children;
 
   DiscoveryCommentListEntity({
     this.userName = '',
@@ -39,6 +42,7 @@ class DiscoveryCommentListEntity {
     this.likes = 0,
     this.userId = 0,
     this.replySocialPostCommentId,
+    this.parentSocialPostCommentId,
     this.text = '',
     this.socialPostId = 0,
     this.comments = 0,
@@ -49,7 +53,10 @@ class DiscoveryCommentListEntity {
     this.country = '',
     this.ip = '',
     this.replyUserId,
-  });
+    List<DiscoveryCommentListEntity>? children,
+  }) {
+    this.children = children ?? [];
+  }
 
   factory DiscoveryCommentListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryCommentListEntityFromJson(json);
 

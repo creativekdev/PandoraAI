@@ -174,7 +174,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                       Wrap(
                         children: list
                             .map((e) => CachedNetworkImageUtils.custom(
-                                  useOld: true,
+                                  useOld: false,
                                   context: context,
                                   imageUrl: e.url,
                                   width: itemSize,
@@ -197,7 +197,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                   return Wrap(
                     children: list
                         .map((e) => CachedNetworkImageUtils.custom(
-                              useOld: true,
+                              useOld: false,
                               context: context,
                               imageUrl: e.url,
                               width: itemSize,
@@ -299,7 +299,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
       FlutterForbidshot.setAndroidForbidOn();
     }
     var pos = entity.outputImages.findPosition((e) => e.url == data.url) ?? 0;
-    List<String> images = entity.outputImages.map((e) => e.url ?? '').toList();
+    List<String> images = entity.outputImages.map((e) => e.url).toList();
     Navigator.push(
       context,
       PageRouteBuilder(

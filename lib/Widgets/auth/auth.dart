@@ -1,6 +1,8 @@
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/dio_node.dart';
+import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -160,8 +162,8 @@ class AuthResult {
   });
 }
 
-class _TiktokRequester extends BaseRequester {
-  _TiktokRequester() : super(newInstance: true);
+class _TiktokRequester extends RetryAbleRequester {
+  _TiktokRequester() : super(client: DioNode.instance.build(logResponseEnable: true));
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {

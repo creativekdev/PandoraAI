@@ -11,6 +11,10 @@ DiscoveryCommentListEntity $DiscoveryCommentListEntityFromJson(Map<String, dynam
 	if (socialPostId != null) {
 		discoveryCommentListEntity.socialPostId = socialPostId;
 	}
+	final int? parentSocialPostCommentId = jsonConvert.convert<int>(json['parent_social_post_comment_id']);
+	if (parentSocialPostCommentId != null) {
+		discoveryCommentListEntity.parentSocialPostCommentId = parentSocialPostCommentId;
+	}
 	final int? replySocialPostCommentId = jsonConvert.convert<int>(json['reply_social_post_comment_id']);
 	if (replySocialPostCommentId != null) {
 		discoveryCommentListEntity.replySocialPostCommentId = replySocialPostCommentId;
@@ -75,6 +79,10 @@ DiscoveryCommentListEntity $DiscoveryCommentListEntityFromJson(Map<String, dynam
 	if (likeId != null) {
 		discoveryCommentListEntity.likeId = likeId;
 	}
+	final List<DiscoveryCommentListEntity>? children = jsonConvert.convertListNotNull<DiscoveryCommentListEntity>(json['children']);
+	if (children != null) {
+		discoveryCommentListEntity.children = children;
+	}
 	return discoveryCommentListEntity;
 }
 
@@ -82,6 +90,7 @@ Map<String, dynamic> $DiscoveryCommentListEntityToJson(DiscoveryCommentListEntit
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['user_id'] = entity.userId;
 	data['social_post_id'] = entity.socialPostId;
+	data['parent_social_post_comment_id'] = entity.parentSocialPostCommentId;
 	data['reply_social_post_comment_id'] = entity.replySocialPostCommentId;
 	data['reply_user_id'] = entity.replyUserId;
 	data['images'] = entity.images;
@@ -98,5 +107,6 @@ Map<String, dynamic> $DiscoveryCommentListEntityToJson(DiscoveryCommentListEntit
 	data['user_name'] = entity.userName;
 	data['user_avatar'] = entity.userAvatar;
 	data['like_id'] = entity.likeId;
+	data['children'] =  entity.children.map((v) => v.toJson()).toList();
 	return data;
 }

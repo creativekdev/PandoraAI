@@ -1,11 +1,9 @@
-import 'dart:collection';
 import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/utils/array_util.dart';
 import 'package:image/image.dart' as imgLib;
 
 class ImageUtils {
@@ -28,7 +26,7 @@ class ImageUtils {
     return result;
   }
 
-  static void getPoints(imgLib.Image image, int x, int y, imgLib.Pixel pixel, List<PointPos> points, List<bool> checkMap, int lastX, int lastY) {
+  static void getPoints(imgLib.Image image, int x, int y, int pixel, List<PointPos> points, List<bool> checkMap, int lastX, int lastY) {
     var pixel2 = image.getPixel(x, y);
     if (checkMap[y * image.width + x]) {
       return;

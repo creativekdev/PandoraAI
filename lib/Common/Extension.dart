@@ -56,7 +56,7 @@ class CommonExtension {
       builder: (_) => Center(child: widget),
     );
 
-    Overlay.of(context)?.insert(entry);
+    Overlay.of(context).insert(entry);
     Timer(const Duration(seconds: 2), () {
       entry.remove();
     });

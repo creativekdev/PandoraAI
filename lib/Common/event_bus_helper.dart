@@ -141,3 +141,7 @@ class OnTxt2imgStyleUpdateEvent extends BaseEvent {}
 class OnNewInvitationCodeReceiveEvent extends BaseEvent<String> {
   OnNewInvitationCodeReceiveEvent({required String code}) : super(data: code);
 }
+
+class OnRetryDialogResultEvent extends BaseEvent<bool> {
+  OnRetryDialogResultEvent({required bool retry}):super(data: retry);
+}

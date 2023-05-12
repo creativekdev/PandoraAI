@@ -36,10 +36,13 @@ class ExceptionHandler {
   }
 
   onDioError(DioError e, {bool toastOnFailed = true}) {
+    var statusCode = e.response?.statusCode ?? -1;
     if (e.response == null) {
-      onError(e);
-    } else if (e.response?.statusCode == 401) {
-      onTokenExpired(e.response?.statusCode, e.response?.statusMessage);
+      // onError(e);
+    } else if (statusCode == 401) {
+      onTokenExpired(statusCode, e.response?.statusMessage);
+    } else if (statusCode >= 500 && statusCode < 600) {
+      // do nothing
     } else {
       if (toastOnFailed) {
         var data = e.response!.data;

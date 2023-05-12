@@ -8,11 +8,12 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/txt2img_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_style_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../app/user/user_manager.dart';
 
-class Text2ImageApi extends BaseRequester {
+class Text2ImageApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
 
   @override

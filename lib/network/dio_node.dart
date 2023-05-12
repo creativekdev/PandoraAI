@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 const _receiveTimeout = 60000;
-const _connectTimeout = 60000;
+const _connectTimeout = 30000;
 const _responseType = ResponseType.json;
 const String _TAG = "WEB";
 const int logMaxLength = 10240;
@@ -33,7 +33,7 @@ class DioNode {
   }) {
     BaseOptions options = new BaseOptions();
     options.receiveTimeout = receiveTimeout ?? _receiveTimeout;
-    options.connectTimeout = connectTimeout ??_connectTimeout;
+    options.connectTimeout = connectTimeout ?? _connectTimeout;
     options.responseType = _responseType;
     Dio client = Dio(options);
     client.interceptors.add(InterceptorsWrapper(onRequest: (RequestOptions options, handler) {

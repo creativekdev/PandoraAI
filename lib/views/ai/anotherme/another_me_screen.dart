@@ -96,15 +96,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         return;
       }
       var pick = value.pick((t) => t.lensDirection == CameraLensDirection.front) ?? value.first;
-      setState(() {
-        isFront = pick.lensDirection == CameraLensDirection.front;
-        cameraController = CustomCameraController(
-          pick,
-          ResolutionPreset.medium,
-          imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
-        );
-        _initializeControllerFuture = cameraController!.initialize();
-      });
+      initCameraController(pick);
     });
     delay(() {
       accelerometerEvents.listen((AccelerometerEvent event) {
@@ -162,14 +154,39 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     if (state == AppLifecycleState.inactive) {
       cc.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      cameraController = CustomCameraController(
-        cc.description,
-        ResolutionPreset.medium,
-        imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
-      );
-      _initializeControllerFuture = cameraController!.initialize();
-      setState(() {});
+      initCameraController(cc.description);
     }
+  }
+
+  initCameraController(CameraDescription description) {
+    cameraController = CustomCameraController(
+      description,
+      ResolutionPreset.medium,
+      imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
+    );
+    _initializeControllerFuture = cameraController!.initialize().then((value) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+          case 'CameraAccessDeniedWithoutPrompt':
+          case 'CameraAccessRestricted':
+            // Handle access errors here.
+            break;
+          case 'AudioAccessDenied':
+          case 'AudioAccessDeniedWithoutPrompt':
+          case 'AudioAccessRestricted':
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    });
   }
 
   @override
@@ -551,16 +568,8 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       cameraController?.dispose().whenComplete(() {
         availableCameras().then((value) {
           var pick = value.pick((t) => isFront ? t.lensDirection != CameraLensDirection.front : t.lensDirection == CameraLensDirection.front) ?? value.first;
-          setState(() {
-            isFront = pick.lensDirection == CameraLensDirection.front;
-            cameraController = CustomCameraController(
-              pick,
-              ResolutionPreset.medium,
-              imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
-            );
-            zoomLevel = 1;
-            _initializeControllerFuture = cameraController!.initialize();
-          });
+          zoomLevel = 1;
+          initCameraController(pick);
         });
       });
     }).onError((error, stackTrace) {});
@@ -602,9 +611,9 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     );
     if (pose != PoseState.stand) {
       var im = (await SyncFileImage(file: file).getImage()).image;
-      var bytes = (await im.toByteData())!.buffer;
-      var orImg = imglib.Image.fromBytes(width:im.width,height: im.height,bytes: bytes);
-      var resImg = imglib.copyRotate(orImg, angle: pose.coefficient());
+      var bytes = (await im.toByteData())!.buffer.asUint8List();
+      var orImg = imglib.Image.fromBytes(im.width, im.height, bytes);
+      var resImg = imglib.copyRotate(orImg, pose.coefficient());
       var encodePng = imglib.encodePng(resImg);
       await file.writeAsBytes(encodePng);
       ratio = 1 / ratio;

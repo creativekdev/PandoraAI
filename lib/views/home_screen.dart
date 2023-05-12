@@ -217,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 if (value) {
                                   AnotherMe.open(context, source: 'home_page');
                                 } else {
-                                  showPhotoLibraryPermissionDialog(context);
+                                  AnotherMe.permissionDenied(context);
                                 }
                               });
                             } else {

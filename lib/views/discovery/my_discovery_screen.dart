@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -33,7 +34,6 @@ class MyDiscoveryScreen extends StatefulWidget {
 class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
-  late StreamSubscription onDeleteListen;
   late CartoonizerApi api;
   int page = 0;
   int size = 20;
@@ -43,6 +43,12 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   String emptyText = '';
   late double imgWidth;
   ScrollController scrollController = ScrollController();
+
+  late StreamSubscription onDeleteListen;
+  late StreamSubscription onLoginEventListener;
+  late StreamSubscription onLikeEventListener;
+  late StreamSubscription onUnlikeEventListener;
+  late StreamSubscription onCreateCommentListener;
 
   @override
   void initState() {
@@ -74,14 +80,62 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
       }
       setState(() {});
     });
+    onLikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryLikeEvent>().listen((event) {
+      // Get the ID and like ID from the event data.
+      var id = event.data!.key;
+      var likeId = event.data!.value;
+      // For each data item in the data list, check if the ID matches the event ID.
+      // If so, update the likeId and likes properties, and update the view.
+      for (var value in dataMap.values) {
+        for (var data in value) {
+          if (data.id == id) {
+            data.likeId = likeId;
+            data.likes++;
+            setState(() {});
+          }
+        }
+      }
+    });
+    onUnlikeEventListener = EventBusHelper().eventBus.on<OnDiscoveryUnlikeEvent>().listen((event) {
+      // For each data item in the data list, check if the ID matches the event ID.
+      // If so, set the likeId property to null, decrement the likes property, and update the view.
+      for (var value in dataMap.values) {
+        for (var data in value) {
+          if (data.id == event.data) {
+            data.likeId = null;
+            data.likes--;
+            setState(() {});
+          }
+        }
+      }
+    });
+    // If there is 1 comment, loop through the data list and increment the comments property for the data item with the matching ID.
+    // Update the view.
+    onCreateCommentListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      if (event.data?.length == 1) {
+        for (var value in dataMap.values) {
+          for (var data in value) {
+            if (data.id == event.data![0]) {
+              data.comments++;
+              break;
+            }
+          }
+        }
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
     api.unbind();
     _refreshController.dispose();
     onDeleteListen.cancel();
+    onLoginEventListener.cancel();
+    onLikeEventListener.cancel();
+    onUnlikeEventListener.cancel();
+    onCreateCommentListener.cancel();
+    super.dispose();
   }
 
   loadFirstPage() => api
@@ -177,8 +231,8 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (BuildContext context) => DiscoveryEffectDetailScreen(discoveryEntity: data, prePage: 'my-discovery',dataType: 'users_discovery'),
-                        settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
+                        builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery', dataType: 'users_discovery'),
+                        settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                       ),
                     );
                   },

@@ -12,9 +12,8 @@ import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/views/discovery/discovery_secondary_comment_list_screen.dart';
-import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widget.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_effect_detail_widget.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -351,31 +350,24 @@ class DiscoveryEffectDetailScreenState extends AppState<DiscoveryEffectDetailScr
                       );
                     } else {
                       var index = i - 1;
-                      return DiscoveryCommentsListCard(
-                        data: dataList[index],
-                        isLast: index == dataList.length - 1,
-                        isTopComments: true,
-                        onTap: () {
-                          onCreateCommentClick(
-                            replySocialPostCommentId: dataList[index].id,
-                            userName: dataList[index].userName,
-                          );
-                        },
-                        onLikeTap: () {
-                          onCommentLikeTap(dataList[index]);
-                        },
-                        onCommentTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => DiscoverySecondaryCommentsListScreen(
-                                parentComment: dataList[index],
-                              ),
-                              settings: RouteSettings(name: "/DiscoverySecondaryCommentsListScreen"),
-                            ),
-                          );
-                        },
-                      ).intoContainer(margin: EdgeInsets.only(top: index == 0 ? $(8) : 0));
+                      return Container();
+                      // return DiscoveryCommentsListCard(
+                      //   data: dataList[index],
+                      //   isLast: index == dataList.length - 1,
+                      //   isTopComments: true,
+                      //   onTap: () {
+                      //     onCreateCommentClick(
+                      //       replySocialPostCommentId: dataList[index].id,
+                      //       userName: dataList[index].userName,
+                      //     );
+                      //   },
+                      //   onLikeTap: () {
+                      //     onCommentLikeTap(dataList[index]);
+                      //   },
+                      //   onCommentTap: () {
+                      //
+                      //   },
+                      // ).intoContainer(margin: EdgeInsets.only(top: index == 0 ? $(8) : 0));
                     }
                   },
                   childCount: dataList.length + 1,

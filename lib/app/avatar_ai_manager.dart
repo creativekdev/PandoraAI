@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:common_utils/common_utils.dart';
 
 class AvatarAiManager extends BaseManager {
   List<AvatarAiListEntity> dataList = [];
@@ -22,6 +23,7 @@ class AvatarAiManager extends BaseManager {
       listAllAvatarAi();
     });
     api = CartoonizerApi().bindManager(this);
+
   }
 
   @override

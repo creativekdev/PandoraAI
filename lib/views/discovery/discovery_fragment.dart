@@ -14,6 +14,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
@@ -128,27 +129,27 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     }
   }
 
-  onCommentTap(DiscoveryListEntity entity) {
-    Navigator.push(
-        context,
-        PageRouteBuilder(
-          opaque: false,
-          pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
-            uniqueId: "${entity.id}}",
-            hint: '${S.of(context).reply} ${entity.userName}',
-            callback: (text) async {
-              return createComment(entity, text);
-            },
-          ),
-        ));
-  }
+  // onCommentTap(DiscoveryListEntity entity) {
+  //   Navigator.push(
+  //       context,
+  //       PageRouteBuilder(
+  //         opaque: false,
+  //         pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
+  //           uniqueId: "${entity.id}}",
+  //           hint: '${S.of(context).reply} ${entity.userName}',
+  //           callback: (text) async {
+  //             return createComment(entity, text);
+  //           },
+  //         ),
+  //       ));
+  // }
 
   Future<bool> createComment(DiscoveryListEntity entity, String comment) async {
     await showLoading();
     var baseEntity = await CartoonizerApi().createDiscoveryComment(
         comment: comment,
         source: DiscoverySort.newest.value(),
-        style: getStyle(entity) ?? '',
+        style: getStyle(entity),
         socialPostId: entity.id,
         onUserExpired: () {
           userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
@@ -289,28 +290,56 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               (context, index) {
                 var data = listController.dataList[index];
                 if (data.visible) {
-                  return DiscoveryListCard(
-                    data: data.data!,
-                    hasLine: index != 0,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              DiscoveryEffectDetailScreen(discoveryEntity: listController.dataList[index].data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
-                          settings: RouteSettings(name: "/DiscoveryEffectDetailScreen"),
-                        ),
-                      );
-                    },
-                    onCommentTap: () => userManager
-                        .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
-                      onCommentTap(listController.dataList[index].data!);
-                    }, autoExec: true),
-                    onLikeTap: () => userManager
-                        .doOnLogin(context, logPreLoginAction: listController.dataList[index].data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike', callback: () {
-                      onLikeTap(listController.dataList[index].data!);
-                    }, autoExec: false),
-                  );
+                  return Obx(() => DiscoveryListCard(
+                        data: data.data!,
+                        hasLine: index != 0,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
+                              settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                            ),
+                          );
+                        },
+                        onCommentTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
+                              settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                            ),
+                          );
+                        },
+                        onLikeTap: (liked) async {
+                          if (userManager.isNeedLogin) {
+                            userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                            return liked;
+                          }
+                          bool result;
+                          listController.likeLocalAddAlready.value = true;
+                          if (liked) {
+                            data.data!.likes--;
+                            listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
+                              if (value == null) {
+                                listController.likeLocalAddAlready.value = false;
+                              }
+                            });
+                            result = false;
+                          } else {
+                            data.data!.likes++;
+                            listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
+                              if (value == null) {
+                                listController.likeLocalAddAlready.value = false;
+                              }
+                            });
+                            result = true;
+                          }
+                          return result;
+                        },
+                        ignoreLikeBtn: listController.likeLocalAddAlready.value,
+                      ));
                 } else {
                   return SizedBox.shrink();
                 }

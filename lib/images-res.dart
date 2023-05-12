@@ -19,6 +19,7 @@ class Images {
    static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';
    static const String ic_avatar_bad_example = 'assets/images/ic_avatar_bad_example.png';
    static const String ic_avatar_camera = 'assets/images/ic_avatar_camera.png';
+   static const String ic_avatar_default = 'assets/images/ic_avatar_default.png';
    static const String ic_avatar_good_example = 'assets/images/ic_avatar_good_example.png';
    static const String ic_avatar_save = 'assets/images/ic_avatar_save.png';
    static const String ic_avatar_success = 'assets/images/ic_avatar_success.png';
@@ -91,6 +92,7 @@ class Images {
    static const String ic_mt_result_bottom = 'assets/images/ic_mt_result_bottom.png';
    static const String ic_mt_result_middle = 'assets/images/ic_mt_result_middle.png';
    static const String ic_mt_result_top = 'assets/images/ic_mt_result_top.png';
+   static const String ic_net_error_icon = 'assets/images/ic_net_error_icon.png';
    static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
    static const String ic_next = 'assets/images/ic_next.png';
    static const String ic_no_ads = 'assets/images/ic_no_ads.png';
@@ -122,6 +124,7 @@ class Images {
    static const String ic_rocket = 'assets/images/ic_rocket.png';
    static const String ic_rollback = 'assets/images/ic_rollback.png';
    static const String ic_round_top = 'assets/images/ic_round_top.png';
+   static const String ic_server_error_icon = 'assets/images/ic_server_error_icon.png';
    static const String ic_setting_my_delete_account = 'assets/images/ic_setting_my_delete_account.png';
    static const String ic_setting_my_discovery = 'assets/images/ic_setting_my_discovery.png';
    static const String ic_settings = 'assets/images/ic_settings.png';

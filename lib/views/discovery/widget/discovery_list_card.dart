@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/expand_text.dart';
@@ -12,18 +11,20 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
-import 'package:path/path.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
+import 'package:like_button/like_button.dart';
 
 import 'user_info_header_widget.dart';
 
 class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late DiscoveryListEntity data;
   GestureTapCallback? onTap;
-  GestureTapCallback? onLikeTap;
+  OnLikeTap onLikeTap;
   GestureTapCallback? onCommentTap;
   late List<DiscoveryResource> resources;
   late double width;
   bool hasLine;
+  bool ignoreLikeBtn = false;
 
   DiscoveryListCard({
     Key? key,
@@ -31,7 +32,8 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     this.onTap,
     this.hasLine = true,
     this.onCommentTap,
-    this.onLikeTap,
+    required this.onLikeTap,
+    required this.ignoreLikeBtn,
   }) : super(key: key) {
     resources = data.resourceList();
     width = (ScreenUtil.screenSize.width - $(1)) / 2;
@@ -75,25 +77,45 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           children: [
             buildAttr(
               context,
-              iconRes: data.likeId == null ? Images.ic_discovery_like : Images.ic_discovery_liked,
-              iconColor: data.likeId == null ? ColorConstant.White : ColorConstant.Red,
-              value: data.likes,
-              onTap: onLikeTap,
-              hasCount: false,
-              iconSize: $(24),
-            ),
-            buildAttr(
-              context,
               iconRes: Images.ic_discovery_comment,
               value: data.comments,
-              hasCount: false,
               onTap: onCommentTap,
+              axis: Axis.horizontal,
               iconSize: $(24),
             ),
+            LikeButton(
+              size: $(24),
+              circleColor: CircleColor(
+                start: Color(0xfffc2a2a),
+                end: Color(0xffc30000),
+              ),
+              bubblesColor: BubblesColor(
+                dotPrimaryColor: Color(0xfffc2a2a),
+                dotSecondaryColor: Color(0xffc30000),
+              ),
+              isLiked: data.likeId != null,
+              likeBuilder: (bool isLiked) {
+                return Image.asset(
+                  isLiked ? Images.ic_discovery_liked : Images.ic_discovery_like,
+                  width: $(24),
+                  color: isLiked ? Colors.red : Colors.white,
+                );
+              },
+              likeCount: data.likes,
+              onTap: (liked) async => await onLikeTap.call(liked),
+              countBuilder: (int? count, bool isLiked, String text) {
+                count ??= 0;
+                return Text(
+                  count.socialize,
+                  style: TextStyle(color: Colors.white),
+                );
+              },
+            ).ignore(ignoring: ignoreLikeBtn),
           ],
-        ).intoContainer(margin: EdgeInsets.symmetric(vertical: $(10), horizontal: $(9))).hero(tag: Discovery.attrTag(data.id)),
+        ).intoContainer(margin: EdgeInsets.only(top: $(8), left: $(9), right: $(9))).hero(tag: Discovery.attrTag(data.id)),
         TitleTextWidget(S.of(context).all_likes.replaceAll('%d', '${data.likes}'), ColorConstant.White, FontWeight.w400, $(14), align: TextAlign.start)
-            .intoContainer(width: double.maxFinite, margin: EdgeInsets.symmetric(horizontal: $(15)), alignment: Alignment.centerLeft),
+            .intoContainer(width: double.maxFinite, margin: EdgeInsets.symmetric(horizontal: $(15)), alignment: Alignment.centerLeft)
+            .visibility(visible: false),
         ExpandableText(
           text: data.text,
           style: TextStyle(color: ColorConstant.White, fontSize: $(14), fontFamily: 'Poppins'),
@@ -103,7 +125,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
         )
             .intoContainer(
               alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(15)),
+              padding: EdgeInsets.symmetric(horizontal: $(15)),
             )
             .hero(tag: Discovery.textTag(data.id)),
         Text(
@@ -116,7 +138,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
             .intoContainer(
               alignment: Alignment.centerLeft,
               width: double.maxFinite,
-              padding: EdgeInsets.only(left: $(15), right: $(15), bottom: $(20)),
+              padding: EdgeInsets.only(left: $(15), right: $(15), bottom: $(20), top: $(6)),
             ),
       ],
     ).intoGestureDetector(onTap: onTap);

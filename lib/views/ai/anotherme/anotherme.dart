@@ -24,7 +24,7 @@ class AnotherMe {
   }
 
   static Future<bool> checkPermissions() async {
-    var list = [Permission.microphone, Permission.camera, Permission.storage];
+    var list = [Permission.camera, Permission.storage, Permission.microphone];
     var deviceInfoPlugin = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       var androidInfo = await deviceInfoPlugin.androidInfo;
@@ -34,12 +34,40 @@ class AnotherMe {
     } else if (Platform.isIOS) {
       list.add(Permission.photos);
     }
-    var values = await list.request();
+    List<Permission> reqList = <Permission>[];
+    for (var value in list) {
+      var permissionStatus = await value.status;
+      if (permissionStatus.isDenied || permissionStatus.isPermanentlyDenied) {
+        reqList.add(value);
+      }
+    }
+    if (reqList.isEmpty) {
+      return true;
+    }
+    var values = await reqList.request();
     for (var result in values.values) {
       if (result.isDenied || result.isPermanentlyDenied) {
         return false;
       }
     }
     return true;
+  }
+
+  static Future<void> permissionDenied(BuildContext context) async {
+    var cameraStatus = await Permission.camera.status;
+    if (cameraStatus.isDenied || cameraStatus.isPermanentlyDenied) {
+      showCameraPermissionDialog(context);
+      return;
+    }
+    var microStatus = await Permission.microphone.status;
+    if (microStatus.isDenied || microStatus.isPermanentlyDenied) {
+      showMicroPhonePermissionDialog(context);
+      return;
+    }
+    var galleryStatus = await Permission.photos.status;
+    if (galleryStatus.isDenied || galleryStatus.isPermanentlyDenied) {
+      showPhotoLibraryPermissionDialog(context);
+      return;
+    }
   }
 }

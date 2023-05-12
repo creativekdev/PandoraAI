@@ -308,7 +308,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                   var forward = () {
                     ShareDiscoveryScreen.push(
                       context,
-                      effectKey: 'AI_Draw',
+                      effectKey: DiscoveryCategory.scribble.name,
                       originalUrl: uploadImageController.imageUrl.value,
                       image: base64Encode(file.readAsBytesSync()),
                       isVideo: false,

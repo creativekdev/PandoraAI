@@ -27,7 +27,19 @@ class UserInfoHeaderWidget extends StatelessWidget {
             context: context,
             imageUrl: avatar.avatar(),
             fit: BoxFit.cover,
+            placeholder: (context, url) {
+              return Container(
+                width: $(45),
+                height: $(45),
+                decoration: BoxDecoration(border: Border.all(color: Color(0xff121212)), borderRadius: BorderRadius.circular(32), color: Color(0xffd5d5d5)),
+              );
+            },
             errorWidget: (context, url, error) {
+              // return Container(
+              //   width: $(45),
+              //   height: $(45),
+              //   decoration: BoxDecoration(border: Border.all(color: Color(0xff121212)), borderRadius: BorderRadius.circular(32), color: Color(0xffd5d5d5)),
+              // );
               return Text(
                 name[0].toUpperCase(),
                 style: TextStyle(color: ColorConstant.White, fontSize: $(25)),

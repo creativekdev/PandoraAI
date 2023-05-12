@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/enums/avatar_status.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -45,6 +46,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
   ];
   int currentIndex = 0;
   late String source;
+  late TimerUtil timer;
 
   @override
   initState() {
@@ -63,16 +65,28 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
       vsync: this,
     );
     delay(() => _refreshController.callRefresh());
+    timer = TimerUtil()
+      ..setInterval(60000)
+      ..setOnTimerTickCallback(
+        (millisUntilFinished) {
+          var manager = AppDelegate.instance.getManager<UserManager>();
+          if (!manager.isNeedLogin) {
+            loadFirstPage();
+          }
+        },
+      );
   }
 
   @override
   dispose() {
     avatarAiManager.listPageAlive = false;
+    timer.cancel();
     super.dispose();
     listListen.cancel();
   }
 
   refreshShownList() {
+    timer.cancel();
     var status = statusList[currentIndex];
     shownList = dataList.filter((t) {
       var tStatus = AvatarStatusUtils.build(t.status);
@@ -101,7 +115,13 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
           return false;
       }
     });
-    var s = '';
+    if (shownList.exist((t) => t.status == AvatarStatus.pending.value() || t.status == AvatarStatus.processing.value() || t.status == AvatarStatus.generating.value())) {
+      delay(() {
+        if (mounted && !timer.isActive()) {
+          timer.startTimer();
+        }
+      }, milliseconds: 60000);
+    }
   }
 
   loadFirstPage() {
@@ -125,22 +145,6 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
       backgroundColor: Colors.black,
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
-        trailing: Icon(
-          Icons.add,
-          color: Colors.white,
-          size: $(19),
-        )
-            .intoContainer(
-                alignment: Alignment.center,
-                width: $(24),
-                height: $(24),
-                decoration: BoxDecoration(
-                  color: ColorConstant.BlueColor,
-                  borderRadius: BorderRadius.circular(32),
-                ))
-            .intoGestureDetector(onTap: () {
-          Avatar.intro(context, source: source);
-        }),
         child: Theme(
             data: ThemeData(
               splashColor: Colors.transparent,
@@ -168,30 +172,71 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             )),
         childHeight: $(34),
       ),
-      body: EasyRefresh.custom(
-        enableControlFinishRefresh: true,
-        enableControlFinishLoad: false,
-        onRefresh: () async => loadFirstPage(),
-        controller: _refreshController,
-        emptyWidget: shownList.isEmpty?Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              Images.ic_no_avatar,
-              width: $(114),
-            ),
-            SizedBox(height: $(8)),
-            Text('You have no related orders',style: TextStyle(color: Color(0xFF939398),fontFamily: ''
-                'Poppins',fontSize: $(13)),)
-          ],
-        ).intoCenter():null,
-        slivers: [
-          SliverList(
-              delegate: SliverChildBuilderDelegate(
-            (context, index) => buildItem(context, index),
-            childCount: shownList.length,
-          ))
+      body: Stack(
+        children: [
+          EasyRefresh.custom(
+            enableControlFinishRefresh: true,
+            enableControlFinishLoad: false,
+            onRefresh: () async => loadFirstPage(),
+            controller: _refreshController,
+            emptyWidget: shownList.isEmpty
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        Images.ic_no_avatar,
+                        width: $(114),
+                      ),
+                      SizedBox(height: $(8)),
+                      Text(
+                        'You have no related orders',
+                        style: TextStyle(
+                            color: Color(0xFF939398),
+                            fontFamily: ''
+                                'Poppins',
+                            fontSize: $(13)),
+                      )
+                    ],
+                  ).intoCenter()
+                : null,
+            slivers: [
+              SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                (context, index) => buildItem(context, index),
+                childCount: shownList.length,
+              ))
+            ],
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Text(
+              S.of(context).create_new_avatars,
+              style: TextStyle(color: Colors.white, fontFamily: 'Poppins', fontWeight: FontWeight.normal, fontSize: $(17)),
+            )
+                .intoContainer(
+                    width: ScreenUtil.screenSize.width - $(30),
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(15)),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(8)),
+                      color: ColorConstant.DiscoveryBtn,
+                    ))
+                .intoCenter()
+                .intoContainer(
+                    color: Color(0x99000000),
+                    padding: EdgeInsets.only(
+                      top: $(18),
+                      bottom: ScreenUtil.getBottomPadding(context) + $(10),
+                      left: $(25),
+                      right: $(25),
+                    ))
+                .intoGestureDetector(onTap: () {
+              Avatar.intro(context, source: source);
+            }).blur(),
+          )
         ],
       ),
     );
@@ -215,7 +260,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
                   Row(
                     children: trainingList.transfer(
                       (data, index) => CachedNetworkImageUtils.custom(
-                        useOld: true,
+                        useOld: false,
                         context: context,
                         imageUrl: data,
                         width: imageSize * 0.6,
@@ -424,7 +469,7 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
     }
     return item.intoContainer(
       padding: EdgeInsets.only(
-        bottom: index == shownList.length - 1 ? ScreenUtil.getBottomPadding(context, padding: $(32)) : 0,
+        bottom: index == shownList.length - 1 ? ScreenUtil.getBottomPadding(context) + $(90) : 0,
       ),
     );
   }

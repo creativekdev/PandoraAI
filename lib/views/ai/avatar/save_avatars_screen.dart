@@ -172,11 +172,14 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
                       Text(
                         S.of(context).preview,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: selectedList.isEmpty ? Colors.grey : Colors.white,
                           fontSize: $(14),
                           fontFamily: 'Poppins',
                         ),
                       ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () async {
+                        if (selectedList.isEmpty) {
+                          return;
+                        }
                         openImage(context, 0, selectedList);
                       }),
                       Expanded(child: Container()),
@@ -193,6 +196,10 @@ class _SaveAvatarsScreenState extends AppState<SaveAvatarsScreen> {
                               decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
                               margin: EdgeInsets.only(right: $(15)))
                           .intoGestureDetector(onTap: () {
+                        if (selectedList.isEmpty) {
+                          CommonExtension().showToast(S.of(context).select_min_photos_hint.replaceAll('%d', '1'));
+                          return;
+                        }
                         saveAllPhoto(context);
                       })
                     ],

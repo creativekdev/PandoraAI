@@ -1,5 +1,6 @@
 {
   "avatars": "张肖像",
+  "author": "作者",
   "accountCancelled": "Pandora用户",
   "agree_text1": "注册即表示您同意",
   "agree_text2": " of the Pandora AI.",
@@ -109,7 +110,7 @@
   "pandora_create_spend": "您的照片大约要 %d 分钟转换完成",
   "pandora_pay_description": "我们的人工智能技术和极为强大的算法支撑将为您创造出最华丽的画像！",
   "pandora_purchase": "购买金额",
-  "pandora_transfer_tips": "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。你可以选择将AI模型作为高级服务。",
+  "pandora_transfer_tips": "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。",
   "pass_validation": "请输入密码",
   "pass_validation1": "密码不正确",
   "password": "密码",
@@ -118,6 +119,8 @@
   "payment": "支付",
   "payment_successfully": "支付成功",
   "paymentBtn": "提交订单",
+  "permissionMicroPhone": "麦克风权限",
+  "permissionMicroPhoneContent": "这个应用程序需要使用麦克风用来预览相机画面",
   "permissionCamera": "相机权限",
   "permissionCameraContent": "这个应用程序需要使用相机为上传用户资料照片拍照",
   "permissionPhotoLibrary": "相册权限",
@@ -377,5 +380,12 @@
   "oldversion_tips": "当前版本较低，请升级app",
   "ai_draw_reset_tips": "清除当前画板",
   "ai_draw_reset_tips_desc": "清除将会丢失当前的所有操作",
-  "ai_draw_clear_btn": "清除"
+  "ai_draw_clear_btn": "清除",
+  "server_exception": "服务器异常",
+  "server_exception_desc": "服务器出问题了，请稍后再试",
+  "net_exception": "网络异常",
+  "net_exception_desc": "请检查您的网络环境",
+  "retry": "重试",
+  "create_new_avatars": "创建新的Avatar",
+  "view_more_comment": "查看更多 %d 条评论"
 }

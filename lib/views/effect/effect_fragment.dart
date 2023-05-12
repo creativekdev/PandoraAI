@@ -187,11 +187,11 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                           );
                           break;
                         case HomeCardType.anotherme:
-                          AnotherMe.checkPermissions().then((value) {
+                          AnotherMe.checkPermissions().then((value) async {
                             if (value) {
                               AnotherMe.open(context, source: 'home_page');
                             } else {
-                              showPhotoLibraryPermissionDialog(context);
+                              AnotherMe.permissionDenied(context);
                             }
                           });
                           break;
