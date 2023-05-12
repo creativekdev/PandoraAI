@@ -129,6 +129,10 @@ class DiscoveryDetailController extends GetxController {
     dataList = jsonConvert.convertListNotNull<DiscoveryCommentListEntity>(json) ?? [];
   }
 
+  _saveData() {
+    cacheManager.setJson('${CacheManager.commentList}:${discoveryEntity.id}', dataList.map((e) => e.toJson()).toList());
+  }
+
   @override
   void onReady() {
     super.onReady();
@@ -204,6 +208,8 @@ class DiscoveryDetailController extends GetxController {
       if (value == null) {
         entity.likes++;
         likeLocalAddAlready.value = false;
+      } else {
+        _saveData();
       }
     });
   }
@@ -216,6 +222,8 @@ class DiscoveryDetailController extends GetxController {
       if (value == null) {
         entity.likes--;
         likeLocalAddAlready.value = false;
+      } else {
+        _saveData();
       }
     });
   }
@@ -229,6 +237,8 @@ class DiscoveryDetailController extends GetxController {
         discoveryEntity.likes++;
         likeLocalAddAlready.value = false;
         liked.value = true;
+      } else {
+        _saveData();
       }
     });
   }
@@ -248,6 +258,8 @@ class DiscoveryDetailController extends GetxController {
         discoveryEntity.likes--;
         likeLocalAddAlready.value = false;
         liked.value = false;
+      } else {
+        _saveData();
       }
     });
   }
@@ -278,6 +290,7 @@ class DiscoveryDetailController extends GetxController {
       }
       update();
       CommonExtension().showToast('Comment posted');
+      _saveData();
       // delay(() => loadFirstPage(), milliseconds: 64);
     }
     return baseEntity != null;

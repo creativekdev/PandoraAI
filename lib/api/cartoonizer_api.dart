@@ -236,7 +236,9 @@ class CartoonizerApi extends RetryAbleRequester {
       }
       Events.discoveryCommentClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnCreateCommentEvent(data: data));
-      return jsonConvert.convert<DiscoveryCommentListEntity>(baseEntity.data['data']);
+      var entity = jsonConvert.convert<DiscoveryCommentListEntity>(baseEntity.data['data']);
+      entity?.userAvatar = userManager.user?.getShownAvatar() ?? '';
+      return entity;
     }
     return null;
   }

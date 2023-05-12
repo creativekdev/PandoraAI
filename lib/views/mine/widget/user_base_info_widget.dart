@@ -38,7 +38,7 @@ class UserBaseInfoWidget extends StatelessWidget {
                   },
                 )
               : Image.asset(
-                  Images.ic_demo1,
+                  Images.ic_avatar_default,
                   width: $(56),
                   height: $(56),
                 ),

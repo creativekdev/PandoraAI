@@ -106,7 +106,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                             manager.config?.goodHint(widget.style) ?? S.of(context).good_photo_description,
                             ColorConstant.White,
                             FontWeight.normal,
-                            $(14),
+                            $(13),
                             maxLines: 5,
                             align: TextAlign.left,
                           ).intoContainer(
@@ -135,7 +135,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                             manager.config?.badHint(widget.style) ?? S.of(context).bad_photo_description,
                             ColorConstant.White,
                             FontWeight.normal,
-                            $(14),
+                            $(13),
                             align: TextAlign.left,
                             maxLines: 5,
                           ).intoContainer(
@@ -170,7 +170,7 @@ class _AvatarAiCreateScreenState extends State<AvatarAiCreateScreen> {
                                   style: TextStyle(
                                     fontFamily: 'Poppins',
                                     color: ColorConstant.White,
-                                    fontSize: $(14),
+                                    fontSize: $(13),
                                   ),
                                 )
                               ],

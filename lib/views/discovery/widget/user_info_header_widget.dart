@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -40,10 +41,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
               //   height: $(45),
               //   decoration: BoxDecoration(border: Border.all(color: Color(0xff121212)), borderRadius: BorderRadius.circular(32), color: Color(0xffd5d5d5)),
               // );
-              return Text(
-                name[0].toUpperCase(),
-                style: TextStyle(color: ColorConstant.White, fontSize: $(25)),
-              ).intoContainer(
+              return Image.asset(Images.ic_avatar_default).intoContainer(
                   width: $(45),
                   height: $(45),
                   alignment: Alignment.center,

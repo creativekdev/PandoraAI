@@ -111,19 +111,18 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       }
       await uploadFile.writeAsBytes(value!.toList(), flush: true);
       var imageInfo = await SyncMemoryImage(list: value).getImage();
-      hideLoading().whenComplete(() {
-        Navigator.of(context).push(
-          FadeRouter(
-            child: AiDrawableResultScreen(
-              drawableController: drawableController,
-              filePath: uploadPath,
-              scale: imageInfo.image.width / imageInfo.image.height,
-              photoType: 'ai_draw',
-            ),
-            opaque: false,
+      Navigator.of(context).push(
+        FadeRouter(
+          child: AiDrawableResultScreen(
+            drawableController: drawableController,
+            filePath: uploadPath,
+            scale: imageInfo.image.width / imageInfo.image.height,
+            photoType: 'ai_draw',
           ),
-        );
-      });
+          opaque: false,
+        ),
+      );
+      hideLoading();
     });
   }
 

@@ -68,6 +68,7 @@ class DiscoveryListController extends GetxController {
       for (var data in dataList) {
         if (data.data!.id == id) {
           data.data!.likeId = likeId;
+          data.liked.value = true;
           if (likeLocalAddAlready.value) {
             likeLocalAddAlready.value = false;
           } else {
@@ -83,6 +84,7 @@ class DiscoveryListController extends GetxController {
       for (var data in dataList) {
         if (data.data!.id == event.data) {
           data.data!.likeId = null;
+          data.liked.value = false;
           if (likeLocalAddAlready.value) {
             likeLocalAddAlready.value = false;
           } else {
@@ -159,6 +161,7 @@ class DiscoveryListController extends GetxController {
       dataList.add(ListData(
         page: page,
         data: data,
+        liked: data.likeId != null,
 
         /// Set the visible property to true if no other data item in the data list has an ID matching the current item's ID.
         visible: dataList.pick((t) => t.data?.id == data.id) == null,
@@ -225,12 +228,16 @@ class ListData {
   int page;
   DiscoveryListEntity? data;
   bool visible;
+  Rx<bool> liked = false.obs;
 
   ListData({
     this.data,
     required this.page,
     this.visible = true,
-  });
+    required bool liked,
+  }) {
+    this.liked.value = liked;
+  }
 }
 
 class TagData {

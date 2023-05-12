@@ -292,6 +292,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 if (data.visible) {
                   return Obx(() => DiscoveryListCard(
                         data: data.data!,
+                        liked: data.liked.value,
                         hasLine: index != 0,
                         onTap: () {
                           Navigator.push(
@@ -327,6 +328,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                               }
                             });
                             result = false;
+                            data.liked.value = false;
                           } else {
                             data.data!.likes++;
                             listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
@@ -335,6 +337,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                               }
                             });
                             result = true;
+                            data.liked.value = true;
                           }
                           return result;
                         },

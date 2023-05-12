@@ -523,7 +523,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            S.of(context).view_all_comment.replaceAll('%d', '${controller.discoveryEntity.comments}').replaceAll('>', ''),
+            S.of(context).comments.replaceAll('%d', '${controller.discoveryEntity.comments}').replaceAll('>', ''),
             style: TextStyle(
               fontFamily: 'Poppins',
               color: Colors.white,

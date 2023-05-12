@@ -25,6 +25,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   late double width;
   bool hasLine;
   bool ignoreLikeBtn = false;
+  bool liked;
 
   DiscoveryListCard({
     Key? key,
@@ -34,6 +35,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     this.onCommentTap,
     required this.onLikeTap,
     required this.ignoreLikeBtn,
+    required this.liked,
   }) : super(key: key) {
     resources = data.resourceList();
     width = (ScreenUtil.screenSize.width - $(1)) / 2;
@@ -93,7 +95,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
                 dotPrimaryColor: Color(0xfffc2a2a),
                 dotSecondaryColor: Color(0xffc30000),
               ),
-              isLiked: data.likeId != null,
+              isLiked: liked,
               likeBuilder: (bool isLiked) {
                 return Image.asset(
                   isLiked ? Images.ic_discovery_liked : Images.ic_discovery_like,
