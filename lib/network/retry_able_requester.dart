@@ -16,7 +16,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 typedef _ReqAction = Future<BaseEntity?> Function();
 
 abstract class RetryAbleRequester extends BaseRequester {
-  RetryAbleRequester({Dio? client}) : super(client: client);
+  RetryAbleRequester({super.client});
 
   Future<BaseEntity?> get(
     String path, {
@@ -252,7 +252,7 @@ class _RetryDialogHolder {
         isNetError: isNetError,
       ),
     ).then((value) {
-      EventBusHelper().eventBus.fire(OnRetryDialogResultEvent(retry: value ?? false));
+      EventBusHelper().eventBus.fire(OnRetryDialogResultEvent(data: value ?? false));
       _shown = false;
     });
   }

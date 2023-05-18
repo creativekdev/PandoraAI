@@ -16,10 +16,12 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
+import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
@@ -51,12 +53,17 @@ class JsonConvert {
 		(DiscoveryResource).toString(): DiscoveryResource.fromJson,
 		(GenerateLimitEntity).toString(): GenerateLimitEntity.fromJson,
 		(HomeCardEntity).toString(): HomeCardEntity.fromJson,
+		(MetagramPageEntity).toString(): MetagramPageEntity.fromJson,
+		(SocialPostPageEntity).toString(): SocialPostPageEntity.fromJson,
+		(MetagramItemEntity).toString(): MetagramItemEntity.fromJson,
 		(MsgCountEntity).toString(): MsgCountEntity.fromJson,
 		(MsgEntity).toString(): MsgEntity.fromJson,
 		(MsgDiscoveryEntity).toString(): MsgDiscoveryEntity.fromJson,
 		(PageEntity).toString(): PageEntity.fromJson,
 		(MsgPageEntity).toString(): MsgPageEntity.fromJson,
 		(PayPlanEntity).toString(): PayPlanEntity.fromJson,
+		(PlatformConnectionEntity).toString(): PlatformConnectionEntity.fromJson,
+		(PlatformConnectionCoreUser).toString(): PlatformConnectionCoreUser.fromJson,
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
 		(RecentEffectModel).toString(): RecentEffectModel.fromJson,
@@ -196,6 +203,15 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		if(<HomeCardEntity>[] is M){
 			return data.map<HomeCardEntity>((Map<String, dynamic> e) => HomeCardEntity.fromJson(e)).toList() as M;
 		}
+		if(<MetagramPageEntity>[] is M){
+			return data.map<MetagramPageEntity>((Map<String, dynamic> e) => MetagramPageEntity.fromJson(e)).toList() as M;
+		}
+		if(<SocialPostPageEntity>[] is M){
+			return data.map<SocialPostPageEntity>((Map<String, dynamic> e) => SocialPostPageEntity.fromJson(e)).toList() as M;
+		}
+		if(<MetagramItemEntity>[] is M){
+			return data.map<MetagramItemEntity>((Map<String, dynamic> e) => MetagramItemEntity.fromJson(e)).toList() as M;
+		}
 		if(<MsgCountEntity>[] is M){
 			return data.map<MsgCountEntity>((Map<String, dynamic> e) => MsgCountEntity.fromJson(e)).toList() as M;
 		}
@@ -213,6 +229,12 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<PayPlanEntity>[] is M){
 			return data.map<PayPlanEntity>((Map<String, dynamic> e) => PayPlanEntity.fromJson(e)).toList() as M;
+		}
+		if(<PlatformConnectionEntity>[] is M){
+			return data.map<PlatformConnectionEntity>((Map<String, dynamic> e) => PlatformConnectionEntity.fromJson(e)).toList() as M;
+		}
+		if(<PlatformConnectionCoreUser>[] is M){
+			return data.map<PlatformConnectionCoreUser>((Map<String, dynamic> e) => PlatformConnectionCoreUser.fromJson(e)).toList() as M;
 		}
 		if(<PushExtraEntity>[] is M){
 			return data.map<PushExtraEntity>((Map<String, dynamic> e) => PushExtraEntity.fromJson(e)).toList() as M;

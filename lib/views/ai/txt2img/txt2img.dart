@@ -11,6 +11,7 @@ class Txt2img {
     RecentGroundEntity? history,
   }) async {
     Navigator.of(context).push(MaterialPageRoute(
+      settings: RouteSettings(name: "/Txt2imgScreen"),
       builder: (context) => Txt2imgScreen(
         source: source,
         initData: initData,

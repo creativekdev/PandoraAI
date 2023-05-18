@@ -426,7 +426,7 @@ Future<bool> judgeInvitationCode() async {
   }
   delay(() {
     LogUtil.v('code is $code', tag: 'clipboard');
-    EventBusHelper().eventBus.fire(OnNewInvitationCodeReceiveEvent(code: code!));
+    EventBusHelper().eventBus.fire(OnNewInvitationCodeReceiveEvent(data: code!));
   }, milliseconds: 500);
   return true;
 }

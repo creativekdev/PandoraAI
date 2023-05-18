@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
+import 'package:skeletons/skeletons.dart';
 
 extension WidgetExtension on Widget {
   Center intoCenter({
@@ -239,6 +240,42 @@ extension WidgetExtension on Widget {
       );
 
   Hero hero({Key? key, required Object tag}) => Hero(tag: tag, child: this.intoMaterial(color: Colors.transparent));
+
+  SkeletonTheme skeletonTheme() => SkeletonTheme(
+        themeMode: ThemeMode.dark,
+        shimmerGradient: LinearGradient(
+          colors: [
+            Color(0xFFD8E3E7),
+            Color(0xFFC8D5DA),
+            Color(0xFFD8E3E7),
+          ],
+          stops: [
+            0.1,
+            0.5,
+            0.9,
+          ],
+        ),
+        darkShimmerGradient: LinearGradient(
+          colors: [
+            Color(0xFF222222),
+            Color(0xFF242424),
+            Color(0xFF2B2B2B),
+            Color(0xFF242424),
+            Color(0xFF222222),
+          ],
+          stops: [
+            0.0,
+            0.2,
+            0.5,
+            0.8,
+            1,
+          ],
+          begin: Alignment(-2.4, -0.2),
+          end: Alignment(2.4, 0.2),
+          tileMode: TileMode.clamp,
+        ),
+        child: this,
+      );
 }
 
 typedef DelayCallback<T> = T Function();

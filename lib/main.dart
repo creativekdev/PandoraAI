@@ -135,7 +135,7 @@ class MyApp extends StatelessWidget {
           },
           locale: const Locale('en', 'US'),
           supportedLocales: S.delegate.supportedLocales,
-        );
+        ).skeletonTheme();
       },
     );
   }

@@ -230,6 +230,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "june": MessageLookupByLibrary.simpleMessage("六月"),
         "like": MessageLookupByLibrary.simpleMessage("点赞"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
+        "loginToThePlatformAccount":
+            MessageLookupByLibrary.simpleMessage("登录第三方账号"),
         "login_or_sign_up": MessageLookupByLibrary.simpleMessage("注册/登录"),
         "logout": MessageLookupByLibrary.simpleMessage("登出"),
         "logout_tips": MessageLookupByLibrary.simpleMessage("您确定要退出么？"),
@@ -322,6 +324,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("该图片已经被删除"),
         "photo_select_already":
             MessageLookupByLibrary.simpleMessage("该图片已经被选择"),
+        "platform_connecting": MessageLookupByLibrary.simpleMessage("链接中"),
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),

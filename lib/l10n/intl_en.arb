@@ -386,6 +386,8 @@
   "net_exception": "Network Anomaly",
   "net_exception_desc": "Please ensure your internet connection is available",
   "retry": "Retry",
-  "create_new_avatars":"Create New Avatars",
-  "view_more_comment": "View more %d comments"
+  "create_new_avatars": "Create New Avatars",
+  "view_more_comment": "View more %d comments",
+  "loginToThePlatformAccount": "Log in to the platform account",
+  "platform_connecting": "Connecting"
 }

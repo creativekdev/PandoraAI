@@ -85,6 +85,9 @@ class Images {
    static const String ic_mark4 = 'assets/images/ic_mark4.png';
    static const String ic_mark5 = 'assets/images/ic_mark5.png';
    static const String ic_mark_pen = 'assets/images/ic_mark_pen.png';
+   static const String ic_metagram_comment = 'assets/images/ic_metagram_comment.png';
+   static const String ic_metagram_download = 'assets/images/ic_metagram_download.png';
+   static const String ic_metagram_shareout = 'assets/images/ic_metagram_shareout.png';
    static const String ic_msg_comment = 'assets/images/ic_msg_comment.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_like = 'assets/images/ic_msg_like.png';

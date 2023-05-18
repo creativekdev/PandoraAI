@@ -104,7 +104,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
         if (nextPose != null) {
           if (nextPose != this.pose) {
             if (mounted) {
-              EventBusHelper().eventBus.fire(OnPoseStateChangeEvent(pose: nextPose));
+              EventBusHelper().eventBus.fire(OnPoseStateChangeEvent(data: nextPose));
               setState(() {
                 pose = nextPose;
               });

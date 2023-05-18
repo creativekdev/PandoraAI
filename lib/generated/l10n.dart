@@ -3939,6 +3939,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Log in to the platform account`
+  String get loginToThePlatformAccount {
+    return Intl.message(
+      'Log in to the platform account',
+      name: 'loginToThePlatformAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connecting`
+  String get platform_connecting {
+    return Intl.message(
+      'Connecting',
+      name: 'platform_connecting',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

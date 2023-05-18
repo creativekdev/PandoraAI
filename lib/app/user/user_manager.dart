@@ -1,11 +1,14 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
+import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -27,6 +30,24 @@ class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
   late CartoonizerApi api;
+
+  Map<ConnectorPlatform, List<PlatformConnectionEntity>> get platformConnections {
+    Map<ConnectorPlatform, List<PlatformConnectionEntity>> result = {};
+    Map<String, dynamic> cache = cacheManager.getJson('${CacheManager.platformConnections}:${_user?.id ?? 'guest'}') ?? {};
+    cache.forEach((key, value) {
+      var platform = ConnectorPlatformUtils.build(key);
+      result[platform] = jsonConvert.convertListNotNull<PlatformConnectionEntity>(value) ?? [];
+    });
+    return result;
+  }
+
+  set platformConnections(Map<ConnectorPlatform, List<PlatformConnectionEntity>> data) {
+    Map<String, dynamic> cache = {};
+    data.forEach((key, value) {
+      cache[key.value() ?? ''] = value.map((e) => e.toJson()).toList();
+    });
+    cacheManager.setJson('${CacheManager.platformConnections}:${_user?.id ?? 'guest'}', cache);
+  }
 
   Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
 
@@ -96,6 +117,7 @@ class UserManager extends BaseManager {
     _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
+        refreshConnections();
       } else {
         Posthog().reset();
         _rateNoticeOperator.dispose();
@@ -127,6 +149,7 @@ class UserManager extends BaseManager {
       lastLauncherLoginStatus = true;
     }
     refreshUser();
+    refreshConnections();
     if (_user != null) {
       Posthog().identify(userId: _user?.getShownEmail());
     }
@@ -292,5 +315,18 @@ class UserManager extends BaseManager {
     }
     var baseEntity = await api.unsubscribe(planCategory);
     return baseEntity;
+  }
+
+  Future<bool> refreshConnections() async {
+    if (isNeedLogin) {
+      return false;
+    }
+    var map = await api.listConnections();
+    if (map != null) {
+      platformConnections = map;
+      EventBusHelper().eventBus.fire(OnConnectionsChangeEvent());
+      return true;
+    }
+    return false;
   }
 }

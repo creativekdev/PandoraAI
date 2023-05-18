@@ -25,6 +25,7 @@ import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -97,125 +98,134 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
     }
   }
 
+  onItemClick(HomeCardType type) {
+    switch (type) {
+      case HomeCardType.cartoonize:
+        Cartoonize.open(
+          context,
+          source: 'home_page',
+          categoryPos: 0,
+          itemPos: 0,
+          tabPos: 0,
+        );
+        break;
+      case HomeCardType.anotherme:
+        AnotherMe.checkPermissions().then((value) async {
+          if (value) {
+            AnotherMe.open(context, source: 'home_page');
+          } else {
+            AnotherMe.permissionDenied(context);
+          }
+        });
+        break;
+      case HomeCardType.ai_avatar:
+        Avatar.openFromHome(context);
+        break;
+      case HomeCardType.text2image:
+        Txt2img.open(context, source: 'home_page');
+        break;
+      case HomeCardType.scribble:
+        AiDrawable.open(context, source: 'home_page');
+        break;
+      case HomeCardType.UNDEFINED:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
-        if (_.loading) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          if (_.data == null) {
-            return FutureBuilder(
-                future: getConnectionStatus(),
-                builder: (context, snapshot1) {
-                  return Center(
-                    child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? S.of(context).empty_msg : S.of(context).no_internet_msg, ColorConstant.BtnTextColor,
-                        FontWeight.w400, 12.sp),
-                  ).intoGestureDetector(onTap: () {
-                    _.loadData();
-                    userManager.refreshUser();
-                  });
-                });
-          } else {
-            var list = _.data?.homeCards ?? [];
-            return Stack(
-              children: [
-                ListView.builder(
-                  padding: EdgeInsets.only(
-                    top: 55 + ScreenUtil.getStatusBarHeight(),
-                    bottom: ScreenUtil.getBottomPadding(context) + 70,
-                  ),
-                  itemBuilder: (context, index) {
-                    var config = list[index];
-                    var type = HomeCardTypeUtils.build(config.type);
-                    if (type == HomeCardType.UNDEFINED) {
-                      return Container();
-                    }
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TitleTextWidget(
-                                type.title(),
-                                ColorConstant.White,
-                                FontWeight.w500,
-                                $(17),
-                                align: TextAlign.start,
-                              ),
-                            ),
-                            Icon(
-                              Icons.keyboard_arrow_right,
-                              color: Colors.white,
-                              size: $(22),
-                            ),
-                          ],
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                        ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8), top: $(18))),
-                        ClipRRect(
-                          child: CachedNetworkImageUtils.custom(
-                            context: context,
-                            useOld: true,
-                            imageUrl: config.url.appendHash,
-                            fit: BoxFit.cover,
-                            width: double.maxFinite,
-                            placeholder: (context, url) => CircularProgressIndicator()
-                                .intoContainer(
-                                  width: $(25),
-                                  height: $(25),
-                                )
-                                .intoCenter()
-                                .intoContainer(
-                                  width: double.maxFinite,
-                                  height: $(150),
-                                ),
-                          ),
-                          borderRadius: BorderRadius.circular($(20)),
-                        ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
-                      ],
-                    ).intoGestureDetector(onTap: () {
-                      switch (type) {
-                        case HomeCardType.cartoonize:
-                          Cartoonize.open(
-                            context,
-                            source: 'home_page',
-                            categoryPos: 0,
-                            itemPos: 0,
-                            tabPos: 0,
-                          );
-                          break;
-                        case HomeCardType.anotherme:
-                          AnotherMe.checkPermissions().then((value) async {
-                            if (value) {
-                              AnotherMe.open(context, source: 'home_page');
-                            } else {
-                              AnotherMe.permissionDenied(context);
-                            }
+        var list = _.data?.homeCards ?? [];
+        return Stack(
+          children: [
+            _.loading
+                ? SkeletonListView(
+                    itemCount: 4,
+                    item: SkeletonItem(
+                      child: Column(children: [
+                        SkeletonLine(style: SkeletonLineStyle(height: $(42))),
+                        SizedBox(height: $(10)),
+                        SkeletonLine(style: SkeletonLineStyle(height: $(160))),
+                      ]),
+                    ).intoContainer(margin: EdgeInsets.only(top: $(15))),
+                  ).intoContainer(margin: EdgeInsets.only(top: 55 + ScreenUtil.getStatusBarHeight()))
+                : _.data == null
+                    ? FutureBuilder(
+                        future: getConnectionStatus(),
+                        builder: (context, snapshot1) {
+                          return Center(
+                            child: TitleTextWidget((snapshot1.hasData && (snapshot1.data as bool)) ? S.of(context).empty_msg : S.of(context).no_internet_msg,
+                                ColorConstant.BtnTextColor, FontWeight.w400, 12.sp),
+                          ).intoGestureDetector(onTap: () {
+                            _.loadData();
+                            userManager.refreshUser();
                           });
-                          break;
-                        case HomeCardType.ai_avatar:
-                          Avatar.openFromHome(context);
-                          break;
-                        case HomeCardType.text2image:
-                          Txt2img.open(context, source: 'home_page');
-                          break;
-                        case HomeCardType.scribble:
-                          AiDrawable.open(context, source: 'home_page');
-                          break;
-                        case HomeCardType.UNDEFINED:
-                          break;
-                      }
-                    });
-                  },
-                  itemCount: list.length,
-                ),
-                header(context),
-              ],
-            );
-          }
-        }
+                        })
+                    : ListView.builder(
+                        padding: EdgeInsets.only(
+                          top: 55 + ScreenUtil.getStatusBarHeight(),
+                          bottom: ScreenUtil.getBottomPadding(context) + 70,
+                        ),
+                        itemBuilder: (context, index) {
+                          var config = list[index];
+                          var type = HomeCardTypeUtils.build(config.type);
+                          if (type == HomeCardType.UNDEFINED) {
+                            return Container();
+                          }
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TitleTextWidget(
+                                      type.title(),
+                                      ColorConstant.White,
+                                      FontWeight.w500,
+                                      $(17),
+                                      align: TextAlign.start,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.keyboard_arrow_right,
+                                    color: Colors.white,
+                                    size: $(22),
+                                  ),
+                                ],
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                              ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8), top: $(18))),
+                              ClipRRect(
+                                child: CachedNetworkImageUtils.custom(
+                                  context: context,
+                                  useOld: true,
+                                  imageUrl: config.url.appendHash,
+                                  fit: BoxFit.cover,
+                                  width: double.maxFinite,
+                                  placeholder: (context, url) => CircularProgressIndicator()
+                                      .intoContainer(
+                                        width: $(25),
+                                        height: $(25),
+                                      )
+                                      .intoCenter()
+                                      .intoContainer(
+                                        width: double.maxFinite,
+                                        height: $(150),
+                                      ),
+                                ),
+                                borderRadius: BorderRadius.circular($(20)),
+                              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+                            ],
+                          ).intoGestureDetector(onTap: () {
+                            onItemClick(type);
+                          });
+                        },
+                        itemCount: list.length,
+                      ),
+            header(context),
+          ],
+        );
       },
     ).intoContainer(color: Colors.black);
   }

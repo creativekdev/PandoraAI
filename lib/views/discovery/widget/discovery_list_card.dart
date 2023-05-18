@@ -13,6 +13,7 @@ import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
 import 'package:like_button/like_button.dart';
+import 'package:skeletons/skeletons.dart';
 
 import 'user_info_header_widget.dart';
 
@@ -160,22 +161,10 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           height: height,
           fit: BoxFit.cover,
           placeholder: (context, url) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: width);
+            return SkeletonLine(style: SkeletonLineStyle(height: height));
           },
           errorWidget: (context, url, error) {
-            return CircularProgressIndicator()
-                .intoContainer(
-                  width: $(25),
-                  height: $(25),
-                )
-                .intoCenter()
-                .intoContainer(width: width, height: width);
+            return SkeletonLine(style: SkeletonLineStyle(height: height));
           }).intoContainer(constraints: BoxConstraints(maxHeight: height ?? maxHeight ?? double.infinity)).hero(tag: resource.url ?? '');
     }
   }

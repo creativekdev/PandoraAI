@@ -11,6 +11,7 @@ import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import 'discovery_effect_detail_screen.dart';
 import 'widget/my_discovery_list_card.dart';
@@ -45,10 +46,10 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   ScrollController scrollController = ScrollController();
 
   late StreamSubscription onDeleteListen;
-  late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
   late StreamSubscription onCreateCommentListener;
+  bool listLoading = false;
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
       });
     });
     api = CartoonizerApi().bindState(this);
-    delay(() => _refreshController.callRefresh());
+    delay(() => loadFirstPage());
     imgWidth = (ScreenUtil.screenSize.width - $(90)) / 3;
     onDeleteListen = EventBusHelper().eventBus.on<OnDeleteDiscoveryEvent>().listen((event) {
       bool find = false;
@@ -131,30 +132,37 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     api.unbind();
     _refreshController.dispose();
     onDeleteListen.cancel();
-    onLoginEventListener.cancel();
     onLikeEventListener.cancel();
     onUnlikeEventListener.cancel();
     onCreateCommentListener.cancel();
     super.dispose();
   }
 
-  loadFirstPage() => api
-          .listDiscovery(
-        from: 0,
-        pageSize: size,
-        userId: userId,
-        sort: DiscoverySort.newest,
-      )
-          .then((value) {
-        _refreshController.finishRefresh();
-        if (value != null) {
-          page = 0;
-          var list = value.getDataList<DiscoveryListEntity>();
-          dataMap = {};
-          addToGroup(list);
-          _refreshController.finishLoad(noMore: list.length != size);
-        }
+  loadFirstPage() {
+    setState(() {
+      listLoading = true;
+    });
+    api
+        .listDiscovery(
+      from: 0,
+      pageSize: size,
+      userId: userId,
+      sort: DiscoverySort.newest,
+    )
+        .then((value) {
+      _refreshController.finishRefresh();
+      setState(() {
+        listLoading = false;
       });
+      if (value != null) {
+        page = 0;
+        var list = value.getDataList<DiscoveryListEntity>();
+        dataMap = {};
+        addToGroup(list);
+        _refreshController.finishLoad(noMore: list.length != size);
+      }
+    });
+  }
 
   loadMorePage() => api
           .listDiscovery(
@@ -193,6 +201,33 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
     setState(() {});
   }
 
+  Widget skeletons() {
+    return SkeletonListView(
+      itemCount: 3,
+      item: SkeletonItem(
+          child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SkeletonAvatar(
+            style: SkeletonAvatarStyle(width: $(52), height: $(34)),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Wrap(
+              runSpacing: $(5),
+              spacing: $(5),
+              children: [1, 1, 1, 1, 1]
+                  .map((e) => SkeletonAvatar(
+                        style: SkeletonAvatarStyle(width: imgWidth - $(8), height: imgWidth - $(8)),
+                      ))
+                  .toList(),
+            ).intoContainer(margin: EdgeInsets.only(top: $(40))),
+          )
+        ],
+      )).intoContainer(margin: EdgeInsets.only(top: $(12))),
+    );
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
@@ -202,45 +237,54 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
         middle: TitleTextWidget(title, ColorConstant.White, FontWeight.w600, $(18)),
         scrollController: scrollController,
       ),
-      body: EasyRefresh.custom(
-        scrollController: scrollController,
-        onRefresh: () async => loadFirstPage(),
-        onLoad: () async => loadMorePage(),
-        controller: _refreshController,
-        enableControlFinishRefresh: true,
-        enableControlFinishLoad: false,
-        emptyWidget: dataMap.isEmpty ? TitleTextWidget(emptyText, ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
-        slivers: [
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                var keyValue = pickItem(index);
-                bool hasYear = false;
-                if (index != 0) {
-                  var lasKeyValue = pickItem(index - 1);
-                  if (!lasKeyValue.key.isSameYear(keyValue.key)) {
-                    hasYear = true;
-                  }
-                }
-                return MyDiscoveryListCard(
-                  hasYear: hasYear,
-                  time: keyValue.key,
-                  dataList: keyValue.value,
-                  imgWidth: imgWidth,
-                  onItemClick: (data) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery', dataType: 'users_discovery'),
-                        settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                      ),
-                    );
+      body: Stack(
+        children: [
+          EasyRefresh.custom(
+            scrollController: scrollController,
+            onRefresh: () async => loadFirstPage(),
+            onLoad: () async => loadMorePage(),
+            controller: _refreshController,
+            enableControlFinishRefresh: true,
+            enableControlFinishLoad: false,
+            emptyWidget: !listLoading && dataMap.isEmpty ? TitleTextWidget(emptyText, ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    var keyValue = pickItem(index);
+                    bool hasYear = false;
+                    if (index != 0) {
+                      var lasKeyValue = pickItem(index - 1);
+                      if (!lasKeyValue.key.isSameYear(keyValue.key)) {
+                        hasYear = true;
+                      }
+                    }
+                    return MyDiscoveryListCard(
+                      hasYear: hasYear,
+                      time: keyValue.key,
+                      dataList: keyValue.value,
+                      imgWidth: imgWidth,
+                      onItemClick: (data) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery', dataType: 'users_discovery'),
+                            settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                          ),
+                        );
+                      },
+                    ).intoContainer(margin: EdgeInsets.only(top: index == 0 ? $(15) : 0));
                   },
-                );
-              },
-              childCount: dataMap.length,
-            ),
+                  childCount: dataMap.length,
+                ),
+              ),
+            ],
           ),
+          skeletons()
+              .intoContainer(
+                height: ScreenUtil.screenSize.height - $(55) - ScreenUtil.getStatusBarHeight(),
+              )
+              .offstage(offstage: !listLoading || !dataMap.isEmpty),
         ],
       ),
     );

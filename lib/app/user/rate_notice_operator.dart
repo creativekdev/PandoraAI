@@ -38,6 +38,13 @@ class RateNoticeOperator {
       saveConfig(configEntity!);
     } else {
       configEntity = jsonConvert.convert(json);
+      if (configEntity!.nextActivateDate != 0 && configEntity!.nextActivateDate < DateTime.now().millisecondsSinceEpoch) {
+        configEntity!.nextActivateDate = 0;
+        saveConfig(configEntity!);
+      } else if (DateUtils.isSameDay(DateTime.fromMillisecondsSinceEpoch(configEntity!.nextActivateDate), DateTime.now())) {
+        configEntity!.nextActivateDate = 0;
+        saveConfig(configEntity!);
+      }
     }
   }
 
@@ -117,6 +124,7 @@ class RateNoticeOperator {
               if (value) {
                 // 3 month later
                 configEntity!.nextActivateDate = DateTime.now().add(Duration(hours: nextActivatePositive)).millisecondsSinceEpoch;
+                configEntity!.switchCount = 0;
                 configEntity!.calculateInNextActivate = true;
               } else {
                 // 1 month later

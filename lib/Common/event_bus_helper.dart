@@ -82,20 +82,20 @@ class OnCommentLikeEvent extends BaseEvent<MapEntry<int, int>> {
 }
 
 class OnCommentUnlikeEvent extends BaseEvent<int> {
-  OnCommentUnlikeEvent({required int data}) : super(data: data);
+  OnCommentUnlikeEvent({required super.data});
 }
 
 /// create comment event
 /// @data <socialPostId, replyCommentId>
 class OnCreateCommentEvent extends BaseEvent<List<int>> {
-  OnCreateCommentEvent({required List<int> data}) : super(data: data);
+  OnCreateCommentEvent({required super.data});
 }
 
 class OnAppStateChangeEvent extends BaseEvent {}
 
 /// cartoonizer process event
 class OnCartoonizerFinishedEvent extends BaseEvent<bool> {
-  OnCartoonizerFinishedEvent({required bool data}) : super(data: data);
+  OnCartoonizerFinishedEvent({super.data});
 }
 
 class OnPaySuccessEvent extends BaseEvent {}
@@ -115,7 +115,7 @@ class OnSplashAdLoadingChangeEvent extends BaseEvent {}
 /// switch home_screen tab
 @Deprecated('可以直接弹出详情，不用通知')
 class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
-  OnEffectPushClickEvent({required PushExtraEntity data}) : super(data: data);
+  OnEffectPushClickEvent({super.data});
 }
 
 class OnEffectNsfwChangeEvent extends BaseEvent {}
@@ -125,7 +125,7 @@ class OnHomeConfigGetEvent extends BaseEvent {}
 class OnNewPostEvent extends BaseEvent {}
 
 class OnHashTagChangeEvent extends BaseEvent<String> {
-  OnHashTagChangeEvent({String? data}) : super(data: data);
+  OnHashTagChangeEvent({super.data});
 }
 
 class OnClearCacheEvent extends BaseEvent {}
@@ -133,15 +133,16 @@ class OnClearCacheEvent extends BaseEvent {}
 class OnCreateAvatarAiEvent extends BaseEvent {}
 
 class OnPoseStateChangeEvent extends BaseEvent<PoseState> {
-  OnPoseStateChangeEvent({required PoseState pose}) : super(data: pose);
+  OnPoseStateChangeEvent({required super.data});
 }
 
 class OnTxt2imgStyleUpdateEvent extends BaseEvent {}
 
 class OnNewInvitationCodeReceiveEvent extends BaseEvent<String> {
-  OnNewInvitationCodeReceiveEvent({required String code}) : super(data: code);
+  OnNewInvitationCodeReceiveEvent({required super.data});
 }
 
 class OnRetryDialogResultEvent extends BaseEvent<bool> {
-  OnRetryDialogResultEvent({required bool retry}):super(data: retry);
+  OnRetryDialogResultEvent({required super.data});
 }
+class OnConnectionsChangeEvent extends BaseEvent {}

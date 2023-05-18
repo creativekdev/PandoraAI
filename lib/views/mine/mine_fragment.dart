@@ -22,6 +22,7 @@ import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -123,14 +124,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                       builder: (context) => EffectRecentScreen(),
                     ));
               }),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              ).intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: $(15)),
-                color: ColorConstant.BackgroundColor,
-              ),
+              line(context),
               ImageTextBarWidget(
                 S.of(context).setting_my_discovery,
                 Images.ic_setting_my_discovery,
@@ -148,16 +142,15 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   return;
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              )
-                  .intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: $(15)),
-                    color: ColorConstant.BackgroundColor,
-                  )
-                  .offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
+              ImageTextBarWidget(
+                'Metagram',
+                Images.ic_setting_my_discovery,
+                true,
+              ).intoGestureDetector(onTap: () {
+                Metagram.open(context, source: 'home_page');
+              }).offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
@@ -177,14 +170,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 // }
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              ).intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: $(15)),
-                color: ColorConstant.BackgroundColor,
-              ),
+              line(context),
               ImageTextBarWidget(Platform.isAndroid ? S.of(context).rate_us1 : S.of(context).rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
@@ -195,43 +181,20 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   // launchURL(url);
                 },
               ),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              ).intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: $(15)),
-                color: ColorConstant.BackgroundColor,
-              ),
+              line(context),
               ImageTextBarWidget((userManager.user?.isReferred ?? false) ? S.of(context).invited_code : S.of(context).input_invited_code, Images.ic_ref_code, true)
                   .intoGestureDetector(
                 onTap: () {
                   SubmitInvitedCodeScreen.push(context);
                 },
               ).offstage(offstage: userManager.isNeedLogin),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              )
-                  .intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: $(15)),
-                    color: ColorConstant.BackgroundColor,
-                  )
-                  .offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget('Pandora Avatar', Images.ic_avatar_ai, true).intoGestureDetector(
                 onTap: () async {
                   Avatar.open(context, source: 'my');
                 },
               ),
-              Container(
-                width: double.maxFinite,
-                height: 1,
-                color: Color(0xff323232),
-              ).intoContainer(
-                padding: EdgeInsets.symmetric(horizontal: $(15)),
-                color: ColorConstant.BackgroundColor,
-              ),
+              line(context),
               ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 PaymentUtils.pay(context, 'my_page').then((value) {
@@ -285,7 +248,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                           launchURL("https://www.facebook.com/pandoraaiapp/");
                         },
                         child: Image.asset(
-                          ImagesConstant.ic_facebook,
+                          Images.ic_facebook,
                           width: double.maxFinite,
                         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
@@ -296,7 +259,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                           launchURL("https://www.instagram.com/pandoraai.app/");
                         },
                         child: Image.asset(
-                          ImagesConstant.ic_share_instagram,
+                          Images.ic_share_instagram,
                           width: double.maxFinite,
                         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
@@ -307,7 +270,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                           launchURL("https://twitter.com/PandoraAI_App");
                         },
                         child: Image.asset(
-                          ImagesConstant.ic_share_twitter,
+                          Images.ic_share_twitter,
                           width: double.maxFinite,
                         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
@@ -318,7 +281,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                           launchURL("https://www.tiktok.com/@pandoraapp");
                         },
                         child: Image.asset(
-                          ImagesConstant.ic_share_tiktok,
+                          Images.ic_share_tiktok,
                           width: double.maxFinite,
                         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
@@ -326,9 +289,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   ],
                 ),
               ),
-              SizedBox(
-                height: 2.h,
-              ),
+              SizedBox(height: 2.h),
             ],
           ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),
         ).intoContainer(color: ColorConstant.MineBackgroundColor)),
@@ -354,4 +315,13 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
         )
         .intoGestureDetector(onTap: onTap);
   }
+
+  Widget line(BuildContext context) => Container(
+        width: double.maxFinite,
+        height: 1,
+        color: Color(0xff323232),
+      ).intoContainer(
+        padding: EdgeInsets.symmetric(horizontal: $(15)),
+        color: ColorConstant.BackgroundColor,
+      );
 }

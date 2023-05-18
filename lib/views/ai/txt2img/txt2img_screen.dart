@@ -315,7 +315,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                             controller: controller.scrollController,
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 1.15,
+                              childAspectRatio: 1.2,
                               mainAxisSpacing: $(2),
                               crossAxisSpacing: $(2),
                             ),
@@ -393,7 +393,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                 }
                               });
                             }).intoContainer(
-                            height: imageSize * 2.45,
+                            height: imageSize * 2.5,
                             margin: EdgeInsets.only(top: $(15)),
                           ),
                     TitleTextWidget(S.of(context).reference_image, ColorConstant.White, FontWeight.w600, $(15)).intoContainer(

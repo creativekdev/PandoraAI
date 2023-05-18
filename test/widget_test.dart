@@ -12,8 +12,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:cartoonizer/main.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
+  test('socket', () {
+    final wsUrl = Uri(
+      host: 'io.socialbook.io',
+      scheme: 'https',
+      port: 8185,
+      queryParameters: {
+        'influencer_id': '7391605',
+      },
+      path: '/profile',
+    );
+    IO.Socket socket = IO.io(
+        wsUrl.toString(),
+        IO.OptionBuilder()
+            .setTransports(['websocket', 'polling'])
+            .enableReconnection() // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .setExtraHeaders({'origin': 'https://socialbook.io'}) // optional
+            .build());
+    socket.onConnect((_) {
+      print('connect');
+      // socket.emit('msg', 'test');
+    });
+    socket.onDisconnect((data) {
+      print(data);
+    });
+    socket.connect();
+  });
+  return;
   test('description', () async {
     sortLocalConfigJson({});
   });

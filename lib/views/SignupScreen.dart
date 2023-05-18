@@ -40,7 +40,6 @@ class _SignupScreenState extends AppState<SignupScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late CartoonizerApi api;
-  double blueAreaHeight = 100;
 
   @override
   void initState() {

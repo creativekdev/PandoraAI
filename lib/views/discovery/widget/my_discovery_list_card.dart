@@ -5,6 +5,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
+import 'package:skeletons/skeletons.dart';
 
 class MyDiscoveryListCard extends StatelessWidget {
   int time;
@@ -88,6 +89,7 @@ class MyDiscoveryListCard extends StatelessWidget {
         imageUrl: resource.url ?? '',
         width: imgWidth,
         height: imgWidth,
+        placeholder: (context, url) => SkeletonAvatar(style: SkeletonAvatarStyle(width: imgWidth, height: imgWidth)),
         errorWidget: (context, url, error) => Container(
           color: ColorConstant.CardColor,
         ),

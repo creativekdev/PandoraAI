@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/connector/platform_connector_page.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -100,6 +101,49 @@ class Auth {
       }
     }
     return null;
+  }
+
+  Future<void> accountBottomSheet(BuildContext context, {Function(bool? result)? callback}) {
+    return showDialog(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.5),
+        builder: (_) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  S.of(context).loginToThePlatformAccount,
+                  style: TextStyle(
+                    fontSize: $(16),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontFamily: 'PoppinsMedium',
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 10),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _platformList
+                      .map((e) => socialMediaContainer(
+                              title: e.title(),
+                              icon: e.image(),
+                              onTap: () {
+                                Get.back();
+                                PlatformConnectorPage.push(context, platform: e).then((value) {
+                                  callback?.call(value);
+                                });
+                              },
+                              iconColor: Colors.white)
+                          .intoContainer(margin: EdgeInsets.only(top: $(10))))
+                      .toList(),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Widget socialMediaContainer({String? icon, String? title, Color? iconColor, dynamic onTap}) {

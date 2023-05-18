@@ -387,5 +387,7 @@
   "net_exception_desc": "请检查您的网络环境",
   "retry": "重试",
   "create_new_avatars": "创建新的Avatar",
-  "view_more_comment": "查看更多 %d 条评论"
+  "view_more_comment": "查看更多 %d 条评论",
+  "loginToThePlatformAccount": "登录第三方账号",
+  "platform_connecting": "链接中"
 }

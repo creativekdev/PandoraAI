@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/events.dart';
+import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -24,6 +25,7 @@ import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
+import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -568,5 +570,20 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<BaseEntity?> appleBuy(Map<String, dynamic> params) async {
     return await post('/plan/apple_store/buy', params: params);
+  }
+
+  Future<Map<ConnectorPlatform, List<PlatformConnectionEntity>>?> listConnections() async {
+    var baseEntity = await get('/user/connected_channels');
+    List<PlatformConnectionEntity>? list = jsonConvert.convertListNotNull<PlatformConnectionEntity>(baseEntity?.data['data']);
+    if (list == null) {
+      return null;
+    }
+    Map<ConnectorPlatform, List<PlatformConnectionEntity>> result = {};
+    for (var value in list) {
+      List<PlatformConnectionEntity> list = result[value.platform] ?? [];
+      list.add(value);
+      result[value.platform] = list;
+    }
+    return result;
   }
 }

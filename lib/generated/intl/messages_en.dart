@@ -275,6 +275,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "june": MessageLookupByLibrary.simpleMessage("June"),
         "like": MessageLookupByLibrary.simpleMessage("Like"),
         "login": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(
+            "Log in to the platform account"),
         "login_or_sign_up":
             MessageLookupByLibrary.simpleMessage("Login / Sign up"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
@@ -392,6 +394,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "This photo has been deleted already"),
         "photo_select_already": MessageLookupByLibrary.simpleMessage(
             "You\'ve chosen this photo already"),
+        "platform_connecting":
+            MessageLookupByLibrary.simpleMessage("Connecting"),
         "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
