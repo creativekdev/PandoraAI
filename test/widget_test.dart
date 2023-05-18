@@ -5,20 +5,14 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:io';
-
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:cartoonizer/main.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() {
   test('socket', () {
     final wsUrl = Uri(
-      host: 'io.socialbook.io',
-      scheme: 'https',
+      host: '127.0.0.1',
+      scheme: 'http',
       port: 8185,
       queryParameters: {
         'influencer_id': '7391605',
@@ -31,7 +25,6 @@ void main() {
             .setTransports(['websocket', 'polling'])
             .enableReconnection() // for Flutter or Dart VM
             .disableAutoConnect() // disable auto-connection
-            .setExtraHeaders({'origin': 'https://socialbook.io'}) // optional
             .build());
     socket.onConnect((_) {
       print('connect');
@@ -40,28 +33,10 @@ void main() {
     socket.onDisconnect((data) {
       print(data);
     });
+    socket.on('notification', (data) {
+      print(data);
+    });
     socket.connect();
-  });
-  return;
-  test('description', () async {
-    sortLocalConfigJson({});
-  });
-  return;
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
   });
 }
 
