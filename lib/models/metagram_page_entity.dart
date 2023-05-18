@@ -32,18 +32,6 @@ class MetagramPageEntity {
   String toString() {
     return jsonEncode(this);
   }
-
-  List<T> getDataList<T>() {
-    if (rows is List) {
-      List<T> result = [];
-      for (var e in rows) {
-        result.add(jsonConvert.convert<T>(e)!);
-      }
-      return result;
-    } else {
-      return <T>[];
-    }
-  }
 }
 
 @JsonSerializable()
@@ -113,6 +101,10 @@ class MetagramItemEntity {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+
+  MetagramItemEntity copy() {
+    return MetagramItemEntity.fromJson(toJson());
   }
 
   List<DiscoveryResource> resourceList() {

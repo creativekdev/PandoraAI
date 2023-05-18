@@ -87,7 +87,11 @@ class Images {
    static const String ic_mark_pen = 'assets/images/ic_mark_pen.png';
    static const String ic_metagram_comment = 'assets/images/ic_metagram_comment.png';
    static const String ic_metagram_download = 'assets/images/ic_metagram_download.png';
+   static const String ic_metagram_opt_another = 'assets/images/ic_metagram_opt_another.png';
+   static const String ic_metagram_save = 'assets/images/ic_metagram_save.png';
    static const String ic_metagram_shareout = 'assets/images/ic_metagram_shareout.png';
+   static const String ic_metagram_show_origin = 'assets/images/ic_metagram_show_origin.png';
+   static const String ic_metagram_yes = 'assets/images/ic_metagram_yes.png';
    static const String ic_msg_comment = 'assets/images/ic_msg_comment.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_like = 'assets/images/ic_msg_like.png';

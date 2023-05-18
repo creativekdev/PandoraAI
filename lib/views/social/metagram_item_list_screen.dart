@@ -2,6 +2,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/social/metagram_controller.dart';
 
+import 'edit/metagram_item_edit_screen.dart';
 import 'widget/metagram_list_card.dart';
 
 class MetagramItemListScreen extends StatefulWidget {
@@ -36,8 +37,17 @@ class _MetagramItemListScreenState extends State<MetagramItemListScreen> {
               itemScrollController: controller.itemScrollController,
               itemCount: controller.data!.rows.length,
               itemBuilder: (context, index) {
+                var data = controller.data!.rows[index];
                 return MetagramListCard(
-                  data: controller.data!.rows[index],
+                  data: data,
+                  onEditTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                          settings: RouteSettings(name: "/MetagramItemEditScreen"),
+                          builder: (context) => MetagramItemEditScreen(entity: data),
+                        ))
+                        .then((value) {});
+                  },
                 ).intoContainer(margin: EdgeInsets.only(bottom: index == controller.data!.rows.length - 1 ? $(400) : $(15)));
               });
         },

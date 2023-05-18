@@ -76,6 +76,8 @@ class MetagramController extends GetxController {
       size: 12,
     );
     if (result != null) {
+      // result.rows = [...result.rows, ...result.rows];
+      // result.rows = [...result.rows, ...result.rows];
       data = result;
       var status = MetagramStatusUtils.build(data?.socialPostPage?.status);
       if (status == MetagramStatus.completed) {

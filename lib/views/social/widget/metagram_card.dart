@@ -35,7 +35,11 @@ class MetagramCard extends StatelessWidget {
     return Column(
       children: [
         buildHeader(context),
-        buildPosts(context),
+        Expanded(
+          child: SingleChildScrollView(
+            child: buildPosts(context),
+          ),
+        ),
       ],
     );
   }
@@ -90,7 +94,8 @@ class MetagramCard extends StatelessWidget {
           width: $(92),
           height: $(92),
           images: userAvatars!,
-          loopDelay: 1500,
+          loopDelay: 500,
+          duration: (entity!.rows.length + 1) * 1000,
         ),
       );
     }
@@ -164,10 +169,11 @@ class MetagramCard extends StatelessWidget {
         runSpacing: $(1),
         children: entity!.rows.transfer(
           (e, index) => BlinkImage(
-            images: e.resourceList().filter((t) => t.type == 'image').map((e) => e.url!).toList(),
+            images: e.resourceList().filter((t) => t.type == 'image').map((e) => e.url!).toList().reversed.toList(),
             width: imageWidth,
             height: imageWidth,
-            loopDelay: (index % 2) * 1000 + 1000,
+            loopDelay: ((index + 1) % (entity!.rows.length + 1)) * 1000 + 500,
+            duration: (entity!.rows.length + 1) * 1000,
           ).intoGestureDetector(onTap: () {
             onItemClick.call(e, index);
           }),

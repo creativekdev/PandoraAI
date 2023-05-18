@@ -4,15 +4,18 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 
 class MetagramListCard extends StatelessWidget {
   MetagramItemEntity data;
   late List<DiscoveryResource> resourceList;
+  Function onEditTap;
 
   MetagramListCard({
     super.key,
     required this.data,
+    required this.onEditTap,
   }) {
     resourceList = data.resourceList();
   }
@@ -117,7 +120,9 @@ class MetagramListCard extends StatelessWidget {
             )),
           ],
         ).intoContainer(padding: EdgeInsets.only(top: $(12), left: $(12), right: $(12), bottom: $(6))),
-        TitleTextWidget(data.text ?? 'ss', Colors.white, FontWeight.normal, $(15)).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12))),
+        TitleTextWidget(data.text ?? '', Colors.white, FontWeight.normal, $(15))
+            .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)))
+            .offstage(offstage: TextUtil.isEmpty(data.text)),
         OutlineWidget(
           radius: $(8),
           strokeWidth: $(1.5),
@@ -143,7 +148,9 @@ class MetagramListCard extends StatelessWidget {
             width: $(120),
             alignment: Alignment.center,
           ),
-        ).intoContainer(
+        ).intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8))).intoGestureDetector(onTap: () {
+          onEditTap.call();
+        }).intoContainer(
           margin: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
         ),
       ],

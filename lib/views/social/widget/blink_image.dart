@@ -9,12 +9,15 @@ class BlinkImage extends StatefulWidget {
   double height;
   int loopDelay;
 
+  int duration;
+
   BlinkImage({
     Key? key,
     required this.images,
     required this.width,
     required this.height,
     this.loopDelay = 3000,
+    required this.duration,
   }) : super(key: key);
 
   @override
@@ -22,35 +25,38 @@ class BlinkImage extends StatefulWidget {
 }
 
 class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  AnimationController? _controller;
   late List<String> images;
   late double width;
   late double height;
   int cursor = 0;
   TimerUtil? timer;
   late int loopDelay;
+  late int duration;
 
   @override
   void initState() {
     super.initState();
     initData();
     timer = TimerUtil()
-      ..setInterval(4000)
+      ..setInterval(duration)
       ..setOnTimerTickCallback(
         (millisUntilFinished) {
-          _controller.forward();
+          if (mounted && _controller?.status == AnimationStatus.dismissed) {
+            _controller?.forward();
+          }
         },
       );
     _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
-    _controller.addStatusListener((status) {
+    _controller?.addStatusListener((status) {
       if (images.length < 2) {
         return;
       }
       if (status == AnimationStatus.completed) {
-        setState(() {
-          cursor = cursor.next(max: images.length - 1);
-        });
-        _controller.reset();
+        // setState(() {
+        //   cursor = cursor.next(max: images.length - 1);
+        // });
+        // _controller?.reset();
       }
     });
     if (images.length >= 2) {
@@ -68,6 +74,7 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
     width = widget.width;
     height = widget.height;
     loopDelay = widget.loopDelay;
+    duration = widget.duration;
   }
 
   @override
@@ -81,8 +88,10 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
+    _controller = null;
     timer?.cancel();
+    timer = null;
     super.dispose();
   }
 
@@ -97,11 +106,11 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
     return Stack(
       children: [
         AnimatedBuilder(
-          animation: _controller,
+          animation: _controller!,
           builder: (context, child) {
             return Opacity(
               child: child,
-              opacity: _controller.value,
+              opacity: _controller!.value,
             );
           },
           child: CachedNetworkImageUtils.custom(
@@ -112,11 +121,11 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
           ),
         ),
         AnimatedBuilder(
-          animation: _controller,
+          animation: _controller!,
           builder: (context, child) {
             return Opacity(
               child: child,
-              opacity: 1 - _controller.value,
+              opacity: 1 - _controller!.value,
             );
           },
           child: CachedNetworkImageUtils.custom(

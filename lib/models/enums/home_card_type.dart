@@ -14,6 +14,7 @@ class HomeCardTypeUtils {
       case 'cartoonize':
         return HomeCardType.cartoonize;
       case 'anotherme':
+      case 'another_me':
         return HomeCardType.anotherme;
       case 'ai_avatar':
         return HomeCardType.ai_avatar;
@@ -33,7 +34,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.cartoonize:
         return 'cartoonize';
       case HomeCardType.anotherme:
-        return 'anotherme';
+        return 'another_me';
       case HomeCardType.ai_avatar:
         return 'ai_avatar';
       case HomeCardType.text2image:

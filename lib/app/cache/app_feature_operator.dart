@@ -117,6 +117,7 @@ class _FeatureUtils {
       case 'txt2img':
         return FeatureType.txt2img;
       case 'anotherme':
+      case 'another_me':
         return FeatureType.anotherme;
       case 'cartoonize':
         return FeatureType.cartoonize;
