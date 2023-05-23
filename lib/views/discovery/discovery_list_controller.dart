@@ -28,6 +28,7 @@ class DiscoveryListController extends GetxController {
   List<ListData> dataList = [];
   bool listLoading = false;
 
+  Function(bool scrollDown)? onScrollChange;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
@@ -40,11 +41,32 @@ class DiscoveryListController extends GetxController {
   late ScrollController scrollController;
   Rx<bool> likeLocalAddAlready = false.obs;
 
+  double lastScrollPos = 0;
+  bool lastScrollDown = false;
+
   @override
   void onInit() {
     super.onInit();
     api = CartoonizerApi().bindController(this);
     scrollController = ScrollController();
+    scrollController.addListener(() {
+      var newPos = scrollController.position.pixels;
+      if (newPos < 0) {
+        return;
+      }
+      if (newPos - lastScrollPos > 0) {
+        if (!lastScrollDown) {
+          lastScrollDown = true;
+          onScrollChange?.call(lastScrollDown);
+        }
+      } else {
+        if (lastScrollDown) {
+          lastScrollDown = false;
+          onScrollChange?.call(lastScrollDown);
+        }
+      }
+      lastScrollPos = newPos;
+    });
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       // Check if the event data is null or true and the list is not loading.
       if (event.data ?? true && !listLoading) {

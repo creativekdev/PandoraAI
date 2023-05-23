@@ -4,6 +4,7 @@ class Images {
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
+   static const String ic_ai_draw_camera = 'assets/images/ic_ai_draw_camera.png';
    static const String ic_ai_draw_delete = 'assets/images/ic_ai_draw_delete.png';
    static const String ic_ai_draw_top = 'assets/images/ic_ai_draw_top.png';
    static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
@@ -88,9 +89,12 @@ class Images {
    static const String ic_metagram_comment = 'assets/images/ic_metagram_comment.png';
    static const String ic_metagram_download = 'assets/images/ic_metagram_download.png';
    static const String ic_metagram_opt_another = 'assets/images/ic_metagram_opt_another.png';
+   static const String ic_metagram_refresh = 'assets/images/ic_metagram_refresh.png';
    static const String ic_metagram_save = 'assets/images/ic_metagram_save.png';
+   static const String ic_metagram_share_home = 'assets/images/ic_metagram_share_home.png';
    static const String ic_metagram_shareout = 'assets/images/ic_metagram_shareout.png';
    static const String ic_metagram_show_origin = 'assets/images/ic_metagram_show_origin.png';
+   static const String ic_metagram_stack = 'assets/images/ic_metagram_stack.png';
    static const String ic_metagram_yes = 'assets/images/ic_metagram_yes.png';
    static const String ic_msg_comment = 'assets/images/ic_msg_comment.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';

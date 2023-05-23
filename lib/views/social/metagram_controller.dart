@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cartoonizer/Common/importFile.dart';
@@ -5,6 +6,7 @@ import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/enums/metagram_status.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:common_utils/common_utils.dart';
@@ -22,7 +24,6 @@ class MetagramController extends GetxController {
   MetagramPageEntity? data;
   String? slug;
   int? coreUserId;
-  late TimerUtil timer;
   int _scrollPosition = 0;
 
   set scrollPosition(int pos) {
@@ -33,6 +34,8 @@ class MetagramController extends GetxController {
   int get scrollPosition => _scrollPosition;
   late ItemScrollController itemScrollController;
   late ItemPositionsListener itemPositionsListener;
+  IO.Socket? socket;
+  bool metaProcessing = false;
 
   @override
   void onInit() {
@@ -42,13 +45,6 @@ class MetagramController extends GetxController {
     if (hasIgConnection) {
       coreUserId = userManager.platformConnections[ConnectorPlatform.instagram]?.first.coreUserId;
     }
-    timer = TimerUtil()
-      ..setInterval(3000)
-      ..setOnTimerTickCallback(
-        (millisUntilFinished) {
-          loadMetagramData();
-        },
-      );
     itemScrollController = ItemScrollController();
     itemPositionsListener = ItemPositionsListener.create();
     itemPositionsListener.itemPositions.addListener(() {
@@ -76,12 +72,12 @@ class MetagramController extends GetxController {
       size: 12,
     );
     if (result != null) {
-      // result.rows = [...result.rows, ...result.rows];
-      // result.rows = [...result.rows, ...result.rows];
       data = result;
       var status = MetagramStatusUtils.build(data?.socialPostPage?.status);
       if (status == MetagramStatus.completed) {
-        timer.cancel();
+        metaProcessing = false;
+      } else {
+        metaProcessing = true;
       }
       update();
       return true;
@@ -90,55 +86,71 @@ class MetagramController extends GetxController {
     }
   }
 
-  void startLoadPage() {
+  void startLoadPage({bool force = false}) {
     if (data == null) {
       return;
     }
     var status = MetagramStatusUtils.build(data?.socialPostPage?.status);
-    if (status == MetagramStatus.completed) {
-      return;
-    } else {
-      // final wsUrl = Uri(
-      //   host: 'io.socialbook.io',
-      //   scheme: 'https',
-      //   port: 8185,
-      //   queryParameters: {
-      //     'influencer_id': '$coreUserId',
-      //   },
-      //   path: '/profile',
-      // );
-      // IO.Socket socket = IO.io(
-      //     wsUrl.toString(),
-      //     IO.OptionBuilder()
-      //         .setTransports(['websocket', 'polling'])
-      //         .enableReconnection() // for Flutter or Dart VM
-      //         .disableAutoConnect() // disable auto-connection
-      //         .setExtraHeaders({'origin': 'https://socialbook.io'}) // optional
-      //         .build());
-      // socket.onConnect((_) {
-      //   print('connect');
-      //   // socket.emit('msg', 'test');
-      // });
-      // socket.onDisconnect((data) {
-      //   print(data);
-      // });
-      // socket.connect();
-      // WebSocket.connect(
-      //   wsUrl,
-      //   headers: {'origin': "https://socialbook.io"},
-      // ).then((value) {
-      //   value.listen((event) {
-      //     print(event.toString());
-      //   });
-      // });
-      timer.startTimer();
-      if (status == MetagramStatus.init) {
-        api.startBuildMetagram(coreUserId: coreUserId!);
+    if (!force) {
+      if (status == MetagramStatus.completed) {
+        return;
       }
+    }
+    final wsUrl = Uri(
+      host: Config.instance.metagramSocket,
+      scheme: Config.instance.metagramSocketSchema,
+      port: Config.instance.metagramSocketPort,
+      path: '/profile',
+    );
+    metaProcessing = true;
+    update();
+    socket = IO.io(
+        wsUrl.toString(),
+        IO.OptionBuilder()
+            .setTransports(['websocket', 'polling'])
+            .enableReconnection() // for Flutter or Dart VM
+            .disableAutoConnect() // disable auto-connection
+            .setExtraHeaders({'origin': Config.instance.host}) // optional
+            .enableForceNewConnection()
+            .setQuery({
+              'influencer_id': '$coreUserId',
+            })
+            .build());
+    socket?.onConnect((_) {
+      print('connect');
+    });
+    socket?.on('social_post_page_update', (data) {
+      try {
+        Map<String, dynamic> payload = jsonDecode(data);
+        bool success = payload['success'] ?? false;
+        if (success) {
+          var status = MetagramStatusUtils.build(payload['step']);
+          if (status == MetagramStatus.init || status == MetagramStatus.processing) {
+            metaProcessing = true;
+            update();
+          }
+          if (status == MetagramStatus.processing || status == MetagramStatus.completed) {
+            loadMetagramData();
+            if (status == MetagramStatus.completed) {
+              socket?.disconnect();
+              metaProcessing = false;
+              update();
+            }
+          }
+        }
+      } catch (e) {
+        LogUtil.e(e.toString(), tag: 'socket-error');
+      }
+    });
+    socket?.onDisconnect((data) {
+      print(data);
+    });
+    socket?.connect();
+    if (status == MetagramStatus.init || force) {
+      api.startBuildMetagram(coreUserId: coreUserId!);
+      loadMetagramData();
     }
   }
 
-  void refreshScrollPos() {
-
-  }
+  void refreshScrollPos() {}
 }

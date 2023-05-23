@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'image_cache_manager.dart';
@@ -234,6 +236,17 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
 
   void updateData() {
     url = widget.url;
+    var fileType = getFileType(url);
+    downloading = true;
+    SyncDownloadImage(url: url, type: fileType).getImage().then((value) {
+      if(mounted) {
+        setState(() {
+          downloading = false;
+          this.data = value;
+        });
+      }
+    });
+    return;
     downloadListener = DownloadListener(
         onChanged: (count, total) {},
         onError: (error) {

@@ -3,14 +3,14 @@ enum HomeCardType {
   cartoonize,
   anotherme,
   ai_avatar,
-  text2image,
+  txt2img,
   scribble,
   UNDEFINED,
 }
 
 class HomeCardTypeUtils {
   static HomeCardType build(String? value) {
-    switch (value) {
+    switch (value?.toLowerCase()) {
       case 'cartoonize':
         return HomeCardType.cartoonize;
       case 'anotherme':
@@ -19,7 +19,7 @@ class HomeCardTypeUtils {
       case 'ai_avatar':
         return HomeCardType.ai_avatar;
       case 'txt2img':
-        return HomeCardType.text2image;
+        return HomeCardType.txt2img;
       case 'scribble':
         return HomeCardType.scribble;
       default:
@@ -37,7 +37,7 @@ extension HomeCardTypeEx on HomeCardType {
         return 'another_me';
       case HomeCardType.ai_avatar:
         return 'ai_avatar';
-      case HomeCardType.text2image:
+      case HomeCardType.txt2img:
         return 'txt2img';
       case HomeCardType.UNDEFINED:
         return null;
@@ -56,7 +56,7 @@ extension HomeCardTypeEx on HomeCardType {
         return 'Pandora Avatar';
       case HomeCardType.UNDEFINED:
         return '';
-      case HomeCardType.text2image:
+      case HomeCardType.txt2img:
         return 'AI Artist: Text to Image';
       case HomeCardType.scribble:
         return 'AI Scribble';

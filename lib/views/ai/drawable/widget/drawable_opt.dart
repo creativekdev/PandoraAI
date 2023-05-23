@@ -4,10 +4,12 @@ import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 
 class DrawableOpt extends StatefulWidget {
   DrawableController controller;
+  Function onCameraTap;
 
   DrawableOpt({
     Key? key,
     required this.controller,
+    required this.onCameraTap,
   }) : super(key: key);
 
   @override
@@ -24,6 +26,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
   late double marginHorizontalSpace;
   late double categoryItemWidth;
   late double animDistance;
+  late Function onCameraTap;
 
   bool aniInProgress = false;
   List<Map<String, dynamic>> optList = [
@@ -39,6 +42,10 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
       'mode': DrawMode.eraser,
       'image': Images.ic_eraser,
     },
+    {
+      'mode': 'camera',
+      'image': Images.ic_ai_draw_camera,
+    }
   ];
 
   Completer? _completer;
@@ -48,8 +55,9 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
   @override
   void initState() {
     super.initState();
+    onCameraTap = widget.onCameraTap;
     marginHorizontalSpace = $(15);
-    categoryHorizontalSpace = $(70);
+    categoryHorizontalSpace = $(50);
     categoryItemWidth = $(36);
     animDistance = (ScreenUtil.screenSize.width - 2 * marginHorizontalSpace - 2 * categoryHorizontalSpace - optList.length * categoryItemWidth) / (optList.length - 1);
     _visibleAnimation = AnimationController(vsync: this, duration: Duration(milliseconds: 150));
@@ -211,39 +219,54 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: optList.transfer(
             (e, index) {
-              DrawMode mode = e['mode'];
-              bool check = controller.drawMode == mode;
-              return Image.asset(
-                e['image'],
-                color: aniInProgress
-                    ? Colors.black
-                    : check
-                        ? Colors.white
-                        : Colors.black,
-              )
-                  .intoContainer(
-                width: categoryItemWidth,
-                height: categoryItemWidth,
-                padding: EdgeInsets.all($(4)),
-              )
-                  .intoGestureDetector(onTap: () {
-                if (controller.drawMode != mode) {
-                  switchMode(index, currentIndex()).whenComplete(() {
-                    refreshBaseLeft(index);
-                    controller.drawMode = mode;
-                    _transAnimation.reset();
+              if (e['mode'] is String) {
+                return Image.asset(
+                  e['image'],
+                  color: Colors.black,
+                )
+                    .intoContainer(
+                  width: categoryItemWidth,
+                  height: categoryItemWidth,
+                  padding: EdgeInsets.all($(4)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  onCameraTap.call();
+                });
+              } else {
+                DrawMode mode = e['mode'];
+                bool check = controller.drawMode == mode;
+                return Image.asset(
+                  e['image'],
+                  color: aniInProgress
+                      ? Colors.black
+                      : check
+                          ? Colors.white
+                          : Colors.black,
+                )
+                    .intoContainer(
+                  width: categoryItemWidth,
+                  height: categoryItemWidth,
+                  padding: EdgeInsets.all($(4)),
+                )
+                    .intoGestureDetector(onTap: () {
+                  if (controller.drawMode != mode) {
+                    switchMode(index, currentIndex()).whenComplete(() {
+                      refreshBaseLeft(index);
+                      controller.drawMode = mode;
+                      _transAnimation.reset();
+                      if (_visibleAnimation.status == AnimationStatus.dismissed) {
+                        _visibleAnimation.forward();
+                      }
+                    });
+                  } else {
                     if (_visibleAnimation.status == AnimationStatus.dismissed) {
                       _visibleAnimation.forward();
+                    } else if (_visibleAnimation.status == AnimationStatus.completed) {
+                      _visibleAnimation.reverse();
                     }
-                  });
-                } else {
-                  if (_visibleAnimation.status == AnimationStatus.dismissed) {
-                    _visibleAnimation.forward();
-                  } else if (_visibleAnimation.status == AnimationStatus.completed) {
-                    _visibleAnimation.reverse();
                   }
-                }
-              });
+                });
+              }
             },
           ),
         ),

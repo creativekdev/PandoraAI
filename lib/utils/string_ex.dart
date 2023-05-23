@@ -106,4 +106,13 @@ extension StringEx on String {
         return this;
     }
   }
+
+  String get fileImageType {
+    var lowerCase = this.toLowerCase();
+    if (lowerCase == 'png' || lowerCase == 'jpg' || lowerCase == 'jpeg' || lowerCase == 'webp' || lowerCase == 'gif' || lowerCase == 'bmp') {
+      return this;
+    } else {
+      return 'png';
+    }
+  }
 }

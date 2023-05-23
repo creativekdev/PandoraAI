@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/mine/refcode/refcode_controller.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
@@ -47,11 +48,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   RecentController recentController = Get.put(RecentController());
   AlbumController albumController = Get.put(AlbumController());
   MsgListController msgController = Get.put(MsgListController());
+  DiscoveryListController discoveryListController = Get.put(DiscoveryListController());
+
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
     initialTab(false);
+    discoveryListController.onScrollChange = (scrollDown) {
+      if (scrollDown) {
+        animationController.forward();
+      } else if (!scrollDown) {
+        animationController.reverse();
+      }
+    };
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
     });
@@ -142,6 +154,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     onHomeConfigListener.cancel();
     onNewInvitationCodeListener.cancel();
     onUserStateChangeListener.cancel();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -200,44 +213,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           IndexedStack(index: currentIndex, children: tabItems.map((e) => e.fragment!).toList()).intoContainer(color: ColorConstant.BackgroundColor),
           Align(
             alignment: Alignment.bottomCenter,
-            child: tabItems.length > 1
-                ? ClipRect(
-                    child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: AppTabBar(
-                          items: createBottomItem(context),
-                          activeColor: ColorConstant.BlueColor,
-                          inactiveColor: ColorConstant.White,
-                          // backgroundColor: ColorConstant.BackgroundColorBlur,
-                          backgroundColor: Color.fromARGB(180, 14, 16, 17),
-                          iconSize: $(22),
-                          onTap: (pos) {
-                            if (tabItems[pos].id == AppTabId.AI.id()) {
-                              AnotherMe.checkPermissions().then((value) {
-                                if (value) {
-                                  AnotherMe.open(context, source: 'home_page');
-                                } else {
-                                  AnotherMe.permissionDenied(context);
-                                }
-                              });
-                            } else {
-                              _setIndex(pos);
-                            }
-                          },
-                          onDoubleTap: (index) {
-                            EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));
-                          },
-                          onLongPress: (index) {
-                            EventBusHelper().eventBus.fire(OnTabLongPressEvent(data: tabItems[index].id));
-                          },
-                          currentIndex: currentIndex,
-                          elevation: $(4),
-                        )))
-                : Container(),
+            child: tabItems.length > 1 ? buildBottomBar(context) : Container(),
           ),
         ],
       ).blankAreaIntercept(),
     );
+  }
+
+  Widget buildBottomBar(BuildContext context) {
+    return AnimatedBuilder(
+        animation: animationController,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, animationController.value * (55 + ScreenUtil.getBottomPadding(context))),
+            child: ClipRect(
+                child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: AppTabBar(
+                      items: createBottomItem(context),
+                      activeColor: ColorConstant.BlueColor,
+                      inactiveColor: ColorConstant.White,
+                      // backgroundColor: ColorConstant.BackgroundColorBlur,
+                      backgroundColor: Color.fromARGB(180, 14, 16, 17),
+                      iconSize: $(22),
+                      onTap: (pos) {
+                        if (tabItems[pos].id == AppTabId.AI.id()) {
+                          AnotherMe.checkPermissions().then((value) {
+                            if (value) {
+                              AnotherMe.open(context, source: 'home_page');
+                            } else {
+                              AnotherMe.permissionDenied(context);
+                            }
+                          });
+                        } else {
+                          _setIndex(pos);
+                        }
+                      },
+                      onDoubleTap: (index) {
+                        EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));
+                      },
+                      onLongPress: (index) {
+                        EventBusHelper().eventBus.fire(OnTabLongPressEvent(data: tabItems[index].id));
+                      },
+                      currentIndex: currentIndex,
+                      elevation: $(4),
+                    ))),
+          );
+        });
   }
 
   List<BottomNavigationBarItem> createBottomItem(BuildContext context) {

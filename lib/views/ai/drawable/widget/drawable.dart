@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/common/importFile.dart';
@@ -60,6 +61,7 @@ class DrawableController {
   Function? onStartDraw;
   Rx<String> text = ''.obs;
   List<String> resultFilePaths = [];
+  File? cameraFile;
 
   DrawableController({DrawableRecord? data}) {
     if (data != null) {
@@ -251,7 +253,10 @@ class DrawableController {
     canRollback.value = !activePens.isEmpty;
   }
 
-  Future<Uint8List?> getImage({double screenShotScale = 1}) async {
+  Future<Uint8List?> getImage({double screenShotScale = 1, required bool fromCamera}) async {
+    if (fromCamera) {
+      return await cameraFile!.readAsBytes();
+    }
     var local = await state?.getImage(ratio: screenShotScale);
     return local;
   }
@@ -570,6 +575,7 @@ class DrawablePainter extends CustomPainter {
 
 class DrawableRecord {
   String text;
+  String? cameraFilePath;
   late List<DrawablePen> activePens;
   late List<DrawablePen> checkMatePens;
   late List<String> resultPaths;
@@ -577,6 +583,7 @@ class DrawableRecord {
 
   DrawableRecord({
     this.text = '',
+    this.cameraFilePath,
     List<DrawablePen>? activePens,
     List<DrawablePen>? checkMatePens,
     List<String>? resultPaths,
@@ -591,6 +598,9 @@ class DrawableRecord {
     DrawableRecord result = DrawableRecord();
     if (json['text'] != null) {
       result.text = json['text'];
+    }
+    if (json['cameraFilePath'] != null) {
+      result.cameraFilePath = json['cameraFilePath'];
     }
     if (json['activePens'] != null) {
       result.activePens = (json['activePens'] as List).map((e) => DrawablePen.fromJson(e)).toList();
@@ -613,6 +623,7 @@ class DrawableRecord {
         'checkMatePens': checkMatePens.map((e) => e.toJson()).toList(),
         'resultPaths': resultPaths,
         'updateDt': updateDt,
+        'cameraFilePath': cameraFilePath,
       };
 
   @override

@@ -40,16 +40,12 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   EasyRefreshController easyRefreshController = EasyRefreshController();
-  DiscoveryListController listController = Get.put(DiscoveryListController());
+  DiscoveryListController listController = Get.find<DiscoveryListController>();
   late AppTabId tabId;
 
   double headerHeight = 0;
   double titleHeight = 0;
 
-  late AnimationController animationController;
-  MyVerticalDragGestureRecognizer dragGestureRecognizer = MyVerticalDragGestureRecognizer();
-  bool canBeDragged = true;
-  late bool lastDragDirection = true;
   late StreamSubscription onTabDoubleClickListener;
 
   @override
@@ -68,11 +64,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   void initAnimator() {
     titleHeight = $(36);
-    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight);
-    dragGestureRecognizer.onDragStart = onDragStart;
-    dragGestureRecognizer.onDragUpdate = onDragUpdate;
-    dragGestureRecognizer.onDragEnd = onDragEnd;
-    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(48);
   }
 
   @override
@@ -87,36 +79,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     onTabDoubleClickListener.cancel();
     super.dispose();
     // animationController.dispose();
-  }
-
-  onDragStart(DragStartDetails details) {
-    canBeDragged = animationController.isDismissed || animationController.isCompleted;
-  }
-
-  onDragUpdate(DragUpdateDetails details) {
-    if (canBeDragged) {
-      double value = -details.primaryDelta! / titleHeight;
-      if (value != 0) {
-        lastDragDirection = value < 0;
-      }
-      animationController.value += value;
-    }
-  }
-
-  onDragEnd(DragEndDetails details) {
-    if (animationController.isDismissed || animationController.isCompleted) {
-      return;
-    }
-    if (details.velocity.pixelsPerSecond.dy.abs() > 200) {
-      double visualVelocity = details.velocity.pixelsPerSecond.dy / ScreenUtil.screenSize.height;
-      animationController.fling(velocity: -visualVelocity);
-    } else {
-      if (lastDragDirection) {
-        animationController.reverse();
-      } else {
-        animationController.forward();
-      }
-    }
   }
 
   onLikeTap(DiscoveryListEntity entity) {
@@ -175,29 +137,16 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     return Scaffold(
       backgroundColor: Color(0xff161719),
       body: GetBuilder<DiscoveryListController>(
-        init: listController,
+        init: Get.find<DiscoveryListController>(),
         builder: (listController) {
-          return SingleChildScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            child: Listener(
-              onPointerDown: (pointer) {
-                dragGestureRecognizer.addPointer(pointer);
-              },
-              child: AnimatedBuilder(
-                animation: animationController,
-                builder: (context, child) {
-                  double dy = titleHeight * animationController.value;
-                  return Transform.translate(
-                      offset: Offset(0, -dy),
-                      child: Stack(
-                        children: [
-                          Transform.translate(offset: Offset(0, -dy), child: buildRefreshList(listController)),
-                          buildHeader(listController),
-                        ],
-                      ));
-                },
-              ),
-            ).intoContainer(height: ScreenUtil.screenSize.height + titleHeight),
+          return Stack(
+            children: [
+              buildRefreshList(listController),
+              buildHeader(listController),
+            ],
+          ).intoContainer(
+            height: ScreenUtil.screenSize.height,
+            width: ScreenUtil.screenSize.width,
           );
         },
       ),
@@ -206,157 +155,150 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   Widget buildHeader(DiscoveryListController listController) {
     return ClipRect(
-            child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: AnimatedBuilder(
-                  animation: animationController,
-                  builder: (context, child) {
-                    return Opacity(opacity: 1 - animationController.value, child: child);
-                  },
-                  child: TitleTextWidget(
-                    S.of(context).tabDiscovery,
-                    ColorConstant.BtnTextColor,
-                    FontWeight.w600,
-                    $(18),
-                  ).intoContainer(alignment: Alignment.center, height: titleHeight, padding: EdgeInsets.only(top: $(4))),
-                ).intoContainer(padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()), height: headerHeight, color: ColorConstant.BackgroundColorBlur)))
-        .intoGestureDetector(onTap: () {
+        child: BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+      child: Column(
+        children: [
+          TitleTextWidget(
+            S.of(context).tabDiscovery,
+            ColorConstant.BtnTextColor,
+            FontWeight.w600,
+            $(18),
+          ).intoContainer(alignment: Alignment.center, height: titleHeight, padding: EdgeInsets.only(top: $(4))),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: $(15)),
+            child: Row(
+              children: listController.tags.transfer((e, index) {
+                bool checked = listController.currentTag == e;
+                return Text(
+                  e.title,
+                  style: TextStyle(
+                    color: checked ? Color(0xff3e60ff) : Colors.white,
+                    fontSize: $(13),
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+                    .intoContainer(
+                  margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)),
+                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(7)),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    color: Color(0xff1b1b1b),
+                    border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
+                  ),
+                )
+                    .intoGestureDetector(onTap: () {
+                  if (listController.listLoading) {
+                    return;
+                  }
+                  if (listController.currentTag == e) {
+                    listController.currentTag = null;
+                  } else {
+                    listController.currentTag = e;
+                  }
+                  easyRefreshController.callRefresh();
+                });
+              }),
+            ),
+          ).intoContainer(height: $(48), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
+        ],
+      ),
+    ).intoContainer(
+      padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()),
+      height: headerHeight,
+      color: ColorConstant.BackgroundColorBlur,
+    )).intoGestureDetector(onTap: () {
       listController.scrollController.jumpTo(0);
     });
   }
 
   Widget buildRefreshList(DiscoveryListController listController) {
-    return Column(
-      children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: $(15)),
-          child: Row(
-            children: listController.tags.transfer((e, index) {
-              bool checked = listController.currentTag == e;
-              return Text(
-                e.title,
-                style: TextStyle(
-                  color: checked ? Color(0xff3e60ff) : Colors.white,
-                  fontSize: $(13),
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
-                ),
-              )
-                  .intoContainer(
-                margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)),
-                padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(7)),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  color: Color(0xff1b1b1b),
-                  border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
-                ),
-              )
-                  .intoGestureDetector(onTap: () {
-                if (listController.listLoading) {
-                  return;
-                }
-                if (listController.currentTag == e) {
-                  listController.currentTag = null;
-                } else {
-                  listController.currentTag = e;
-                }
-                easyRefreshController.callRefresh();
-              });
-            }),
-          ),
-        ).intoContainer(height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
-        Expanded(
-            child: EasyRefresh.custom(
-          controller: easyRefreshController,
-          scrollController: listController.scrollController,
-          enableControlFinishRefresh: true,
-          enableControlFinishLoad: false,
-          emptyWidget: listController.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
-          onRefresh: () async {
-            listController.onLoadFirstPage().then((value) {
-              easyRefreshController.finishRefresh();
-              easyRefreshController.finishLoad(noMore: value);
-            });
-          },
-          onLoad: () async {
-            listController.onLoadMorePage().then((value) {
-              easyRefreshController.finishLoad(noMore: value);
-            });
-          },
-          slivers: [
-            SliverList(
-                delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                var data = listController.dataList[index];
-                if (data.visible) {
-                  return Obx(() => DiscoveryListCard(
-                        data: data.data!,
-                        liked: data.liked.value,
-                        hasLine: index != 0,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
-                              settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                            ),
-                          );
-                        },
-                        onCommentTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
-                              settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                            ),
-                          );
-                        },
-                        onLikeTap: (liked) async {
-                          if (userManager.isNeedLogin) {
-                            userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
-                            return liked;
+    return EasyRefresh.custom(
+      controller: easyRefreshController,
+      scrollController: listController.scrollController,
+      enableControlFinishRefresh: true,
+      enableControlFinishLoad: false,
+      emptyWidget: listController.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
+      onRefresh: () async {
+        listController.onLoadFirstPage().then((value) {
+          easyRefreshController.finishRefresh();
+          easyRefreshController.finishLoad(noMore: value);
+        });
+      },
+      onLoad: () async {
+        listController.onLoadMorePage().then((value) {
+          easyRefreshController.finishLoad(noMore: value);
+        });
+      },
+      slivers: [
+        SliverList(
+            delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            var data = listController.dataList[index];
+            if (data.visible) {
+              return Obx(() => DiscoveryListCard(
+                    data: data.data!,
+                    liked: data.liked.value,
+                    hasLine: index != 0,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
+                          settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                        ),
+                      );
+                    },
+                    onCommentTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
+                          settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                        ),
+                      );
+                    },
+                    onLikeTap: (liked) async {
+                      if (userManager.isNeedLogin) {
+                        userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                        return liked;
+                      }
+                      bool result;
+                      listController.likeLocalAddAlready.value = true;
+                      if (liked) {
+                        data.data!.likes--;
+                        listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
+                          if (value == null) {
+                            listController.likeLocalAddAlready.value = false;
                           }
-                          bool result;
-                          listController.likeLocalAddAlready.value = true;
-                          if (liked) {
-                            data.data!.likes--;
-                            listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
-                              if (value == null) {
-                                listController.likeLocalAddAlready.value = false;
-                              }
-                            });
-                            result = false;
-                            data.liked.value = false;
-                          } else {
-                            data.data!.likes++;
-                            listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
-                              if (value == null) {
-                                listController.likeLocalAddAlready.value = false;
-                              }
-                            });
-                            result = true;
-                            data.liked.value = true;
+                        });
+                        result = false;
+                        data.liked.value = false;
+                      } else {
+                        data.data!.likes++;
+                        listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
+                          if (value == null) {
+                            listController.likeLocalAddAlready.value = false;
                           }
-                          return result;
-                        },
-                        ignoreLikeBtn: listController.likeLocalAddAlready.value,
-                      ));
-                } else {
-                  return SizedBox.shrink();
-                }
-              },
-              childCount: listController.dataList.length,
-            ))
-          ],
-        )),
+                        });
+                        result = true;
+                        data.liked.value = true;
+                      }
+                      return result;
+                    },
+                    ignoreLikeBtn: listController.likeLocalAddAlready.value,
+                  ));
+            } else {
+              return SizedBox.shrink();
+            }
+          },
+          childCount: listController.dataList.length,
+        ))
       ],
-    ).intoContainer(
-        margin: EdgeInsets.only(
-      top: headerHeight,
-      bottom: $(30),
-    ));
+    ).intoContainer(margin: EdgeInsets.only(top: headerHeight));
   }
 
   String getStyle(
@@ -410,34 +352,4 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class MyVerticalDragGestureRecognizer extends VerticalDragGestureRecognizer {
-  bool needDrag = true;
-  GestureDragStartCallback? onDragStart;
-  GestureDragUpdateCallback? onDragUpdate;
-  GestureDragEndCallback? onDragEnd;
-
-  MyVerticalDragGestureRecognizer() {
-    this.onStart = (details) {
-      if (needDrag) {
-        onDragStart?.call(details);
-      }
-    };
-    this.onUpdate = (details) {
-      if (needDrag) {
-        onDragUpdate?.call(details);
-      }
-    };
-    this.onEnd = (details) {
-      if (needDrag) {
-        onDragEnd?.call(details);
-      }
-    };
-  }
-
-  @override
-  rejectGesture(int pointer) {
-    acceptGesture(pointer);
-  }
 }

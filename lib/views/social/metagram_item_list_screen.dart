@@ -1,6 +1,24 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/gallery_saver.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
+import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/social/metagram_controller.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'edit/metagram_item_edit_screen.dart';
 import 'widget/metagram_list_card.dart';
@@ -12,7 +30,7 @@ class MetagramItemListScreen extends StatefulWidget {
   State<MetagramItemListScreen> createState() => _MetagramItemListScreenState();
 }
 
-class _MetagramItemListScreenState extends State<MetagramItemListScreen> {
+class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
   MetagramController controller = Get.find<MetagramController>();
 
   @override
@@ -25,8 +43,60 @@ class _MetagramItemListScreenState extends State<MetagramItemListScreen> {
     });
   }
 
+  void shareOutImage(List<DiscoveryResource> items) async {
+    await showLoading();
+    UserManager userManager = AppDelegate.instance.getManager();
+    var originFile = await SyncDownloadImage(url: items.last.url!, type: getFileType(items.last.url!).fileImageType).getImage();
+    var resultFile = await SyncDownloadImage(url: items.first.url!, type: getFileType(items.first.url!).fileImageType).getImage();
+    if (originFile == null || resultFile == null) {
+      await hideLoading();
+      CommonExtension().showToast('Image Load Failed');
+      return;
+    }
+    var uint8list = await ImageUtils.printAnotherMeData(originFile, resultFile, '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    await hideLoading();
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+    ShareScreen.startShare(context,
+        backgroundColor: Color(0x77000000),
+        style: 'Metagram',
+        image: base64Encode(uint8list),
+        isVideo: false,
+        originalUrl: null,
+        effectKey: 'Me-taverse', onShareSuccess: (platform) {
+      Events.metaverseCompleteShare(source: 'metagram', platform: platform, type: 'image');
+    });
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+  }
+
+  void saveImage(List<DiscoveryResource> items) async {
+    await showLoading();
+    UserManager userManager = AppDelegate.instance.getManager();
+    var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+    var saveFileName = EncryptUtil.encodeMd5('${items.last.url}${items.first.url}');
+    var imgPath = path + '${saveFileName}.png';
+    if (!File(imgPath).existsSync()) {
+      var originFile = await SyncDownloadImage(url: items.last.url!, type: getFileType(items.last.url!).fileImageType).getImage();
+      var resultFile = await SyncDownloadImage(url: items.first.url!, type: getFileType(items.first.url!).fileImageType).getImage();
+      if (originFile == null || resultFile == null) {
+        await hideLoading();
+        CommonExtension().showToast('Image Load Failed');
+        return;
+      }
+      var uint8list = await ImageUtils.printAnotherMeData(originFile, resultFile, '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      var list = uint8list.toList();
+      await File(imgPath).writeAsBytes(list);
+    }
+    await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+    await hideLoading();
+    Events.metaverseCompleteDownload(type: 'image');
+    CommonExtension().showImageSavedOkToast(context);
+    delay(() {
+      userManager.rateNoticeOperator.onSwitch(context);
+    }, milliseconds: 2000);
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       appBar: AppNavigationBar(backgroundColor: ColorConstant.BackgroundColor),
@@ -40,13 +110,21 @@ class _MetagramItemListScreenState extends State<MetagramItemListScreen> {
                 var data = controller.data!.rows[index];
                 return MetagramListCard(
                   data: data,
-                  onEditTap: () {
+                  onEditTap: (List<List<DiscoveryResource>> items, int index) {
                     Navigator.of(context)
                         .push(MaterialPageRoute(
-                          settings: RouteSettings(name: "/MetagramItemEditScreen"),
-                          builder: (context) => MetagramItemEditScreen(entity: data),
-                        ))
-                        .then((value) {});
+                      settings: RouteSettings(name: "/MetagramItemEditScreen"),
+                      builder: (context) => MetagramItemEditScreen(entity: data, items: items, index: index),
+                    ))
+                        .then((value) {
+                      controller.update();
+                    });
+                  },
+                  onDownloadTap: (List<DiscoveryResource> items) {
+                    saveImage(items);
+                  },
+                  onShareOutTap: (List<DiscoveryResource> items) {
+                    shareOutImage(items);
                   },
                 ).intoContainer(margin: EdgeInsets.only(bottom: index == controller.data!.rows.length - 1 ? $(400) : $(15)));
               });

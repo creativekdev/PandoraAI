@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:skeletons/skeletons.dart';
 
@@ -15,10 +16,13 @@ class MetagramCard extends StatelessWidget {
 
   Function(MetagramItemEntity entity, int index) onItemClick;
 
+  bool metaProcessing;
+
   MetagramCard({
     super.key,
     this.entity,
     required this.onItemClick,
+    required this.metaProcessing,
   }) {
     if (entity != null && entity!.socialPostPage != null) {
       userAvatars = entity!.socialPostPage!.coverImage?.split(',');
@@ -94,8 +98,6 @@ class MetagramCard extends StatelessWidget {
           width: $(92),
           height: $(92),
           images: userAvatars!,
-          loopDelay: 500,
-          duration: (entity!.rows.length + 1) * 1000,
         ),
       );
     }
@@ -163,21 +165,46 @@ class MetagramCard extends StatelessWidget {
         ).intoContainer(margin: EdgeInsets.only(top: $(1))),
       ).intoContainer(height: height);
     } else {
+      List<Widget> children = entity!.rows.transfer(
+        (e, index) {
+          var blinkImage = BlinkImage(
+            images: e.resourceList().filter((t) => t.type == 'image').map((e) => e.url!).toList(),
+            width: imageWidth,
+            height: imageWidth,
+          );
+          if (e.resourceList().length > 2) {
+            return Stack(
+              children: [
+                blinkImage,
+                Positioned(
+                  child: Image.asset(
+                    Images.ic_metagram_stack,
+                    width: $(20),
+                  ),
+                  top: $(4),
+                  right: $(4),
+                ),
+              ],
+            ).intoGestureDetector(onTap: () {
+              onItemClick.call(e, index);
+            });
+          } else {
+            return blinkImage.intoGestureDetector(onTap: () {
+              onItemClick.call(e, index);
+            });
+          }
+        },
+      );
+      if (metaProcessing) {
+        children.add(SkeletonAvatar(
+          style: SkeletonAvatarStyle(width: imageWidth, height: imageWidth),
+        ));
+      }
       return Wrap(
         alignment: WrapAlignment.start,
         spacing: $(1),
         runSpacing: $(1),
-        children: entity!.rows.transfer(
-          (e, index) => BlinkImage(
-            images: e.resourceList().filter((t) => t.type == 'image').map((e) => e.url!).toList().reversed.toList(),
-            width: imageWidth,
-            height: imageWidth,
-            loopDelay: ((index + 1) % (entity!.rows.length + 1)) * 1000 + 500,
-            duration: (entity!.rows.length + 1) * 1000,
-          ).intoGestureDetector(onTap: () {
-            onItemClick.call(e, index);
-          }),
-        ),
+        children: children,
       ).intoContainer(width: double.maxFinite, padding: EdgeInsets.symmetric(horizontal: $(15)));
     }
   }

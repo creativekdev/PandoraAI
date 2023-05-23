@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:skeletons/skeletons.dart';
 
 class BlinkImage extends StatefulWidget {
   List<String> images;
@@ -16,8 +16,8 @@ class BlinkImage extends StatefulWidget {
     required this.images,
     required this.width,
     required this.height,
-    this.loopDelay = 3000,
-    required this.duration,
+    this.loopDelay = 2000,
+    this.duration = 4000,
   }) : super(key: key);
 
   @override
@@ -30,43 +30,23 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
   late double width;
   late double height;
   int cursor = 0;
-  TimerUtil? timer;
   late int loopDelay;
   late int duration;
+  late Animation<double> _iconAnimation;
 
   @override
   void initState() {
     super.initState();
     initData();
-    timer = TimerUtil()
-      ..setInterval(duration)
-      ..setOnTimerTickCallback(
-        (millisUntilFinished) {
-          if (mounted && _controller?.status == AnimationStatus.dismissed) {
-            _controller?.forward();
-          }
-        },
-      );
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
-    _controller?.addStatusListener((status) {
-      if (images.length < 2) {
-        return;
-      }
-      if (status == AnimationStatus.completed) {
-        // setState(() {
-        //   cursor = cursor.next(max: images.length - 1);
-        // });
-        // _controller?.reset();
-      }
-    });
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: duration));
+    _iconAnimation = TweenSequence([
+      TweenSequenceItem(tween: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeIn)), weight: 30),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.0), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.0), weight: 20),
+    ]).animate(_controller!);
     if (images.length >= 2) {
-      loop();
+      delay(() => _controller?.forward(), milliseconds: loopDelay);
     }
-  }
-
-  loop() {
-    timer?.cancel();
-    delay(() => timer?.startTimer(), milliseconds: loopDelay);
   }
 
   void initData() {
@@ -81,17 +61,12 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
   void didUpdateWidget(covariant BlinkImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     initData();
-    if (images.length >= 2) {
-      loop();
-    }
   }
 
   @override
   void dispose() {
     _controller?.dispose();
     _controller = null;
-    timer?.cancel();
-    timer = null;
     super.dispose();
   }
 
@@ -106,34 +81,24 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
     return Stack(
       children: [
         AnimatedBuilder(
-          animation: _controller!,
+          animation: _iconAnimation,
           builder: (context, child) {
             return Opacity(
               child: child,
-              opacity: _controller!.value,
+              opacity: 1 - _iconAnimation.value,
             );
           },
-          child: CachedNetworkImageUtils.custom(
-            context: context,
-            imageUrl: images[cursor],
-            width: width,
-            height: height,
-          ),
+          child: buildImage(context, images[cursor]),
         ),
         AnimatedBuilder(
           animation: _controller!,
           builder: (context, child) {
             return Opacity(
               child: child,
-              opacity: 1 - _controller!.value,
+              opacity: _iconAnimation.value,
             );
           },
-          child: CachedNetworkImageUtils.custom(
-            context: context,
-            imageUrl: images[cursor.next(max: images.length - 1)],
-            width: width,
-            height: height,
-          ),
+          child: buildImage(context, images[cursor.next(max: images.length - 1)]),
         ),
       ],
     ).intoContainer(
@@ -142,14 +107,17 @@ class _BlinkImageState extends State<BlinkImage> with SingleTickerProviderStateM
     );
   }
 
-  Widget buildImage(BuildContext context, String url) {
-    return CachedNetworkImageUtils.custom(
+  Widget buildImage(BuildContext context, String url) => CachedNetworkImageUtils.custom(
       context: context,
+      useOld: false,
       imageUrl: url,
       width: width,
       height: height,
-    );
-  }
+      placeholder: (context, url) {
+        return SkeletonAvatar(
+          style: SkeletonAvatarStyle(width: width, height: height),
+        );
+      });
 }
 
 extension _CursorEx on int {

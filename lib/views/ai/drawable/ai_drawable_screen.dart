@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -16,13 +17,16 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable_result_screen.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable_opt.dart';
 import 'package:cartoonizer/views/input/real_time_input_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AiDrawableScreen extends StatefulWidget {
   DrawableRecord? record;
@@ -70,13 +74,13 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       setState(() {});
       if (widget.record != null) {
         delay(() {
-          toResultWithoutCheck();
+          toResultWithoutCheck(fromCamera: false);
         }, milliseconds: 200);
       }
     });
   }
 
-  toResult() async {
+  toResult({required bool fromCamera}) async {
     showLoading().whenComplete(() async {
       var aiDrawLimitEntity = await CartoonizerApi().getAiDrawLimit();
       if (aiDrawLimitEntity == null) {
@@ -95,14 +99,14 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             showLimitDialog(context, type);
           });
         } else {
-          toResultWithoutCheck();
+          toResultWithoutCheck(fromCamera: fromCamera);
         }
       }
     });
   }
 
-  toResultWithoutCheck() {
-    drawableController.getImage(screenShotScale: screenShotScale).then((value) async {
+  toResultWithoutCheck({required bool fromCamera}) {
+    drawableController.getImage(screenShotScale: screenShotScale, fromCamera: fromCamera).then((value) async {
       var key = EncryptUtil.encodeMd5(DrawableRecord(activePens: drawableController.activePens).toString());
       var uploadPath = cacheManager.storageOperator.recordAiDrawDir.path + key + '.jpg';
       var uploadFile = File(uploadPath);
@@ -290,7 +294,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
                 S.of(context).done,
                 style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500, fontSize: $(17), color: ColorConstant.aiDrawBlue),
               ).intoContainer(padding: EdgeInsets.only(left: $(6), top: $(8), bottom: $(8)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                toResult();
+                toResult(fromCamera: false);
               }).visibility(visible: !drawableController.isEmpty.value),
             )
           ],
@@ -341,7 +345,13 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             right: $(15),
             top: height - $(10),
           ),
-          DrawableOpt(key: optKey, controller: drawableController),
+          DrawableOpt(
+            key: optKey,
+            controller: drawableController,
+            onCameraTap: () {
+              choosePhoto(context, drawableController);
+            },
+          ),
         ],
       ),
       resizeToAvoidBottomInset: false,
@@ -454,5 +464,20 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
         ],
       ).customDialogStyle(color: Colors.white),
     );
+  }
+
+  void choosePhoto(BuildContext context, DrawableController drawableController) {
+    AnotherMe.checkPermissions().then((value) {
+      if (value) {
+        ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear).then((value) {
+          if (value != null) {
+            drawableController.cameraFile = File(value.path);
+            toResult(fromCamera: true);
+          }
+        });
+      } else {
+        showPhotoLibraryPermissionDialog(context);
+      }
+    });
   }
 }

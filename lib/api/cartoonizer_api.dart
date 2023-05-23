@@ -21,6 +21,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
+import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
@@ -585,5 +586,11 @@ class CartoonizerApi extends RetryAbleRequester {
       result[value.platform] = list;
     }
     return result;
+  }
+
+  Future<BaseEntity?> updateMetagram(int id, String resources) async {
+    return await post('/social_post/update/${id}', params: {
+      'resources': resources,
+    });
   }
 }

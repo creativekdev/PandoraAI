@@ -6,18 +6,69 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
+import 'package:skeletons/skeletons.dart';
 
-class MetagramListCard extends StatelessWidget {
+class MetagramListCard extends StatefulWidget {
   MetagramItemEntity data;
-  late List<DiscoveryResource> resourceList;
-  Function onEditTap;
+  Function(List<List<DiscoveryResource>> items, int index) onEditTap;
+  Function(List<DiscoveryResource> items) onDownloadTap;
+  Function(List<DiscoveryResource> items) onShareOutTap;
 
   MetagramListCard({
     super.key,
     required this.data,
     required this.onEditTap,
-  }) {
+    required this.onDownloadTap,
+    required this.onShareOutTap,
+  });
+
+  @override
+  MetagramListState createState() {
+    return MetagramListState();
+  }
+}
+
+class MetagramListState extends State<MetagramListCard> {
+  late MetagramItemEntity data;
+  late Function(List<List<DiscoveryResource>> items, int index) onEditTap;
+  late Function(List<DiscoveryResource> items) onDownloadTap;
+  late Function(List<DiscoveryResource> items) onShareOutTap;
+
+  late List<DiscoveryResource> resourceList;
+  late List<List<DiscoveryResource>> items;
+
+  double maxHeight = 0;
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
+  @override
+  void didUpdateWidget(covariant MetagramListCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initData();
+  }
+
+  initData() {
+    data = widget.data;
+    onEditTap = widget.onEditTap;
+    onDownloadTap = widget.onDownloadTap;
+    onShareOutTap = widget.onShareOutTap;
     resourceList = data.resourceList();
+    items = [];
+    for (var value in resourceList) {
+      List<DiscoveryResource> l;
+      if (items.isEmpty || items.last.length == 2) {
+        l = [];
+        l.add(value);
+        items.add(l);
+      } else {
+        items.last.add(value);
+      }
+    }
   }
 
   @override
@@ -28,29 +79,7 @@ class MetagramListCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Stack(
-          children: [
-            CachedNetworkImageUtils.custom(
-              context: context,
-              imageUrl: resourceList.last.url!,
-              fit: BoxFit.cover,
-            ),
-            Positioned(
-              child: ClipRRect(
-                      child: CachedNetworkImageUtils.custom(
-                        context: context,
-                        imageUrl: resourceList.first.url!,
-                        fit: BoxFit.cover,
-                        width: $(70),
-                      ),
-                      borderRadius: BorderRadius.circular($(6)))
-                  .intoContainer(padding: EdgeInsets.all($(2)))
-                  .intoMaterial(borderRadius: BorderRadius.circular($(8)), color: Colors.white, elevation: 4),
-              top: $(15),
-              left: $(15),
-            ),
-          ],
-        ),
+        buildItems(context),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,17 +121,27 @@ class MetagramListCard extends StatelessWidget {
                   ),
                   SizedBox(width: $(12)),
                   Image.asset(Images.ic_metagram_shareout, width: $(26)).intoGestureDetector(onTap: () {
-                    //todo
+                    if (items.isEmpty) {
+                      return;
+                    }
+                    onShareOutTap.call(items[currentIndex]);
                   }),
                 ],
                 crossAxisAlignment: CrossAxisAlignment.start,
               ),
             ),
-            Container(
-              width: 80,
-              height: 22,
-              color: Colors.red,
-            ),
+            items.length > 1
+                ? Row(
+                    children: items.transfer(
+                      (e, index) => Container(
+                        height: $(6),
+                        width: $(6),
+                        margin: EdgeInsets.symmetric(horizontal: $(4)),
+                        decoration: BoxDecoration(color: currentIndex == index ? Colors.white : Colors.grey, borderRadius: BorderRadius.circular($(6))),
+                      ),
+                    ),
+                  ).intoContainer(margin: EdgeInsets.only(top: $(8)))
+                : Container(),
             Expanded(
                 child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +153,10 @@ class MetagramListCard extends StatelessWidget {
                 }),
                 SizedBox(width: $(12)),
                 Image.asset(Images.ic_metagram_download, width: $(26)).intoGestureDetector(onTap: () {
-                  //todo
+                  if (items.isEmpty) {
+                    return;
+                  }
+                  onDownloadTap.call(items[currentIndex]);
                 }),
               ],
             )),
@@ -149,7 +191,7 @@ class MetagramListCard extends StatelessWidget {
             alignment: Alignment.center,
           ),
         ).intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8))).intoGestureDetector(onTap: () {
-          onEditTap.call();
+          onEditTap.call(items, currentIndex);
         }).intoContainer(
           margin: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
         ),
@@ -167,6 +209,66 @@ class MetagramListCard extends StatelessWidget {
         ),
         TitleTextWidget(data.comments.socialize, Colors.white, FontWeight.w400, $(12)),
       ],
+    );
+  }
+
+  Widget buildItems(BuildContext context) {
+    if (items.length == 1) {
+      return buildOneImage(context, items.first);
+    } else {
+      return PageView(
+        onPageChanged: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        children: items.map((e) => buildOneImage(context, e, needListenSize: true)).toList(),
+      ).intoContainer(height: maxHeight, width: double.maxFinite);
+    }
+  }
+
+  Widget buildOneImage(BuildContext context, List<DiscoveryResource> items, {bool needListenSize = false}) {
+    var child = Stack(
+      children: [
+        CachedNetworkImageUtils.custom(
+            context: context,
+            useOld: false,
+            imageUrl: items.first.url!,
+            fit: BoxFit.cover,
+            placeholder: (context, url) {
+              return SkeletonAvatar(
+                style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: maxHeight == 0 ? ScreenUtil.screenSize.width : maxHeight),
+              );
+            }),
+        Positioned(
+          child: ClipRRect(
+                  child: CachedNetworkImageUtils.custom(
+                    useOld: false,
+                    context: context,
+                    imageUrl: items.last.url!,
+                    fit: BoxFit.cover,
+                    width: $(70),
+                    height: $(70),
+                  ),
+                  borderRadius: BorderRadius.circular($(6)))
+              .intoContainer(padding: EdgeInsets.all($(2)))
+              .intoMaterial(borderRadius: BorderRadius.circular($(8)), color: Colors.white, elevation: 4),
+          top: $(15),
+          left: $(15),
+        ),
+      ],
+    );
+    if (!needListenSize) {
+      return child;
+    }
+    return SingleChildScrollView(
+      child: child.listenSizeChanged(onSizeChanged: (size) {
+        if (size.height > maxHeight) {
+          setState(() {
+            maxHeight = size.height;
+          });
+        }
+      }),
     );
   }
 }

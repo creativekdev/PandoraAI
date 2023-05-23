@@ -110,7 +110,7 @@ class MetagramItemEntity {
   List<DiscoveryResource> resourceList() {
     try {
       var json = jsonDecode(resources ?? '');
-      return (json as List<dynamic>).map((e) => jsonConvert.convert<DiscoveryResource>(e)!).toList().reversed.toList();
+      return (json as List<dynamic>).map((e) => jsonConvert.convert<DiscoveryResource>(e)!).toList();
     } on FormatException catch (e) {
       return [];
     }

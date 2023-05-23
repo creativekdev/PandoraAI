@@ -121,7 +121,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
       case HomeCardType.ai_avatar:
         Avatar.openFromHome(context);
         break;
-      case HomeCardType.text2image:
+      case HomeCardType.txt2img:
         Txt2img.open(context, source: 'home_page');
         break;
       case HomeCardType.scribble:

@@ -25,3 +25,18 @@ Map<String, dynamic> $PushExtraEntityToJson(PushExtraEntity entity) {
 	data['effect'] = entity.effect;
 	return data;
 }
+
+PushModuleExtraEntity $PushModuleExtraEntityFromJson(Map<String, dynamic> json) {
+	final PushModuleExtraEntity pushModuleExtraEntity = PushModuleExtraEntity();
+	final String? type = jsonConvert.convert<String>(json['type']);
+	if (type != null) {
+		pushModuleExtraEntity.type = type;
+	}
+	return pushModuleExtraEntity;
+}
+
+Map<String, dynamic> $PushModuleExtraEntityToJson(PushModuleExtraEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['type'] = entity.type;
+	return data;
+}

@@ -117,7 +117,7 @@ class EffectDataController extends GetxController {
       var key = keyList[i];
       tabList.add(ChooseTabInfo(title: data!.localeName(key), key: key));
       List<EffectModel> effectList = data!.effectList(key);
-      if (key == 'face') {
+      if (key == 'face-de') {//deprecated
         // flat tow-level data
         for (int j = 0; j < effectList.length; j++) {
           EffectModel effectModel = effectList[j];

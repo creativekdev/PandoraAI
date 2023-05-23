@@ -19,3 +19,21 @@ class PushExtraEntity {
     return jsonEncode(this);
   }
 }
+
+@JsonSerializable()
+class PushModuleExtraEntity {
+  String type;
+
+  PushModuleExtraEntity({
+    this.type = '',
+  });
+
+  factory PushModuleExtraEntity.fromJson(Map<String, dynamic> json) => $PushModuleExtraEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $PushModuleExtraEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}

@@ -128,7 +128,12 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
             .then((value) {
           if (value != null) {
             recentController.onAiDrawUsed(DrawableRecord(
-                text: drawableController.text.value, activePens: drawableController.activePens, checkMatePens: drawableController.checkmatePens, resultPaths: value.filePath));
+              text: drawableController.text.value,
+              activePens: drawableController.activePens,
+              checkMatePens: drawableController.checkmatePens,
+              resultPaths: value.filePath,
+              cameraFilePath: filePath,
+            ));
             drawableController.resultFilePaths = value.filePath;
             resultFilePath = drawableController.resultFilePaths.first;
             progressBarController.loadComplete();

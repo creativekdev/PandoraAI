@@ -4,6 +4,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
@@ -61,12 +62,12 @@ class AppFeatureOperator {
   }
 
   onFeatureTap(BuildContext context, AppFeaturePayload? payload) {
-    var target = _FeatureUtils.build(payload?.target ?? '');
+    var target = HomeCardTypeUtils.build(payload?.target ?? '');
     switch (target) {
-      case FeatureType.txt2img:
+      case HomeCardType.txt2img:
         Txt2img.open(context, source: 'in_app_messaging');
         break;
-      case FeatureType.anotherme:
+      case HomeCardType.anotherme:
         AnotherMe.checkPermissions().then((value) async {
           if (value) {
             AnotherMe.open(context, source: 'in_app_messaging');
@@ -75,7 +76,7 @@ class AppFeatureOperator {
           }
         });
         break;
-      case FeatureType.cartoonize:
+      case HomeCardType.cartoonize:
         var split = payload!.data?.split(',');
         InitPos pos = InitPos();
         if (split != null && split.length >= 2) {
@@ -90,43 +91,14 @@ class AppFeatureOperator {
           itemPos: pos.itemPos,
         );
         break;
-      case FeatureType.ai_avatar:
+      case HomeCardType.ai_avatar:
         Avatar.open(context, source: 'in_app_messaging');
         break;
-      case FeatureType.scribble:
+      case HomeCardType.scribble:
         AiDrawable.open(context, source: 'in_app_messaging');
         break;
       default:
         break;
-    }
-  }
-}
-
-enum FeatureType {
-  txt2img,
-  anotherme,
-  cartoonize,
-  ai_avatar,
-  scribble,
-  UNDEFINED,
-}
-
-class _FeatureUtils {
-  static FeatureType build(String type) {
-    switch (type.toLowerCase()) {
-      case 'txt2img':
-        return FeatureType.txt2img;
-      case 'anotherme':
-      case 'another_me':
-        return FeatureType.anotherme;
-      case 'cartoonize':
-        return FeatureType.cartoonize;
-      case 'ai_avatar':
-        return FeatureType.ai_avatar;
-      case 'scribble':
-        return FeatureType.scribble;
-      default:
-        return FeatureType.UNDEFINED;
     }
   }
 }
@@ -146,14 +118,14 @@ class AppFeaturePage extends StatefulWidget {
 class _AppFeaturePageState extends State<AppFeaturePage> {
   late AppFeatureEntity entity;
   AppFeaturePayload? feature;
-  late FeatureType type;
+  late HomeCardType type;
 
   @override
   void initState() {
     super.initState();
     entity = widget.entity;
     feature = entity.feature();
-    type = _FeatureUtils.build(feature?.target ?? '');
+    type = HomeCardTypeUtils.build(feature?.target ?? '');
   }
 
   @override
@@ -183,7 +155,7 @@ class _AppFeaturePageState extends State<AppFeaturePage> {
         ),
         Positioned(
           child: Text(
-            type == FeatureType.UNDEFINED ? S.of(context).ok : S.of(context).try_it_now,
+            type == HomeCardType.UNDEFINED ? S.of(context).ok : S.of(context).try_it_now,
             style: TextStyle(
               color: ColorConstant.White,
               fontSize: $(18),

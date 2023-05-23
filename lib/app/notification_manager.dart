@@ -9,7 +9,12 @@ import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/firebase_options.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/avatar/avatar.dart';
+import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
@@ -124,7 +129,12 @@ class NotificationManager extends BaseManager {
         itemPos: pos.itemPos,
         categoryPos: pos.categoryPos,
       );
-    } else {
+    } else if(message.data.containsKey('type')) {
+      Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
+      var pushModuleEntity = PushModuleExtraEntity.fromJson(message.data);
+      EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
+      onNotificationTap(HomeCardTypeUtils.build(pushModuleEntity.type));
+    } else{
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       try {
         Get.find<MsgListController>();
@@ -136,6 +146,34 @@ class NotificationManager extends BaseManager {
       }
     }
     return null;
+  }
+
+  onNotificationTap(HomeCardType type) {
+    switch (type) {
+      case HomeCardType.txt2img:
+        Txt2img.open(Get.context!, source: 'push_click');
+        break;
+      case HomeCardType.anotherme:
+        AnotherMe.checkPermissions().then((value) async {
+          if (value) {
+            AnotherMe.open(Get.context!, source: 'push_click');
+          } else {
+            AnotherMe.permissionDenied(Get.context!);
+          }
+        });
+        break;
+      case HomeCardType.cartoonize:
+        // nothing
+        break;
+      case HomeCardType.ai_avatar:
+        Avatar.open(Get.context!, source: 'push_click');
+        break;
+      case HomeCardType.scribble:
+        AiDrawable.open(Get.context!, source: 'push_click');
+        break;
+      default:
+        break;
+    }
   }
 }
 
