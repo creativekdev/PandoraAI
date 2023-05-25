@@ -4,6 +4,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 import 'package:skeletons/skeletons.dart';
@@ -13,6 +14,9 @@ class MetagramListCard extends StatefulWidget {
   Function(List<List<DiscoveryResource>> items, int index) onEditTap;
   Function(List<DiscoveryResource> items) onDownloadTap;
   Function(List<DiscoveryResource> items) onShareOutTap;
+  Function() onCommentsTap;
+  OnLikeTap onLikeTap;
+  bool liked;
 
   MetagramListCard({
     super.key,
@@ -20,6 +24,9 @@ class MetagramListCard extends StatefulWidget {
     required this.onEditTap,
     required this.onDownloadTap,
     required this.onShareOutTap,
+    required this.onLikeTap,
+    required this.liked,
+    required this.onCommentsTap,
   });
 
   @override
@@ -33,7 +40,9 @@ class MetagramListState extends State<MetagramListCard> {
   late Function(List<List<DiscoveryResource>> items, int index) onEditTap;
   late Function(List<DiscoveryResource> items) onDownloadTap;
   late Function(List<DiscoveryResource> items) onShareOutTap;
-
+  late Function() onCommentsTap;
+  late OnLikeTap onLikeTap;
+  late bool liked;
   late List<DiscoveryResource> resourceList;
   late List<List<DiscoveryResource>> items;
 
@@ -57,6 +66,9 @@ class MetagramListState extends State<MetagramListCard> {
     onEditTap = widget.onEditTap;
     onDownloadTap = widget.onDownloadTap;
     onShareOutTap = widget.onShareOutTap;
+    onLikeTap = widget.onLikeTap;
+    onCommentsTap = widget.onCommentsTap;
+    liked = widget.liked;
     resourceList = data.resourceList();
     items = [];
     for (var value in resourceList) {
@@ -87,7 +99,7 @@ class MetagramListState extends State<MetagramListCard> {
               child: Row(
                 children: [
                   buildComments(context).intoGestureDetector(onTap: () {
-                    //todo
+                    onCommentsTap.call();
                   }),
                   SizedBox(width: $(12)),
                   LikeButton(
@@ -101,7 +113,7 @@ class MetagramListState extends State<MetagramListCard> {
                       dotPrimaryColor: Color(0xfffc2a2a),
                       dotSecondaryColor: Color(0xffc30000),
                     ),
-                    // isLiked: controller.liked.value,
+                    isLiked: liked,
                     likeBuilder: (bool isLiked) {
                       return Image.asset(
                         isLiked ? Images.ic_discovery_liked : Images.ic_discovery_like,
@@ -110,7 +122,7 @@ class MetagramListState extends State<MetagramListCard> {
                       );
                     },
                     likeCount: data.likes,
-                    // onTap: (liked) async => await onLikeTap.call(liked),
+                    onTap: (liked) async => await onLikeTap.call(liked),
                     countBuilder: (int? count, bool isLiked, String text) {
                       count ??= 0;
                       return Text(
@@ -120,12 +132,6 @@ class MetagramListState extends State<MetagramListCard> {
                     },
                   ),
                   SizedBox(width: $(12)),
-                  Image.asset(Images.ic_metagram_shareout, width: $(26)).intoGestureDetector(onTap: () {
-                    if (items.isEmpty) {
-                      return;
-                    }
-                    onShareOutTap.call(items[currentIndex]);
-                  }),
                 ],
                 crossAxisAlignment: CrossAxisAlignment.start,
               ),
@@ -148,8 +154,11 @@ class MetagramListState extends State<MetagramListCard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 SizedBox(width: $(12)),
-                Image.asset(Images.ic_share_discovery, width: $(26)).intoGestureDetector(onTap: () {
-                  //todo
+                Image.asset(Images.ic_metagram_shareout, width: $(26)).intoGestureDetector(onTap: () {
+                  if (items.isEmpty) {
+                    return;
+                  }
+                  onShareOutTap.call(items[currentIndex]);
                 }),
                 SizedBox(width: $(12)),
                 Image.asset(Images.ic_metagram_download, width: $(26)).intoGestureDetector(onTap: () {
@@ -263,6 +272,9 @@ class MetagramListState extends State<MetagramListCard> {
     }
     return SingleChildScrollView(
       child: child.listenSizeChanged(onSizeChanged: (size) {
+        if (!mounted) {
+          return;
+        }
         if (size.height > maxHeight) {
           setState(() {
             maxHeight = size.height;

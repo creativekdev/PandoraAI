@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -110,11 +111,40 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                 var data = controller.data!.rows[index];
                 return MetagramListCard(
                   data: data,
+                  onCommentsTap: () {},
+                  liked: data.liked.value,
+                  onLikeTap: (liked) async {
+                    UserManager userManager = AppDelegate.instance.getManager();
+                    if (userManager.isNeedLogin) {
+                      userManager.doOnLogin(context, logPreLoginAction: data.likeId == null ? 'pre_metagram_like' : 'pre_metagram_unlike');
+                      return liked;
+                    }
+                    bool result;
+                    controller.likeLocalAddAlready.value = true;
+                    if (liked) {
+                      data.likes--;
+                      CartoonizerApi().discoveryUnLike(data.id!, data.likeId!).then((value) {
+                        controller.likeLocalAddAlready.value = false;
+                      });
+                      result = false;
+                      data.liked.value = false;
+                    } else {
+                      data.likes++;
+                      CartoonizerApi().discoveryLike(data.id!, source: 'metagram_item_list_page', style: 'metagram').then((value) {
+                        if (value == null) {
+                          controller.likeLocalAddAlready.value = false;
+                        }
+                      });
+                      result = true;
+                      data.liked.value = true;
+                    }
+                    return result;
+                  },
                   onEditTap: (List<List<DiscoveryResource>> items, int index) {
                     Navigator.of(context)
                         .push(MaterialPageRoute(
                       settings: RouteSettings(name: "/MetagramItemEditScreen"),
-                      builder: (context) => MetagramItemEditScreen(entity: data, items: items, index: index),
+                      builder: (context) => MetagramItemEditScreen(entity: data, items: items, index: index, isSelf: controller.isSelf),
                     ))
                         .then((value) {
                       controller.update();
@@ -126,7 +156,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                   onShareOutTap: (List<DiscoveryResource> items) {
                     shareOutImage(items);
                   },
-                ).intoContainer(margin: EdgeInsets.only(bottom: index == controller.data!.rows.length - 1 ? $(400) : $(15)));
+                ).intoContainer(margin: EdgeInsets.only(bottom: $(15)));
               });
         },
         init: Get.find<MetagramController>(),

@@ -6,6 +6,7 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:common_utils/common_utils.dart';
 
 class SocialMediaConnectorApi extends RetryAbleRequester {
   UserManager userManager = AppDelegate().getManager();
@@ -47,7 +48,11 @@ class SocialMediaConnectorApi extends RetryAbleRequester {
       'slug': slug,
     };
     var baseEntity = await get('/social_post_page/get', params: params);
-    return jsonConvert.convert<MetagramPageEntity>(baseEntity?.data['data']);
+    var entity = jsonConvert.convert<MetagramPageEntity>(baseEntity?.data['data']);
+    entity?.rows.forEach((element) {
+      element.liked.value = element.likeId != null;
+    });
+    return entity;
   }
 
   Future<BaseEntity?> startBuildMetagram({required int coreUserId}) async {

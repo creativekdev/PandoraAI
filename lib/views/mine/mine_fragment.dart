@@ -148,7 +148,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 Images.ic_setting_my_discovery,
                 true,
               ).intoGestureDetector(onTap: () {
-                Metagram.open(context, source: 'home_page');
+                Metagram.openBySelf(context, source: 'home_page');
               }).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {

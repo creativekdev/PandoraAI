@@ -14,15 +14,20 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:waterfall_flow/waterfall_flow.dart';
+
+import 'widget/discovery_mg_list_card.dart';
 
 class DiscoveryFragment extends StatefulWidget {
   AppTabId tabId;
@@ -53,16 +58,11 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     super.initState();
     Posthog().screenWithUser(screenName: 'discovery_fragment');
     tabId = widget.tabId;
-    // If the tab ID matches the event data and the list is not loading, call the EasyRefresh controller's callRefresh() method.
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (tabId.id() == event.data && !listController.listLoading) {
         easyRefreshController.callRefresh();
       }
     });
-    initAnimator();
-  }
-
-  void initAnimator() {
     titleHeight = $(36);
     headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(48);
   }
@@ -78,7 +78,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     easyRefreshController.dispose();
     onTabDoubleClickListener.cancel();
     super.dispose();
-    // animationController.dispose();
   }
 
   onLikeTap(DiscoveryListEntity entity) {
@@ -89,41 +88,6 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         hideLoading();
       });
     }
-  }
-
-  // onCommentTap(DiscoveryListEntity entity) {
-  //   Navigator.push(
-  //       context,
-  //       PageRouteBuilder(
-  //         opaque: false,
-  //         pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
-  //           uniqueId: "${entity.id}}",
-  //           hint: '${S.of(context).reply} ${entity.userName}',
-  //           callback: (text) async {
-  //             return createComment(entity, text);
-  //           },
-  //         ),
-  //       ));
-  // }
-
-  Future<bool> createComment(DiscoveryListEntity entity, String comment) async {
-    await showLoading();
-    var baseEntity = await CartoonizerApi().createDiscoveryComment(
-        comment: comment,
-        source: DiscoverySort.newest.value(),
-        style: getStyle(entity),
-        socialPostId: entity.id,
-        onUserExpired: () {
-          userManager.doOnLogin(context, logPreLoginAction: 'token_expired');
-        });
-    await hideLoading();
-    if (baseEntity != null) {
-      CommonExtension().showToast('Comment posted');
-      setState(() {
-        entity.comments++;
-      });
-    }
-    return baseEntity != null;
   }
 
   @override
@@ -185,7 +149,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(7)),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(32),
-                    color: Color(0xff1b1b1b),
+                    color: checked ? Colors.transparent : Color(0xFF37373B),
                     border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
                   ),
                 )
@@ -202,7 +166,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 });
               }),
             ),
-          ).intoContainer(height: $(48), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
+          ).intoContainer(height: $(46), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
         ],
       ),
     ).intoContainer(
@@ -220,6 +184,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       scrollController: listController.scrollController,
       enableControlFinishRefresh: true,
       enableControlFinishLoad: false,
+      cacheExtent: 1000,
       emptyWidget: listController.dataList.isEmpty ? TitleTextWidget('There are no posts yet', ColorConstant.White, FontWeight.normal, $(16)).intoCenter() : null,
       onRefresh: () async {
         listController.onLoadFirstPage().then((value) {
@@ -233,72 +198,106 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         });
       },
       slivers: [
-        SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            var data = listController.dataList[index];
-            if (data.visible) {
-              return Obx(() => DiscoveryListCard(
-                    data: data.data!,
-                    liked: data.liked.value,
-                    hasLine: index != 0,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
-                          settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                        ),
+        (listController.currentTag?.isMetagram ?? false)
+            ? SliverWaterfallFlow(
+                gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: $(15),
+                  mainAxisSpacing: $(15),
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    var data = listController.dataList[index];
+                    if (data.data is SocialPostPageEntity) {
+                      return DiscoveryMgListCard(
+                        data: data.data! as SocialPostPageEntity,
+                        onTap: () {
+                          Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
+                        },
                       );
-                    },
-                    onCommentTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
-                          settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                        ),
-                      );
-                    },
-                    onLikeTap: (liked) async {
-                      if (userManager.isNeedLogin) {
-                        userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
-                        return liked;
-                      }
-                      bool result;
-                      listController.likeLocalAddAlready.value = true;
-                      if (liked) {
-                        data.data!.likes--;
-                        listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
-                          if (value == null) {
-                            listController.likeLocalAddAlready.value = false;
-                          }
-                        });
-                        result = false;
-                        data.liked.value = false;
-                      } else {
-                        data.data!.likes++;
-                        listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
-                          if (value == null) {
-                            listController.likeLocalAddAlready.value = false;
-                          }
-                        });
-                        result = true;
-                        data.liked.value = true;
-                      }
-                      return result;
-                    },
-                    ignoreLikeBtn: listController.likeLocalAddAlready.value,
-                  ));
-            } else {
-              return SizedBox.shrink();
-            }
-          },
-          childCount: listController.dataList.length,
-        ))
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  },
+                  childCount: listController.dataList.length,
+                ))
+            : SliverList(
+                delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  var data = listController.dataList[index];
+                  if (data.data is DiscoveryListEntity) {
+                    if (data.visible) {
+                      return Obx(() => DiscoveryListCard(
+                            data: data.data! as DiscoveryListEntity,
+                            liked: data.liked.value,
+                            hasLine: index != 0,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
+                                  settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                                ),
+                              );
+                            },
+                            onCommentTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
+                                  settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                                ),
+                              );
+                            },
+                            onLikeTap: (liked) async {
+                              if (userManager.isNeedLogin) {
+                                userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                                return liked;
+                              }
+                              bool result;
+                              listController.likeLocalAddAlready.value = true;
+                              if (liked) {
+                                data.data!.likes--;
+                                listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
+                                  if (value == null) {
+                                    listController.likeLocalAddAlready.value = false;
+                                  }
+                                });
+                                result = false;
+                                data.liked.value = false;
+                              } else {
+                                data.data!.likes++;
+                                listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
+                                  if (value == null) {
+                                    listController.likeLocalAddAlready.value = false;
+                                  }
+                                });
+                                result = true;
+                                data.liked.value = true;
+                              }
+                              return result;
+                            },
+                            ignoreLikeBtn: listController.likeLocalAddAlready.value,
+                          ));
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+                childCount: listController.dataList.length,
+              )),
       ],
-    ).intoContainer(margin: EdgeInsets.only(top: headerHeight));
+    ).intoContainer(
+      margin: EdgeInsets.only(
+        top: headerHeight + ((listController.currentTag?.isMetagram ?? false) ? $(8) : 0),
+        left: ((listController.currentTag?.isMetagram ?? false) ? $(15) : 0),
+        right: ((listController.currentTag?.isMetagram ?? false) ? $(15) : 0),
+      ),
+    );
   }
 
   String getStyle(

@@ -4,7 +4,10 @@ import 'package:cartoonizer/Widgets/auth/auth.dart';
 import 'package:cartoonizer/Widgets/auth/auth_api.dart';
 import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/instagram_constant.dart';
+import 'package:cartoonizer/Common/instagram_business_constant.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/InstagramModel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -50,7 +53,7 @@ class PlatformConnectorState extends AppState<_PlatformConnectorPage> {
     super.initState();
     authApi = AuthApi().bindState(this);
     platform = widget.platform;
-    _isWebAuth = platform == ConnectorPlatform.instagram;
+    _isWebAuth = platform == ConnectorPlatform.instagram || platform == ConnectorPlatform.instagramBusiness;
     delay(() {
       switch (platform) {
         case ConnectorPlatform.youtube:
@@ -114,6 +117,7 @@ class PlatformConnectorState extends AppState<_PlatformConnectorPage> {
           });
           break;
         case ConnectorPlatform.instagram:
+        case ConnectorPlatform.instagramBusiness:
           break;
         case ConnectorPlatform.UNDEFINED:
           break;
@@ -132,6 +136,11 @@ class PlatformConnectorState extends AppState<_PlatformConnectorPage> {
       instagram = InstagramModel();
       controller!.loadUrl(
         InstagramConstant.instance.url,
+      );
+    } else if (platform == ConnectorPlatform.instagramBusiness) {
+      instagram = InstagramModel();
+      controller!.loadUrl(
+        InstagramBusinessConstant.instance.url,
       );
     } else if (platform == ConnectorPlatform.tiktok) {}
   }
@@ -173,22 +182,39 @@ class PlatformConnectorState extends AppState<_PlatformConnectorPage> {
   Future<NavigationDecision> onNaviRequest(NavigationRequest request) async {
     if (platform == ConnectorPlatform.instagram) {
       if (request.url.startsWith(InstagramConstant.redirectUri)) {
-        instagram!.getAuthorizationCode(request.url);
+        instagram!.getAuthorizationCode(request.url, false);
         await showLoading();
         var isDone = await instagram!.getTokenAndUserID();
         if (isDone) {
           await instagram!.getUserProfile();
           var baseEntity = await authApi.connectWithInstagram(instagram!.accessToken ?? '');
+          await AppDelegate().getManager<UserManager>().refreshConnections();
           await hideLoading();
           Navigator.of(context).pop(baseEntity != null);
         } else {
-          hideLoading();
+          await hideLoading();
+          Navigator.pop(context, false);
+        }
+        return NavigationDecision.prevent;
+      }
+    } else if (platform == ConnectorPlatform.instagramBusiness) {
+      if (request.url.startsWith(InstagramBusinessConstant.redirectUri)) {
+        instagram!.getAuthorizationCode(request.url, true);
+        await showLoading();
+        var isDone = await instagram!.getTokenAndUserID();
+        if (isDone) {
+          await instagram!.getUserProfile();
+          var baseEntity = await authApi.connectWithInstagramBusiness(instagram!.accessToken ?? '');
+          await AppDelegate().getManager<UserManager>().refreshConnections();
+          await hideLoading();
+          Navigator.of(context).pop(baseEntity != null);
+        } else {
+          await hideLoading();
           Navigator.pop(context, false);
         }
         return NavigationDecision.prevent;
       }
     } else if (platform == ConnectorPlatform.tiktok) {}
-
     return NavigationDecision.navigate;
   }
 }

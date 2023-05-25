@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/common/importFile.dart';
+
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -70,6 +72,14 @@ SocialPostPageEntity $SocialPostPageEntityFromJson(Map<String, dynamic> json) {
 	if (slug != null) {
 		socialPostPageEntity.slug = slug;
 	}
+	final String? type = jsonConvert.convert<String>(json['type']);
+	if (type != null) {
+		socialPostPageEntity.type = type;
+	}
+	final String? previewImages = jsonConvert.convert<String>(json['preview_images']);
+	if (previewImages != null) {
+		socialPostPageEntity.previewImages = previewImages;
+	}
 	final String? created = jsonConvert.convert<String>(json['created']);
 	if (created != null) {
 		socialPostPageEntity.created = created;
@@ -94,6 +104,8 @@ Map<String, dynamic> $SocialPostPageEntityToJson(SocialPostPageEntity entity) {
 	data['status'] = entity.status;
 	data['payload'] = entity.payload;
 	data['slug'] = entity.slug;
+	data['type'] = entity.type;
+	data['preview_images'] = entity.previewImages;
 	data['created'] = entity.created;
 	data['modified'] = entity.modified;
 	data['id'] = entity.id;
@@ -121,6 +133,10 @@ MetagramItemEntity $MetagramItemEntityFromJson(Map<String, dynamic> json) {
 	final int? likes = jsonConvert.convert<int>(json['likes']);
 	if (likes != null) {
 		metagramItemEntity.likes = likes;
+	}
+	final int? likeId = jsonConvert.convert<int>(json['like_id']);
+	if (likeId != null) {
+		metagramItemEntity.likeId = likeId;
 	}
 	final int? realLikes = jsonConvert.convert<int>(json['real_likes']);
 	if (realLikes != null) {
@@ -196,6 +212,7 @@ Map<String, dynamic> $MetagramItemEntityToJson(MetagramItemEntity entity) {
 	data['resources'] = entity.resources;
 	data['text'] = entity.text;
 	data['likes'] = entity.likes;
+	data['like_id'] = entity.likeId;
 	data['real_likes'] = entity.realLikes;
 	data['comments'] = entity.comments;
 	data['ip'] = entity.ip;

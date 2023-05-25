@@ -33,12 +33,14 @@ class MetagramItemEditScreen extends StatefulWidget {
   MetagramItemEntity entity;
   List<List<DiscoveryResource>> items;
   int index;
+  bool isSelf;
 
   MetagramItemEditScreen({
     Key? key,
     required this.entity,
     required this.items,
     required this.index,
+    required this.isSelf,
   }) : super(key: key);
 
   @override
@@ -53,7 +55,8 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(MetagramItemEditController(entity: widget.entity, items: widget.items, index: widget.index));
+    controller = Get.put(MetagramItemEditController(entity: widget.entity, items: widget.items, index: widget.index, isSelf: widget.isSelf));
+    delay(() => generateAgain(controller), milliseconds: 100);
   }
 
   @override
@@ -92,7 +95,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
             )
                 .intoGestureDetector(onTap: () {
               submit(controller);
-            }).offstage(offstage: controller.transResult == null),
+            }).offstage(offstage: controller.transResult == null || !controller.isSelf),
           ),
           body: Column(
             children: [

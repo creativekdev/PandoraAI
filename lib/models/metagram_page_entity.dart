@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/metagram_page_entity.g.dart';
@@ -46,6 +47,9 @@ class SocialPostPageEntity {
   String? status;
   String? payload;
   String? slug;
+  String? type;
+  @JSONField(name: "preview_images")
+  String? previewImages;
   String? created;
   String? modified;
   int? id;
@@ -70,6 +74,8 @@ class MetagramItemEntity {
   String? resources;
   String? text;
   int likes = 0;
+  @JSONField(name: 'like_id')
+  int? likeId;
   @JSONField(name: 'real_likes')
   int realLikes = 0;
   int comments = 0;
@@ -91,6 +97,8 @@ class MetagramItemEntity {
   String? created;
   String? modified;
   int? id;
+  @JSONField(serialize: false, deserialize: false)
+  Rx<bool> liked = false.obs;
 
   MetagramItemEntity();
 

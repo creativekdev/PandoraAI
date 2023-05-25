@@ -34,6 +34,7 @@ class MetagramItemEditController extends GetxController {
   File? transResult;
   bool _showOrigin = false;
   late HomeCardType currentType;
+  bool isSelf;
 
   set showOrigin(bool value) {
     _showOrigin = value;
@@ -82,6 +83,7 @@ class MetagramItemEditController extends GetxController {
     required this.entity,
     required this.items,
     required int index,
+    required this.isSelf,
     EffectModel? fullBody,
   }) {
     _resourceIndex = index;

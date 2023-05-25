@@ -593,4 +593,20 @@ class CartoonizerApi extends RetryAbleRequester {
       'resources': resources,
     });
   }
+
+  Future<PageEntity?> listAllMetagrams({
+    required int from,
+    required int size,
+    String? type,
+  }) async {
+    Map<String, dynamic> params = {
+      'from': from,
+      'size': size,
+    };
+    if (!TextUtil.isEmpty(type)) {
+      params['type'] = type;
+    }
+    var baseEntity = await get('/social_post_pages/all', params: params);
+    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
+  }
 }

@@ -5,6 +5,7 @@ enum ConnectorPlatform {
   youtube,
   facebook,
   instagram,
+  instagramBusiness,
   tiktok,
   UNDEFINED,
 }
@@ -18,6 +19,8 @@ class ConnectorPlatformUtils {
         return ConnectorPlatform.facebook;
       case 'instagram':
         return ConnectorPlatform.instagram;
+      case 'instagramBusiness':
+        return ConnectorPlatform.instagramBusiness;
       case 'tiktok':
         return ConnectorPlatform.tiktok;
       default:
@@ -34,6 +37,7 @@ extension ConnectorPlatformEx on ConnectorPlatform {
       case ConnectorPlatform.facebook:
         return 'Continue with IG Business';
       case ConnectorPlatform.instagram:
+      case ConnectorPlatform.instagramBusiness:
         return 'Continue with Instagram';
       case ConnectorPlatform.tiktok:
         return 'Continue with TikTok';
@@ -49,6 +53,7 @@ extension ConnectorPlatformEx on ConnectorPlatform {
       case ConnectorPlatform.facebook:
         return Images.ic_facebook;
       case ConnectorPlatform.instagram:
+      case ConnectorPlatform.instagramBusiness:
         return Images.ic_sign_instagram;
       case ConnectorPlatform.tiktok:
         return Images.ic_sign_tiktok;
@@ -65,6 +70,8 @@ extension ConnectorPlatformEx on ConnectorPlatform {
         return 'facebook';
       case ConnectorPlatform.instagram:
         return 'instagram';
+      case ConnectorPlatform.instagramBusiness:
+        return 'instagramBusiness';
       case ConnectorPlatform.tiktok:
         return 'tiktok';
       case ConnectorPlatform.UNDEFINED:
@@ -84,6 +91,8 @@ extension ConnectorPlatformEx on ConnectorPlatform {
         return '/oauth/tiktok';
       case ConnectorPlatform.UNDEFINED:
         return null;
+      case ConnectorPlatform.instagramBusiness:
+        return '/oauth/instagram_business';
     }
   }
 }

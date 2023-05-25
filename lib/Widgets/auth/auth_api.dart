@@ -76,6 +76,13 @@ class AuthApi extends RetryAbleRequester {
     return baseEntity;
   }
 
+  Future<BaseEntity?> connectWithInstagramBusiness(String token) async {
+    var tempStamp = DateTime.now().millisecondsSinceEpoch;
+    final headers = {"cookie": "bst_social_signup=$tempStamp"};
+    var baseEntity = await get('/oauth/instagram_v2/callback', params: {'access_token': token}, headers: headers);
+    return baseEntity;
+  }
+
   Future<BaseEntity?> connectWithTiktok(String accessToken, String openId, String tempData) async {
     var tokenBody = jsonEncode(<String, dynamic>{
       "access_token": accessToken,

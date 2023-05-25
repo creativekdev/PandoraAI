@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/Common/instagram_business_constant.dart';
 import 'package:http/http.dart' as http;
 
 import '../common/instagram_constant.dart';
@@ -12,8 +13,8 @@ class InstagramModel {
   String? userID;
   String? username;
 
-  void getAuthorizationCode(String url) {
-    authorizationCode = url.replaceAll('${InstagramConstant.redirectUri}?code=', '').replaceAll('#_', '');
+  void getAuthorizationCode(String url, bool isBusiness) {
+    authorizationCode = url.replaceAll('${isBusiness ? InstagramBusinessConstant.redirectUri : InstagramConstant.redirectUri}?code=', '').replaceAll('#_', '');
   }
 
   Future<bool> getTokenAndUserID() async {
@@ -22,6 +23,21 @@ class InstagramModel {
       'client_id': InstagramConstant.clientID,
       'redirect_uri': InstagramConstant.redirectUri,
       'client_secret': InstagramConstant.appSecret,
+      'code': authorizationCode,
+      'grant_type': 'authorization_code'
+    });
+    accessToken = json.decode(response.body)['access_token'];
+    print(accessToken);
+    userID = json.decode(response.body)['user_id'].toString();
+    return (accessToken != null && userID != null) ? true : false;
+  }
+
+  Future<bool> getBusinessTokenAndUserID() async {
+    var url = Uri.parse('https://api.instagram.com/oauth/access_token');
+    final response = await http.post(url, body: {
+      'client_id': InstagramBusinessConstant.clientID,
+      'redirect_uri': InstagramBusinessConstant.redirectUri,
+      'client_secret': InstagramBusinessConstant.appSecret,
       'code': authorizationCode,
       'grant_type': 'authorization_code'
     });
