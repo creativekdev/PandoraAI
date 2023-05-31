@@ -42,7 +42,6 @@ class AnotherMeController extends GetxController {
     uploadImageController.updateImageUrl('');
     _sourcePhoto = null;
     _transKey = null;
-    _mFaceRatio = null;
     update();
   }
 
@@ -70,8 +69,6 @@ class AnotherMeController extends GetxController {
   }
 
   bool get viewInit => _viewInit;
-
-  int? _mFaceRatio;
 
   @override
   void onInit() {
@@ -112,26 +109,7 @@ class AnotherMeController extends GetxController {
         }
       }
     }
-    if (_mFaceRatio == null) {
-      int faceRatio = 0;
-      var image = await SyncFileImage(file: sourcePhoto!).getImage();
-      var totalArea = image.image.width * image.image.height;
-      FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
-      var list = await detector.processImage(InputImage.fromFile(sourcePhoto!));
-      int maxFaceArea = 0;
-      list.forEach((element) {
-        var area = element.boundingBox.width * element.boundingBox.height;
-        if (area > maxFaceArea) {
-          maxFaceArea = area.toInt();
-        }
-      });
-      detector.close();
-      if (maxFaceArea != 0) {
-        faceRatio = (totalArea / maxFaceArea).round();
-      }
-      _mFaceRatio = faceRatio;
-    }
-    var baseEntity = await api.generateAnotherMe(imageUrl, _mFaceRatio!, cachedId);
+    var baseEntity = await api.generateAnotherMe(imageUrl, cachedId);
     if (baseEntity == null) {
       return null;
     }
@@ -147,7 +125,6 @@ class AnotherMeController extends GetxController {
     _transKey = name;
     CartoonizerApi().logAnotherMe({
       'init_images': [imageUrl],
-      'face_ratio': _mFaceRatio,
       'result_id': baseEntity.s,
     });
     return TransferResult()..entity = baseEntity;

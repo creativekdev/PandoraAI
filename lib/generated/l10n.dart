@@ -3959,6 +3959,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Disconnect`
+  String get disconnect {
+    return Intl.message(
+      'Disconnect',
+      name: 'disconnect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure to disconnect this account?`
+  String get disconnect_social_tips {
+    return Intl.message(
+      'Are you sure to disconnect this account?',
+      name: 'disconnect_social_tips',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have unbound the account`
+  String get disconnect_social_completed {
+    return Intl.message(
+      'You have unbound the account',
+      name: 'disconnect_social_completed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

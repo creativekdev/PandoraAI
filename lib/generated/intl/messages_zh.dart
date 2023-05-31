@@ -131,6 +131,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("您确定要永久注销您的账户吗？"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("删除成功"),
         "deny": MessageLookupByLibrary.simpleMessage("拒绝"),
+        "disconnect": MessageLookupByLibrary.simpleMessage("解除绑定"),
+        "disconnect_social_completed":
+            MessageLookupByLibrary.simpleMessage("您已成功解除绑定"),
+        "disconnect_social_tips":
+            MessageLookupByLibrary.simpleMessage("您确定要解除绑定此账号么?"),
         "discoveryComment": MessageLookupByLibrary.simpleMessage("评论"),
         "discoveryComments": MessageLookupByLibrary.simpleMessage("评论"),
         "discoveryDetails": MessageLookupByLibrary.simpleMessage("详情"),

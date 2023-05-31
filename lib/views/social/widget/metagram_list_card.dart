@@ -1,9 +1,13 @@
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/image/compareable_image.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
@@ -17,6 +21,7 @@ class MetagramListCard extends StatefulWidget {
   Function() onCommentsTap;
   OnLikeTap onLikeTap;
   bool liked;
+  bool isSelf;
 
   MetagramListCard({
     super.key,
@@ -27,6 +32,7 @@ class MetagramListCard extends StatefulWidget {
     required this.onLikeTap,
     required this.liked,
     required this.onCommentsTap,
+    required this.isSelf,
   });
 
   @override
@@ -45,9 +51,12 @@ class MetagramListState extends State<MetagramListCard> {
   late bool liked;
   late List<DiscoveryResource> resourceList;
   late List<List<DiscoveryResource>> items;
+  late bool isSelf;
 
   double maxHeight = 0;
-  int currentIndex = 0;
+  bool reverse = false;
+  late PageController pageController;
+  bool scrollable = true;
 
   @override
   void initState() {
@@ -69,6 +78,7 @@ class MetagramListState extends State<MetagramListCard> {
     onLikeTap = widget.onLikeTap;
     onCommentsTap = widget.onCommentsTap;
     liked = widget.liked;
+    isSelf = widget.isSelf;
     resourceList = data.resourceList();
     items = [];
     for (var value in resourceList) {
@@ -81,6 +91,7 @@ class MetagramListState extends State<MetagramListCard> {
         items.last.add(value);
       }
     }
+    pageController = PageController(initialPage: data.currentIndex);
   }
 
   @override
@@ -89,6 +100,7 @@ class MetagramListState extends State<MetagramListCard> {
       return SizedBox.shrink();
     }
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         buildItems(context),
@@ -143,7 +155,7 @@ class MetagramListState extends State<MetagramListCard> {
                         height: $(6),
                         width: $(6),
                         margin: EdgeInsets.symmetric(horizontal: $(4)),
-                        decoration: BoxDecoration(color: currentIndex == index ? Colors.white : Colors.grey, borderRadius: BorderRadius.circular($(6))),
+                        decoration: BoxDecoration(color: data.currentIndex == index ? Colors.white : Colors.grey, borderRadius: BorderRadius.circular($(6))),
                       ),
                     ),
                   ).intoContainer(margin: EdgeInsets.only(top: $(8)))
@@ -158,14 +170,14 @@ class MetagramListState extends State<MetagramListCard> {
                   if (items.isEmpty) {
                     return;
                   }
-                  onShareOutTap.call(items[currentIndex]);
+                  onShareOutTap.call(items[data.currentIndex]);
                 }),
                 SizedBox(width: $(12)),
                 Image.asset(Images.ic_metagram_download, width: $(26)).intoGestureDetector(onTap: () {
                   if (items.isEmpty) {
                     return;
                   }
-                  onDownloadTap.call(items[currentIndex]);
+                  onDownloadTap.call(items[data.currentIndex]);
                 }),
               ],
             )),
@@ -199,11 +211,15 @@ class MetagramListState extends State<MetagramListCard> {
             width: $(120),
             alignment: Alignment.center,
           ),
-        ).intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8))).intoGestureDetector(onTap: () {
-          onEditTap.call(items, currentIndex);
-        }).intoContainer(
-          margin: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
-        ),
+        )
+            .intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8)))
+            .intoGestureDetector(onTap: () {
+              onEditTap.call(items, data.currentIndex);
+            })
+            .intoContainer(
+              margin: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
+            )
+            .visibility(visible: isSelf),
       ],
     );
   }
@@ -222,56 +238,38 @@ class MetagramListState extends State<MetagramListCard> {
   }
 
   Widget buildItems(BuildContext context) {
-    if (items.length == 1) {
-      return buildOneImage(context, items.first);
-    } else {
-      return PageView(
-        onPageChanged: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        children: items.map((e) => buildOneImage(context, e, needListenSize: true)).toList(),
-      ).intoContainer(height: maxHeight, width: double.maxFinite);
-    }
+    return PageView(
+      controller: pageController,
+      physics: scrollable ? null : NeverScrollableScrollPhysics(),
+      onPageChanged: (index) {
+        setState(() {
+          data.currentIndex = index;
+        });
+      },
+      children: items.map((e) => buildOneImage(context, e)).toList(),
+    ).intoContainer(height: maxHeight, width: ScreenUtil.screenSize.width);
   }
 
-  Widget buildOneImage(BuildContext context, List<DiscoveryResource> items, {bool needListenSize = false}) {
-    var child = Stack(
-      children: [
-        CachedNetworkImageUtils.custom(
-            context: context,
-            useOld: false,
-            imageUrl: items.first.url!,
-            fit: BoxFit.cover,
-            placeholder: (context, url) {
-              return SkeletonAvatar(
-                style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: maxHeight == 0 ? ScreenUtil.screenSize.width : maxHeight),
-              );
-            }),
-        Positioned(
-          child: ClipRRect(
-                  child: CachedNetworkImageUtils.custom(
-                    useOld: false,
-                    context: context,
-                    imageUrl: items.last.url!,
-                    fit: BoxFit.cover,
-                    width: $(70),
-                    height: $(70),
-                  ),
-                  borderRadius: BorderRadius.circular($(6)))
-              .intoContainer(padding: EdgeInsets.all($(2)))
-              .intoMaterial(borderRadius: BorderRadius.circular($(8)), color: Colors.white, elevation: 4),
-          top: $(15),
-          left: $(15),
-        ),
-      ],
-    );
-    if (!needListenSize) {
-      return child;
-    }
+  Widget buildOneImage(
+    BuildContext context,
+    List<DiscoveryResource> items,
+  ) {
     return SingleChildScrollView(
-      child: child.listenSizeChanged(onSizeChanged: (size) {
+      child: CompareImageView(
+        result: items.first.url!,
+        origin: items.last.url!,
+        width: ScreenUtil.screenSize.width,
+        onStartDrag: () {
+          setState(() {
+            scrollable = false;
+          });
+        },
+        onCancelDrag: () {
+          setState(() {
+            scrollable = true;
+          });
+        },
+      ).listenSizeChanged(onSizeChanged: (size) {
         if (!mounted) {
           return;
         }
@@ -282,5 +280,138 @@ class MetagramListState extends State<MetagramListCard> {
         }
       }),
     );
+  }
+}
+
+class CompareImageView extends StatefulWidget {
+  String origin;
+  String result;
+  double width;
+  Function onStartDrag;
+  Function onCancelDrag;
+
+  CompareImageView({
+    required this.origin,
+    required this.result,
+    required this.width,
+    super.key,
+    required this.onStartDrag,
+    required this.onCancelDrag,
+  });
+
+  @override
+  CompareImageViewState createState() {
+    return CompareImageViewState();
+  }
+}
+
+class CompareImageViewState extends State<CompareImageView> {
+  late String origin;
+  late String result;
+  late double width;
+  double height = 0;
+
+  late Function onStartDrag;
+  late Function onCancelDrag;
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
+  @override
+  void didUpdateWidget(covariant CompareImageView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    initData();
+  }
+
+  initData() {
+    origin = widget.origin;
+    result = widget.result;
+    width = widget.width;
+    onStartDrag = widget.onStartDrag;
+    onCancelDrag = widget.onCancelDrag;
+    if (height == 0) {
+      SyncNetworkImage(
+        url: result,
+      ).getImage().then((value) {
+        var scale = value.image.width / value.image.height;
+        setState(() {
+          height = width / scale;
+        });
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CompareableImage(
+        imageWidth: ScreenUtil.screenSize.width,
+        imageHeight: height,
+        onCancelDrag: onCancelDrag,
+        onStartDrag: onStartDrag,
+        beforeImage: Stack(
+          children: [
+            CachedNetworkImageUtils.custom(
+                context: context,
+                useOld: false,
+                imageUrl: origin,
+                fit: BoxFit.cover,
+                width: ScreenUtil.screenSize.width,
+                height: height,
+                placeholder: (context, url) {
+                  return SkeletonAvatar(
+                    style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: height),
+                  );
+                }),
+            Positioned(
+              child: Text(
+                'Before',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: $(14),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+                  .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(3)))
+                  .intoMaterial(color: Colors.white, elevation: 1, borderRadius: BorderRadius.circular($(32))),
+              left: 10,
+              top: 10,
+            ),
+          ],
+        ),
+        afterImage: Stack(
+          children: [
+            CachedNetworkImageUtils.custom(
+                useOld: false,
+                context: context,
+                imageUrl: result,
+                fit: BoxFit.cover,
+                width: ScreenUtil.screenSize.width,
+                height: height,
+                placeholder: (context, url) {
+                  return SkeletonAvatar(
+                    style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: height),
+                  );
+                }),
+            Positioned(
+              child: Text(
+                'After',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: $(14),
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                ),
+              )
+                  .intoContainer(padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(3)))
+                  .intoMaterial(color: Colors.white, elevation: 1, borderRadius: BorderRadius.circular($(32))),
+              right: 10,
+              top: 10,
+            ),
+          ],
+        ));
   }
 }

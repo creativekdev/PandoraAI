@@ -31,6 +31,8 @@ class DiscoveryListEntity {
   late String resources;
   bool removed;
   String? payload;
+  @JSONField(name: 'social_post_page_id')
+  String? socialPostPageId;
 
   DiscoveryListEntity({
     this.userId = 0,
@@ -53,6 +55,7 @@ class DiscoveryListEntity {
     this.resources = '',
     this.removed = false,
     this.payload,
+    this.socialPostPageId,
   });
 
   factory DiscoveryListEntity.fromJson(Map<String, dynamic> json) => $DiscoveryListEntityFromJson(json);

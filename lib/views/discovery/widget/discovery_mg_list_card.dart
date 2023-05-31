@@ -16,31 +16,23 @@ const List<List<Color>> _cList = [
   [Color(0xff00F260), Color(0xff0575E6)]
 ];
 
-class DiscoveryMgListCard extends StatefulWidget {
+class DiscoveryMgListCard extends StatelessWidget {
   SocialPostPageEntity data;
   Function() onTap;
-
-  DiscoveryMgListCard({Key? key, required this.data, required this.onTap}) : super(key: key);
-
-  @override
-  State<DiscoveryMgListCard> createState() => _DiscoveryMgListCardState();
-}
-
-class _DiscoveryMgListCardState extends State<DiscoveryMgListCard> {
-  late SocialPostPageEntity data;
+  List<Color> colors = [];
   Map<String, dynamic>? payload;
   List<String>? userAvatars;
   late List<String> previewImages;
-  late Function() onTap;
+  double width;
+  late double imageSize;
 
-  double imageSize = 0;
-  List<Color> colors = [];
-
-  @override
-  void initState() {
-    super.initState();
-    onTap = widget.onTap;
-    data = widget.data;
+  DiscoveryMgListCard({
+    Key? key,
+    required this.data,
+    required this.onTap,
+    required this.width,
+  }) : super(key: key) {
+    colors = _cList[Random().nextInt(_cList.length)];
     userAvatars = data.coverImage?.split(',');
     previewImages = data.previewImages?.split(',') ?? [];
     if (previewImages.length > 4) {
@@ -51,7 +43,7 @@ class _DiscoveryMgListCardState extends State<DiscoveryMgListCard> {
     } catch (e) {
       payload = null;
     }
-    colors = _cList[Random().nextInt(_cList.length)];
+    imageSize = (width - $(22)) / 2;
   }
 
   @override
@@ -111,16 +103,10 @@ class _DiscoveryMgListCardState extends State<DiscoveryMgListCard> {
                     height: imageSize,
                   ))
               .toList(),
-        )
-            .intoContainer(
+        ).intoContainer(
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
-        )
-            .listenSizeChanged(onSizeChanged: (size) {
-          setState(() {
-            imageSize = (size.width - $(21)) / 2;
-          });
-        }),
+        ),
       ],
     )
         .intoContainer(

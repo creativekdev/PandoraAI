@@ -1,15 +1,16 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 
 class DiscoveryListController extends GetxController {
   late CartoonizerApi api;
+  late SocialMediaConnectorApi socialMediaConnectorApi;
 
   List<TagData> tags = [
-    TagData(title: '# Metagram', tag: 'metagram', isMetagram: true),
     TagData(title: '# Me-taverse', tag: 'another_me'),
     TagData(title: '# AITextToImage', tag: 'txt2img'),
     TagData(title: '# AIScribble', tag: 'scribble'),
@@ -25,6 +26,14 @@ class DiscoveryListController extends GetxController {
     update();
   }
 
+  bool _isMetagram = false;
+
+  set isMetagram(bool value) {
+    _isMetagram = value;
+    update();
+  }
+
+  bool get isMetagram => _isMetagram;
   int page = 0;
   int pageSize = 10;
   List<ListData> dataList = [];
@@ -50,6 +59,7 @@ class DiscoveryListController extends GetxController {
   void onInit() {
     super.onInit();
     api = CartoonizerApi().bindController(this);
+    socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
     scrollController = ScrollController();
     scrollController.addListener(() {
       var newPos = scrollController.position.pixels;
@@ -165,6 +175,7 @@ class DiscoveryListController extends GetxController {
   @override
   void dispose() {
     api.unbind();
+    socialMediaConnectorApi.unbind();
     onLoginEventListener.cancel();
     onLikeEventListener.cancel();
     onUnlikeEventListener.cancel();
@@ -199,7 +210,7 @@ class DiscoveryListController extends GetxController {
   Future<bool> onLoadFirstPage() async {
     listLoading = true;
     update();
-    if (currentTag?.isMetagram ?? false) {
+    if (isMetagram) {
       return await _loadFirstMetagram();
     } else {
       return await _loadFirstDiscovery();
@@ -207,7 +218,7 @@ class DiscoveryListController extends GetxController {
   }
 
   Future<bool> _loadFirstMetagram() async {
-    var value = await api.listAllMetagrams(from: 0, size: pageSize);
+    var value = await socialMediaConnectorApi.listAllMetagrams(from: 0, size: pageSize);
     delay(() {
       listLoading = false;
       update();
@@ -254,7 +265,7 @@ class DiscoveryListController extends GetxController {
   Future<bool> onLoadMorePage() async {
     listLoading = true;
     update();
-    if (currentTag?.isMetagram ?? false) {
+    if (isMetagram) {
       return await _loadMoreMetagram();
     } else {
       return await _loadMoreDiscovery();
@@ -262,7 +273,7 @@ class DiscoveryListController extends GetxController {
   }
 
   Future<bool> _loadMoreMetagram() async {
-    var value = await api.listAllMetagrams(from: (page + 1) * pageSize, size: pageSize);
+    var value = await socialMediaConnectorApi.listAllMetagrams(from: (page + 1) * pageSize, size: pageSize);
     delay(() {
       listLoading = false;
       update();
@@ -322,11 +333,9 @@ class ListData {
 class TagData {
   String tag;
   String title;
-  bool isMetagram;
 
   TagData({
     required this.title,
     required this.tag,
-    this.isMetagram = false,
   });
 }

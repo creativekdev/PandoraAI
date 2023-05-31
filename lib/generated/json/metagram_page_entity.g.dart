@@ -114,7 +114,7 @@ Map<String, dynamic> $SocialPostPageEntityToJson(SocialPostPageEntity entity) {
 
 MetagramItemEntity $MetagramItemEntityFromJson(Map<String, dynamic> json) {
 	final MetagramItemEntity metagramItemEntity = MetagramItemEntity();
-	final int? userId = jsonConvert.convert<int>(json['user_id˚']);
+	final int? userId = jsonConvert.convert<int>(json['user_id']);
 	if (userId != null) {
 		metagramItemEntity.userId = userId;
 	}
@@ -207,7 +207,7 @@ MetagramItemEntity $MetagramItemEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $MetagramItemEntityToJson(MetagramItemEntity entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['user_id˚'] = entity.userId;
+	data['user_id'] = entity.userId;
 	data['images'] = entity.images;
 	data['resources'] = entity.resources;
 	data['text'] = entity.text;

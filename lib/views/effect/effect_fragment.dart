@@ -23,6 +23,7 @@ import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
@@ -126,6 +127,9 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
         break;
       case HomeCardType.scribble:
         AiDrawable.open(context, source: 'home_page');
+        break;
+      case HomeCardType.metagram:
+        Metagram.openBySelf(context, source: 'home_page');
         break;
       case HomeCardType.UNDEFINED:
         break;

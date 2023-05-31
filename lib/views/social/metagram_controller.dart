@@ -38,6 +38,7 @@ class MetagramController extends GetxController {
 
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
+  late StreamSubscription onCreateCommentEventListener;
   Rx<bool> likeLocalAddAlready = false.obs;
 
   @override
@@ -88,7 +89,7 @@ class MetagramController extends GetxController {
           if (likeLocalAddAlready.value) {
             likeLocalAddAlready.value = false;
           } else {
-            data!.likes++;
+            data.likes++;
           }
           update();
         }
@@ -110,17 +111,29 @@ class MetagramController extends GetxController {
         }
       }
     });
+    onCreateCommentEventListener = EventBusHelper().eventBus.on<OnCreateCommentEvent>().listen((event) {
+      data?.rows.forEach((element) {
+        if (element.id == event.data![0]) {
+          element.comments++;
+          update();
+        }
+      });
+    });
   }
 
   @override
   void dispose() {
     api.unbind();
+    onLikeEventListener.cancel();
+    onUnlikeEventListener.cancel();
+    onCreateCommentEventListener.cancel();
+    socket?.disconnect();
     super.dispose();
   }
 
-  onPageStart(BuildContext context, int? userId) {
-    isSelf = userId == coreUserId;
-    coreUserId = userId;
+  onPageStart(BuildContext context, int coreUserId, bool isSelf) {
+    this.isSelf = isSelf;
+    this.coreUserId = coreUserId;
     loadMetagramData().then((value) {
       if (value) {
         startLoadPage();
@@ -238,7 +251,7 @@ class MetagramController extends GetxController {
           if (status == MetagramStatus.processing || status == MetagramStatus.completed) {
             loadMetagramData();
             if (status == MetagramStatus.completed) {
-              socket?.disconnect();
+              // socket?.disconnect();
               metaProcessing = false;
               update();
             }
@@ -253,6 +266,7 @@ class MetagramController extends GetxController {
     });
     socket?.connect();
     if (status == MetagramStatus.init || force) {
+      api.publishMetagram(coreUserId: coreUserId!);
       api.startBuildMetagram(coreUserId: coreUserId!);
       loadMetagramData();
     }

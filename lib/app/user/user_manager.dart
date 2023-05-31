@@ -329,4 +329,44 @@ class UserManager extends BaseManager {
     }
     return false;
   }
+
+  Future<bool> disconnectSocialAccount({required PlatformConnectionEntity connection}) async {
+    Map<String, dynamic> params = {
+      "id": connection.id,
+      'target': connection.channel,
+    };
+    switch (connection.platform) {
+      case ConnectorPlatform.youtube:
+        params['youtube_channel'] = connection.coreUser.youtubeChannel;
+        break;
+      case ConnectorPlatform.facebook:
+        break;
+      case ConnectorPlatform.instagram:
+        params['instagram_username'] = connection.coreUser.instagramUsername;
+        break;
+      case ConnectorPlatform.instagramBusiness:
+        params['instagram_username'] = connection.coreUser.instagramUsername;
+        break;
+      case ConnectorPlatform.tiktok:
+        params['tiktok_username'] = connection.coreUser.tiktokUsername;
+        break;
+      case ConnectorPlatform.UNDEFINED:
+        break;
+    }
+    var baseEntity = await CartoonizerApi2().disconnectSocialMedia(params);
+    if (baseEntity != null) {
+      var connections = platformConnections;
+      var platformConnection = connections[connection.platform] as List<PlatformConnectionEntity>;
+      platformConnection.removeWhere((element) => element.coreUserId == connection.coreUserId);
+      if (platformConnection.isEmpty) {
+        connections.remove(connection.platform);
+      } else {
+        connections[connection.platform] = platformConnection;
+      }
+      platformConnections = connections;
+      EventBusHelper().eventBus.fire(OnConnectionsChangeEvent());
+      return true;
+    }
+    return false;
+  }
 }

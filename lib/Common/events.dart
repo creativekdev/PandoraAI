@@ -203,6 +203,27 @@ class Events {
   static Future<void> shareApp() => logEvent('shareapp_click');
 
   static Future<void> rateUs() => logEvent('rate_us');
+
+
+  static Future<void> metagramLoading({required String source}) => logEvent('metagram_loading', eventValues: {'source': source});
+
+  static Future<void> metagramCompleteSuccess({required String photo}) => logEvent('metagram_completed_success', eventValues: {'photo': photo});
+
+  static Future<void> metagramCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('metagram_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> metagramCompleteDownload({required String type}) => logEvent('metagram_completed_download', eventValues: {'type': type});
+
+  static Future<void> metagramCompleteGenerateAgain({required int time}) => logEvent('metagram_completed_generateagain', eventValues: {'time': '${time}'});
+
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

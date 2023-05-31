@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -13,6 +14,7 @@ enum DrawMode {
   markPaint,
   eraser,
   floodFill,
+  camera,
 }
 
 extension DrawModeEx on DrawMode {
@@ -26,6 +28,8 @@ extension DrawModeEx on DrawMode {
         return DrawMode.eraser;
       case 'floodFill':
         return DrawMode.floodFill;
+      case 'camera':
+        return DrawMode.camera;
       default:
         return DrawMode.paint;
     }
@@ -41,6 +45,8 @@ extension DrawModeEx on DrawMode {
         return 'eraser';
       case DrawMode.floodFill:
         return 'floodFill';
+      case DrawMode.camera:
+        return 'camera';
     }
   }
 }
@@ -61,7 +67,6 @@ class DrawableController {
   Function? onStartDraw;
   Rx<String> text = ''.obs;
   List<String> resultFilePaths = [];
-  File? cameraFile;
 
   DrawableController({DrawableRecord? data}) {
     if (data != null) {
@@ -100,6 +105,8 @@ class DrawableController {
         ];
       case DrawMode.floodFill:
         return [];
+      case DrawMode.camera:
+        return [];
     }
   }
 
@@ -112,6 +119,8 @@ class DrawableController {
       case DrawMode.floodFill:
         return floodFillColor;
       case DrawMode.markPaint:
+        return paintColor;
+      case DrawMode.camera:
         return paintColor;
     }
   }
@@ -126,6 +135,8 @@ class DrawableController {
         return StrokeCap.round;
       case DrawMode.floodFill:
         return StrokeCap.round;
+      case DrawMode.camera:
+        return StrokeCap.round;
     }
   }
 
@@ -138,6 +149,8 @@ class DrawableController {
       case DrawMode.floodFill:
         return BlendMode.src;
       case DrawMode.markPaint:
+        return BlendMode.src;
+      case DrawMode.camera:
         return BlendMode.src;
     }
   }
@@ -152,6 +165,8 @@ class DrawableController {
         return PaintingStyle.stroke;
       case DrawMode.floodFill:
         return PaintingStyle.fill;
+      case DrawMode.camera:
+        return PaintingStyle.stroke;
     }
   }
 
@@ -164,6 +179,8 @@ class DrawableController {
       case DrawMode.eraser:
         return eraserWidth;
       case DrawMode.floodFill:
+        return 1;
+      case DrawMode.camera:
         return 1;
     }
   }
@@ -253,10 +270,7 @@ class DrawableController {
     canRollback.value = !activePens.isEmpty;
   }
 
-  Future<Uint8List?> getImage({double screenShotScale = 1, required bool fromCamera}) async {
-    if (fromCamera) {
-      return await cameraFile!.readAsBytes();
-    }
+  Future<Uint8List?> getImage({double screenShotScale = 1}) async {
     var local = await state?.getImage(ratio: screenShotScale);
     return local;
   }
@@ -447,12 +461,29 @@ class _DrawableState extends State<Drawable> {
           //todo
         },
         onPointerDown: (details) {
-          var s = details.toStringFull();
+          if (_controller.activePens.isNotEmpty && _controller.activePens.last.drawMode == DrawMode.camera) {
+            return;
+          }
           onPointDown(details);
         },
-        onPointerMove: onPointMove,
-        onPointerUp: onPointUp,
-        onPointerCancel: onPointCancel,
+        onPointerMove: (details) {
+          if (_controller.activePens.isNotEmpty && _controller.activePens.last.drawMode == DrawMode.camera) {
+            return;
+          }
+          onPointMove(details);
+        },
+        onPointerUp: (details) {
+          if (_controller.activePens.isNotEmpty && _controller.activePens.last.drawMode == DrawMode.camera) {
+            return;
+          }
+          onPointUp(details);
+        },
+        onPointerCancel: (details) {
+          if (_controller.activePens.isNotEmpty && _controller.activePens.last.drawMode == DrawMode.camera) {
+            return;
+          }
+          onPointCancel(details);
+        },
         child: _CanvasHolder(
           key: key,
           controller: _controller,
@@ -509,11 +540,16 @@ class _CanvasHolderState extends State<_CanvasHolder> {
 
   @override
   Widget build(BuildContext context) {
+    List<DrawablePen> pens = _controller.activePens;
+    var pick = pens.pick((t) => t.drawMode == DrawMode.camera);
+    if (pick != null) {
+      pens = [pick];
+    }
     return RepaintBoundary(
       key: screenShotKey,
       child: CustomPaint(
         painter: DrawablePainter(
-          pens: _controller.activePens,
+          pens: pens,
           backgroundColor: _controller.background,
           eraserRadius: _controller.eraserWidth / 2,
         ),
@@ -548,10 +584,18 @@ class DrawablePainter extends CustomPainter {
     canvas.saveLayer(Rect.fromLTWH(0, 0, size.width, size.height), Paint());
     DrawPosition? eraserPosition;
     for (var value in pens) {
-      canvas.drawPath(value.path!, value.paint!);
-      if (value.drawMode == DrawMode.eraser) {
-        if (value.lastPosition != null) {
-          eraserPosition = value.lastPosition;
+      if (value.drawMode == DrawMode.camera) {
+        if (value.cameraImage != null) {
+          var targetCoverRect = ImageUtils.getTargetCoverRect(size, Size(value.cameraImage!.image.width.toDouble(), value.cameraImage!.image.height.toDouble()));
+          canvas.drawImageRect(
+              value.cameraImage!.image, Rect.fromLTWH(0, 0, value.cameraImage!.image.width.toDouble(), value.cameraImage!.image.height.toDouble()), targetCoverRect, Paint());
+        }
+      } else {
+        canvas.drawPath(value.path!, value.paint!);
+        if (value.drawMode == DrawMode.eraser) {
+          if (value.lastPosition != null) {
+            eraserPosition = value.lastPosition;
+          }
         }
       }
     }
@@ -639,6 +683,8 @@ class DrawablePen {
   late DrawMode drawMode;
   Path? path;
   Paint? paint;
+  String? filePath;
+  ImageInfo? cameraImage;
 
   DrawablePen({
     this.paintWidth = 0,
@@ -646,6 +692,7 @@ class DrawablePen {
     DrawMode? drawMode,
     this.lastPosition,
     this.paint,
+    this.filePath,
   }) {
     this.paths = paths ?? [];
     this.drawMode = drawMode ?? DrawMode.paint;
@@ -665,6 +712,9 @@ class DrawablePen {
     if (json['drawMode'] != null) {
       pen.drawMode = DrawModeEx.build(json['drawMode']);
     }
+    if (json['filePath'] != null) {
+      pen.filePath = json['filePath'];
+    }
     return pen;
   }
 
@@ -673,6 +723,7 @@ class DrawablePen {
       'paintWidth': paintWidth,
       'paths': paths.map((e) => e.toJson()).toList(),
       'drawMode': drawMode.value(),
+      'filePath': filePath,
     };
     if (lastPosition != null) {
       result['lastPosition'] = lastPosition!.toJson();
@@ -704,6 +755,16 @@ class DrawablePen {
           var value = paths[i];
           path!.lineTo(value.x, value.y);
         }
+      }
+    }
+  }
+
+  buildImage() async {
+    if (filePath != null) {
+      if (File(filePath!).existsSync()) {
+        cameraImage = await SyncFileImage(file: File(filePath!)).getImage();
+      } else {
+        filePath == null;
       }
     }
   }

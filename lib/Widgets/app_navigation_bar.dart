@@ -89,6 +89,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
       Images.ic_back,
       height: $(24),
       width: $(24),
+      color: brightness == Brightness.dark ? Colors.white : Colors.black,
     );
     this.statusBar ??= Container(
       color: Colors.transparent,

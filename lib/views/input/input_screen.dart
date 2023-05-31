@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 
@@ -29,13 +30,15 @@ class InputScreen extends StatefulWidget {
   State<StatefulWidget> createState() => InputScreenState();
 }
 
-class InputScreenState extends State<InputScreen> {
+class InputScreenState extends AppState<InputScreen> {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   TextEditingController textEditingController = TextEditingController();
   String? hint;
   late String uniqueId;
   late InputCallback callback;
   bool ignore = false;
+
+  InputScreenState() : super(interceptType: KeyboardInterceptType.pop, canCancelOnLoading: false);
 
   @override
   void initState() {
@@ -55,92 +58,96 @@ class InputScreenState extends State<InputScreen> {
   }
 
   submit() async {
+    if (ignore) {
+      return;
+    }
     var string = textEditingController.text.trim();
     if (string.isEmpty) {
       return;
     }
     setState(() => ignore = true);
-    var bool = await callback.call(string);
-    setState(() => ignore = false);
-    if (bool) {
-      cacheManager.setString(_getKey(), '');
-      Navigator.pop(context);
-    }
+    showLoading().whenComplete(() async {
+      var bool = await callback.call(string);
+      hideLoading().whenComplete(() {
+        setState(() => ignore = false);
+        if (bool) {
+          cacheManager.setString(_getKey(), '');
+          Navigator.pop(context);
+        }
+      });
+    });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlankAreaIntercept(
-      interceptType: KeyboardInterceptType.pop,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            Align(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: TextField(
-                      autofocus: true,
-                      controller: textEditingController,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(_maxInputLength),
-                      ],
-                      textInputAction: TextInputAction.done,
-                      style: TextStyle(height: 1, color: ColorConstant.White),
-                      maxLines: 3,
-                      minLines: 1,
-                      onChanged: (text) {
-                        cacheManager.setString(_getKey(), text);
-                      },
-                      onEditingComplete: () {
-                        submit();
-                      },
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: hint,
-                        hintStyle: TextStyle(
-                          color: ColorConstant.DiscoveryCommentGrey,
-                        ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
-                        isDense: true,
+  Widget buildWidget(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TextField(
+                    autofocus: true,
+                    controller: textEditingController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(_maxInputLength),
+                    ],
+                    textInputAction: TextInputAction.done,
+                    style: TextStyle(height: 1, color: ColorConstant.White),
+                    maxLines: 3,
+                    minLines: 1,
+                    onChanged: (text) {
+                      cacheManager.setString(_getKey(), text);
+                    },
+                    onEditingComplete: () {
+                      submit();
+                    },
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: hint,
+                      hintStyle: TextStyle(
+                        color: ColorConstant.DiscoveryCommentGrey,
                       ),
-                    ).intoContainer(
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: ColorConstant.InputContent,
-                        borderRadius: BorderRadius.circular($(6)),
-                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(12)),
+                      isDense: true,
                     ),
-                  ),
-                  SizedBox(width: $(8)),
-                  Text(
-                    S.of(context).send,
-                    style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins'),
-                  )
-                      .intoContainer(
-                    padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(9)),
+                  ).intoContainer(
+                    width: double.maxFinite,
                     decoration: BoxDecoration(
-                      color: ColorConstant.BlueColor,
+                      color: ColorConstant.InputContent,
                       borderRadius: BorderRadius.circular($(6)),
                     ),
-                  )
-                      .intoGestureDetector(onTap: () {
-                    submit();
-                  }),
-                ],
-              ).intoContainer(
-                  color: ColorConstant.InputBackground,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: $(15),
-                    vertical: $(8),
-                  )),
-              alignment: Alignment.bottomCenter,
-            ),
-          ],
-        ),
+                  ),
+                ),
+                SizedBox(width: $(8)),
+                Text(
+                  S.of(context).send,
+                  style: TextStyle(color: ColorConstant.White, fontFamily: 'Poppins'),
+                )
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(9)),
+                  decoration: BoxDecoration(
+                    color: ColorConstant.BlueColor,
+                    borderRadius: BorderRadius.circular($(6)),
+                  ),
+                )
+                    .intoGestureDetector(onTap: () {
+                  submit();
+                }),
+              ],
+            ).intoContainer(
+                color: ColorConstant.InputBackground,
+                padding: EdgeInsets.symmetric(
+                  horizontal: $(15),
+                  vertical: $(8),
+                )),
+            alignment: Alignment.bottomCenter,
+          ),
+        ],
       ),
     ).ignore(ignoring: ignore);
   }

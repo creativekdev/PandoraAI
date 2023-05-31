@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pandora AI</string>
-    <string name="facebook_app_id">1043807369586450</string>
-    <string name="facebook_client_token">31823da957485a30fea58f83049d5778</string>
-    <string name="fb_login_protocol_scheme">fb1043807369586450</string>
+<!--    <string name="facebook_app_id">1043807369586450</string>-->
+<!--    <string name="facebook_client_token">31823da957485a30fea58f83049d5778</string>-->
+<!--    <string name="fb_login_protocol_scheme">fb1043807369586450</string>-->
+    <string name="facebook_app_id">801412163654865</string>
+    <string name="facebook_client_token">3f9c73333f39f44676a28c1800614906</string>
+    <string name="fb_login_protocol_scheme">fb801412163654865</string>
     <string name="admob_app_key">ca-app-pub-8401689731796078~6409248025</string>
 </resources>

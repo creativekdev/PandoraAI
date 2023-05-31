@@ -6,6 +6,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/downloader.dart';
+import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -28,13 +29,13 @@ class MetagramItemEditController extends GetxController {
   List<List<DiscoveryResource>> items = [];
   List<DiscoveryResource> resources = [];
   int _resourceIndex = 0;
+  Function? onReadyCallback;
 
   File? originFile;
   File? resultFile;
   File? transResult;
   bool _showOrigin = false;
   late HomeCardType currentType;
-  bool isSelf;
 
   set showOrigin(bool value) {
     _showOrigin = value;
@@ -77,13 +78,12 @@ class MetagramItemEditController extends GetxController {
 
   late Uploader api;
   late CartoonizerApi cartoonizerApi;
-  int? _mFaceRatio;
+  late SocialMediaConnectorApi socialMediaConnectorApi;
 
   MetagramItemEditController({
     required this.entity,
     required this.items,
     required int index,
-    required this.isSelf,
     EffectModel? fullBody,
   }) {
     _resourceIndex = index;
@@ -100,7 +100,7 @@ class MetagramItemEditController extends GetxController {
     entity.category;
     api = Uploader().bindController(this);
     cartoonizerApi = CartoonizerApi().bindController(this);
-
+    socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
     var originMd5 = EncryptUtil.encodeMd5(resources.last.url ?? '');
     var resultMd5 = EncryptUtil.encodeMd5(resources.first.url ?? '');
     var imageDir = cacheManager.storageOperator.imageDir;
@@ -131,13 +131,17 @@ class MetagramItemEditController extends GetxController {
                 onChanged: (count, total) {},
                 onError: (error) {
                   originFile = null;
+                  onReadyCallback?.call();
                   update();
                 },
                 onFinished: (File file) {
                   originFile = file;
                   update();
+                  onReadyCallback?.call();
                 }));
       });
+    } else {
+      onReadyCallback?.call();
     }
     if (resultFile == null) {
       var resultMd5 = EncryptUtil.encodeMd5(resources.first.url ?? '');
@@ -163,6 +167,7 @@ class MetagramItemEditController extends GetxController {
   void dispose() {
     api.unbind();
     cartoonizerApi.unbind();
+    socialMediaConnectorApi.unbind();
     super.dispose();
   }
 
@@ -183,27 +188,8 @@ class MetagramItemEditController extends GetxController {
         }
       }
     }
-    if (_mFaceRatio == null) {
-      int faceRatio = 0;
-      ImageInfo sourceImage = await SyncFileImage(file: originFile!).getImage();
-      var totalArea = sourceImage.image.width * sourceImage.image.height;
-      FaceDetector detector = FaceDetector(options: FaceDetectorOptions());
-      var list = await detector.processImage(InputImage.fromFile(originFile!));
-      int maxFaceArea = 0;
-      list.forEach((element) {
-        var area = element.boundingBox.width * element.boundingBox.height;
-        if (area > maxFaceArea) {
-          maxFaceArea = area.toInt();
-        }
-      });
-      detector.close();
-      if (maxFaceArea != 0) {
-        faceRatio = (totalArea / maxFaceArea).round();
-      }
-      _mFaceRatio = faceRatio;
-    }
     var imageUrl = resources.last.url!;
-    var baseEntity = await api.generateAnotherMe(imageUrl, _mFaceRatio!, null);
+    var baseEntity = await api.generateAnotherMe(imageUrl, null);
     if (baseEntity == null) {
       return null;
     }
@@ -220,7 +206,6 @@ class MetagramItemEditController extends GetxController {
     transResult = File(_transKey!);
     CartoonizerApi().logAnotherMe({
       'init_images': [imageUrl],
-      'face_ratio': _mFaceRatio,
       'result_id': baseEntity.s,
     });
     return TransferResult()..entity = baseEntity;
@@ -236,7 +221,7 @@ class MetagramItemEditController extends GetxController {
     }
     items[_resourceIndex].first.url = uploaded.key;
     var resources = jsonEncode(flatItems(items).map((e) => e.toJson()).toList());
-    var baseEntity = await cartoonizerApi.updateMetagram(entity.id!, resources);
+    var baseEntity = await socialMediaConnectorApi.updateMetagram(entity.id!, resources);
     if (baseEntity != null) {
       entity.resources = resources;
     }

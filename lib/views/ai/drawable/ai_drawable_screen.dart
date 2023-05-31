@@ -58,10 +58,12 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
     drawableController.activePens.forEach((element) {
       element.buildPaint(drawableController);
       element.buildPath();
+      element.buildImage();
     });
     drawableController.checkmatePens.forEach((element) {
       element.buildPaint(drawableController);
       element.buildPath();
+      element.buildImage();
     });
     drawableController.onStartDraw = () {
       optKey.currentState?.dismiss();
@@ -74,13 +76,13 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       setState(() {});
       if (widget.record != null) {
         delay(() {
-          toResultWithoutCheck(fromCamera: false);
+          toResultWithoutCheck();
         }, milliseconds: 200);
       }
     });
   }
 
-  toResult({required bool fromCamera}) async {
+  toResult() async {
     showLoading().whenComplete(() async {
       var aiDrawLimitEntity = await CartoonizerApi().getAiDrawLimit();
       if (aiDrawLimitEntity == null) {
@@ -99,14 +101,14 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             showLimitDialog(context, type);
           });
         } else {
-          toResultWithoutCheck(fromCamera: fromCamera);
+          toResultWithoutCheck();
         }
       }
     });
   }
 
-  toResultWithoutCheck({required bool fromCamera}) {
-    drawableController.getImage(screenShotScale: screenShotScale, fromCamera: fromCamera).then((value) async {
+  toResultWithoutCheck() {
+    drawableController.getImage(screenShotScale: screenShotScale).then((value) async {
       var key = EncryptUtil.encodeMd5(DrawableRecord(activePens: drawableController.activePens).toString());
       var uploadPath = cacheManager.storageOperator.recordAiDrawDir.path + key + '.jpg';
       var uploadFile = File(uploadPath);
@@ -114,6 +116,9 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
         await uploadFile.delete();
       }
       await uploadFile.writeAsBytes(value!.toList(), flush: true);
+      if (drawableController.activePens.isNotEmpty && drawableController.activePens.last.drawMode == DrawMode.camera) {
+        drawableController.activePens.last.filePath = uploadPath;
+      }
       var imageInfo = await SyncMemoryImage(list: value).getImage();
       Navigator.of(context).push(
         FadeRouter(
@@ -294,7 +299,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
                 S.of(context).done,
                 style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500, fontSize: $(17), color: ColorConstant.aiDrawBlue),
               ).intoContainer(padding: EdgeInsets.only(left: $(6), top: $(8), bottom: $(8)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                toResult(fromCamera: false);
+                toResult();
               }).visibility(visible: !drawableController.isEmpty.value),
             )
           ],
@@ -348,9 +353,6 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
           DrawableOpt(
             key: optKey,
             controller: drawableController,
-            onCameraTap: () {
-              choosePhoto(context, drawableController);
-            },
           ),
         ],
       ),
@@ -464,20 +466,5 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
         ],
       ).customDialogStyle(color: Colors.white),
     );
-  }
-
-  void choosePhoto(BuildContext context, DrawableController drawableController) {
-    AnotherMe.checkPermissions().then((value) {
-      if (value) {
-        ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear).then((value) {
-          if (value != null) {
-            drawableController.cameraFile = File(value.path);
-            toResult(fromCamera: true);
-          }
-        });
-      } else {
-        showPhotoLibraryPermissionDialog(context);
-      }
-    });
   }
 }

@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
@@ -129,9 +130,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           });
         } else if (purchaseDetails.status == PurchaseStatus.purchased || purchaseDetails.status == PurchaseStatus.restored) {
           log("_listenToPurchaseUpdated ${purchaseDetails.purchaseID ?? ""}");
-          // bool valid = await _verifyPurchase(purchaseDetails);
+          bool valid = false;
+          if (!isVip()) {
+            valid = await _verifyPurchase(purchaseDetails);
+          }
 
-          // if (valid) {
+          if (valid) {
             // reload user by get login
             await userManager.refreshUser();
             var user = userManager.user!;
@@ -149,9 +153,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
             setState(() {
               _loading = false;
             });
-          // } else {
+          } else {
             return;
-          // }
+          }
         }
         if (Platform.isAndroid) {
           if (!_kAutoConsume) {
@@ -370,8 +374,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}", ColorConstant.White, FontWeight.w500, 14,
-                              align: TextAlign.start),
+                          TitleTextWidget("${currentPlan.title} : ${currentPlan.price}", ColorConstant.White, FontWeight.w500, 14, align: TextAlign.start),
                         ],
                       ),
                     ),

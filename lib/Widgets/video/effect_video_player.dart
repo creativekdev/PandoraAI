@@ -13,12 +13,16 @@ class EffectVideoPlayer extends StatefulWidget {
   String url;
   bool useCached;
   bool isFile;
+  bool loop;
+  Function? onCompleted;
 
   EffectVideoPlayer({
     Key? key,
     required this.url,
     this.useCached = true,
     this.isFile = false,
+    this.loop = true,
+    this.onCompleted,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,8 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   String? key;
   late bool useCached;
   late bool isFile;
+  late bool loop;
+  Function? onCompleted;
 
   @override
   initState() {
@@ -46,11 +52,16 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     useCached = widget.useCached;
     url = widget.url;
     isFile = widget.isFile;
+    onCompleted = widget.onCompleted;
+    loop = widget.loop;
     if (isFile) {
       downloading = false;
       controller = VideoPlayerController.file(File(url))
-        ..setLooping(true)
+        ..setLooping(loop)
         ..initialize().then((value) {
+          controller!.addListener(() {
+            judgePlaySection();
+          });
           setState(() {
             play();
           });
@@ -58,8 +69,11 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     } else if (!useCached) {
       downloading = false;
       controller = VideoPlayerController.network(url)
-        ..setLooping(true)
+        ..setLooping(loop)
         ..initialize().then((value) {
+          controller!.addListener(() {
+            judgePlaySection();
+          });
           setState(() {
             play();
           });
@@ -70,8 +84,11 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
           onError: (error) {},
           onFinished: (File file) {
             controller = VideoPlayerController.file(file)
-              ..setLooping(true)
+              ..setLooping(loop)
               ..initialize().then((value) {
+                controller!.addListener(() {
+                  judgePlaySection();
+                });
                 setState(() {
                   play();
                 });
@@ -92,9 +109,12 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
       if (data.existsSync()) {
         downloading = false;
         controller = VideoPlayerController.file(data)
-          ..setLooping(true)
+          ..setLooping(loop)
           ..setVolume(0)
           ..initialize().then((value) {
+            controller!.addListener(() {
+              judgePlaySection();
+            });
             setState(() {
               play();
             });
@@ -110,6 +130,14 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
     });
+  }
+
+  judgePlaySection() {
+    var currentPos = controller!.value.position;
+    var totalPos = controller!.value.duration;
+    if (currentPos == totalPos) {
+      onCompleted?.call();
+    }
   }
 
   play() {

@@ -6,6 +6,7 @@ import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
+import 'package:cartoonizer/views/social/comments/metagram_comments_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'widgets/msg_discovery_card.dart';
@@ -123,21 +124,41 @@ class MsgDiscoveryListState extends AppState<MsgDiscoveryList> with AutomaticKee
 
   onMsgClick(MsgListController controller, MsgDiscoveryEntity entity) {
     showLoading().whenComplete(() {
-      controller.api.getDiscoveryDetail(entity.getPostId()).then((value) {
-        hideLoading().whenComplete(() {
-          if (value != null) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => DiscoveryDetailScreen(
-                  discoveryEntity: value,
-                  prePage: 'msg_page',
-                  dataType: 'msg_page',
+      controller.api
+          .getDiscoveryDetail(
+        entity.getPostId(),
+        needRetry: false,
+      )
+          .then((value) {
+        if (value != null) {
+          if (value.socialPostPageId == null) {
+            hideLoading().whenComplete(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => DiscoveryDetailScreen(
+                    discoveryEntity: value,
+                    prePage: 'msg_page',
+                    dataType: 'msg_page',
+                  ),
+                  settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                 ),
-                settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-              ),
-            );
+              );
+            });
+          } else {
+            controller.api.getMetagramItem(entity.getPostId(), needRetry: false).then((value) {
+              hideLoading().whenComplete(() {
+                if (value != null) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    settings: RouteSettings(name: "/MetagramCommentsScreen"),
+                    builder: (context) => MetagramCommentsScreen(
+                      data: value,
+                    ),
+                  ));
+                }
+              });
+            });
           }
-        });
+        }
       });
     });
   }

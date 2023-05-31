@@ -165,6 +165,7 @@ class MsgDiscoveryCard extends StatelessWidget {
               data.getPostId(),
               useCache: true,
               toast: false,
+              needRetry: false,
             ),
           );
   }

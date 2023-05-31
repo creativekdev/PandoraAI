@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/utils/utils.dart';
 
 class EffectManager extends BaseManager {
   EffectMap? _data = null;
@@ -58,6 +61,13 @@ class EffectManager extends BaseManager {
             }
           });
         }
+        _data!.promotionResources.forEach((element) {
+          if (element.type == 'image') {
+            SyncDownloadImage(type: getFileType(element.url ?? ''), url: element.url ?? '').getImage();
+          } else if (element.type == 'video') {
+            SyncDownloadVideo(type: getFileType(element.url ?? ''), url: element.url ?? '').getVideo();
+          }
+        });
         EventBusHelper().eventBus.fire(OnEffectNsfwChangeEvent());
         cacheManager.setJson(CacheManager.effectAllData, data.toJson());
       }

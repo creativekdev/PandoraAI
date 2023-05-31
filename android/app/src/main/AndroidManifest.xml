@@ -13,11 +13,10 @@
 			<action android:name="android.media.action.IMAGE_CAPTURE" />
 		</intent>
 	</queries>
-	<!--
 	<queries>
-	<provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+<!--		<provider android:authorities="com.facebook.katana.provider.PlatformProvider" />-->
+		<provider android:authorities="com.facebook.katana" />
 	</queries>
-	-->
 	<!-- tiktok -->
 	<queries>
 		<package android:name="com.zhiliaoapp.musically" />
@@ -74,9 +73,9 @@
 		</provider>
 		<!-- facebook sdk -->
 		<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
-		<!-- <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token" /> -->
-		<provider android:name="com.facebook.FacebookContentProvider" android:authorities="com.facebook.app.FacebookContentProvider1043807369586450" android:exported="false">
-		</provider>
+		<meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token" />
+<!--		<provider android:name="com.facebook.FacebookContentProvider" android:authorities="com.facebook.app.FacebookContentProvider1043807369586450" android:exported="false">-->
+<!--		</provider>-->
 		<!--
 		<activity android:name="com.facebook.FacebookActivity" android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="@string/app_name" />
 		-->

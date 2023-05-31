@@ -4,7 +4,9 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -52,11 +54,14 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   double titleHeight = 0;
 
   late StreamSubscription onTabDoubleClickListener;
+  late TabController tabController;
+  final List<String> tabs = ['Discovery', 'Metagram'];
 
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'discovery_fragment');
+    tabController = TabController(length: tabs.length, vsync: this);
     tabId = widget.tabId;
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (tabId.id() == event.data && !listController.listLoading) {
@@ -123,12 +128,43 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
       child: Column(
         children: [
-          TitleTextWidget(
-            S.of(context).tabDiscovery,
-            ColorConstant.BtnTextColor,
-            FontWeight.w600,
-            $(18),
-          ).intoContainer(alignment: Alignment.center, height: titleHeight, padding: EdgeInsets.only(top: $(4))),
+          Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: TabBar(
+              isScrollable: true,
+              indicator: LineTabIndicator(
+                borderSide: BorderSide(width: 4.0, color: ColorConstant.DiscoveryBtn),
+                strokeCap: StrokeCap.round,
+                width: $(90),
+              ),
+              labelColor: Colors.white,
+              labelStyle: TextStyle(fontWeight: FontWeight.w500),
+              unselectedLabelColor: Colors.grey.shade400,
+              unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+              tabs: tabs
+                  .map((e) => Text(
+                        e,
+                        style: TextStyle(fontSize: $(18)),
+                      ))
+                  .toList(),
+              padding: EdgeInsets.only(left: $(12), top: $(8), right: $(12), bottom: $(8)),
+              controller: tabController,
+              onTap: (index) {
+                listController.isMetagram = index == 1;
+                easyRefreshController.callRefresh();
+                setState(() {
+                  if (listController.isMetagram) {
+                    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(6);
+                  } else {
+                    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(50);
+                  }
+                });
+              },
+            ),
+          ).intoContainer(width: ScreenUtil.screenSize.width, alignment: Alignment.center),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(horizontal: $(15)),
@@ -166,16 +202,17 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 });
               }),
             ),
-          ).intoContainer(height: $(46), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))),
+          ).intoContainer(height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))).visibility(visible: !listController.isMetagram),
         ],
       ),
     ).intoContainer(
       padding: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()),
       height: headerHeight,
       color: ColorConstant.BackgroundColorBlur,
-    )).intoGestureDetector(onTap: () {
-      listController.scrollController.jumpTo(0);
-    });
+    )).ignore(ignoring: listController.listLoading);
+    // .intoGestureDetector(onTap: () {
+    //   listController.scrollController.jumpTo(0);
+    // });
   }
 
   Widget buildRefreshList(DiscoveryListController listController) {
@@ -198,23 +235,24 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         });
       },
       slivers: [
-        (listController.currentTag?.isMetagram ?? false)
+        (listController.isMetagram)
             ? SliverWaterfallFlow(
                 gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: $(15),
-                  mainAxisSpacing: $(15),
+                  // mainAxisSpacing: $(15),
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) {
                     var data = listController.dataList[index];
                     if (data.data is SocialPostPageEntity) {
                       return DiscoveryMgListCard(
+                        width: (ScreenUtil.screenSize.width - $(45)) / 2,
                         data: data.data! as SocialPostPageEntity,
                         onTap: () {
                           Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
                         },
-                      );
+                      ).marginOnly(top: $(15));
                     } else {
                       return SizedBox.shrink();
                     }
@@ -293,9 +331,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       ],
     ).intoContainer(
       margin: EdgeInsets.only(
-        top: headerHeight + ((listController.currentTag?.isMetagram ?? false) ? $(8) : 0),
-        left: ((listController.currentTag?.isMetagram ?? false) ? $(15) : 0),
-        right: ((listController.currentTag?.isMetagram ?? false) ? $(15) : 0),
+        top: headerHeight,
+        left: ((listController.isMetagram) ? $(15) : 0),
+        right: ((listController.isMetagram) ? $(15) : 0),
       ),
     );
   }

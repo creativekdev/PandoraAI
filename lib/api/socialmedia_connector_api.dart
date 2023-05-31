@@ -4,6 +4,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:common_utils/common_utils.dart';
@@ -55,7 +56,33 @@ class SocialMediaConnectorApi extends RetryAbleRequester {
     return entity;
   }
 
+  Future<BaseEntity?> publishMetagram({required int coreUserId}) async {
+    return await get('/core_user/publish_metagram/$coreUserId');
+  }
+
   Future<BaseEntity?> startBuildMetagram({required int coreUserId}) async {
     return await get('/social_post_page/run/$coreUserId');
+  }
+
+  Future<BaseEntity?> updateMetagram(int id, String resources) async {
+    return await post('/social_post/update/${id}', params: {
+      'resources': resources,
+    });
+  }
+
+  Future<PageEntity?> listAllMetagrams({
+    required int from,
+    required int size,
+    String? type,
+  }) async {
+    Map<String, dynamic> params = {
+      'from': from,
+      'size': size,
+    };
+    if (!TextUtil.isEmpty(type)) {
+      params['type'] = type;
+    }
+    var baseEntity = await get('/social_post_page/all', params: params);
+    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 }

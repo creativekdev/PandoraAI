@@ -7,6 +7,23 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:image/image.dart' as imgLib;
 
 class ImageUtils {
+  // 根据目标坐标计算原图应该显示的区域
+  static Rect getTargetCoverRect(Size source, Size target) {
+    double sourceScale = source.width / source.height;
+    double targetScale = target.width / target.height;
+    if (sourceScale > targetScale) {
+      //原图更宽，以高度缩放取中间部分。
+      double width = source.height * targetScale;
+      double x = (source.width - width) / 2;
+      return Rect.fromLTWH(x, 0, width, source.height);
+    } else {
+      //原图更高，以宽度缩放取中间部分。
+      double height = source.width / targetScale;
+      double y = (source.height - height) / 2;
+      return Rect.fromLTWH(0, y, source.width, height);
+    }
+  }
+
   // todo 4领域泛洪填充算法，还没有优化好。
   static List<ui.Path> getBoundaries(imgLib.Image image, ui.Offset center) {
     List<ui.Path> result = [];

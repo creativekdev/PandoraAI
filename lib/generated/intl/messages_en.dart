@@ -160,6 +160,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "delete_succeed":
             MessageLookupByLibrary.simpleMessage("delete succeed"),
         "deny": MessageLookupByLibrary.simpleMessage("Deny"),
+        "disconnect": MessageLookupByLibrary.simpleMessage("Disconnect"),
+        "disconnect_social_completed": MessageLookupByLibrary.simpleMessage(
+            "You have unbound the account"),
+        "disconnect_social_tips": MessageLookupByLibrary.simpleMessage(
+            "Are you sure to disconnect this account?"),
         "discoveryComment": MessageLookupByLibrary.simpleMessage("Comment"),
         "discoveryComments": MessageLookupByLibrary.simpleMessage("Comments"),
         "discoveryDetails": MessageLookupByLibrary.simpleMessage("Details"),

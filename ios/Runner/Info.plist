@@ -22,12 +22,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>FacebookAppID</key>
-    	<string>1043807369586450</string>
-    	<key>FacebookClientToken</key>
-    	<string>31823da957485a30fea58f83049d5778</string>
-    	<key>FacebookDisplayName</key>
-    	<string>Pandora AI</string>
+    <key>FacebookAppID</key>
+    <string>801412163654865</string>
+    <key>FacebookDisplayName</key>
+    <string>SocialBuilder</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 	    <dict>
@@ -43,7 +41,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1043807369586450</string>
+				<string>fb801412163654865</string>
 				<string>aw9iospxikqd2qsx</string>
 			</array>
 		</dict>

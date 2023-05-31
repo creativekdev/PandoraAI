@@ -68,7 +68,7 @@ class SocialPostPageEntity {
 
 @JsonSerializable()
 class MetagramItemEntity {
-  @JSONField(name: 'user_id˚')
+  @JSONField(name: 'user_id')
   int? userId;
   String? images;
   String? resources;
@@ -99,6 +99,8 @@ class MetagramItemEntity {
   int? id;
   @JSONField(serialize: false, deserialize: false)
   Rx<bool> liked = false.obs;
+  @JSONField(serialize: false, deserialize: false)
+  int currentIndex = 0;
 
   MetagramItemEntity();
 

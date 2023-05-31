@@ -389,5 +389,8 @@
   "create_new_avatars": "Create New Avatars",
   "view_more_comment": "View more %d comments",
   "loginToThePlatformAccount": "Log in to the platform account",
-  "platform_connecting": "Connecting"
+  "platform_connecting": "Connecting",
+  "disconnect": "Disconnect",
+  "disconnect_social_tips": "Are you sure to disconnect this account?",
+  "disconnect_social_completed": "You have unbound the account"
 }

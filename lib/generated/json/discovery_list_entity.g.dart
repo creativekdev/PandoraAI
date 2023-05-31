@@ -89,6 +89,10 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (payload != null) {
 		discoveryListEntity.payload = payload;
 	}
+	final String? socialPostPageId = jsonConvert.convert<String>(json['social_post_page_id']);
+	if (socialPostPageId != null) {
+		discoveryListEntity.socialPostPageId = socialPostPageId;
+	}
 	return discoveryListEntity;
 }
 
@@ -115,6 +119,7 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['resources'] = entity.resources;
 	data['removed'] = entity.removed;
 	data['payload'] = entity.payload;
+	data['social_post_page_id'] = entity.socialPostPageId;
 	return data;
 }
 

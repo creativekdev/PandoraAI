@@ -1,4 +1,5 @@
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
 
 import 'EffectModel.dart';
@@ -10,6 +11,7 @@ class EffectMap {
   List<String> tags = [];
   List<HomeCardEntity> homeCards = [];
   String? hash;
+  List<DiscoveryResource> promotionResources = [];
 
   EffectMap({
     required this.data,
@@ -34,8 +36,11 @@ class EffectMap {
     if (json['home_functions'] != null) {
       this.homeCards = (json['home_functions'] as List).map((e) => HomeCardEntity.fromJson(e)).toList();
     }
-    if(json['hash'] != null) {
+    if (json['hash'] != null) {
       this.hash = json['hash'];
+    }
+    if (json['promotion_resources'] != null) {
+      this.promotionResources = (json['promotion_resources'] as List).map((e) => DiscoveryResource.fromJson(e)).toList();
     }
   }
 
@@ -49,6 +54,11 @@ class EffectMap {
       map['campaign_tab'] = campaignTab!.toJson();
     }
     map['home_functions'] = homeCards.map((e) => e.toJson()).toList();
+    map['tags'] = tags;
+    if (hash != null) {
+      map['hash'] = hash!;
+    }
+    map['promotion_resources'] = promotionResources.map((e) => e.toJson()).toList();
     return map;
   }
 }

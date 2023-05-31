@@ -45,11 +45,10 @@ class Uploader extends RetryAbleRequester {
         });
   }
 
-  Future<AnotherMeResultEntity?> generateAnotherMe(String url, int faceRatio, String? cachedId) async {
+  Future<AnotherMeResultEntity?> generateAnotherMe(String url, String? cachedId) async {
     UserManager userManager = AppDelegate().getManager();
-    var params = {
+    var params = <String, dynamic>{
       'init_images': [url],
-      'face_ratio': faceRatio,
     };
     if (!TextUtil.isEmpty(cachedId)) {
       params['cache_id'] = cachedId!;

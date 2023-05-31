@@ -42,12 +42,12 @@ class DioNode {
       }
       var tag = _generateRequestTag(options);
       String url = options.baseUrl + options.path;
-      LogUtil.v('request: $url  headers: ${_generateHeaders(options)}', tag: tag);
-      var getParams = _generateGetParams(options);
+      LogUtil.v('request: $url  headers: ${options.generateHeaders()}', tag: tag);
+      var getParams = options._generateGetParams();
       if (getParams != null) {
         LogUtil.v('request: $url  queryParams: $getParams', tag: tag);
       }
-      var postParams = _generatePostParams(options);
+      var postParams = options._generatePostParams();
       if (postParams != null) {
         if (postParams.length > logMaxLength) {
           LogUtil.v('request: $url  data: ${postParams.substring(0, logMaxLength)}', tag: tag);
@@ -94,11 +94,11 @@ class DioNode {
   String _generateRequestTag(RequestOptions options) {
     String requestTag;
     String url = options.baseUrl + options.path;
-    var getParams = _generateGetParams(options);
+    var getParams = options._generateGetParams();
     if (getParams != null) {
       requestTag = _TAG + "_" + EncryptUtil.encodeMd5(url + getParams).substring(0, 8);
     } else {
-      var postParams = _generatePostParams(options);
+      var postParams = options._generatePostParams();
       if (postParams != null) {
         requestTag = _TAG + "_" + EncryptUtil.encodeMd5(url + postParams).substring(0, 8);
       } else {
@@ -107,19 +107,28 @@ class DioNode {
     }
     return requestTag;
   }
+}
 
-  String _generateHeaders(RequestOptions options) {
+extension RequestOptionsEx on RequestOptions {
+  String generateHeaders() {
     String result = "{";
-    options.headers.forEach((key, value) {
+    headers.forEach((key, value) {
       result += '$key:$value,';
     });
     result += "}";
     return result;
   }
 
-  String? _generateGetParams(RequestOptions options) {
+  String? generateParams() {
+    var getParams = _generateGetParams();
+    if (getParams != null) {
+      return getParams;
+    }
+    return _generatePostParams();
+  }
+
+  String? _generateGetParams() {
     String? result;
-    var queryParameters = options.queryParameters;
     if (queryParameters.keys.isNotEmpty) {
       var queryParamsString = "?";
       queryParameters.keys.forEach((v) {
@@ -131,9 +140,9 @@ class DioNode {
     return result;
   }
 
-  String? _generatePostParams(RequestOptions options) {
+  String? _generatePostParams() {
     String? result;
-    var reqData = options.data;
+    var reqData = data;
     if (reqData != null) {
       var data;
       if (reqData is FormData) {

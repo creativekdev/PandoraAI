@@ -9,6 +9,7 @@ import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
+import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -96,6 +97,9 @@ class AppFeatureOperator {
         break;
       case HomeCardType.scribble:
         AiDrawable.open(context, source: 'in_app_messaging');
+        break;
+      case HomeCardType.metagram:
+        Metagram.openBySelf(context, source: 'in_app_messaging');
         break;
       default:
         break;

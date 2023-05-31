@@ -20,7 +20,9 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/social/metagram_controller.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
+import 'comments/metagram_comments_screen.dart';
 import 'edit/metagram_item_edit_screen.dart';
 import 'widget/metagram_list_card.dart';
 
@@ -37,6 +39,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screen(screenName: 'metagram_list_screen');
     delay(() {
       controller.itemScrollController.jumpTo(
         index: controller.scrollPosition,
@@ -64,7 +67,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
         isVideo: false,
         originalUrl: null,
         effectKey: 'Me-taverse', onShareSuccess: (platform) {
-      Events.metaverseCompleteShare(source: 'metagram', platform: platform, type: 'image');
+      Events.metagramCompleteShare(source: 'metagram', platform: platform, type: 'image');
     });
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
@@ -89,7 +92,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
     }
     await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
     await hideLoading();
-    Events.metaverseCompleteDownload(type: 'image');
+    Events.metagramCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);
     delay(() {
       userManager.rateNoticeOperator.onSwitch(context);
@@ -111,7 +114,15 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                 var data = controller.data!.rows[index];
                 return MetagramListCard(
                   data: data,
-                  onCommentsTap: () {},
+                  isSelf: controller.isSelf,
+                  onCommentsTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      settings: RouteSettings(name: "/MetagramCommentsScreen"),
+                      builder: (context) => MetagramCommentsScreen(
+                        data: data,
+                      ),
+                    ));
+                  },
                   liked: data.liked.value,
                   onLikeTap: (liked) async {
                     UserManager userManager = AppDelegate.instance.getManager();
@@ -124,7 +135,9 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                     if (liked) {
                       data.likes--;
                       CartoonizerApi().discoveryUnLike(data.id!, data.likeId!).then((value) {
-                        controller.likeLocalAddAlready.value = false;
+                        if (value == null) {
+                          controller.likeLocalAddAlready.value = false;
+                        }
                       });
                       result = false;
                       data.liked.value = false;

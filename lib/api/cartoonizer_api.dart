@@ -145,20 +145,54 @@ class CartoonizerApi extends RetryAbleRequester {
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
-  Future<DiscoveryListEntity?> getDiscoveryDetail(int id, {bool useCache = false, bool toast = true}) async {
+  Future<DiscoveryListEntity?> getDiscoveryDetail(
+    int id, {
+    bool useCache = false,
+    bool toast = true,
+    bool needRetry = true,
+  }) async {
     if (useCache) {
       var json = cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
       if (json != null) {
         return jsonConvert.convert<DiscoveryListEntity>(json);
       }
     }
-    var baseEntity = await get('/social_post/get/$id', toastOnFailed: toast);
+    var baseEntity = await get(
+      '/social_post/get/$id',
+      toastOnFailed: toast,
+      needRetry: needRetry,
+    );
     if (baseEntity == null) {
       return null;
     }
     var data = baseEntity.data['data'];
     cacheManager.setJson(CacheManager.cacheDiscoveryListEntity + '$id', data);
     return jsonConvert.convert<DiscoveryListEntity>(data);
+  }
+
+  Future<MetagramItemEntity?> getMetagramItem(
+    int id, {
+    bool useCache = false,
+    bool toast = true,
+    bool needRetry = true,
+  }) async {
+    if (useCache) {
+      var json = cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
+      if (json != null) {
+        return jsonConvert.convert<MetagramItemEntity>(json);
+      }
+    }
+    var baseEntity = await get(
+      '/social_post/get/$id',
+      toastOnFailed: toast,
+      needRetry: needRetry,
+    );
+    if (baseEntity == null) {
+      return null;
+    }
+    var data = baseEntity.data['data'];
+    cacheManager.setJson(CacheManager.cacheDiscoveryListEntity + '$id', data);
+    return jsonConvert.convert<MetagramItemEntity>(data);
   }
 
   /// share effect to discovery
@@ -241,6 +275,7 @@ class CartoonizerApi extends RetryAbleRequester {
       EventBusHelper().eventBus.fire(OnCreateCommentEvent(data: data));
       var entity = jsonConvert.convert<DiscoveryCommentListEntity>(baseEntity.data['data']);
       entity?.userAvatar = userManager.user?.getShownAvatar() ?? '';
+      entity?.userName = userManager.user?.getShownName() ?? '';
       return entity;
     }
     return null;
@@ -588,25 +623,42 @@ class CartoonizerApi extends RetryAbleRequester {
     return result;
   }
 
-  Future<BaseEntity?> updateMetagram(int id, String resources) async {
-    return await post('/social_post/update/${id}', params: {
-      'resources': resources,
-    });
+  Future<BaseEntity?> logError({
+    required String reqMethod,
+    required String api,
+    required String errorMessage,
+    required String headers,
+    required int statusCode,
+  }) async {
+    return await post(
+      '/log/api_error',
+      params: {
+        'requestMethod': reqMethod,
+        'api': api,
+        'headers': headers,
+        'statusCode': statusCode,
+        'errorMessage': errorMessage,
+      },
+      needRetry: false,
+      toastOnFailed: false,
+    );
+  }
+}
+
+class CartoonizerApi2 extends RetryAbleRequester {
+  CacheManager cacheManager = AppDelegate().getManager();
+  UserManager userManager = AppDelegate().getManager();
+
+  CartoonizerApi2({Dio? client}) : super(client: client);
+
+  @override
+  Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
+    Map<String, String> headers = {};
+    headers['cookie'] = "sb.connect.sid=${userManager.sid}";
+    return ApiOptions(baseUrl: Config.instance.host, headers: headers);
   }
 
-  Future<PageEntity?> listAllMetagrams({
-    required int from,
-    required int size,
-    String? type,
-  }) async {
-    Map<String, dynamic> params = {
-      'from': from,
-      'size': size,
-    };
-    if (!TextUtil.isEmpty(type)) {
-      params['type'] = type;
-    }
-    var baseEntity = await get('/social_post_pages/all', params: params);
-    return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
+  Future<BaseEntity?> disconnectSocialMedia(Map<String, dynamic> params) async {
+    return await post('/disconnect', params: params);
   }
 }

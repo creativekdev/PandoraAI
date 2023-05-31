@@ -25,6 +25,7 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dar
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
 import 'metagram_item_edit_controller.dart';
@@ -55,8 +56,15 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(MetagramItemEditController(entity: widget.entity, items: widget.items, index: widget.index, isSelf: widget.isSelf));
-    delay(() => generateAgain(controller), milliseconds: 100);
+    Posthog().screen(screenName: 'metagram_item_edit_screen');
+    controller = Get.put(MetagramItemEditController(entity: widget.entity, items: widget.items, index: widget.index));
+    controller.onReadyCallback = () {
+      if (controller.originFile != null) {
+        delay(() {
+          generateAgain(controller);
+        });
+      }
+    };
   }
 
   @override
@@ -67,131 +75,139 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return GetBuilder<MetagramItemEditController>(
-      builder: (controller) {
-        return Scaffold(
-          backgroundColor: ColorConstant.BackgroundColor,
-          appBar: AppNavigationBar(
-            backgroundColor: ColorConstant.BackgroundColor,
-            middle: Image.asset(
-              Images.ic_metagram_download,
-              width: $(24),
-            )
-                .intoContainer(
-              padding: EdgeInsets.all($(10)),
-              color: Colors.transparent,
-            )
-                .intoGestureDetector(onTap: () {
-              saveImage(controller);
-            }).offstage(offstage: controller.resultFile == null),
-            trailing: Image.asset(
-              Images.ic_metagram_save,
-              width: $(24),
-              height: $(24),
-            )
-                .intoContainer(
-              padding: EdgeInsets.all($(10)),
-              color: Colors.transparent,
-            )
-                .intoGestureDetector(onTap: () {
-              submit(controller);
-            }).offstage(offstage: controller.transResult == null || !controller.isSelf),
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                  child: Stack(
+    return WillPopScope(
+        child: GetBuilder<MetagramItemEditController>(
+          builder: (controller) {
+            return Scaffold(
+              backgroundColor: ColorConstant.BackgroundColor,
+              appBar: AppNavigationBar(
+                backgroundColor: ColorConstant.BackgroundColor,
+                backAction: () {
+                  _willPopCallback(context);
+                },
+                middle: Image.asset(
+                  Images.ic_metagram_download,
+                  width: $(24),
+                )
+                    .intoContainer(
+                  padding: EdgeInsets.all($(10)),
+                  color: Colors.transparent,
+                )
+                    .intoGestureDetector(onTap: () {
+                  saveImage(controller);
+                }).offstage(offstage: controller.resultFile == null),
+                trailing: Image.asset(
+                  Images.ic_metagram_save,
+                  width: $(24),
+                  height: $(24),
+                )
+                    .intoContainer(
+                  padding: EdgeInsets.all($(10)),
+                  color: Colors.transparent,
+                )
+                    .intoGestureDetector(onTap: () {
+                  submit(controller);
+                }).offstage(offstage: controller.transResult == null),
+              ),
+              body: Column(
                 children: [
-                  controller.resultFile == null
-                      ? SkeletonAvatar(
-                          style: SkeletonAvatarStyle(
-                            width: ScreenUtil.screenSize.width,
-                            height: ScreenUtil.screenSize.width,
-                          ),
-                        )
-                      : controller.transResult == null
-                          ? Image.file(
-                              controller.resultFile!,
-                              width: ScreenUtil.screenSize.width,
+                  Expanded(
+                      child: Stack(
+                    children: [
+                      controller.resultFile == null
+                          ? SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                                width: ScreenUtil.screenSize.width,
+                                height: ScreenUtil.screenSize.width,
+                              ),
                             )
+                          : controller.transResult == null
+                              ? Image.file(
+                                  controller.resultFile!,
+                                  width: ScreenUtil.screenSize.width,
+                                )
+                              : Image.file(
+                                  controller.transResult!,
+                                  fit: BoxFit.contain,
+                                  width: ScreenUtil.screenSize.width,
+                                ),
+                      controller.originFile == null || !controller.showOrigin
+                          ? SizedBox.shrink()
                           : Image.file(
-                              controller.transResult!,
-                              fit: BoxFit.contain,
-                              width: ScreenUtil.screenSize.width,
+                              controller.originFile!,
+                              width: double.maxFinite,
                             ),
-                  controller.originFile == null || !controller.showOrigin
-                      ? SizedBox.shrink()
-                      : Image.file(
-                          controller.originFile!,
-                          width: double.maxFinite,
+                      Positioned(
+                        left: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          child: Image.asset(Images.ic_metagram_show_origin, width: $(26)).intoContainer(
+                            color: Colors.transparent,
+                            padding: EdgeInsets.all($(12)),
+                          ),
+                          onTapDown: (details) {
+                            controller.showOrigin = true;
+                          },
+                          onTapUp: (details) {
+                            controller.showOrigin = false;
+                          },
+                          onTapCancel: () {
+                            controller.showOrigin = false;
+                          },
                         ),
-                  Positioned(
-                    left: 0,
-                    bottom: 0,
-                    child: GestureDetector(
-                      child: Image.asset(Images.ic_metagram_show_origin, width: $(26)).intoContainer(
-                        color: Colors.transparent,
-                        padding: EdgeInsets.all($(12)),
-                      ),
-                      onTapDown: (details) {
-                        controller.showOrigin = true;
-                      },
-                      onTapUp: (details) {
-                        controller.showOrigin = false;
-                      },
-                      onTapCancel: () {
-                        controller.showOrigin = false;
-                      },
+                      )
+                    ],
+                  ).intoCenter().intoContainer()),
+                  OutlineWidget(
+                    radius: $(8),
+                    strokeWidth: $(2),
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFEC5DD8),
+                        Color(0xFF7F97F3),
+                        Color(0xFF04F1F9),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  )
+                    child: Text(
+                      S.of(context).generate_again,
+                      style: TextStyle(
+                        color: ColorConstant.White,
+                        fontSize: $(16),
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ).intoContainer(
+                      padding: EdgeInsets.symmetric(vertical: $(10)),
+                      alignment: Alignment.center,
+                    ),
+                  ).intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8))).intoGestureDetector(onTap: () {
+                    generateAgain(controller);
+                  }).intoContainer(
+                      margin: EdgeInsets.only(
+                    left: $(12),
+                    right: $(12),
+                    bottom: ScreenUtil.getBottomPadding(context) + $(30),
+                  )),
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: $(12)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: buildItems(controller),
+                    ),
+                    scrollDirection: Axis.horizontal,
+                  ).intoContainer(margin: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15))).offstage(offstage: true),
                 ],
-              ).intoCenter().intoContainer()),
-              OutlineWidget(
-                radius: $(8),
-                strokeWidth: $(2),
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFEC5DD8),
-                    Color(0xFF7F97F3),
-                    Color(0xFF04F1F9),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                child: Text(
-                  S.of(context).generate_again,
-                  style: TextStyle(
-                    color: ColorConstant.White,
-                    fontSize: $(16),
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.normal,
-                  ),
-                ).intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                  alignment: Alignment.center,
-                ),
-              ).intoMaterial(color: Color(0xff222222), borderRadius: BorderRadius.circular($(8))).intoGestureDetector(onTap: () {
-                generateAgain(controller);
-              }).intoContainer(
-                  margin: EdgeInsets.only(
-                left: $(12),
-                right: $(12),
-                bottom: ScreenUtil.getBottomPadding(context) + $(30),
-              )),
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: $(12)),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: buildItems(controller),
-                ),
-                scrollDirection: Axis.horizontal,
-              ).intoContainer(margin: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15))).offstage(offstage: true),
-            ],
-          ),
-        );
-      },
-      init: Get.find<MetagramItemEditController>(),
-    );
+              ),
+            );
+          },
+          init: Get.find<MetagramItemEditController>(),
+        ),
+        onWillPop: () async {
+          _willPopCallback(context);
+          return false;
+        });
   }
 
   generateAgain(MetagramItemEditController controller) {
@@ -205,10 +221,10 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
       if (value == null) {
         controller.onError();
       } else if (value.result) {
-        Events.metaverseCompleteSuccess(photo: 'url');
+        Events.metagramCompleteSuccess(photo: 'url');
         generateCount++;
         if (generateCount - 1 > 0) {
-          Events.metaverseCompleteGenerateAgain(time: generateCount - 1);
+          Events.metagramCompleteGenerateAgain(time: generateCount - 1);
         }
         controller.onSuccess();
       } else {
@@ -249,7 +265,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
                 ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
                 SizedBox(height: $(16)),
                 TitleTextWidget(
-                  type.getContent(context, 'AI Artist'),
+                  type.getContent(context, 'Metagram'),
                   ColorConstant.White,
                   FontWeight.w500,
                   $(13),
@@ -448,7 +464,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
     }
     await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
     await hideLoading();
-    Events.metaverseCompleteDownload(type: 'image');
+    Events.metagramCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);
     delay(() {
       UserManager userManager = AppDelegate.instance.getManager();
@@ -465,6 +481,57 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
           }
         });
       });
+    });
+  }
+
+  _willPopCallback(BuildContext context) async {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: $(20)),
+          TitleTextWidget(S.of(context).exit_msg, Colors.white, FontWeight.w600, $(17)),
+          SizedBox(height: $(15)),
+          TitleTextWidget(S.of(context).exit_msg1, Colors.white, FontWeight.w400, $(13), maxLines: 2).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))),
+          SizedBox(height: $(15)),
+          Divider(height: 1, color: ColorConstant.LightLineColor),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: TitleTextWidget(
+                  S.of(context).txtContinue,
+                  ColorConstant.aiDrawBlue,
+                  FontWeight.w400,
+                  $(17),
+                ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
+                  Navigator.pop(context, true);
+                }),
+              ),
+              Container(
+                height: $(46),
+                width: 0.5,
+                color: ColorConstant.LightLineColor,
+              ),
+              Expanded(
+                child: TitleTextWidget(
+                  S.of(context).cancel,
+                  ColorConstant.aiDrawBlue,
+                  FontWeight.w500,
+                  $(17),
+                ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
+                  Navigator.pop(context);
+                }),
+              ),
+            ],
+          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+        ],
+      ).customDialogStyle(),
+    ).then((value) {
+      if (value ?? false) {
+        Navigator.pop(context);
+      }
     });
   }
 }

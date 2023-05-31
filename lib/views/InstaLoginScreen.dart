@@ -36,7 +36,7 @@ class _InstaLoginScreenState extends State<InstaLoginScreen> {
         gestureNavigationEnabled: true,
         navigationDelegate: (NavigationRequest request) async {
           if (request.url.startsWith(InstagramConstant.redirectUri)) {
-            instagram.getAuthorizationCode(request.url, false);
+            instagram.getAuthorizationCode(request.url);
             await instagram.getTokenAndUserID().then((isDone) {
               if (isDone) {
                 instagram.getUserProfile().then((isDone) async {

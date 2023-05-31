@@ -1,6 +1,11 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -8,6 +13,7 @@ import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/share/ShareUrlScreen.dart';
 import 'package:cartoonizer/views/social/metagram_item_list_screen.dart';
 import 'package:cartoonizer/views/social/widget/rotating_image.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
 import 'metagram_controller.dart';
@@ -15,25 +21,28 @@ import 'widget/blink_image.dart';
 
 class MetagramScreen extends StatefulWidget {
   String source;
-  int? coreUserId;
+  int coreUserId;
+  bool isSelf;
 
   MetagramScreen({
     Key? key,
     required this.source,
-    this.coreUserId,
+    required this.coreUserId,
+    required this.isSelf,
   }) : super(key: key);
 
   @override
   State<MetagramScreen> createState() => _MetagramScreenState();
 }
 
-class _MetagramScreenState extends State<MetagramScreen> {
+class _MetagramScreenState extends AppState<MetagramScreen> {
   MetagramController controller = Get.put(MetagramController());
 
   @override
   void initState() {
     super.initState();
-    delay(() => controller.onPageStart(context, widget.coreUserId));
+    Posthog().screen(screenName: 'metagram_home_screen');
+    delay(() => controller.onPageStart(context, widget.coreUserId, widget.isSelf));
   }
 
   @override
@@ -43,7 +52,7 @@ class _MetagramScreenState extends State<MetagramScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<MetagramController>(
@@ -128,19 +137,19 @@ class _MetagramScreenState extends State<MetagramScreen> {
                   item: Row(
                     children: [
                       SkeletonAvatar(
-                        style: SkeletonAvatarStyle(width: imageWidth, height: imageWidth),
+                        style: SkeletonAvatarStyle(width: imageWidth - 1, height: imageWidth),
                       ),
                       SizedBox(
                         width: $(1),
                       ),
                       SkeletonAvatar(
-                        style: SkeletonAvatarStyle(width: imageWidth, height: imageWidth),
+                        style: SkeletonAvatarStyle(width: imageWidth - 1, height: imageWidth),
                       ),
                       SizedBox(
                         width: $(1),
                       ),
                       SkeletonAvatar(
-                        style: SkeletonAvatarStyle(width: imageWidth, height: imageWidth),
+                        style: SkeletonAvatarStyle(width: imageWidth - 1, height: imageWidth),
                       ),
                     ],
                   ).intoContainer(margin: EdgeInsets.only(top: $(1))),
@@ -181,6 +190,18 @@ class _MetagramScreenState extends State<MetagramScreen> {
                   itemCount: entity.rows.length,
                 ),
         ),
+        TitleTextWidget(S.of(context).disconnect, Colors.white, FontWeight.w500, $(18))
+            .intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.symmetric(vertical: $(8)),
+                margin: EdgeInsets.only(left: $(15), right: $(15), bottom: ScreenUtil.getBottomPadding(context)),
+                decoration: BoxDecoration(
+                  color: ColorConstant.DiscoveryBtn,
+                  borderRadius: BorderRadius.circular($(10)),
+                ))
+            .intoGestureDetector(onTap: () {
+          disconnectAccount();
+        }).visibility(visible: controller.isSelf),
       ],
     );
   }
@@ -292,4 +313,74 @@ class _MetagramScreenState extends State<MetagramScreen> {
       ).intoContainer(alignment: Alignment.centerLeft);
     }
   }
+
+  void disconnectAccount() {
+    showDeleteAccountDialog().then((value) {
+      if (value ?? false) {
+        showLoading().whenComplete(() {
+          var userManager = AppDelegate().getManager<UserManager>();
+          userManager.disconnectSocialAccount(connection: userManager.platformConnections[ConnectorPlatform.instagram]!.first).then((value) {
+            hideLoading().whenComplete(() {
+              if (value) {
+                CommonExtension().showToast(S.of(context).disconnect_social_completed);
+                Navigator.of(context).pop();
+              }
+            });
+          });
+        });
+      }
+    });
+  }
+
+  Future<bool?> showDeleteAccountDialog() => showDialog<bool>(
+        context: context,
+        builder: (context) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              S.of(context).disconnect_social_tips,
+              style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+              textAlign: TextAlign.center,
+            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(20))),
+            Row(
+              children: [
+                Expanded(
+                    child: Text(
+                  S.of(context).disconnect,
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.red),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                              right: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () async {
+                  Navigator.pop(context, true);
+                })),
+                Expanded(
+                    child: Text(
+                  S.of(context).cancel,
+                  style: TextStyle(fontSize: $(15), fontFamily: 'Poppins', color: Colors.white),
+                )
+                        .intoContainer(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                border: Border(
+                              top: BorderSide(color: ColorConstant.LineColor, width: 1),
+                            )))
+                        .intoGestureDetector(onTap: () {
+                  Navigator.pop(context);
+                })),
+              ],
+            ),
+          ],
+        )
+            .intoMaterial(color: ColorConstant.EffectFunctionGrey, borderRadius: BorderRadius.circular($(16)))
+            .intoContainer(padding: EdgeInsets.only(left: $(16), right: $(16), top: $(10)), margin: EdgeInsets.symmetric(horizontal: $(35)))
+            .intoCenter(),
+      );
 }

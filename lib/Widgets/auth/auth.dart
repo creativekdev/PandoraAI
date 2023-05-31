@@ -4,6 +4,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -76,18 +77,29 @@ class Auth {
 
   Future<AuthResult> signInWithFacebook() async {
     // Trigger the sign-in flow
-    final LoginResult loginResult = await FacebookAuth.instance.login();
+    FacebookAuth.instance.autoLogAppEventsEnabled(true);
+    final LoginResult loginResult = await FacebookAuth.instance.login(permissions: [
+      'instagram_basic',
+      'pages_show_list',
+      'instagram_manage_insights',
+      'pages_read_engagement',
+      'instagram_manage_comments',
+    ],loginBehavior: LoginBehavior.nativeOnly);
 
-    // Create a credential from the access token
-    final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+    if (loginResult.status == LoginStatus.success) {
+      // Create a credential from the access token
+      final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-    String? token = facebookAuthCredential.accessToken;
-    String? tokenId = facebookAuthCredential.idToken;
-    print(facebookAuthCredential.accessToken);
+      String? token = facebookAuthCredential.accessToken;
+      String? tokenId = facebookAuthCredential.idToken;
+      LogUtil.d(facebookAuthCredential.accessToken, tag: 'FBSdkLogin');
 
-    // Once signed in, return the UserCredential
-    var userCredential = await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    return AuthResult(credential: userCredential, token: token, tokenId: tokenId);
+      // Once signed in, return the UserCredential
+      // var userCredential = await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+      return AuthResult(credential: null, token: token, tokenId: tokenId);
+    } else {
+      return AuthResult(errorMsg: loginResult.message);
+    }
   }
 
   Future<TiktokResult?> signInWithTiktok() async {

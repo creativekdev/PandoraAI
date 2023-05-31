@@ -143,14 +143,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 });
               }).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
-              ImageTextBarWidget(
-                'Metagram',
-                Images.ic_setting_my_discovery,
-                true,
-              ).intoGestureDetector(onTap: () {
-                Metagram.openBySelf(context, source: 'home_page');
-              }).offstage(offstage: userManager.isNeedLogin),
-              line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();

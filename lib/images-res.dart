@@ -88,6 +88,7 @@ class Images {
    static const String ic_mark_pen = 'assets/images/ic_mark_pen.png';
    static const String ic_metagram_comment = 'assets/images/ic_metagram_comment.png';
    static const String ic_metagram_download = 'assets/images/ic_metagram_download.png';
+   static const String ic_metagram_intro_bg = 'assets/images/ic_metagram_intro_bg.png';
    static const String ic_metagram_opt_another = 'assets/images/ic_metagram_opt_another.png';
    static const String ic_metagram_refresh = 'assets/images/ic_metagram_refresh.png';
    static const String ic_metagram_save = 'assets/images/ic_metagram_save.png';

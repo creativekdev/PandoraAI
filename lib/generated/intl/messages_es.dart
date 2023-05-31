@@ -46,7 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "album_to_settings_tips":
             MessageLookupByLibrary.simpleMessage("Para agregar más imágenes"),
         "all": MessageLookupByLibrary.simpleMessage("todo"),
-        "all_likes": MessageLookupByLibrary.simpleMessage("%d 赞"),
+        "all_likes": MessageLookupByLibrary.simpleMessage("%d me gusta"),
         "all_plans": MessageLookupByLibrary.simpleMessage("Todas las tareas"),
         "already_account":
             MessageLookupByLibrary.simpleMessage("Ya tienes una cuenta？ "),
@@ -61,7 +61,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "august": MessageLookupByLibrary.simpleMessage("Agosto"),
         "author": MessageLookupByLibrary.simpleMessage("autor"),
         "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
-            "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？"),
+            "El estilo de selección actual es %s. Por favor, cargue una imagen que coincida con este estilo para garantizar que los resultados generados sean más precisos. ¿Seguro que el estilo es %s?"),
         "avatars": MessageLookupByLibrary.simpleMessage("retratos"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
             "Fotos de grupo, fotos de solo mirada, cubierta facial / gafas de sol, fotos monótonas, desnudos, niños (menores de 12 años)"),
@@ -80,9 +80,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Sin marca de agua"),
         "buyNow": MessageLookupByLibrary.simpleMessage("Comprar ahora"),
         "buy_attr_ai_artist":
-            MessageLookupByLibrary.simpleMessage("%d 次AI Artist转化 / 天"),
-        "buy_attr_metaverse":
-            MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
+            MessageLookupByLibrary.simpleMessage("％d conversión AI Artist/día"),
+        "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
+            "％d conversión me-taverse/día"),
         "c_password":
             MessageLookupByLibrary.simpleMessage("Confirmar la contraseña"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancelar"),
@@ -111,8 +111,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Seleccione la imagen"),
         "choose_photo_bad_images_desc":
             MessageLookupByLibrary.simpleMessage("有 %badCount 张无效，"),
-        "choose_photo_more_photos":
-            MessageLookupByLibrary.simpleMessage("请再选择 %d 张照片。"),
+        "choose_photo_more_photos": MessageLookupByLibrary.simpleMessage(
+            "Por favor, seleccione ％d foto más."),
         "choose_photo_not_enough_desc": MessageLookupByLibrary.simpleMessage(
             "您选择了 %selected 张照片，%badImages最少需要 %minSize 张照片。"),
         "choose_photo_ok_description": MessageLookupByLibrary.simpleMessage(
@@ -123,8 +123,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "clean_successfully": MessageLookupByLibrary.simpleMessage(
             "La limpieza se ha realizado correctamente"),
         "clear": MessageLookupByLibrary.simpleMessage("purga"),
-        "clear_cache_tips":
-            MessageLookupByLibrary.simpleMessage("确定要清除所有缓存？\n 共：%d"),
+        "clear_cache_tips": MessageLookupByLibrary.simpleMessage(
+            "¿Seguro que quieres borrar todo el caché? \n total：%d"),
         "click_logout":
             MessageLookupByLibrary.simpleMessage("Haz clic en Cerrar sesión"),
         "code_send_to_email": MessageLookupByLibrary.simpleMessage(
@@ -165,6 +165,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "delete_succeed": MessageLookupByLibrary.simpleMessage(
             "La eliminación se ha realizado correctamente"),
         "deny": MessageLookupByLibrary.simpleMessage("rehusar"),
+        "disconnect": MessageLookupByLibrary.simpleMessage("desvinculación"),
+        "disconnect_social_completed": MessageLookupByLibrary.simpleMessage(
+            "Has sido desvinculado exitosamente"),
+        "disconnect_social_tips": MessageLookupByLibrary.simpleMessage(
+            "¿Está seguro de que desea desvincular esta cuenta?"),
         "discoveryComment": MessageLookupByLibrary.simpleMessage("Comentarios"),
         "discoveryComments":
             MessageLookupByLibrary.simpleMessage("Comentarios"),
@@ -238,13 +243,13 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate": MessageLookupByLibrary.simpleMessage("crear"),
         "generate_again": MessageLookupByLibrary.simpleMessage("Reconstruir"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
-            "您已达到了 %s 的每日限制！升级您的账户可以继续使用，或者明天再试。同时，您还可以探索其他功能"),
-        "generate_reached_limit_guest":
-            MessageLookupByLibrary.simpleMessage("您已达到了 %s 的每日限制！现在注册即可获得更多配额"),
-        "generate_reached_limit_title":
-            MessageLookupByLibrary.simpleMessage("%s 创建次数已达当日上限"),
+            "¡Has alcanzado el límite diario de %s! Actualiza tu cuenta para seguir usándola o inténtalo de nuevo mañana. Mientras tanto, puede explorar otras características"),
+        "generate_reached_limit_guest": MessageLookupByLibrary.simpleMessage(
+            "¡Has alcanzado el límite diario de %s! Regístrese ahora para obtener más cuotas"),
+        "generate_reached_limit_title": MessageLookupByLibrary.simpleMessage(
+            "%s veces creadas ha alcanzado el límite diario"),
         "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
-            "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能"),
+            "¡Has alcanzado el límite diario de %s! Por favor, intente de nuevo mañana o pruebe otras funciones"),
         "generate_record":
             MessageLookupByLibrary.simpleMessage("Generar registros"),
         "generating": MessageLookupByLibrary.simpleMessage("En producción"),
@@ -264,8 +269,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Sube primeros planos o fotos de cuerpo completo de tu mascota, todas las cuales deben ser la misma mascota, con la menor cantidad posible de ángulos, iluminación y entornos diferentes……"),
         "google":
             MessageLookupByLibrary.simpleMessage("Usar una cuenta de Google"),
-        "guidelines":
-            MessageLookupByLibrary.simpleMessage("按照我们的建议，能获得\n更好的头像效果。"),
+        "guidelines": MessageLookupByLibrary.simpleMessage(
+            "Siguiendo nuestras recomendaciones, puede obtener \n Mejores efectos de avatar。"),
         "help": MessageLookupByLibrary.simpleMessage("Ayuda"),
         "high_resolution":
             MessageLookupByLibrary.simpleMessage("Imágenes de alta calidad"),
@@ -456,7 +461,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ref_code_copied": MessageLookupByLibrary.simpleMessage(
             "El código de verificación se ha copiado en el portapapeles"),
         "ref_code_desc": MessageLookupByLibrary.simpleMessage(
-            "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的Me-taverse和AI Artist转化次数！"),
+            "Invita a amigos y obtén recompensas \n\n Después de que se haya utilizado su código de invitación, ¡Tanto usted como sus amigos pueden ganar un número adicional de conversiones me-taverse y Al Artist!"),
         "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
             "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
         "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(
@@ -502,8 +507,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Seleccione Listo"),
         "select_from_album":
             MessageLookupByLibrary.simpleMessage("Seleccionar del álbum"),
-        "select_min_photos_hint":
-            MessageLookupByLibrary.simpleMessage("请至少选择 %d 张图片"),
+        "select_min_photos_hint": MessageLookupByLibrary.simpleMessage(
+            "Por favor, seleccione al menos ％d imagen"),
         "select_more_photos":
             MessageLookupByLibrary.simpleMessage("Selecciona Más fotos"),
         "select_style": MessageLookupByLibrary.simpleMessage("Elige un estilo"),
@@ -610,9 +615,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "10 estilos, 10 variaciones cada uno"),
         "view_all": MessageLookupByLibrary.simpleMessage("Ver todos"),
         "view_all_comment":
-            MessageLookupByLibrary.simpleMessage("查看所有 %d 条评论 >"),
+            MessageLookupByLibrary.simpleMessage("Ver todos ％d comentarios>"),
         "view_more_comment":
-            MessageLookupByLibrary.simpleMessage("查看更多 %d 条评论"),
+            MessageLookupByLibrary.simpleMessage("Ver más %d comentarios"),
         "waiting":
             MessageLookupByLibrary.simpleMessage("Espere la compilación"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
