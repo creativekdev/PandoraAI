@@ -392,5 +392,7 @@
   "platform_connecting": "Connecting",
   "disconnect": "Disconnect",
   "disconnect_social_tips": "Are you sure to disconnect this account?",
-  "disconnect_social_completed": "You have unbound the account"
+  "disconnect_social_completed": "You have unbound the account",
+  "before": "Before",
+  "after": "After"
 }

@@ -17,6 +17,7 @@ import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
+import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -129,12 +130,12 @@ class NotificationManager extends BaseManager {
         itemPos: pos.itemPos,
         categoryPos: pos.categoryPos,
       );
-    } else if(message.data.containsKey('type')) {
+    } else if (message.data.containsKey('type')) {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       var pushModuleEntity = PushModuleExtraEntity.fromJson(message.data);
       EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
       onNotificationTap(HomeCardTypeUtils.build(pushModuleEntity.type));
-    } else{
+    } else {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       try {
         Get.find<MsgListController>();
@@ -171,7 +172,10 @@ class NotificationManager extends BaseManager {
       case HomeCardType.scribble:
         AiDrawable.open(Get.context!, source: 'push_click');
         break;
-      default:
+      case HomeCardType.metagram:
+        Metagram.openBySelf(Get.context!, source: 'push_click');
+        break;
+      case HomeCardType.UNDEFINED:
         break;
     }
   }

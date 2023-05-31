@@ -318,6 +318,19 @@ class CompareImageViewState extends State<CompareImageView> {
   void initState() {
     super.initState();
     initData();
+    height = width;
+    SyncNetworkImage(
+      url: result,
+    ).getImage().then((value) {
+      var scale = value.image.width / value.image.height;
+      if (mounted) {
+        setState(() {
+          height = width / scale;
+        });
+      } else {
+        height = width / scale;
+      }
+    });
   }
 
   @override
@@ -332,16 +345,6 @@ class CompareImageViewState extends State<CompareImageView> {
     width = widget.width;
     onStartDrag = widget.onStartDrag;
     onCancelDrag = widget.onCancelDrag;
-    if (height == 0) {
-      SyncNetworkImage(
-        url: result,
-      ).getImage().then((value) {
-        var scale = value.image.width / value.image.height;
-        setState(() {
-          height = width / scale;
-        });
-      });
-    }
   }
 
   @override
@@ -367,7 +370,7 @@ class CompareImageViewState extends State<CompareImageView> {
                 }),
             Positioned(
               child: Text(
-                'Before',
+                S.of(context).before,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: $(14),
@@ -398,7 +401,7 @@ class CompareImageViewState extends State<CompareImageView> {
                 }),
             Positioned(
               child: Text(
-                'After',
+                S.of(context).after,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: $(14),

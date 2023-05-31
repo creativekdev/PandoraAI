@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),
         "activate_failed": MessageLookupByLibrary.simpleMessage("激活失败"),
         "activate_successfully": MessageLookupByLibrary.simpleMessage("激活成功！"),
+        "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
@@ -59,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_examples": MessageLookupByLibrary.simpleMessage("不合适的照片案例"),
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……"),
+        "before": MessageLookupByLibrary.simpleMessage("Before"),
         "bought": MessageLookupByLibrary.simpleMessage("已购买"),
         "buy": MessageLookupByLibrary.simpleMessage("购买"),
         "buyAttrFasterSpeed": MessageLookupByLibrary.simpleMessage("更快速转化"),

@@ -392,5 +392,7 @@
   "platform_connecting": "enlace",
   "disconnect": "desvinculación",
   "disconnect_social_tips": "¿Está seguro de que desea desvincular esta cuenta?",
-  "disconnect_social_completed": "Has sido desvinculado exitosamente"
+  "disconnect_social_completed": "Has sido desvinculado exitosamente",
+  "before": "Before",
+  "after": "After"
 }

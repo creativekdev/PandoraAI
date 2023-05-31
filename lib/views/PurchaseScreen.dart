@@ -84,7 +84,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     var body = {"receipt_data": purchaseDetails.verificationData.serverVerificationData, "purchase_id": purchaseDetails.purchaseID ?? "", "product_id": purchaseDetails.productID};
     var response = await API.post("/api/plan/apple_store/buy", body: body);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return Future<bool>.value(true);
     } else {
       return Future<bool>.value(false);

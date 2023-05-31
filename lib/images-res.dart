@@ -95,6 +95,7 @@ class Images {
    static const String ic_metagram_share_home = 'assets/images/ic_metagram_share_home.png';
    static const String ic_metagram_shareout = 'assets/images/ic_metagram_shareout.png';
    static const String ic_metagram_show_origin = 'assets/images/ic_metagram_show_origin.png';
+   static const String ic_metagram_split_icon = 'assets/images/ic_metagram_split_icon.png';
    static const String ic_metagram_stack = 'assets/images/ic_metagram_stack.png';
    static const String ic_metagram_yes = 'assets/images/ic_metagram_yes.png';
    static const String ic_msg_comment = 'assets/images/ic_msg_comment.png';

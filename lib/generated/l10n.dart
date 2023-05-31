@@ -3989,6 +3989,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Before`
+  String get before {
+    return Intl.message(
+      'Before',
+      name: 'before',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `After`
+  String get after {
+    return Intl.message(
+      'After',
+      name: 'after',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 
 class CompareableImage extends StatefulWidget {
   final Widget beforeImage;
@@ -69,10 +70,15 @@ class CompareableImageState extends State<CompareableImage> {
             onPointerCancel: (details) {
               widget.onCancelDrag.call();
             },
-            child: Icon(Icons.add).intoContainer(width: $(50), height: $(50)).intoMaterial(color: Colors.white, borderRadius: BorderRadius.circular($(32))),
+            child: Image.asset(Images.ic_metagram_split_icon)
+                .intoContainer(
+                  width: $(44),
+                  height: $(44),
+                )
+                .intoMaterial(color: Colors.white, borderRadius: BorderRadius.circular($(32))),
           ),
           bottom: 10,
-          left: _clipFactor * widget.imageWidth - $(25),
+          left: _clipFactor * widget.imageWidth - $(22),
         ),
       ],
     );

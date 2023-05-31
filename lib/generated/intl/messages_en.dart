@@ -30,6 +30,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Activate failure."),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("Activate successfully!"),
+        "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1":
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
         "agree_text2":
@@ -68,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Bad photo examples"),
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "Please don\'t upload photos of more than one pet; don\'t cover your pet\'s face; don\'t use photos where your pet curls up into a ball."),
+        "before": MessageLookupByLibrary.simpleMessage("Before"),
         "bought": MessageLookupByLibrary.simpleMessage("Bought"),
         "buy": MessageLookupByLibrary.simpleMessage("Buy"),
         "buyAttrFasterSpeed":
