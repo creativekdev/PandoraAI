@@ -33,7 +33,7 @@ class ThirdpartManager extends BaseManager {
     AppStateEventNotifier.appStateStream.forEach((state) => _onAppStateChanged(state));
     LogUtil.init(tag: 'Cartoonizer', isDebug: !kReleaseMode, maxLen: 256);
     EasyRefresh.defaultHeader = AppClassicalHeader(infoColor: ColorConstant.White);
-    EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White);
+    EasyRefresh.defaultFooter = ClassicalFooter(textColor: ColorConstant.White, infoColor: ColorConstant.White,enableHapticFeedback: false);
     onPayStatusListen = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       var string = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.prePaymentAction);
       if (!TextUtil.isEmpty(string)) {
