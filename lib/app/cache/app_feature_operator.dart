@@ -10,7 +10,7 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'cache_manager.dart';

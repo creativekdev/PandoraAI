@@ -152,6 +152,9 @@ class UserManager extends BaseManager {
     refreshConnections();
     if (_user != null) {
       Posthog().identify(userId: _user?.getShownEmail());
+      FirebaseAnalytics.instance.setUserProperty(name: 'user_email', value: _user?.getShownEmail());
+      FirebaseAnalytics.instance.setUserProperty(name: 'user_name', value: _user?.getShownName());
+      FirebaseAnalytics.instance.setUserId(id: _user?.id.toString());
     }
   }
 

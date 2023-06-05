@@ -28,7 +28,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
@@ -36,17 +36,17 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/choose_video_container.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-import '../../gallery_saver.dart';
-import '../../models/OfflineEffectModel.dart';
-import '../advertisement/reward_advertisement_screen.dart';
-import '../share/ShareScreen.dart';
+import '../../../gallery_saver.dart';
+import '../../../models/OfflineEffectModel.dart';
+import '../../advertisement/reward_advertisement_screen.dart';
+import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
 enum EntrySource {
@@ -1411,25 +1411,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
   }
 
-  EffectModel? findCategory(EffectItem effectItem) {
-    EffectModel? category;
-    var selectedEffect = tabItemList[currentItemIndex.value].data;
-    bool find = false;
-    for (var element in effectDataController.data!.allEffectList()) {
-      if (find) {
-        break;
-      }
-      for (var value in element.effects.values) {
-        if (value.key == selectedEffect.key) {
-          find = true;
-          category = element;
-          break;
-        }
-      }
-    }
-    return category;
-  }
-
   Future<void> getCartoon(BuildContext context, {bool rebuild = false}) async {
     refreshLastBuildType();
     await controller.saveOriginalIfNotExist();
@@ -1441,7 +1422,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     }
 
     var selectedEffect = tabItemList[currentItemIndex.value].data;
-    EffectModel? category = findCategory(selectedEffect);
+    EffectCategory? category = effectDataController.data!.findCategory(selectedEffect.key);
     if (category == null) {
       controller.changeIsLoading(false);
       // CommonExtension().showToast(S.of(context).commonFailedToast);
@@ -1470,14 +1451,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         }
 
         urlFinal = data.imageUrl;
-        algoName = selectedEffect.algoname;
+        algoName = selectedEffect.algoName;
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(true);
       } else {
         controller.changeIsLoading(false);
         image = data.data;
         urlFinal = data.imageUrl;
-        algoName = selectedEffect.algoname;
+        algoName = selectedEffect.algoName;
         controller.changeIsPhotoDone(true);
         controller.changeIsVideo(false);
       }
@@ -1522,7 +1503,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'querypics': imageArray,
               'is_data': 0,
               // 'algoname': includeOriginalFace() ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
-              'algoname': selectedEffect.algoname,
+              'algoname': selectedEffect.algoName,
               'direct': 1,
               'hide_watermark': 1,
             };
@@ -1567,7 +1548,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   await initVideoPlayerFromNet(aiHost);
 
                   urlFinal = imageUrl;
-                  algoName = selectedEffect.algoname;
+                  algoName = selectedEffect.algoName;
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 };
@@ -1579,10 +1560,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       OfflineEffectModel(data: fileName, imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   image = fileName;
                   urlFinal = imageUrl;
-                  algoName = selectedEffect.algoname;
+                  algoName = selectedEffect.algoName;
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  var params = {"algoname": selectedEffect.algoname};
+                  var params = {"algoname": selectedEffect.algoName};
                   API.get("/api/log/cartoonize", params: params);
                 };
               }
@@ -1605,7 +1586,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               'querypics': imageArray,
               'is_data': 0,
               // 'algoname': includeOriginalFace() ? selectedEffect.algoname + "-original_face" : selectedEffect.algoname,
-              'algoname': selectedEffect.algoname,
+              'algoname': selectedEffect.algoName,
               'direct': 1,
               'token': token,
               'hide_watermark': 1,
@@ -1636,7 +1617,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                   controller.updateVideoUrl(parsed['data']);
                   await initVideoPlayerFromNet(aiHost);
                   urlFinal = imageUrl;
-                  algoName = selectedEffect.algoname;
+                  algoName = selectedEffect.algoName;
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(true);
                 };
@@ -1648,10 +1629,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                       OfflineEffectModel(data: fileName, imageUrl: imageUrl, message: "", hasWatermark: lastBuildType == _BuildType.waterMark));
                   image = fileName;
                   urlFinal = imageUrl;
-                  algoName = selectedEffect.algoname;
+                  algoName = selectedEffect.algoName;
                   controller.changeIsPhotoDone(true);
                   controller.changeIsVideo(false);
-                  var params = {"algoname": selectedEffect.algoname};
+                  var params = {"algoname": selectedEffect.algoName};
                   API.get("/api/log/cartoonize", params: params);
                 };
               }

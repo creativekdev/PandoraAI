@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/record_holder.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:common_utils/common_utils.dart';

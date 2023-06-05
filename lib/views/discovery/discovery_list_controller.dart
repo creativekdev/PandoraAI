@@ -26,7 +26,7 @@ class DiscoveryListController extends GetxController {
     update();
   }
 
-  bool _isMetagram = false;
+  bool _isMetagram = true;
 
   set isMetagram(bool value) {
     _isMetagram = value;

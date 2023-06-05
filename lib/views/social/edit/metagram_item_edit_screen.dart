@@ -14,7 +14,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
@@ -361,8 +361,8 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
           ),
         );
       } else if (element.type == HomeCardType.cartoonize) {
-        EffectModel data = element.data! as EffectModel;
-        var effects = data.effects.values.toList();
+        EffectCategory data = element.data! as EffectCategory;
+        var effects = data.effects;
         for (int i = 0; i < effects.length; i++) {
           var effectItem = effects[i];
           bool checked;

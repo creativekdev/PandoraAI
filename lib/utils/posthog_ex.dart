@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -19,5 +19,6 @@ extension PosthogEx on Posthog {
     }
     var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
     screen(screenName: screenName, properties: values);
+    FirebaseAnalytics.instance.setCurrentScreen(screenName: screenName);
   }
 }

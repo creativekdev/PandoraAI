@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
@@ -6,12 +5,11 @@ import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/models/effect_map.dart';
-import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 class EffectManager extends BaseManager {
-  EffectMap? _data = null;
+  ApiConfigEntity? _data = null;
   late CacheManager cacheManager;
   late CartoonizerApi api;
   late Map<String, double> _scaleCachedMap = {};
@@ -37,7 +35,7 @@ class EffectManager extends BaseManager {
     }
     var json = cacheManager.getJson(CacheManager.effectAllData);
     if (json != null) {
-      _data = EffectMap.fromJson(json);
+      _data = ApiConfigEntity.fromJson(json);
     }
   }
 
@@ -47,20 +45,23 @@ class EffectManager extends BaseManager {
     api.unbind();
   }
 
-  Future<EffectMap?> loadData({bool ignoreCache = false}) async {
+  Future<ApiConfigEntity?> loadData({bool ignoreCache = false}) async {
     if (ignoreCache || !loaded) {
       var data = await api.getHomeConfig();
       if (data != null) {
         _data = data;
         loaded = true;
         nsfwStateMap.clear();
-        for (var value in data.allEffectList()) {
-          value.effects.forEach((key, effect) {
-            if (effect.nsfw) {
-              nsfwStateMap[effect.key] = true;
-            }
+        data.datas.forEach((tabs) {
+          tabs.children.forEach((category) {
+            category.effects.forEach((effect) {
+              if (effect.isNsfw) {
+                nsfwStateMap[effect.key] = true;
+              }
+            });
           });
-        }
+        });
+        //download metagram resources
         _data!.promotionResources.forEach((element) {
           if (element.type == 'image') {
             SyncDownloadImage(type: getFileType(element.url ?? ''), url: element.url ?? '').getImage();

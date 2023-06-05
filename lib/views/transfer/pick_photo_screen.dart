@@ -12,7 +12,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/choose_tab_bar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:vibration/vibration.dart';
 

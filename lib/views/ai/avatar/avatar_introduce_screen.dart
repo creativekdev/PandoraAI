@@ -11,7 +11,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
-import 'package:cartoonizer/views/transfer/choose_tab_bar.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/choose_tab_bar.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 

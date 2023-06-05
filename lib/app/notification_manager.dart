@@ -18,7 +18,7 @@ import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

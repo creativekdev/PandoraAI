@@ -7,14 +7,13 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
-import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 
 class EffectRecentScreen extends StatefulWidget {
   EffectRecentScreen({
@@ -133,21 +132,10 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
   pickEffectItemAndOpen(BuildContext context, RecentEffectModel data) async {
     var key = data.itemList.first.key!;
     var tabPos = effectDataController.data!.tabPos(key);
-    EffectModel? effectModel;
-    EffectItem? effectItem;
-    for (var value in effectDataController.data!.allEffectList()) {
-      var item = value.effects.values.toList().pick((t) => t.key == key);
-      if (item != null) {
-        effectItem = item;
-        effectModel = value;
-        break;
-      }
-    }
-    if (effectModel == null || effectItem == null) {
-      return;
-    }
-    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
-    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
+    EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+    EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
 
     var fileExist = await File(pick!.originalPath ?? "").exists();

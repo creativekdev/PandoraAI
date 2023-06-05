@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
@@ -11,7 +10,7 @@ import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -20,7 +19,6 @@ import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:path/path.dart' as path;
 
 class MetagramItemEditController extends GetxController {
@@ -84,7 +82,7 @@ class MetagramItemEditController extends GetxController {
     required this.entity,
     required this.items,
     required int index,
-    EffectModel? fullBody,
+    EffectCategory? fullBody,
   }) {
     _resourceIndex = index;
     resources = items[index];

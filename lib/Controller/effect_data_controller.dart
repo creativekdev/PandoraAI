@@ -8,7 +8,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:common_utils/common_utils.dart';
 
 // dev
@@ -58,7 +58,7 @@ class ChooseTabItemInfo {
 }
 
 class EffectDataController extends GetxController {
-  EffectMap? data = null;
+  ApiConfigEntity? data = null;
   bool loading = true;
   EffectManager effectManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -87,7 +87,7 @@ class EffectDataController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    loadData();
+    // loadData();
   }
 
   loadData() {
@@ -112,27 +112,28 @@ class EffectDataController extends GetxController {
     tabList.clear();
     tabTitleList.clear();
     tabItemList.clear();
-    var keyList = data!.data.keys.toList();
-    for (int i = 0; i < keyList.length; i++) {
-      var key = keyList[i];
-      tabList.add(ChooseTabInfo(title: data!.localeName(key), key: key));
-      List<EffectModel> effectList = data!.effectList(key);
-      if (key == 'face-de') {//deprecated
+    var list = data!.datas;
+    for (int i = 0; i < list.length; i++) {
+      var tab = list[i];
+      tabList.add(ChooseTabInfo(title: tab.title, key: tab.key));
+      var categoryList = tab.children;
+      if (tab.key == 'face-de') {
+        //deprecated
         // flat tow-level data
-        for (int j = 0; j < effectList.length; j++) {
-          EffectModel effectModel = effectList[j];
-          List<EffectItem> effectItems = effectModel.effects.values.toList();
+        for (int j = 0; j < categoryList.length; j++) {
+          EffectCategory category = categoryList[j];
+          var effectItems = category.effects;
           for (int k = 0; k < effectItems.length; k++) {
             int categoryIndex = tabTitleList.length;
             tabTitleList.add(ChooseTitleInfo(
-              title: effectItems[k].displayName,
-              categoryKey: effectModel.key,
-              tabKey: key,
+              title: effectItems[k].title,
+              categoryKey: category.key,
+              tabKey: tab.key,
             ));
             tabItemList.add(ChooseTabItemInfo(
               data: effectItems[k],
-              tabKey: key,
-              categoryKey: effectModel.key,
+              tabKey: tab.key,
+              categoryKey: category.key,
               categoryIndex: categoryIndex,
               childIndex: k,
             ));
@@ -140,20 +141,20 @@ class EffectDataController extends GetxController {
         }
       } else {
         //others
-        for (int j = 0; j < effectList.length; j++) {
-          EffectModel effectModel = effectList[j];
+        for (int j = 0; j < categoryList.length; j++) {
+          EffectCategory category = categoryList[j];
           int categoryIndex = tabTitleList.length;
           tabTitleList.add(ChooseTitleInfo(
-            title: effectModel.displayName,
-            categoryKey: effectModel.key,
-            tabKey: key,
+            title: category.title,
+            categoryKey: category.key,
+            tabKey: tab.key,
           ));
-          List<EffectItem> effectItems = effectModel.effects.values.toList();
+          var effectItems = category.effects;
           for (int k = 0; k < effectItems.length; k++) {
             tabItemList.add(ChooseTabItemInfo(
               data: effectItems[k],
-              tabKey: key,
-              categoryKey: effectModel.key,
+              tabKey: tab.key,
+              categoryKey: category.key,
               categoryIndex: categoryIndex,
               childIndex: k,
             ));
@@ -167,13 +168,14 @@ class EffectDataController extends GetxController {
   /// if time duration great than a half hour -> rebuild
   /// delay reload page when user is checking random list
   buildRandomList() {
+    return; // deprecated
     if (data == null) {
       return;
     }
     var forward = () {
-      data!.data.forEach((key, value) {
-        if (key == 'template') {
-          refreshRandomList(flatApiRandomList(key));
+      data!.datas.forEach((value) {
+        if (value.key == 'template') {
+          refreshRandomList(flatApiRandomList(value.children));
         }
       });
     };
@@ -192,11 +194,10 @@ class EffectDataController extends GetxController {
   }
 
   /// get flat random effect list
-  List<EffectItemListData> flatApiRandomList(String key) {
-    List<EffectModel> effectList = data!.effectList(key);
+  List<EffectItemListData> flatApiRandomList(List<EffectCategory> effectList) {
     List<EffectItemListData> allItemList = [];
     for (var value in effectList) {
-      var items = value.effects.values.toList();
+      var items = value.effects;
       for (int i = 0; i < items.length; i++) {
         allItemList.add(EffectItemListData(
           key: value.key,
@@ -237,20 +238,22 @@ class EffectDataController extends GetxController {
   }
 
   InitPos findItemPos(String tab, String category, String? effect) {
-    EffectDataController controller = Get.find();
-    List<EffectModel> allEffectList = controller.data?.allEffectList() ?? [];
-    EffectModel? model = allEffectList.pick((t) => t.key == category);
+    List<EffectCategory> allEffectList = [];
+    data!.datas.forEach((element) {
+      allEffectList.addAll(element.children);
+    });
+    EffectCategory? model = allEffectList.pick((t) => t.key == category);
     if (model == null) {
       return InitPos();
     }
-    int tabPos = controller.tabList.findPosition((data) => data.key == tab)!;
-    var categoryPos = controller.tabTitleList.findPosition((data) => data.categoryKey == category)!;
+    int tabPos = tabList.findPosition((data) => data.key == tab)!;
+    var categoryPos = tabTitleList.findPosition((data) => data.categoryKey == category)!;
     int itemPos;
     if (TextUtil.isEmpty(effect)) {
-      EffectItem item = model.effects.values.toList()[model.getDefaultPos()];
-      itemPos = controller.tabItemList.findPosition((data) => data.data.key == item.key)!;
+      EffectItem item = model.effects[model.getDefaultPos()];
+      itemPos = tabItemList.findPosition((data) => data.data.key == item.key)!;
     } else {
-      itemPos = controller.tabItemList.findPosition((data) => data.data.key == effect)!;
+      itemPos = tabItemList.findPosition((data) => data.data.key == effect)!;
     }
     return InitPos()
       ..tabPos = tabPos

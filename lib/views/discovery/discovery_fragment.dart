@@ -6,25 +6,19 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
-import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
-import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
@@ -55,7 +49,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
 
   late StreamSubscription onTabDoubleClickListener;
   late TabController tabController;
-  final List<String> tabs = ['Discovery', 'Metagram'];
+  final List<String> tabs = ['Metagram', 'Discovery'];
 
   @override
   void initState() {
@@ -69,7 +63,15 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       }
     });
     titleHeight = $(36);
-    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(48);
+    calculateHeaderHeight();
+  }
+
+  void calculateHeaderHeight() {
+    if (listController.isMetagram) {
+      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(6);
+    } else {
+      headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(50);
+    }
   }
 
   @override
@@ -153,14 +155,10 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               padding: EdgeInsets.only(left: $(12), top: $(8), right: $(12), bottom: $(8)),
               controller: tabController,
               onTap: (index) {
-                listController.isMetagram = index == 1;
+                listController.isMetagram = index == 0;
                 easyRefreshController.callRefresh();
                 setState(() {
-                  if (listController.isMetagram) {
-                    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(6);
-                  } else {
-                    headerHeight = ScreenUtil.getStatusBarHeight() + $(titleHeight) + $(50);
-                  }
+                  calculateHeaderHeight();
                 });
               },
             ),
@@ -352,30 +350,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         CommonExtension().showToast(S.of(context).template_not_available);
         return '';
       }
-      var targetSeries = effectDataController.data!.targetSeries(key)!;
-      EffectModel? effectModel;
-      EffectItem? effectItem;
-      int index = 0;
-      for (int i = 0; i < targetSeries.value.length; i++) {
-        if (effectModel != null) {
-          break;
-        }
-        var model = targetSeries.value[i];
-        var list = model.effects.values.toList();
-        for (int j = 0; j < list.length; j++) {
-          var item = list[j];
-          if (item.key == key) {
-            effectModel = model;
-            effectItem = item;
-            index = i;
-            break;
-          }
-        }
-      }
-      if (effectItem == null) {
-        CommonExtension().showToast(S.of(context).template_not_available);
-        return '';
-      }
+      EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+      EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
       return 'facetoon-${effectItem.key}';
     } else if (discoveryEntity.category == DiscoveryCategory.ai_avatar.name) {
       return 'avatar';
@@ -383,6 +359,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
       return 'metaverse';
     } else if (discoveryEntity.category == DiscoveryCategory.txt2img.name) {
       return 'txt2img';
+    } else if (discoveryEntity.category == DiscoveryCategory.scribble.name) {
+      return 'scribble';
     }
     return '';
   }

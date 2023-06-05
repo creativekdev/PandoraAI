@@ -6,6 +6,7 @@ enum HomeCardType {
   txt2img,
   scribble,
   metagram,
+  style_morph,
   UNDEFINED,
 }
 
@@ -25,6 +26,8 @@ class HomeCardTypeUtils {
         return HomeCardType.scribble;
       case 'metagram':
         return HomeCardType.metagram;
+      case 'style_morph':
+        return HomeCardType.style_morph;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -48,6 +51,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'scribble';
       case HomeCardType.metagram:
         return 'metagram';
+      case HomeCardType.style_morph:
+        return 'style_morph';
     }
   }
 
@@ -67,6 +72,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'AI Scribble';
       case HomeCardType.metagram:
         return 'Metagram';
+      case HomeCardType.style_morph:
+        return 'Style Morph';
     }
   }
 }

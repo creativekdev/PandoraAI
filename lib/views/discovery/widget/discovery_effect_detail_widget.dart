@@ -19,8 +19,8 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
@@ -31,8 +31,8 @@ import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart'
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
-import 'package:cartoonizer/views/transfer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
@@ -450,32 +450,10 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       CommonExtension().showToast(S.of(context).template_not_available);
       return;
     }
-    var targetSeries = effectDataController.data!.targetSeries(key)!;
-    EffectModel? effectModel;
-    EffectItem? effectItem;
-    int index = 0;
-    for (int i = 0; i < targetSeries.value.length; i++) {
-      if (effectModel != null) {
-        break;
-      }
-      var model = targetSeries.value[i];
-      var list = model.effects.values.toList();
-      for (int j = 0; j < list.length; j++) {
-        var item = list[j];
-        if (item.key == key) {
-          effectModel = model;
-          effectItem = item;
-          index = i;
-          break;
-        }
-      }
-    }
-    if (effectItem == null) {
-      CommonExtension().showToast(S.of(context).template_not_available);
-      return;
-    }
-    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel!.key)!;
-    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem!.key)!;
+    EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+    EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     Events.discoveryTemplateClick(source: dataType, style: 'facetoon-${effectItem.key}');
     Cartoonize.open(
       context,

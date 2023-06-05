@@ -12,13 +12,13 @@ import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/models/effect_map.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
@@ -437,10 +437,10 @@ class CartoonizerApi extends RetryAbleRequester {
     });
   }
 
-  Future<EffectMap?> getHomeConfig() async {
+  Future<ApiConfigEntity?> getHomeConfig() async {
     var baseEntity = await get("/tool/cartoonize_config/v6");
     if (baseEntity == null) return null;
-    return EffectMap.fromJson(baseEntity.data);
+    return ApiConfigEntity.fromJson(baseEntity.data);
   }
 
   Future<BaseEntity?> deleteDiscovery(int id) async {

@@ -4,6 +4,8 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:common_utils/common_utils.dart';
+import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -204,7 +206,6 @@ class Events {
 
   static Future<void> rateUs() => logEvent('rate_us');
 
-
   static Future<void> metagramLoading({required String source}) => logEvent('metagram_loading', eventValues: {'source': source});
 
   static Future<void> metagramCompleteSuccess({required String photo}) => logEvent('metagram_completed_success', eventValues: {'photo': photo});
@@ -223,7 +224,6 @@ class Events {
   static Future<void> metagramCompleteDownload({required String type}) => logEvent('metagram_completed_download', eventValues: {'type': type});
 
   static Future<void> metagramCompleteGenerateAgain({required int time}) => logEvent('metagram_completed_generateagain', eventValues: {'time': '${time}'});
-
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
@@ -236,6 +236,7 @@ Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) asy
     defaultValues["user_email"] = user.getShownEmail();
   }
   var values = eventValues == null ? defaultValues : {...defaultValues, ...eventValues};
+  LogUtil.d(values, tag: eventName);
   // log Kochava
   logKochavaEvent(eventName, eventValues: values);
   // log firebase analytics
@@ -244,7 +245,7 @@ Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) asy
 }
 
 logKochavaEvent(String eventName, {Map<String, dynamic>? eventValues}) {
-  // KochavaTracker.instance.sendEventWithDictionary(eventName, eventValues ?? {});
+  KochavaTracker.instance.sendEventWithDictionary(eventName, eventValues ?? {});
 }
 
 logSystemEvent(String eventName, {Map<String, dynamic>? eventValues}) {

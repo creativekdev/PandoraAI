@@ -13,9 +13,9 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
-import 'package:cartoonizer/models/effect_map.dart';
+import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/views/transfer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
 
 import '../../Widgets/tabbar/app_tab_bar.dart';
 
@@ -80,7 +80,7 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
                     ),
                     itemBuilder: (context, index) {
                       var data = dataList[index];
-                      var nsfwShown = data.item!.nsfw && !nsfwOpen;
+                      var nsfwShown = data.item!.isNsfw && !nsfwOpen;
                       return (data.item!.imageUrl.contains('mp4')
                               ? Stack(
                                   children: [
@@ -176,12 +176,12 @@ class ActivityFragmentState extends AppState<ActivityFragment> with AutomaticKee
   }
 
   _onEffectCategoryTap(EffectItemListData data, EffectDataController effectDataController) async {
-    EffectModel? effectModel;
-    var effectList = effectDataController.data!.effectList('template');
+    EffectCategory? effectModel;
+    var effectList = effectDataController.data!.datas[0].children;
     for (int i = 0; i < effectList.length; i++) {
       var value = effectList[i];
       if (data.key == value.key) {
-        effectModel = EffectModel.fromJson(value.toJson());
+        effectModel = EffectCategory.fromJson(value.toJson(), effectDataController.data!.locale);
         break;
       }
     }
