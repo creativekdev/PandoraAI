@@ -224,6 +224,24 @@ class Events {
   static Future<void> metagramCompleteDownload({required String type}) => logEvent('metagram_completed_download', eventValues: {'type': type});
 
   static Future<void> metagramCompleteGenerateAgain({required int time}) => logEvent('metagram_completed_generateagain', eventValues: {'time': '${time}'});
+
+  static Future<void> styleMorphLoading({required String source}) => logEvent('stylemorph_loading', eventValues: {'source': source});
+
+  static Future<void> styleMorphCompleteSuccess({required String photo}) => logEvent('stylemorph_completed_success', eventValues: {'photo': photo});
+
+  static Future<void> styleMorphCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('stylemorph_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
+
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

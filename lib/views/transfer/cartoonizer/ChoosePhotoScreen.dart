@@ -1756,8 +1756,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void onSwitchOnce() {
     var user = userManager.user;
     if (user != null) {
-      user.cartoonizeCredit--;
-      userManager.user = user;
+      if (user.cartoonizeCredit > 0) {
+        user.cartoonizeCredit--;
+        userManager.user = user;
+      }
       refreshLastBuildType();
     }
   }

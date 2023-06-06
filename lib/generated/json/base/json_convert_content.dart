@@ -25,6 +25,7 @@ import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/models/style_morph_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_style_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
@@ -71,6 +72,7 @@ class JsonConvert {
 		(RecentEffectItem).toString(): RecentEffectItem.fromJson,
 		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
 		(RecentGroundEntity).toString(): RecentGroundEntity.fromJson,
+		(StyleMorphResultEntity).toString(): StyleMorphResultEntity.fromJson,
 		(Txt2imgResultEntity).toString(): Txt2imgResultEntity.fromJson,
 		(Txt2imgStyleEntity).toString(): Txt2imgStyleEntity.fromJson,
 		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
@@ -257,6 +259,9 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<RecentGroundEntity>[] is M){
 			return data.map<RecentGroundEntity>((Map<String, dynamic> e) => RecentGroundEntity.fromJson(e)).toList() as M;
+		}
+		if(<StyleMorphResultEntity>[] is M){
+			return data.map<StyleMorphResultEntity>((Map<String, dynamic> e) => StyleMorphResultEntity.fromJson(e)).toList() as M;
 		}
 		if(<Txt2imgResultEntity>[] is M){
 			return data.map<Txt2imgResultEntity>((Map<String, dynamic> e) => Txt2imgResultEntity.fromJson(e)).toList() as M;

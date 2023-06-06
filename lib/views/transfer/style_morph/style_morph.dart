@@ -15,9 +15,10 @@ class StyleMorph {
       CommonExtension().showToast('Image not exist');
       return;
     }
+    Events.styleMorphLoading(source: source);
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => StyleMorphScreen(source: source, path: first.path),
+        builder: (_) => StyleMorphScreen(source: source, path: first.path, photoType: 'gallery'),
         settings: RouteSettings(name: 'StyleMorphScreen'),
       ),
     );
