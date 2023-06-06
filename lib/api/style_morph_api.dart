@@ -28,8 +28,7 @@ class StyleMorphApi extends RetryAbleRequester {
       'template_name': templateName,
     };
 
-    var baseEntity = await post('/sdapi/v1/img2img', params: params);
-    // var baseEntity = await post('/sdapi/v1/stylemorph', params: params);
+    var baseEntity = await post('/sdapi/v1/stylemorph', params: params);
     StyleMorphResultEntity? result = jsonConvert.convert<StyleMorphResultEntity>(baseEntity?.data);
     if (result == null) {
       return null;
