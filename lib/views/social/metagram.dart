@@ -26,6 +26,7 @@ class Metagram {
       var hasIgConnection = userManager.platformConnections.containsKey(ConnectorPlatform.instagram);
       if (hasIgConnection) {
         var coreUserId = userManager.platformConnections[ConnectorPlatform.instagram]?.first.coreUserId;
+        Events.metagramLoading(source: source);
         Navigator.of(context).push(MaterialPageRoute(
           settings: RouteSettings(name: "/MetagramScreen"),
           builder: (context) => MetagramScreen(
