@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/models/shipping_method_entity.dart';
 import 'package:cartoonizer/utils/map_util.dart';
 
 class ApiConfigEntity {
@@ -14,6 +15,7 @@ class ApiConfigEntity {
   String? hash;
   List<DiscoveryResource> promotionResources = [];
   late EffectData stylemorph;
+  List<ShippingMethodEntity> shippingMethods = [];
 
   ApiConfigEntity._instance();
 
@@ -45,6 +47,9 @@ class ApiConfigEntity {
     if (json['stylemorph'] != null) {
       entity.stylemorph = EffectData.fromJson('stylemorph', json['stylemorph'], entity.locale);
     }
+    if (json['shipping_methods'] != null) {
+      entity.shippingMethods = (json['shipping_methods'] as List).map((e) => ShippingMethodEntity.fromJson(e)).toList();
+    }
     return entity;
   }
 
@@ -62,6 +67,7 @@ class ApiConfigEntity {
     }
     result['promotion_resources'] = promotionResources.map((e) => e.toJson()).toList();
     result['stylemorph'] = stylemorph.toJson();
+    result['shipping_methods'] = shippingMethods.map((e) => e.toJson()).toList();
     return result;
   }
 
