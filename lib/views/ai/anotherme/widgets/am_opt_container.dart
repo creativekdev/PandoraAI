@@ -4,34 +4,29 @@ import 'package:cartoonizer/images-res.dart';
 
 class AMOptContainer extends StatefulWidget {
   GestureTapCallback onChoosePhotoTap;
-
-  // GestureTapCallback onShareTap;
-  GestureTapCallback onSharePrintTap;
-
-  // GestureTapCallback onDownloadTap;
+  GestureTapCallback onShareTap;
+  GestureTapCallback onShareDiscoveryTap;
+  GestureTapCallback onDownloadTap;
   GestureTapCallback onGenerateAgainTap;
 
   AMOptContainer({
     Key? key,
     required this.onChoosePhotoTap,
-    // required this.onDownloadTap,
-    required this.onSharePrintTap,
+    required this.onDownloadTap,
+    required this.onShareDiscoveryTap,
     required this.onGenerateAgainTap,
-    // required this.onShareTap,
+    required this.onShareTap,
   }) : super(key: key);
 
   @override
   State<AMOptContainer> createState() => AMOptContainerState();
 }
 
-class AMOptContainerState extends State<AMOptContainer>
-    with SingleTickerProviderStateMixin {
+class AMOptContainerState extends State<AMOptContainer> with SingleTickerProviderStateMixin {
   late GestureTapCallback onChoosePhotoTap;
-
-  // late GestureTapCallback onShareTap;
-  late GestureTapCallback onSharePrintTap;
-
-  // late GestureTapCallback onDownloadTap;
+  late GestureTapCallback onShareTap;
+  late GestureTapCallback onShareDiscoveryTap;
+  late GestureTapCallback onDownloadTap;
   late GestureTapCallback onGenerateAgainTap;
   late AnimationController _animationController;
   late CurvedAnimation _anim;
@@ -41,14 +36,12 @@ class AMOptContainerState extends State<AMOptContainer>
   void initState() {
     super.initState();
     onChoosePhotoTap = widget.onChoosePhotoTap;
-    // onShareTap = widget.onShareTap;
-    onSharePrintTap = widget.onSharePrintTap;
-    // onDownloadTap = widget.onDownloadTap;
+    onShareTap = widget.onShareTap;
+    onShareDiscoveryTap = widget.onShareDiscoveryTap;
+    onDownloadTap = widget.onDownloadTap;
     onGenerateAgainTap = widget.onGenerateAgainTap;
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _anim =
-        CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
     _animationController.forward();
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
@@ -78,62 +71,62 @@ class AMOptContainerState extends State<AMOptContainer>
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Row(
-        //   children: [
-        //     SizedBox(width: $(41)),
-        //     Expanded(
-        //         child: Row(
-        //       children: [
-        //         Image.asset(
-        //           Images.ic_share,
-        //           width: $(24),
-        //         ),
-        //         SizedBox(width: 6),
-        //         TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
-        //       ],
-        //       mainAxisSize: MainAxisSize.min,
-        //     )
-        //             .intoContainer(
-        //               padding: EdgeInsets.symmetric(vertical: $(10)),
-        //               alignment: Alignment.center,
-        //               decoration: BoxDecoration(
-        //                   borderRadius: BorderRadius.circular($(12)),
-        //                   gradient: LinearGradient(
-        //                     begin: Alignment.bottomCenter,
-        //                     end: Alignment.topCenter,
-        //                     colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
-        //                   )),
-        //             )
-        //             .intoGestureDetector(onTap: onShareTap)),
-        //     SizedBox(width: $(16)),
-        //     Expanded(
-        //         child: Row(
-        //       children: [
-        //         Image.asset(
-        //           Images.ic_download,
-        //           width: $(24),
-        //         ),
-        //         SizedBox(width: 6),
-        //         TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
-        //       ],
-        //       mainAxisSize: MainAxisSize.min,
-        //     )
-        //             .intoContainer(
-        //               padding: EdgeInsets.symmetric(vertical: $(10)),
-        //               alignment: Alignment.center,
-        //               decoration: BoxDecoration(
-        //                   borderRadius: BorderRadius.circular($(12)),
-        //                   gradient: LinearGradient(
-        //                     begin: Alignment.bottomCenter,
-        //                     end: Alignment.topCenter,
-        //                     colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
-        //                   )),
-        //             )
-        //             .intoGestureDetector(onTap: onDownloadTap)),
-        //     SizedBox(width: $(16)),
-        //   ],
-        // ),
-        SizedBox(height: 41),
+        Row(
+          children: [
+            SizedBox(width: $(16)),
+            Expanded(
+                child: Row(
+                  children: [
+                    Image.asset(
+                      Images.ic_share,
+                      width: $(24),
+                    ),
+                    SizedBox(width: 6),
+                    TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
+                  ],
+                  mainAxisSize: MainAxisSize.min,
+                )
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(12)),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
+                      )),
+                )
+                    .intoGestureDetector(onTap: onShareTap)),
+            SizedBox(width: $(16)),
+            Expanded(
+                child: Row(
+                  children: [
+                    Image.asset(
+                      Images.ic_download,
+                      width: $(24),
+                    ),
+                    SizedBox(width: 6),
+                    TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
+                  ],
+                  mainAxisSize: MainAxisSize.min,
+                )
+                    .intoContainer(
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(12)),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
+                      )),
+                )
+                    .intoGestureDetector(onTap: onDownloadTap)),
+            SizedBox(width: $(16)),
+          ],
+        ),
+        SizedBox(height: 22),
         AnimatedBuilder(
           animation: _anim,
           builder: (context, child) {
@@ -147,10 +140,10 @@ class AMOptContainerState extends State<AMOptContainer>
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
                   child: Image.asset(Images.ic_camera, width: $(24))
                       .intoContainer(
-                        alignment: Alignment.center,
-                        width: $(48),
-                        height: $(48),
-                      )
+                    alignment: Alignment.center,
+                    width: $(48),
+                    height: $(48),
+                  )
                       .intoGestureDetector(onTap: onChoosePhotoTap),
                 ),
                 SizedBox(width: $(16)),
@@ -161,11 +154,7 @@ class AMOptContainerState extends State<AMOptContainer>
                       radius: $(12),
                       strokeWidth: $(2),
                       gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF04F1F9),
-                          Color(0xFF7F97F3),
-                          Color(0xFFEC5DD8)
-                        ],
+                        colors: [Color(0xFF04F1F9), Color(0xFF7F97F3), Color(0xFFEC5DD8)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -188,13 +177,13 @@ class AMOptContainerState extends State<AMOptContainer>
                 SizedBox(width: $(16)),
                 Transform.translate(
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
-                  child: Image.asset(Images.ic_share_print, width: $(24))
+                  child: Image.asset(Images.ic_share_discovery, width: $(24))
                       .intoContainer(
-                        alignment: Alignment.center,
-                        width: $(48),
-                        height: $(48),
-                      )
-                      .intoGestureDetector(onTap: onSharePrintTap),
+                    alignment: Alignment.center,
+                    width: $(48),
+                    height: $(48),
+                  )
+                      .intoGestureDetector(onTap: onShareDiscoveryTap),
                 ),
                 SizedBox(width: $(16)),
                 // Column(
@@ -252,9 +241,7 @@ class AMOptContainerState extends State<AMOptContainer>
                 //   ],
                 // ).intoContainer(width: $(48)),
               ],
-            ).intoContainer(
-                width: ScreenUtil.screenSize.width,
-                padding: EdgeInsets.symmetric(horizontal: $(15)));
+            ).intoContainer(width: ScreenUtil.screenSize.width, padding: EdgeInsets.symmetric(horizontal: $(15)));
           },
         ),
       ],
