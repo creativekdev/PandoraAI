@@ -4,6 +4,26 @@ import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/recent_entity.g.dart';
 
 @JsonSerializable()
+class RecentStyleMorphModel {
+  int updateDt = 0;
+  String? originalPath;
+  late List<RecentEffectItem> itemList;
+
+  RecentStyleMorphModel({List<RecentEffectItem>? itemList}) {
+    this.itemList = itemList ?? [];
+  }
+
+  factory RecentStyleMorphModel.fromJson(Map<String, dynamic> json) => $RecentStyleMorphModelFromJson(json);
+
+  Map<String, dynamic> toJson() => $RecentStyleMorphModelToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
 class RecentEffectModel {
   int updateDt = 0;
   String? originalPath;

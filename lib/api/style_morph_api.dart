@@ -15,7 +15,7 @@ class StyleMorphApi extends RetryAbleRequester {
     var userManager = AppDelegate.instance.getManager<UserManager>();
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
-    return ApiOptions(baseUrl: userManager.aiServers['sdserver'] ?? 'https://ai.pandoraai.app:7003', headers: headers);
+    return ApiOptions(baseUrl: userManager.aiServers['stylemorph'] ?? 'https://ai.pandoraai.app:7002', headers: headers);
   }
 
   Future<StyleMorphResultEntity?> startTransfer({

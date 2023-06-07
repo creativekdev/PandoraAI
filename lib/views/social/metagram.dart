@@ -51,7 +51,7 @@ class Metagram {
         Navigator.of(context)
             .push<bool>(MaterialPageRoute(
           settings: RouteSettings(name: "/MetagramIntroduceScreen"),
-          builder: (context) => MetagramIntroduceScreen(),
+          builder: (context) => MetagramIntroduceScreen(source: source),
         ))
             .then((value) {
           if (value ?? false) {

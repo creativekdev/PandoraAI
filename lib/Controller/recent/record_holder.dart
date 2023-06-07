@@ -89,6 +89,45 @@ class EffectRecordHolder extends RecordHolder<RecentEffectModel> {
   }
 }
 
+class StyleMorphRecordHolder extends RecordHolder<RecentStyleMorphModel> {
+  @override
+  Future<List<RecentStyleMorphModel>> loadFromCache() async {
+    List<RecentStyleMorphModel> result = [];
+    try {
+      var json = _cacheManager.getJson(CacheManager.keyRecentStyleMorph);
+      result = (json as List<dynamic>).map((e) => RecentStyleMorphModel.fromJson(e)).toList();
+    } catch (e) {}
+    return result;
+  }
+
+  @override
+  Future<bool> record(List<RecentStyleMorphModel> source, RecentStyleMorphModel data, {bool toCache = true}) async {
+    var pick = source.pick((e) => e.originalPath == data.originalPath);
+    if (pick != null) {
+      pick.updateDt = data.updateDt;
+      var old = pick.itemList.pick((t) => t.key == data.itemList.first.key);
+      if (old != null) {
+        pick.itemList.remove(old);
+      }
+      pick.itemList.insertAll(0, data.itemList);
+    } else {
+      source.insert(0, data);
+    }
+    if (toCache) {
+      await saveToCache(source);
+    }
+    return true;
+  }
+
+  @override
+  Future<bool> saveToCache(List<RecentStyleMorphModel> data) async {
+    return await _cacheManager.setJson(
+      CacheManager.keyRecentStyleMorph,
+      data.map((e) => e.toJson()).toList(),
+    );
+  }
+}
+
 class Txt2imgRecordHolder extends RecordHolder<RecentGroundEntity> {
   @override
   Future<List<RecentGroundEntity>> loadFromCache() async {

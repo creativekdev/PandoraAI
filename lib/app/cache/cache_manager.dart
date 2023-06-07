@@ -13,6 +13,7 @@ import 'image_scale_operator.dart';
 
 class CacheManager extends BaseManager {
   static const keyHasIntroductionPageShowed = "HAS_INTRODUCTION_PAGE_SHOWED";
+  static const keyRecentStyleMorph = "recent_style_morph_file";
   static const keyRecentEffects = "recent_effect_file";
   static const keyRecentTxt2img = "recent_ai_ground_file";
   static const keyRecentAIDraw = "recent_ai_draw_file";

@@ -13,7 +13,12 @@ import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class MetagramIntroduceScreen extends StatefulWidget {
-  const MetagramIntroduceScreen({Key? key}) : super(key: key);
+  String source;
+
+  MetagramIntroduceScreen({
+    Key? key,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<MetagramIntroduceScreen> createState() => _MetagramIntroduceScreenState();
@@ -116,8 +121,10 @@ class _MetagramIntroduceScreenState extends State<MetagramIntroduceScreen> {
                   decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular($(32))),
                 )
                     .intoGestureDetector(onTap: () {
+                  Events.metagramConnectClick(source: widget.source, accountType: 'biz');
                   PlatformConnectorPage.push(context, platform: ConnectorPlatform.instagramBusiness).then((value) {
                     if (value ?? false) {
+                      Events.metagramConnectSuccess(source: widget.source, accountType: 'biz');
                       Navigator.of(context).pop(value);
                     }
                   });
@@ -128,8 +135,10 @@ class _MetagramIntroduceScreenState extends State<MetagramIntroduceScreen> {
                   padding: EdgeInsets.symmetric(vertical: $(12)),
                 )
                     .intoGestureDetector(onTap: () {
+                  Events.metagramConnectClick(source: widget.source, accountType: 'personal');
                   PlatformConnectorPage.push(context, platform: ConnectorPlatform.instagram).then((value) {
                     if (value ?? false) {
+                      Events.metagramConnectSuccess(source: widget.source, accountType: 'personal');
                       Navigator.of(context).pop(value);
                     }
                   });
