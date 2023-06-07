@@ -19,6 +19,7 @@ import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -176,6 +177,9 @@ class NotificationManager extends BaseManager {
         Metagram.openBySelf(Get.context!, source: 'push_click');
         break;
       case HomeCardType.UNDEFINED:
+        break;
+      case HomeCardType.style_morph:
+        StyleMorph.open(Get.context!, 'push_click');
         break;
     }
   }

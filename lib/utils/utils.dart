@@ -159,9 +159,9 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
   return result;
 }
 
-Future<File> imageCompress(File file, String targetPath, {CompressFormat format = CompressFormat.png}) async {
+Future<File> imageCompress(File file, String targetPath, {CompressFormat format = CompressFormat.png, bool ignoreSize = false}) async {
   var length = await file.length();
-  if (length <= 512 * 512) {
+  if (length <= 512 * 512 && !ignoreSize) {
     return await file.copy(targetPath);
   }
 

@@ -1668,7 +1668,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
         if (resultSuccess == 1) {
           Events.facetoonGenerated(style: selectedEffect.key);
-          if (TextUtil.isEmpty(controller.videoFile.value?.path) || TextUtil.isEmpty(_image)) {
+          if (TextUtil.isEmpty(controller.videoFile.value?.path) && TextUtil.isEmpty(_image)) {
             return;
           }
           recentController.onEffectUsed(

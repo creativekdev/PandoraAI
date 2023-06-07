@@ -88,6 +88,7 @@ class JsonConvert {
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(PushModuleExtraEntity).toString(): PushModuleExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
+		(RecentStyleMorphModel).toString(): RecentStyleMorphModel.fromJson,
 		(RecentEffectModel).toString(): RecentEffectModel.fromJson,
 		(RecentEffectItem).toString(): RecentEffectItem.fromJson,
 		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
@@ -318,6 +319,9 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentStyleMorphModel>[] is M){
+			return data.map<RecentStyleMorphModel>((Map<String, dynamic> e) => RecentStyleMorphModel.fromJson(e)).toList() as M;
 		}
 		if(<RecentEffectModel>[] is M){
 			return data.map<RecentEffectModel>((Map<String, dynamic> e) => RecentEffectModel.fromJson(e)).toList() as M;

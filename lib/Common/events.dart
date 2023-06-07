@@ -206,6 +206,12 @@ class Events {
 
   static Future<void> rateUs() => logEvent('rate_us');
 
+  static Future<void> metagramConnectClick({required String source, required String accountType}) =>
+      logEvent('metagram_connect', eventValues: {'source': source, 'accountType': accountType});
+
+  static Future<void> metagramConnectSuccess({required String source, required String accountType}) =>
+      logEvent('metagram_connect', eventValues: {'source': source, 'accountType': accountType});
+
   static Future<void> metagramLoading({required String source}) => logEvent('metagram_loading', eventValues: {'source': source});
 
   static Future<void> metagramCompleteSuccess({required String photo}) => logEvent('metagram_completed_success', eventValues: {'photo': photo});
@@ -241,6 +247,8 @@ class Events {
       });
 
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
+
+  static Future<void> styleMorphGenerateAgain({required int time}) => logEvent('stylemorph_completed_generateagain', eventValues: {'time': '${time}'});
 
 }
 

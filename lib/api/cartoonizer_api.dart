@@ -660,7 +660,7 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<GenerateLimitEntity?> getStyleMorphLimit() async {
-    var baseEntity = await get('/tool/stylemorph/usage', needRetry: false,canClickRetry: false);
+    var baseEntity = await get('/tool/stylemorph/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 

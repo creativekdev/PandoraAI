@@ -485,13 +485,13 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                 }
                               });
                             } else {
-                              await showLoading();
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
+                              await showLoading();
                               var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               await hideLoading();
+                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               ShareScreen.startShare(context,
                                   backgroundColor: Color(0x77000000),
                                   style: 'Me-taverse',
