@@ -15,6 +15,7 @@ const _recordMetaverse = 'metaverse/';
 const _recordCartoonize = 'cartoonize/';
 const _recordTxt2img = 'aiGround/';
 const _recordAiDraw = 'aiDraw/';
+const _filterDir = 'filterDir/';
 const saveAlbumName = 'PandoraAI';
 
 class StorageOperator {
@@ -45,6 +46,8 @@ class StorageOperator {
 
   Directory get recordAiDrawDir => Directory('$_mainPath$_recordDir$_recordAiDraw');
 
+  Directory get recordFilterDir => Directory('$_mainPath$_recordDir$_filterDir');
+
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (directory == null) return false;
@@ -62,6 +65,7 @@ class StorageOperator {
       '$_recordDir$_recordCartoonize',
       '$_recordDir$_recordTxt2img',
       '$_recordDir$_recordAiDraw',
+      '$_recordDir$_filterDir',
     ]);
     return true;
   }
