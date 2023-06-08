@@ -33,6 +33,7 @@ import 'package:cartoonizer/views/discovery/widget/user_info_header_widget.dart'
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
 
@@ -259,6 +260,8 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
         ).intoGestureDetector(onTap: () {
           if (data.category == DiscoveryCategory.cartoonize.name) {
             toChoosePage();
+          } else if (data.category == DiscoveryCategory.stylemorph.name) {
+            toStyleMorph();
           } else if (data.category == DiscoveryCategory.ai_avatar.name) {
             Events.discoveryTemplateClick(source: dataType, style: 'avatar');
             Avatar.open(context, source: 'discovery');
@@ -463,6 +466,16 @@ class DiscoveryEffectDetailWidgetState extends State<DiscoveryEffectDetailWidget
       itemPos: itemPos,
       entrySource: EntrySource.fromDiscovery,
     );
+  }
+
+  toStyleMorph() {
+    if (effectDataController.data == null) {
+      return;
+    }
+
+    String key = data.cartoonizeKey;
+    Events.discoveryTemplateClick(source: dataType, style: 'stylemorph-${key}');
+    StyleMorph.open(context, source + '-try-template', initKey: key);
   }
 
   Widget buildImages(

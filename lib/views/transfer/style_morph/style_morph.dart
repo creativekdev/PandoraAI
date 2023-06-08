@@ -14,14 +14,14 @@ import 'package:cartoonizer/views/transfer/style_morph/style_morph_screen.dart';
 class StyleMorph {
   static Future open(BuildContext context, String source, {RecentStyleMorphModel? record, String? initKey}) async {
     if (record == null) {
-      return _open(context, source);
+      return _open(context, source, initKey);
     } else {
       return _openFromRecent(context, source, record, initKey);
     }
   }
 
-  static Future _open(BuildContext context, String source) async {
-    var list = await PickAlbumScreen.pickImage(context, count: 1);
+  static Future _open(BuildContext context, String source, String? initKey) async {
+    var list = await PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true);
     if (list == null || list.isEmpty) {
       return;
     }
@@ -40,6 +40,7 @@ class StyleMorph {
             source: source,
             record: recentController.styleMorphList.pick((t) => t.originalPath == path) ?? RecentStyleMorphModel()
               ..originalPath = path,
+            initKey: initKey,
             photoType: 'gallery'),
         settings: RouteSettings(name: 'StyleMorphScreen'),
       ),

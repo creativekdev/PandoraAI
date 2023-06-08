@@ -76,7 +76,7 @@ class RecentController extends GetxController {
         ..originalPath = element.originalPath
         ..filePath = [e]));
     });
-    recordList = [...effects, ...metaverses, ...groundList, ...aiDrawList, ...styleMorphs];
+    recordList = [...effects, ...metaverses, ...groundList, ...aiDrawList, ...styleMorphList];
     recordList.sort((a1, a2) => a1.updateDt < a2.updateDt ? 1 : -1);
   }
 

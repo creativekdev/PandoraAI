@@ -61,6 +61,10 @@ class EffectRecordHolder extends RecordHolder<RecentEffectModel> {
     try {
       var json = _cacheManager.getJson(CacheManager.keyRecentEffects);
       result = (json as List<dynamic>).map((e) => RecentEffectModel.fromJson(e)).toList();
+      result = result.filter((t) => File(t.originalPath ?? '').existsSync());
+      result.forEach((element) {
+        element.itemList = element.itemList.filter((t) => File(t.imageData ?? '').existsSync());
+      });
     } catch (e) {}
     return result;
   }
@@ -96,23 +100,28 @@ class StyleMorphRecordHolder extends RecordHolder<RecentStyleMorphModel> {
     try {
       var json = _cacheManager.getJson(CacheManager.keyRecentStyleMorph);
       result = (json as List<dynamic>).map((e) => RecentStyleMorphModel.fromJson(e)).toList();
+      result = result.filter((t) => File(t.originalPath ?? '').existsSync());
+      result.forEach((element) {
+        element.itemList = element.itemList.filter((t) => File(t.imageData ?? '').existsSync());
+      });
     } catch (e) {}
     return result;
   }
 
   @override
   Future<bool> record(List<RecentStyleMorphModel> source, RecentStyleMorphModel data, {bool toCache = true}) async {
-    var pick = source.pick((e) => e.originalPath == data.originalPath);
-    if (pick != null) {
-      pick.updateDt = data.updateDt;
-      var old = pick.itemList.pick((t) => t.key == data.itemList.first.key);
-      if (old != null) {
-        pick.itemList.remove(old);
-      }
-      pick.itemList.insertAll(0, data.itemList);
-    } else {
-      source.insert(0, data);
-    }
+    source.insert(0, data);
+    // var pick = source.pick((e) => e.originalPath == data.originalPath);
+    // if (pick != null) {
+    //   pick.updateDt = data.updateDt;
+    //   var old = pick.itemList.pick((t) => t.key == data.itemList.first.key);
+    //   if (old != null) {
+    //     pick.itemList.remove(old);
+    //   }
+    //   pick.itemList.insertAll(0, data.itemList);
+    // } else {
+    //   source.insert(0, data);
+    // }
     if (toCache) {
       await saveToCache(source);
     }

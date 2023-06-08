@@ -409,7 +409,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       var file = File(controller.resultMap[controller.selectedEffect!.key]!);
       ShareDiscoveryScreen.push(
         context,
-        effectKey: 'StyleMorph',
+        effectKey: controller.selectedEffect!.key,
         originalUrl: uploadImageController.imageUrl.value,
         image: base64Encode(file.readAsBytesSync()),
         isVideo: false,

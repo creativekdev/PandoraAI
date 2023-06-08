@@ -18,7 +18,9 @@ import 'package:cartoonizer/utils/utils.dart';
 
 class StyleMorphController extends GetxController {
   late File _originFile;
-  File get originFile=>_originFile;
+
+  File get originFile => _originFile;
+
   set originFile(File file) {
     _originFile = file;
     SyncFileImage(file: originFile).getImage().then((value) {
@@ -26,6 +28,7 @@ class StyleMorphController extends GetxController {
       calculatePosY();
     });
   }
+
   late List<EffectCategory> categories;
   EffectCategory? selectedTitle;
   EffectItem? selectedEffect;
@@ -81,7 +84,18 @@ class StyleMorphController extends GetxController {
           });
         });
       } else {
-        selectedTitle = categories.first;
+        if (initKey != null) {
+          categories.forEach((category) {
+            category.effects.forEach((effect) {
+              if (initKey == effect.key) {
+                selectedTitle = category;
+                selectedEffect = effect;
+              }
+            });
+          });
+        } else {
+          selectedTitle = categories.first;
+        }
       }
     }
   }
