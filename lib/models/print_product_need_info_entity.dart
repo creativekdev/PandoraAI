@@ -14,8 +14,7 @@ class PrintProductNeedInfoEntity {
 
   PrintProductNeedInfoEntity();
 
-  factory PrintProductNeedInfoEntity.fromJson(Map<String, dynamic> json) =>
-      $PrintProductNeedInfoEntityFromJson(json);
+  factory PrintProductNeedInfoEntity.fromJson(Map<String, dynamic> json) => $PrintProductNeedInfoEntityFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintProductNeedInfoEntityToJson(this);
 
@@ -36,8 +35,7 @@ class PrintProductNeedInfoPages {
 
   PrintProductNeedInfoPages();
 
-  factory PrintProductNeedInfoPages.fromJson(Map<String, dynamic> json) =>
-      $PrintProductNeedInfoPagesFromJson(json);
+  factory PrintProductNeedInfoPages.fromJson(Map<String, dynamic> json) => $PrintProductNeedInfoPagesFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintProductNeedInfoPagesToJson(this);
 
@@ -50,8 +48,8 @@ class PrintProductNeedInfoPages {
 @JsonSerializable()
 class PrintProductNeedInfoPrintInfo {
   late String url;
-  late int width;
-  late int height;
+  late double width;
+  late double height;
   late String name;
   late String title;
   late String size;
@@ -61,8 +59,7 @@ class PrintProductNeedInfoPrintInfo {
 
   PrintProductNeedInfoPrintInfo();
 
-  factory PrintProductNeedInfoPrintInfo.fromJson(Map<String, dynamic> json) =>
-      $PrintProductNeedInfoPrintInfoFromJson(json);
+  factory PrintProductNeedInfoPrintInfo.fromJson(Map<String, dynamic> json) => $PrintProductNeedInfoPrintInfoFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintProductNeedInfoPrintInfoToJson(this);
 
@@ -76,7 +73,7 @@ class PrintProductNeedInfoPrintInfo {
 class PrintProductNeedInfoPrintInfoPages {
   late double x;
   late double y;
-  late int width;
+  late double width;
   late double height;
   late int rotation;
   late String id;
@@ -85,12 +82,9 @@ class PrintProductNeedInfoPrintInfoPages {
 
   PrintProductNeedInfoPrintInfoPages();
 
-  factory PrintProductNeedInfoPrintInfoPages.fromJson(
-          Map<String, dynamic> json) =>
-      $PrintProductNeedInfoPrintInfoPagesFromJson(json);
+  factory PrintProductNeedInfoPrintInfoPages.fromJson(Map<String, dynamic> json) => $PrintProductNeedInfoPrintInfoPagesFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      $PrintProductNeedInfoPrintInfoPagesToJson(this);
+  Map<String, dynamic> toJson() => $PrintProductNeedInfoPrintInfoPagesToJson(this);
 
   @override
   String toString() {

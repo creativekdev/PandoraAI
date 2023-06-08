@@ -1,12 +1,7 @@
 import '../../../Common/importFile.dart';
 
 class PrintQuatityItem extends StatefulWidget {
-  PrintQuatityItem(
-      {Key? key,
-      required this.quatity,
-      required this.onAddTap,
-      required this.onSubTap})
-      : super(key: key);
+  PrintQuatityItem({Key? key, required this.quatity, required this.onAddTap, required this.onSubTap}) : super(key: key);
   final String quatity;
   final GestureTapCallback onAddTap;
   final GestureTapCallback onSubTap;
@@ -20,8 +15,7 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        TitleTextWidget(
-            "Quatity".tr, ColorConstant.White, FontWeight.normal, $(9)),
+        TitleTextWidget("Quatity".tr, ColorConstant.White, FontWeight.normal, $(12)),
         Spacer(),
         TitleTextWidget("+", ColorConstant.White, FontWeight.normal, $(8))
             .intoContainer(
@@ -40,8 +34,11 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
           widget.onAddTap();
         }),
         TitleTextWidget(
-                widget.quatity, ColorConstant.White, FontWeight.normal, $(9))
-            .intoContainer(
+          widget.quatity,
+          ColorConstant.White,
+          FontWeight.normal,
+          $(14),
+        ).intoContainer(
           width: $(40),
         ),
         TitleTextWidget("-", ColorConstant.White, FontWeight.normal, $(8))

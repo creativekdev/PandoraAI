@@ -104,6 +104,7 @@ dependencies:
   palette_generator: 0.3.3+2
   crop_your_image: 0.7.3
   kochava_tracker: 2.0.2
+  flutter_google_places: 0.3.0
 #dependency_overrides:
 #  intl: 0.18.1
 dev_dependencies:

@@ -1,11 +1,13 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../models/print_option_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../network/dio_node.dart';
+import '../ai/anotherme/another_me_controller.dart';
 
 class PrintController extends GetxController {
   PrintController({required this.optionData});
@@ -15,10 +17,51 @@ class PrintController extends GetxController {
 
   PrintProductEntity? product;
   PrintProductNeedInfoEntity? productInfo;
+  AnotherMeController acontroller = Get.find();
 
   Map<String, dynamic> options = {};
   List<Map<String, bool>> showesed = [];
   Map<String, String> selectOptions = {};
+
+  // 获取图片的真实显示尺寸
+  Size _imgSize = Size.zero;
+
+  set imgSize(Size value) {
+    _imgSize = value;
+    update();
+  }
+
+  Size get imgSize => _imgSize;
+
+  // 获取缩放比例
+  double _scale = 1;
+
+  set scale(double value) {
+    _scale = value;
+    update();
+  }
+
+  double get scale => _scale;
+
+  // 起点
+  Offset _origin = Offset.zero;
+
+  set origin(Offset value) {
+    _origin = value;
+    update();
+  }
+
+  Offset get origin => _origin;
+
+  // size
+  Size _size = Size.zero;
+
+  set size(Size value) {
+    _size = value;
+    update();
+  }
+
+  Size get size => _size;
 
   int _quatity = 1;
 
@@ -62,6 +105,12 @@ class PrintController extends GetxController {
     productInfo = info;
     options = getOptionsData(entity);
     showesed = getInitIsShowed(options.keys.toList());
+    _scale = getImageScale(productInfo?.printInfo.width.toDouble() ?? 0.0);
+    _origin = getOrigiPosition(productInfo?.printInfo.pages.first.x as double, productInfo?.printInfo.pages.first.y as double);
+    _size = getImageRealSize(productInfo?.printInfo.pages.first.width as double, productInfo?.printInfo.pages.first.height as double);
+    _imgSize = getImageRealSize(productInfo?.printInfo.width.toDouble() ?? 0.0, productInfo?.printInfo.height.toDouble() ?? 0.0);
+    LogUtil.d("scale === $_scale");
+    LogUtil.d("size === $_size");
     _total = getSubTotal();
     update();
   }
@@ -102,7 +151,15 @@ class PrintController extends GetxController {
   }
 
   getSubTotal() {
-    double total = _quatity * double.parse(product?.data.rows.first.variants.edges.first.node.price ?? "0");
+    double total = _quatity * double.parse(product
+        ?.data
+        .rows
+        .first
+        .variants
+        .edges
+        .first
+        .node
+        .price ?? "0");
     return getNeedDouble(total);
   }
 
@@ -126,7 +183,11 @@ class PrintController extends GetxController {
     onRequestData();
   }
 
-  onSubmit() {}
+  bool onSubmit() {
+    // TODO: 检查是否选择了各种条件
+
+    return true;
+  }
 
   onRequestData() async {
     final shopify = cartoonizerApi.shopifyProducts(product_ids: optionData.shopifyProductId, is_admin_shop: 1);
@@ -148,14 +209,14 @@ class PrintController extends GetxController {
     return ScreenUtil.screenSize.width / imgWidth;
   }
 
+  // 计算起始点位置
   Offset getOrigiPosition(double x, double y) {
-    double scale = getImageScale(productInfo?.printInfo.width as double? ?? 0.0);
-    return Offset(scale * x, scale * y);
+    return Offset(_scale * x, _scale * y);
   }
 
+  // 获取图片实际展示大小
   Size getImageRealSize(double width, double height) {
-    double scale = getImageScale(productInfo?.printInfo.width as double? ?? 0.0);
-    return Size(width * scale, height * scale);
+    return Size(width * _scale, height * _scale);
   }
 
   //

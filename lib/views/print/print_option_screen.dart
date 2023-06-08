@@ -54,7 +54,6 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
                 return PrintOptionItem(
                   data: controller.printOptionEntity.data[index],
                 ).intoGestureDetector(onTap: () {
-                  print(index);
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       child: PrintScreen(
                     optionData: controller.printOptionEntity.data[index],
