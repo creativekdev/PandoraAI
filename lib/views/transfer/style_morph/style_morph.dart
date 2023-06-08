@@ -25,7 +25,7 @@ class StyleMorph {
     if (list == null || list.isEmpty) {
       return;
     }
-    var first = await list.first.file;
+    var first = await list.first.originFile;
     if (first == null || !first.existsSync()) {
       CommonExtension().showToast('Image not exist');
       return;

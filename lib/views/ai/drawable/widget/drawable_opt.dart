@@ -334,7 +334,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           );
           if (files != null && files.isNotEmpty) {
             var medium = files.first;
-            var file = await medium.file;
+            var file = await medium.originFile;
             if (file != null) {
               var f = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
               if (f != null) {
