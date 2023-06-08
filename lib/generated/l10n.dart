@@ -4009,6 +4009,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Select Region`
+  String get SELECT_COUNTRY_CALLING_CODE {
+    return Intl.message(
+      'Select Region',
+      name: 'SELECT_COUNTRY_CALLING_CODE',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select region`
+  String get SELECT_COUNTRY_CALLING_CODE_HINT {
+    return Intl.message(
+      'Please select region',
+      name: 'SELECT_COUNTRY_CALLING_CODE_HINT',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `RegionName, RegionCode or CallingCode`
+  String get SELECT_COUNTRY_KEYWORD {
+    return Intl.message(
+      'RegionName, RegionCode or CallingCode',
+      name: 'SELECT_COUNTRY_KEYWORD',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Region`
+  String get SELECT_REGION {
+    return Intl.message(
+      'Select Region',
+      name: 'SELECT_REGION',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

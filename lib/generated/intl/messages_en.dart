@@ -24,6 +24,13 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "You have run out of your daily credits. Please come back tomorrow."),
+        "SELECT_COUNTRY_CALLING_CODE":
+            MessageLookupByLibrary.simpleMessage("Select Region"),
+        "SELECT_COUNTRY_CALLING_CODE_HINT":
+            MessageLookupByLibrary.simpleMessage("Please select region"),
+        "SELECT_COUNTRY_KEYWORD": MessageLookupByLibrary.simpleMessage(
+            "RegionName, RegionCode or CallingCode"),
+        "SELECT_REGION": MessageLookupByLibrary.simpleMessage("Select Region"),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Pandora User"),
         "activate_failed":

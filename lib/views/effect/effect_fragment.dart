@@ -21,6 +21,7 @@ import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
+import 'package:cartoonizer/views/common/region/select_region_page.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
@@ -134,7 +135,12 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
         Metagram.openBySelf(context, source: 'home_page');
         break;
       case HomeCardType.style_morph:
-        StyleMorph.open(context, 'home_page');
+        SelectRegionPage.pickRegion(context).then((value) {
+          if(value != null) {
+            print(value.toString());
+          }
+        });
+        // StyleMorph.open(context, 'home_page');
         break;
       case HomeCardType.UNDEFINED:
         break;

@@ -394,5 +394,9 @@
   "disconnect_social_tips": "您确定要解除绑定此账号么?",
   "disconnect_social_completed": "您已成功解除绑定",
   "before": "Before",
-  "after": "After"
+  "after": "After",
+  "SELECT_COUNTRY_CALLING_CODE": "选择国家/地区",
+  "SELECT_COUNTRY_CALLING_CODE_HINT": "请选择国家/地区",
+  "SELECT_COUNTRY_KEYWORD": "国家/地区名，地区编码或区号",
+  "SELECT_REGION": "选择国家/地区"
 }

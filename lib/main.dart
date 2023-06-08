@@ -127,6 +127,7 @@ class MyApp extends StatelessWidget {
               };
               AppDelegate.instance.listen(listener);
             }
+            theme.AppContext.currentLocales = 'zh';
             if (result == null) {
               return deviceLocale;
             } else {

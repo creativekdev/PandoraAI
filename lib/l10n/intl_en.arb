@@ -394,5 +394,9 @@
   "disconnect_social_tips": "Are you sure to disconnect this account?",
   "disconnect_social_completed": "You have unbound the account",
   "before": "Before",
-  "after": "After"
+  "after": "After",
+  "SELECT_COUNTRY_CALLING_CODE": "Select Region",
+  "SELECT_COUNTRY_CALLING_CODE_HINT": "Please select region",
+  "SELECT_COUNTRY_KEYWORD": "RegionName, RegionCode or CallingCode",
+  "SELECT_REGION": "Select Region"
 }
