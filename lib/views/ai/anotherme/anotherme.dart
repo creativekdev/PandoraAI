@@ -10,16 +10,21 @@ class AnotherMe {
   static String takeItemTag = 'am_take_item';
 
   static Future<void> open(BuildContext context, {RecentMetaverseEntity? entity, required String source}) async {
-    Events.metaverseLoading(source: source);
-    return await Navigator.push<void>(
-      context,
-      MaterialPageRoute(
-        settings: RouteSettings(name: "/AnotherMeScreen"),
-        builder: (context) => AnotherMeScreen(
-          entity: entity,
+    var result = await checkPermissions();
+    if (result) {
+      Events.metaverseLoading(source: source);
+      return await Navigator.push<void>(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/AnotherMeScreen"),
+          builder: (context) => AnotherMeScreen(
+            entity: entity,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      permissionDenied(context);
+    }
   }
 
   static Future<bool> checkPermissions() async {

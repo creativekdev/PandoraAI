@@ -326,7 +326,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   }
 
   pickPhotoFromCamera(BuildContext context, StyleMorphController controller) async {
-    var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
+    var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
     if (pickImage != null) {
       photoType = 'camera';
       CacheManager cacheManager = AppDelegate().getManager();

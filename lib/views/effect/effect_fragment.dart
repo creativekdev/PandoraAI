@@ -113,13 +113,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
         );
         break;
       case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(context, source: 'home_page');
-          } else {
-            AnotherMe.permissionDenied(context);
-          }
-        });
+        AnotherMe.open(context, source: 'home_page');
         break;
       case HomeCardType.ai_avatar:
         Avatar.openFromHome(context);
