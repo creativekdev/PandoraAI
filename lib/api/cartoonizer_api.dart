@@ -349,7 +349,6 @@ class CartoonizerApi extends RetryAbleRequester {
       }
     }, toastOnFailed: false, needRetry: false);
     if (baseEntity != null) {
-      print("127.0.0.1  baseEntity $baseEntity");
       var entity = jsonConvert.convert<PrintProductEntity>(baseEntity.data);
       return entity;
     }
@@ -660,7 +659,8 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<GenerateLimitEntity?> getStyleMorphLimit() async {
-    var baseEntity = await get('/tool/stylemorph/usage', needRetry: false,canClickRetry: false);
+    var baseEntity = await get('/tool/stylemorph/usage',
+        needRetry: false, canClickRetry: false);
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 

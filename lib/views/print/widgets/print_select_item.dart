@@ -1,6 +1,7 @@
 import 'package:cartoonizer/images-res.dart';
 
 import '../../../Common/importFile.dart';
+import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
 
 class PrintSelectItem extends StatelessWidget {
   PrintSelectItem(
@@ -28,11 +29,12 @@ class PrintSelectItem extends StatelessWidget {
                     content, ColorConstant.White, FontWeight.w500, $(14)),
             ]),
         Spacer(),
-        if (imgUrl.isNotEmpty)
-          Image.asset(
-            Images.ic_arrow_right,
-            color: ColorConstant.White,
+        if (imgUrl.isNotEmpty && title == "Color")
+          CachedNetworkImageUtils.custom(
+            context: context,
+            imageUrl: imgUrl,
             width: $(32),
+            fit: BoxFit.cover,
           ).intoContainer(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular($(4)),

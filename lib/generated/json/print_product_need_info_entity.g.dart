@@ -1,41 +1,41 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
-import 'package:cartoonizer/models/print_product_info_entity.dart';
+import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 
-PrintProductInfoEntity $PrintProductInfoEntityFromJson(
+PrintProductNeedInfoEntity $PrintProductNeedInfoEntityFromJson(
     Map<String, dynamic> json) {
-  final PrintProductInfoEntity printProductInfoEntity =
-      PrintProductInfoEntity();
+  final PrintProductNeedInfoEntity printProductNeedInfoEntity =
+      PrintProductNeedInfoEntity();
   final int? width = jsonConvert.convert<int>(json['width']);
   if (width != null) {
-    printProductInfoEntity.width = width;
+    printProductNeedInfoEntity.width = width;
   }
   final int? height = jsonConvert.convert<int>(json['height']);
   if (height != null) {
-    printProductInfoEntity.height = height;
+    printProductNeedInfoEntity.height = height;
   }
-  final int? ratio = jsonConvert.convert<int>(json['ratio']);
+  final double? ratio = jsonConvert.convert<double>(json['ratio']);
   if (ratio != null) {
-    printProductInfoEntity.ratio = ratio;
+    printProductNeedInfoEntity.ratio = ratio;
   }
-  final List<PrintProductInfoPages>? pages =
-      jsonConvert.convertListNotNull<PrintProductInfoPages>(json['pages']);
+  final List<PrintProductNeedInfoPages>? pages =
+      jsonConvert.convertListNotNull<PrintProductNeedInfoPages>(json['pages']);
   if (pages != null) {
-    printProductInfoEntity.pages = pages;
+    printProductNeedInfoEntity.pages = pages;
   }
-  final PrintProductInfoPrintInfo? printInfo =
-      jsonConvert.convert<PrintProductInfoPrintInfo>(json['printInfo']);
+  final PrintProductNeedInfoPrintInfo? printInfo =
+      jsonConvert.convert<PrintProductNeedInfoPrintInfo>(json['printInfo']);
   if (printInfo != null) {
-    printProductInfoEntity.printInfo = printInfo;
+    printProductNeedInfoEntity.printInfo = printInfo;
   }
   final int? modified = jsonConvert.convert<int>(json['modified']);
   if (modified != null) {
-    printProductInfoEntity.modified = modified;
+    printProductNeedInfoEntity.modified = modified;
   }
-  return printProductInfoEntity;
+  return printProductNeedInfoEntity;
 }
 
-Map<String, dynamic> $PrintProductInfoEntityToJson(
-    PrintProductInfoEntity entity) {
+Map<String, dynamic> $PrintProductNeedInfoEntityToJson(
+    PrintProductNeedInfoEntity entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['width'] = entity.width;
   data['height'] = entity.height;
@@ -46,39 +46,40 @@ Map<String, dynamic> $PrintProductInfoEntityToJson(
   return data;
 }
 
-PrintProductInfoPages $PrintProductInfoPagesFromJson(
+PrintProductNeedInfoPages $PrintProductNeedInfoPagesFromJson(
     Map<String, dynamic> json) {
-  final PrintProductInfoPages printProductInfoPages = PrintProductInfoPages();
+  final PrintProductNeedInfoPages printProductNeedInfoPages =
+      PrintProductNeedInfoPages();
   final String? id = jsonConvert.convert<String>(json['id']);
   if (id != null) {
-    printProductInfoPages.id = id;
+    printProductNeedInfoPages.id = id;
   }
   final List<dynamic>? children =
       jsonConvert.convertListNotNull<dynamic>(json['children']);
   if (children != null) {
-    printProductInfoPages.children = children;
+    printProductNeedInfoPages.children = children;
   }
   final String? width = jsonConvert.convert<String>(json['width']);
   if (width != null) {
-    printProductInfoPages.width = width;
+    printProductNeedInfoPages.width = width;
   }
   final String? height = jsonConvert.convert<String>(json['height']);
   if (height != null) {
-    printProductInfoPages.height = height;
+    printProductNeedInfoPages.height = height;
   }
   final String? background = jsonConvert.convert<String>(json['background']);
   if (background != null) {
-    printProductInfoPages.background = background;
+    printProductNeedInfoPages.background = background;
   }
   final int? bleed = jsonConvert.convert<int>(json['bleed']);
   if (bleed != null) {
-    printProductInfoPages.bleed = bleed;
+    printProductNeedInfoPages.bleed = bleed;
   }
-  return printProductInfoPages;
+  return printProductNeedInfoPages;
 }
 
-Map<String, dynamic> $PrintProductInfoPagesToJson(
-    PrintProductInfoPages entity) {
+Map<String, dynamic> $PrintProductNeedInfoPagesToJson(
+    PrintProductNeedInfoPages entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['id'] = entity.id;
   data['children'] = entity.children;
@@ -89,54 +90,54 @@ Map<String, dynamic> $PrintProductInfoPagesToJson(
   return data;
 }
 
-PrintProductInfoPrintInfo $PrintProductInfoPrintInfoFromJson(
+PrintProductNeedInfoPrintInfo $PrintProductNeedInfoPrintInfoFromJson(
     Map<String, dynamic> json) {
-  final PrintProductInfoPrintInfo printProductInfoPrintInfo =
-      PrintProductInfoPrintInfo();
+  final PrintProductNeedInfoPrintInfo printProductNeedInfoPrintInfo =
+      PrintProductNeedInfoPrintInfo();
   final String? url = jsonConvert.convert<String>(json['url']);
   if (url != null) {
-    printProductInfoPrintInfo.url = url;
+    printProductNeedInfoPrintInfo.url = url;
   }
   final int? width = jsonConvert.convert<int>(json['width']);
   if (width != null) {
-    printProductInfoPrintInfo.width = width;
+    printProductNeedInfoPrintInfo.width = width;
   }
   final int? height = jsonConvert.convert<int>(json['height']);
   if (height != null) {
-    printProductInfoPrintInfo.height = height;
+    printProductNeedInfoPrintInfo.height = height;
   }
   final String? name = jsonConvert.convert<String>(json['name']);
   if (name != null) {
-    printProductInfoPrintInfo.name = name;
+    printProductNeedInfoPrintInfo.name = name;
   }
   final String? title = jsonConvert.convert<String>(json['title']);
   if (title != null) {
-    printProductInfoPrintInfo.title = title;
+    printProductNeedInfoPrintInfo.title = title;
   }
   final String? size = jsonConvert.convert<String>(json['size']);
   if (size != null) {
-    printProductInfoPrintInfo.size = size;
+    printProductNeedInfoPrintInfo.size = size;
   }
-  final List<PrintProductInfoPrintInfoPages>? pages = jsonConvert
-      .convertListNotNull<PrintProductInfoPrintInfoPages>(json['pages']);
+  final List<PrintProductNeedInfoPrintInfoPages>? pages = jsonConvert
+      .convertListNotNull<PrintProductNeedInfoPrintInfoPages>(json['pages']);
   if (pages != null) {
-    printProductInfoPrintInfo.pages = pages;
+    printProductNeedInfoPrintInfo.pages = pages;
   }
   final Map<String, dynamic>? productColorMap =
       jsonConvert.convert<Map<String, dynamic>>(json['productColorMap']);
   if (productColorMap != null) {
-    printProductInfoPrintInfo.productColorMap = productColorMap;
+    printProductNeedInfoPrintInfo.productColorMap = productColorMap;
   }
   final String? shopifyProductId =
       jsonConvert.convert<String>(json['shopifyProductId']);
   if (shopifyProductId != null) {
-    printProductInfoPrintInfo.shopifyProductId = shopifyProductId;
+    printProductNeedInfoPrintInfo.shopifyProductId = shopifyProductId;
   }
-  return printProductInfoPrintInfo;
+  return printProductNeedInfoPrintInfo;
 }
 
-Map<String, dynamic> $PrintProductInfoPrintInfoToJson(
-    PrintProductInfoPrintInfo entity) {
+Map<String, dynamic> $PrintProductNeedInfoPrintInfoToJson(
+    PrintProductNeedInfoPrintInfo entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['url'] = entity.url;
   data['width'] = entity.width;
@@ -150,47 +151,47 @@ Map<String, dynamic> $PrintProductInfoPrintInfoToJson(
   return data;
 }
 
-PrintProductInfoPrintInfoPages $PrintProductInfoPrintInfoPagesFromJson(
+PrintProductNeedInfoPrintInfoPages $PrintProductNeedInfoPrintInfoPagesFromJson(
     Map<String, dynamic> json) {
-  final PrintProductInfoPrintInfoPages printProductInfoPrintInfoPages =
-      PrintProductInfoPrintInfoPages();
+  final PrintProductNeedInfoPrintInfoPages printProductNeedInfoPrintInfoPages =
+      PrintProductNeedInfoPrintInfoPages();
   final double? x = jsonConvert.convert<double>(json['x']);
   if (x != null) {
-    printProductInfoPrintInfoPages.x = x;
+    printProductNeedInfoPrintInfoPages.x = x;
   }
   final double? y = jsonConvert.convert<double>(json['y']);
   if (y != null) {
-    printProductInfoPrintInfoPages.y = y;
+    printProductNeedInfoPrintInfoPages.y = y;
   }
   final int? width = jsonConvert.convert<int>(json['width']);
   if (width != null) {
-    printProductInfoPrintInfoPages.width = width;
+    printProductNeedInfoPrintInfoPages.width = width;
   }
-  final int? height = jsonConvert.convert<int>(json['height']);
+  final double? height = jsonConvert.convert<double>(json['height']);
   if (height != null) {
-    printProductInfoPrintInfoPages.height = height;
+    printProductNeedInfoPrintInfoPages.height = height;
   }
   final int? rotation = jsonConvert.convert<int>(json['rotation']);
   if (rotation != null) {
-    printProductInfoPrintInfoPages.rotation = rotation;
+    printProductNeedInfoPrintInfoPages.rotation = rotation;
   }
   final String? id = jsonConvert.convert<String>(json['id']);
   if (id != null) {
-    printProductInfoPrintInfoPages.id = id;
+    printProductNeedInfoPrintInfoPages.id = id;
   }
   final int? printPageIndex = jsonConvert.convert<int>(json['printPageIndex']);
   if (printPageIndex != null) {
-    printProductInfoPrintInfoPages.printPageIndex = printPageIndex;
+    printProductNeedInfoPrintInfoPages.printPageIndex = printPageIndex;
   }
   final String? type = jsonConvert.convert<String>(json['type']);
   if (type != null) {
-    printProductInfoPrintInfoPages.type = type;
+    printProductNeedInfoPrintInfoPages.type = type;
   }
-  return printProductInfoPrintInfoPages;
+  return printProductNeedInfoPrintInfoPages;
 }
 
-Map<String, dynamic> $PrintProductInfoPrintInfoPagesToJson(
-    PrintProductInfoPrintInfoPages entity) {
+Map<String, dynamic> $PrintProductNeedInfoPrintInfoPagesToJson(
+    PrintProductNeedInfoPrintInfoPages entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['x'] = entity.x;
   data['y'] = entity.y;

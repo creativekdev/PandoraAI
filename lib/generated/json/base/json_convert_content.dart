@@ -22,7 +22,7 @@ import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/models/print_product_entity.dart';
-import 'package:cartoonizer/models/print_product_info_entity.dart';
+import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
@@ -89,11 +89,13 @@ class JsonConvert {
         PrintProductDataRowsVariantsEdgesNode.fromJson,
     (PrintProductDataRowsVariantsEdgesNodeSelectedOptions).toString():
         PrintProductDataRowsVariantsEdgesNodeSelectedOptions.fromJson,
-    (PrintProductInfoEntity).toString(): PrintProductInfoEntity.fromJson,
-    (PrintProductInfoPages).toString(): PrintProductInfoPages.fromJson,
-    (PrintProductInfoPrintInfo).toString(): PrintProductInfoPrintInfo.fromJson,
-    (PrintProductInfoPrintInfoPages).toString():
-        PrintProductInfoPrintInfoPages.fromJson,
+    (PrintProductNeedInfoEntity).toString():
+        PrintProductNeedInfoEntity.fromJson,
+    (PrintProductNeedInfoPages).toString(): PrintProductNeedInfoPages.fromJson,
+    (PrintProductNeedInfoPrintInfo).toString():
+        PrintProductNeedInfoPrintInfo.fromJson,
+    (PrintProductNeedInfoPrintInfoPages).toString():
+        PrintProductNeedInfoPrintInfoPages.fromJson,
     (PushExtraEntity).toString(): PushExtraEntity.fromJson,
     (PushModuleExtraEntity).toString(): PushModuleExtraEntity.fromJson,
     (RateConfigEntity).toString(): RateConfigEntity.fromJson,
@@ -436,28 +438,28 @@ class JsonConvert {
                       e))
           .toList() as M;
     }
-    if (<PrintProductInfoEntity>[] is M) {
+    if (<PrintProductNeedInfoEntity>[] is M) {
       return data
-          .map<PrintProductInfoEntity>(
-              (Map<String, dynamic> e) => PrintProductInfoEntity.fromJson(e))
+          .map<PrintProductNeedInfoEntity>((Map<String, dynamic> e) =>
+              PrintProductNeedInfoEntity.fromJson(e))
           .toList() as M;
     }
-    if (<PrintProductInfoPages>[] is M) {
+    if (<PrintProductNeedInfoPages>[] is M) {
       return data
-          .map<PrintProductInfoPages>(
-              (Map<String, dynamic> e) => PrintProductInfoPages.fromJson(e))
+          .map<PrintProductNeedInfoPages>(
+              (Map<String, dynamic> e) => PrintProductNeedInfoPages.fromJson(e))
           .toList() as M;
     }
-    if (<PrintProductInfoPrintInfo>[] is M) {
+    if (<PrintProductNeedInfoPrintInfo>[] is M) {
       return data
-          .map<PrintProductInfoPrintInfo>(
-              (Map<String, dynamic> e) => PrintProductInfoPrintInfo.fromJson(e))
+          .map<PrintProductNeedInfoPrintInfo>((Map<String, dynamic> e) =>
+              PrintProductNeedInfoPrintInfo.fromJson(e))
           .toList() as M;
     }
-    if (<PrintProductInfoPrintInfoPages>[] is M) {
+    if (<PrintProductNeedInfoPrintInfoPages>[] is M) {
       return data
-          .map<PrintProductInfoPrintInfoPages>((Map<String, dynamic> e) =>
-              PrintProductInfoPrintInfoPages.fromJson(e))
+          .map<PrintProductNeedInfoPrintInfoPages>((Map<String, dynamic> e) =>
+              PrintProductNeedInfoPrintInfoPages.fromJson(e))
           .toList() as M;
     }
     if (<PushExtraEntity>[] is M) {
