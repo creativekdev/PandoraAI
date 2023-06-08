@@ -14,6 +14,8 @@ class _PrintWebItemState extends State<PrintWebItem> {
   double webViewHeight = 300.0;
   WebViewController? _controller;
 
+  var css = '<style>html, body p {font-size: 40px; color: white;}</style>';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,9 +28,9 @@ class _PrintWebItemState extends State<PrintWebItem> {
         onWebViewCreated: (WebViewController controller) {
           _controller = controller;
           controller.loadUrl(Uri.dataFromString(
-                  "<html><body style='color: white;'>${widget.htmlString}</body></html>",
-                  mimeType: 'text/html')
-              .toString());
+            "<html><head>$css</head><body>${widget.htmlString}</body></html>",
+            mimeType: 'text/html',
+          ).toString());
         },
         onPageFinished: (String url) async {
           _controller
