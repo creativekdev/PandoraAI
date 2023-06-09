@@ -91,7 +91,9 @@ class OnCreateCommentEvent extends BaseEvent<List<int>> {
   OnCreateCommentEvent({required super.data});
 }
 
-class OnAppStateChangeEvent extends BaseEvent {}
+class OnAppStateChangeEvent extends BaseEvent<bool> {
+  OnAppStateChangeEvent({super.data});
+}
 
 /// cartoonizer process event
 class OnCartoonizerFinishedEvent extends BaseEvent<bool> {
@@ -145,4 +147,5 @@ class OnNewInvitationCodeReceiveEvent extends BaseEvent<String> {
 class OnRetryDialogResultEvent extends BaseEvent<bool> {
   OnRetryDialogResultEvent({required super.data});
 }
+
 class OnConnectionsChangeEvent extends BaseEvent {}

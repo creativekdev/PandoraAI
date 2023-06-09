@@ -71,17 +71,23 @@ class EffectDataController extends GetxController {
   List<ChooseTabItemInfo> tabItemList = [];
 
   List<String> tagList = [];
+  late StreamSubscription onAppStateListener;
 
   @override
   void onInit() {
     super.onInit();
     lastRandomTime = cacheManager.getInt(CacheManager.effectLastRandomTime);
-    loopRefreshData();
+    onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      if (!(event.data ?? true)) {
+        loadData();
+      }
+    });
   }
 
-  loopRefreshData() {
-    buildRandomList();
-    delay(() => loopRefreshData(), milliseconds: loopDuration);
+  @override
+  dispose() {
+    onAppStateListener.cancel();
+    super.dispose();
   }
 
   @override
@@ -93,13 +99,12 @@ class EffectDataController extends GetxController {
   loadData() {
     effectManager.loadData().then((value) {
       loading = false;
-      if (value != null) {
+      if (value != null && value != data) {
         this.data = value;
         buildTagList();
         buildChooseDataList();
-        buildRandomList();
+        EventBusHelper().eventBus.fire(OnHomeConfigGetEvent());
       }
-      EventBusHelper().eventBus.fire(OnHomeConfigGetEvent());
       update();
     });
   }
@@ -162,35 +167,6 @@ class EffectDataController extends GetxController {
         }
       }
     }
-  }
-
-  /// if old list not equals new list -> rebuild
-  /// if time duration great than a half hour -> rebuild
-  /// delay reload page when user is checking random list
-  buildRandomList() {
-    return; // deprecated
-    if (data == null) {
-      return;
-    }
-    var forward = () {
-      data!.datas.forEach((value) {
-        if (value.key == 'template') {
-          refreshRandomList(flatApiRandomList(value.children));
-        }
-      });
-    };
-    if (randomList.isEmpty) {
-      forward.call();
-      return;
-    }
-    var currentTime = DateTime.now().millisecondsSinceEpoch;
-    if (currentTime - lastRandomTime < refreshDuration && randomList.isNotEmpty) {
-      return;
-    }
-    if (randomTabViewing) {
-      return;
-    }
-    delay(() => forward.call(), milliseconds: 1000);
   }
 
   /// get flat random effect list

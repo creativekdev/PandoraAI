@@ -556,6 +556,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       context: context,
       imageUrl: data.imageUrl,
       fit: BoxFit.cover,
+      useOld: false,
     );
     if (checked) {
       return Stack(

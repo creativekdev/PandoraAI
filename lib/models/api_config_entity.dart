@@ -74,6 +74,15 @@ class ApiConfigEntity {
   String toString() {
     return jsonEncode(toJson());
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is ApiConfigEntity) {
+      return other.toString() == toString();
+    } else {
+      return false;
+    }
+  }
 }
 
 class EffectData {
