@@ -21,6 +21,7 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
+import 'package:cartoonizer/models/print_order_entity.dart';
 import 'package:cartoonizer/models/print_product_entity.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
@@ -75,6 +76,49 @@ class JsonConvert {
     (PrintOptionData).toString(): PrintOptionData.fromJson,
     (PrintOptionDataCanvaSize).toString(): PrintOptionDataCanvaSize.fromJson,
     (PrintOptionDataS3Files).toString(): PrintOptionDataS3Files.fromJson,
+    (PrintOrderEntity).toString(): PrintOrderEntity.fromJson,
+    (PrintOrderData).toString(): PrintOrderData.fromJson,
+    (PrintOrderDataPayload).toString(): PrintOrderDataPayload.fromJson,
+    (PrintOrderDataPayloadOrder).toString(): PrintOrderDataPayloadOrder.fromJson,
+    (PrintOrderDataPayloadOrderCurrentSubtotalPriceSet).toString(): PrintOrderDataPayloadOrderCurrentSubtotalPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderCurrentSubtotalPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderCurrentSubtotalPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentSubtotalPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderCurrentSubtotalPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalDiscountsSet).toString(): PrintOrderDataPayloadOrderCurrentTotalDiscountsSet.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalDiscountsSetShopMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalDiscountsSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalDiscountsSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalDiscountsSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalPriceSet).toString(): PrintOrderDataPayloadOrderCurrentTotalPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalTaxSet).toString(): PrintOrderDataPayloadOrderCurrentTotalTaxSet.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalTaxSetShopMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalTaxSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderCurrentTotalTaxSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderCurrentTotalTaxSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderSubtotalPriceSet).toString(): PrintOrderDataPayloadOrderSubtotalPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderSubtotalPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderSubtotalPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderSubtotalPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderSubtotalPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalDiscountsSet).toString(): PrintOrderDataPayloadOrderTotalDiscountsSet.fromJson,
+    (PrintOrderDataPayloadOrderTotalDiscountsSetShopMoney).toString(): PrintOrderDataPayloadOrderTotalDiscountsSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalDiscountsSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderTotalDiscountsSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalLineItemsPriceSet).toString(): PrintOrderDataPayloadOrderTotalLineItemsPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderTotalLineItemsPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderTotalLineItemsPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalLineItemsPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderTotalLineItemsPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalPriceSet).toString(): PrintOrderDataPayloadOrderTotalPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderTotalPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderTotalPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderTotalPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalShippingPriceSet).toString(): PrintOrderDataPayloadOrderTotalShippingPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderTotalShippingPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderTotalShippingPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalShippingPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderTotalShippingPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalTaxSet).toString(): PrintOrderDataPayloadOrderTotalTaxSet.fromJson,
+    (PrintOrderDataPayloadOrderTotalTaxSetShopMoney).toString(): PrintOrderDataPayloadOrderTotalTaxSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderTotalTaxSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderTotalTaxSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderCustomer).toString(): PrintOrderDataPayloadOrderCustomer.fromJson,
+    (PrintOrderDataPayloadOrderCustomerDefaultAddress).toString(): PrintOrderDataPayloadOrderCustomerDefaultAddress.fromJson,
+    (PrintOrderDataPayloadOrderLineItems).toString(): PrintOrderDataPayloadOrderLineItems.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsPriceSet).toString(): PrintOrderDataPayloadOrderLineItemsPriceSet.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsPriceSetShopMoney).toString(): PrintOrderDataPayloadOrderLineItemsPriceSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsPriceSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderLineItemsPriceSetPresentmentMoney.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsTotalDiscountSet).toString(): PrintOrderDataPayloadOrderLineItemsTotalDiscountSet.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsTotalDiscountSetShopMoney).toString(): PrintOrderDataPayloadOrderLineItemsTotalDiscountSetShopMoney.fromJson,
+    (PrintOrderDataPayloadOrderLineItemsTotalDiscountSetPresentmentMoney).toString(): PrintOrderDataPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson,
     (PrintProductEntity).toString(): PrintProductEntity.fromJson,
     (PrintProductData).toString(): PrintProductData.fromJson,
     (PrintProductDataRows).toString(): PrintProductDataRows.fromJson,
@@ -275,6 +319,181 @@ class JsonConvert {
     }
     if (<PrintOptionDataS3Files>[] is M) {
       return data.map<PrintOptionDataS3Files>((Map<String, dynamic> e) => PrintOptionDataS3Files.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderEntity>[] is M) {
+      return data.map<PrintOrderEntity>((Map<String, dynamic> e) => PrintOrderEntity.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderData>[] is M) {
+      return data.map<PrintOrderData>((Map<String, dynamic> e) => PrintOrderData.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayload>[] is M) {
+      return data.map<PrintOrderDataPayload>((Map<String, dynamic> e) => PrintOrderDataPayload.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrder>[] is M) {
+      return data.map<PrintOrderDataPayloadOrder>((Map<String, dynamic> e) => PrintOrderDataPayloadOrder.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentSubtotalPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCurrentSubtotalPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentSubtotalPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentSubtotalPriceSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentSubtotalPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentSubtotalPriceSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentSubtotalPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentSubtotalPriceSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentSubtotalPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalDiscountsSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCurrentTotalDiscountsSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalDiscountsSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalDiscountsSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentTotalDiscountsSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalDiscountsSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalDiscountsSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentTotalDiscountsSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalDiscountsSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCurrentTotalPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalPriceSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentTotalPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalPriceSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentTotalPriceSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalTaxSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCurrentTotalTaxSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalTaxSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalTaxSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCurrentTotalTaxSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalTaxSetShopMoney.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderCurrentTotalTaxSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderCurrentTotalTaxSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCurrentTotalTaxSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderSubtotalPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderSubtotalPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderSubtotalPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderSubtotalPriceSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderSubtotalPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderSubtotalPriceSetShopMoney.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderSubtotalPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderSubtotalPriceSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderSubtotalPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalDiscountsSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalDiscountsSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalDiscountsSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalDiscountsSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalDiscountsSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalDiscountsSetShopMoney.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalDiscountsSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalDiscountsSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalDiscountsSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalLineItemsPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalLineItemsPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalLineItemsPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalLineItemsPriceSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalLineItemsPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalLineItemsPriceSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalLineItemsPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalLineItemsPriceSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalLineItemsPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalPriceSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalPriceSetShopMoney.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalPriceSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalShippingPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalShippingPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalShippingPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalShippingPriceSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalShippingPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalShippingPriceSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalShippingPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderTotalShippingPriceSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalShippingPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalTaxSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalTaxSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalTaxSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalTaxSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalTaxSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalTaxSetShopMoney.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderTotalTaxSetPresentmentMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderTotalTaxSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderTotalTaxSetPresentmentMoney.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderCustomer>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCustomer>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCustomer.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderCustomerDefaultAddress>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderCustomerDefaultAddress>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderCustomerDefaultAddress.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItems>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderLineItems>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItems.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsPriceSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderLineItemsPriceSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsPriceSet.fromJson(e)).toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsPriceSetShopMoney>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderLineItemsPriceSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsPriceSetShopMoney.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsPriceSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderLineItemsPriceSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsPriceSetPresentmentMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsTotalDiscountSet>[] is M) {
+      return data.map<PrintOrderDataPayloadOrderLineItemsTotalDiscountSet>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsTotalDiscountSet.fromJson(e)).toList()
+          as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsTotalDiscountSetShopMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderLineItemsTotalDiscountSetShopMoney>((Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsTotalDiscountSetShopMoney.fromJson(e))
+          .toList() as M;
+    }
+    if (<PrintOrderDataPayloadOrderLineItemsTotalDiscountSetPresentmentMoney>[] is M) {
+      return data
+          .map<PrintOrderDataPayloadOrderLineItemsTotalDiscountSetPresentmentMoney>(
+              (Map<String, dynamic> e) => PrintOrderDataPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson(e))
+          .toList() as M;
     }
     if (<PrintProductEntity>[] is M) {
       return data.map<PrintProductEntity>((Map<String, dynamic> e) => PrintProductEntity.fromJson(e)).toList() as M;

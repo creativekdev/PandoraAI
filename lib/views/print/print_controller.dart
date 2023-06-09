@@ -64,8 +64,6 @@ class PrintController extends GetxController {
 
   // 上传合成图片
   Future<bool> _captureAndSave() async {
-    print(acontroller.transKey);
-    print("127.0.0.1");
     try {
       ui.Image? image = await getBitmapFromContext(repaintKey.currentContext!);
       if (image != null) {

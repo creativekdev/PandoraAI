@@ -49,7 +49,7 @@ class _PrintScreenState extends State<PrintScreen> {
           Navigator.pop(context);
         }),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintController>(
         init: controller,
         builder: (controller) {

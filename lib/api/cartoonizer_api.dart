@@ -28,6 +28,7 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
+import 'package:cartoonizer/models/print_order_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -60,8 +61,7 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   /// login normal
-  Future<BaseEntity?> login(Map<String, dynamic> params) async =>
-      await post('/user/login', params: params);
+  Future<BaseEntity?> login(Map<String, dynamic> params) async => await post('/user/login', params: params);
 
   Future<BaseEntity?> signUp({
     required String name,
@@ -77,9 +77,7 @@ class CartoonizerApi extends RetryAbleRequester {
 
   /// get current user info
   Future<OnlineModel> getCurrentUser() async {
-    String? token = AppDelegate.instance
-        .getManager<CacheManager>()
-        .getString(CacheManager.pushToken);
+    String? token = AppDelegate.instance.getManager<CacheManager>().getString(CacheManager.pushToken);
     var baseEntity = await get('/user/get_login',
         params: {
           'device_id': token,
@@ -94,10 +92,8 @@ class CartoonizerApi extends RetryAbleRequester {
         if (login) {
           user = SocialUserInfo.fromJson(data['data']);
         }
-        AdConfigEntity adConfig =
-            AdConfigEntity.fromJson(data['ads_config'] ?? {});
-        DailyLimitRuleEntity dailyLimitRuleEntity =
-            DailyLimitRuleEntity.fromJson(data['daily_limit_rules'] ?? {});
+        AdConfigEntity adConfig = AdConfigEntity.fromJson(data['ads_config'] ?? {});
+        DailyLimitRuleEntity dailyLimitRuleEntity = DailyLimitRuleEntity.fromJson(data['daily_limit_rules'] ?? {});
         AppFeatureEntity? featureEntity;
         if (data['new_feature'] != null) {
           featureEntity = jsonConvert.convert(data['new_feature']);
@@ -160,8 +156,7 @@ class CartoonizerApi extends RetryAbleRequester {
     bool needRetry = true,
   }) async {
     if (useCache) {
-      var json =
-          cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
+      var json = cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
       if (json != null) {
         return jsonConvert.convert<DiscoveryListEntity>(json);
       }
@@ -186,8 +181,7 @@ class CartoonizerApi extends RetryAbleRequester {
     bool needRetry = true,
   }) async {
     if (useCache) {
-      var json =
-          cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
+      var json = cacheManager.getJson(CacheManager.cacheDiscoveryListEntity + '$id');
       if (json != null) {
         return jsonConvert.convert<MetagramItemEntity>(json);
       }
@@ -247,8 +241,7 @@ class CartoonizerApi extends RetryAbleRequester {
     if (parentSocialPostCommentId != null) {
       map['parent_social_post_comment_id'] = parentSocialPostCommentId;
     }
-    var baseEntity =
-        await get('/social_post_comment/all', params: map, needRetry: retry);
+    var baseEntity = await get('/social_post_comment/all', params: map, needRetry: retry);
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
@@ -272,8 +265,7 @@ class CartoonizerApi extends RetryAbleRequester {
     if (parentSocialPostCommentId != null) {
       map['parent_social_post_comment_id'] = parentSocialPostCommentId;
     }
-    var baseEntity = await post('/social_post_comment/create', params: map,
-        onFailed: (response) {
+    var baseEntity = await post('/social_post_comment/create', params: map, onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -285,8 +277,7 @@ class CartoonizerApi extends RetryAbleRequester {
       }
       Events.discoveryCommentClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnCreateCommentEvent(data: data));
-      var entity = jsonConvert
-          .convert<DiscoveryCommentListEntity>(baseEntity.data['data']);
+      var entity = jsonConvert.convert<DiscoveryCommentListEntity>(baseEntity.data['data']);
       entity?.userAvatar = userManager.user?.getShownAvatar() ?? '';
       entity?.userName = userManager.user?.getShownName() ?? '';
       return entity;
@@ -300,8 +291,7 @@ class CartoonizerApi extends RetryAbleRequester {
     required String source,
     required String style,
   }) async {
-    var baseEntity = await post('/social_post_like/create',
-        params: {'social_post_id': id}, onFailed: (response) {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_id': id}, onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -309,9 +299,7 @@ class CartoonizerApi extends RetryAbleRequester {
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
       Events.discoveryLikeClick(source: source, style: style);
-      EventBusHelper()
-          .eventBus
-          .fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
+      EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
     }
     return null;
@@ -322,8 +310,7 @@ class CartoonizerApi extends RetryAbleRequester {
     required int from,
     required int size,
   }) async {
-    var baseEntity = await get('/tool/canva/resource/print_templates',
-        params: {'from': from, 'size': size}, onFailed: (response) {
+    var baseEntity = await get('/tool/canva/resource/print_templates', params: {'from': from, 'size': size}, onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -340,10 +327,7 @@ class CartoonizerApi extends RetryAbleRequester {
     required String product_ids,
     required int is_admin_shop,
   }) async {
-    var baseEntity = await get('/shopify_v2/products', params: {
-      'product_ids': "gid://shopify/Product/$product_ids",
-      'is_admin_shop': is_admin_shop
-    }, onFailed: (response) {
+    var baseEntity = await get('/shopify_v2/products', params: {'product_ids': "gid://shopify/Product/$product_ids", 'is_admin_shop': is_admin_shop}, onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -360,8 +344,7 @@ class CartoonizerApi extends RetryAbleRequester {
     int likeId, {
     Function? onUserExpired,
   }) async {
-    var baseEntity =
-        await delete('/social_post_like/delete/$likeId', onFailed: (response) {
+    var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -376,17 +359,14 @@ class CartoonizerApi extends RetryAbleRequester {
     int id, {
     Function? onUserExpired,
   }) async {
-    var baseEntity = await post('/social_post_like/create',
-        params: {'social_post_comment_id': id}, onFailed: (response) {
+    var baseEntity = await post('/social_post_like/create', params: {'social_post_comment_id': id}, onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
     });
     if (baseEntity != null) {
       var likeId = baseEntity.data['data']?.toInt();
-      EventBusHelper()
-          .eventBus
-          .fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
+      EventBusHelper().eventBus.fire(OnCommentLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
     }
     return null;
@@ -397,8 +377,7 @@ class CartoonizerApi extends RetryAbleRequester {
     int likeId, {
     Function? onUserExpired,
   }) async {
-    var baseEntity =
-        await delete('/social_post_like/delete/$likeId', onFailed: (response) {
+    var baseEntity = await delete('/social_post_like/delete/$likeId', onFailed: (response) {
       if (response?.statusCode == 401) {
         onUserExpired?.call();
       }
@@ -412,6 +391,12 @@ class CartoonizerApi extends RetryAbleRequester {
   Future<String?> getPresignedUrl(Map<String, dynamic> params) async {
     var baseEntity = await get('/file/presigned_url', params: params);
     return baseEntity?.data?['data'];
+  }
+
+  // buy plan with stripe
+  Future<PrintOrderEntity?> shopifyCreateOrder(body) async {
+    var baseEntity = await post("/shopify_v2/order/create", params: body);
+    return jsonConvert.convert<PrintOrderEntity>(baseEntity?.data);
   }
 
   // buy plan with stripe
@@ -445,8 +430,7 @@ class CartoonizerApi extends RetryAbleRequester {
     if (action != null) {
       params['action'] = action;
     }
-    var baseEntity =
-        await get('/notification/all', params: params, toastOnFailed: toast);
+    var baseEntity = await get('/notification/all', params: params, toastOnFailed: toast);
     return jsonConvert.convert<MsgPageEntity>(baseEntity?.data['data']);
   }
 
@@ -458,8 +442,7 @@ class CartoonizerApi extends RetryAbleRequester {
       'from': from,
       'size': size,
     };
-    var baseEntity =
-        await get('/social_post_comment/all_for_author', params: params);
+    var baseEntity = await get('/social_post_comment/all_for_author', params: params);
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
@@ -471,15 +454,13 @@ class CartoonizerApi extends RetryAbleRequester {
       'from': from,
       'size': size,
     };
-    var baseEntity =
-        await get('/social_post_like/all_for_author', params: params);
+    var baseEntity = await get('/social_post_like/all_for_author', params: params);
     return jsonConvert.convert<PageEntity>(baseEntity?.data['data']);
   }
 
   Future<List<MsgCountEntity>?> getAllUnreadCount() async {
     var baseEntity = await get('/notification/action_count', needRetry: false);
-    return jsonConvert
-        .convertListNotNull<MsgCountEntity>(baseEntity?.data['data']);
+    return jsonConvert.convertListNotNull<MsgCountEntity>(baseEntity?.data['data']);
   }
 
   Future<BaseEntity?> readMsg(int id) async {
@@ -539,8 +520,7 @@ class CartoonizerApi extends RetryAbleRequester {
     return null;
   }
 
-  Future<BaseEntity?> submitAvatarAi(
-      {required Map<String, dynamic> params}) async {
+  Future<BaseEntity?> submitAvatarAi({required Map<String, dynamic> params}) async {
     return post('/ai_avatar/create', params: params);
   }
 
@@ -549,27 +529,19 @@ class CartoonizerApi extends RetryAbleRequester {
     if (baseEntity == null) {
       return null;
     }
-    return jsonConvert
-        .convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']);
+    return jsonConvert.convertListNotNull<AvatarAiListEntity>(baseEntity.data['data']);
   }
 
-  Future<AvatarAiListEntity?> getAvatarAiDetail(
-      {required String token, bool useCache = true}) async {
+  Future<AvatarAiListEntity?> getAvatarAiDetail({required String token, bool useCache = true}) async {
     var cacheManager = AppDelegate.instance.getManager<CacheManager>();
     var json = cacheManager.getJson(CacheManager.avatarHistory + token);
-    if (!useCache ||
-        (json == null ||
-            TextUtil.isEmpty(json['share_code']?.toString()) ||
-            json['output_images'] == null ||
-            (json['output_images'] as List).isEmpty)) {
+    if (!useCache || (json == null || TextUtil.isEmpty(json['share_code']?.toString()) || json['output_images'] == null || (json['output_images'] as List).isEmpty)) {
       var baseEntity = await get('/ai_avatar/get', params: {
         'token': token,
       });
-      var entity =
-          jsonConvert.convert<AvatarAiListEntity>(baseEntity?.data['data']);
+      var entity = jsonConvert.convert<AvatarAiListEntity>(baseEntity?.data['data']);
       if (entity != null) {
-        cacheManager.setJson(
-            CacheManager.avatarHistory + token, entity.toJson());
+        cacheManager.setJson(CacheManager.avatarHistory + token, entity.toJson());
       }
       return entity;
     } else {
@@ -582,8 +554,7 @@ class CartoonizerApi extends RetryAbleRequester {
       'category': category,
     });
     if (baseEntity != null) {
-      return jsonConvert
-          .convertListNotNull<PayPlanEntity>(baseEntity.data['data']);
+      return jsonConvert.convertListNotNull<PayPlanEntity>(baseEntity.data['data']);
     }
     return null;
   }
@@ -659,8 +630,7 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<GenerateLimitEntity?> getStyleMorphLimit() async {
-    var baseEntity = await get('/tool/stylemorph/usage',
-        needRetry: false, canClickRetry: false);
+    var baseEntity = await get('/tool/stylemorph/usage', needRetry: false, canClickRetry: false);
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 
@@ -687,11 +657,9 @@ class CartoonizerApi extends RetryAbleRequester {
     return await post('/plan/apple_store/buy', params: params);
   }
 
-  Future<Map<ConnectorPlatform, List<PlatformConnectionEntity>>?>
-      listConnections() async {
+  Future<Map<ConnectorPlatform, List<PlatformConnectionEntity>>?> listConnections() async {
     var baseEntity = await get('/user/connected_channels');
-    List<PlatformConnectionEntity>? list = jsonConvert
-        .convertListNotNull<PlatformConnectionEntity>(baseEntity?.data['data']);
+    List<PlatformConnectionEntity>? list = jsonConvert.convertListNotNull<PlatformConnectionEntity>(baseEntity?.data['data']);
     if (list == null) {
       return null;
     }

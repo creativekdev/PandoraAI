@@ -128,18 +128,6 @@ class API {
     }
   }
 
-  static Future<bool> shopifyOrder(body) async {
-    var response = await post("/shopify_v2/order/create", body: body);
-
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      var body = jsonDecode(response.body);
-      CommonExtension().showToast(body["message"] ?? body["code"]);
-      return false;
-    }
-  }
-
   // check latest version
   static Future<Map> checkLatestVersion() async {
     var data = {};

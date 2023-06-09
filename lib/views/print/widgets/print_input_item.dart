@@ -122,6 +122,7 @@ class PrintInputContactItem extends StatelessWidget {
                   ),
                   cursorColor: ColorConstant.White,
                   controller: controller,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     fillColor: ColorConstant.EffectCardColor,
                     border: OutlineInputBorder(

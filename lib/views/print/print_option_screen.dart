@@ -36,7 +36,7 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
           Navigator.pop(context);
         }),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstant.BackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: $(8)),
         child: GetBuilder<PrintOptionController>(

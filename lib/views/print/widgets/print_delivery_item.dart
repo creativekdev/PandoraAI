@@ -94,10 +94,10 @@ class PrintDeliveryitem extends StatelessWidget {
   }
 
   String getDescription(String type) {
-    if (type == "Standard") {
+    if (type == "standard") {
       return "10-20 business days".tr;
     }
-    if (type == "Express") {
+    if (type == "expedited") {
       return "7-10 business days".tr;
     }
     return "";
