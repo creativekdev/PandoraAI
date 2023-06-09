@@ -70,29 +70,32 @@ class _PrintScreenState extends State<PrintScreen> {
                     ),
                   ),
                   SliverToBoxAdapter(
-                    child: Stack(
-                      children: [
-                        CachedNetworkImageUtils.custom(
-                          context: context,
-                          imageUrl: controller.imgUrl,
-                          width: ScreenUtil.screenSize.width,
-                          fit: BoxFit.fitWidth,
-                        ).intoContainer(
-                          width: ScreenUtil.screenSize.width,
-                          height: controller.imgSize.height,
-                        ),
-                        Image.file(
-                          File(controller.acontroller.transKey!),
-                          width: controller.size.width,
-                          height: controller.size.height,
-                          fit: BoxFit.contain,
-                        ).intoContainer(
-                            margin: EdgeInsets.only(
-                          top: controller.origin.dy,
-                          left: controller.origin.dx,
-                        ))
-                      ],
-                    ).blankAreaIntercept(),
+                    child: RepaintBoundary(
+                      key: controller.repaintKey,
+                      child: Stack(
+                        children: [
+                          CachedNetworkImageUtils.custom(
+                            context: context,
+                            imageUrl: controller.imgUrl,
+                            width: ScreenUtil.screenSize.width,
+                            fit: BoxFit.fitWidth,
+                          ).intoContainer(
+                            width: ScreenUtil.screenSize.width,
+                            height: controller.imgSize.height,
+                          ),
+                          Image.file(
+                            File(controller.acontroller.transKey!),
+                            width: controller.size.width,
+                            height: controller.size.height,
+                            fit: BoxFit.contain,
+                          ).intoContainer(
+                              margin: EdgeInsets.only(
+                            top: controller.origin.dy,
+                            left: controller.origin.dx,
+                          ))
+                        ],
+                      ).blankAreaIntercept(),
+                    ),
                   ),
                   SliverToBoxAdapter(
                     child: SizedBox(height: $(8)),
@@ -107,6 +110,7 @@ class _PrintScreenState extends State<PrintScreen> {
                                   title: value.keys.first,
                                   content: controller.selectOptions[value.keys.first] ?? '',
                                   imgUrl: controller.imgUrl,
+                                  showImage: value.keys.first == "Color" && controller.selectOptions[value.keys.first] != null,
                                 ).intoGestureDetector(onTap: () {
                                   controller.onTapOptions(value, key);
                                 }),

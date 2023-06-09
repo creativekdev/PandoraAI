@@ -4,10 +4,11 @@ import '../../../Common/importFile.dart';
 import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
 
 class PrintSelectItem extends StatelessWidget {
-  PrintSelectItem({Key? key, required this.title, required this.content, required this.imgUrl}) : super(key: key);
+  PrintSelectItem({Key? key, required this.title, required this.content, required this.imgUrl, required this.showImage}) : super(key: key);
   final String title;
   final String content;
   final String imgUrl;
+  final bool showImage;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class PrintSelectItem extends StatelessWidget {
           if (content.isNotEmpty) TitleTextWidget(content, ColorConstant.White, FontWeight.w500, $(14)),
         ]),
         Spacer(),
-        if (imgUrl.isNotEmpty && title == "Color")
+        if (imgUrl.isNotEmpty && title == "Color" && showImage)
           CachedNetworkImageUtils.custom(
             context: context,
             imageUrl: imgUrl,

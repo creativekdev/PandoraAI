@@ -1,12 +1,17 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../api/uploader.dart';
 import '../../models/print_option_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../network/dio_node.dart';
+import '../../utils/utils.dart';
 import '../ai/anotherme/another_me_controller.dart';
 
 class PrintController extends GetxController {
@@ -14,14 +19,82 @@ class PrintController extends GetxController {
 
   PrintOptionData optionData;
   late CartoonizerApi cartoonizerApi;
+  GlobalKey repaintKey = GlobalKey();
 
   PrintProductEntity? product;
   PrintProductNeedInfoEntity? productInfo;
   AnotherMeController acontroller = Get.find();
 
+  String preview_image = "";
+  String ai_image = "";
+
   Map<String, dynamic> options = {};
   List<Map<String, bool>> showesed = [];
   Map<String, String> selectOptions = {};
+
+  // 上传AI生成的图片
+  Future<bool> _uploadAIImage() async {
+    String path = acontroller.transKey!;
+    File imageFile = File(path);
+    if (imageFile.existsSync()) {
+      String b_name = "fast-socialbook";
+      String f_name = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      String c_type = "image/jpg";
+      final params = {
+        "bucket": b_name,
+        "file_name": f_name,
+        "content_type": c_type,
+      };
+      cartoonizerApi.getPresignedUrl(params).then((value) async {
+        if (value != null) {
+          Uint8List imageBytes = await imageFile.readAsBytes();
+          var baseEntity = await Uploader().upload(value, imageBytes, c_type);
+          if (baseEntity != null) {
+            ai_image = value.split("?").first;
+            return true;
+          }
+        }
+        return false;
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  // 上传合成图片
+  Future<bool> _captureAndSave() async {
+    print(acontroller.transKey);
+    print("127.0.0.1");
+    try {
+      ui.Image? image = await getBitmapFromContext(repaintKey.currentContext!);
+      if (image != null) {
+        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        String b_name = "fast-socialbook";
+        String f_name = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+        String c_type = "image/jpg";
+        final params = {
+          "bucket": b_name,
+          "file_name": f_name,
+          "content_type": c_type,
+        };
+        cartoonizerApi.getPresignedUrl(params).then((value) async {
+          if (value != null) {
+            Uint8List pngBytes = byteData!.buffer.asUint8List();
+            var baseEntity = await Uploader().upload(value, pngBytes, c_type);
+            if (baseEntity != null) {
+              preview_image = value.split("?").first;
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+    return false;
+  }
 
   // 获取图片的真实显示尺寸
   Size _imgSize = Size.zero;
@@ -176,8 +249,26 @@ class PrintController extends GetxController {
   }
 
   bool onSubmit() {
-    // TODO: 检查是否选择了各种条件
-
+    List<String> keys = [];
+    for (int i = 0; i < showesed.length; i++) {
+      final temp = showesed[i];
+      keys.add(temp.keys.first);
+    }
+    for (var i = 0; i < keys.length; i++) {
+      if (selectOptions[keys[i]] == null) {
+        Fluttertoast.showToast(msg: "Please select ${keys[i]}", gravity: ToastGravity.CENTER);
+        return false;
+      }
+    }
+    if (_captureAndSave() == false) {
+      // 提交失败，请提交
+      Fluttertoast.showToast(msg: "server_exception".tr, gravity: ToastGravity.CENTER);
+      return false;
+    }
+    if (_uploadAIImage() == false) {
+      Fluttertoast.showToast(msg: "server_exception".tr, gravity: ToastGravity.CENTER);
+      return false;
+    }
     return true;
   }
 
