@@ -194,6 +194,8 @@ class Events {
   }) =>
       logEvent('discovery_detail_like_click', eventValues: {'source': source, 'style': style});
 
+  static Future<void> discoveryTabClick({required String tab}) => logEvent('discovery_fragment_tab', eventValues: {'tab': tab});
+
   static Future<void> discoveryCommentClick({
     required String source,
     required String style,
@@ -249,7 +251,6 @@ class Events {
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
 
   static Future<void> styleMorphGenerateAgain({required int time}) => logEvent('stylemorph_completed_generateagain', eventValues: {'time': '${time}'});
-
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

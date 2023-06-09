@@ -161,13 +161,14 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
 
 Future<File> imageCompress(File file, String targetPath, {CompressFormat format = CompressFormat.png, bool ignoreSize = false}) async {
   var length = await file.length();
-  if (length <= 512 * 512 && !ignoreSize) {
+  var maxSize = 2 * 1024 * 1024;
+  if (length <= maxSize && !ignoreSize) {
     return await file.copy(targetPath);
   }
 
   var quality = 100;
-  if (length > 512 * 512) {
-    quality = (((512 * 512) / length) * 100).toInt();
+  if (length > maxSize) {
+    quality = (((maxSize) / length) * 100).toInt();
   }
   var re = (await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,

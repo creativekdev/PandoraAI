@@ -48,6 +48,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   double titleHeight = 0;
 
   late StreamSubscription onTabDoubleClickListener;
+  late StreamSubscription onSwitchTabListener;
   late TabController tabController;
   final List<String> tabs = ['Metagram', 'Discovery'];
 
@@ -57,6 +58,20 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     Posthog().screenWithUser(screenName: 'discovery_fragment');
     tabController = TabController(length: tabs.length, vsync: this);
     tabId = widget.tabId;
+    onSwitchTabListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
+      if ((event.data?.length ?? 0) == 2) {
+        if (event.data!.first == tabId.id()) {
+          var pos = event.data!.last;
+          tabController.index = pos;
+          listController.isMetagram = pos == 0;
+          easyRefreshController.callRefresh();
+          calculateHeaderHeight();
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      }
+    });
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (tabId.id() == event.data && !listController.listLoading) {
         easyRefreshController.callRefresh();
@@ -155,6 +170,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               padding: EdgeInsets.only(left: $(12), top: $(8), right: $(12), bottom: $(8)),
               controller: tabController,
               onTap: (index) {
+                if(tabController.index != index) {
+                  Events.discoveryTabClick(tab: tabs[index]);
+                }
                 listController.isMetagram = index == 0;
                 easyRefreshController.callRefresh();
                 setState(() {

@@ -344,10 +344,12 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
     );
     if (files != null && files.isNotEmpty) {
       var medium = files.first;
-      var file = await medium.file;
+      var file = await medium.originFile;
       if (file != null) {
+        CacheManager cacheManager = AppDelegate().getManager();
+        var path = await ImageUtils.onImagePick(file.path, cacheManager.storageOperator.recordStyleMorphDir.path);
         photoType = 'gallery';
-        changeOriginFile(file);
+        changeOriginFile(File(path));
         // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
       }
     }
@@ -355,7 +357,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
 
   savePhoto(BuildContext context, StyleMorphController controller) async {
     if (controller.selectedEffect == null) {
-      CommonExtension().showToast('Please select an effect');
+      CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
     await showLoading();
@@ -367,7 +369,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
 
   shareOut(BuildContext context, StyleMorphController controller) async {
     if (controller.selectedEffect == null) {
-      CommonExtension().showToast('Please select an effect');
+      CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
@@ -387,7 +389,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
 
   shareToDiscovery(BuildContext context, StyleMorphController controller) async {
     if (controller.selectedEffect == null) {
-      CommonExtension().showToast('Please select an effect');
+      CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
     if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {

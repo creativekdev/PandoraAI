@@ -32,8 +32,11 @@ class AnotherMe {
     var deviceInfoPlugin = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       var androidInfo = await deviceInfoPlugin.androidInfo;
-      if (androidInfo.version.sdkInt > 31) {
+      if (androidInfo.version.sdkInt > 32) {
+        list.remove(Permission.storage);
         list.add(Permission.photos);
+        // list.add(Permission.videos);
+        // list.add(Permission.audio);
       }
     } else if (Platform.isIOS) {
       list.add(Permission.photos);
