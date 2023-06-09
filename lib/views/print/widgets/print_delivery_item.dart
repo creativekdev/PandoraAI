@@ -59,7 +59,7 @@ class PrintDeliveryitem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TitleTextWidget(
-                        shippingMethodEntity.shippingRateData.displayName.tr,
+                        shippingMethodEntity.shippingRateData.displayName,
                         ColorConstant.White,
                         FontWeight.bold,
                         $(14),
@@ -78,7 +78,7 @@ class PrintDeliveryitem extends StatelessWidget {
                     padding: EdgeInsets.only(right: $(12)),
                   ),
                   TitleTextWidget(
-                    shippingMethodEntity.shippingRateData.type.tr,
+                    getDescription(shippingMethodEntity.shippingRateData.displayName),
                     ColorConstant.White,
                     FontWeight.normal,
                     $(12),
@@ -91,6 +91,16 @@ class PrintDeliveryitem extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String getDescription(String type) {
+    if (type == "Standard") {
+      return "10-20 business days".tr;
+    }
+    if (type == "Express") {
+      return "7-10 business days".tr;
+    }
+    return "";
   }
 }
 

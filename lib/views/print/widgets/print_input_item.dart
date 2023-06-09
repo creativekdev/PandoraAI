@@ -3,9 +3,10 @@ import '../../../images-res.dart';
 import '../../../models/region_code_entity.dart';
 
 class PrintInputItem extends StatelessWidget {
-  PrintInputItem({Key? key, required this.title, required this.controller}) : super(key: key);
+  PrintInputItem({Key? key, required this.title, required this.controller, this.completeCallback}) : super(key: key);
   final String title;
   TextEditingController controller;
+  GestureTapCallback? completeCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +21,13 @@ class PrintInputItem extends StatelessWidget {
             color: ColorConstant.White,
             fontSize: $(14),
           ),
+          maxLines: 1,
           cursorColor: ColorConstant.White,
           controller: controller,
+          onEditingComplete: () {
+            FocusScope.of(context).unfocus();
+            completeCallback?.call();
+          },
           decoration: InputDecoration(
             fillColor: ColorConstant.EffectCardColor,
             border: OutlineInputBorder(
@@ -30,11 +36,10 @@ class PrintInputItem extends StatelessWidget {
             ),
           ),
         ).intoContainer(
-            height: $(48),
             decoration: BoxDecoration(
-              color: ColorConstant.EffectCardColor,
-              borderRadius: BorderRadius.circular($(8)),
-            )),
+          color: ColorConstant.EffectCardColor,
+          borderRadius: BorderRadius.circular($(8)),
+        )),
       ],
     );
   }

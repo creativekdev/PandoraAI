@@ -16,45 +16,26 @@ class PrintShippingScreen extends StatefulWidget {
 }
 
 class _PrintShippingScreenState extends State<PrintShippingScreen> {
-  final String googleMapApiKey = 'AIzaSyAb_K04sbhK0h7hDPeHlOcNPtlX059TxHk'; // 替换为你的 Google Maps API 密钥
-
   PrintShippingController controller = PrintShippingController();
-  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
     super.initState();
     controller.searchAddressController.addListener(() {
-      if (controller.searchAddressController.text.isNotEmpty) {
-        showSearchResults();
-      } else {
-        hideSearchResults();
-      }
+      controller.searchLocation(controller.places!, controller.searchAddressController.text).then((value) {
+        if (controller.searchAddressController.text.isNotEmpty && controller.isResult == false) {
+          hideSearchResults();
+          showSearchResults();
+        } else {
+          hideSearchResults();
+        }
+        controller.isResult = false;
+      });
     });
-  }
-
-  void searchLocation(GoogleMapsPlaces places, String text) async {
-    // 进行地点搜索操作
-    PlacesAutocompleteResponse response = await places.autocomplete(
-      text, // 搜索关键字
-      types: ['geocode'], // 限制搜索结果类型为地理编码（地址）
-      language: 'en', // 搜索结果的语言
-      components: [Component(Component.country, 'us')], // 限制搜索结果的条件
-    );
-
-    // 处理搜索结果
-    if (response.isOkay) {
-      for (Prediction prediction in response.predictions) {
-        print(prediction.description);
-      }
-    } else {
-      print(response.errorMessage);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: googleMapApiKey);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -73,6 +54,7 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
           margin: EdgeInsets.all($(14)),
         )
             .intoGestureDetector(onTap: () {
+          hideSearchResults();
           Navigator.pop(context);
         }),
       ),
@@ -92,11 +74,14 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
                         child: PrintInputItem(
                           title: 'Search address'.tr,
                           controller: controller.searchAddressController,
+                          completeCallback: () {
+                            hideSearchResults();
+                          },
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
-                          title: 'Apartment/Suite/Othe'.tr,
+                          title: 'Apartment/Suite/Other'.tr,
                           controller: controller.apartmentController,
                         ),
                       ),
@@ -168,32 +153,47 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
     );
   }
 
+  // 显示地理位置搜索结果
   void showSearchResults() {
     OverlayState? overlayState = Overlay.of(context);
-    if (_overlayEntry == null && overlayState != null) {
-      _overlayEntry = OverlayEntry(builder: (context) {
+    if (controller.overlayEntry == null && overlayState != null) {
+      controller.overlayEntry = OverlayEntry(builder: (context) {
         return Positioned(
           top: $(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(48), // 输入框下方的偏移量，根据你的界面布局进行调整
           left: $(15),
           right: $(15),
           child: Material(
-            // elevation: 4.0,
             child: Container(
               height:
                   ScreenUtil.screenSize.height - ($(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(48)) - ScreenUtil.getKeyboardHeight(context),
               // 悬浮面板的高度，根据你的需求进行调整
               color: Colors.black,
-              child: ListView.builder(
-                itemCount: 10, // 根据搜索结果的数量进行调整
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      'Search Result $index',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onTap: () {
-                      // 处理选择的搜索结果
-                      hideSearchResults();
+              child: GetBuilder<PrintShippingController>(
+                init: controller,
+                builder: (controller) {
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: $(10)),
+                    itemCount: controller.predictions.length, // 根据搜索结果的数量进行调整
+                    itemBuilder: (context, index) {
+                      Prediction prediction = controller.predictions[index];
+                      return TitleTextWidget(
+                        prediction.description ?? '',
+                        ColorConstant.White,
+                        FontWeight.normal,
+                        $(12),
+                        align: TextAlign.left,
+                      )
+                          .intoContainer(
+                        height: $(40),
+                      )
+                          .intoGestureDetector(onTap: () {
+                        controller.isResult = true;
+                        controller.searchAddressController.text = prediction.description!;
+
+                        FocusScope.of(context).unfocus();
+                        // 处理选择的搜索结果
+                        hideSearchResults();
+                      });
                     },
                   );
                 },
@@ -202,14 +202,14 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
           ),
         );
       });
-
-      overlayState.insert(_overlayEntry!);
+      overlayState.insert(controller.overlayEntry!);
     }
   }
 
+  // 隐藏地理位置搜索结果
   void hideSearchResults() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+    controller.overlayEntry?.remove();
+    controller.overlayEntry = null;
   }
 
   @override

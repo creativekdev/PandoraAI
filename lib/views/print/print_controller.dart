@@ -151,15 +151,7 @@ class PrintController extends GetxController {
   }
 
   getSubTotal() {
-    double total = _quatity * double.parse(product
-        ?.data
-        .rows
-        .first
-        .variants
-        .edges
-        .first
-        .node
-        .price ?? "0");
+    double total = _quatity * double.parse(product?.data.rows.first.variants.edges.first.node.price ?? "0");
     return getNeedDouble(total);
   }
 
@@ -191,6 +183,7 @@ class PrintController extends GetxController {
 
   onRequestData() async {
     final shopify = cartoonizerApi.shopifyProducts(product_ids: optionData.shopifyProductId, is_admin_shop: 1);
+
     final productInfo = DioNode().build().get(optionData.contentUrl);
     dynamic response = await productInfo;
     if (response.statusCode != 200) {
@@ -198,6 +191,7 @@ class PrintController extends GetxController {
     }
     PrintProductNeedInfoEntity? productInfoEntity = PrintProductNeedInfoEntity.fromJson(response.data);
     PrintProductEntity? shopifyProduct = await shopify;
+    print(shopifyProduct);
 
     //    // PrintProductInfoEntity? productInfoEntity =
     //     await productInfo as PrintProductInfoEntity?;
