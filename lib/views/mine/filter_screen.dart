@@ -1,8 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/utils/dialog_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:opencv_4/factory/pathfrom.dart';
@@ -12,6 +19,8 @@ import 'package:opencv_4/opencv_4.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image/image.dart' as imgLib;
+
+import '../../Widgets/gallery/crop_screen.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);
@@ -23,7 +32,11 @@ class FilterScreen extends StatefulWidget {
 class _FilterScreenState extends AppState<FilterScreen> {
   File? _imagefile;
   late imgLib.Image _image;
-  late Uint8List _imageData;
+  late Size _imageSize;
+  CropController cropController = CropController();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
+
+  bool _iscrop = false;
   Uint8List? _byte;
   String _versionOpenCV = 'OpenCV';
   bool _visible = false;
@@ -39,8 +52,7 @@ class _FilterScreenState extends AppState<FilterScreen> {
     "FusedFilter",
     "FreezeFilter",
     "ComicstripFilter",
-    "Sketch",
-    "TestLutFilter"
+    "Crop"
   ];
 
   //uncomment when image_picker is installed
@@ -91,6 +103,8 @@ class _FilterScreenState extends AppState<FilterScreen> {
     _imagefile = File(pickedFile!.path);
 //    final ByteData data = await rootBundle.load(pickedFile.path);
     _image = await getLibImage(await getImage(_imagefile!));
+    _imageSize = Size(_image.width.toDouble(), _image.height.toDouble());
+    _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
 
     setState(() {
       _imagefile;
@@ -269,24 +283,32 @@ class _FilterScreenState extends AppState<FilterScreen> {
             }
             _byte = Uint8List.fromList(imgLib.encodeJpg(__image));
             break;
-          case "Sketch":
-
-            break;
-          case "TestLutFilter":
-            imgLib.Image  __image = imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
-            for (int i = 0; i < __image.width; i++) {
-              for (int j = 0; j < __image.height; j++) {
-                var pixel = __image.getPixel(i, j);
-                int r = getR(pixel);
-                int g = getG(pixel);
-                int b = getB(pixel);
-                int lutX = (b % 8) * 64 + r;
-                int lutY = (b / 8).floor() * 64 + g;
-                // pixel = __image.getPixel(lutX, lutY);
-                __image.setPixel(i, j, pixel);
+          case "Crop":
+            AnotherMe.checkPermissions().then((value) async {
+              bool fromCamera = false;
+              // if (value) {
+              XFile? result;
+              if (fromCamera) {
+                var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
+                if (pickImage != null) {
+                  result = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
+                }
+              } else {
+                final pickedFile = await picker.getImage(source: ImageSource.gallery);
+                result = await CropScreen.crop(context, image: XFile(pickedFile!.path), brightness: Brightness.light);
               }
-            }
-            _byte = Uint8List.fromList(imgLib.encodeJpg(__image));
+              if (result != null) {
+                _imagefile = File(result!.path);
+//    final ByteData data = await rootBundle.load(pickedFile.path);
+                _image = await getLibImage(await getImage(_imagefile!));
+                setState(() {
+                  _imagefile;
+                });
+              }
+              // } else {
+              //   showPhotoLibraryPermissionDialog(context);
+              // }
+            });
             break;
           default:
         }
@@ -326,6 +348,29 @@ class _FilterScreenState extends AppState<FilterScreen> {
     return Column(children: list);
   }
 
+  onCroped(Uint8List bytes) {
+    hideLoading().whenComplete(() async {
+      String filePath = cacheManager.storageOperator.tempDir.path + 'crop-screen${DateTime.now().millisecondsSinceEpoch}.png';
+      var file = File(filePath);
+
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
+      await file.writeAsBytes(bytes);
+      hideLoading().whenComplete(() async {
+        _imagefile = File(filePath);
+        _image = await getLibImage(await getImage(_imagefile!));
+        _imageSize = Size(_image.width.toDouble(), _image.height.toDouble());
+        setState(() {
+          _imagefile;
+          _iscrop = false;
+        });
+
+      });
+
+
+    });
+  }
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
@@ -348,7 +393,14 @@ class _FilterScreenState extends AppState<FilterScreen> {
                         Container(
                           margin: EdgeInsets.only(top: 5),
                           child: _byte != null
-                              ? Image.memory(
+                              ? _iscrop
+                              ?Crop(
+                              image: _byte!,
+                              initialArea: Rect.fromLTWH(_imageSize!.width / 4, _imageSize!.height / 4, _imageSize!.width / 2, _imageSize!.width / 2),
+                              controller: cropController,
+                              onCropped: (bytes) {
+                                onCroped(bytes);
+                              }):Image.memory(
                                   _byte!,
                                   width: 300,
                                   height: 300,
