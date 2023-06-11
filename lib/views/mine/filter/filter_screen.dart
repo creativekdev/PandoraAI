@@ -20,7 +20,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
 import 'package:image/image.dart' as imgLib;
 
-import '../../Widgets/gallery/crop_screen.dart';
+import '../../../Widgets/gallery/crop_screen.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);

@@ -19,7 +19,8 @@ import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
-import 'package:cartoonizer/views/mine/filter_screen.dart';
+import 'package:cartoonizer/views/mine/filter/im_filter.dart';
+import 'package:cartoonizer/views/mine/filter/filter_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
@@ -250,13 +251,10 @@ class MineFragmentState extends AppState<MineFragment>
               line(context),
               ImageTextBarWidget("Filter test", Images.ic_premium, true)
                   .intoGestureDetector(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/FilterScreen"),
-                      builder: (context) => FilterScreen(),
-                    ));
-              }).offstage(offstage: userManager.isNeedLogin),
+                    ImFilter.open(
+                      context
+                    );
+                }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
               ImageTextBarWidget(
                       S.of(context).settings, Images.ic_settings, true)

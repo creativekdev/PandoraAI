@@ -188,5 +188,11 @@ class Images {
    static const String mastercard = 'assets/images/mastercard.png';
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
+   static const String ic_filters = 'assets/images/icon_24_edit_filters@2x.png';
+   static const String ic_adjusts = 'assets/images/icon_24_edit_adjusts@2x.png';
+   static const String ic_effects = 'assets/images/icon_24_edit_effects@2x.png';
+   static const String ic_crop = 'assets/images/icon_24_edit_crop@2x.png';
+   static const String ic_background = 'assets/images/icon_24_edit_background@2x.png';
+
 }
 
