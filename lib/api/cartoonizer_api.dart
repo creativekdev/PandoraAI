@@ -27,6 +27,7 @@ import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
+import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -36,6 +37,8 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import '../models/print_product_entity.dart';
 
 class CartoonizerApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
@@ -297,6 +300,41 @@ class CartoonizerApi extends RetryAbleRequester {
       Events.discoveryLikeClick(source: source, style: style);
       EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
       return likeId;
+    }
+    return null;
+  }
+
+  Future<PrintOptionEntity?> printTemplates({
+    Function? onUserExpired,
+    required int from,
+    required int size,
+  }) async {
+    var baseEntity = await get('/tool/canva/resource/print_templates', params: {'from': from, 'size': size}, onFailed: (response) {
+      if (response?.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    }, toastOnFailed: false, needRetry: false);
+    if (baseEntity != null) {
+      var entity = jsonConvert.convert<PrintOptionEntity>(baseEntity.data);
+      return entity;
+    }
+    return null;
+  }
+
+  Future<PrintProductEntity?> shopifyProducts({
+    Function? onUserExpired,
+    required String product_ids,
+    required int is_admin_shop,
+  }) async {
+    var baseEntity = await get('/shopify_v2/products', params: {'product_ids': "gid://shopify/Product/$product_ids", 'is_admin_shop': is_admin_shop}, onFailed: (response) {
+      if (response?.statusCode == 401) {
+        onUserExpired?.call();
+      }
+    }, toastOnFailed: false, needRetry: false);
+    if (baseEntity != null) {
+      print("127.0.0.1  baseEntity $baseEntity");
+      var entity = jsonConvert.convert<PrintProductEntity>(baseEntity.data);
+      return entity;
     }
     return null;
   }
@@ -582,6 +620,11 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<GenerateLimitEntity?> getTxt2ImgLimit() async {
     var baseEntity = await get('/tool/txt2img/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+
+  Future<GenerateLimitEntity?> getStyleMorphLimit() async {
+    var baseEntity = await get('/tool/stylemorph/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 

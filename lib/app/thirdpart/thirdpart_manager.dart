@@ -18,7 +18,7 @@ class ThirdpartManager extends BaseManager {
   set appBackground(bool value) {
     if (_appBackground != value) {
       _appBackground = value;
-      EventBusHelper().eventBus.fire(OnAppStateChangeEvent());
+      EventBusHelper().eventBus.fire(OnAppStateChangeEvent(data: value));
     }
   }
 

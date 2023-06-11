@@ -98,6 +98,7 @@ class Images {
    static const String ic_metagram_split_icon = 'assets/images/ic_metagram_split_icon.png';
    static const String ic_metagram_stack = 'assets/images/ic_metagram_stack.png';
    static const String ic_metagram_yes = 'assets/images/ic_metagram_yes.png';
+   static const String ic_more = 'assets/images/ic_more.png';
    static const String ic_msg_comment = 'assets/images/ic_msg_comment.png';
    static const String ic_msg_icon = 'assets/images/ic_msg_icon.png';
    static const String ic_msg_like = 'assets/images/ic_msg_like.png';
@@ -149,6 +150,7 @@ class Images {
    static const String ic_share_facebook = 'assets/images/ic_share_facebook.png';
    static const String ic_share_instagram = 'assets/images/ic_share_instagram.png';
    static const String ic_share_more = 'assets/images/ic_share_more.png';
+   static const String ic_share_print = 'assets/images/ic_share_print.png';
    static const String ic_share_tiktok = 'assets/images/ic_share_tiktok.png';
    static const String ic_share_twitter = 'assets/images/ic_share_twitter.png';
    static const String ic_share_whatsapp = 'assets/images/ic_share_whatsapp.png';
@@ -159,6 +161,7 @@ class Images {
    static const String ic_sign_youtube = 'assets/images/ic_sign_youtube.png';
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
+   static const String ic_style_morph_top = 'assets/images/ic_style_morph_top.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';

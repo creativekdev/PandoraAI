@@ -1,6 +1,31 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 
+RecentStyleMorphModel $RecentStyleMorphModelFromJson(Map<String, dynamic> json) {
+	final RecentStyleMorphModel recentStyleMorphModel = RecentStyleMorphModel();
+	final int? updateDt = jsonConvert.convert<int>(json['updateDt']);
+	if (updateDt != null) {
+		recentStyleMorphModel.updateDt = updateDt;
+	}
+	final String? originalPath = jsonConvert.convert<String>(json['originalPath']);
+	if (originalPath != null) {
+		recentStyleMorphModel.originalPath = originalPath;
+	}
+	final List<RecentEffectItem>? itemList = jsonConvert.convertListNotNull<RecentEffectItem>(json['itemList']);
+	if (itemList != null) {
+		recentStyleMorphModel.itemList = itemList;
+	}
+	return recentStyleMorphModel;
+}
+
+Map<String, dynamic> $RecentStyleMorphModelToJson(RecentStyleMorphModel entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['updateDt'] = entity.updateDt;
+	data['originalPath'] = entity.originalPath;
+	data['itemList'] =  entity.itemList.map((v) => v.toJson()).toList();
+	return data;
+}
+
 RecentEffectModel $RecentEffectModelFromJson(Map<String, dynamic> json) {
 	final RecentEffectModel recentEffectModel = RecentEffectModel();
 	final int? updateDt = jsonConvert.convert<int>(json['updateDt']);

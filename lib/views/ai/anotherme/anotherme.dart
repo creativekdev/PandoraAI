@@ -4,23 +4,27 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 class AnotherMe {
   static String logoBackTag = 'am_back_logo';
   static String takeItemTag = 'am_take_item';
 
   static Future<void> open(BuildContext context, {RecentMetaverseEntity? entity, required String source}) async {
-    Events.metaverseLoading(source: source);
-    return await Navigator.push<void>(
-      context,
-      MaterialPageRoute(
-        settings: RouteSettings(name: "/AnotherMeScreen"),
-        builder: (context) => AnotherMeScreen(
-          entity: entity,
+    var result = await checkPermissions();
+    if (result) {
+      Events.metaverseLoading(source: source);
+      return await Navigator.push<void>(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/AnotherMeScreen"),
+          builder: (context) => AnotherMeScreen(
+            entity: entity,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      permissionDenied(context);
+    }
   }
 
   static Future<bool> checkPermissions() async {
@@ -28,8 +32,11 @@ class AnotherMe {
     var deviceInfoPlugin = DeviceInfoPlugin();
     if (Platform.isAndroid) {
       var androidInfo = await deviceInfoPlugin.androidInfo;
-      if (androidInfo.version.sdkInt > 31) {
+      if (androidInfo.version.sdkInt > 32) {
+        list.remove(Permission.storage);
         list.add(Permission.photos);
+        // list.add(Permission.videos);
+        // list.add(Permission.audio);
       }
     } else if (Platform.isIOS) {
       list.add(Permission.photos);

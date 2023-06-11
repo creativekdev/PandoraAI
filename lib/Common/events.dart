@@ -194,6 +194,8 @@ class Events {
   }) =>
       logEvent('discovery_detail_like_click', eventValues: {'source': source, 'style': style});
 
+  static Future<void> discoveryTabClick({required String tab}) => logEvent('discovery_fragment_tab', eventValues: {'tab': tab});
+
   static Future<void> discoveryCommentClick({
     required String source,
     required String style,
@@ -205,6 +207,12 @@ class Events {
   static Future<void> shareApp() => logEvent('shareapp_click');
 
   static Future<void> rateUs() => logEvent('rate_us');
+
+  static Future<void> metagramConnectClick({required String source, required String accountType}) =>
+      logEvent('metagram_connect', eventValues: {'source': source, 'accountType': accountType});
+
+  static Future<void> metagramConnectSuccess({required String source, required String accountType}) =>
+      logEvent('metagram_connect', eventValues: {'source': source, 'accountType': accountType});
 
   static Future<void> metagramLoading({required String source}) => logEvent('metagram_loading', eventValues: {'source': source});
 
@@ -224,6 +232,25 @@ class Events {
   static Future<void> metagramCompleteDownload({required String type}) => logEvent('metagram_completed_download', eventValues: {'type': type});
 
   static Future<void> metagramCompleteGenerateAgain({required int time}) => logEvent('metagram_completed_generateagain', eventValues: {'time': '${time}'});
+
+  static Future<void> styleMorphLoading({required String source}) => logEvent('stylemorph_loading', eventValues: {'source': source});
+
+  static Future<void> styleMorphCompleteSuccess({required String photo}) => logEvent('stylemorph_completed_success', eventValues: {'photo': photo});
+
+  static Future<void> styleMorphCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('stylemorph_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
+
+  static Future<void> styleMorphGenerateAgain({required int time}) => logEvent('stylemorph_completed_generateagain', eventValues: {'time': '${time}'});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

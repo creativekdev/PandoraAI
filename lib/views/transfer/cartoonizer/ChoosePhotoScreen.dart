@@ -1666,7 +1666,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
         if (resultSuccess == 1) {
           Events.facetoonGenerated(style: selectedEffect.key);
-          if (TextUtil.isEmpty(controller.videoFile.value?.path) || TextUtil.isEmpty(_image)) {
+          if (TextUtil.isEmpty(controller.videoFile.value?.path) && TextUtil.isEmpty(_image)) {
             return;
           }
           recentController.onEffectUsed(
@@ -1754,8 +1754,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
   void onSwitchOnce() {
     var user = userManager.user;
     if (user != null) {
-      user.cartoonizeCredit--;
-      userManager.user = user;
+      if (user.cartoonizeCredit > 0) {
+        user.cartoonizeCredit--;
+        userManager.user = user;
+      }
       refreshLastBuildType();
     }
   }

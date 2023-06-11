@@ -45,7 +45,7 @@ class ExceptionHandler {
       onTokenExpired(statusCode, e.response?.statusMessage);
     } else if (statusCode >= 402 && statusCode < 600) {
       if (e.response != null) {
-        CartoonizerApi().logError(
+        CartoonizerApi(client: DioNode.instance.build()).logError(
             reqMethod: e.requestOptions.method,
             api: '${e.requestOptions.baseUrl}${e.requestOptions.path}${e.requestOptions.generateParams()}',
             errorMessage: e.response!.data.toString(),

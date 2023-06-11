@@ -31,7 +31,7 @@ showShareSuccessDialog(BuildContext context) {
                         top: BorderSide(color: ColorConstant.LineColor, width: 1),
                       )))
                   .intoGestureDetector(onTap: () {
-                EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id()]));
+                EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id(), 1]));
                 Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
               }),
             ),
@@ -117,76 +117,77 @@ showCameraPermissionDialog(BuildContext context) {
   showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(
-          S.of(context).permissionCamera,
-          style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-        ),
-        content: Text(
-          S.of(context).permissionCameraContent,
-          style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-        ),
-        actions: <Widget>[
-          CupertinoDialogAction(
-            child: Text(
-              S.of(context).deny,
+            title: Text(
+              S.of(context).permissionCamera,
+              style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+            ),
+            content: Text(
+              S.of(context).permissionCameraContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          CupertinoDialogAction(
-            child: Text(
-              S.of(context).settings,
-              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-            ),
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                openAppSettings();
-              } catch (err) {
-                print("err");
-                print(err);
-              }
-            },
-          ),
-        ],
-      ));
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  S.of(context).deny,
+                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  S.of(context).settings,
+                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    openAppSettings();
+                  } catch (err) {
+                    print("err");
+                    print(err);
+                  }
+                },
+              ),
+            ],
+          ));
 }
+
 /// openAppSettingsOnCameraRequireFailed
 showMicroPhonePermissionDialog(BuildContext context) {
   showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(
-          S.of(context).permissionMicroPhone,
-          style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
-        ),
-        content: Text(
-          S.of(context).permissionMicroPhoneContent,
-          style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-        ),
-        actions: <Widget>[
-          CupertinoDialogAction(
-            child: Text(
-              S.of(context).deny,
+            title: Text(
+              S.of(context).permissionMicroPhone,
+              style: TextStyle(fontSize: 14.sp, fontFamily: 'Poppins'),
+            ),
+            content: Text(
+              S.of(context).permissionMicroPhoneContent,
               style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
             ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          CupertinoDialogAction(
-            child: Text(
-              S.of(context).settings,
-              style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-            ),
-            onPressed: () async {
-              Navigator.pop(context);
-              try {
-                openAppSettings();
-              } catch (err) {
-                print("err");
-                print(err);
-              }
-            },
-          ),
-        ],
-      ));
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text(
+                  S.of(context).deny,
+                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              CupertinoDialogAction(
+                child: Text(
+                  S.of(context).settings,
+                  style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    openAppSettings();
+                  } catch (err) {
+                    print("err");
+                    print(err);
+                  }
+                },
+              ),
+            ],
+          ));
 }

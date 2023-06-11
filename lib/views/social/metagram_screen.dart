@@ -87,7 +87,7 @@ class _MetagramScreenState extends AppState<MetagramScreen> {
                             return;
                           }
                           controller.startLoadPage(force: true);
-                        }).offstage(offstage: controller.data == null),
+                        }).offstage(offstage: controller.data == null || !controller.isSelf),
                         Image.asset(
                           Images.ic_metagram_share_home,
                           width: $(24),
@@ -97,7 +97,7 @@ class _MetagramScreenState extends AppState<MetagramScreen> {
                             url: '${Config.instance.host}/metagram/${controller.slug}',
                           ).then((value) {
                             if (value != null) {
-                              Events.avatarResultDetailMediaShareSuccess(platform: value);
+                              Events.metagramCompleteShare(source: 'metagram', platform: value, type: 'url');
                             }
                           });
                         }).offstage(offstage: controller.data == null),

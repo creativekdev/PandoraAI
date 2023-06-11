@@ -29,6 +29,7 @@ enum DiscoveryCategory {
   ai_avatar,
   cartoonize,
   another_me,
+  stylemorph,
   txt2img,
   scribble,
 }
@@ -130,6 +131,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           break;
         case DiscoveryCategory.scribble:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIScribble");
+          break;
+        case DiscoveryCategory.stylemorph:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#StyleMorph");
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

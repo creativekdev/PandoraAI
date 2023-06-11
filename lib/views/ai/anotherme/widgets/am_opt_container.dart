@@ -76,52 +76,52 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
             SizedBox(width: $(16)),
             Expanded(
                 child: Row(
-              children: [
-                Image.asset(
-                  Images.ic_share,
-                  width: $(24),
-                ),
-                SizedBox(width: 6),
-                TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
-              ],
-              mainAxisSize: MainAxisSize.min,
-            )
+                  children: [
+                    Image.asset(
+                      Images.ic_share,
+                      width: $(24),
+                    ),
+                    SizedBox(width: 6),
+                    TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
+                  ],
+                  mainAxisSize: MainAxisSize.min,
+                )
                     .intoContainer(
-                      padding: EdgeInsets.symmetric(vertical: $(10)),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular($(12)),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
-                          )),
-                    )
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(12)),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
+                      )),
+                )
                     .intoGestureDetector(onTap: onShareTap)),
             SizedBox(width: $(16)),
             Expanded(
                 child: Row(
-              children: [
-                Image.asset(
-                  Images.ic_download,
-                  width: $(24),
-                ),
-                SizedBox(width: 6),
-                TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
-              ],
-              mainAxisSize: MainAxisSize.min,
-            )
+                  children: [
+                    Image.asset(
+                      Images.ic_download,
+                      width: $(24),
+                    ),
+                    SizedBox(width: 6),
+                    TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
+                  ],
+                  mainAxisSize: MainAxisSize.min,
+                )
                     .intoContainer(
-                      padding: EdgeInsets.symmetric(vertical: $(10)),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular($(12)),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
-                          )),
-                    )
+                  padding: EdgeInsets.symmetric(vertical: $(10)),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular($(12)),
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
+                      )),
+                )
                     .intoGestureDetector(onTap: onDownloadTap)),
             SizedBox(width: $(16)),
           ],
@@ -140,10 +140,10 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
                   child: Image.asset(Images.ic_camera, width: $(24))
                       .intoContainer(
-                        alignment: Alignment.center,
-                        width: $(48),
-                        height: $(48),
-                      )
+                    alignment: Alignment.center,
+                    width: $(48),
+                    height: $(48),
+                  )
                       .intoGestureDetector(onTap: onChoosePhotoTap),
                 ),
                 SizedBox(width: $(16)),
@@ -179,10 +179,10 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
                   child: Image.asset(Images.ic_share_discovery, width: $(24))
                       .intoContainer(
-                        alignment: Alignment.center,
-                        width: $(48),
-                        height: $(48),
-                      )
+                    alignment: Alignment.center,
+                    width: $(48),
+                    height: $(48),
+                  )
                       .intoGestureDetector(onTap: onShareDiscoveryTap),
                 ),
                 SizedBox(width: $(16)),

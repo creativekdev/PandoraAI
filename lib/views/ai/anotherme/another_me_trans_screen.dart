@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -8,7 +7,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -487,13 +485,13 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                 }
                               });
                             } else {
-                              await showLoading();
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
+                              await showLoading();
                               var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               await hideLoading();
+                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                               ShareScreen.startShare(context,
                                   backgroundColor: Color(0x77000000),
                                   style: 'Me-taverse',

@@ -113,13 +113,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
         );
         break;
       case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(context, source: 'home_page');
-          } else {
-            AnotherMe.permissionDenied(context);
-          }
-        });
+        AnotherMe.open(context, source: 'home_page');
         break;
       case HomeCardType.ai_avatar:
         Avatar.openFromHome(context);
@@ -147,9 +141,6 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
       init: dataController,
       builder: (_) {
         var list = _.data?.homeCards ?? [];
-        list.add(HomeCardEntity()
-          ..type = 'style_morph'
-          ..url = 'https://pics0.baidu.com/feed/e61190ef76c6a7ef4441916d48ceee5df2de66d2.jpeg@f_auto?token=36e7621a7e9637fb7b78e360eeab6f4b');
         return Stack(
           children: [
             _.loading

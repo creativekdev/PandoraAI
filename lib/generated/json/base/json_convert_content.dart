@@ -22,9 +22,14 @@ import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
+import 'package:cartoonizer/models/print_option_entity.dart';
+import 'package:cartoonizer/models/print_product_entity.dart';
+import 'package:cartoonizer/models/print_product_info_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/rate_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/models/shipping_method_entity.dart';
+import 'package:cartoonizer/models/style_morph_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_style_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
@@ -64,13 +69,34 @@ class JsonConvert {
 		(PayPlanEntity).toString(): PayPlanEntity.fromJson,
 		(PlatformConnectionEntity).toString(): PlatformConnectionEntity.fromJson,
 		(PlatformConnectionCoreUser).toString(): PlatformConnectionCoreUser.fromJson,
+		(PrintOptionEntity).toString(): PrintOptionEntity.fromJson,
+		(PrintOptionData).toString(): PrintOptionData.fromJson,
+		(PrintOptionDataCanvaSize).toString(): PrintOptionDataCanvaSize.fromJson,
+		(PrintOptionDataS3Files).toString(): PrintOptionDataS3Files.fromJson,
+		(PrintProductEntity).toString(): PrintProductEntity.fromJson,
+		(PrintProductData).toString(): PrintProductData.fromJson,
+		(PrintProductDataRows).toString(): PrintProductDataRows.fromJson,
+		(PrintProductDataRowsFeaturedImage).toString(): PrintProductDataRowsFeaturedImage.fromJson,
+		(PrintProductDataRowsVariants).toString(): PrintProductDataRowsVariants.fromJson,
+		(PrintProductDataRowsVariantsEdges).toString(): PrintProductDataRowsVariantsEdges.fromJson,
+		(PrintProductDataRowsVariantsEdgesNode).toString(): PrintProductDataRowsVariantsEdgesNode.fromJson,
+		(PrintProductDataRowsVariantsEdgesNodeSelectedOptions).toString(): PrintProductDataRowsVariantsEdgesNodeSelectedOptions.fromJson,
+		(PrintProductInfoEntity).toString(): PrintProductInfoEntity.fromJson,
+		(PrintProductInfoPages).toString(): PrintProductInfoPages.fromJson,
+		(PrintProductInfoPrintInfo).toString(): PrintProductInfoPrintInfo.fromJson,
+		(PrintProductInfoPrintInfoPages).toString(): PrintProductInfoPrintInfoPages.fromJson,
 		(PushExtraEntity).toString(): PushExtraEntity.fromJson,
 		(PushModuleExtraEntity).toString(): PushModuleExtraEntity.fromJson,
 		(RateConfigEntity).toString(): RateConfigEntity.fromJson,
+		(RecentStyleMorphModel).toString(): RecentStyleMorphModel.fromJson,
 		(RecentEffectModel).toString(): RecentEffectModel.fromJson,
 		(RecentEffectItem).toString(): RecentEffectItem.fromJson,
 		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
 		(RecentGroundEntity).toString(): RecentGroundEntity.fromJson,
+		(ShippingMethodEntity).toString(): ShippingMethodEntity.fromJson,
+		(ShippingMethodShippingRateData).toString(): ShippingMethodShippingRateData.fromJson,
+		(ShippingMethodShippingRateDataFixedAmount).toString(): ShippingMethodShippingRateDataFixedAmount.fromJson,
+		(StyleMorphResultEntity).toString(): StyleMorphResultEntity.fromJson,
 		(Txt2imgResultEntity).toString(): Txt2imgResultEntity.fromJson,
 		(Txt2imgStyleEntity).toString(): Txt2imgStyleEntity.fromJson,
 		(UploadRecordEntity).toString(): UploadRecordEntity.fromJson,
@@ -237,6 +263,54 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		if(<PlatformConnectionCoreUser>[] is M){
 			return data.map<PlatformConnectionCoreUser>((Map<String, dynamic> e) => PlatformConnectionCoreUser.fromJson(e)).toList() as M;
 		}
+		if(<PrintOptionEntity>[] is M){
+			return data.map<PrintOptionEntity>((Map<String, dynamic> e) => PrintOptionEntity.fromJson(e)).toList() as M;
+		}
+		if(<PrintOptionData>[] is M){
+			return data.map<PrintOptionData>((Map<String, dynamic> e) => PrintOptionData.fromJson(e)).toList() as M;
+		}
+		if(<PrintOptionDataCanvaSize>[] is M){
+			return data.map<PrintOptionDataCanvaSize>((Map<String, dynamic> e) => PrintOptionDataCanvaSize.fromJson(e)).toList() as M;
+		}
+		if(<PrintOptionDataS3Files>[] is M){
+			return data.map<PrintOptionDataS3Files>((Map<String, dynamic> e) => PrintOptionDataS3Files.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductEntity>[] is M){
+			return data.map<PrintProductEntity>((Map<String, dynamic> e) => PrintProductEntity.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductData>[] is M){
+			return data.map<PrintProductData>((Map<String, dynamic> e) => PrintProductData.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRows>[] is M){
+			return data.map<PrintProductDataRows>((Map<String, dynamic> e) => PrintProductDataRows.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRowsFeaturedImage>[] is M){
+			return data.map<PrintProductDataRowsFeaturedImage>((Map<String, dynamic> e) => PrintProductDataRowsFeaturedImage.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRowsVariants>[] is M){
+			return data.map<PrintProductDataRowsVariants>((Map<String, dynamic> e) => PrintProductDataRowsVariants.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRowsVariantsEdges>[] is M){
+			return data.map<PrintProductDataRowsVariantsEdges>((Map<String, dynamic> e) => PrintProductDataRowsVariantsEdges.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRowsVariantsEdgesNode>[] is M){
+			return data.map<PrintProductDataRowsVariantsEdgesNode>((Map<String, dynamic> e) => PrintProductDataRowsVariantsEdgesNode.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductDataRowsVariantsEdgesNodeSelectedOptions>[] is M){
+			return data.map<PrintProductDataRowsVariantsEdgesNodeSelectedOptions>((Map<String, dynamic> e) => PrintProductDataRowsVariantsEdgesNodeSelectedOptions.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductInfoEntity>[] is M){
+			return data.map<PrintProductInfoEntity>((Map<String, dynamic> e) => PrintProductInfoEntity.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductInfoPages>[] is M){
+			return data.map<PrintProductInfoPages>((Map<String, dynamic> e) => PrintProductInfoPages.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductInfoPrintInfo>[] is M){
+			return data.map<PrintProductInfoPrintInfo>((Map<String, dynamic> e) => PrintProductInfoPrintInfo.fromJson(e)).toList() as M;
+		}
+		if(<PrintProductInfoPrintInfoPages>[] is M){
+			return data.map<PrintProductInfoPrintInfoPages>((Map<String, dynamic> e) => PrintProductInfoPrintInfoPages.fromJson(e)).toList() as M;
+		}
 		if(<PushExtraEntity>[] is M){
 			return data.map<PushExtraEntity>((Map<String, dynamic> e) => PushExtraEntity.fromJson(e)).toList() as M;
 		}
@@ -245,6 +319,9 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<RateConfigEntity>[] is M){
 			return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentStyleMorphModel>[] is M){
+			return data.map<RecentStyleMorphModel>((Map<String, dynamic> e) => RecentStyleMorphModel.fromJson(e)).toList() as M;
 		}
 		if(<RecentEffectModel>[] is M){
 			return data.map<RecentEffectModel>((Map<String, dynamic> e) => RecentEffectModel.fromJson(e)).toList() as M;
@@ -257,6 +334,18 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<RecentGroundEntity>[] is M){
 			return data.map<RecentGroundEntity>((Map<String, dynamic> e) => RecentGroundEntity.fromJson(e)).toList() as M;
+		}
+		if(<ShippingMethodEntity>[] is M){
+			return data.map<ShippingMethodEntity>((Map<String, dynamic> e) => ShippingMethodEntity.fromJson(e)).toList() as M;
+		}
+		if(<ShippingMethodShippingRateData>[] is M){
+			return data.map<ShippingMethodShippingRateData>((Map<String, dynamic> e) => ShippingMethodShippingRateData.fromJson(e)).toList() as M;
+		}
+		if(<ShippingMethodShippingRateDataFixedAmount>[] is M){
+			return data.map<ShippingMethodShippingRateDataFixedAmount>((Map<String, dynamic> e) => ShippingMethodShippingRateDataFixedAmount.fromJson(e)).toList() as M;
+		}
+		if(<StyleMorphResultEntity>[] is M){
+			return data.map<StyleMorphResultEntity>((Map<String, dynamic> e) => StyleMorphResultEntity.fromJson(e)).toList() as M;
 		}
 		if(<Txt2imgResultEntity>[] is M){
 			return data.map<Txt2imgResultEntity>((Map<String, dynamic> e) => Txt2imgResultEntity.fromJson(e)).toList() as M;
