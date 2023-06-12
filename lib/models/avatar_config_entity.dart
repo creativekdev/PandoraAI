@@ -7,6 +7,8 @@ import 'package:common_utils/common_utils.dart';
 abstract class AvatarConfig {
   List<String> getRoles();
 
+  List<Map<String, String>> getRoleList();
+
   Map<String, String> getRoleImages();
 
   String styleTitle(String role, String style);
@@ -104,6 +106,23 @@ class AvatarConfigEntity extends AvatarConfig {
   @override
   String getName(String role) {
     return locale[role]['name'] ?? role;
+  }
+
+  @override
+  List<Map<String, String>> getRoleList() {
+    var roles = getRoles();
+    List<Map<String, String>> result = [];
+    for (var value in roles) {
+      Map<String, String> kv;
+      if (result.isEmpty || result.last.length == 2) {
+        kv = {};
+        result.add(kv);
+      } else {
+        kv = result.last;
+      }
+      kv[value] = originalImage(value);
+    }
+    return result;
   }
 
   @override
