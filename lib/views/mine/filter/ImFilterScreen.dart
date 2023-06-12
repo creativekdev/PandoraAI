@@ -32,8 +32,13 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   final ItemPositionsListener itemScrollPositionsListener = ItemPositionsListener.create();
   late double itemWidth;
   var currentItemIndex = 0.obs;
-  List<String> _rightTabList = [Images.ic_effects, Images.ic_filters, Images.ic_adjusts,Images.ic_crop, Images.ic_background, Images.ic_background];
+  List<String> _rightTabList = [Images.ic_effects, Images.ic_filters, Images.ic_adjusts,Images.ic_crop, Images.ic_background, Images.ic_letter];
   int selectedRightTab = 0;
+
+  int selectedEffectID = 0;
+  int currentAdjustID = 0;
+
+  int selectedCropID = 0;
   @override
   void initState() {
     super.initState();
@@ -47,7 +52,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     super.dispose();
   }
 
-  _buildRightTab() {
+  Widget _buildRightTab() {
     List<Widget> buttons = [];
     int num  = 0;
     for(var img in _rightTabList) {
@@ -94,27 +99,71 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       ));
       num++;
     }
+    List<Widget> adjustbutton = [];
+    adjustbutton.add(GestureDetector(
+      onTap: () {
+        // Handle button press
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration:
+        BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: FractionallySizedBox(
+          widthFactor: 0.5,
+          heightFactor: 0.5,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Images.ic_reduction),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ));
     return Align(
       alignment: Alignment.centerRight,
-      child: Container(
-          decoration: BoxDecoration(
-              color: Color.fromARGB(100, 22, 44, 33),
-              borderRadius: BorderRadius.all(Radius.circular(50))
+      child: Wrap(
+        direction: Axis.vertical,
+          spacing: 40,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(100, 22, 44, 33),
+                borderRadius: BorderRadius.all(Radius.circular(50))
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+            margin: const EdgeInsets.only(right: 10.0),
+            height: 320,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: buttons
+            )
           ),
-          padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-          margin: const EdgeInsets.only(right: 10.0),
-          height: 320,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: buttons
+          Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(100, 22, 44, 33),
+                borderRadius: BorderRadius.all(Radius.circular(50))
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+            margin: const EdgeInsets.only(right: 10.0),
+            height: 60,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: adjustbutton
+            )
           )
-      )
+        ])
 
     );
 
   }
 
-  _buildInOutControlPad() {
+  Widget _buildInOutControlPad() {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -143,13 +192,59 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23), bottom: $(10)),
     );
   }
-  _buildImageView() {
+  Widget _buildImageView() {
     return Expanded(child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [Image.asset(Images.ic_choose_photo_initial_header)],
     ),);
   }
-  _buildBottomTabbar() {
+  Widget _buildEffectController(){
+    return ScrollablePositionedList.separated(
+      initialScrollIndex: 0,
+      itemCount: 10,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedEffectID = index;
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(2.0),
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Color(0xFF05E0D5),
+                      width: (selectedEffectID == index)? 2:0,
+                      style: BorderStyle.solid,
+                    ),
+                    image: DecorationImage(
+                      image: AssetImage(Images.ic_choose_photo_initial_header),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Text('Text',style: TextStyle(
+                  color: Colors.white,
+                ),),
+                SizedBox(height: 2),
+            ],
+          )
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return Container();
+      },
+    ).intoContainer(
+      height: itemWidth + $(10),
+    );
+  }
+  Widget _buildFiltersController(){
     return ScrollablePositionedList.separated(
       initialScrollIndex: 0,
       itemCount: 10,
@@ -177,11 +272,165 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         );
       },
       separatorBuilder: (BuildContext context, int index) {
-          return Container();
+        return Container();
       },
     ).intoContainer(
       height: itemWidth + $(10),
     );
+  }
+  Widget _buildAdjust() {
+    double _currentSliderValue = 0;
+    List<Widget> buttons = [];
+    for (int i = 0; i < 3; i++){
+      int cur_i  = i;
+      buttons.add(GestureDetector(
+        onTap: () {
+          setState(() {
+            currentAdjustID = cur_i;
+          });
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: (currentAdjustID == cur_i)?
+            Border.all(color: const Color(0xFF05E0D5), width: 2)
+            :Border.all(color: Colors.white, width: 2),
+          ),
+          child: CircleAvatar(
+            backgroundImage: AssetImage(Images.ic_adjusts),
+            radius: 25.0,
+            backgroundColor: Colors.transparent,
+          ),
+        ),
+      ));
+      buttons.add(SizedBox(width: 20));
+    }
+
+    return Container(
+        height: itemWidth + $(40),
+        child:Column(
+          children:[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: buttons,
+            ),
+            Slider(
+              value: _currentSliderValue,
+              min: 0,
+              max: 100,
+              divisions: 5,
+              label: _currentSliderValue.round().toString(),
+              onChanged: (double value) {
+                setState(() {
+                  _currentSliderValue = value;
+                });
+              },
+            )
+          ]
+        )
+    );
+  }
+  Widget _buildCrops() {
+    List<Widget> buttons = [];
+    List<List<int>> ratios = [[2, 3, 20, 30], [3,2,30,20], [3,4,22,30],[4,3,30,22],[1,1,30,30]];
+    int i = 0;
+    for(List<int> ratio in ratios){
+      int curi = i;
+      buttons.add(
+          GestureDetector(
+            onTap: () {
+              selectedRightTab = curi;
+            },
+            child: Column(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  child: Center(
+                    child: Container(
+                      width: ratio.elementAt(2).toDouble(),
+                      height: ratio.elementAt(3).toDouble(),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(width: 2.0, color: Colors.white),
+                          left: BorderSide(width: 2.0, color: Colors.white),
+                          right: BorderSide(width: 2.0, color: Colors.white),
+                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  )
+                ),
+                SizedBox(height: 10,),
+                Text(
+                  ratio.elementAt(0).toString() + ":" + ratio.elementAt(1).toString(),
+                  style: TextStyle(
+                      color: Colors.white
+                  ),
+                )
+              ],
+            ),
+          )
+      );
+      buttons.add(SizedBox(width: 30,));
+      i++;
+    }
+    return Container(
+      height: itemWidth + $(40),
+      child:Center(
+        child:Row(
+          mainAxisSize: MainAxisSize.min,
+          children: buttons,
+        )
+      )
+    );
+  }
+  Widget _buildBackground() {
+    return ScrollablePositionedList.separated(
+      initialScrollIndex: 0,
+      itemCount: 10,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(2.0),
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(Images.ic_choose_photo_initial_header),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            SizedBox(height: 2),
+          ],
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return Container();
+      },
+    ).intoContainer(
+      height: itemWidth + $(10),
+    );
+  }
+  Widget _buildBottomTabbar() {
+    switch(selectedRightTab) {
+      case 0:
+        return _buildEffectController();
+      case 1:
+        return _buildFiltersController();
+      case 2:
+        return _buildAdjust();
+      case 3:
+        return _buildCrops();
+      case 4:
+        return _buildBackground();
+      default:
+        return Container(height: itemWidth + $(10));
+    }
   }
   @override
   Widget build(BuildContext context) {
