@@ -14,6 +14,11 @@ class Images {
   static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
   static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
   static const String ic_app = 'assets/images/ic_app.png';
+  static const String ic_order_name = 'assets/images/ic_order_name.png';
+  static const String ic_order_email = 'assets/images/ic_order_email.png';
+  static const String ic_order_phone = 'assets/images/ic_order_phone.png';
+  static const String ic_order_address = 'assets/images/ic_order_address.png';
+
   static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
   static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
   static const String ic_delivery = 'assets/images/ic_delivery.png';
@@ -141,6 +146,7 @@ class Images {
   static const String ic_rollback = 'assets/images/ic_rollback.png';
   static const String ic_round_top = 'assets/images/ic_round_top.png';
   static const String ic_search = 'assets/images/ic_search.png';
+  static const String ic_filter = 'assets/images/ic_filter.png';
   static const String ic_server_error_icon = 'assets/images/ic_server_error_icon.png';
   static const String ic_setting_my_delete_account = 'assets/images/ic_setting_my_delete_account.png';
   static const String ic_setting_my_discovery = 'assets/images/ic_setting_my_discovery.png';

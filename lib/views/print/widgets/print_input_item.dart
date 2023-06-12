@@ -37,7 +37,7 @@ class PrintInputItem extends StatelessWidget {
           ),
         ).intoContainer(
             decoration: BoxDecoration(
-          color: ColorConstant.EffectCardColor,
+          color: Color(0xFF0F0F0F),
           borderRadius: BorderRadius.circular($(8)),
         )),
       ],
@@ -113,6 +113,7 @@ class PrintInputContactItem extends StatelessWidget {
                 onTap: onTap,
               ),
               Container(
+                color: Color(0xFF0F0F0F),
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.only(left: $(100)),
                 child: TextField(

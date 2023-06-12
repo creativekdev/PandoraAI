@@ -84,14 +84,16 @@ class PrintImageOption extends StatelessWidget {
 }
 
 class DividerLine extends StatelessWidget {
-  DividerLine({Key? key, this.left}) : super(key: key);
+  DividerLine({Key? key, this.left, this.right}) : super(key: key);
   double? left;
+  double? right;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
         left: left ?? $(17),
+        right: right ?? $(0),
       ),
       color: ColorConstant.InputBackground,
       height: $(0.5),
