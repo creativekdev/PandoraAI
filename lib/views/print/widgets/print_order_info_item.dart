@@ -1,7 +1,9 @@
 import '../../../Common/importFile.dart';
 
 class PrintOrderInfoItem extends StatelessWidget {
-  const PrintOrderInfoItem({Key? key}) : super(key: key);
+  const PrintOrderInfoItem({Key? key, required this.name, required this.value}) : super(key: key);
+  final String name;
+  final String value;
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +12,7 @@ class PrintOrderInfoItem extends StatelessWidget {
         SizedBox(height: $(16)),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           TitleTextWidget(
-            "Size:",
+            name,
             ColorConstant.DiscoveryCommentGrey,
             FontWeight.w400,
             $(14),
@@ -18,7 +20,7 @@ class PrintOrderInfoItem extends StatelessWidget {
             maxLines: 3,
           ),
           TitleTextWidget(
-            "S",
+            value,
             ColorConstant.DiscoveryCommentGrey,
             FontWeight.w400,
             $(14),

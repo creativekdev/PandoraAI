@@ -39,6 +39,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../models/print_orders_entity.dart';
 import '../models/print_product_entity.dart';
 
 class CartoonizerApi extends RetryAbleRequester {
@@ -391,6 +392,17 @@ class CartoonizerApi extends RetryAbleRequester {
   Future<String?> getPresignedUrl(Map<String, dynamic> params) async {
     var baseEntity = await get('/file/presigned_url', params: params);
     return baseEntity?.data?['data'];
+  }
+
+  Future<PrintOrdersEntity?> getShopifyOrders(body) async {
+    var baseEntity = await get("/ps_order/all", params: body);
+    return jsonConvert.convert<PrintOrdersEntity>(baseEntity?.data);
+  }
+
+  Future<BaseEntity?> getShopifyOrderDetail(int id) async {
+    var baseEntity = await get("/ps_order/get/${id}");
+    print(baseEntity?.data);
+    return jsonConvert.convert<BaseEntity>(baseEntity?.data);
   }
 
   // buy plan with stripe

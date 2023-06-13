@@ -13,8 +13,17 @@ class PrintOrderScreen extends StatefulWidget {
   State<PrintOrderScreen> createState() => _PrintOrderScreenState();
 }
 
-class _PrintOrderScreenState extends State<PrintOrderScreen> {
+class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerProviderStateMixin {
   PrintOrderController controller = Get.put(PrintOrderController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.tabController = TabController(length: controller.statuses.length, vsync: this);
+    controller.tabController!.addListener(() {
+      controller.onChangeStatus(controller.tabController!.index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,102 +51,111 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> {
           }),
         ),
         backgroundColor: ColorConstant.BackgroundColor,
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(
-            alignment: Alignment.centerLeft,
-            margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(8)),
-            height: $(40),
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                TextField(
-                  controller: controller.searchOrderController,
-                  cursorColor: ColorConstant.White,
-                  style: TextStyle(color: ColorConstant.White, fontSize: $(14)),
-                  decoration: InputDecoration(
-                    hintText: 'Search order',
-                    hintStyle: TextStyle(color: Colors.white38, fontSize: $(14)),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular($(8)),
-                    ),
-                    suffixIcon: Padding(
-                      padding: EdgeInsets.all($(6)),
-                      child: Image.asset(
-                        Images.ic_search,
-                        color: Colors.white38,
-                        width: $(12),
-                        height: $(12),
+        body: GetBuilder<PrintOrderController>(
+          init: controller,
+          builder: (controller) {
+            return Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center, children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(8)),
+                height: $(40),
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    TextField(
+                      controller: controller.searchOrderController,
+                      cursorColor: ColorConstant.White,
+                      style: TextStyle(color: ColorConstant.White, fontSize: $(14)),
+                      decoration: InputDecoration(
+                        hintText: 'Search order',
+                        hintStyle: TextStyle(color: Colors.white38, fontSize: $(14)),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular($(8)),
+                        ),
+                        suffixIcon: Padding(
+                          padding: EdgeInsets.all($(6)),
+                          child: Image.asset(
+                            Images.ic_search,
+                            color: Colors.white38,
+                            width: $(12),
+                            height: $(12),
+                          ),
+                        ),
+                      ),
+                    ).intoContainer(
+                      margin: EdgeInsets.only(left: 0, right: 40),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF0F0F0F),
+                        borderRadius: BorderRadius.circular($(8)),
                       ),
                     ),
-                  ),
-                ).intoContainer(
-                  margin: EdgeInsets.only(left: 0, right: 40),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF0F0F0F),
-                    borderRadius: BorderRadius.circular($(8)),
-                  ),
+                    Positioned(
+                      right: $(0),
+                      child: Image.asset(
+                        Images.ic_filter,
+                        width: $(24),
+                      ).intoGestureDetector(onTap: () {
+                        controller.onShowTimeSheet(context);
+                      }),
+                    )
+                  ],
                 ),
-                Positioned(
-                  right: $(0),
-                  child: Image.asset(
-                    Images.ic_filter,
-                    width: $(24),
-                  ),
-                )
-              ],
-            ),
-          ),
-          TabBar(
-            enableFeedback: false,
-            labelColor: Colors.white,
-            indicatorColor: Colors.transparent,
-            labelStyle: TextStyle(fontSize: $(14)),
-            tabs: const <Widget>[
-              Tab(
-                text: 'List',
               ),
-              Tab(
-                text: 'Grid',
+              TabBar(
+                controller: controller.tabController,
+                enableFeedback: false,
+                isScrollable: true,
+                labelColor: Colors.white,
+                indicatorColor: Colors.transparent,
+                labelStyle: TextStyle(fontSize: $(14)),
+                onTap: (index) {
+                  controller.tabController?.index = index;
+                  controller.onChangeStatus(index);
+                },
+                tabs: controller.statuses.map((String tab) {
+                  return Tab(text: tab);
+                }).toList(),
               ),
-            ],
-          ),
-          DividerLine(
-            left: 0,
-          ),
-          Expanded(
-              child: TabBarView(children: [
-            _AutomaticKeepAlive(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                    return PrintOrderItem().intoGestureDetector(onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/PrintOrderDetailScreen"),
-                            builder: (context) => PrintOrderDetailScreen(),
-                          ));
-                    });
-                  }, childCount: 50)),
-                ],
+              DividerLine(
+                left: 0,
               ),
-            ),
-            _AutomaticKeepAlive(
-              child: CustomScrollView(
-                slivers: [
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                    return PrintOrderItem();
-                  }, childCount: 50)),
-                ],
+              Expanded(
+                child: TabBarView(
+                    controller: controller.tabController,
+                    children: controller.statuses.map((e) {
+                      return _AutomaticKeepAlive(
+                        child: CustomScrollView(
+                          slivers: [
+                            SliverList(
+                                delegate: SliverChildBuilderDelegate((context, index) {
+                              return PrintOrderItem(rows: controller.orders[e.toLowerCase()]![index]).intoGestureDetector(onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      settings: RouteSettings(name: "/PrintOrderDetailScreen"),
+                                      builder: (context) => PrintOrderDetailScreen(
+                                        rows: controller.orders[e.toLowerCase()]![index],
+                                      ),
+                                    ));
+                              });
+                            }, childCount: controller.orders[e.toLowerCase()]?.length ?? 0)),
+                          ],
+                        ),
+                      );
+                    }).toList()),
               ),
-            ),
-          ]))
-        ]),
+            ]);
+          },
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    Get.delete<PrintOrderController>();
+    super.dispose();
   }
 }
 

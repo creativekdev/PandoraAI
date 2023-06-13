@@ -1,18 +1,35 @@
+import 'package:cartoonizer/views/print/print_order_detail_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_info_item.dart';
+import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../images-res.dart';
+import '../../models/print_orders_entity.dart';
 
 class PrintOrderDetailScreen extends StatefulWidget {
-  const PrintOrderDetailScreen({Key? key}) : super(key: key);
+  PrintOrderDetailScreen({Key? key, required this.rows}) : super(key: key);
+  PrintOrdersDataRows rows;
 
   @override
-  State<PrintOrderDetailScreen> createState() => _PrintOrderDetailScreenState();
+  State<PrintOrderDetailScreen> createState() => _PrintOrderDetailScreenState(rows: rows);
 }
 
 class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
+  _PrintOrderDetailScreenState({required this.rows}) {
+    controller = Get.put(PrintOrderDetailController(rows: rows));
+  }
+
+  late PrintOrderDetailController controller;
+  PrintOrdersDataRows rows;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,75 +54,126 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
         }),
       ),
       backgroundColor: ColorConstant.BackgroundColor,
-      body: CustomScrollView(slivers: [
-        SliverToBoxAdapter(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-            color: Color(0xFF1B1C1D),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              TitleTextWidget(
-                "Order ID: 1234567",
-                ColorConstant.White,
-                FontWeight.w500,
-                $(17),
-                align: TextAlign.left,
-              ),
-              SizedBox(height: $(16)),
-              DividerLine(
-                left: 0,
-              ),
-              SizedBox(height: $(16)),
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Image.asset(
-                  Images.ic_ai_draw_camera,
-                  width: $(80),
-                  height: $(80),
-                ).intoContainer(
-                    decoration: BoxDecoration(
-                  color: Color(0xFFFB8888),
-                  borderRadius: BorderRadius.circular(8),
-                )),
-                SizedBox(width: $(16)),
-                TitleTextWidget(
-                  "Order ID: 1234567",
-                  ColorConstant.White,
-                  FontWeight.w500,
-                  $(14),
-                  align: TextAlign.left,
-                  maxLines: 3,
+      body: GetBuilder<PrintOrderDetailController>(
+          init: controller,
+          builder: (controller) {
+            return CustomScrollView(slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
+                  color: Color(0xFF1B1C1D),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    TitleTextWidget(
+                      "Order ID: ${rows.shopifyOrderId}",
+                      ColorConstant.White,
+                      FontWeight.w500,
+                      $(17),
+                      align: TextAlign.left,
+                    ),
+                    SizedBox(height: $(16)),
+                    DividerLine(
+                      left: 0,
+                    ),
+                    SizedBox(height: $(16)),
+                    Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular($(8)),
+                        child: CachedNetworkImageUtils.custom(
+                          context: context,
+                          imageUrl: rows.psPreviewImage,
+                          width: $(80),
+                          height: $(80),
+                          fit: BoxFit.cover,
+                        ).intoContainer(
+                            decoration: BoxDecoration(
+                          color: Color(0xFFFB8888),
+                          borderRadius: BorderRadius.circular($(8)),
+                        )),
+                      ),
+                      SizedBox(width: $(16)),
+                      Expanded(
+                        child: TitleTextWidget(
+                          "${rows.name}",
+                          ColorConstant.White,
+                          FontWeight.w500,
+                          $(14),
+                          align: TextAlign.left,
+                          maxLines: 3,
+                        ),
+                      ),
+                    ]),
+                    PrintOrderInfoItem(
+                      name: "Order ID",
+                      value: "${rows.shopifyOrderId}",
+                    ),
+                    PrintOrderInfoItem(
+                      name: "Variant",
+                      value: "${controller.order.lineItems.first.variantTitle}",
+                    ),
+                    PrintOrderInfoItem(
+                      name: "Number",
+                      value: "${controller.order.lineItems.first.quantity}",
+                    ),
+                    PrintOrderInfoItem(
+                      name: "Subtotal",
+                      value: "${rows.totalPrice}",
+                    ),
+                    PrintOrderInfoItem(
+                      name: "Order Time",
+                      value: "${getDate(rows.eventTime)}",
+                    ),
+                  ]),
                 ),
-              ]),
-              PrintOrderInfoItem(),
-              PrintOrderInfoItem(),
-            ]),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: $(8),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
-            color: Color(0xFF1B1C1D),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              TitleTextWidget(
-                "Shopping Information".tr,
-                ColorConstant.White,
-                FontWeight.w500,
-                $(17),
-                align: TextAlign.left,
               ),
-              SizedBox(height: $(16)),
-              DividerLine(
-                left: 0,
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: $(8),
+                ),
               ),
-              PrintShippingInfoItem()
-            ]),
-          ),
-        )
-      ]),
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(12)),
+                  color: Color(0xFF1B1C1D),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    TitleTextWidget(
+                      "Shopping Information".tr,
+                      ColorConstant.White,
+                      FontWeight.w500,
+                      $(17),
+                      align: TextAlign.left,
+                    ),
+                    SizedBox(height: $(16)),
+                    DividerLine(
+                      left: 0,
+                    ),
+                    PrintShippingInfoItem(
+                      image: Images.ic_order_name,
+                      value: controller.order.customer.defaultAddress.firstName + " " + controller.order.customer.defaultAddress.lastName,
+                    ),
+                    if (controller.order.contactEmail != null)
+                      PrintShippingInfoItem(
+                        image: Images.ic_order_email,
+                        value: controller.order.contactEmail ?? '',
+                      ),
+                    PrintShippingInfoItem(
+                      image: Images.ic_order_phone,
+                      value: controller.order.customer.defaultAddress.phone,
+                    ),
+                    PrintShippingInfoItem(
+                      image: Images.ic_order_address,
+                      value: controller.order.customer.defaultAddress.address1 + " " + controller.order.customer.defaultAddress.address2,
+                    ),
+                  ]),
+                ),
+              )
+            ]);
+          }),
     );
+  }
+
+  @override
+  void dispose() {
+    Get.delete<PrintOrderDetailController>();
+    super.dispose();
   }
 }

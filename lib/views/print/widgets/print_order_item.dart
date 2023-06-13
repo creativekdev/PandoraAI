@@ -1,13 +1,18 @@
+import 'dart:convert';
+
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 
 import '../../../Common/importFile.dart';
-import '../../../images-res.dart';
+import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
+import '../../../models/print_orders_entity.dart';
 
 class PrintOrderItem extends StatelessWidget {
-  const PrintOrderItem({Key? key}) : super(key: key);
+  PrintOrderItem({Key? key, required this.rows}) : super(key: key);
+  PrintOrdersDataRows rows;
 
   @override
   Widget build(BuildContext context) {
+    PrintOrdersDataRowsPayloadOrder order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(rows.payload)["order"]);
     return Column(
       children: [
         SizedBox(
@@ -23,7 +28,7 @@ class PrintOrderItem extends StatelessWidget {
               height: $(12),
             ),
             TitleTextWidget(
-              "Order ID: 1234567",
+              "Order ID: ${rows.shopifyOrderId}",
               ColorConstant.White,
               FontWeight.w500,
               $(17),
@@ -40,15 +45,20 @@ class PrintOrderItem extends StatelessWidget {
               height: $(16),
             ),
             Row(children: [
-              Image.asset(
-                Images.ic_ai_draw_camera,
-                width: $(80),
-                height: $(80),
-              ).intoContainer(
-                  decoration: BoxDecoration(
-                color: Color(0xFFFB8888),
-                borderRadius: BorderRadius.circular(8),
-              )),
+              ClipRRect(
+                borderRadius: BorderRadius.circular($(8)),
+                child: CachedNetworkImageUtils.custom(
+                  context: context,
+                  imageUrl: rows.psPreviewImage,
+                  width: $(80),
+                  height: $(80),
+                  fit: BoxFit.cover,
+                ).intoContainer(
+                    decoration: BoxDecoration(
+                  color: Color(0xFFFB8888),
+                  borderRadius: BorderRadius.circular($(8)),
+                )),
+              ),
               SizedBox(
                 width: $(16),
               ),
@@ -59,7 +69,7 @@ class PrintOrderItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TitleTextWidget(
-                          "T-shirt T-shirtT-shiT-shirt T-shirtT-shiT-shirt T-shirtT-shiT-shirt T-shirtT-shiT-shirt T-shirtT-shiT-shirt T-shirtT-shi",
+                          "${rows.name}",
                           ColorConstant.White,
                           FontWeight.normal,
                           $(14),
@@ -71,8 +81,8 @@ class PrintOrderItem extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            TitleTextWidget("\$2.75", ColorConstant.White, FontWeight.normal, $(14), align: TextAlign.right),
-                            TitleTextWidget("1 piece", ColorConstant.loginTitleColor, FontWeight.normal, $(14), align: TextAlign.right),
+                            TitleTextWidget("\$${rows.totalPrice}", ColorConstant.White, FontWeight.normal, $(14), align: TextAlign.right),
+                            TitleTextWidget("${order.lineItems.first.quantity} piece", ColorConstant.loginTitleColor, FontWeight.normal, $(14), align: TextAlign.right),
                           ],
                         ).intoContainer(
                           width: $(60),
@@ -82,8 +92,8 @@ class PrintOrderItem extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TitleTextWidget("Paied", Color(0xFF30D158), FontWeight.normal, $(14), align: TextAlign.left),
-                        TitleTextWidget("2023-02-22", ColorConstant.loginTitleColor, FontWeight.normal, $(14), align: TextAlign.right),
+                        TitleTextWidget("${rows.financialStatus}", Color(0xFF30D158), FontWeight.normal, $(14), align: TextAlign.left),
+                        TitleTextWidget("${getDate(rows.eventTime)}", ColorConstant.loginTitleColor, FontWeight.normal, $(14), align: TextAlign.right),
                       ],
                     )
                   ],
@@ -95,4 +105,10 @@ class PrintOrderItem extends StatelessWidget {
       ],
     );
   }
+}
+
+String getDate(int timestamp) {
+  DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+  return "${date.year}-${date.month}-${date.day}";
 }

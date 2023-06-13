@@ -24,7 +24,6 @@ class PrintScreen extends StatefulWidget {
 
 class _PrintScreenState extends State<PrintScreen> {
   _PrintScreenState({required this.optionData}) {
-    print(optionData);
     controller = Get.put(PrintController(optionData: optionData));
   }
 
