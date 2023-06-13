@@ -1,16 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/ai_draw_api.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -20,15 +17,11 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -38,12 +31,14 @@ class AiDrawableResultScreen extends StatefulWidget {
   String filePath;
   double scale;
   String photoType;
+  String source;
 
   AiDrawableResultScreen({
     Key? key,
     required this.drawableController,
     required this.filePath,
     required this.scale,
+    required this.source,
     required this.photoType,
   }) : super(key: key);
 
@@ -57,6 +52,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   late double scale;
   late double imageWidth;
   late double imageHeight;
+  late String source;
   late String photoType;
   String? resultFilePath;
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -71,6 +67,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
     super.initState();
     api = AiDrawApi().bindState(this);
     scale = widget.scale;
+    source = widget.source;
     photoType = widget.photoType;
     drawableController = widget.drawableController;
     filePath = widget.filePath;
@@ -102,7 +99,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
         Navigator.of(context).pop();
       } else if (value.result) {
         setState(() {});
-        Events.aidrawCompleteSuccess();
+        Events.aidrawCompleteSuccess(source: source, photoType: photoType);
       } else {
         Navigator.of(context).pop();
       }
@@ -124,7 +121,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
           width: imageInfo.image.width,
           height: imageInfo.image.height,
           initImage: uploadImageController.imageUrl.value,
-          onFailed: (response){
+          onFailed: (response) {
             uploadImageController.deleteUploadData(compressedImage);
           },
         )
@@ -323,7 +320,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                       category: DiscoveryCategory.scribble,
                     ).then((value) {
                       if (value ?? false) {
-                        Events.aidrawCompleteShare(source: photoType == 'recently' ? 'recently' : 'ai_draw', platform: 'discovery', type: 'image');
+                        Events.aidrawCompleteShare(source: source, platform: 'discovery', type: photoType);
                         showShareSuccessDialog(context);
                       }
                     });
@@ -373,7 +370,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                       isVideo: false,
                       originalUrl: null,
                       effectKey: 'AI_Draw', onShareSuccess: (platform) {
-                    Events.aidrawCompleteShare(source: photoType == 'recently' ? 'recently' : 'ai_draw', platform: platform, type: 'image');
+                    Events.aidrawCompleteShare(source: source, platform: platform, type: photoType);
                   });
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                 }),
