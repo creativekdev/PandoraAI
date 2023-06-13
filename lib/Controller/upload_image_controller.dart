@@ -89,6 +89,23 @@ class UploadImageController extends GetxController {
     return true;
   }
 
+  Future<void> deleteUploadData(File? imageFile, {String? key}) async {
+    if (imageFile == null && key == null) {
+      return;
+    }
+    if(imageFile != null) {
+      if (key == null) {
+        key = await md5File(imageFile);
+      }
+    }
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
+    if (cacheFile != null) {
+      imageUploadCache.remove(cacheFile);
+      _saveUploadCacheMap();
+      updateImageUrl('');
+    }
+  }
+
   Future<bool> uploadCompressedImage(File? imageFile, {String? key, bool cache = true}) async {
     if (imageFile == null) {
       return false;

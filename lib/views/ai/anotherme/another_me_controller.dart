@@ -93,7 +93,7 @@ class AnotherMeController extends GetxController {
 
   bool hasTransRecord() => _transKey != null;
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId) async {
+  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, onFailed) async {
     if (TextUtil.isEmpty(imageUrl)) {
       return null;
     }
@@ -109,7 +109,7 @@ class AnotherMeController extends GetxController {
         }
       }
     }
-    var baseEntity = await api.generateAnotherMe(imageUrl, cachedId);
+    var baseEntity = await api.generateAnotherMe(imageUrl, cachedId, onFailed);
     if (baseEntity == null) {
       return null;
     }

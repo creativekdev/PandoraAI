@@ -215,7 +215,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       simulateProgressBarController.uploadComplete();
       if (value) {
         uploadImageController.getCachedIdByKey(key).then((cachedId) {
-          controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
+          controller.startTransfer(uploadImageController.imageUrl.value, cachedId, (response) {
+            uploadImageController.deleteUploadData(null, key: key);
+          }).then((value) {
             if (value != null) {
               if (value.entity != null) {
                 uploadImageController.updateCachedId(file, value.entity!.cacheId ?? '');

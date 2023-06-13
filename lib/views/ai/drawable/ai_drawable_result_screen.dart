@@ -124,6 +124,9 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
           width: imageInfo.image.width,
           height: imageInfo.image.height,
           initImage: uploadImageController.imageUrl.value,
+          onFailed: (response){
+            uploadImageController.deleteUploadData(compressedImage);
+          },
         )
             .then((value) {
           if (value != null) {

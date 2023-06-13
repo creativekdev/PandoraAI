@@ -123,8 +123,13 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         simulateProgressBarController.uploadComplete();
       }
     }
+    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+      return;
+    }
     var cachedId = await uploadImageController.getCachedIdByKey(key);
-    controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
+    controller.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
+      uploadImageController.deleteUploadData(controller.originFile, key: key);
+    }).then((value) {
       if (value != null) {
         if (value.entity != null) {
           simulateProgressBarController.loadComplete();

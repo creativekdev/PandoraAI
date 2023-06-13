@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -32,6 +33,7 @@ class AiDrawApi extends RetryAbleRequester {
     int height = 512,
     int seed = -1,
     int steps = 20,
+    onFailed,
   }) async {
     var params = <String, dynamic>{
       'prompt': text,
@@ -42,7 +44,7 @@ class AiDrawApi extends RetryAbleRequester {
       'batch_size': 4,
       'init_images': [initImage],
     };
-    var baseEntity = await post('/sdapi/v1/scribble', params: params);
+    var baseEntity = await post('/sdapi/v1/scribble', params: params, onFailed: onFailed);
     AiDrawResultEntity? result = jsonConvert.convert<AiDrawResultEntity>(baseEntity?.data);
     if (result == null) {
       return null;
@@ -61,6 +63,16 @@ class AiDrawApi extends RetryAbleRequester {
       }
     }
     result.s = baseEntity!.s;
+    CartoonizerApi().logScribble({
+      'prompt': text,
+      'width': width,
+      'height': height,
+      'seed': seed,
+      'steps': steps,
+      'batch_size': 4,
+      'init_images': [initImage],
+      'result_id': baseEntity.s,
+    });
     return result;
   }
 

@@ -123,6 +123,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
     Function(Response? response)? onFailed,
+    bool needRetry = true,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -135,7 +136,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
       onFailed?.call(e.response);
       return null;
     }
@@ -151,6 +152,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
     Function(Response? response)? onFailed,
+    bool needRetry = true,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -170,7 +172,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
       onFailed?.call(e.response);
       return null;
     }
@@ -187,6 +189,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     bool preHandleRequest = true,
     Options? options,
     Function(Response? response)? onFailed,
+    bool needRetry = true,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -202,7 +205,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       );
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
       onFailed?.call(e.response);
       return null;
     }
@@ -216,6 +219,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     bool toastOnFailed = true,
     bool preHandleRequest = true,
     Function(Response? response)? onFailed,
+    bool needRetry = true,
   }) async {
     params ??= Map();
     headers ??= Map();
@@ -224,7 +228,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
       Response response = await _client.delete(path, data: data, queryParameters: params);
       return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: params['s']);
     } on DioError catch (e) {
-      onDioError(e, toastOnFailed: toastOnFailed);
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
       onFailed?.call(e.response);
       return null;
     }

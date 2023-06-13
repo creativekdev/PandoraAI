@@ -4,7 +4,6 @@ import 'package:cartoonizer/app/msg_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
-import 'package:cartoonizer/views/discovery/discovery_effect_detail_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/social/comments/metagram_comments_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';

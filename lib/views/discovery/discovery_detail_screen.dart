@@ -8,7 +8,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -24,6 +23,7 @@ import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -103,6 +103,8 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       style = 'txt2img';
     } else if (discoveryEntity.category == DiscoveryCategory.scribble.name) {
       style = 'scribble';
+    } else if (discoveryEntity.category == DiscoveryCategory.stylemorph.name) {
+      style = 'stylemorpn';
     }
     if (TextUtil.isEmpty(style)) {
       return;
@@ -126,6 +128,8 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
   onTryTap(DiscoveryListEntity data) {
     if (data.category == DiscoveryCategory.cartoonize.name) {
       toChoosePage();
+    } else if (data.category == DiscoveryCategory.stylemorph.name) {
+      toStyleMorph();
     } else if (data.category == DiscoveryCategory.ai_avatar.name) {
       Events.discoveryTemplateClick(source: dataType, style: 'avatar');
       Avatar.open(context, source: 'discovery');
@@ -186,6 +190,16 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       itemPos: itemPos,
       entrySource: EntrySource.fromDiscovery,
     );
+  }
+
+  toStyleMorph() {
+    if (effectDataController.data == null) {
+      return;
+    }
+
+    String key = controller.discoveryEntity.cartoonizeKey;
+    Events.discoveryTemplateClick(source: dataType, style: 'stylemorph-${key}');
+    StyleMorph.open(context, source + '-try-template', initKey: key);
   }
 
   onCreateCommentClick(DiscoveryDetailController controller, {int? replySocialPostCommentId, int? parentSocialPostCommentId, String? userName}) {
