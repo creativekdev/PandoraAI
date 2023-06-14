@@ -198,6 +198,7 @@ class Images {
    static const String ic_background = 'assets/images/icon_24_edit_background@2x.png';
    static const String ic_reduction = 'assets/images/icon_24_edit_reduction@2x.png';
    static const String ic_letter = 'assets/images/icon_24_edit_letter@2x.png';
+   static const String slider = 'assets/images/slider.png';
 
 }
 

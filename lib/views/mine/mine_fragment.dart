@@ -254,7 +254,7 @@ class MineFragmentState extends AppState<MineFragment>
                     ImFilter.open(
                       context
                     );
-                }).offstage(offstage: userManager.isNeedLogin),
+                }),
               Container(height: $(12)),
               ImageTextBarWidget(
                       S.of(context).settings, Images.ic_settings, true)

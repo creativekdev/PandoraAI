@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:common_utils/common_utils.dart';
 
 
@@ -36,6 +37,8 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   int selectedRightTab = 0;
 
   int selectedEffectID = 0;
+  int selectedFilterID = 0;
+
   int currentAdjustID = 0;
 
   int selectedCropID = 0;
@@ -175,12 +178,14 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
 
           },
         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+        SizedBox(width: 50),
         Image.asset(Images.ic_download, height: $(24), width: $(24))
             .intoGestureDetector(
           onTap: (){
 
           },
         ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
+        SizedBox(width: 50),
         Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
             .intoGestureDetector(
           onTap: () {
@@ -214,18 +219,31 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.all(2.0),
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Color(0xFF05E0D5),
-                      width: (selectedEffectID == index)? 2:0,
-                      style: BorderStyle.solid,
-                    ),
-                    image: DecorationImage(
-                      image: AssetImage(Images.ic_choose_photo_initial_header),
-                      fit: BoxFit.cover,
+                  width: 65,
+                  height: 65,
+                  decoration: (selectedEffectID == index)?
+                  BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Color(0xFF05E0D5),
+                        width: 2,
+                        style: BorderStyle.solid,
+                      ),
+                  )
+                  : null
+                  ,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      margin: EdgeInsets.all(2.0),
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(Images.ic_choose_photo_initial_header),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -241,7 +259,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(10),
+      height: itemWidth + $(40),
     );
   }
   Widget _buildFiltersController(){
@@ -250,32 +268,57 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       itemCount: 10,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.all(2.0),
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(Images.ic_choose_photo_initial_header),
-                  fit: BoxFit.cover,
+        return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedFilterID = index;
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: (selectedFilterID == index)?
+                  BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Color(0xFF05E0D5),
+                      width: 2,
+                      style: BorderStyle.solid,
+                    ),
+                  )
+                      : null
+                  ,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      margin: EdgeInsets.all(2.0),
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(Images.ic_choose_photo_initial_header),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Text('Text',style: TextStyle(
-              color: Colors.white,
-            ),),
-            SizedBox(height: 2),
-          ],
+                Text('Text',style: TextStyle(
+                  color: Colors.white,
+                ),),
+                SizedBox(height: 2),
+              ],
+            )
         );
       },
       separatorBuilder: (BuildContext context, int index) {
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(10),
+      height: itemWidth + $(40),
     );
   }
   Widget _buildAdjust() {
@@ -314,18 +357,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               mainAxisAlignment: MainAxisAlignment.end,
               children: buttons,
             ),
-            Slider(
-              value: _currentSliderValue,
-              min: 0,
-              max: 100,
-              divisions: 5,
-              label: _currentSliderValue.round().toString(),
-              onChanged: (double value) {
-                setState(() {
-                  _currentSliderValue = value;
-                });
-              },
-            )
+            GridSlider(minVal: 0, maxVal: 100, currentPos: 50)
           ]
         )
     );
@@ -391,30 +423,56 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       itemCount: 10,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.all(2.0),
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(Images.ic_choose_photo_initial_header),
-                  fit: BoxFit.cover,
+        return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedFilterID = index;
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  width: 65,
+                  height: 65,
+                  decoration: (selectedFilterID == index)?
+                  BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Color(0xFF05E0D5),
+                      width: 2,
+                      style: BorderStyle.solid,
+                    ),
+                  )
+                      : null
+                  ,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      margin: EdgeInsets.all(2.0),
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(Images.ic_choose_photo_initial_header),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 2),
-          ],
+                SizedBox(height: 40),
+              ],
+            )
         );
       },
       separatorBuilder: (BuildContext context, int index) {
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(10),
+      height: itemWidth + $(40),
     );
+
   }
   Widget _buildBottomTabbar() {
     switch(selectedRightTab) {
