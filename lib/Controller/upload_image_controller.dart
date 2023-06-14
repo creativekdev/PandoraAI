@@ -93,7 +93,7 @@ class UploadImageController extends GetxController {
     if (imageFile == null && key == null) {
       return;
     }
-    if(imageFile != null) {
+    if (imageFile != null) {
       if (key == null) {
         key = await md5File(imageFile);
       }

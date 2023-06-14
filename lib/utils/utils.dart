@@ -357,18 +357,28 @@ int faceRatio(Size originalSize, Size faceSize) {
 }
 
 Future<File?> heicToImage(AssetEntity media) async {
-  var sourceFile = await media.file;
+  var sourceFile = await media.originFile;
   return heicFileToImage(sourceFile);
 }
 
 Future<File?> heicFileToImage(File? file) async {
   if (file == null) return null;
+  const platform = MethodChannel(PLATFORM_CHANNEL);
   if (Platform.isIOS) {
-    const platform = MethodChannel(PLATFORM_CHANNEL);
-    final String outPath = await platform.invokeMethod('heic2jpg', file.path);
+    final String? outPath = await platform.invokeMethod('heic2jpg', file.path);
+    if (outPath == null) {
+      return null;
+    }
     return File(outPath);
   } else {
-    return file;
+    CacheManager cacheManager = AppDelegate().getManager();
+    String targetPath = '${cacheManager.storageOperator.tempDir.path}${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final bool result = await platform.invokeMethod('heic2jpg', {'path': file.path, 'outPath': targetPath});
+    if (result) {
+      return File(targetPath);
+    } else {
+      return null;
+    }
   }
 }
 

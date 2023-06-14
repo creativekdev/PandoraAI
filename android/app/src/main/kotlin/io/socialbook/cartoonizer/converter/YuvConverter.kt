@@ -1,17 +1,14 @@
-package io.socialbook.cartoonizer.converter;
+package io.socialbook.cartoonizer.converter
 
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.os.Build;
+import android.graphics.ImageFormat
+import android.graphics.Rect
+import android.graphics.YuvImage
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 
-import androidx.annotation.RequiresApi;
-
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
-import java.util.List;
-
-public class YuvConverter {
+object YuvConverter {
     /**
      * Converts an NV21 image into JPEG compressed.
      *
@@ -22,11 +19,11 @@ public class YuvConverter {
      * @return byte[] of a compressed Jpeg image.
      */
     @RequiresApi(api = Build.VERSION_CODES.FROYO)
-    public static byte[] NV21toJPEG(byte[] nv21, int width, int height, int quality) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        YuvImage yuv = new YuvImage(nv21, ImageFormat.NV21, width, height, null);
-        yuv.compressToJpeg(new Rect(0, 0, width, height), quality, out);
-        return out.toByteArray();
+    fun NV21toJPEG(nv21: ByteArray?, width: Int, height: Int, quality: Int): ByteArray {
+        val out = ByteArrayOutputStream()
+        val yuv = YuvImage(nv21, ImageFormat.NV21, width, height, null)
+        yuv.compressToJpeg(Rect(0, 0, width, height), quality, out)
+        return out.toByteArray()
     }
 
     /**
@@ -35,70 +32,67 @@ public class YuvConverter {
      *
      * @param planes  List of Bytes list
      * @param strides contains the strides of each plane. The structure :
-     *                strideRowFirstPlane,stridePixelFirstPlane, strideRowSecondPlane
+     * strideRowFirstPlane,stridePixelFirstPlane, strideRowSecondPlane
      * @param width   Width of the image
      * @param height  Height of given image
      * @return NV21 image byte[].
      */
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public static byte[] YUVtoNV21(List<byte[]> planes, int[] strides, int width, int height) {
-        Rect crop = new Rect(0, 0, width, height);
-        int format = ImageFormat.YUV_420_888;
-        byte[] data = new byte[width * height * ImageFormat.getBitsPerPixel(format) / 8];
-        byte[] rowData = new byte[strides[0]];
-        int channelOffset = 0;
-        int outputStride = 1;
-        for (int i = 0; i < planes.size(); i++) {
-            switch (i) {
-                case 0:
-                    channelOffset = 0;
-                    outputStride = 1;
-                    break;
-                case 1:
-                    channelOffset = width * height + 1;
-                    outputStride = 2;
-                    break;
-                case 2:
-                    channelOffset = width * height;
-                    outputStride = 2;
-                    break;
+    fun YUVtoNV21(planes: ArrayList<ByteArray>, strides: IntArray, width: Int, height: Int): ByteArray {
+        val crop = Rect(0, 0, width, height)
+        val format = ImageFormat.YUV_420_888
+        val data = ByteArray(width * height * ImageFormat.getBitsPerPixel(format) / 8)
+        val rowData = ByteArray(strides[0])
+        var channelOffset = 0
+        var outputStride = 1
+        for (i in planes.indices) {
+            when (i) {
+                0 -> {
+                    channelOffset = 0
+                    outputStride = 1
+                }
+                1 -> {
+                    channelOffset = width * height + 1
+                    outputStride = 2
+                }
+                2 -> {
+                    channelOffset = width * height
+                    outputStride = 2
+                }
             }
-
-            ByteBuffer buffer = ByteBuffer.wrap(planes.get(i));
-            int rowStride;
-            int pixelStride;
+            val buffer = ByteBuffer.wrap(planes[i])
+            var rowStride: Int
+            var pixelStride: Int
             if (i == 0) {
-                rowStride = strides[i];
-                pixelStride = strides[i + 1];
+                rowStride = strides[i]
+                pixelStride = strides[i + 1]
             } else {
-                rowStride = strides[i * 2];
-                pixelStride = strides[i * 2 + 1];
+                rowStride = strides[i * 2]
+                pixelStride = strides[i * 2 + 1]
             }
-            int shift = (i == 0) ? 0 : 1;
-            int w = width >> shift;
-            int h = height >> shift;
-            buffer.position(rowStride * (crop.top >> shift) + pixelStride * (crop.left >> shift));
-            for (int row = 0; row < h; row++) {
-                int length;
+            val shift = if (i == 0) 0 else 1
+            val w = width shr shift
+            val h = height shr shift
+            buffer.position(rowStride * (crop.top shr shift) + pixelStride * (crop.left shr shift))
+            for (row in 0 until h) {
+                var length: Int
                 if (pixelStride == 1 && outputStride == 1) {
-                    length = w;
-                    buffer.get(data, channelOffset, length);
-                    channelOffset += length;
+                    length = w
+                    buffer[data, channelOffset, length]
+                    channelOffset += length
                 } else {
-                    length = (w - 1) * pixelStride + 1;
-                    buffer.get(rowData, 0, length);
-                    for (int col = 0; col < w; col++) {
-                        data[channelOffset] = rowData[col * pixelStride];
-                        channelOffset += outputStride;
+                    length = (w - 1) * pixelStride + 1
+                    buffer[rowData, 0, length]
+                    for (col in 0 until w) {
+                        data[channelOffset] = rowData[col * pixelStride]
+                        channelOffset += outputStride
                     }
                 }
                 if (row < h - 1) {
-                    buffer.position(buffer.position() + rowStride - length);
+                    buffer.position(buffer.position() + rowStride - length)
                 }
             }
         }
-        return data;
-
+        return data
     }
-
 }

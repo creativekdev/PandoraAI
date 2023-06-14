@@ -236,11 +236,9 @@ class _MyHomePageState extends State<MyHomePage> {
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion().then((value) {
-        if (value ?? false) {
-          var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
-          thirdpartManager.adsHolder.initHolder();
-          delay(() => openApp(force: true), milliseconds: 2000);
-        }
+        var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
+        thirdpartManager.adsHolder.initHolder();
+        delay(() => openApp(force: true), milliseconds: 2000);
       });
     } else {
       Navigator.pushAndRemoveUntil(
