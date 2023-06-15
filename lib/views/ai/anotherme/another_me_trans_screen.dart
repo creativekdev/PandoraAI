@@ -19,6 +19,7 @@ import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -434,7 +435,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                             originalUrl: uploadImageController.imageUrl.value,
                             image: base64Encode(file.readAsBytesSync()),
                             isVideo: false,
-                            category: DiscoveryCategory.another_me,
+                            category: HomeCardType.anotherme,
                           ).then((value) {
                             if (value ?? false) {
                               Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');

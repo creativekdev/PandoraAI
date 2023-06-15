@@ -267,7 +267,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery', dataType: 'users_discovery'),
+                            builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery'),
                             settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                           ),
                         );

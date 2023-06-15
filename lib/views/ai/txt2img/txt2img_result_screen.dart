@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_controller.dart';
@@ -189,7 +190,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                         originalUrl: null,
                         image: base64Encode(list),
                         isVideo: false,
-                        category: DiscoveryCategory.txt2img,
+                        category: HomeCardType.txt2img,
                         payload: controller.parameters != null
                             ? jsonEncode({
                                 "txt2img_params": controller.parameters,

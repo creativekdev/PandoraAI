@@ -57,57 +57,10 @@ class AppFeatureOperator {
     cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
 
     if (result ?? false) {
-      onFeatureTap(context, feature.feature());
+      HomeCardTypeUtils.jump(context: context, source: 'in_app_messaging', payload: feature.feature());
       return true;
     }
     return false;
-  }
-
-  onFeatureTap(BuildContext context, AppFeaturePayload? payload) {
-    var target = HomeCardTypeUtils.build(payload?.target ?? '');
-    switch (target) {
-      case HomeCardType.txt2img:
-        Txt2img.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(context, source: 'in_app_messaging');
-          } else {
-            AnotherMe.permissionDenied(context);
-          }
-        });
-        break;
-      case HomeCardType.cartoonize:
-        var split = payload!.data?.split(',');
-        InitPos pos = InitPos();
-        if (split != null && split.length >= 2) {
-          var controller = Get.find<EffectDataController>();
-          pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
-        }
-        Cartoonize.open(
-          context,
-          source: 'in_app_messaging',
-          tabPos: pos.itemPos,
-          categoryPos: pos.categoryPos,
-          itemPos: pos.itemPos,
-        );
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.style_morph:
-        StyleMorph.open(context, 'in_app_messaging');
-        break;
-      case HomeCardType.UNDEFINED:
-        break;
-    }
   }
 }
 

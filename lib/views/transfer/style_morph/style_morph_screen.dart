@@ -21,6 +21,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -419,7 +420,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         originalUrl: uploadImageController.imageUrl.value,
         image: base64Encode(file.readAsBytesSync()),
         isVideo: false,
-        category: DiscoveryCategory.stylemorph,
+        category: HomeCardType.style_morph,
       ).then((value) {
         if (value ?? false) {
           Events.styleMorphCompleteShare(source: photoType, platform: 'discovery', type: 'image');

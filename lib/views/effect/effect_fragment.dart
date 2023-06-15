@@ -100,40 +100,6 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
     }
   }
 
-  onItemClick(HomeCardType type) {
-    switch (type) {
-      case HomeCardType.cartoonize:
-        Cartoonize.open(
-          context,
-          source: 'home_page',
-          categoryPos: 0,
-          itemPos: 0,
-          tabPos: 0,
-        );
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.open(context, source: 'home_page');
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.openFromHome(context);
-        break;
-      case HomeCardType.txt2img:
-        Txt2img.open(context, source: 'home_page');
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(context, source: 'home_page');
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(context, source: 'home_page');
-        break;
-      case HomeCardType.style_morph:
-        StyleMorph.open(context, 'home_page');
-        break;
-      case HomeCardType.UNDEFINED:
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<EffectDataController>(
@@ -220,7 +186,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                               ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                             ],
                           ).intoGestureDetector(onTap: () {
-                            onItemClick(type);
+                            HomeCardTypeUtils.jumpWithHomeType(context, 'home_page', type, InitPos());
                           });
                         },
                         itemCount: list.length,

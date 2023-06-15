@@ -19,20 +19,12 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:posthog_flutter/posthog_flutter.dart';
-
-enum DiscoveryCategory {
-  ai_avatar,
-  cartoonize,
-  another_me,
-  stylemorph,
-  txt2img,
-  scribble,
-}
 
 const int _maxInputLength = 512;
 
@@ -43,7 +35,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
     required String image,
     required bool isVideo,
     required String effectKey,
-    required DiscoveryCategory category,
+    required HomeCardType category,
     String? payload,
   }) {
     return Navigator.of(context).push<bool>(
@@ -66,7 +58,7 @@ class ShareDiscoveryScreen extends StatefulWidget {
   bool isVideo;
   String effectKey;
   String? payload;
-  DiscoveryCategory category;
+  HomeCardType category;
 
   ShareDiscoveryScreen({
     Key? key,
@@ -117,23 +109,28 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     }
     delay(() {
       switch (widget.category) {
-        case DiscoveryCategory.ai_avatar:
+        case HomeCardType.ai_avatar:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', '#PandoraAvatar');
           break;
-        case DiscoveryCategory.cartoonize:
+        case HomeCardType.cartoonize:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Cartoonizer");
           break;
-        case DiscoveryCategory.another_me:
+        case HomeCardType.anotherme:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Me-taverse");
           break;
-        case DiscoveryCategory.txt2img:
+        case HomeCardType.txt2img:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AITextToImage");
           break;
-        case DiscoveryCategory.scribble:
+        case HomeCardType.scribble:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIScribble");
           break;
-        case DiscoveryCategory.stylemorph:
+        case HomeCardType.style_morph:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#StyleMorph");
+          break;
+        case HomeCardType.metagram:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Metagram");
+          break;
+        case HomeCardType.UNDEFINED:
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);

@@ -138,7 +138,6 @@ class MsgDiscoveryListState extends AppState<MsgDiscoveryList> with AutomaticKee
                   builder: (_) => DiscoveryDetailScreen(
                     discoveryEntity: value,
                     prePage: 'msg_page',
-                    dataType: 'msg_page',
                   ),
                   settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                 ),

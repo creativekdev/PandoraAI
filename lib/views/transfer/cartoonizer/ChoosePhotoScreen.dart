@@ -29,6 +29,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
@@ -49,16 +50,10 @@ import '../../advertisement/reward_advertisement_screen.dart';
 import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
-enum EntrySource {
-  fromDiscovery,
-  fromEffect,
-}
-
 class ChoosePhotoScreen extends StatefulWidget {
   int tabPos;
   int pos;
   int itemPos;
-  EntrySource entrySource;
   RecentEffectModel? recentEffectModel;
 
   ChoosePhotoScreen({
@@ -66,7 +61,6 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.tabPos,
     required this.pos,
     required this.itemPos,
-    this.entrySource = EntrySource.fromEffect,
     this.recentEffectModel,
   }) : super(key: key);
 
@@ -756,7 +750,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: videoUrl,
           isVideo: true,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');
@@ -773,7 +767,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: newImage,
           isVideo: false,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');

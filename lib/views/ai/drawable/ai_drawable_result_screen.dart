@@ -17,6 +17,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
@@ -313,11 +314,11 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                   var forward = () {
                     ShareDiscoveryScreen.push(
                       context,
-                      effectKey: DiscoveryCategory.scribble.name,
+                      effectKey: 'scribble',
                       originalUrl: uploadImageController.imageUrl.value,
                       image: base64Encode(file.readAsBytesSync()),
                       isVideo: false,
-                      category: DiscoveryCategory.scribble,
+                      category: HomeCardType.scribble,
                     ).then((value) {
                       if (value ?? false) {
                         Events.aidrawCompleteShare(source: source, platform: 'discovery', type: photoType);
