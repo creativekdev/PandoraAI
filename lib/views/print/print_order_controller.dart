@@ -33,7 +33,7 @@ class PrintOrderController extends GetxController {
   };
   bool _viewInit = false;
 
-  int size = 4;
+  int size = 10;
   String name = "";
   List<DateTime?> _dates = [];
 
