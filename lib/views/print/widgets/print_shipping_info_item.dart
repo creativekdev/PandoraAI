@@ -1,9 +1,10 @@
 import '../../../Common/importFile.dart';
 
 class PrintShippingInfoItem extends StatelessWidget {
-  const PrintShippingInfoItem({Key? key, required this.image, required this.value}) : super(key: key);
+  const PrintShippingInfoItem({Key? key, required this.image, required this.value, this.color}) : super(key: key);
   final String image;
   final String value;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +15,13 @@ class PrintShippingInfoItem extends StatelessWidget {
           Image.asset(
             image,
             width: $(16),
-            color: ColorConstant.DiscoveryCommentGrey,
-          ).intoPadding(padding: EdgeInsets.only(top: $(6))),
+            color: color ?? ColorConstant.DiscoveryCommentGrey,
+          ).intoPadding(padding: EdgeInsets.only(top: $(3))),
           SizedBox(width: $(16)),
           Expanded(
             child: TitleTextWidget(
               value,
-              ColorConstant.DiscoveryCommentGrey,
+              color ?? ColorConstant.DiscoveryCommentGrey,
               FontWeight.w400,
               $(14),
               align: TextAlign.left,

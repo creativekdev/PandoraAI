@@ -1,4 +1,3 @@
-import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_shipping_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_delivery_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_input_item.dart';
@@ -7,7 +6,6 @@ import 'package:google_maps_webservice/places.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/blank_area_intercept.dart';
-import '../../Widgets/router/routers.dart';
 import '../../images-res.dart';
 
 class PrintShippingScreen extends StatefulWidget {
@@ -42,7 +40,7 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          "Shipping details".tr,
+          S.of(context).shipping_details,
           style: TextStyle(
             color: Colors.white,
             fontSize: $(18),
@@ -71,10 +69,10 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
                 child: BlankAreaIntercept(
                   child: CustomScrollView(
                     slivers: [
-                      SliverToBoxAdapter(child: TitleTextWidget("Address".tr, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
+                      SliverToBoxAdapter(child: TitleTextWidget(S.of(context).address, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
-                          title: 'Search address'.tr,
+                          title: S.of(context).search_address,
                           controller: controller.searchAddressController,
                           completeCallback: () {
                             hideSearchResults();
@@ -83,25 +81,25 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
-                          title: 'Apartment/Suite/Other'.tr,
+                          title: S.of(context).apartment_suite_other,
                           controller: controller.apartmentController,
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
-                          title: 'First name'.tr,
+                          title: S.of(context).first_name,
                           controller: controller.firstNameController,
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
-                          title: 'Last name'.tr,
+                          title: S.of(context).last_name,
                           controller: controller.secondNameController,
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputContactItem(
-                          title: 'Contact number'.tr,
+                          title: S.of(context).contact_number,
                           controller: controller.contactNumberController,
                           regionCodeEntity: controller.regionEntity,
                           onTap: () {
@@ -145,10 +143,7 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
                 onTap: () async {
                   bool isSuccess = await controller.onSubmit();
                   if (isSuccess) {
-                    Navigator.of(context).push<void>(Right2LeftRouter(
-                        child: PrintPaymentScreen(
-                      payUrl: controller.payUrl,
-                    )));
+                    controller.gotoPaymentPage(context);
                   }
                 },
               ),

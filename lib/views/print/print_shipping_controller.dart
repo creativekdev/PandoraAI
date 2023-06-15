@@ -3,11 +3,16 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
+import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
+import 'package:cartoonizer/views/print/print_payment_screen.dart';
+import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_webservice/places.dart';
 
 import '../../Controller/effect_data_controller.dart';
+import '../../Widgets/router/routers.dart';
 import '../../models/print_order_entity.dart';
+import '../../models/print_payment_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../models/region_code_entity.dart';
 import '../common/region/select_region_page.dart';
@@ -56,6 +61,8 @@ class PrintShippingController extends GetxController {
   double get total => _total;
 
   List<Prediction> _predictions = [];
+  late PrintOrderDataPayload orderPayload;
+  late PrintOrderEntity? printOrderEntity;
 
   bool _isResult = false;
 
@@ -126,14 +133,18 @@ class PrintShippingController extends GetxController {
     update();
   }
 
-  late RegionCodeEntity _regionEntity = RegionCodeEntity();
+  // String? regionName;
+  // String? callingCode;
+  // String? regionCode;
+  // String? regionFlag;
+  RegionCodeEntity? _regionEntity;
 
-  set regionEntity(RegionCodeEntity value) {
+  set regionEntity(RegionCodeEntity? value) {
     _regionEntity = value;
     update();
   }
 
-  RegionCodeEntity get regionEntity => _regionEntity;
+  RegionCodeEntity? get regionEntity => _regionEntity;
 
   bool _viewInit = false;
 
@@ -149,6 +160,70 @@ class PrintShippingController extends GetxController {
         _regionEntity = value;
       }
     });
+  }
+
+  gotoPaymentPage(BuildContext context) async {
+    int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
+    final params = {
+      "order_id": printOrderEntity?.data.id,
+      "order_type": "ps-order",
+      "success_url": "https://socialbook.io/pay_success_screen",
+      "cancel_url": "https://socialbook.io/pay_cancel_screen",
+      "shipping_options": [
+        {
+          "shipping_rate_data": {
+            "type": 'fixed_amount',
+            "fixed_amount": {"amount": amount, "currency": "usd"},
+            "display_name": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
+          }
+        }
+      ],
+      "line_items": [
+        {
+          "price_data": {
+            "currency": "usd",
+            "unit_amount": (printController.total * 100).toInt(),
+            "product_data": {
+              "name": printOrderEntity?.data.name,
+              "images": [printController.preview_image],
+            },
+            "tax_behavior": "exclusive",
+          },
+          "adjustable_quantity": {"enabled": false},
+          "quantity": printController.quatity
+        }
+      ],
+    };
+
+    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
+
+    Navigator.of(context).push<void>(
+      Right2LeftRouter(
+        child: PrintPaymentScreen(
+          payUrl: payment?.data.url ?? '',
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+          cancelPayCallBack: (sessionId, payUrl) {
+            Navigator.of(context).pop();
+            Navigator.of(context).push<void>(Right2LeftRouter(
+                child: PrintPaymentCancelScreen(
+              payUrl: payUrl,
+              sessionId: sessionId,
+              orderEntity: printOrderEntity!,
+            )));
+          },
+          payCompleteCallBack: (sessionId, payUrl) {
+            Navigator.of(context).pop();
+            Navigator.of(context).push<void>(Right2LeftRouter(
+                child: PrintPaymentSuccessScreen(
+              payUrl: payUrl,
+              sessionId: sessionId,
+              orderEntity: printOrderEntity!,
+            )));
+          },
+        ),
+      ),
+    );
   }
 
   Future<bool> onSubmit() async {
@@ -174,11 +249,11 @@ class PrintShippingController extends GetxController {
     }
     var address = {
       "first_name": firstNameController.text,
-      "last_name": searchAddressController.text,
-      "phone": "+${regionEntity.regionCode ?? "1"}" + contactNumberController.text,
-      "country_code": regionEntity.regionCode,
-      "country_name": regionEntity.regionName,
-      "country": regionEntity.regionName,
+      "last_name": secondNameController.text,
+      "phone": "+${regionEntity?.regionCode ?? "1"}" + contactNumberController.text,
+      "country_code": regionEntity?.regionCode,
+      "country_name": regionEntity?.regionName,
+      "country": regionEntity?.regionName,
       "address1": searchAddressController.text,
       "address2": apartmentController.text,
     };
@@ -188,7 +263,7 @@ class PrintShippingController extends GetxController {
       "quantity": printController.quatity,
       "customer": {
         "first_name": firstNameController.text,
-        "last_name": searchAddressController.text,
+        "last_name": secondNameController.text,
         "addresses": [address],
       },
       "shipping_address": address,
@@ -197,15 +272,14 @@ class PrintShippingController extends GetxController {
       "ps_image": printController.ai_image,
       "ps_preview_image": printController.preview_image,
     };
-    PrintOrderEntity? printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
-    print(printOrderEntity?.data.toJson());
+    printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
     if (printOrderEntity == null) {
       Fluttertoast.showToast(msg: "Something went wrong", gravity: ToastGravity.CENTER);
       return false;
     }
-    String payload = printOrderEntity.data.payload;
-    PrintOrderDataPayload orderPayload = PrintOrderDataPayload.fromJson(json.decode(payload));
-    _payUrl = orderPayload.order.orderStatusUrl;
+    String payload = printOrderEntity!.data.payload;
+    orderPayload = PrintOrderDataPayload.fromJson(json.decode(payload));
+    // _payUrl = orderPayload.order.orderStatusUrl;
     return true;
   }
 

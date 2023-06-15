@@ -15,19 +15,25 @@ import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../Widgets/router/routers.dart';
 
 class PrintScreen extends StatefulWidget {
-  PrintScreen({Key? key, required this.optionData}) : super(key: key);
+  PrintScreen({
+    Key? key,
+    required this.optionData,
+    required this.file,
+  }) : super(key: key);
   final PrintOptionData optionData;
+  final String file;
 
   @override
-  State<PrintScreen> createState() => _PrintScreenState(optionData: optionData);
+  State<PrintScreen> createState() => _PrintScreenState(optionData: optionData, file: file);
 }
 
 class _PrintScreenState extends State<PrintScreen> {
-  _PrintScreenState({required this.optionData}) {
-    controller = Get.put(PrintController(optionData: optionData));
+  _PrintScreenState({required this.optionData, required this.file}) {
+    controller = Get.put(PrintController(optionData: optionData, file: file));
   }
 
   PrintOptionData optionData;
+  String file;
   late PrintController controller;
 
   // File file = File(acontroller.transKey!);
@@ -83,7 +89,7 @@ class _PrintScreenState extends State<PrintScreen> {
                             height: controller.imgSize.height,
                           ),
                           Image.file(
-                            File(controller.acontroller.transKey!),
+                            File(controller.file!),
                             width: controller.size.width,
                             height: controller.size.height,
                             fit: BoxFit.contain,

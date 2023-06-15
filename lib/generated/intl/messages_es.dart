@@ -24,12 +24,14 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "Sus solicitudes diarias han alcanzado su límite, inténtelo de nuevo mañana"),
+        "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Usuarios de Pandora"),
         "activate_failed":
             MessageLookupByLibrary.simpleMessage("Error de activación"),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("Activación correcta！"),
+        "address": MessageLookupByLibrary.simpleMessage("Address"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage(
             "Al registrarse, usted acepta"),
@@ -52,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "already_account":
             MessageLookupByLibrary.simpleMessage("Ya tienes una cuenta？ "),
         "and": MessageLookupByLibrary.simpleMessage("y"),
+        "apartment_suite_other":
+            MessageLookupByLibrary.simpleMessage("Apartment/Suite/Other"),
         "app_name": MessageLookupByLibrary.simpleMessage("Pandora ama"),
         "apple":
             MessageLookupByLibrary.simpleMessage("Usar una cuenta de Apple"),
@@ -64,6 +68,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "avatar_create_ensure_hint": MessageLookupByLibrary.simpleMessage(
             "El estilo de selección actual es %s. Por favor, cargue una imagen que coincida con este estilo para garantizar que los resultados generados sean más precisos. ¿Seguro que el estilo es %s?"),
         "avatars": MessageLookupByLibrary.simpleMessage("retratos"),
+        "back_home": MessageLookupByLibrary.simpleMessage("Back home"),
         "bad_photo_description": MessageLookupByLibrary.simpleMessage(
             "Fotos de grupo, fotos de solo mirada, cubierta facial / gafas de sol, fotos monótonas, desnudos, niños (menores de 12 años)"),
         "bad_photo_examples": MessageLookupByLibrary.simpleMessage(
@@ -72,6 +77,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "No suba fotos de mascotas y no cubra sus caras; Tampoco subas fotos de mascotas acurrucadas y extremidades torcidas……"),
         "before": MessageLookupByLibrary.simpleMessage("Before"),
         "bought": MessageLookupByLibrary.simpleMessage("Comprado"),
+        "business_days_10_20":
+            MessageLookupByLibrary.simpleMessage("10-20 business days"),
+        "business_days_7_10":
+            MessageLookupByLibrary.simpleMessage("7-10 business days"),
         "buy": MessageLookupByLibrary.simpleMessage("compra"),
         "buyAttrFasterSpeed":
             MessageLookupByLibrary.simpleMessage("Convierte más rápido"),
@@ -142,6 +151,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Confirmar la contraseña"),
         "congratulations": MessageLookupByLibrary.simpleMessage("Felicidades!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("Contáctenos"),
+        "contact_number":
+            MessageLookupByLibrary.simpleMessage("Contact Number"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copiado al portapapeles"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage(
@@ -216,6 +227,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "expand": MessageLookupByLibrary.simpleMessage("desplegar"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "Las imágenes producidas por la IA son impredecibles y pueden contener imágenes incómodas como desnudez y mutilación, que están fuera de nuestro control. Por lo tanto, asegúrese de conocer todos los riesgos antes de hacer clic en Continuar"),
+        "expedited": MessageLookupByLibrary.simpleMessage("expedited"),
         "expired_date": MessageLookupByLibrary.simpleMessage("Válido hasta"),
         "explain": MessageLookupByLibrary.simpleMessage("ilustrar"),
         "explore_more": MessageLookupByLibrary.simpleMessage("Ir a explorar"),
@@ -235,6 +247,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Ya has enviado tu opinión, inténtalo de nuevo mañana"),
         "feedback_thanks":
             MessageLookupByLibrary.simpleMessage("Gracias por sus comentarios"),
+        "first_name": MessageLookupByLibrary.simpleMessage("First Name"),
         "forgot_password":
             MessageLookupByLibrary.simpleMessage("Olvidé mi contraseña？"),
         "forgot_password_text": MessageLookupByLibrary.simpleMessage(
@@ -298,6 +311,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "january": MessageLookupByLibrary.simpleMessage("Enero"),
         "july": MessageLookupByLibrary.simpleMessage("Julio"),
         "june": MessageLookupByLibrary.simpleMessage("Junio"),
+        "last_name": MessageLookupByLibrary.simpleMessage("Last Name"),
         "like": MessageLookupByLibrary.simpleMessage("Gustar"),
         "login": MessageLookupByLibrary.simpleMessage("Iniciar sesión"),
         "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(
@@ -363,6 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "not_found":
             MessageLookupByLibrary.simpleMessage("Los datos no existen"),
         "november": MessageLookupByLibrary.simpleMessage("Noviembre"),
+        "number": MessageLookupByLibrary.simpleMessage("Number"),
         "october": MessageLookupByLibrary.simpleMessage("Octubre"),
         "ok": MessageLookupByLibrary.simpleMessage("Bien"),
         "ok1": MessageLookupByLibrary.simpleMessage("Bien"),
@@ -370,6 +385,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "oldversion_tips": MessageLookupByLibrary.simpleMessage(
             "La versión actual es más antigua, actualice la aplicación"),
         "or": MessageLookupByLibrary.simpleMessage("o"),
+        "order_ID": MessageLookupByLibrary.simpleMessage("Order ID:"),
+        "order_details": MessageLookupByLibrary.simpleMessage("Order details"),
+        "order_time": MessageLookupByLibrary.simpleMessage("Order time"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("Otro"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("Comprado"),
@@ -401,6 +419,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Pagar con una tarjeta nueva"),
         "payment": MessageLookupByLibrary.simpleMessage("pagar"),
         "paymentBtn": MessageLookupByLibrary.simpleMessage("Enviar el pedido"),
+        "payment_failed":
+            MessageLookupByLibrary.simpleMessage("Payment failed"),
         "payment_successfully":
             MessageLookupByLibrary.simpleMessage("Pago exitoso"),
         "per_day": MessageLookupByLibrary.simpleMessage("veces todos los días"),
@@ -501,6 +521,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Contiene elementos de terror！"),
         "scary_content_alert_open_it": MessageLookupByLibrary.simpleMessage(
             "El contenido de terror se ha ocultado, haga clic para mostrarlo"),
+        "search_address":
+            MessageLookupByLibrary.simpleMessage("Search address"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Ve a verlo"),
         "select": MessageLookupByLibrary.simpleMessage("elegir"),
         "select_a_style": MessageLookupByLibrary.simpleMessage(
@@ -541,6 +563,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Compartir la aplicación"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora ama"),
         "share_to": MessageLookupByLibrary.simpleMessage("Compartir en"),
+        "shipping_delivery":
+            MessageLookupByLibrary.simpleMessage("Shipping & Delivery"),
+        "shipping_information":
+            MessageLookupByLibrary.simpleMessage("Shipping information"),
         "show_it": MessageLookupByLibrary.simpleMessage("Monitor"),
         "sign_in": MessageLookupByLibrary.simpleMessage("Iniciar sesión"),
         "sign_up": MessageLookupByLibrary.simpleMessage("inscribirse"),
@@ -551,6 +577,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Regístrate para desbloquear más funciones"),
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "¡Nos alegra que te haya gustado nuestra herramienta! Regístrese o inicie sesión ahora, solo toma 2 minutos y puede experimentar más funciones！"),
+        "standard": MessageLookupByLibrary.simpleMessage("standard"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
@@ -593,6 +620,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_saving": MessageLookupByLibrary.simpleMessage("Ahorro..."),
         "trans_success": MessageLookupByLibrary.simpleMessage("terminar"),
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Cargar..."),
+        "try_again": MessageLookupByLibrary.simpleMessage("Try again"),
         "try_it_now": MessageLookupByLibrary.simpleMessage("Ir ahora"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Sigue"),
         "unique_avatars":
@@ -613,6 +641,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Subir una imagen"),
         "uploading_photos":
             MessageLookupByLibrary.simpleMessage("Subir una imagen"),
+        "variations": MessageLookupByLibrary.simpleMessage("Variations"),
         "variations_of_styles": MessageLookupByLibrary.simpleMessage(
             "10 estilos, 10 variaciones cada uno"),
         "view_all": MessageLookupByLibrary.simpleMessage("Ver todos"),
@@ -620,6 +649,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ver todos ％d comentarios>"),
         "view_more_comment":
             MessageLookupByLibrary.simpleMessage("Ver más %d comentarios"),
+        "view_orders": MessageLookupByLibrary.simpleMessage("View orders"),
         "waiting":
             MessageLookupByLibrary.simpleMessage("Espere la compilación"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 // ANDROID_CHANNEL -> 单独发布的时候，需要指定一个 channel
@@ -83,14 +84,26 @@ class DevelopmentConfig implements BaseConfig {
   // String aiHost = 'http://192.168.31.126:3000';
 
   // io
-  String host = 'https://socialbook.io';
-  String aiHost = 'https://ai.socialbook.io';
+  // String host = 'https://socialbook.io';
+  // String aiHost = 'https://ai.socialbook.io';
+  //
+  // String get apiHost => '$host/api';
+  // String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
+  // String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
+  // String text2imageHost = "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/sd";
+  // String metagramSocket = 'io.socialbook.io';
+  // String metagramSocketSchema = 'https';
+  // int metagramSocketPort = 443;
+
+// us
+  String host = 'https://socialbook.us';
+  String aiHost = 'https://ai.socialbook.us';
 
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
   String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
   String text2imageHost = "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/sd";
-  String metagramSocket = 'io.socialbook.io';
+  String metagramSocket = 'io.socialbook.us';
   String metagramSocketSchema = 'https';
   int metagramSocketPort = 443;
 }

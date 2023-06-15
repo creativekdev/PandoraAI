@@ -23,6 +23,7 @@ import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/models/print_order_entity.dart';
 import 'package:cartoonizer/models/print_orders_entity.dart';
+import 'package:cartoonizer/models/print_payment_entity.dart';
 import 'package:cartoonizer/models/print_product_entity.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
@@ -164,6 +165,18 @@ class JsonConvert {
     (PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSet).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSet.fromJson,
     (PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetShopMoney).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetShopMoney.fromJson,
     (PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson,
+    (PrintPaymentEntity).toString(): PrintPaymentEntity.fromJson,
+    (PrintPaymentData).toString(): PrintPaymentData.fromJson,
+    (PrintPaymentDataAutomaticTax).toString(): PrintPaymentDataAutomaticTax.fromJson,
+    (PrintPaymentDataCustomText).toString(): PrintPaymentDataCustomText.fromJson,
+    (PrintPaymentDataInvoiceCreation).toString(): PrintPaymentDataInvoiceCreation.fromJson,
+    (PrintPaymentDataInvoiceCreationInvoiceData).toString(): PrintPaymentDataInvoiceCreationInvoiceData.fromJson,
+    (PrintPaymentDataInvoiceCreationInvoiceDataMetadata).toString(): PrintPaymentDataInvoiceCreationInvoiceDataMetadata.fromJson,
+    (PrintPaymentDataMetadata).toString(): PrintPaymentDataMetadata.fromJson,
+    (PrintPaymentDataPaymentMethodOptions).toString(): PrintPaymentDataPaymentMethodOptions.fromJson,
+    (PrintPaymentDataPhoneNumberCollection).toString(): PrintPaymentDataPhoneNumberCollection.fromJson,
+    (PrintPaymentDataShippingOptions).toString(): PrintPaymentDataShippingOptions.fromJson,
+    (PrintPaymentDataTotalDetails).toString(): PrintPaymentDataTotalDetails.fromJson,
     (PrintProductEntity).toString(): PrintProductEntity.fromJson,
     (PrintProductData).toString(): PrintProductData.fromJson,
     (PrintProductDataRows).toString(): PrintProductDataRows.fromJson,
@@ -741,6 +754,42 @@ class JsonConvert {
           .map<PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney>(
               (Map<String, dynamic> e) => PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson(e))
           .toList() as M;
+    }
+    if (<PrintPaymentEntity>[] is M) {
+      return data.map<PrintPaymentEntity>((Map<String, dynamic> e) => PrintPaymentEntity.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentData>[] is M) {
+      return data.map<PrintPaymentData>((Map<String, dynamic> e) => PrintPaymentData.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataAutomaticTax>[] is M) {
+      return data.map<PrintPaymentDataAutomaticTax>((Map<String, dynamic> e) => PrintPaymentDataAutomaticTax.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataCustomText>[] is M) {
+      return data.map<PrintPaymentDataCustomText>((Map<String, dynamic> e) => PrintPaymentDataCustomText.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataInvoiceCreation>[] is M) {
+      return data.map<PrintPaymentDataInvoiceCreation>((Map<String, dynamic> e) => PrintPaymentDataInvoiceCreation.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataInvoiceCreationInvoiceData>[] is M) {
+      return data.map<PrintPaymentDataInvoiceCreationInvoiceData>((Map<String, dynamic> e) => PrintPaymentDataInvoiceCreationInvoiceData.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataInvoiceCreationInvoiceDataMetadata>[] is M) {
+      return data.map<PrintPaymentDataInvoiceCreationInvoiceDataMetadata>((Map<String, dynamic> e) => PrintPaymentDataInvoiceCreationInvoiceDataMetadata.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataMetadata>[] is M) {
+      return data.map<PrintPaymentDataMetadata>((Map<String, dynamic> e) => PrintPaymentDataMetadata.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataPaymentMethodOptions>[] is M) {
+      return data.map<PrintPaymentDataPaymentMethodOptions>((Map<String, dynamic> e) => PrintPaymentDataPaymentMethodOptions.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataPhoneNumberCollection>[] is M) {
+      return data.map<PrintPaymentDataPhoneNumberCollection>((Map<String, dynamic> e) => PrintPaymentDataPhoneNumberCollection.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataShippingOptions>[] is M) {
+      return data.map<PrintPaymentDataShippingOptions>((Map<String, dynamic> e) => PrintPaymentDataShippingOptions.fromJson(e)).toList() as M;
+    }
+    if (<PrintPaymentDataTotalDetails>[] is M) {
+      return data.map<PrintPaymentDataTotalDetails>((Map<String, dynamic> e) => PrintPaymentDataTotalDetails.fromJson(e)).toList() as M;
     }
     if (<PrintProductEntity>[] is M) {
       return data.map<PrintProductEntity>((Map<String, dynamic> e) => PrintProductEntity.fromJson(e)).toList() as M;

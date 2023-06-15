@@ -124,25 +124,32 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                 child: TabBarView(
                     controller: controller.tabController,
                     children: controller.statuses.map((e) {
-                      return _AutomaticKeepAlive(
-                        child: CustomScrollView(
-                          slivers: [
-                            SliverList(
-                                delegate: SliverChildBuilderDelegate((context, index) {
-                              return PrintOrderItem(rows: controller.orders[e.toLowerCase()]![index]).intoGestureDetector(onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      settings: RouteSettings(name: "/PrintOrderDetailScreen"),
-                                      builder: (context) => PrintOrderDetailScreen(
-                                        rows: controller.orders[e.toLowerCase()]![index],
-                                      ),
-                                    ));
-                              });
-                            }, childCount: controller.orders[e.toLowerCase()]?.length ?? 0)),
-                          ],
-                        ),
-                      );
+                      if (controller.orders[e.toLowerCase()] != null && controller.orders[e.toLowerCase()]!.length > 0) {
+                        return _AutomaticKeepAlive(
+                          child: CustomScrollView(
+                            controller: controller.sControllers[e]
+                              ?..addListener(() {
+                                controller.onListenSwiper(e);
+                              }),
+                            slivers: [
+                              SliverList(
+                                  delegate: SliverChildBuilderDelegate((context, index) {
+                                return PrintOrderItem(rows: controller.orders[e.toLowerCase()]![index]).intoGestureDetector(onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        settings: RouteSettings(name: "/PrintOrderDetailScreen"),
+                                        builder: (context) => PrintOrderDetailScreen(
+                                          rows: controller.orders[e.toLowerCase()]![index],
+                                        ),
+                                      ));
+                                });
+                              }, childCount: controller.orders[e.toLowerCase()]?.length ?? 0)),
+                            ],
+                          ),
+                        );
+                      }
+                      return Center(child: TitleTextWidget("You have not this orders", ColorConstant.White, FontWeight.normal, $(12)));
                     }).toList()),
               ),
             ]);

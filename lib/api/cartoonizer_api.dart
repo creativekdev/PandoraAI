@@ -29,6 +29,7 @@ import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/models/print_order_entity.dart';
+import 'package:cartoonizer/models/print_payment_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -415,6 +416,13 @@ class CartoonizerApi extends RetryAbleRequester {
   Future<BaseEntity?> buyPlan(body) async {
     var baseEntity = await post("/plan/buy", params: body);
     return baseEntity;
+  }
+
+  // buy plan with check
+  Future<PrintPaymentEntity?> buyPlanCheckout(body) async {
+    var baseEntity = await post("/plan/checkout", params: body);
+    print("127.0.0.1 === ${baseEntity?.data}");
+    return jsonConvert.convert<PrintPaymentEntity>(baseEntity?.data);
   }
 
   // buy plan with stripe

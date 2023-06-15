@@ -49,11 +49,15 @@ class PrintInputContactItem extends StatelessWidget {
   PrintInputContactItem({Key? key, required this.title, required this.controller, required this.onTap, required this.regionCodeEntity}) : super(key: key);
   final String title;
   final TextEditingController controller;
-  GestureTapCallback onTap;
+  final GestureTapCallback onTap;
   RegionCodeEntity? regionCodeEntity;
 
   @override
   Widget build(BuildContext context) {
+    print(regionCodeEntity);
+    print(regionCodeEntity?.regionCode);
+    bool regionIsEmpty = regionCodeEntity == null;
+    print(regionIsEmpty);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,18 +73,37 @@ class PrintInputContactItem extends StatelessWidget {
         Container(
           height: $(48),
           decoration: BoxDecoration(
-            color: ColorConstant.EffectCardColor,
+            color: Color(0xFF0F0F0F),
             borderRadius: BorderRadius.circular($(8)),
           ),
           child: Stack(
             children: [
               Container(
+                alignment: Alignment.centerLeft,
+                margin: EdgeInsets.only(left: $(100)),
+                child: TextField(
+                  style: TextStyle(
+                    color: ColorConstant.White,
+                    fontSize: $(14),
+                  ),
+                  cursorColor: ColorConstant.White,
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    fillColor: ColorConstant.EffectCardColor,
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
                 padding: EdgeInsets.only(left: $(16)),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  regionCodeEntity?.regionFlag ?? '🇺🇸',
+                  regionIsEmpty ? '🇺🇸' : regionCodeEntity!.regionFlag!,
                   style: TextStyle(
-                    color: Color(0xfff9f9f9),
+                    // color: Color(0xfff9f9f9),
                     fontSize: $(18),
                     fontFamily: 'Poppins',
                   ),
@@ -104,7 +127,7 @@ class PrintInputContactItem extends StatelessWidget {
                 child: Text(
                   regionCodeEntity?.regionCode ?? '+1',
                   style: TextStyle(
-                    color: Color(0x7FFFFFFF),
+                    color: ColorConstant.White,
                     fontSize: $(14),
                     fontFamily: 'Poppins',
                   ),
@@ -112,26 +135,6 @@ class PrintInputContactItem extends StatelessWidget {
               ).intoGestureDetector(
                 onTap: onTap,
               ),
-              Container(
-                color: Color(0xFF0F0F0F),
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: $(100)),
-                child: TextField(
-                  style: TextStyle(
-                    color: ColorConstant.White,
-                    fontSize: $(14),
-                  ),
-                  cursorColor: ColorConstant.White,
-                  controller: controller,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    fillColor: ColorConstant.EffectCardColor,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              )
             ],
           ),
         ),

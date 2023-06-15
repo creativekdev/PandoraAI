@@ -12,10 +12,9 @@ import '../../models/print_option_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../network/dio_node.dart';
 import '../../utils/utils.dart';
-import '../ai/anotherme/another_me_controller.dart';
 
 class PrintController extends GetxController {
-  PrintController({required this.optionData});
+  PrintController({required this.optionData, required this.file});
 
   PrintOptionData optionData;
   late CartoonizerApi cartoonizerApi;
@@ -23,7 +22,9 @@ class PrintController extends GetxController {
 
   PrintProductEntity? product;
   PrintProductNeedInfoEntity? productInfo;
-  AnotherMeController acontroller = Get.find();
+
+  // AnotherMeController acontroller = Get.find();
+  String file;
 
   String preview_image = "";
   String ai_image = "";
@@ -34,7 +35,7 @@ class PrintController extends GetxController {
 
   // 上传AI生成的图片
   Future<bool> _uploadAIImage() async {
-    String path = acontroller.transKey!;
+    String path = file!;
     File imageFile = File(path);
     if (imageFile.existsSync()) {
       String b_name = "fast-socialbook";

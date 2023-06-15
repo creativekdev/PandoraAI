@@ -25,9 +25,10 @@ import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
+
+import '../transfer/style_morph/style_morph.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;

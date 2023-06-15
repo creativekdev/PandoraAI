@@ -28,7 +28,7 @@ class _PrintSubmitAreaState extends State<PrintSubmitArea> {
             children: [
               Row(
                 children: [
-                  TitleTextWidget("Subtotal".tr, ColorConstant.White, FontWeight.w500, $(14)),
+                  TitleTextWidget(S.of(context).Subtotal, ColorConstant.White, FontWeight.w500, $(14)),
                   Spacer(),
                   PriceWidget(integerVale: getInt(widget.total), fractionValue: getDouble(widget.total)),
                 ],
@@ -39,7 +39,7 @@ class _PrintSubmitAreaState extends State<PrintSubmitArea> {
                 height: $(20),
               ),
               TitleTextWidget(
-                "Checkout".tr,
+                S.of(context).checkout,
                 ColorConstant.White,
                 FontWeight.w500,
                 $(17),
@@ -97,6 +97,6 @@ String getInt(double value) {
 
 // 获取一个double类型的小数部分
 String getDouble(double value) {
-  String valueStr = value.toString();
-  return valueStr.split(".")[1];
+  String valueStr = value.toStringAsFixed(2).toString();
+  return valueStr.split(".")[1].substring(0, 2);
 }

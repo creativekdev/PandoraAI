@@ -36,7 +36,7 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         title: Text(
-          "Order Details".tr,
+          S.of(context).order_details,
           style: TextStyle(
             color: Colors.white,
             fontSize: $(18),
@@ -64,7 +64,7 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
                   color: Color(0xFF1B1C1D),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     TitleTextWidget(
-                      "Order ID: ${rows.shopifyOrderId}",
+                      "${S.of(context).order_ID} ${rows.shopifyOrderId}",
                       ColorConstant.White,
                       FontWeight.w500,
                       $(17),
@@ -103,23 +103,23 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
                       ),
                     ]),
                     PrintOrderInfoItem(
-                      name: "Order ID",
+                      name: S.of(context).order_ID,
                       value: "${rows.shopifyOrderId}",
                     ),
                     PrintOrderInfoItem(
-                      name: "Variant",
+                      name: S.of(context).variations,
                       value: "${controller.order.lineItems.first.variantTitle}",
                     ),
                     PrintOrderInfoItem(
-                      name: "Number",
+                      name: S.of(context).number,
                       value: "${controller.order.lineItems.first.quantity}",
                     ),
                     PrintOrderInfoItem(
-                      name: "Subtotal",
+                      name: S.of(context).Subtotal,
                       value: "${rows.totalPrice}",
                     ),
                     PrintOrderInfoItem(
-                      name: "Order Time",
+                      name: S.of(context).order_time,
                       value: "${getDate(rows.eventTime)}",
                     ),
                   ]),
@@ -136,7 +136,7 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
                   color: Color(0xFF1B1C1D),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     TitleTextWidget(
-                      "Shopping Information".tr,
+                      S.of(context).shipping_information,
                       ColorConstant.White,
                       FontWeight.w500,
                       $(17),

@@ -21,6 +21,8 @@ class Images {
 
   static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
   static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
+  static const String ic_print_payment_failure = 'assets/images/ic_print_payment_failure.png';
+  static const String ic_print_payment_success = 'assets/images/ic_print_payment_success.png';
   static const String ic_delivery = 'assets/images/ic_delivery.png';
   static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
   static const String ic_avatar_ai_planet = 'assets/images/ic_avatar_ai_planet.png';

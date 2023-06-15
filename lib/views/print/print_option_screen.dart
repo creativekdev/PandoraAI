@@ -57,6 +57,7 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       child: PrintScreen(
                     optionData: controller.printOptionEntity.data[index],
+                    file: widget.file.path,
                   )));
                 });
               },

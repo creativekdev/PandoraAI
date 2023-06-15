@@ -78,7 +78,7 @@ class PrintDeliveryitem extends StatelessWidget {
                     padding: EdgeInsets.only(right: $(12)),
                   ),
                   TitleTextWidget(
-                    getDescription(shippingMethodEntity.shippingRateData.displayName),
+                    getDescription(shippingMethodEntity.shippingRateData.displayName, context),
                     ColorConstant.White,
                     FontWeight.normal,
                     $(12),
@@ -93,12 +93,12 @@ class PrintDeliveryitem extends StatelessWidget {
     );
   }
 
-  String getDescription(String type) {
+  String getDescription(String type, BuildContext context) {
     if (type == "standard") {
-      return "10-20 business days".tr;
+      return S.of(context).business_days_10_20;
     }
     if (type == "expedited") {
-      return "7-10 business days".tr;
+      return S.of(context).business_days_7_10;
     }
     return "";
   }
@@ -118,19 +118,19 @@ class PrintDeliveryTitle extends StatelessWidget {
         ),
         SizedBox(height: $(16)),
         TitleTextWidget(
-          "Shipping & Delivery".tr,
+          S.of(context).shipping_delivery,
           ColorConstant.White,
           FontWeight.normal,
           $(16),
           align: TextAlign.left,
         ),
-        TitleTextWidget(
-          "Last name".tr,
-          ColorConstant.White,
-          FontWeight.normal,
-          $(14),
-          align: TextAlign.left,
-        ),
+        // TitleTextWidget(
+        //   "Last name".tr,
+        //   ColorConstant.White,
+        //   FontWeight.normal,
+        //   $(14),
+        //   align: TextAlign.left,
+        // ),
       ],
     );
   }

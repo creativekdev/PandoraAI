@@ -9,11 +9,31 @@ class PrintOrderController extends GetxController {
   TabController? tabController;
 
   List<String> statuses = ["All", "Pending", "Unpaid", "Paid", "Refunded", "voided", "Partial delivered", "Fulfilled", "Restocked"];
-
+  Map<String, ScrollController> sControllers = {
+    "Pending": ScrollController(),
+    "Unpaid": ScrollController(),
+    "Paid": ScrollController(),
+    "Refunded": ScrollController(),
+    "voided": ScrollController(),
+    "All": ScrollController(),
+    "Partial delivered": ScrollController(),
+    "Fulfilled": ScrollController(),
+    "Restocked": ScrollController(),
+  };
+  Map<String, bool> isLoadings = {
+    "Pending": false,
+    "Unpaid": false,
+    "Paid": false,
+    "Refunded": false,
+    "voided": false,
+    "All": false,
+    "Partial delivered": false,
+    "Fulfilled": false,
+    "Restocked": false,
+  };
   bool _viewInit = false;
 
-  List<int> from = [0, 0, 0, 0, 0, 0, 0, 0];
-  int size = 10;
+  int size = 4;
   String name = "";
   List<DateTime?> _dates = [];
 
@@ -34,6 +54,9 @@ class PrintOrderController extends GetxController {
 
   onChangeStatus(int index) {
     _status = statuses[index];
+    if ((orders[_status.toLowerCase()]?.length ?? 0) > 0) {
+      return;
+    }
     onRequestData();
     update();
   }
@@ -65,8 +88,26 @@ class PrintOrderController extends GetxController {
 
   onSuccess(List<PrintOrdersDataRows> entity) {
     _viewInit = true;
-    _orders[_status.toLowerCase()] = entity;
+    if ((orders[_status.toLowerCase()]?.length ?? 0) > 0) {
+      _orders[_status.toLowerCase()]?.addAll(entity);
+    } else {
+      _orders[_status.toLowerCase()] = entity;
+    }
+    isLoadings[_status.toLowerCase()] = false;
     update();
+  }
+
+  onListenSwiper(String tabKey) {
+    if (isLoadings[_status.toLowerCase()] == true) {
+      return;
+    }
+
+    ScrollController controller = sControllers[tabKey]!;
+    if (controller.position.pixels > controller.position.maxScrollExtent - 20) {
+      // 加载更多；
+      isLoadings[_status.toLowerCase()] = true;
+      onRequestData(from: orders[tabKey.toLowerCase()]?.length ?? 0);
+    }
   }
 
   @override
@@ -82,8 +123,8 @@ class PrintOrderController extends GetxController {
     onRequestData();
   }
 
-  onRequestData() {
-    Map<String, dynamic> params = {"from": tabController != null ? from[tabController!.index] : 0, "size": size, "name": name};
+  onRequestData({int from = 0}) {
+    Map<String, dynamic> params = {"from": from, "size": size, "name": name};
     if (_status.toLowerCase() != "all" && _status.toLowerCase() != "all status") {
       if (_status.toLowerCase() == "paid" || _status.toLowerCase() == "unpaid" || _status.toLowerCase() == "refunded" || _status.toLowerCase() == "pending") {
         params["financial_status"] = _status.toLowerCase();
