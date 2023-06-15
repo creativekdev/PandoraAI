@@ -11,6 +11,7 @@ import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'cache_manager.dart';
@@ -101,7 +102,10 @@ class AppFeatureOperator {
       case HomeCardType.metagram:
         Metagram.openBySelf(context, source: 'in_app_messaging');
         break;
-      default:
+      case HomeCardType.style_morph:
+        StyleMorph.open(context, 'in_app_messaging');
+        break;
+      case HomeCardType.UNDEFINED:
         break;
     }
   }

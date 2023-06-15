@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
@@ -123,8 +122,13 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         simulateProgressBarController.uploadComplete();
       }
     }
+    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+      return;
+    }
     var cachedId = await uploadImageController.getCachedIdByKey(key);
-    controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
+    controller.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
+      uploadImageController.deleteUploadData(controller.originFile, key: key);
+    }).then((value) {
       if (value != null) {
         if (value.entity != null) {
           simulateProgressBarController.loadComplete();

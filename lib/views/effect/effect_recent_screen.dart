@@ -161,7 +161,6 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
   }
 
   pickStyleMorphItemAndOpen(BuildContext context, RecentStyleMorphModel data) async {
-    var d = recentController.styleMorphList.pick((data) => data.originalPath == data.originalPath) ?? data;
-    StyleMorph.open(context, 'recently', record: d, initKey: data.itemList.first.key);
+    StyleMorph.open(context, 'recently', record: data, initKey: data.itemList.first.key);
   }
 }

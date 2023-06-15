@@ -45,7 +45,7 @@ class Uploader extends RetryAbleRequester {
         });
   }
 
-  Future<AnotherMeResultEntity?> generateAnotherMe(String url, String? cachedId) async {
+  Future<AnotherMeResultEntity?> generateAnotherMe(String url, String? cachedId, onFailed) async {
     UserManager userManager = AppDelegate().getManager();
     var params = <String, dynamic>{
       'init_images': [url],
@@ -53,7 +53,7 @@ class Uploader extends RetryAbleRequester {
     if (!TextUtil.isEmpty(cachedId)) {
       params['cache_id'] = cachedId!;
     }
-    var baseEntity = await post('${userManager.aiServers['sdppm']}/sdapi/v1/anotherme', params: params);
+    var baseEntity = await post('${userManager.aiServers['sdppm']}/sdapi/v1/anotherme', params: params, onFailed: onFailed);
     var entity = jsonConvert.convert<AnotherMeResultEntity>(baseEntity?.data);
     if (entity != null && baseEntity != null) {
       entity.s = baseEntity.s;

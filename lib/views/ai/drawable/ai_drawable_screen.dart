@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -17,23 +16,22 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/ai_drawable_result_screen.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/widget/drawable_opt.dart';
 import 'package:cartoonizer/views/input/real_time_input_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AiDrawableScreen extends StatefulWidget {
   DrawableRecord? record;
+  String source;
 
   AiDrawableScreen({
     Key? key,
     this.record,
+    required this.source,
   }) : super(key: key);
 
   @override
@@ -53,7 +51,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
   @override
   void initState() {
     super.initState();
-    drawableController = DrawableController(data: widget.record);
+    drawableController = DrawableController(data: widget.record, source: widget.source);
     drawableController.background = Colors.white;
     drawableController.activePens.forEach((element) {
       element.buildPaint(drawableController);
@@ -120,13 +118,20 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
         drawableController.activePens.last.filePath = uploadPath;
       }
       var imageInfo = await SyncMemoryImage(list: value).getImage();
+      String photoType;
+      if (drawableController.activePens.last.drawMode == DrawMode.camera) {
+        photoType = 'ai_draw_${drawableController.activePens.last.source}';
+      } else {
+        photoType = 'ai_draw';
+      }
       Navigator.of(context).push(
         FadeRouter(
           child: AiDrawableResultScreen(
             drawableController: drawableController,
             filePath: uploadPath,
             scale: imageInfo.image.width / imageInfo.image.height,
-            photoType: 'ai_draw',
+            photoType: photoType,
+            source: widget.source,
           ),
           opaque: false,
         ),

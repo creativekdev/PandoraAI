@@ -67,8 +67,9 @@ class DrawableController {
   Function? onStartDraw;
   Rx<String> text = ''.obs;
   List<String> resultFilePaths = [];
+  final String source;
 
-  DrawableController({DrawableRecord? data}) {
+  DrawableController({DrawableRecord? data, required this.source}) {
     if (data != null) {
       text.value = data.text;
       activePens = data.activePens;
@@ -391,6 +392,7 @@ class _DrawableState extends State<Drawable> {
         paths: [DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy)],
         drawMode: _controller.drawMode,
         lastPosition: DrawPosition(x: details.localPosition.dx, y: details.localPosition.dy),
+        source: 'draw',
       )
         ..buildPaint(_controller)
         ..buildPath();
@@ -685,6 +687,7 @@ class DrawablePen {
   Paint? paint;
   String? filePath;
   ImageInfo? cameraImage;
+  String? source;
 
   DrawablePen({
     this.paintWidth = 0,
@@ -693,6 +696,7 @@ class DrawablePen {
     this.lastPosition,
     this.paint,
     this.filePath,
+    this.source,
   }) {
     this.paths = paths ?? [];
     this.drawMode = drawMode ?? DrawMode.paint;
@@ -715,6 +719,9 @@ class DrawablePen {
     if (json['filePath'] != null) {
       pen.filePath = json['filePath'];
     }
+    if (json['source'] != null) {
+      pen.filePath = json['source'];
+    }
     return pen;
   }
 
@@ -724,6 +731,7 @@ class DrawablePen {
       'paths': paths.map((e) => e.toJson()).toList(),
       'drawMode': drawMode.value(),
       'filePath': filePath,
+      'source': source,
     };
     if (lastPosition != null) {
       result['lastPosition'] = lastPosition!.toJson();

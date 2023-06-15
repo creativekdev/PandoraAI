@@ -14,9 +14,7 @@ class ImageUtils {
     var fileName = await md5File(File(tempFilePath));
     var fileType = getFileType(tempFilePath);
     var path = targetPath + fileName + '.' + fileType;
-    if (!File(path).existsSync()) {
-      await imageCompress(File(tempFilePath), path, format: _buildCompressFormat(fileType), ignoreSize: true);
-    }
+    await File(tempFilePath).copy(path);
     return path;
   }
 

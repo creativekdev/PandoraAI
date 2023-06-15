@@ -318,6 +318,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
         if (fromCamera) {
           var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
           if (pickImage != null) {
+            Events.aidrawCameraClick(source: drawableController.source, photoType: 'camera');
             var f = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
             if (f != null) {
               result = f;
@@ -336,6 +337,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
             var medium = files.first;
             var file = await medium.originFile;
             if (file != null) {
+              Events.aidrawCameraClick(source: drawableController.source, photoType: 'gallery');
               var f = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
               if (f != null) {
                 result = f;
@@ -355,7 +357,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           if (pick2 != null) {
             drawableController.checkmatePens.remove(pick2);
           }
-          var pen = DrawablePen(drawMode: DrawMode.camera, filePath: result.path);
+          var pen = DrawablePen(drawMode: DrawMode.camera, filePath: result.path, source: fromCamera ? 'camera' : 'gallery');
           await pen.buildImage();
           drawableController.addPens(pen);
         }

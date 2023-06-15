@@ -133,7 +133,7 @@ class StyleMorphController extends GetxController {
 
   void onSuccess() {}
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId) async {
+  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
     if (selectedEffect == null) {
       CommonExtension().showToast('Please select template');
       return null;
@@ -151,7 +151,7 @@ class StyleMorphController extends GetxController {
       }
     }
     var rootPath = cacheManager.storageOperator.recordTxt2imgDir.path;
-    var baseEntity = await api.startTransfer(initImage: imageUrl, templateName: selectedEffect!.key, directoryPath: rootPath);
+    var baseEntity = await api.startTransfer(initImage: imageUrl, templateName: selectedEffect!.key, directoryPath: rootPath, onFailed: onFailed);
     if (baseEntity != null) {
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();

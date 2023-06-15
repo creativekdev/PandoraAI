@@ -10,7 +10,10 @@ class AiDrawable {
     Events.aidrawLoading(source: source);
     return Navigator.of(context).push(MaterialPageRoute(
       settings: RouteSettings(name: "/AiDrawableScreen"),
-      builder: (_) => AiDrawableScreen(record: history),
+      builder: (_) => AiDrawableScreen(
+        record: history,
+        source: source,
+      ),
     ));
   }
 }

@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/events.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
@@ -569,6 +568,14 @@ class CartoonizerApi extends RetryAbleRequester {
     return await get('/log/anotherme', params: params);
   }
 
+  Future<BaseEntity?> logScribble(Map<String, dynamic> params) async {
+    return await get('/log/scribble', params: params);
+  }
+
+  Future<BaseEntity?> logStyleMorph(Map<String, dynamic> params) async {
+    return await get('/log/stylemorph', params: params);
+  }
+
   Future<BaseEntity?> logTxt2Img(Map<String, dynamic> params) async {
     if (params.containsKey('init_images')) {
       return await get('/log/img2img', params: params);
@@ -673,6 +680,9 @@ class CartoonizerApi extends RetryAbleRequester {
     required String headers,
     required int statusCode,
   }) async {
+    if (api.contains('/log/api_error')) {
+      return null;
+    }
     return await post(
       '/log/api_error',
       params: {

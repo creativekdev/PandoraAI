@@ -8,7 +8,6 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -104,6 +103,8 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       style = 'txt2img';
     } else if (discoveryEntity.category == DiscoveryCategory.scribble.name) {
       style = 'scribble';
+    } else if (discoveryEntity.category == DiscoveryCategory.stylemorph.name) {
+      style = 'stylemorpn';
     }
     if (TextUtil.isEmpty(style)) {
       return;
