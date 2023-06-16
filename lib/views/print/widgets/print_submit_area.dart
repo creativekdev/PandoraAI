@@ -13,12 +13,13 @@ class _PrintSubmitAreaState extends State<PrintSubmitArea> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: ScreenUtil.screenSize.height -
-          $(144) -
-          ScreenUtil.getNavigationBarHeight() -
-          ScreenUtil.getStatusBarHeight() -
-          ScreenUtil.getBottomPadding(context) -
-          ScreenUtil.getBottomBarHeight(),
+      // top: ScreenUtil.screenSize.height -
+      //     $(144) -
+      //     ScreenUtil.getNavigationBarHeight() -
+      //     ScreenUtil.getStatusBarHeight() -
+      //     ScreenUtil.getBottomPadding(context) -
+      //     ScreenUtil.getBottomBarHeight(),
+      bottom: 0,
       left: 0,
       right: 0,
       child: Container(
@@ -57,7 +58,7 @@ class _PrintSubmitAreaState extends State<PrintSubmitArea> {
                 widget.onTap();
               })
             ],
-          )),
+          )).blur(),
     );
   }
 }

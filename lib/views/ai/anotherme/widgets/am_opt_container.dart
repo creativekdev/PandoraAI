@@ -4,18 +4,20 @@ import 'package:cartoonizer/images-res.dart';
 
 class AMOptContainer extends StatefulWidget {
   GestureTapCallback onChoosePhotoTap;
-  GestureTapCallback onShareTap;
-  GestureTapCallback onShareDiscoveryTap;
-  GestureTapCallback onDownloadTap;
+
+  // GestureTapCallback onShareTap;
+  GestureTapCallback onSharePrintTap;
+
+  // GestureTapCallback onDownloadTap;
   GestureTapCallback onGenerateAgainTap;
 
   AMOptContainer({
     Key? key,
     required this.onChoosePhotoTap,
-    required this.onDownloadTap,
-    required this.onShareDiscoveryTap,
+    // required this.onDownloadTap,
+    required this.onSharePrintTap,
     required this.onGenerateAgainTap,
-    required this.onShareTap,
+    // required this.onShareTap,
   }) : super(key: key);
 
   @override
@@ -24,9 +26,11 @@ class AMOptContainer extends StatefulWidget {
 
 class AMOptContainerState extends State<AMOptContainer> with SingleTickerProviderStateMixin {
   late GestureTapCallback onChoosePhotoTap;
-  late GestureTapCallback onShareTap;
-  late GestureTapCallback onShareDiscoveryTap;
-  late GestureTapCallback onDownloadTap;
+
+  // late GestureTapCallback onShareTap;
+  late GestureTapCallback onSharePrintTap;
+
+  // late GestureTapCallback onDownloadTap;
   late GestureTapCallback onGenerateAgainTap;
   late AnimationController _animationController;
   late CurvedAnimation _anim;
@@ -36,9 +40,9 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
   void initState() {
     super.initState();
     onChoosePhotoTap = widget.onChoosePhotoTap;
-    onShareTap = widget.onShareTap;
-    onShareDiscoveryTap = widget.onShareDiscoveryTap;
-    onDownloadTap = widget.onDownloadTap;
+    // onShareTap = widget.onShareTap;
+    onSharePrintTap = widget.onSharePrintTap;
+    // onDownloadTap = widget.onDownloadTap;
     onGenerateAgainTap = widget.onGenerateAgainTap;
     _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
@@ -71,62 +75,62 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            SizedBox(width: $(16)),
-            Expanded(
-                child: Row(
-                  children: [
-                    Image.asset(
-                      Images.ic_share,
-                      width: $(24),
-                    ),
-                    SizedBox(width: 6),
-                    TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
-                  ],
-                  mainAxisSize: MainAxisSize.min,
-                )
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular($(12)),
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
-                      )),
-                )
-                    .intoGestureDetector(onTap: onShareTap)),
-            SizedBox(width: $(16)),
-            Expanded(
-                child: Row(
-                  children: [
-                    Image.asset(
-                      Images.ic_download,
-                      width: $(24),
-                    ),
-                    SizedBox(width: 6),
-                    TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
-                  ],
-                  mainAxisSize: MainAxisSize.min,
-                )
-                    .intoContainer(
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular($(12)),
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
-                      )),
-                )
-                    .intoGestureDetector(onTap: onDownloadTap)),
-            SizedBox(width: $(16)),
-          ],
-        ),
-        SizedBox(height: 22),
+        // Row(
+        //   children: [
+        //     SizedBox(width: $(41)),
+        //     Expanded(
+        //         child: Row(
+        //       children: [
+        //         Image.asset(
+        //           Images.ic_share,
+        //           width: $(24),
+        //         ),
+        //         SizedBox(width: 6),
+        //         TitleTextWidget(S.of(context).share, ColorConstant.White, FontWeight.normal, $(17)),
+        //       ],
+        //       mainAxisSize: MainAxisSize.min,
+        //     )
+        //             .intoContainer(
+        //               padding: EdgeInsets.symmetric(vertical: $(10)),
+        //               alignment: Alignment.center,
+        //               decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.circular($(12)),
+        //                   gradient: LinearGradient(
+        //                     begin: Alignment.bottomCenter,
+        //                     end: Alignment.topCenter,
+        //                     colors: [Color(0xFF601AFF), Color(0xFF9A26FF), Color(0xFFFF57CD)],
+        //                   )),
+        //             )
+        //             .intoGestureDetector(onTap: onShareTap)),
+        //     SizedBox(width: $(16)),
+        //     Expanded(
+        //         child: Row(
+        //       children: [
+        //         Image.asset(
+        //           Images.ic_download,
+        //           width: $(24),
+        //         ),
+        //         SizedBox(width: 6),
+        //         TitleTextWidget(S.of(context).download, ColorConstant.White, FontWeight.normal, $(17)),
+        //       ],
+        //       mainAxisSize: MainAxisSize.min,
+        //     )
+        //             .intoContainer(
+        //               padding: EdgeInsets.symmetric(vertical: $(10)),
+        //               alignment: Alignment.center,
+        //               decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.circular($(12)),
+        //                   gradient: LinearGradient(
+        //                     begin: Alignment.bottomCenter,
+        //                     end: Alignment.topCenter,
+        //                     colors: [Color(0xFF5E18FF), Color(0xFF1F83FF), Color(0xFF00FFF8)],
+        //                   )),
+        //             )
+        //             .intoGestureDetector(onTap: onDownloadTap)),
+        //     SizedBox(width: $(16)),
+        //   ],
+        // ),
+        SizedBox(height: 41),
         AnimatedBuilder(
           animation: _anim,
           builder: (context, child) {
@@ -140,10 +144,10 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
                   child: Image.asset(Images.ic_camera, width: $(24))
                       .intoContainer(
-                    alignment: Alignment.center,
-                    width: $(48),
-                    height: $(48),
-                  )
+                        alignment: Alignment.center,
+                        width: $(48),
+                        height: $(48),
+                      )
                       .intoGestureDetector(onTap: onChoosePhotoTap),
                 ),
                 SizedBox(width: $(16)),
@@ -177,13 +181,13 @@ class AMOptContainerState extends State<AMOptContainer> with SingleTickerProvide
                 SizedBox(width: $(16)),
                 Transform.translate(
                   offset: Offset(0, (1 - _animationController.value) * $(106)),
-                  child: Image.asset(Images.ic_share_discovery, width: $(24))
+                  child: Image.asset(Images.ic_share_print, width: $(24))
                       .intoContainer(
-                    alignment: Alignment.center,
-                    width: $(48),
-                    height: $(48),
-                  )
-                      .intoGestureDetector(onTap: onShareDiscoveryTap),
+                        alignment: Alignment.center,
+                        width: $(48),
+                        height: $(48),
+                      )
+                      .intoGestureDetector(onTap: onSharePrintTap),
                 ),
                 SizedBox(width: $(16)),
                 // Column(
