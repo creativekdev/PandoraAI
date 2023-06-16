@@ -4279,6 +4279,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Order Screening`
+  String get order_screening {
+    return Intl.message(
+      'Order Screening',
+      name: 'order_screening',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1 month`
+  String get month_1 {
+    return Intl.message(
+      '1 month',
+      name: 'month_1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `3 month`
+  String get month_3 {
+    return Intl.message(
+      '3 month',
+      name: 'month_3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `6 month`
+  String get month_6 {
+    return Intl.message(
+      '6 month',
+      name: 'month_6',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset`
+  String get reset {
+    return Intl.message(
+      'Reset',
+      name: 'reset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Orders`
+  String get orders {
+    return Intl.message(
+      'Orders',
+      name: 'orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search order`
+  String get search_order {
+    return Intl.message(
+      'Search order',
+      name: 'search_order',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start Date`
+  String get start_date {
+    return Intl.message(
+      'Start Date',
+      name: 'start_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `End Date`
+  String get end_date {
+    return Intl.message(
+      'End Date',
+      name: 'end_date',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quatity`
+  String get quatity {
+    return Intl.message(
+      'Quatity',
+      name: 'quatity',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

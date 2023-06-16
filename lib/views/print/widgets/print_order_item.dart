@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
+import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -28,7 +30,7 @@ class PrintOrderItem extends StatelessWidget {
               height: $(12),
             ),
             TitleTextWidget(
-              "Order ID: ${rows.shopifyOrderId}",
+              S.of(context).order_ID + " ${rows.shopifyOrderId}",
               ColorConstant.White,
               FontWeight.w500,
               $(17),
@@ -93,7 +95,8 @@ class PrintOrderItem extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         TitleTextWidget("${rows.financialStatus}", Color(0xFF30D158), FontWeight.normal, $(14), align: TextAlign.left),
-                        TitleTextWidget("${getDate(rows.eventTime)}", ColorConstant.loginTitleColor, FontWeight.normal, $(14), align: TextAlign.right),
+                        TitleTextWidget("${DateUtil.formatDate(rows.created.timezoneCur, format: 'yyyy-MM-dd HH:mm')}", ColorConstant.loginTitleColor, FontWeight.normal, $(14),
+                            align: TextAlign.right),
                       ],
                     )
                   ],
@@ -105,10 +108,4 @@ class PrintOrderItem extends StatelessWidget {
       ],
     );
   }
-}
-
-String getDate(int timestamp) {
-  DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-  return "${date.year}-${date.month}-${date.day}";
 }

@@ -402,7 +402,7 @@
   "Subtotal": "总计",
   "Shipping_details": "物流信息",
   "address": "收货地址",
-  "apartment_suite_other": "Apartment/Suite/Other",
+  "apartment_suite_other": "公寓/套房/其他",
   "search_address": "搜索地址",
   "first_name": "名字",
   "last_name": "姓氏",
@@ -421,5 +421,15 @@
   "order_details": "订单详细",
   "variations": "规格",
   "order_time": "下单时间",
-  "number": "数量"
+  "number": "数量",
+  "order_screening": "订单筛查",
+  "month_1": "1个月",
+  "month_3": "3个月",
+  "month_6": "6个月",
+  "reset": "重置",
+  "orders": "订单",
+  "search_order": "订单搜索",
+  "start_date": "开始时间",
+  "end_date": "结束时间",
+  "quatity": "数量"
 }

@@ -55,7 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "already_account": MessageLookupByLibrary.simpleMessage("已有账号？ "),
         "and": MessageLookupByLibrary.simpleMessage("和"),
         "apartment_suite_other":
-            MessageLookupByLibrary.simpleMessage("Apartment/Suite/Other"),
+            MessageLookupByLibrary.simpleMessage("公寓/套房/其他"),
         "app_name": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "apple": MessageLookupByLibrary.simpleMessage("使用Apple账号"),
         "april": MessageLookupByLibrary.simpleMessage("四月"),
@@ -180,6 +180,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email_validation": MessageLookupByLibrary.simpleMessage("请输入邮箱"),
         "email_validation1": MessageLookupByLibrary.simpleMessage("请输入正确的邮箱"),
         "empty_msg": MessageLookupByLibrary.simpleMessage("暂无数据"),
+        "end_date": MessageLookupByLibrary.simpleMessage("结束时间"),
         "enter_code": MessageLookupByLibrary.simpleMessage("填写邀请码"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage("输入6位验证码"),
         "examples": MessageLookupByLibrary.simpleMessage("案例"),
@@ -271,6 +272,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "metaverse_share_image": MessageLookupByLibrary.simpleMessage("分享图片"),
         "metaverse_share_video": MessageLookupByLibrary.simpleMessage("分享视频"),
         "month": MessageLookupByLibrary.simpleMessage("月"),
+        "month_1": MessageLookupByLibrary.simpleMessage("1个月"),
+        "month_3": MessageLookupByLibrary.simpleMessage("3个月"),
+        "month_6": MessageLookupByLibrary.simpleMessage("6个月"),
         "monthly": MessageLookupByLibrary.simpleMessage("月付"),
         "more": MessageLookupByLibrary.simpleMessage("更多"),
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
@@ -309,7 +313,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "or": MessageLookupByLibrary.simpleMessage("或"),
         "order_ID": MessageLookupByLibrary.simpleMessage("订单号："),
         "order_details": MessageLookupByLibrary.simpleMessage("订单详细"),
+        "order_screening": MessageLookupByLibrary.simpleMessage("订单筛查"),
         "order_time": MessageLookupByLibrary.simpleMessage("下单时间"),
+        "orders": MessageLookupByLibrary.simpleMessage("订单"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("其他"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("已购买"),
@@ -371,6 +377,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("隐私政策"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
+        "quatity": MessageLookupByLibrary.simpleMessage("数量"),
         "rate_description":
             MessageLookupByLibrary.simpleMessage("您的使用体验如何？愿意给我们评分么？"),
         "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("给我们评分"),
@@ -405,6 +412,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_successfully": MessageLookupByLibrary.simpleMessage("发送成功！"),
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "提示：如果没有收到邮件，请检查您的垃圾箱或者点击重试按钮"),
+        "reset": MessageLookupByLibrary.simpleMessage("重置"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
         "restore_content":
             MessageLookupByLibrary.simpleMessage("在再次订阅之前，您将失去所有的权益"),
@@ -419,6 +427,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scary_content_alert_open_it":
             MessageLookupByLibrary.simpleMessage("恐怖内容已被隐藏，点击显示它"),
         "search_address": MessageLookupByLibrary.simpleMessage("搜索地址"),
+        "search_order": MessageLookupByLibrary.simpleMessage("订单搜索"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
@@ -460,6 +469,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "我们很高兴你喜欢我们的工具！现在注册或登录，只需2分钟，你可以体验更多的功能！"),
         "standard": MessageLookupByLibrary.simpleMessage("标准"),
+        "start_date": MessageLookupByLibrary.simpleMessage("开始时间"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
         "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),

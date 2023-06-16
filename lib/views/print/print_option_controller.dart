@@ -26,17 +26,18 @@ class PrintOptionController extends GetxController {
   void onInit() {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);
-    cartoonizerApi.printTemplates(from: 0, size: 10).then((value) => {
-          if (value != null)
-            {
-              onSuccess(value),
-            }
-        });
   }
 
   @override
   void onReady() {
     super.onReady();
+    cartoonizerApi.printTemplates(from: 0, size: 10).then((value) =>
+    {
+      if (value != null)
+        {
+          onSuccess(value),
+        }
+    });
   }
 
   @override

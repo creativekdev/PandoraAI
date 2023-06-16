@@ -213,6 +213,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email_validation1":
             MessageLookupByLibrary.simpleMessage("Please enter valid email"),
         "empty_msg": MessageLookupByLibrary.simpleMessage("No Data Found."),
+        "end_date": MessageLookupByLibrary.simpleMessage("End Date"),
         "enter_code": MessageLookupByLibrary.simpleMessage("Enter Code"),
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("Enter 6-digit code"),
@@ -324,6 +325,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "metaverse_share_video":
             MessageLookupByLibrary.simpleMessage("Share Video"),
         "month": MessageLookupByLibrary.simpleMessage("Month"),
+        "month_1": MessageLookupByLibrary.simpleMessage("1 month"),
+        "month_3": MessageLookupByLibrary.simpleMessage("3 month"),
+        "month_6": MessageLookupByLibrary.simpleMessage("6 month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
         "more": MessageLookupByLibrary.simpleMessage("More"),
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
@@ -371,7 +375,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "or": MessageLookupByLibrary.simpleMessage("Or"),
         "order_ID": MessageLookupByLibrary.simpleMessage("Order ID:"),
         "order_details": MessageLookupByLibrary.simpleMessage("Order details"),
+        "order_screening":
+            MessageLookupByLibrary.simpleMessage("Order Screening"),
         "order_time": MessageLookupByLibrary.simpleMessage("Order time"),
+        "orders": MessageLookupByLibrary.simpleMessage("Orders"),
         "other_replies":
             MessageLookupByLibrary.simpleMessage("other %d replies >"),
         "others": MessageLookupByLibrary.simpleMessage("Others"),
@@ -449,6 +456,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Privacy policy"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
+        "quatity": MessageLookupByLibrary.simpleMessage("Quatity"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
             "If you enjoy using Pandora AI, would you mind taking a moment to rate it?"),
         "rate_pandora_ai":
@@ -492,6 +500,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Resend successfully!"),
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend."),
+        "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
         "restore_content": MessageLookupByLibrary.simpleMessage(
             "You will lose all of your rights until subscribe again"),
@@ -512,6 +521,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Scary content alert! Tap to show it"),
         "search_address":
             MessageLookupByLibrary.simpleMessage("Search address"),
+        "search_order": MessageLookupByLibrary.simpleMessage("Search order"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Check it out"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),
         "select_a_style":
@@ -566,6 +576,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "standard": MessageLookupByLibrary.simpleMessage("standard"),
+        "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),

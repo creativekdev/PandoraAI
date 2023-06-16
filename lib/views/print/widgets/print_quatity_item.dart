@@ -15,7 +15,7 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        TitleTextWidget("Quatity".tr, ColorConstant.White, FontWeight.normal, $(12)),
+        TitleTextWidget(S.of(context).quatity, ColorConstant.White, FontWeight.normal, $(12)),
         Spacer(),
         TitleTextWidget("+", ColorConstant.White, FontWeight.normal, $(8))
             .intoContainer(

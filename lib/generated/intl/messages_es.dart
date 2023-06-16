@@ -214,6 +214,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "email_validation1": MessageLookupByLibrary.simpleMessage(
             "Por favor, introduzca la dirección de correo electrónico correcta"),
         "empty_msg": MessageLookupByLibrary.simpleMessage("Aún no hay datos"),
+        "end_date": MessageLookupByLibrary.simpleMessage("End Date"),
         "enter_code": MessageLookupByLibrary.simpleMessage(
             "Rellene el código de invitación"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage(
@@ -336,6 +337,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "metaverse_share_video":
             MessageLookupByLibrary.simpleMessage("Compartir vídeos"),
         "month": MessageLookupByLibrary.simpleMessage("mes"),
+        "month_1": MessageLookupByLibrary.simpleMessage("1 month"),
+        "month_3": MessageLookupByLibrary.simpleMessage("3 month"),
+        "month_6": MessageLookupByLibrary.simpleMessage("6 month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Mensualidad"),
         "more": MessageLookupByLibrary.simpleMessage("más"),
         "most_popular": MessageLookupByLibrary.simpleMessage("Más populares"),
@@ -387,7 +391,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "or": MessageLookupByLibrary.simpleMessage("o"),
         "order_ID": MessageLookupByLibrary.simpleMessage("Order ID:"),
         "order_details": MessageLookupByLibrary.simpleMessage("Order details"),
+        "order_screening":
+            MessageLookupByLibrary.simpleMessage("Order Screening"),
         "order_time": MessageLookupByLibrary.simpleMessage("Order time"),
+        "orders": MessageLookupByLibrary.simpleMessage("Orders"),
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("Otro"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("Comprado"),
@@ -462,6 +469,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Política de privacidad"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
+        "quatity": MessageLookupByLibrary.simpleMessage("Quatity"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
             "¿Cómo fue tu experiencia? ¿Quieres puntuarnos?"),
         "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("Califícanos"),
@@ -504,6 +512,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enviar correctamente！"),
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Consejo: Si no recibes el correo electrónico, revisa la papelera o haz clic en el botón Inténtalo de nuevo"),
+        "reset": MessageLookupByLibrary.simpleMessage("Reset"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTAURAR"),
         "restore_content": MessageLookupByLibrary.simpleMessage(
             "Perderá todos los beneficios hasta que se suscriba nuevamente"),
@@ -523,6 +532,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "El contenido de terror se ha ocultado, haga clic para mostrarlo"),
         "search_address":
             MessageLookupByLibrary.simpleMessage("Search address"),
+        "search_order": MessageLookupByLibrary.simpleMessage("Search order"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Ve a verlo"),
         "select": MessageLookupByLibrary.simpleMessage("elegir"),
         "select_a_style": MessageLookupByLibrary.simpleMessage(
@@ -578,6 +588,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "¡Nos alegra que te haya gustado nuestra herramienta! Regístrese o inicie sesión ahora, solo toma 2 minutos y puede experimentar más funciones！"),
         "standard": MessageLookupByLibrary.simpleMessage("standard"),
+        "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),

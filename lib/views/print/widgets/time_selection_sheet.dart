@@ -4,24 +4,28 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../../Common/importFile.dart';
 import '../../../images-res.dart';
 
-typedef DateCallback = void Function(List<DateTime?> values);
+typedef DateCallback = void Function(List<DateTime?> values, int index);
 
 class TimeSelectionSheet extends StatefulWidget {
-  TimeSelectionSheet({Key? key, required this.datesCallback}) : super(key: key);
-  DateCallback datesCallback;
+  TimeSelectionSheet({Key? key, required this.datesCallback, this.dates = const [], this.selectedIndex}) : super(key: key);
+  final DateCallback datesCallback;
+  final List<DateTime?> dates;
+  final int? selectedIndex;
 
   @override
-  State<TimeSelectionSheet> createState() => _TimeSelectionSheetState();
+  State<TimeSelectionSheet> createState() => _TimeSelectionSheetState(dates: dates, selectedIndex: selectedIndex);
 }
 
 class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
-  List<DateTime?> _dates = [];
-  List<bool> _isSelected = [false, false, false];
+  _TimeSelectionSheetState({required this.dates, required this.selectedIndex});
+
+  List<DateTime?> dates;
+  int? selectedIndex;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: $(326),
+      height: $(300),
       decoration: BoxDecoration(
         color: Color(0xFF1B1C1D),
         borderRadius: BorderRadius.only(
@@ -35,7 +39,7 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
           SizedBox(width: $(40)),
           Expanded(
             child: TitleTextWidget(
-              "Order Screening".tr,
+              S.of(context).order_screening,
               ColorConstant.White,
               FontWeight.w400,
               $(17),
@@ -57,7 +61,7 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
         Padding(
           padding: EdgeInsets.only(left: $(15)),
           child: TitleTextWidget(
-            "Order time".tr,
+            S.of(context).order_time,
             ColorConstant.White,
             FontWeight.w400,
             $(14),
@@ -69,28 +73,22 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
           height: $(40),
           margin: EdgeInsets.symmetric(horizontal: $(15)),
           child: Wrap(spacing: $(10), children: [
-            timeWidget("1 month", _isSelected[0], $(108)).intoGestureDetector(onTap: () {
-              _isSelected[0] = !_isSelected[0];
-              _isSelected[1] = false;
-              _isSelected[2] = false;
+            timeWidget(S.of(context).month_1, selectedIndex == 0, $(108)).intoGestureDetector(onTap: () {
+              selectedIndex = 0;
               DateTime now = DateTime.now();
-              _dates = [now, now.add(Duration(days: 30))];
+              dates = [now.add(Duration(days: -30)), now];
               setState(() {});
             }),
-            timeWidget("3 month", _isSelected[1], $(108)).intoGestureDetector(onTap: () {
-              _isSelected[1] = !_isSelected[1];
-              _isSelected[0] = false;
-              _isSelected[2] = false;
+            timeWidget(S.of(context).month_3, selectedIndex == 1, $(108)).intoGestureDetector(onTap: () {
+              selectedIndex = 1;
               DateTime now = DateTime.now();
-              _dates = [now, now.add(Duration(days: 90))];
+              dates = [now.add(Duration(days: -90)), now];
               setState(() {});
             }),
-            timeWidget("6 month", _isSelected[2], $(108)).intoGestureDetector(onTap: () {
-              _isSelected[2] = !_isSelected[2];
-              _isSelected[1] = false;
-              _isSelected[0] = false;
+            timeWidget(S.of(context).month_6, selectedIndex == 2, $(108)).intoGestureDetector(onTap: () {
+              selectedIndex = 2;
               DateTime now = DateTime.now();
-              _dates = [now, now.add(Duration(days: 180))];
+              dates = [now.add(Duration(days: -180)), now];
               setState(() {});
             }),
           ]),
@@ -102,7 +100,7 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
           margin: EdgeInsets.symmetric(horizontal: $(15)),
           child: Wrap(spacing: $(4), children: [
             timeWidget(
-              _dates.length > 0 && _dates.first != null ? _dates.first!.toString().substring(0, 10) : "Start Date",
+              dates.length > 0 && dates.first != null ? dates.first!.toString().substring(0, 10) : S.of(context).start_date,
               false,
               $(160),
             ).intoGestureDetector(onTap: () async {
@@ -115,7 +113,7 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
               color: Colors.white,
             ),
             timeWidget(
-              _dates.length > 0 && _dates.last != null ? _dates.last!.toString().substring(0, 10) : "End Date",
+              dates.length > 0 && dates.last != null ? dates.last!.toString().substring(0, 10) : S.of(context).end_date,
               false,
               $(160),
             ).intoGestureDetector(onTap: () async {
@@ -128,7 +126,7 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TitleTextWidget(
-              "Reset",
+              S.of(context).reset,
               ColorConstant.White,
               FontWeight.w500,
               $(17),
@@ -147,12 +145,12 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
               ),
             )
                 .intoGestureDetector(onTap: () {
-              _dates = [];
-              _isSelected = [false, false, false];
+              dates = [];
+              selectedIndex = -1;
               setState(() {});
             }),
             TitleTextWidget(
-              "Confirm",
+              S.of(context).confirm,
               ColorConstant.White,
               FontWeight.w500,
               $(17),
@@ -169,8 +167,8 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
               ),
             )
                 .intoGestureDetector(onTap: () {
-              if (_dates.length > 0) {
-                widget.datesCallback(_dates);
+              if (dates.length > 0) {
+                widget.datesCallback(dates, selectedIndex!);
                 Navigator.pop(context);
               } else {
                 Fluttertoast.showToast(msg: "Please select date", gravity: ToastGravity.CENTER);
@@ -199,6 +197,16 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
                 fontSize: $(12),
               ),
               selectedDayHighlightColor: Colors.purple[800],
+              lastMonthIcon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: $(12),
+              ),
+              nextMonthIcon: Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white,
+                size: $(12),
+              ),
               dayTextStyle: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w400,
@@ -216,11 +224,10 @@ class _TimeSelectionSheetState extends State<TimeSelectionSheet> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            value: _dates,
-            onValueChanged: (dates) {
-              if (dates.length == 2) {
-                _dates = dates;
-                print(_dates);
+            value: dates,
+            onValueChanged: (selectedDates) {
+              if (selectedDates.length == 2) {
+                dates = selectedDates;
                 ShowTimeSheet.hide(context);
                 setState(() {});
               }
@@ -262,7 +269,7 @@ class ShowTimeSheet {
       builder: (context) => LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Container(
-            height: constraints.maxHeight * 1.2,
+            height: constraints.maxHeight,
             child: child,
           );
         },

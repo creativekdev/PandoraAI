@@ -36,6 +36,7 @@ class PrintOrderController extends GetxController {
   int size = 10;
   String name = "";
   List<DateTime?> _dates = [];
+  int seletedIndex = -1;
 
   set dates(List<DateTime?> value) {
     _dates = value;
@@ -62,11 +63,17 @@ class PrintOrderController extends GetxController {
   }
 
   onShowTimeSheet(BuildContext context) {
-    ShowTimeSheet.show(context, TimeSelectionSheet(
-      datesCallback: (dates) {
-        _dates = dates;
-      },
-    ));
+    ShowTimeSheet.show(
+        context,
+        TimeSelectionSheet(
+          dates: _dates,
+          selectedIndex: seletedIndex,
+          datesCallback: (dates, index) {
+            seletedIndex = index;
+            _dates = dates;
+            onRequestData(refresh: true);
+          },
+        ));
   }
 
   set viewInit(bool value) {
@@ -86,9 +93,9 @@ class PrintOrderController extends GetxController {
   bool get viewInit => _viewInit;
   TextEditingController searchOrderController = TextEditingController();
 
-  onSuccess(List<PrintOrdersDataRows> entity) {
+  onSuccess(List<PrintOrdersDataRows> entity, {bool refresh = false}) {
     _viewInit = true;
-    if ((orders[_status.toLowerCase()]?.length ?? 0) > 0) {
+    if ((orders[_status.toLowerCase()]?.length ?? 0) > 0 && refresh == false) {
       _orders[_status.toLowerCase()]?.addAll(entity);
     } else {
       _orders[_status.toLowerCase()] = entity;
@@ -120,10 +127,9 @@ class PrintOrderController extends GetxController {
       }
     });
     cartoonizerApi = CartoonizerApi().bindController(this);
-    onRequestData();
   }
 
-  onRequestData({int from = 0}) {
+  onRequestData({int from = 0, bool refresh = false}) {
     Map<String, dynamic> params = {"from": from, "size": size, "name": name};
     if (_status.toLowerCase() != "all" && _status.toLowerCase() != "all status") {
       if (_status.toLowerCase() == "paid" || _status.toLowerCase() == "unpaid" || _status.toLowerCase() == "refunded" || _status.toLowerCase() == "pending") {
@@ -136,12 +142,13 @@ class PrintOrderController extends GetxController {
       params["start_time"] = _dates[0]?.millisecondsSinceEpoch ?? 0;
       params["end_time"] = _dates[1]?.millisecondsSinceEpoch ?? 0;
     }
-    cartoonizerApi.getShopifyOrders(params).then((value) => {onSuccess(value?.data.rows ?? [])});
+    cartoonizerApi.getShopifyOrders(params).then((value) => {onSuccess(value?.data.rows ?? [], refresh: refresh)});
   }
 
   @override
   void onReady() {
     super.onReady();
+    onRequestData();
   }
 
   @override

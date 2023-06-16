@@ -87,7 +87,7 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
               navigationDelegate: (NavigationRequest request) async {
                 // 处理取消逻辑
                 if (request.url.contains("https://socialbook.io/pay_success_screen")) {
-                  widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
+                  // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
                   return NavigationDecision.prevent;
                 }
                 if (request.url.contains("https://socialbook.io/pay_cancel_screen")) {
