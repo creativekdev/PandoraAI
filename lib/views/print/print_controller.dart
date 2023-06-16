@@ -245,7 +245,7 @@ class PrintController extends GetxController {
     onRequestData();
   }
 
-  bool onSubmit() {
+  bool onSubmit(BuildContext context) {
     List<String> keys = [];
     for (int i = 0; i < showesed.length; i++) {
       final temp = showesed[i];
@@ -259,11 +259,11 @@ class PrintController extends GetxController {
     }
     if (_captureAndSave() == false) {
       // 提交失败，请提交
-      Fluttertoast.showToast(msg: "server_exception".tr, gravity: ToastGravity.CENTER);
+      Fluttertoast.showToast(msg: S.of(context).server_exception, gravity: ToastGravity.CENTER);
       return false;
     }
     if (_uploadAIImage() == false) {
-      Fluttertoast.showToast(msg: "server_exception".tr, gravity: ToastGravity.CENTER);
+      Fluttertoast.showToast(msg: S.of(context).server_exception, gravity: ToastGravity.CENTER);
       return false;
     }
     return true;

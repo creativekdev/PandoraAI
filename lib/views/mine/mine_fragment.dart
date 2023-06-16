@@ -22,10 +22,10 @@ import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/print/print_order_screen.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../print/print_order_screen.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
@@ -125,15 +125,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     ));
               }),
               line(context),
-              ImageTextBarWidget("Orders", Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/PrintOrderScreen"),
-                      builder: (context) => PrintOrderScreen(),
-                    ));
-              }),
-              line(context),
               ImageTextBarWidget(
                 S.of(context).setting_my_discovery,
                 Images.ic_setting_my_discovery,
@@ -150,6 +141,15 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     )).then((value) async {
                   return;
                 });
+              }).offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
+              ImageTextBarWidget(S.of(context).orders, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PrintOrderScreen"),
+                      builder: (context) => PrintOrderScreen(),
+                    ));
               }).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {

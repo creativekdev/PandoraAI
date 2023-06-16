@@ -29,13 +29,13 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dar
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/print/print_option_screen.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+import '../../print/print_option_screen.dart';
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
@@ -387,6 +387,12 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         generate(context, controller);
                       },
                       onSharePrintTap: () async {
+                        // Navigator.of(context)
+                        //     .push<void>(NoAnimRouter(TransResultAnimScreen(
+                        //   origin: file,
+                        //   result: transResult!,
+                        //   ratio: ratio,
+                        // )));
                         Navigator.of(context).push<void>(Right2LeftRouter(
                             child: PrintOptionScreen(
                           file: transResult!,
@@ -427,6 +433,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     isShowBg: true,
                     clickCallback: (index, text) {
                       if (index == 0) {
+                        // 分享
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {
@@ -470,13 +477,13 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                                 }
                               });
                             } else {
+                              await showLoading();
                               if (TextUtil.isEmpty(controller.transKey)) {
                                 return;
                               }
-                              await showLoading();
                               var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              await hideLoading();
                               AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                              await hideLoading();
                               ShareScreen.startShare(context,
                                   backgroundColor: Color(0x77000000),
                                   style: 'Me-taverse',

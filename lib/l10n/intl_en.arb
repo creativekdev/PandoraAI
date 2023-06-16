@@ -421,5 +421,15 @@
   "order_details": "Order details",
   "variations": "Variations",
   "order_time": "Order time",
-  "number": "Number"
+  "number": "Number",
+  "order_screening": "Order Screening",
+  "month_1": "1 month",
+  "month_3": "3 month",
+  "month_6": "6 month",
+  "reset": "Reset",
+  "orders": "Orders",
+  "search_order": "Search order",
+  "start_date": "Start Date",
+  "end_date": "End Date",
+  "quatity": "Quatity"
 }

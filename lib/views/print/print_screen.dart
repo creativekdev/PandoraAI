@@ -162,7 +162,7 @@ class _PrintScreenState extends State<PrintScreen> {
               PrintSubmitArea(
                 total: controller.total,
                 onTap: () {
-                  if (controller.onSubmit()) {
+                  if (controller.onSubmit(context)) {
                     Navigator.of(context).push<void>(Right2LeftRouter(child: PrintShippingScreen()));
                   }
                 },

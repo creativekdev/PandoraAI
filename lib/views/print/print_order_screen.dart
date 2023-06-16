@@ -33,7 +33,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(
-            "Orders".tr,
+            S.of(context).orders,
             style: TextStyle(
               color: Colors.white,
               fontSize: $(18),
@@ -67,7 +67,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                       cursorColor: ColorConstant.White,
                       style: TextStyle(color: ColorConstant.White, fontSize: $(14)),
                       decoration: InputDecoration(
-                        hintText: 'Search order',
+                        hintText: S.of(context).search_order,
                         hintStyle: TextStyle(color: Colors.white38, fontSize: $(14)),
                         border: OutlineInputBorder(
                           borderSide: BorderSide.none,
@@ -149,7 +149,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                           ),
                         );
                       }
-                      return Center(child: TitleTextWidget("You have not this orders", ColorConstant.White, FontWeight.normal, $(12)));
+                      return Center(child: TitleTextWidget(S.of(context).empty_msg, ColorConstant.White, FontWeight.normal, $(12)));
                     }).toList()),
               ),
             ]);

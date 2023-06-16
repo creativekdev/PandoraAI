@@ -6,6 +6,7 @@ import 'package:google_maps_webservice/places.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/blank_area_intercept.dart';
+import '../../Widgets/state/app_state.dart';
 import '../../images-res.dart';
 
 class PrintShippingScreen extends StatefulWidget {
@@ -15,7 +16,8 @@ class PrintShippingScreen extends StatefulWidget {
   State<PrintShippingScreen> createState() => _PrintShippingScreenState();
 }
 
-class _PrintShippingScreenState extends State<PrintShippingScreen> {
+class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
+  _PrintShippingScreenState() : super(canCancelOnLoading: false);
   PrintShippingController controller = PrintShippingController();
 
   @override
@@ -35,7 +37,7 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -141,10 +143,12 @@ class _PrintShippingScreenState extends State<PrintShippingScreen> {
               PrintSubmitArea(
                 total: controller.total,
                 onTap: () async {
+                  // showLoading();
                   bool isSuccess = await controller.onSubmit();
                   if (isSuccess) {
                     controller.gotoPaymentPage(context);
                   }
+                  // hideLoading();
                 },
               ),
             ],

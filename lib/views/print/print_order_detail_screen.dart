@@ -1,8 +1,9 @@
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_order_detail_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_info_item.dart';
-import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
+import 'package:common_utils/common_utils.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -120,7 +121,7 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
                     ),
                     PrintOrderInfoItem(
                       name: S.of(context).order_time,
-                      value: "${getDate(rows.eventTime)}",
+                      value: "${DateUtil.formatDate(rows.created.timezoneCur, format: 'yyyy-MM-dd HH:mm')}",
                     ),
                   ]),
                 ),

@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -14,7 +12,6 @@ import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 class AnotherMeController extends GetxController {
   File? _sourcePhoto;
@@ -156,7 +153,7 @@ class AnotherMeController extends GetxController {
   ) async {
     _transKey = null;
     update();
-    File compressedImage = await imageCompressAndGetFile(file, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
     return _uploadAndSave(key, compressedImage, uploadImageController, sourceFile: file);
   }
 }

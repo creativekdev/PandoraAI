@@ -66,7 +66,7 @@ class PrintDeliveryitem extends StatelessWidget {
                         align: TextAlign.left,
                       ),
                       TitleTextWidget(
-                        "\$${shippingMethodEntity.shippingRateData.fixedAmount.amount / 100.0}".tr,
+                        "\$${shippingMethodEntity.shippingRateData.fixedAmount.amount / 100.0}",
                         ColorConstant.White,
                         FontWeight.bold,
                         $(14),
