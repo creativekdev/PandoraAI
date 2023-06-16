@@ -86,11 +86,11 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
             child: WebView(
               navigationDelegate: (NavigationRequest request) async {
                 // 处理取消逻辑
-                if (request.url.contains("https://socialbook.io/pay_success_screen")) {
+                if (request.url.contains(Config.instance.successUrl)) {
                   // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
                   return NavigationDecision.prevent;
                 }
-                if (request.url.contains("https://socialbook.io/pay_cancel_screen")) {
+                if (request.url.contains(Config.instance.cancelUrl)) {
                   widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
                   return NavigationDecision.prevent;
                 }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
@@ -167,8 +168,8 @@ class PrintShippingController extends GetxController {
     final params = {
       "order_id": printOrderEntity?.data.id,
       "order_type": "ps-order",
-      "success_url": "https://socialbook.io/pay_success_screen",
-      "cancel_url": "https://socialbook.io/pay_cancel_screen",
+      "success_url": Config.instance.successUrl,
+      "cancel_url": Config.instance.cancelUrl,
       "shipping_options": [
         {
           "shipping_rate_data": {
