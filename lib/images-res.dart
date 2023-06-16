@@ -194,7 +194,7 @@ class Images {
    static const String ic_filter = 'assets/images/ic_filter.png';
    static const String ic_adjust = 'assets/images/ic_adjust.png';
    static const String ic_effect = 'assets/images/ic_effect.png';
-   static const String ic_crop = 'assets/images/icon_24_edit_crop@2x.png';
+   static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_background = 'assets/images/ic_background.png';
    static const String ic_reduction = 'assets/images/ic_reduction.png';
    static const String ic_letter = 'assets/images/ic_letter.png';
