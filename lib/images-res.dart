@@ -3,6 +3,7 @@ class Images {
    static const String american_express = 'assets/images/american_express.png';
    static const String discover = 'assets/images/discover.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_adjust = 'assets/images/ic_adjust.png';
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
    static const String ic_ai_draw_camera = 'assets/images/ic_ai_draw_camera.png';
    static const String ic_ai_draw_delete = 'assets/images/ic_ai_draw_delete.png';
@@ -25,6 +26,7 @@ class Images {
    static const String ic_avatar_save = 'assets/images/ic_avatar_save.png';
    static const String ic_avatar_success = 'assets/images/ic_avatar_success.png';
    static const String ic_back = 'assets/images/ic_back.png';
+   static const String ic_background = 'assets/images/ic_background.png';
    static const String ic_bug_no_ad = 'assets/images/ic_bug_no_ad.png';
    static const String ic_buy_ai_artist = 'assets/images/ic_buy_ai_artist.png';
    static const String ic_buy_background = 'assets/images/ic_buy_background.png';
@@ -44,6 +46,7 @@ class Images {
    static const String ic_choose_photo_initial_header = 'assets/images/ic_choose_photo_initial_header.png';
    static const String ic_choose_photo_initial_text = 'assets/images/ic_choose_photo_initial_text.png';
    static const String ic_close = 'assets/images/ic_close.png';
+   static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
    static const String ic_discovery_comment = 'assets/images/ic_discovery_comment.png';
@@ -54,6 +57,7 @@ class Images {
    static const String ic_draw_result_bg = 'assets/images/ic_draw_result_bg.png';
    static const String ic_drawable_arrow = 'assets/images/ic_drawable_arrow.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
+   static const String ic_effect = 'assets/images/ic_effect.png';
    static const String ic_email = 'assets/images/ic_email.png';
    static const String ic_eraser = 'assets/images/ic_eraser.png';
    static const String ic_eraser1 = 'assets/images/ic_eraser1.png';
@@ -65,6 +69,7 @@ class Images {
    static const String ic_eye = 'assets/images/ic_eye.png';
    static const String ic_eye_close = 'assets/images/ic_eye_close.png';
    static const String ic_facebook = 'assets/images/ic_facebook.png';
+   static const String ic_filter = 'assets/images/ic_filter.png';
    static const String ic_flood_fill = 'assets/images/ic_flood_fill.png';
    static const String ic_forward = 'assets/images/ic_forward.png';
    static const String ic_gallery = 'assets/images/ic_gallery.png';
@@ -78,6 +83,7 @@ class Images {
    static const String ic_invitation_dialog_bg = 'assets/images/ic_invitation_dialog_bg.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
    static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
+   static const String ic_letter = 'assets/images/ic_letter.png';
    static const String ic_limit_icon = 'assets/images/ic_limit_icon.png';
    static const String ic_loading_filled = 'assets/images/ic_loading_filled.png';
    static const String ic_mark1 = 'assets/images/ic_mark1.png';
@@ -131,6 +137,7 @@ class Images {
    static const String ic_recent_checked = 'assets/images/ic_recent_checked.png';
    static const String ic_recent_delete = 'assets/images/ic_recent_delete.png';
    static const String ic_recently = 'assets/images/ic_recently.png';
+   static const String ic_reduction = 'assets/images/ic_reduction.png';
    static const String ic_ref_code = 'assets/images/ic_ref_code.png';
    static const String ic_refresh_header = 'assets/images/ic_refresh_header.svg';
    static const String ic_right_arrow = 'assets/images/ic_right_arrow.png';
@@ -161,6 +168,7 @@ class Images {
    static const String ic_sign_youtube = 'assets/images/ic_sign_youtube.png';
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
+   static const String ic_slider = 'assets/images/ic_slider.png';
    static const String ic_style_morph_top = 'assets/images/ic_style_morph_top.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
@@ -191,14 +199,5 @@ class Images {
    static const String mastercard = 'assets/images/mastercard.png';
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
-   static const String ic_filter = 'assets/images/ic_filter.png';
-   static const String ic_adjust = 'assets/images/ic_adjust.png';
-   static const String ic_effect = 'assets/images/ic_effect.png';
-   static const String ic_crop = 'assets/images/ic_crop.png';
-   static const String ic_background = 'assets/images/ic_background.png';
-   static const String ic_reduction = 'assets/images/ic_reduction.png';
-   static const String ic_letter = 'assets/images/ic_letter.png';
-   static const String ic_slider = 'assets/images/ic_slider.png';
-
 }
 
