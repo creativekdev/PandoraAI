@@ -51,40 +51,42 @@ class PrintDeliveryitem extends StatelessWidget {
                     borderRadius: BorderRadius.circular($(4)),
                   )),
               SizedBox(width: $(8)),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TitleTextWidget(
-                        shippingMethodEntity.shippingRateData.displayName,
-                        ColorConstant.White,
-                        FontWeight.bold,
-                        $(14),
-                        align: TextAlign.left,
-                      ),
-                      TitleTextWidget(
-                        "\$${shippingMethodEntity.shippingRateData.fixedAmount.amount / 100.0}",
-                        ColorConstant.White,
-                        FontWeight.bold,
-                        $(14),
-                        align: TextAlign.right,
-                      ),
-                    ],
-                  ).intoContainer(
-                    width: $(245),
-                    padding: EdgeInsets.only(right: $(12)),
-                  ),
-                  TitleTextWidget(
-                    getDescription(shippingMethodEntity.shippingRateData.displayName, context),
-                    ColorConstant.White,
-                    FontWeight.normal,
-                    $(12),
-                    align: TextAlign.left,
-                  ),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TitleTextWidget(
+                          shippingMethodEntity.shippingRateData.displayName,
+                          ColorConstant.White,
+                          FontWeight.bold,
+                          $(14),
+                          align: TextAlign.left,
+                        ),
+                        TitleTextWidget(
+                          "\$${shippingMethodEntity.shippingRateData.fixedAmount.amount / 100.0}",
+                          ColorConstant.White,
+                          FontWeight.bold,
+                          $(14),
+                          align: TextAlign.right,
+                        ),
+                      ],
+                    ).intoContainer(
+                      // width: $(245),
+                      padding: EdgeInsets.only(right: $(12)),
+                    ),
+                    TitleTextWidget(
+                      getDescription(shippingMethodEntity.shippingRateData.displayName, context),
+                      ColorConstant.White,
+                      FontWeight.normal,
+                      $(12),
+                      align: TextAlign.left,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

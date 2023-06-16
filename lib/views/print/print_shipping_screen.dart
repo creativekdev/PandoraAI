@@ -17,7 +17,6 @@ class PrintShippingScreen extends StatefulWidget {
 }
 
 class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
-  _PrintShippingScreenState() : super(canCancelOnLoading: false);
   PrintShippingController controller = PrintShippingController();
 
   @override
@@ -143,12 +142,12 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
               PrintSubmitArea(
                 total: controller.total,
                 onTap: () async {
-                  // showLoading();
+                  showLoading();
                   bool isSuccess = await controller.onSubmit();
                   if (isSuccess) {
                     controller.gotoPaymentPage(context);
                   }
-                  // hideLoading();
+                  hideLoading();
                 },
               ),
             ],

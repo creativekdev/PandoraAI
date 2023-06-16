@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
+import 'package:cartoonizer/views/print/print_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -14,7 +15,9 @@ import '../../network/dio_node.dart';
 import '../../utils/utils.dart';
 
 class PrintController extends GetxController {
-  PrintController({required this.optionData, required this.file});
+  PrintController({required this.optionData, required this.file, required this.screenState});
+
+  final PrintScreenState screenState;
 
   PrintOptionData optionData;
   late CartoonizerApi cartoonizerApi;
@@ -242,7 +245,6 @@ class PrintController extends GetxController {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);
     _imgUrl = getImgUrl();
-    onRequestData();
   }
 
   bool onSubmit(BuildContext context) {
@@ -341,6 +343,10 @@ class PrintController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    screenState.showLoading();
+    onRequestData().whenComplete(() {
+      screenState.hideLoading();
+    });
   }
 
   @override

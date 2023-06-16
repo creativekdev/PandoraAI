@@ -143,15 +143,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 });
               }).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
-              ImageTextBarWidget(S.of(context).orders, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      settings: RouteSettings(name: "/PrintOrderScreen"),
-                      builder: (context) => PrintOrderScreen(),
-                    ));
-              }).offstage(offstage: userManager.isNeedLogin),
-              line(context).offstage(offstage: userManager.isNeedLogin),
               ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
@@ -201,6 +192,15 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 PaymentUtils.pay(context, 'my_page').then((value) {
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                 });
+              }).offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
+              ImageTextBarWidget(S.of(context).orders, Images.ic_my_orders, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PrintOrderScreen"),
+                      builder: (context) => PrintOrderScreen(),
+                    ));
               }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
@@ -156,8 +157,10 @@ class PrintShippingController extends GetxController {
 
   onTapRegion(BuildContext context) {
     SelectRegionPage.pickRegion(context).then((value) {
+      print(value);
       if (value != null) {
         _regionEntity = value;
+        update();
       }
     });
   }
@@ -167,8 +170,8 @@ class PrintShippingController extends GetxController {
     final params = {
       "order_id": printOrderEntity?.data.id,
       "order_type": "ps-order",
-      "success_url": "https://socialbook.io/pay_success_screen",
-      "cancel_url": "https://socialbook.io/pay_cancel_screen",
+      "success_url": Config.instance.successUrl,
+      "cancel_url": Config.instance.cancelUrl,
       "shipping_options": [
         {
           "shipping_rate_data": {
@@ -197,33 +200,51 @@ class PrintShippingController extends GetxController {
 
     PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
 
-    Navigator.of(context).push<void>(
+    Navigator.of(context)
+        .push<bool>(
       Right2LeftRouter(
         child: PrintPaymentScreen(
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
           orderEntity: printOrderEntity!,
-          cancelPayCallBack: (sessionId, payUrl) {
-            Navigator.of(context).pop();
-            Navigator.of(context).push<void>(Right2LeftRouter(
-                child: PrintPaymentCancelScreen(
-              payUrl: payUrl,
-              sessionId: sessionId,
-              orderEntity: printOrderEntity!,
-            )));
-          },
-          payCompleteCallBack: (sessionId, payUrl) {
-            Navigator.of(context).pop();
-            Navigator.of(context).push<void>(Right2LeftRouter(
-                child: PrintPaymentSuccessScreen(
-              payUrl: payUrl,
-              sessionId: sessionId,
-              orderEntity: printOrderEntity!,
-            )));
-          },
+          // cancelPayCallBack: (sessionId, payUrl) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context).push<void>(Right2LeftRouter(
+          //       child: PrintPaymentCancelScreen(
+          //     payUrl: payUrl,
+          //     sessionId: sessionId,
+          //     orderEntity: printOrderEntity!,
+          //   )));
+          // },
+          // payCompleteCallBack: (sessionId, payUrl) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context).push<void>(Right2LeftRouter(
+          //       child: PrintPaymentSuccessScreen(
+          //     payUrl: payUrl,
+          //     sessionId: sessionId,
+          //     orderEntity: printOrderEntity!,
+          //   )));
+          // },
         ),
       ),
-    );
+    )
+        .then((value) {
+      if (value == true) {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentSuccessScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      } else {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentCancelScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      }
+    });
   }
 
   Future<bool> onSubmit() async {
@@ -250,8 +271,8 @@ class PrintShippingController extends GetxController {
     var address = {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
-      "phone": "+${regionEntity?.regionCode ?? "1"}" + contactNumberController.text,
-      "country_code": regionEntity?.regionCode,
+      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+      "country_code": regionEntity?.callingCode,
       "country_name": regionEntity?.regionName,
       "country": regionEntity?.regionName,
       "address1": searchAddressController.text,

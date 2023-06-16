@@ -6,16 +6,16 @@ import '../../Common/importFile.dart';
 import '../../config.dart';
 import '../../models/print_order_entity.dart';
 
-typedef CancelPayCallBack = void Function(String sessionId, String payUrl);
-typedef PayCompleteCallBack = void Function(String sessionId, String payUrl);
+// typedef CancelPayCallBack = void Function(String sessionId, String payUrl);
+// typedef PayCompleteCallBack = void Function(String sessionId, String payUrl);
 
 class PrintPaymentScreen extends StatefulWidget {
-  const PrintPaymentScreen({Key? key, required this.sessionId, required this.payUrl, required this.cancelPayCallBack, required this.payCompleteCallBack, required this.orderEntity})
-      : super(key: key);
+  const PrintPaymentScreen({Key? key, required this.sessionId, required this.payUrl, required this.orderEntity}) : super(key: key);
   final String sessionId;
   final String payUrl;
-  final CancelPayCallBack cancelPayCallBack;
-  final PayCompleteCallBack payCompleteCallBack;
+
+  // final CancelPayCallBack cancelPayCallBack;
+  // final PayCompleteCallBack payCompleteCallBack;
   final PrintOrderEntity orderEntity;
 
   @override
@@ -46,31 +46,24 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
               'influencer_id': '${widget.sessionId}',
             })
             .build());
-    socket?.onConnect((_) {
-      print('127.0.0.1 connect');
-    });
-    socket?.onReconnect((_) {
-      print('127.0.0.1 reconnect');
-    });
+    socket?.onConnect((_) {});
+    socket?.onReconnect((_) {});
     socket?.on('pay_complete', (data) {
-      print('127.0.0.1 ==== Received event: $data');
       // 跳转成功界面
-      widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
+      Navigator.of(context).pop(true);
+      // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
     });
-    socket?.onDisconnect((data) {
-      print("127.0.0.1 ==== Disconnected $data");
-    });
+    socket?.onDisconnect((data) {});
     socket?.connect();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("127.0.0.1 ==== ${widget.payUrl}");
-    print("127.0.0.1 ==== ${widget.sessionId}");
     return WillPopScope(
       onWillPop: () async {
         // 跳转取消界面
-        widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
+        // widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
+        Navigator.of(context).pop(false);
         return false;
       },
       child: Scaffold(
@@ -85,14 +78,16 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
             width: ScreenUtil.screenSize.width,
             child: WebView(
               navigationDelegate: (NavigationRequest request) async {
+                print(request.url);
                 // 处理取消逻辑
-                if (request.url.contains("https://socialbook.io/pay_success_screen")) {
+                if (request.url.contains(Config.instance.successUrl)) {
                   // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
                   return NavigationDecision.prevent;
                 }
-                if (request.url.contains("https://socialbook.io/pay_cancel_screen")) {
-                  widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
-                  return NavigationDecision.prevent;
+                if (request.url.contains(Config.instance.cancelUrl)) {
+                  // widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
+                  Navigator.of(context).pop(false);
+                  // return NavigationDecision.prevent;
                 }
                 return NavigationDecision.navigate;
               },
