@@ -24,10 +24,12 @@ import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print_option_screen.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -380,71 +382,51 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           Navigator.of(context).pop(false);
                         });
                       },
-                      onDownloadTap: () async {
-                        showSaveDialog(context, true).then((value) async {
-                          if (value != null) {
-                            if (value) {
-                              showDialog<String>(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
-                                if (!TextUtil.isEmpty(value)) {
-                                  await showLoading();
-                                  await GallerySaver.saveVideo(value!, true, toDcim: true, albumName: saveAlbumName);
-                                  await hideLoading();
-                                  Events.metaverseCompleteDownload(type: 'video');
-                                  CommonExtension().showVideoSavedOkToast(context);
-                                  delay(() {
-                                    UserManager userManager = AppDelegate.instance.getManager();
-                                    userManager.rateNoticeOperator.onSwitch(context);
-                                  }, milliseconds: 2000);
-                                }
-                              });
-                            } else {
-                              await showLoading();
-                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              var list = uint8list.toList();
-                              var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-                              var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-                              await File(imgPath).writeAsBytes(list);
-                              await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
-                              await hideLoading();
-                              Events.metaverseCompleteDownload(type: 'image');
-                              CommonExtension().showImageSavedOkToast(context);
-                              delay(() {
-                                UserManager userManager = AppDelegate.instance.getManager();
-                                userManager.rateNoticeOperator.onSwitch(context);
-                              }, milliseconds: 2000);
-                            }
-                          }
-                        });
-                      },
                       onGenerateAgainTap: () {
                         controller.clearTransKey();
                         generate(context, controller);
                       },
-                      onShareDiscoveryTap: () async {
-                        if (TextUtil.isEmpty(controller.transKey)) {
-                          return;
-                        }
-                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
-                          var file = File(controller.transKey!);
-                          ShareDiscoveryScreen.push(
-                            context,
-                            effectKey: 'Me-taverse',
-                            originalUrl: uploadImageController.imageUrl.value,
-                            image: base64Encode(file.readAsBytesSync()),
-                            isVideo: false,
-                            category: HomeCardType.anotherme,
-                          ).then((value) {
-                            if (value ?? false) {
-                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
-                              showShareSuccessDialog(context);
-                            }
-                          });
-                        }, autoExec: true);
+                      onSharePrintTap: () async {
+                        Navigator.of(context).push<void>(Right2LeftRouter(
+                            child: PrintOptionScreen(
+                          file: transResult!,
+                        )));
                       },
-                      onShareTap: () async {
+                    ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
+                  ],
+                ).intoContainer(
+                  width: ScreenUtil.screenSize.width,
+                  height: ScreenUtil.screenSize.height,
+                ),
+                Image.asset(
+                  Images.ic_back,
+                  height: $(24),
+                  width: $(24),
+                )
+                    .intoContainer(
+                      padding: EdgeInsets.all($(10)),
+                      margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
+                    )
+                    .hero(tag: AnotherMe.logoBackTag)
+                    .intoGestureDetector(onTap: () {
+                  Navigator.pop(context, true);
+                }),
+                Image.asset(Images.ic_more, height: $(24), width: $(24))
+                    .intoContainer(
+                  alignment: Alignment.topRight,
+                  width: ScreenUtil.screenSize.width,
+                  padding: EdgeInsets.all($(10)),
+                  margin: EdgeInsets.only(
+                    top: ScreenUtil.getStatusBarHeight(),
+                    right: $(5),
+                  ),
+                )
+                    .intoGestureDetector(onTap: () {
+                  LiPopMenu.showLinePop(
+                    context,
+                    isShowBg: true,
+                    clickCallback: (index, text) {
+                      if (index == 0) {
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {
@@ -508,25 +490,67 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                             }
                           }
                         });
-                      },
-                    ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
-                  ],
-                ).intoContainer(
-                  width: ScreenUtil.screenSize.width,
-                  height: ScreenUtil.screenSize.height,
-                ),
-                Image.asset(
-                  Images.ic_back,
-                  height: $(24),
-                  width: $(24),
-                )
-                    .intoContainer(
-                      padding: EdgeInsets.all($(10)),
-                      margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
-                    )
-                    .hero(tag: AnotherMe.logoBackTag)
-                    .intoGestureDetector(onTap: () {
-                  Navigator.pop(context, true);
+                      } else if (index == 1) {
+                        if (TextUtil.isEmpty(controller.transKey)) {
+                          return;
+                        }
+                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
+                          var file = File(controller.transKey!);
+                          ShareDiscoveryScreen.push(
+                            context,
+                            effectKey: 'Me-taverse',
+                            originalUrl: uploadImageController.imageUrl.value,
+                            image: base64Encode(file.readAsBytesSync()),
+                            isVideo: false,
+                            category: HomeCardType.anotherme,
+                          ).then((value) {
+                            if (value ?? false) {
+                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
+                              showShareSuccessDialog(context);
+                            }
+                          });
+                        }, autoExec: true);
+                      } else if (index == 2) {
+                        showSaveDialog(context, true).then((value) async {
+                          if (value != null) {
+                            if (value) {
+                              showDialog<String>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
+                                if (!TextUtil.isEmpty(value)) {
+                                  await showLoading();
+                                  await GallerySaver.saveVideo(value!, true, toDcim: true, albumName: saveAlbumName);
+                                  await hideLoading();
+                                  Events.metaverseCompleteDownload(type: 'video');
+                                  CommonExtension().showVideoSavedOkToast(context);
+                                  delay(() {
+                                    UserManager userManager = AppDelegate.instance.getManager();
+                                    userManager.rateNoticeOperator.onSwitch(context);
+                                  }, milliseconds: 2000);
+                                }
+                              });
+                            } else {
+                              await showLoading();
+                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                              var list = uint8list.toList();
+                              var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+                              var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+                              await File(imgPath).writeAsBytes(list);
+                              await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+                              await hideLoading();
+                              Events.metaverseCompleteDownload(type: 'image');
+                              CommonExtension().showImageSavedOkToast(context);
+                              delay(() {
+                                UserManager userManager = AppDelegate.instance.getManager();
+                                userManager.rateNoticeOperator.onSwitch(context);
+                              }, milliseconds: 2000);
+                            }
+                          }
+                        });
+                      }
+                    },
+                  );
                 }),
               ],
             ).intoContainer(

@@ -65,34 +65,32 @@ class PrintController extends GetxController {
 
   // 上传合成图片
   Future<bool> _captureAndSave() async {
-    try {
-      ui.Image? image = await getBitmapFromContext(repaintKey.currentContext!);
-      if (image != null) {
-        ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-        String b_name = "fast-socialbook";
-        String f_name = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-        String c_type = "image/jpg";
-        final params = {
-          "bucket": b_name,
-          "file_name": f_name,
-          "content_type": c_type,
-        };
-        cartoonizerApi.getPresignedUrl(params).then((value) async {
-          if (value != null) {
-            Uint8List pngBytes = byteData!.buffer.asUint8List();
-            var baseEntity = await Uploader().upload(value, pngBytes, c_type);
-            if (baseEntity != null) {
-              preview_image = value.split("?").first;
-              return true;
-            }
-          }
-          return false;
-        });
-      }
-    } catch (e) {
-      print(e);
+    ui.Image? image = await getBitmapFromContext(repaintKey.currentContext!);
+    if (image == null) {
+      return false;
     }
-    return false;
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    String b_name = "fast-socialbook";
+    String f_name = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    String c_type = "image/jpg";
+    final params = {
+      "bucket": b_name,
+      "file_name": f_name,
+      "content_type": c_type,
+    };
+    var value = await cartoonizerApi.getPresignedUrl(params);
+    if (value != null) {
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      var baseEntity = await Uploader().upload(value, pngBytes, c_type);
+      if (baseEntity != null) {
+        preview_image = value.split("?").first;
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   // 获取图片的真实显示尺寸
