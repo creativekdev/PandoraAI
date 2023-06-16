@@ -595,7 +595,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     var uint8list = Uint8List.fromList(list);
     var imageInfo = (await SyncMemoryImage(list: uint8list).getImage()).image;
     double ratio = cameraHeight / cameraWidth;
-    double canvasRatio = imageInfo.height / imageInfo.width;
     Rect rect;
     rect = ImageUtils.getTargetCoverRect(Size(imageInfo.width.toDouble(), imageInfo.height.toDouble()), Size(cameraWidth, cameraHeight));
     File file = await cropFileToTarget(
@@ -610,6 +609,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       var resImg = imglib.copyRotate(orImg, pose.coefficient());
       var encodePng = imglib.encodePng(resImg);
       await file.writeAsBytes(encodePng);
+      ratio = 1 / ratio;
     }
     takingPhoto = false;
     return MapEntry(ratio, XFile(file.path));
