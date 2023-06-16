@@ -101,7 +101,7 @@ class DevelopmentConfig implements BaseConfig {
 
   String get successUrl => "$host/pay_success_screen";
 
-  String get cancelUrl => "$host/pay_success_screen";
+  String get cancelUrl => "$host/pay_cancel_screen";
 }
 
 class ProductionConfig implements BaseConfig {
@@ -118,7 +118,7 @@ class ProductionConfig implements BaseConfig {
 
   String get successUrl => "$host/pay_success_screen";
 
-  String get cancelUrl => "$host/pay_success_screen";
+  String get cancelUrl => "$host/pay_cancel_screen";
 }
 
 class Config {

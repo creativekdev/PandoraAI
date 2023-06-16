@@ -198,33 +198,51 @@ class PrintShippingController extends GetxController {
 
     PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
 
-    Navigator.of(context).push<void>(
+    Navigator.of(context)
+        .push<bool>(
       Right2LeftRouter(
         child: PrintPaymentScreen(
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
           orderEntity: printOrderEntity!,
-          cancelPayCallBack: (sessionId, payUrl) {
-            Navigator.of(context).pop();
-            Navigator.of(context).push<void>(Right2LeftRouter(
-                child: PrintPaymentCancelScreen(
-              payUrl: payUrl,
-              sessionId: sessionId,
-              orderEntity: printOrderEntity!,
-            )));
-          },
-          payCompleteCallBack: (sessionId, payUrl) {
-            Navigator.of(context).pop();
-            Navigator.of(context).push<void>(Right2LeftRouter(
-                child: PrintPaymentSuccessScreen(
-              payUrl: payUrl,
-              sessionId: sessionId,
-              orderEntity: printOrderEntity!,
-            )));
-          },
+          // cancelPayCallBack: (sessionId, payUrl) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context).push<void>(Right2LeftRouter(
+          //       child: PrintPaymentCancelScreen(
+          //     payUrl: payUrl,
+          //     sessionId: sessionId,
+          //     orderEntity: printOrderEntity!,
+          //   )));
+          // },
+          // payCompleteCallBack: (sessionId, payUrl) {
+          //   Navigator.of(context).pop();
+          //   Navigator.of(context).push<void>(Right2LeftRouter(
+          //       child: PrintPaymentSuccessScreen(
+          //     payUrl: payUrl,
+          //     sessionId: sessionId,
+          //     orderEntity: printOrderEntity!,
+          //   )));
+          // },
         ),
       ),
-    );
+    )
+        .then((value) {
+      if (value == true) {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentSuccessScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      } else {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentCancelScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      }
+    });
   }
 
   Future<bool> onSubmit() async {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
@@ -24,12 +25,17 @@ class PrintScreen extends StatefulWidget {
   final String file;
 
   @override
-  State<PrintScreen> createState() => _PrintScreenState(optionData: optionData, file: file);
+  State<PrintScreen> createState() => PrintScreenState(optionData: optionData, file: file);
 }
 
-class _PrintScreenState extends State<PrintScreen> {
-  _PrintScreenState({required this.optionData, required this.file}) {
-    controller = Get.put(PrintController(optionData: optionData, file: file));
+class PrintScreenState extends AppState<PrintScreen> {
+  PrintScreenState({required this.optionData, required this.file}) {
+    controller = Get.put(PrintController(optionData: optionData, file: file, screenState: this));
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   PrintOptionData optionData;
@@ -39,7 +45,7 @@ class _PrintScreenState extends State<PrintScreen> {
   // File file = File(acontroller.transKey!);
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
