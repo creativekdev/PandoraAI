@@ -22,6 +22,7 @@ class PrintSelectItem extends StatelessWidget {
         if (imgUrl.isNotEmpty && title == "Color" && showImage)
           CachedNetworkImageUtils.custom(
             context: context,
+            useOld: false,
             imageUrl: imgUrl,
             width: $(32),
             fit: BoxFit.cover,
