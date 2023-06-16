@@ -17,6 +17,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
@@ -568,6 +569,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       cameraController?.dispose().whenComplete(() {
         availableCameras().then((value) {
           var pick = value.pick((t) => isFront ? t.lensDirection != CameraLensDirection.front : t.lensDirection == CameraLensDirection.front) ?? value.first;
+          isFront = pick.lensDirection == CameraLensDirection.front;
           zoomLevel = 1;
           initCameraController(pick);
         });
@@ -595,15 +597,7 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
     double ratio = cameraHeight / cameraWidth;
     double canvasRatio = imageInfo.height / imageInfo.width;
     Rect rect;
-    if (ratio > canvasRatio) {
-      var newWidth = imageInfo.height / ratio;
-      var d = (newWidth - imageInfo.width).abs() / 2;
-      rect = Rect.fromLTWH(d, 0, newWidth, imageInfo.height.toDouble());
-    } else {
-      var newHeight = imageInfo.width / ratio;
-      var d = (newHeight - imageInfo.height).abs() / 2;
-      rect = Rect.fromLTWH(0, d, imageInfo.width.toDouble(), newHeight);
-    }
+    rect = ImageUtils.getTargetCoverRect(Size(imageInfo.width.toDouble(), imageInfo.height.toDouble()), Size(cameraWidth, cameraHeight));
     File file = await cropFileToTarget(
       imageInfo,
       rect,
@@ -616,7 +610,6 @@ class _AnotherMeScreenState extends AppState<AnotherMeScreen> with WidgetsBindin
       var resImg = imglib.copyRotate(orImg, pose.coefficient());
       var encodePng = imglib.encodePng(resImg);
       await file.writeAsBytes(encodePng);
-      ratio = 1 / ratio;
     }
     takingPhoto = false;
     return MapEntry(ratio, XFile(file.path));
