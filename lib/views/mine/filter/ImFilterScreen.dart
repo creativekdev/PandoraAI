@@ -68,7 +68,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   final ItemPositionsListener itemScrollPositionsListener = ItemPositionsListener.create();
   late double itemWidth;
   var currentItemIndex = 0.obs;
-  List<String> _rightTabList = [Images.ic_effects, Images.ic_filters, Images.ic_adjusts,Images.ic_crop, Images.ic_background, Images.ic_letter];
+  List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust,Images.ic_crop, Images.ic_background, Images.ic_letter];
   int selectedRightTab = 0;
 
   int selectedEffectID = 0;
@@ -812,7 +812,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             :Border.all(color: Colors.white, width: 2),
           ),
           child: CircleAvatar(
-            backgroundImage: AssetImage(Images.ic_adjusts),
+            backgroundImage: AssetImage(Images.ic_adjust),
             radius: 25.0,
             backgroundColor: Colors.transparent,
           ),

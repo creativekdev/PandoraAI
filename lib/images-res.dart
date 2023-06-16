@@ -191,14 +191,14 @@ class Images {
    static const String mastercard = 'assets/images/mastercard.png';
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
-   static const String ic_filters = 'assets/images/icon_24_edit_filters@2x.png';
-   static const String ic_adjusts = 'assets/images/icon_24_edit_adjusts@2x.png';
-   static const String ic_effects = 'assets/images/icon_24_edit_effects@2x.png';
+   static const String ic_filter = 'assets/images/ic_filter.png';
+   static const String ic_adjust = 'assets/images/ic_adjust.png';
+   static const String ic_effect = 'assets/images/ic_effect.png';
    static const String ic_crop = 'assets/images/icon_24_edit_crop@2x.png';
-   static const String ic_background = 'assets/images/icon_24_edit_background@2x.png';
-   static const String ic_reduction = 'assets/images/icon_24_edit_reduction@2x.png';
-   static const String ic_letter = 'assets/images/icon_24_edit_letter@2x.png';
-   static const String slider = 'assets/images/slider.png';
+   static const String ic_background = 'assets/images/ic_background.png';
+   static const String ic_reduction = 'assets/images/ic_reduction.png';
+   static const String ic_letter = 'assets/images/ic_letter.png';
+   static const String ic_slider = 'assets/images/ic_slider.png';
 
 }
 
