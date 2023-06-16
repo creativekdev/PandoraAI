@@ -157,8 +157,10 @@ class PrintShippingController extends GetxController {
 
   onTapRegion(BuildContext context) {
     SelectRegionPage.pickRegion(context).then((value) {
+      print(value);
       if (value != null) {
         _regionEntity = value;
+        update();
       }
     });
   }
@@ -269,8 +271,8 @@ class PrintShippingController extends GetxController {
     var address = {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
-      "phone": "+${regionEntity?.regionCode ?? "1"}" + contactNumberController.text,
-      "country_code": regionEntity?.regionCode,
+      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+      "country_code": regionEntity?.callingCode,
       "country_name": regionEntity?.regionName,
       "country": regionEntity?.regionName,
       "address1": searchAddressController.text,

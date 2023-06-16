@@ -29,6 +29,7 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
   @override
   void initState() {
     super.initState();
+    print(rows);
   }
 
   @override

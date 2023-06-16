@@ -14,6 +14,8 @@ import 'package:cartoonizer/views/print/widgets/print_web_item.dart';
 
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../Widgets/router/routers.dart';
+import '../../app/app.dart';
+import '../../app/user/user_manager.dart';
 
 class PrintScreen extends StatefulWidget {
   PrintScreen({
@@ -169,7 +171,10 @@ class PrintScreenState extends AppState<PrintScreen> {
                 total: controller.total,
                 onTap: () {
                   if (controller.onSubmit(context)) {
-                    Navigator.of(context).push<void>(Right2LeftRouter(child: PrintShippingScreen()));
+                    UserManager userManager = AppDelegate().getManager();
+                    userManager.doOnLogin(context, logPreLoginAction: 'print_shipping_screen', callback: () {
+                      Navigator.of(context).push<void>(Right2LeftRouter(child: PrintShippingScreen()));
+                    }, autoExec: true);
                   }
                 },
               ),

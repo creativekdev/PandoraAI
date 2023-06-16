@@ -126,7 +126,7 @@ class PrintInputContactItem extends StatelessWidget {
                 padding: EdgeInsets.only(left: $(76)),
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  regionCodeEntity?.regionCode ?? '+1',
+                  regionCodeEntity?.callingCode ?? '+1',
                   style: TextStyle(
                     color: ColorConstant.White,
                     fontSize: $(14),

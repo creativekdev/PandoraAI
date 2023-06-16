@@ -13,7 +13,7 @@ class _PrintSubmitAreaState extends State<PrintSubmitArea> {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: ScreenUtil.screenSize.height - $(144) - ScreenUtil.getNavigationBarHeight() - ScreenUtil.getStatusBarHeight(),
+      top: ScreenUtil.screenSize.height - $(144) - ScreenUtil.getNavigationBarHeight() - ScreenUtil.getStatusBarHeight() - ScreenUtil.getBottomPadding(context),
       // ScreenUtil.getBottomPadding(context) -
       // ScreenUtil.getBottomBarHeight(),
       // bottom: 0,
