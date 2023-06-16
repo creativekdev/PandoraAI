@@ -22,7 +22,7 @@ import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
+import 'package:cartoonizer/views/print/print_order_screen.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -122,6 +122,15 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     MaterialPageRoute(
                       settings: RouteSettings(name: "/EffectRecentScreen"),
                       builder: (context) => EffectRecentScreen(),
+                    ));
+              }),
+              line(context),
+              ImageTextBarWidget("Orders", Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PrintOrderScreen"),
+                      builder: (context) => PrintOrderScreen(),
                     ));
               }),
               line(context),

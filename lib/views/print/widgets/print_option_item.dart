@@ -8,7 +8,6 @@ class PrintOptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TitleTextWidget(btnText, ColorConstant.White, FontWeight.w600, 16)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

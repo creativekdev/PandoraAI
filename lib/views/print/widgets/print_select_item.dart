@@ -1,38 +1,30 @@
 import 'package:cartoonizer/images-res.dart';
 
 import '../../../Common/importFile.dart';
+import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
 
 class PrintSelectItem extends StatelessWidget {
-  PrintSelectItem(
-      {Key? key,
-      required this.title,
-      required this.content,
-      required this.imgUrl})
-      : super(key: key);
+  PrintSelectItem({Key? key, required this.title, required this.content, required this.imgUrl, required this.showImage}) : super(key: key);
   final String title;
   final String content;
   final String imgUrl;
+  final bool showImage;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TitleTextWidget(
-                  title, ColorConstant.White, FontWeight.normal, $(9)),
-              if (content.isNotEmpty)
-                TitleTextWidget(
-                    content, ColorConstant.White, FontWeight.w500, $(14)),
-            ]),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+          TitleTextWidget(title, ColorConstant.White, FontWeight.normal, $(12)),
+          if (content.isNotEmpty) TitleTextWidget(content, ColorConstant.White, FontWeight.w500, $(14)),
+        ]),
         Spacer(),
-        if (imgUrl.isNotEmpty)
-          Image.asset(
-            Images.ic_arrow_right,
-            color: ColorConstant.White,
+        if (imgUrl.isNotEmpty && title == "Color" && showImage)
+          CachedNetworkImageUtils.custom(
+            context: context,
+            imageUrl: imgUrl,
             width: $(32),
+            fit: BoxFit.cover,
           ).intoContainer(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular($(4)),

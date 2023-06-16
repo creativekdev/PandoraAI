@@ -36,7 +36,7 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
           Navigator.pop(context);
         }),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstant.BackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: $(8)),
         child: GetBuilder<PrintOptionController>(
@@ -54,10 +54,10 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
                 return PrintOptionItem(
                   data: controller.printOptionEntity.data[index],
                 ).intoGestureDetector(onTap: () {
-                  print(index);
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       child: PrintScreen(
                     optionData: controller.printOptionEntity.data[index],
+                    file: widget.file.path,
                   )));
                 });
               },

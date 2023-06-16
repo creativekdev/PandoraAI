@@ -4009,6 +4009,276 @@ class S {
       args: [],
     );
   }
+
+  /// `Select Region`
+  String get SELECT_COUNTRY_CALLING_CODE {
+    return Intl.message(
+      'Select Region',
+      name: 'SELECT_COUNTRY_CALLING_CODE',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select region`
+  String get SELECT_COUNTRY_CALLING_CODE_HINT {
+    return Intl.message(
+      'Please select region',
+      name: 'SELECT_COUNTRY_CALLING_CODE_HINT',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `RegionName, RegionCode or CallingCode`
+  String get SELECT_COUNTRY_KEYWORD {
+    return Intl.message(
+      'RegionName, RegionCode or CallingCode',
+      name: 'SELECT_COUNTRY_KEYWORD',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Region`
+  String get SELECT_REGION {
+    return Intl.message(
+      'Select Region',
+      name: 'SELECT_REGION',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Subtotal`
+  String get Subtotal {
+    return Intl.message(
+      'Subtotal',
+      name: 'Subtotal',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shipping details`
+  String get shipping_details {
+    return Intl.message(
+      'Shipping details',
+      name: 'shipping_details',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get address {
+    return Intl.message(
+      'Address',
+      name: 'address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apartment/Suite/Other`
+  String get apartment_suite_other {
+    return Intl.message(
+      'Apartment/Suite/Other',
+      name: 'apartment_suite_other',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search address`
+  String get search_address {
+    return Intl.message(
+      'Search address',
+      name: 'search_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First Name`
+  String get first_name {
+    return Intl.message(
+      'First Name',
+      name: 'first_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last Name`
+  String get last_name {
+    return Intl.message(
+      'Last Name',
+      name: 'last_name',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Number`
+  String get contact_number {
+    return Intl.message(
+      'Contact Number',
+      name: 'contact_number',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shipping & Delivery`
+  String get shipping_delivery {
+    return Intl.message(
+      'Shipping & Delivery',
+      name: 'shipping_delivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `7-10 business days`
+  String get business_days_7_10 {
+    return Intl.message(
+      '7-10 business days',
+      name: 'business_days_7_10',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `10-20 business days`
+  String get business_days_10_20 {
+    return Intl.message(
+      '10-20 business days',
+      name: 'business_days_10_20',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `standard`
+  String get standard {
+    return Intl.message(
+      'standard',
+      name: 'standard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `expedited`
+  String get expedited {
+    return Intl.message(
+      'expedited',
+      name: 'expedited',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Back home`
+  String get back_home {
+    return Intl.message(
+      'Back home',
+      name: 'back_home',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View orders`
+  String get view_orders {
+    return Intl.message(
+      'View orders',
+      name: 'view_orders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order ID:`
+  String get order_ID {
+    return Intl.message(
+      'Order ID:',
+      name: 'order_ID',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shipping information`
+  String get shipping_information {
+    return Intl.message(
+      'Shipping information',
+      name: 'shipping_information',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment failed`
+  String get payment_failed {
+    return Intl.message(
+      'Payment failed',
+      name: 'payment_failed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Try again`
+  String get try_again {
+    return Intl.message(
+      'Try again',
+      name: 'try_again',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order details`
+  String get order_details {
+    return Intl.message(
+      'Order details',
+      name: 'order_details',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Variations`
+  String get variations {
+    return Intl.message(
+      'Variations',
+      name: 'variations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Order time`
+  String get order_time {
+    return Intl.message(
+      'Order time',
+      name: 'order_time',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Number`
+  String get number {
+    return Intl.message(
+      'Number',
+      name: 'number',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

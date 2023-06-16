@@ -3,12 +3,7 @@ import '../../../Common/importFile.dart';
 typedef ValueCallBack = void Function(Map<String, bool> map, String value);
 
 class PrintOptionsItem extends StatelessWidget {
-  PrintOptionsItem(
-      {Key? key,
-      required this.showMap,
-      required this.options,
-      required this.onSelectTitleTap})
-      : super(key: key);
+  PrintOptionsItem({Key? key, required this.showMap, required this.options, required this.onSelectTitleTap}) : super(key: key);
   final Map<String, bool> showMap;
   final List<String> options;
   ValueCallBack onSelectTitleTap;
@@ -32,8 +27,7 @@ class PrintOptionsItem extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: options.length,
             itemBuilder: (context, index) {
-              return PrintTextOption(text: options[index]).intoGestureDetector(
-                  onTap: () {
+              return PrintTextOption(text: options[index]).intoGestureDetector(onTap: () {
                 onSelectTitleTap(showMap, options[index]);
               });
             },
@@ -51,8 +45,7 @@ class PrintTextOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14))
-        .intoContainer(
+    return TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14)).intoContainer(
       alignment: Alignment.center,
       width: $(59),
       height: $(40),
@@ -74,8 +67,7 @@ class PrintImageOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14))
-        .intoContainer(
+    return TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14)).intoContainer(
       alignment: Alignment.center,
       width: $(59),
       height: $(40),
@@ -92,13 +84,16 @@ class PrintImageOption extends StatelessWidget {
 }
 
 class DividerLine extends StatelessWidget {
-  const DividerLine({Key? key}) : super(key: key);
+  DividerLine({Key? key, this.left, this.right}) : super(key: key);
+  double? left;
+  double? right;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(
-        left: $(17),
+        left: left ?? $(17),
+        right: right ?? $(0),
       ),
       color: ColorConstant.InputBackground,
       height: $(0.5),
