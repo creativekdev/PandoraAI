@@ -25,11 +25,7 @@ class MsgDiscoveryCard extends StatelessWidget {
     this.onTap,
     required this.tab,
   }) : super(key: key) {
-    var date = DateUtil.getDateTime(data.created, isUtc: true);
-    if (date != null) {
-      var timeZoneOffset = DateTime.now().timeZoneOffset;
-      dateTime = date.add(timeZoneOffset);
-    }
+    dateTime = data.created.timezoneCur;
     var json = AppDelegate.instance.getManager<CacheManager>().getJson(CacheManager.cacheDiscoveryListEntity + '${data.getPostId()}');
     if (json != null) {
       discovery = jsonConvert.convert(json);

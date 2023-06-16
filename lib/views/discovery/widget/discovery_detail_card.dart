@@ -12,6 +12,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
@@ -41,11 +42,7 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     required this.onTryTap,
   }) : super(key: key) {
     imageListWidth = (ScreenUtil.screenSize.width - $(31)) / 2;
-    var date = DateUtil.getDateTime(controller.discoveryEntity.created, isUtc: true);
-    if (date != null) {
-      var timeZoneOffset = DateTime.now().timeZoneOffset;
-      dateTime = date.add(timeZoneOffset);
-    }
+    dateTime = controller.discoveryEntity.created.timezoneCur;
   }
 
   @override

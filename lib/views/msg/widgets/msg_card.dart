@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
 
 class MsgCard extends StatelessWidget {
@@ -20,11 +21,7 @@ class MsgCard extends StatelessWidget {
   }) : super(key: key) {
     extras = data.extras;
     msgType = data.msgType;
-    var date = DateUtil.getDateTime(data.created, isUtc: true);
-    if (date != null) {
-      var timeZoneOffset = DateTime.now().timeZoneOffset;
-      dateTime = date.add(timeZoneOffset);
-    }
+    dateTime = data.created.timezoneCur;
     avatar = extras['user_avatar']?.toString() ?? '';
     String? name = extras['user_name'];
     if (TextUtil.isEmpty(name)) {

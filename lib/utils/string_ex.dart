@@ -115,4 +115,14 @@ extension StringEx on String {
       return 'png';
     }
   }
+
+  DateTime? get timezoneCur {
+    DateTime? result;
+    var date = DateUtil.getDateTime(this, isUtc: true);
+    if (date != null) {
+      var timeZoneOffset = DateTime.now().timeZoneOffset;
+      result = date.add(timeZoneOffset);
+    }
+    return result;
+  }
 }
