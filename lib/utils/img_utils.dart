@@ -4,9 +4,22 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imgLib;
 
+import 'utils.dart';
+
 class ImageUtils {
+  static Future<String> onImagePick(String tempFilePath, String targetPath) async {
+    var fileName = await md5File(File(tempFilePath));
+    var fileType = getFileType(tempFilePath);
+    var path = targetPath + fileName + '.' + fileType;
+    if (!File(path).existsSync()) {
+      await File(tempFilePath).copy(path);
+    }
+    return path;
+  }
+
   // 根据目标坐标计算原图应该显示的区域
   static Rect getTargetCoverRect(Size source, Size target) {
     double sourceScale = source.width / source.height;
@@ -122,6 +135,10 @@ class ImageUtils {
 
   static Future<Uint8List> printAiDrawData(File originalImage, File resultImage, String userEmail) async {
     return printImageData(originalImage, resultImage, userEmail, Images.ic_ai_draw_top, arrowRes: Images.ic_ai_draw_arrow);
+  }
+
+  static Future<Uint8List> printStyleMorphDrawData(File originalImage, File resultImage, String userEmail) async {
+    return printImageData(originalImage, resultImage, userEmail, Images.ic_style_morph_top, arrowRes: Images.ic_ai_draw_arrow);
   }
 
   static Future<Uint8List> printAnotherMeData(File originalImage, File resultImage, String userEmail) async {
@@ -318,6 +335,22 @@ class ImageUtils {
     final outBytes = await img.toByteData(format: ui.ImageByteFormat.png);
     // var outBytes = await img.toByteData();
     return Uint8List.fromList(outBytes!.buffer.asUint8List().toList());
+  }
+}
+
+CompressFormat _buildCompressFormat(String type) {
+  switch (type.toLowerCase()) {
+    case 'png':
+      return CompressFormat.png;
+    case 'jpg':
+    case 'jpeg':
+      return CompressFormat.jpeg;
+    case 'webp':
+      return CompressFormat.webp;
+    case 'heic':
+      return CompressFormat.heic;
+    default:
+      return CompressFormat.png;
   }
 }
 

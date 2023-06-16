@@ -16,7 +16,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 typedef _ReqAction = Future<BaseEntity?> Function();
 
 abstract class RetryAbleRequester extends BaseRequester {
-  RetryAbleRequester({super.client});
+  RetryAbleRequester({required super.client});
 
   Future<BaseEntity?> get(
     String path, {
@@ -39,6 +39,7 @@ abstract class RetryAbleRequester extends BaseRequester {
         toastOnFailed: toastOnFailed,
         onReceiveProgress: onReceiveProgress,
         preHandleRequest: preHandleRequest,
+        needRetry: needRetry,
         onFailed: (response) {
           if (needRetry) {
             _onFailedCall(response, canClickRetry).then((value) {
@@ -85,6 +86,7 @@ abstract class RetryAbleRequester extends BaseRequester {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
         preHandleRequest: preHandleRequest,
+        needRetry: needRetry,
         onFailed: (response) {
           if (needRetry) {
             _onFailedCall(response, canClickRetry).then((value) {
@@ -133,6 +135,7 @@ abstract class RetryAbleRequester extends BaseRequester {
         onReceiveProgress: onReceiveProgress,
         preHandleRequest: preHandleRequest,
         options: options,
+        needRetry: needRetry,
         onFailed: (response) {
           if (needRetry) {
             _onFailedCall(response, canClickRetry).then((value) {
@@ -175,6 +178,7 @@ abstract class RetryAbleRequester extends BaseRequester {
         params: params,
         toastOnFailed: toastOnFailed,
         preHandleRequest: preHandleRequest,
+        needRetry: needRetry,
         onFailed: (response) {
           if (needRetry) {
             _onFailedCall(response, canClickRetry).then((value) {

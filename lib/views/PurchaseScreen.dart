@@ -154,6 +154,9 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
               _loading = false;
             });
           } else {
+            setState(() {
+              _loading = false;
+            });
             return;
           }
         }
@@ -450,21 +453,13 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                 if (_isAvailable)
                   GestureDetector(
                     onTap: () async {
-                      var sharedPrefs = await SharedPreferences.getInstance();
-                      if (!(sharedPrefs.getBool("isLogin") ?? false)) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/LoginScreen"),
-                            builder: (context) => LoginScreen(),
-                          ),
-                        ).then((value) => Navigator.pop(context, value));
-                      } else {
-                        // setState(() {
-                        //   _loading = true;
-                        // });
-                        _inAppPurchase.restorePurchases();
+                      if (userManager.isNeedLogin) {
+                        return;
                       }
+                      // setState(() {
+                      //   _loading = true;
+                      // });
+                      _inAppPurchase.restorePurchases();
                     },
                     child: Container(
                       decoration: BoxDecoration(

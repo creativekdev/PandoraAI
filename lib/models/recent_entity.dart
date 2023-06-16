@@ -4,6 +4,26 @@ import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/recent_entity.g.dart';
 
 @JsonSerializable()
+class RecentStyleMorphModel {
+  int updateDt = 0;
+  String? originalPath;
+  late List<RecentEffectItem> itemList;
+
+  RecentStyleMorphModel({List<RecentEffectItem>? itemList}) {
+    this.itemList = itemList ?? [];
+  }
+
+  factory RecentStyleMorphModel.fromJson(Map<String, dynamic> json) => $RecentStyleMorphModelFromJson(json);
+
+  Map<String, dynamic> toJson() => $RecentStyleMorphModelToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
 class RecentEffectModel {
   int updateDt = 0;
   String? originalPath;
@@ -79,6 +99,24 @@ class RecentGroundEntity {
   factory RecentGroundEntity.fromJson(Map<String, dynamic> json) => $RecentGroundEntityFromJson(json);
 
   Map<String, dynamic> toJson() => $RecentGroundEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class RecentColoringEntity {
+  int updateDt = 0;
+  String? filePath;
+  String? originFilePath;
+
+  RecentColoringEntity();
+
+  factory RecentColoringEntity.fromJson(Map<String, dynamic> json) => $RecentColoringEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $RecentColoringEntityToJson(this);
 
   @override
   String toString() {

@@ -8,37 +8,64 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
-import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:like_button/like_button.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+
+extension DiscoveryListEntityEx on DiscoveryListEntity {
+  String? getStyle(BuildContext context) {
+    EffectDataController effectDataController = Get.find();
+    var type = HomeCardTypeUtils.build(category);
+    switch (type) {
+      case HomeCardType.cartoonize:
+        if (effectDataController.data == null) {
+          return null;
+        }
+        String key = cartoonizeKey;
+        int tabPos = effectDataController.data!.tabPos(key);
+        if (tabPos == -1) {
+          CommonExtension().showToast(S.of(context).template_not_available);
+          return null;
+        }
+        EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+        EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+        return 'facetoon-${effectItem.key}';
+      case HomeCardType.anotherme:
+        return 'metaverse';
+      case HomeCardType.ai_avatar:
+        return 'avatar';
+      case HomeCardType.txt2img:
+        return 'txt2img';
+      case HomeCardType.scribble:
+        return 'scribble';
+      case HomeCardType.metagram:
+        return 'metagram';
+      case HomeCardType.style_morph:
+        return 'stylemorph';
+      case HomeCardType.UNDEFINED:
+        return null;
+    }
+  }
+}
 
 class DiscoveryDetailScreen extends StatefulWidget {
   DiscoveryListEntity discoveryEntity;
   String prePage;
-  String dataType;
   bool autoComment;
 
   DiscoveryDetailScreen({
     Key? key,
     required this.discoveryEntity,
     required this.prePage,
-    required this.dataType,
     this.autoComment = false,
   }) : super(key: key);
 
@@ -51,7 +78,6 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
   late DiscoveryDetailController controller;
 
   late String prePage;
-  late String dataType;
   String source = '';
   String style = '';
   EffectDataController effectDataController = Get.find();
@@ -61,7 +87,6 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     super.initState();
     Posthog().screenWithUser(screenName: 'discovery_detail_screen');
     prePage = widget.prePage;
-    dataType = widget.dataType;
     source = prePage + '-discovery';
     controller = Get.put(DiscoveryDetailController(
       discoveryEntity: widget.discoveryEntity.copy(),
@@ -82,32 +107,12 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
 
   logLoading() {
     var discoveryEntity = controller.discoveryEntity;
-    if (discoveryEntity.category == DiscoveryCategory.cartoonize.name) {
-      if (effectDataController.data == null) {
-        return;
-      }
-      String key = discoveryEntity.cartoonizeKey;
-      int tabPos = effectDataController.data!.tabPos(key);
-      if (tabPos == -1) {
-        CommonExtension().showToast(S.of(context).template_not_available);
-        return;
-      }
-      EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-      EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-      style = 'facetoon-${effectItem.key}';
-    } else if (discoveryEntity.category == DiscoveryCategory.ai_avatar.name) {
-      style = 'avatar';
-    } else if (discoveryEntity.category == DiscoveryCategory.another_me.name) {
-      style = 'metaverse';
-    } else if (discoveryEntity.category == DiscoveryCategory.txt2img.name) {
-      style = 'txt2img';
-    } else if (discoveryEntity.category == DiscoveryCategory.scribble.name) {
-      style = 'scribble';
-    }
-    if (TextUtil.isEmpty(style)) {
+    var style = discoveryEntity.getStyle(context);
+    if (style == null) {
       return;
     }
-    Events.discoveryDetailLoading(source: dataType, style: style);
+    this.style = style;
+    Events.discoveryDetailLoading(source: source, style: style);
   }
 
   delete() {
@@ -123,43 +128,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     });
   }
 
-  onTryTap(DiscoveryListEntity data) {
-    if (data.category == DiscoveryCategory.cartoonize.name) {
-      toChoosePage();
-    } else if (data.category == DiscoveryCategory.ai_avatar.name) {
-      Events.discoveryTemplateClick(source: dataType, style: 'avatar');
-      Avatar.open(context, source: 'discovery');
-    } else if (data.category == DiscoveryCategory.another_me.name) {
-      AnotherMe.checkPermissions().then((value) {
-        if (value) {
-          Events.discoveryTemplateClick(source: dataType, style: 'metaverse');
-          AnotherMe.open(context, source: source + '-try-template');
-        } else {
-          AnotherMe.permissionDenied(context);
-        }
-      });
-    } else if (data.category == DiscoveryCategory.txt2img.name) {
-      Map? payload;
-      try {
-        payload = json.decode(data.payload ?? '');
-      } catch (e) {}
-      Txt2imgInitData? initData;
-      if (payload != null && payload['txt2img_params'] != null) {
-        var params = payload['txt2img_params'];
-        int width = params['width'] ?? 512;
-        int height = params['height'] ?? 512;
-        initData = Txt2imgInitData()
-          ..prompt = params['prompt']
-          ..width = width
-          ..height = height;
-      }
-      Txt2img.open(context, source: source + '-try-template', initData: initData);
-    } else if (data.category == DiscoveryCategory.scribble.name) {
-      AiDrawable.open(context, source: source + '-try-template');
-    } else {
-      CommonExtension().showToast(S.of(context).oldversion_tips);
-    }
-  }
+  onTryTap(DiscoveryListEntity data) {}
 
   toChoosePage() {
     if (effectDataController.data == null) {
@@ -177,15 +146,24 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
     categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
     itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-    Events.discoveryTemplateClick(source: dataType, style: 'facetoon-${effectItem.key}');
+    Events.discoveryTemplateClick(source: source, style: 'facetoon-${effectItem.key}');
     Cartoonize.open(
       context,
       source: source + '-try-template',
       tabPos: tabPos,
       categoryPos: categoryPos,
       itemPos: itemPos,
-      entrySource: EntrySource.fromDiscovery,
     );
+  }
+
+  toStyleMorph() {
+    if (effectDataController.data == null) {
+      return;
+    }
+
+    String key = controller.discoveryEntity.cartoonizeKey;
+    Events.discoveryTemplateClick(source: source, style: 'stylemorph-${key}');
+    StyleMorph.open(context, source + '-try-template', initKey: key);
   }
 
   onCreateCommentClick(DiscoveryDetailController controller, {int? replySocialPostCommentId, int? parentSocialPostCommentId, String? userName}) {
@@ -209,7 +187,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
     await showLoading();
     var result = controller.createDiscoveryComment(
       comment,
-      dataType,
+      source,
       style,
       replySocialPostCommentId: replySocialPostCommentId,
       parentSocialPostCommentId: parentSocialPostCommentId,
@@ -253,7 +231,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
                             controller.discoveryUnLike();
                             result = false;
                           } else {
-                            controller.discoveryLike(dataType, style);
+                            controller.discoveryLike(source, style);
                             result = true;
                           }
                           return result;
@@ -262,7 +240,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
                           onCreateCommentClick(controller);
                         },
                         onTryTap: () {
-                          onTryTap(controller.discoveryEntity);
+                          HomeCardTypeUtils.jump(context: context, source: '$source-try-template', data: controller.discoveryEntity);
                         });
                   } else {
                     return buildCommentItem(context, index - 1, controller);
@@ -319,7 +297,7 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
                     controller.discoveryUnLike();
                     result = false;
                   } else {
-                    controller.discoveryLike(dataType, style);
+                    controller.discoveryLike(source, style);
                     result = true;
                   }
                   return result;

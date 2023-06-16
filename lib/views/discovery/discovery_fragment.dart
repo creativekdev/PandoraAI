@@ -48,6 +48,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   double titleHeight = 0;
 
   late StreamSubscription onTabDoubleClickListener;
+  late StreamSubscription onSwitchTabListener;
   late TabController tabController;
   final List<String> tabs = ['Metagram', 'Discovery'];
 
@@ -57,6 +58,20 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
     Posthog().screenWithUser(screenName: 'discovery_fragment');
     tabController = TabController(length: tabs.length, vsync: this);
     tabId = widget.tabId;
+    onSwitchTabListener = EventBusHelper().eventBus.on<OnTabSwitchEvent>().listen((event) {
+      if ((event.data?.length ?? 0) == 2) {
+        if (event.data!.first == tabId.id()) {
+          var pos = event.data!.last;
+          tabController.index = pos;
+          listController.isMetagram = pos == 0;
+          easyRefreshController.callRefresh();
+          calculateHeaderHeight();
+          if (mounted) {
+            setState(() {});
+          }
+        }
+      }
+    });
     onTabDoubleClickListener = EventBusHelper().eventBus.on<OnTabDoubleClickEvent>().listen((event) {
       if (tabId.id() == event.data && !listController.listLoading) {
         easyRefreshController.callRefresh();
@@ -155,6 +170,9 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               padding: EdgeInsets.only(left: $(12), top: $(8), right: $(12), bottom: $(8)),
               controller: tabController,
               onTap: (index) {
+                if (tabController.index != index) {
+                  Events.discoveryTabClick(tab: tabs[index]);
+                }
                 listController.isMetagram = index == 0;
                 easyRefreshController.callRefresh();
                 setState(() {
@@ -271,8 +289,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value()),
+                                  builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery'),
                                   settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                                 ),
                               );
@@ -281,8 +298,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', dataType: DiscoverySort.newest.value(), autoComment: true),
+                                  builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', autoComment: true),
                                   settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                                 ),
                               );
@@ -339,30 +355,8 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   String getStyle(
     DiscoveryListEntity discoveryEntity,
   ) {
-    if (discoveryEntity.category == DiscoveryCategory.cartoonize.name) {
-      EffectDataController effectDataController = Get.find();
-      if (effectDataController.data == null) {
-        return '';
-      }
-      String key = discoveryEntity.cartoonizeKey;
-      int tabPos = effectDataController.data!.tabPos(key);
-      if (tabPos == -1) {
-        CommonExtension().showToast(S.of(context).template_not_available);
-        return '';
-      }
-      EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-      EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-      return 'facetoon-${effectItem.key}';
-    } else if (discoveryEntity.category == DiscoveryCategory.ai_avatar.name) {
-      return 'avatar';
-    } else if (discoveryEntity.category == DiscoveryCategory.another_me.name) {
-      return 'metaverse';
-    } else if (discoveryEntity.category == DiscoveryCategory.txt2img.name) {
-      return 'txt2img';
-    } else if (discoveryEntity.category == DiscoveryCategory.scribble.name) {
-      return 'scribble';
-    }
-    return '';
+    var style = discoveryEntity.getStyle(context);
+    return style ?? '';
   }
 
   @override

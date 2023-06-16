@@ -169,7 +169,7 @@ class MetagramItemEditController extends GetxController {
     super.dispose();
   }
 
-  Future<TransferResult?> startTransfer() async {
+  Future<TransferResult?> startTransfer({onFailed}) async {
     if (originFile == null) {
       CommonExtension().showToast('Oops failed, please retry a few later');
       return null;
@@ -187,7 +187,7 @@ class MetagramItemEditController extends GetxController {
       }
     }
     var imageUrl = resources.last.url!;
-    var baseEntity = await api.generateAnotherMe(imageUrl, null);
+    var baseEntity = await api.generateAnotherMe(imageUrl, null, onFailed);
     if (baseEntity == null) {
       return null;
     }

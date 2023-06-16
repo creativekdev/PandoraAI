@@ -4,10 +4,12 @@
 
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/ai_draw_result_entity.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/models/color_fill_result_entity.dart';
 import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
@@ -48,6 +50,7 @@ class JsonConvert {
   static final Map<String, JsonConvertFunction> convertFuncMap = {
     (AdConfigEntity).toString(): AdConfigEntity.fromJson,
     (AiDrawResultEntity).toString(): AiDrawResultEntity.fromJson,
+    (AiServerEntity).toString(): AiServerEntity.fromJson,
     (AnotherMeResultEntity).toString(): AnotherMeResultEntity.fromJson,
     (AppFeatureEntity).toString(): AppFeatureEntity.fromJson,
     (AppFeaturePayload).toString(): AppFeaturePayload.fromJson,
@@ -55,6 +58,7 @@ class JsonConvert {
     (AvatarChildEntity).toString(): AvatarChildEntity.fromJson,
     (AvatarConfigEntity).toString(): AvatarConfigEntity.fromJson,
     (AvatarConfigData).toString(): AvatarConfigData.fromJson,
+    (ColorFillResultEntity).toString(): ColorFillResultEntity.fromJson,
     (CropRecordEntity).toString(): CropRecordEntity.fromJson,
     (DailyLimitRuleEntity).toString(): DailyLimitRuleEntity.fromJson,
     (VIPPlanDetail).toString(): VIPPlanDetail.fromJson,
@@ -192,10 +196,12 @@ class JsonConvert {
     (PushExtraEntity).toString(): PushExtraEntity.fromJson,
     (PushModuleExtraEntity).toString(): PushModuleExtraEntity.fromJson,
     (RateConfigEntity).toString(): RateConfigEntity.fromJson,
+    (RecentStyleMorphModel).toString(): RecentStyleMorphModel.fromJson,
     (RecentEffectModel).toString(): RecentEffectModel.fromJson,
     (RecentEffectItem).toString(): RecentEffectItem.fromJson,
     (RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
     (RecentGroundEntity).toString(): RecentGroundEntity.fromJson,
+    (RecentColoringEntity).toString(): RecentColoringEntity.fromJson,
     (RegionCodeEntity).toString(): RegionCodeEntity.fromJson,
     (ShippingMethodEntity).toString(): ShippingMethodEntity.fromJson,
     (ShippingMethodShippingRateData).toString(): ShippingMethodShippingRateData.fromJson,
@@ -288,6 +294,9 @@ class JsonConvert {
     if (<AiDrawResultEntity>[] is M) {
       return data.map<AiDrawResultEntity>((Map<String, dynamic> e) => AiDrawResultEntity.fromJson(e)).toList() as M;
     }
+    if (<AiServerEntity>[] is M) {
+      return data.map<AiServerEntity>((Map<String, dynamic> e) => AiServerEntity.fromJson(e)).toList() as M;
+    }
     if (<AnotherMeResultEntity>[] is M) {
       return data.map<AnotherMeResultEntity>((Map<String, dynamic> e) => AnotherMeResultEntity.fromJson(e)).toList() as M;
     }
@@ -308,6 +317,9 @@ class JsonConvert {
     }
     if (<AvatarConfigData>[] is M) {
       return data.map<AvatarConfigData>((Map<String, dynamic> e) => AvatarConfigData.fromJson(e)).toList() as M;
+    }
+    if (<ColorFillResultEntity>[] is M) {
+      return data.map<ColorFillResultEntity>((Map<String, dynamic> e) => ColorFillResultEntity.fromJson(e)).toList() as M;
     }
     if (<CropRecordEntity>[] is M) {
       return data.map<CropRecordEntity>((Map<String, dynamic> e) => CropRecordEntity.fromJson(e)).toList() as M;
@@ -837,6 +849,9 @@ class JsonConvert {
     if (<RateConfigEntity>[] is M) {
       return data.map<RateConfigEntity>((Map<String, dynamic> e) => RateConfigEntity.fromJson(e)).toList() as M;
     }
+    if (<RecentStyleMorphModel>[] is M) {
+      return data.map<RecentStyleMorphModel>((Map<String, dynamic> e) => RecentStyleMorphModel.fromJson(e)).toList() as M;
+    }
     if (<RecentEffectModel>[] is M) {
       return data.map<RecentEffectModel>((Map<String, dynamic> e) => RecentEffectModel.fromJson(e)).toList() as M;
     }
@@ -848,6 +863,9 @@ class JsonConvert {
     }
     if (<RecentGroundEntity>[] is M) {
       return data.map<RecentGroundEntity>((Map<String, dynamic> e) => RecentGroundEntity.fromJson(e)).toList() as M;
+    }
+    if (<RecentColoringEntity>[] is M) {
+      return data.map<RecentColoringEntity>((Map<String, dynamic> e) => RecentColoringEntity.fromJson(e)).toList() as M;
     }
     if (<RegionCodeEntity>[] is M) {
       return data.map<RegionCodeEntity>((Map<String, dynamic> e) => RegionCodeEntity.fromJson(e)).toList() as M;

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
@@ -93,7 +94,7 @@ class AnotherMeController extends GetxController {
 
   bool hasTransRecord() => _transKey != null;
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId) async {
+  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, onFailed) async {
     if (TextUtil.isEmpty(imageUrl)) {
       return null;
     }
@@ -109,7 +110,7 @@ class AnotherMeController extends GetxController {
         }
       }
     }
-    var baseEntity = await api.generateAnotherMe(imageUrl, cachedId);
+    var baseEntity = await api.generateAnotherMe(imageUrl, cachedId, onFailed);
     if (baseEntity == null) {
       return null;
     }
@@ -155,7 +156,7 @@ class AnotherMeController extends GetxController {
   ) async {
     _transKey = null;
     update();
-    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
+    File compressedImage = await imageCompressAndGetFile(file, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
     return _uploadAndSave(key, compressedImage, uploadImageController, sourceFile: file);
   }
 }

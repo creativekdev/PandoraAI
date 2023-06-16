@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 
 import 'ai_drawable_screen.dart';
 
@@ -10,7 +10,10 @@ class AiDrawable {
     Events.aidrawLoading(source: source);
     return Navigator.of(context).push(MaterialPageRoute(
       settings: RouteSettings(name: "/AiDrawableScreen"),
-      builder: (_) => AiDrawableScreen(record: history),
+      builder: (_) => AiDrawableScreen(
+        record: history,
+        source: source,
+      ),
     ));
   }
 }

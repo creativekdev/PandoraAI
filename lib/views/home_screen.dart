@@ -130,19 +130,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }
             }),
         milliseconds: 1000);
-    // userManager.rateNoticeOperator.judgeAndShowNotice(context).then((value) {
-    //   if (!value) {
-    //     delay(() => cacheManager.featureOperator.judgeAndOpenFeaturePage(context), milliseconds: 1000);
-    //   }
-    // });
     FirebaseMessaging.instance.getInitialMessage().then((value) {
       if (value != null) {
         AppDelegate.instance.getManager<NotificationManager>().onHandleNotificationClick(value);
-      }
-    });
-    AnotherMe.checkPermissions().then((value) {
-      if (value) {
-        albumController.getTotalAlbum();
       }
     });
   }

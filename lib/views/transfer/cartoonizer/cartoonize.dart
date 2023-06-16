@@ -12,7 +12,6 @@ class Cartoonize {
     int tabPos = 0,
     int categoryPos = 0,
     int itemPos = 0,
-    EntrySource entrySource = EntrySource.fromDiscovery,
     RecentEffectModel? recentEffectModel,
   }) async {
     Events.facetoonLoading(source: source);
@@ -24,7 +23,6 @@ class Cartoonize {
           tabPos: tabPos,
           pos: categoryPos,
           itemPos: itemPos,
-          entrySource: entrySource,
           recentEffectModel: recentEffectModel,
         ),
       ),

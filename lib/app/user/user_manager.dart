@@ -49,10 +49,6 @@ class UserManager extends BaseManager {
     cacheManager.setJson('${CacheManager.platformConnections}:${_user?.id ?? 'guest'}', cache);
   }
 
-  Map<String, dynamic> get aiServers => cacheManager.getJson(CacheManager.keyAiServer) ?? {};
-
-  set aiServers(Map<String, dynamic> data) => cacheManager.setJson(CacheManager.keyAiServer, data);
-
   DailyLimitRuleEntity get limitRule {
     var data = cacheManager.getJson(CacheManager.limitRule);
     if (data == null) {
@@ -160,9 +156,6 @@ class UserManager extends BaseManager {
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
     var value = await api.getCurrentUser();
-    if (value.aiServers.isNotEmpty) {
-      aiServers = value.aiServers;
-    }
     adConfig = value.adConfig;
     limitRule = value.dailyLimitRuleEntity;
     cacheManager.featureOperator.refreshFeature(value.feature);

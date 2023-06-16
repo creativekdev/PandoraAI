@@ -16,19 +16,11 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
-
-import '../transfer/style_morph/style_morph.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -98,46 +90,6 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
       } else {
         proVisible = false;
       }
-    }
-  }
-
-  onItemClick(HomeCardType type) {
-    switch (type) {
-      case HomeCardType.cartoonize:
-        Cartoonize.open(
-          context,
-          source: 'home_page',
-          categoryPos: 0,
-          itemPos: 0,
-          tabPos: 0,
-        );
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(context, source: 'home_page');
-          } else {
-            AnotherMe.permissionDenied(context);
-          }
-        });
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.openFromHome(context);
-        break;
-      case HomeCardType.txt2img:
-        Txt2img.open(context, source: 'home_page');
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(context, source: 'home_page');
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(context, source: 'home_page');
-        break;
-      case HomeCardType.style_morph:
-        StyleMorph.open(context, 'home_page');
-        break;
-      case HomeCardType.UNDEFINED:
-        break;
     }
   }
 
@@ -227,7 +179,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                               ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
                             ],
                           ).intoGestureDetector(onTap: () {
-                            onItemClick(type);
+                            HomeCardTypeUtils.jumpWithHomeType(context, 'home_page', type, InitPos());
                           });
                         },
                         itemCount: list.length,

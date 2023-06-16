@@ -37,15 +37,25 @@ class ExceptionHandler {
     }
   }
 
-  onDioError(DioError e, {bool toastOnFailed = true}) {
+  onDioError(DioError e, {bool toastOnFailed = true, bool needRetry = true}) {
     var statusCode = e.response?.statusCode ?? -1;
     if (e.response == null) {
       // onError(e);
     } else if (statusCode == 401) {
       onTokenExpired(statusCode, e.response?.statusMessage);
     } else if (statusCode >= 402 && statusCode < 600) {
+      if (toastOnFailed && !needRetry) {
+        var data = e.response!.data;
+        if (data == null) {
+          CommonExtension().showToast("Oops failed!");
+        } else if (data is Map) {
+          CommonExtension().showToast((data['message'] ?? "Oops failed!").toString());
+        } else {
+          CommonExtension().showToast(data.toString());
+        }
+      }
       if (e.response != null) {
-        CartoonizerApi().logError(
+        CartoonizerApi(client: DioNode.instance.build()).logError(
             reqMethod: e.requestOptions.method,
             api: '${e.requestOptions.baseUrl}${e.requestOptions.path}${e.requestOptions.generateParams()}',
             errorMessage: e.response!.data.toString(),

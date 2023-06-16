@@ -13,7 +13,6 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 
-import 'discovery_effect_detail_screen.dart';
 import 'widget/my_discovery_list_card.dart';
 
 class MyDiscoveryScreen extends StatefulWidget {
@@ -268,7 +267,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery', dataType: 'users_discovery'),
+                            builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data, prePage: 'my-discovery'),
                             settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                           ),
                         );

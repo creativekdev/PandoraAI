@@ -21,6 +21,7 @@ import 'package:cartoonizer/api/transform_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -28,7 +29,9 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
@@ -49,16 +52,10 @@ import '../../advertisement/reward_advertisement_screen.dart';
 import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
-enum EntrySource {
-  fromDiscovery,
-  fromEffect,
-}
-
 class ChoosePhotoScreen extends StatefulWidget {
   int tabPos;
   int pos;
   int itemPos;
-  EntrySource entrySource;
   RecentEffectModel? recentEffectModel;
 
   ChoosePhotoScreen({
@@ -66,7 +63,6 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.tabPos,
     required this.pos,
     required this.itemPos,
-    this.entrySource = EntrySource.fromEffect,
     this.recentEffectModel,
   }) : super(key: key);
 
@@ -320,12 +316,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     itemScrollPositionsListener.itemPositions.removeListener(itemScrollPositionsListen);
   }
 
-  void judgeAiServers() {
-    if (userManager.aiServers.isEmpty) {
+  void judgeAiServers() async {
+    EffectManager effectManager = AppDelegate().getManager();
+    var data = await effectManager.loadData();
+    if ((data?.aiConfig ?? []).isEmpty) {
       delay(() {
         controller.changeIsLoading(true);
-        userManager.refreshUser().then((value) {
-          if (value.aiServers.isEmpty) {
+        effectManager.loadData(ignoreCache: true).then((value) {
+          if (value == null || value.aiConfig.isEmpty) {
             CommonExtension().showToast('Load server config failed');
             Navigator.of(context).pop();
           } else {
@@ -756,7 +754,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: videoUrl,
           isVideo: true,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');
@@ -773,7 +771,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: newImage,
           isVideo: false,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');
@@ -1652,8 +1650,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           controller.changeTransingImage(false);
           var responseBody = json.decode(tokenResponse.body);
           if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
-            bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
+            bool isLogin = !userManager.isNeedLogin;
             if (!isLogin) {
               showDialogLogin(context, sharedPrefs);
             } else {
@@ -1668,7 +1665,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
         if (resultSuccess == 1) {
           Events.facetoonGenerated(style: selectedEffect.key);
-          if (TextUtil.isEmpty(controller.videoFile.value?.path) || TextUtil.isEmpty(_image)) {
+          if (TextUtil.isEmpty(controller.videoFile.value?.path) && TextUtil.isEmpty(_image)) {
             return;
           }
           recentController.onEffectUsed(
@@ -1698,7 +1695,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   String _getAiHostByStyle(EffectItem effect) {
     var server = effect.server;
-    return userManager.aiServers[server] ?? Config.instance.host;
+    if (server.contains('cartoonize')) {
+      server = 'cartoonize';
+    }
+    EffectManager effectManager = AppDelegate().getManager();
+    return effectManager.data!.aiConfig.pick((t) => t.key == server)?.serverUrl ?? Config.instance.host;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {

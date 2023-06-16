@@ -16,6 +16,7 @@ const _recordCartoonize = 'cartoonize/';
 const _recordTxt2img = 'aiGround/';
 const _recordStyleMorph = 'styleMorph/';
 const _recordAiDraw = 'aiDraw/';
+const _recordAiColoring = 'aiColoring/';
 const saveAlbumName = 'PandoraAI';
 
 class StorageOperator {
@@ -48,6 +49,8 @@ class StorageOperator {
 
   Directory get recordStyleMorphDir => Directory('$_mainPath$_recordDir$_recordStyleMorph');
 
+  Directory get recordAiColoringDir => Directory('$_mainPath$_recordDir$_recordAiColoring');
+
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
     if (directory == null) return false;
@@ -66,6 +69,7 @@ class StorageOperator {
       '$_recordDir$_recordTxt2img',
       '$_recordDir$_recordAiDraw',
       '$_recordDir$_recordStyleMorph',
+      '$_recordDir$_recordAiColoring',
     ]);
     return true;
   }

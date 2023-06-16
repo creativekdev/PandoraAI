@@ -1,11 +1,13 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DrawableOpt extends StatefulWidget {
@@ -315,7 +317,14 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
         if (fromCamera) {
           var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 512, maxHeight: 512, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
           if (pickImage != null) {
-            result = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
+            Events.aidrawCameraClick(source: drawableController.source, photoType: 'camera');
+            var f = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
+            if (f != null) {
+              result = f;
+            } else {
+              var p = await ImageUtils.onImagePick(pickImage.path, AppDelegate().getManager<CacheManager>().storageOperator.recordAiDrawDir.path);
+              result = XFile(p);
+            }
           }
         } else {
           var files = await PickAlbumScreen.pickImage(
@@ -325,9 +334,16 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           );
           if (files != null && files.isNotEmpty) {
             var medium = files.first;
-            var file = await medium.file;
+            var file = await medium.originFile;
             if (file != null) {
-              result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
+              Events.aidrawCameraClick(source: drawableController.source, photoType: 'gallery');
+              var f = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
+              if (f != null) {
+                result = f;
+              } else {
+                var p = await ImageUtils.onImagePick(file.path, AppDelegate().getManager<CacheManager>().storageOperator.recordAiDrawDir.path);
+                result = XFile(p);
+              }
             }
           }
         }
@@ -340,7 +356,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           if (pick2 != null) {
             drawableController.checkmatePens.remove(pick2);
           }
-          var pen = DrawablePen(drawMode: DrawMode.camera, filePath: result.path);
+          var pen = DrawablePen(drawMode: DrawMode.camera, filePath: result.path, source: fromCamera ? 'camera' : 'gallery');
           await pen.buildImage();
           drawableController.addPens(pen);
         }

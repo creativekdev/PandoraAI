@@ -63,7 +63,7 @@ class Avatar {
       await aiManager.listAllAvatarAi();
       await state?.hideLoading();
       var forward = () {
-        var json = AppDelegate.instance.getManager<CacheManager>().getJson(CacheManager.lastCreateAvatar);
+        var json = AppDelegate.instance.getManager<CacheManager>().getJson(CacheManager.lastCreateAvatar) ?? {};
         var isChangeTemplate = json['isChangeTemplate'] ?? false;
         Events.avatarWhatToExpectContinue(isChangeTemplate: isChangeTemplate);
         Navigator.push(
