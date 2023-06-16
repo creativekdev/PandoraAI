@@ -109,6 +109,7 @@ class Images {
    static const String ic_mt_result_bottom = 'assets/images/ic_mt_result_bottom.png';
    static const String ic_mt_result_middle = 'assets/images/ic_mt_result_middle.png';
    static const String ic_mt_result_top = 'assets/images/ic_mt_result_top.png';
+   static const String ic_my_orders = 'assets/images/ic_my_orders.png';
    static const String ic_net_error_icon = 'assets/images/ic_net_error_icon.png';
    static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
    static const String ic_next = 'assets/images/ic_next.png';
