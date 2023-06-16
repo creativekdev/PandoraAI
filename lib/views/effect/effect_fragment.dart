@@ -15,17 +15,11 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:skeletons/skeletons.dart';
 

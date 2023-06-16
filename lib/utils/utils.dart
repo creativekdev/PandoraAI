@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -116,23 +117,15 @@ Future<bool> mkdir(Directory file) async {
   return true;
 }
 
-Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
+Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFileSize = 2 * mb}) async {
   var length = await file.length();
-  if (length < 200 * 1024) {
+  if (length < 200 * kb) {
     return file;
   }
 
   var quality = 100;
-  if (length > 8 * 1024 * 1024) {
-    quality = (((2 * 1024 * 1024) / length) * 100).toInt();
-  } else if (length > 4 * 1024 * 1024) {
-    quality = 50;
-  } else if (length > 2 * 1024 * 1024) {
-    quality = 60;
-  } else if (length > 1 * 1024 * 1024) {
-    quality = 70;
-  } else if (length > 0.5 * 1024 * 1024) {
-    quality = 80;
+  if (length > maxFileSize) {
+    quality = (((maxFileSize) / length) * 100).toInt();
   }
 
   var dir = await getTemporaryDirectory();
@@ -159,22 +152,29 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 1024}) async {
   return result;
 }
 
-Future<File> imageCompress(File file, String targetPath, {CompressFormat format = CompressFormat.png, bool ignoreSize = false}) async {
+Future<File> imageCompress(
+  File file,
+  String targetPath, {
+  CompressFormat format = CompressFormat.png,
+  bool ignoreSize = false,
+  int maxFileSize = 2 * mb,
+}) async {
+  EffectDataController dataController = Get.find();
+  int imageSize = dataController.data?.imageMaxl ?? 512;
   var length = await file.length();
-  var maxSize = 2 * 1024 * 1024;
-  if (length <= maxSize && !ignoreSize) {
+  if (length <= maxFileSize && !ignoreSize) {
     return await file.copy(targetPath);
   }
 
   var quality = 100;
-  if (length > maxSize) {
-    quality = (((maxSize) / length) * 100).toInt();
+  if (length > maxFileSize) {
+    quality = (((maxFileSize) / length) * 100).toInt();
   }
   var re = (await FlutterImageCompress.compressAndGetFile(
     file.absolute.path,
     targetPath,
-    minWidth: 512,
-    minHeight: 512,
+    minWidth: imageSize,
+    minHeight: imageSize,
     quality: quality,
     format: format,
   ))!;

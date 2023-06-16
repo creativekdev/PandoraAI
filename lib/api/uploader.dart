@@ -2,12 +2,15 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:cartoonizer/utils/array_util.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 
@@ -46,14 +49,16 @@ class Uploader extends RetryAbleRequester {
   }
 
   Future<AnotherMeResultEntity?> generateAnotherMe(String url, String? cachedId, onFailed) async {
-    UserManager userManager = AppDelegate().getManager();
     var params = <String, dynamic>{
       'init_images': [url],
     };
     if (!TextUtil.isEmpty(cachedId)) {
       params['cache_id'] = cachedId!;
     }
-    var baseEntity = await post('${userManager.aiServers['sdppm']}/sdapi/v1/anotherme', params: params, onFailed: onFailed);
+    EffectManager effectManager = AppDelegate().getManager();
+    var apiConfigEntity = effectManager.data!;
+    var pick = apiConfigEntity.aiConfig.pick((t) => t.key == 'anotherme',);
+    var baseEntity = await post('${pick!.serverUrl}/sdapi/v1/anotherme', params: params, onFailed: onFailed);
     var entity = jsonConvert.convert<AnotherMeResultEntity>(baseEntity?.data);
     if (entity != null && baseEntity != null) {
       entity.s = baseEntity.s;

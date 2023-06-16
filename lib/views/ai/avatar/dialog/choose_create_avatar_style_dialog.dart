@@ -22,7 +22,6 @@ class _ChooseCreateAvatarStyleDialog extends StatefulWidget {
 class _ChooseCreateAvatarStyleDialogState extends State<_ChooseCreateAvatarStyleDialog> {
   AvatarAiManager aiManager = AppDelegate().getManager();
   CacheManager cacheManager = AppDelegate().getManager();
-  List<String> selectedList = [];
 
   onCreateTap(String key) {
     int index = aiManager.dataList.length + 1;
@@ -44,15 +43,16 @@ class _ChooseCreateAvatarStyleDialogState extends State<_ChooseCreateAvatarStyle
           if (snapshot.connectionState != ConnectionState.done || configEntity == null) {
             return Container();
           }
-          var roleImages = configEntity.getRoleList();
-          if (selectedList.isEmpty) {
-            selectedList = roleImages.map((e) => e.keys.toList().first).toList();
-          }
+          var roleImages = configEntity.getRoleImages();
+          List<Widget> children = [];
+          roleImages.forEach((key, value) {
+            children.add(buildItem(context, key, configEntity.examples(key)));
+          });
           return SingleChildScrollView(
             padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: roleImages.transfer((e, index) => buildItem(context, e, index)).toList(),
+              children: children,
             ),
           );
         },
@@ -61,200 +61,89 @@ class _ChooseCreateAvatarStyleDialogState extends State<_ChooseCreateAvatarStyle
     );
   }
 
-  Widget buildItem(BuildContext context, Map<String, String> data, int pos) {
-    var keys = data.keys.toList();
-    if (keys.length != 2) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(height: $(16)),
-          ClipRRect(
-            borderRadius: BorderRadius.circular($(60)),
-            child: CachedNetworkImageUtils.custom(
-              useOld: false,
-              context: context,
-              imageUrl: data[keys.first]!,
-              width: $(90),
-              height: $(90),
-            ),
-          ).intoMaterial(elevation: 4, borderRadius: BorderRadius.circular(60)),
-          SizedBox(height: $(6)),
-          TitleTextWidget(aiManager.config!.getName(keys.first), Colors.white, FontWeight.w500, $(15)),
-          SizedBox(height: $(16)),
-          Text(
-            S.of(context).create,
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: $(15),
-            ),
-          )
-              .intoContainer(
-            alignment: Alignment.center,
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(vertical: $(8)),
-            margin: EdgeInsets.symmetric(horizontal: $(15)),
-            decoration: BoxDecoration(
-              color: ColorConstant.DiscoveryBtn,
-              borderRadius: BorderRadius.circular($(8)),
-            ),
-          )
-              .intoGestureDetector(onTap: () {
-            onCreateTap(selectedList[pos]);
-          }),
-          SizedBox(height: $(16)),
-        ],
-      ).intoContainer(
-        decoration: BoxDecoration(
-          color: ColorConstant.DiscoveryCommentBackground,
-          borderRadius: BorderRadius.circular($(6)),
-        ),
-        margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
-      );
+  Widget buildItem(BuildContext context, String key, List<String> urls) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: $(16)),
+        _ExampleImageCard(itemSize: $(80), urls: urls),
+        SizedBox(height: $(6)),
+        TitleTextWidget(aiManager.config!.getName(key), Colors.white, FontWeight.w500, $(15)),
+        SizedBox(height: $(16)),
+        Text(
+          S.of(context).create,
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Poppins',
+            fontSize: $(15),
+          ),
+        )
+            .intoContainer(
+          alignment: Alignment.center,
+          width: double.maxFinite,
+          padding: EdgeInsets.symmetric(vertical: $(8)),
+          margin: EdgeInsets.symmetric(horizontal: $(15)),
+          decoration: BoxDecoration(
+            color: ColorConstant.DiscoveryBtn,
+            borderRadius: BorderRadius.circular($(8)),
+          ),
+        )
+            .intoGestureDetector(onTap: () {
+          onCreateTap(key);
+        }),
+        SizedBox(height: $(16)),
+      ],
+    ).intoContainer(
+      decoration: BoxDecoration(
+        color: Color(0xff16191e),
+        borderRadius: BorderRadius.circular($(6)),
+      ),
+      margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
+    );
+  }
+}
+
+class _ExampleImageCard extends StatelessWidget {
+  double itemSize;
+  List<String> urls = [];
+
+  _ExampleImageCard({required this.itemSize, required List<String> urls}) {
+    if (urls.length > 3) {
+      this.urls = urls.sublist(0, 3);
     } else {
-      String leftKey = keys.first;
-      String leftValue = data[leftKey]!;
-      String rightKey = keys.last;
-      String rightValue = data[rightKey]!;
-      return Column(
-        children: [
-          SizedBox(height: $(16)),
-          _SelectStyleCard(
-            leftKey: leftKey,
-            leftValue: leftValue,
-            rightKey: rightKey,
-            rightValue: rightValue,
-            onChange: (String key) {
-              selectedList[pos] = key;
-            },
-          ).intoCenter(),
-          SizedBox(height: $(16)),
-          Text(
-            S.of(context).create,
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: $(15),
-            ),
-          )
-              .intoContainer(
-            alignment: Alignment.center,
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(vertical: $(8)),
-            margin: EdgeInsets.symmetric(horizontal: $(15)),
-            decoration: BoxDecoration(
-              color: ColorConstant.DiscoveryBtn,
-              borderRadius: BorderRadius.circular($(8)),
-            ),
-          )
-              .intoGestureDetector(onTap: () {
-            onCreateTap(selectedList[pos]);
-          }),
-          SizedBox(height: $(16)),
-        ],
-      ).intoContainer(
-        decoration: BoxDecoration(
-          color: ColorConstant.DiscoveryCommentBackground,
-          borderRadius: BorderRadius.circular($(6)),
-        ),
-        margin: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
-      );
+      this.urls = urls;
     }
-  }
-}
-
-class _SelectStyleCard extends StatefulWidget {
-  String leftKey;
-  String rightKey;
-  String leftValue;
-  String rightValue;
-  Function(String key) onChange;
-
-  _SelectStyleCard({
-    Key? key,
-    required this.leftKey,
-    required this.rightKey,
-    required this.rightValue,
-    required this.leftValue,
-    required this.onChange,
-  }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _SelectStyleCardState();
-  }
-}
-
-class _SelectStyleCardState extends State<_SelectStyleCard> {
-  AvatarAiManager aiManager = AppDelegate().getManager();
-  late String leftKey;
-  late String rightKey;
-  late String leftValue;
-  late String rightValue;
-
-  late String selectedKey;
-
-  @override
-  void initState() {
-    super.initState();
-    leftKey = widget.leftKey;
-    leftValue = widget.leftValue;
-    rightKey = widget.rightKey;
-    rightValue = widget.rightValue;
-    selectedKey = leftKey;
   }
 
   @override
   Widget build(BuildContext context) {
-    bool checkLeft = selectedKey != rightKey;
-    var children = [
-      Align(
-        alignment: Alignment.centerRight,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular($(60)),
-          child: CachedNetworkImageUtils.custom(
-            useOld: false,
-            context: context,
-            imageUrl: rightValue,
-            width: !checkLeft ? $(90) : $(70),
-            height: !checkLeft ? $(90) : $(70),
-          ),
-        ).intoMaterial(elevation: 4, borderRadius: BorderRadius.circular(60)),
-      ),
-      Align(
-        alignment: Alignment.centerLeft,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular($(60)),
-          child: CachedNetworkImageUtils.custom(
-            useOld: false,
-            context: context,
-            imageUrl: leftValue,
-            width: checkLeft ? $(90) : $(70),
-            height: checkLeft ? $(90) : $(70),
-          ),
-        ).intoMaterial(elevation: 4, borderRadius: BorderRadius.circular(60)),
-      ),
-    ];
-    if (!checkLeft) {
-      children = children.reversed.toList();
-    }
-    return Column(
+    return Stack(
       children: [
-        Stack(
-          children: children,
-        ).intoContainer(width: $(140), height: $(90)).intoGestureDetector(onTap: () {
-          if (checkLeft) {
-            widget.onChange.call(rightKey);
-          } else {
-            widget.onChange.call(leftKey);
-          }
-          setState(() {
-            selectedKey = checkLeft ? rightKey : leftKey;
-          });
-        }).intoCenter(),
-        SizedBox(height: $(6)),
-        TitleTextWidget(aiManager.config!.getName(selectedKey), Colors.white, FontWeight.w500, $(15)),
+        Align(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: urls.map((e) => buildItem(context, e, itemSize * 0.8)).toList(),
+          ),
+        ),
+        Align(
+          child: buildItem(context, urls[1], itemSize)
+              .intoContainer(padding: EdgeInsets.all(4), decoration: BoxDecoration(color: Color(0xff16191e), borderRadius: BorderRadius.circular($(80)))),
+          alignment: Alignment.center,
+        ),
       ],
-    );
+    ).intoContainer(height: itemSize + $(10));
+  }
+
+  Widget buildItem(BuildContext context, String url, double size) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular($(60)),
+      child: CachedNetworkImageUtils.custom(
+        useOld: false,
+        context: context,
+        imageUrl: url,
+        width: size,
+        height: size,
+      ),
+    ).intoMaterial(elevation: 4, borderRadius: BorderRadius.circular(60));
   }
 }

@@ -16,7 +16,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 typedef _ReqAction = Future<BaseEntity?> Function();
 
 abstract class RetryAbleRequester extends BaseRequester {
-  RetryAbleRequester({super.client});
+  RetryAbleRequester({required super.client});
 
   Future<BaseEntity?> get(
     String path, {

@@ -99,7 +99,6 @@ class CartoonizerApi extends RetryAbleRequester {
         return OnlineModel(
           user: user,
           loginSuccess: login,
-          aiServers: data['ai_servers'],
           adConfig: adConfig,
           dailyLimitRuleEntity: dailyLimitRuleEntity,
           feature: featureEntity,
@@ -109,7 +108,6 @@ class CartoonizerApi extends RetryAbleRequester {
     return OnlineModel(
       user: null,
       loginSuccess: false,
-      aiServers: {},
       adConfig: AdConfigEntity(),
       dailyLimitRuleEntity: DailyLimitRuleEntity(),
       feature: null,
@@ -475,7 +473,11 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<ApiConfigEntity?> getHomeConfig() async {
-    var baseEntity = await get("/tool/cartoonize_config/v6");
+    var baseEntity = await get(
+      "/tool/cartoonize_config/v6",
+      needRetry: true,
+      canClickRetry: true,
+    );
     if (baseEntity == null) return null;
     return ApiConfigEntity.fromJson(baseEntity.data);
   }
@@ -632,6 +634,11 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<GenerateLimitEntity?> getStyleMorphLimit() async {
     var baseEntity = await get('/tool/stylemorph/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+
+  Future<GenerateLimitEntity?> getAiColoringLimit() async {
+    var baseEntity = await get('/tool/lineart/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 

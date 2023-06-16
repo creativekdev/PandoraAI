@@ -4,9 +4,12 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 
 class AuthApi extends RetryAbleRequester {
+  AuthApi() : super(client: DioNode().client);
+
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     return ApiOptions(baseUrl: Config.instance.host, headers: {});

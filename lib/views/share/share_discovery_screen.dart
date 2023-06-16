@@ -130,6 +130,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         case HomeCardType.metagram:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#Metagram");
           break;
+        case HomeCardType.lineart:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AiColoring");
+          break;
         case HomeCardType.UNDEFINED:
           break;
       }

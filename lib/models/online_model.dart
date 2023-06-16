@@ -5,7 +5,6 @@ import 'package:cartoonizer/models/social_user_info.dart';
 
 class OnlineModel {
   SocialUserInfo? user;
-  Map<String, dynamic> aiServers;
   AdConfigEntity adConfig;
   bool loginSuccess;
   DailyLimitRuleEntity dailyLimitRuleEntity;
@@ -14,7 +13,6 @@ class OnlineModel {
   OnlineModel({
     required this.user,
     required this.loginSuccess,
-    required this.aiServers,
     required this.adConfig,
     required this.dailyLimitRuleEntity,
     required this.feature,

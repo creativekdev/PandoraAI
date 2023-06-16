@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ai_draw_result_entity.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:cartoonizer/utils/array_util.dart';
 import 'package:common_utils/common_utils.dart';
 
 class AiDrawApi extends RetryAbleRequester {
@@ -20,9 +23,12 @@ class AiDrawApi extends RetryAbleRequester {
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     var userManager = AppDelegate.instance.getManager<UserManager>();
+    var effectManager = AppDelegate.instance.getManager<EffectManager>();
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
-    return ApiOptions(baseUrl: userManager.aiServers['sdscribble'] ?? 'https://ai.pandoraai.app:50004', headers: headers);
+    var apiConfigEntity = await effectManager.loadData();
+    var pick = apiConfigEntity?.aiConfig.pick((t) => t.key == 'scribble');
+    return ApiOptions(baseUrl: pick?.serverUrl ?? 'https://ai.pandoraai.app:50004', headers: headers);
   }
 
   Future<AiDrawResultEntity?> draw({

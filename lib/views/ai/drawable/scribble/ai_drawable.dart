@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 
 import 'ai_drawable_screen.dart';
 

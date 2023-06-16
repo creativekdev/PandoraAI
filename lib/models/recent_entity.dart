@@ -105,3 +105,21 @@ class RecentGroundEntity {
     return jsonEncode(this);
   }
 }
+
+@JsonSerializable()
+class RecentColoringEntity {
+  int updateDt = 0;
+  String? filePath;
+  String? originFilePath;
+
+  RecentColoringEntity();
+
+  factory RecentColoringEntity.fromJson(Map<String, dynamic> json) => $RecentColoringEntityFromJson(json);
+
+  Map<String, dynamic> toJson() => $RecentColoringEntityToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}

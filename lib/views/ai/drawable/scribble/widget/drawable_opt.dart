@@ -7,8 +7,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/ChoosePhotoScreen.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DrawableOpt extends StatefulWidget {

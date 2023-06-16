@@ -118,14 +118,9 @@ class StyleMorphController extends GetxController {
   }
 
   @override
-  void onReady() {
+  void dispose() {
     cartoonizerApi.unbind();
     api.unbind();
-    super.onReady();
-  }
-
-  @override
-  void dispose() {
     super.dispose();
   }
 

@@ -8,7 +8,8 @@ import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
@@ -24,6 +25,7 @@ enum HomeCardType {
   scribble,
   metagram,
   style_morph,
+  lineart,
   UNDEFINED,
 }
 
@@ -45,6 +47,8 @@ class HomeCardTypeUtils {
         return HomeCardType.metagram;
       case 'stylemorph':
         return HomeCardType.style_morph;
+      case 'lineart':
+        return HomeCardType.lineart;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -144,6 +148,9 @@ class HomeCardTypeUtils {
       case HomeCardType.UNDEFINED:
         CommonExtension().showToast(S.of(context).oldversion_tips);
         break;
+      case HomeCardType.lineart:
+        AiColoring.open(context, source: source);
+        break;
     }
   }
 }
@@ -167,6 +174,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'metagram';
       case HomeCardType.style_morph:
         return 'stylemorph';
+      case HomeCardType.lineart:
+        return 'lineart';
     }
   }
 
@@ -188,6 +197,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'Metagram';
       case HomeCardType.style_morph:
         return 'Style Morph';
+      case HomeCardType.lineart:
+        return 'AI Coloring';
     }
   }
 }

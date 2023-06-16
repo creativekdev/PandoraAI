@@ -13,7 +13,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';

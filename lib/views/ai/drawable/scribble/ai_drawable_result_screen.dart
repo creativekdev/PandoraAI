@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -21,8 +22,8 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -106,7 +107,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
       }
     });
 
-    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: 512);
+    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
 
     var imageInfo = await SyncFileImage(file: compressedImage).getImage();
 
@@ -327,7 +328,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                     });
                   };
                   if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-                    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: 512);
+                    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
                     showLoading().whenComplete(() {
                       uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) {
                         hideLoading().whenComplete(() {

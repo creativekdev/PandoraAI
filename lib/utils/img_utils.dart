@@ -14,7 +14,9 @@ class ImageUtils {
     var fileName = await md5File(File(tempFilePath));
     var fileType = getFileType(tempFilePath);
     var path = targetPath + fileName + '.' + fileType;
-    await File(tempFilePath).copy(path);
+    if (!File(path).existsSync()) {
+      await File(tempFilePath).copy(path);
+    }
     return path;
   }
 
