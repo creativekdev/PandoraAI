@@ -29,6 +29,7 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dar
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print_option_screen.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -387,12 +388,15 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         generate(context, controller);
                       },
                       onSharePrintTap: () async {
+<<<<<<< HEAD
                         // Navigator.of(context)
                         //     .push<void>(NoAnimRouter(TransResultAnimScreen(
                         //   origin: file,
                         //   result: transResult!,
                         //   ratio: ratio,
                         // )));
+=======
+>>>>>>> origin/dev
                         Navigator.of(context).push<void>(Right2LeftRouter(
                             child: PrintOptionScreen(
                           file: transResult!,
@@ -433,7 +437,10 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     isShowBg: true,
                     clickCallback: (index, text) {
                       if (index == 0) {
+<<<<<<< HEAD
                         // 分享
+=======
+>>>>>>> origin/dev
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {

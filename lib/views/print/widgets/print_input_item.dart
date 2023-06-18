@@ -81,7 +81,7 @@ class PrintInputContactItem extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: $(100), bottom: $(9)),
+                margin: EdgeInsets.only(left: $(125), bottom: $(9)),
                 child: TextField(
                   style: TextStyle(
                     color: ColorConstant.White,
