@@ -8,24 +8,18 @@ import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/OfflineEffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
-import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:opencv_4/factory/pathfrom.dart';
-import 'package:opencv_4/opencv_4.dart';
 import 'package:image/image.dart' as imgLib;
 
 
@@ -60,7 +54,8 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   int selectedRightTab = 0;
 
   int selectedEffectID = 0;
-  int selectedFilterID = 0;
+  Filter filter = new Filter();
+  Adjust adjust = new Adjust();
 
   int currentAdjustID = 0;
 
@@ -93,13 +88,15 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
 
   _setURL() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    _imagefile = File(pickedFile!.path);
-    _image = await getLibImage(await getImage(_imagefile!));
-    _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
+    if(pickedFile!=null) {
+      _imagefile = File(pickedFile!.path);
+      _image = await getLibImage(await getImage(_imagefile!));
+      _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
 
-    setState(() {
-      _imagefile;
-    });
+      setState(() {
+        _imagefile;
+      });
+    }
   }
 
 
@@ -111,8 +108,6 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       });
     }
   }
-
-
 
   Widget _buildRightTab() {
     List<Widget> buttons = [];
@@ -553,7 +548,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return GestureDetector(
             onTap: () {
               setState(() {
-                selectedFilterID = index;
+                filter.setSelectedID(index);
                 _Filter(Filter.filters[index]);
               });
             },
@@ -563,7 +558,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
                 Container(
                   width: 65,
                   height: 65,
-                  decoration: (selectedFilterID == index)?
+                  decoration: (filter.getSelectedID() == index)?
                   BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
@@ -605,20 +600,19 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     );
   }
   Widget _buildAdjust() {
-    double _currentSliderValue = 0;
     List<Widget> buttons = [];
-    for (int i = 0; i < 3; i++){
+    for (int i = 0; i < adjust.getCnt(); i++){
       int cur_i  = i;
       buttons.add(GestureDetector(
         onTap: () {
           setState(() {
-            currentAdjustID = cur_i;
+            adjust.setSelectedID(cur_i);
           });
         },
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: (currentAdjustID == cur_i)?
+            border: (adjust.getSelectedID() == cur_i)?
             Border.all(color: const Color(0xFF05E0D5), width: 2)
             :Border.all(color: Colors.white, width: 2),
           ),
@@ -631,7 +625,6 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       ));
       buttons.add(SizedBox(width: 20));
     }
-
     return Container(
         height: itemWidth + $(40),
         child:Column(
@@ -640,7 +633,17 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               mainAxisAlignment: MainAxisAlignment.end,
               children: buttons,
             ),
-            GridSlider(minVal: 0, maxVal: 100, currentPos: 50)
+            GridSlider(minVal: 0, maxVal: 100, currentPos: adjust.getSelectedValue(),
+              onChanged: (newValue){
+                adjust.setSliderValue(newValue);
+              }, onEnd: () async {
+                if (_imagefile != null) {
+                  _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
+                  setState(() {
+                    _byte;
+                  });
+                }
+              })
           ]
         )
     );
@@ -709,7 +712,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return GestureDetector(
             onTap: () {
               setState(() {
-                selectedFilterID = index;
+                filter.setSelectedID(index);
               });
             },
             child: Column(
@@ -718,7 +721,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
                 Container(
                   width: 65,
                   height: 65,
-                  decoration: (selectedFilterID == index)?
+                  decoration: (filter.getSelectedID() == index)?
                   BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(

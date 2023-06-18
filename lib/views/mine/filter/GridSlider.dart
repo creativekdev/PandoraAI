@@ -4,11 +4,15 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:flutter/material.dart';
+typedef FloatCallback = void Function(double);
 class GridSlider extends StatefulWidget {
   int minVal = 0;
   int maxVal = 100;
   double currentPos = 50;
-  GridSlider({required this.minVal, required this.maxVal, required this.currentPos});
+  final FloatCallback onChanged;
+  final VoidCallback  onEnd;
+
+  GridSlider({required this.minVal, required this.maxVal, required this.currentPos, required this.onChanged, required this.onEnd()});
 
   @override
   _GridSliderState createState() => _GridSliderState();
@@ -28,13 +32,14 @@ class _GridSliderState extends State<GridSlider> {
         widget.currentPos -= details.delta.dx / 10;
         if(widget.currentPos > widget.maxVal) widget.currentPos = widget.maxVal.toDouble();
         if(widget.currentPos < widget.minVal) widget.currentPos = widget.minVal.toDouble();
-
+        widget.onChanged(widget.currentPos);
         setState((){
           widget.currentPos;
         });
       },
       onPanEnd: (details) {
         // print('Drag ended');
+        widget.onEnd();
       },
       child: Container(
         width: width,
@@ -74,7 +79,7 @@ class MyPainter extends CustomPainter {
     int range = maxVal - minVal;
     // int midrange = (range / 2).floor() + currentPos;
     for(int i  = 0; i < range; i++) {
-      double xpos = screenWidth / 2 + (i - currentPos) * 10;
+      double xpos = screenWidth / 2 + (i - currentPos + minVal) * 10;
       if(i % 5 == 0) {
         canvas.drawLine(
           Offset(xpos, 30),

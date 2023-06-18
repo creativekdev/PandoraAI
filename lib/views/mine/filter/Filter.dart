@@ -6,6 +6,7 @@ import 'package:opencv_4/opencv_4.dart';
 import 'package:image/image.dart' as imgLib;
 
 class Filter{
+  int selectedID = 0;
   static List<String> filters = [
     "NOR",
     "INV",
@@ -18,6 +19,13 @@ class Filter{
     "FRZ",
     "CMC",
   ];
+  void setSelectedID(int id) {
+    selectedID = id;
+  }
+  int getSelectedID() {
+    return selectedID;
+  }
+
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;

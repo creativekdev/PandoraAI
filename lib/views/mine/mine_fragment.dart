@@ -20,11 +20,9 @@ import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter.dart';
-import 'package:cartoonizer/views/mine/filter/filter_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
