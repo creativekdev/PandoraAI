@@ -168,6 +168,12 @@ class JsonConvert {
 		(PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSet).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSet.fromJson,
 		(PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetShopMoney).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetShopMoney.fromJson,
 		(PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney).toString(): PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson,
+		(PrintOrdersDataRowsPayloadRepay).toString(): PrintOrdersDataRowsPayloadRepay.fromJson,
+		(PrintOrdersDataRowsPayloadRepayProductInfo).toString(): PrintOrdersDataRowsPayloadRepayProductInfo.fromJson,
+		(PrintOrdersDataRowsPayloadRepayCustomer).toString(): PrintOrdersDataRowsPayloadRepayCustomer.fromJson,
+		(PrintOrdersDataRowsPayloadRepayCustomerAddresses).toString(): PrintOrdersDataRowsPayloadRepayCustomerAddresses.fromJson,
+		(PrintOrdersDataRowsPayloadRepayDelivery).toString(): PrintOrdersDataRowsPayloadRepayDelivery.fromJson,
+		(PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount).toString(): PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount.fromJson,
 		(PrintPaymentEntity).toString(): PrintPaymentEntity.fromJson,
 		(PrintPaymentData).toString(): PrintPaymentData.fromJson,
 		(PrintPaymentDataAutomaticTax).toString(): PrintPaymentDataAutomaticTax.fromJson,
@@ -650,6 +656,24 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney>[] is M){
 			return data.map<PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepay>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepay>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepay.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepayProductInfo>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepayProductInfo>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepayProductInfo.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepayCustomer>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepayCustomer>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepayCustomer.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepayCustomerAddresses>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepayCustomerAddresses>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepayCustomerAddresses.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepayDelivery>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepayDelivery>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepayDelivery.fromJson(e)).toList() as M;
+		}
+		if(<PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount>[] is M){
+			return data.map<PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount>((Map<String, dynamic> e) => PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount.fromJson(e)).toList() as M;
 		}
 		if(<PrintPaymentEntity>[] is M){
 			return data.map<PrintPaymentEntity>((Map<String, dynamic> e) => PrintPaymentEntity.fromJson(e)).toList() as M;

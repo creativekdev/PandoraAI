@@ -387,12 +387,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         generate(context, controller);
                       },
                       onSharePrintTap: () async {
-                        // Navigator.of(context)
-                        //     .push<void>(NoAnimRouter(TransResultAnimScreen(
-                        //   origin: file,
-                        //   result: transResult!,
-                        //   ratio: ratio,
-                        // )));
                         Navigator.of(context).push<void>(Right2LeftRouter(
                             child: PrintOptionScreen(
                           file: transResult!,

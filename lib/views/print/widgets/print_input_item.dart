@@ -54,8 +54,6 @@ class PrintInputContactItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(regionCodeEntity);
-    print(regionCodeEntity?.regionCode);
     bool regionIsEmpty = regionCodeEntity == null;
     print(regionIsEmpty);
     return Column(
@@ -81,7 +79,7 @@ class PrintInputContactItem extends StatelessWidget {
             children: [
               Container(
                 alignment: Alignment.centerLeft,
-                margin: EdgeInsets.only(left: $(100), bottom: $(9)),
+                margin: EdgeInsets.only(left: $(125), bottom: $(9)),
                 child: TextField(
                   style: TextStyle(
                     color: ColorConstant.White,

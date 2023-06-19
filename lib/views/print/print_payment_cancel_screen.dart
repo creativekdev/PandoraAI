@@ -88,24 +88,6 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
             payUrl: widget.payUrl,
             sessionId: widget.sessionId,
             orderEntity: widget.orderEntity,
-            // cancelPayCallBack: (sessionId, payUrl) {
-            //   Navigator.of(context).pop();
-            //   Navigator.of(context).push<void>(Right2LeftRouter(
-            //       child: PrintPaymentCancelScreen(
-            //     payUrl: payUrl,
-            //     sessionId: sessionId,
-            //     orderEntity: widget.orderEntity!,
-            //   )));
-            // },
-            // payCompleteCallBack: (sessionId, payUrl) {
-            //   Navigator.of(context).pop();
-            //   Navigator.of(context).push<void>(Right2LeftRouter(
-            //       child: PrintPaymentSuccessScreen(
-            //     payUrl: payUrl,
-            //     sessionId: sessionId,
-            //     orderEntity: widget.orderEntity!,
-            //   )));
-            // },
           )))
               .then((value) {
             if (value == true) {

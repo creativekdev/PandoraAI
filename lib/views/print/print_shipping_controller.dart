@@ -165,88 +165,6 @@ class PrintShippingController extends GetxController {
     });
   }
 
-  gotoPaymentPage(BuildContext context) async {
-    int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
-    final params = {
-      "order_id": printOrderEntity?.data.id,
-      "order_type": "ps-order",
-      "success_url": Config.instance.successUrl,
-      "cancel_url": Config.instance.cancelUrl,
-      "shipping_options": [
-        {
-          "shipping_rate_data": {
-            "type": 'fixed_amount',
-            "fixed_amount": {"amount": amount, "currency": "usd"},
-            "display_name": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
-          }
-        }
-      ],
-      "line_items": [
-        {
-          "price_data": {
-            "currency": "usd",
-            "unit_amount": (printController.total * 100).toInt(),
-            "product_data": {
-              "name": printOrderEntity?.data.name,
-              "images": [printController.preview_image],
-            },
-            "tax_behavior": "exclusive",
-          },
-          "adjustable_quantity": {"enabled": false},
-          "quantity": printController.quatity
-        }
-      ],
-    };
-
-    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
-
-    Navigator.of(context)
-        .push<bool>(
-      Right2LeftRouter(
-        child: PrintPaymentScreen(
-          payUrl: payment?.data.url ?? '',
-          sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
-          // cancelPayCallBack: (sessionId, payUrl) {
-          //   Navigator.of(context).pop();
-          //   Navigator.of(context).push<void>(Right2LeftRouter(
-          //       child: PrintPaymentCancelScreen(
-          //     payUrl: payUrl,
-          //     sessionId: sessionId,
-          //     orderEntity: printOrderEntity!,
-          //   )));
-          // },
-          // payCompleteCallBack: (sessionId, payUrl) {
-          //   Navigator.of(context).pop();
-          //   Navigator.of(context).push<void>(Right2LeftRouter(
-          //       child: PrintPaymentSuccessScreen(
-          //     payUrl: payUrl,
-          //     sessionId: sessionId,
-          //     orderEntity: printOrderEntity!,
-          //   )));
-          // },
-        ),
-      ),
-    )
-        .then((value) {
-      if (value == true) {
-        Navigator.of(context).push<void>(Right2LeftRouter(
-            child: PrintPaymentSuccessScreen(
-          payUrl: payUrl,
-          sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
-        )));
-      } else {
-        Navigator.of(context).push<void>(Right2LeftRouter(
-            child: PrintPaymentCancelScreen(
-          payUrl: payUrl,
-          sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
-        )));
-      }
-    });
-  }
-
   Future<bool> onSubmit() async {
     if (searchAddressController.text.isEmpty) {
       Fluttertoast.showToast(msg: "Please input address", gravity: ToastGravity.CENTER);
@@ -283,6 +201,7 @@ class PrintShippingController extends GetxController {
       "variant_id": variantId,
       "quantity": printController.quatity,
       "customer": {
+        "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
         "first_name": firstNameController.text,
         "last_name": secondNameController.text,
         "addresses": [address],
@@ -292,7 +211,26 @@ class PrintShippingController extends GetxController {
       "name": printController.optionData.title,
       "ps_image": printController.ai_image,
       "ps_preview_image": printController.preview_image,
+      "payload": jsonEncode({
+        "repay": {
+          "productInfo": {
+            "name": printController.optionData.title,
+            "quantity": printController.quatity,
+            "desc": printController.optionData.desc,
+            "price": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt()
+          },
+          "customer": {
+            "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+            "first_name": firstNameController.text,
+            "last_name": secondNameController.text,
+            "addresses": [address],
+          },
+          "delivery": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.toJson(),
+          "image": printController.preview_image,
+        },
+      })
     };
+    print(body);
     printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
     if (printOrderEntity == null) {
       Fluttertoast.showToast(msg: "Something went wrong", gravity: ToastGravity.CENTER);
@@ -302,6 +240,70 @@ class PrintShippingController extends GetxController {
     orderPayload = PrintOrderDataPayload.fromJson(json.decode(payload));
     // _payUrl = orderPayload.order.orderStatusUrl;
     return true;
+  }
+
+  gotoPaymentPage(BuildContext context) async {
+    int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
+    final params = {
+      "order_id": printOrderEntity?.data.id,
+      "order_type": "ps-order",
+      "success_url": Config.instance.successUrl,
+      "cancel_url": Config.instance.cancelUrl,
+      "shipping_options": [
+        {
+          "shipping_rate_data": {
+            "type": 'fixed_amount',
+            "fixed_amount": {"amount": amount, "currency": "usd"},
+            "display_name": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
+          }
+        }
+      ],
+      "line_items": [
+        {
+          "price_data": {
+            "currency": "usd",
+            "unit_amount": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt(),
+            "product_data": {
+              "name": printOrderEntity?.data.name,
+              "images": [printController.preview_image],
+            },
+            "tax_behavior": "exclusive",
+          },
+          "adjustable_quantity": {"enabled": false},
+          "quantity": printController.quatity
+        }
+      ],
+    };
+
+    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
+
+    Navigator.of(context)
+        .push<bool>(
+      Right2LeftRouter(
+        child: PrintPaymentScreen(
+          payUrl: payment?.data.url ?? '',
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        ),
+      ),
+    )
+        .then((value) {
+      if (value == true) {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentSuccessScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      } else {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentCancelScreen(
+          payUrl: payUrl,
+          sessionId: payment?.data.id ?? '',
+          orderEntity: printOrderEntity!,
+        )));
+      }
+    });
   }
 
   getVariantId() async {
