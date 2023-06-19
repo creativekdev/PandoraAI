@@ -70,7 +70,7 @@ abstract class RetryAbleRequester extends BaseRequester {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
-    bool needRetry = true,
+    bool needRetry = false,
     bool canClickRetry = false,
     Function(Response? response)? onFailed,
   }) async {
@@ -118,7 +118,7 @@ abstract class RetryAbleRequester extends BaseRequester {
     ProgressCallback? onReceiveProgress,
     bool preHandleRequest = true,
     Options? options,
-    bool needRetry = true,
+    bool needRetry = false,
     bool canClickRetry = false,
     Function(Response? response)? onFailed,
   }) async {
@@ -164,7 +164,7 @@ abstract class RetryAbleRequester extends BaseRequester {
     Map<String, dynamic>? params,
     bool toastOnFailed = true,
     bool preHandleRequest = true,
-    bool needRetry = true,
+    bool needRetry = false,
     bool canClickRetry = false,
     Function(Response? response)? onFailed,
   }) async {
