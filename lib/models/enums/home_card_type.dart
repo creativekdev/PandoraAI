@@ -46,6 +46,7 @@ class HomeCardTypeUtils {
       case 'metagram':
         return HomeCardType.metagram;
       case 'stylemorph':
+      case 'style_morph':
         return HomeCardType.style_morph;
       case 'lineart':
         return HomeCardType.lineart;
@@ -167,7 +168,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.txt2img:
         return 'txt2img';
       case HomeCardType.UNDEFINED:
-        return null;
+        return '';
       case HomeCardType.scribble:
         return 'scribble';
       case HomeCardType.metagram:

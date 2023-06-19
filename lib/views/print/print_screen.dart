@@ -89,6 +89,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                         children: [
                           CachedNetworkImageUtils.custom(
                             context: context,
+                            useOld: false,
                             imageUrl: controller.imgUrl,
                             width: ScreenUtil.screenSize.width,
                             fit: BoxFit.fitWidth,

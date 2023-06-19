@@ -7,6 +7,7 @@ import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
 import '../../Common/importFile.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../images-res.dart';
+import '../../models/print_orders_entity.dart';
 
 class PrintOrderScreen extends StatefulWidget {
   const PrintOrderScreen({Key? key}) : super(key: key);
@@ -131,13 +132,19 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                               slivers: [
                                 SliverList(
                                     delegate: SliverChildBuilderDelegate((context, index) {
-                                  return PrintOrderItem(rows: controller.orders[e.toLowerCase()]![index]).intoGestureDetector(onTap: () {
+                                  PrintOrdersDataRows rows = controller.orders[e.toLowerCase()]![index];
+
+                                  return PrintOrderItem(rows: rows).intoGestureDetector(onTap: () {
+                                    if (rows.financialStatus == "unpaid" || rows.financialStatus == "pending") {
+                                      controller.gotoPaymentPage(context, rows);
+                                      return;
+                                    }
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           settings: RouteSettings(name: "/PrintOrderDetailScreen"),
                                           builder: (context) => PrintOrderDetailScreen(
-                                            rows: controller.orders[e.toLowerCase()]![index],
+                                            rows: rows,
                                           ),
                                         ));
                                   });

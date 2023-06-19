@@ -22,6 +22,9 @@ class PrintOrdersEntity {
 @JsonSerializable()
 class PrintOrdersData {
   late List<PrintOrdersDataRows> rows;
+  late int records;
+  late int total;
+  late int page;
 
   PrintOrdersData();
 
@@ -41,12 +44,12 @@ class PrintOrdersDataRows {
   late int userId;
   late int price;
   @JSONField(name: "total_price")
-  late double totalPrice;
+  late int totalPrice;
   @JSONField(name: "event_time")
-  late int eventTime;
+  late String eventTime;
   late String payload;
   @JSONField(name: "shopify_order_id")
-  late int shopifyOrderId;
+  late String shopifyOrderId;
   @JSONField(name: "stripe_session_id")
   dynamic stripeSessionId;
   @JSONField(name: "financial_status")
@@ -83,6 +86,7 @@ class PrintOrdersDataRows {
 @JsonSerializable()
 class PrintOrdersDataRowsPayload {
   late PrintOrdersDataRowsPayloadOrder order;
+  late PrintOrdersDataRowsPayloadRepay repay;
 
   PrintOrdersDataRowsPayload();
 
@@ -1078,6 +1082,129 @@ class PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoney {
       $PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoneyFromJson(json);
 
   Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadOrderLineItemsTotalDiscountSetPresentmentMoneyToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepay {
+  late PrintOrdersDataRowsPayloadRepayProductInfo productInfo;
+  late PrintOrdersDataRowsPayloadRepayCustomer customer;
+  late PrintOrdersDataRowsPayloadRepayDelivery delivery;
+  late String image;
+
+  PrintOrdersDataRowsPayloadRepay();
+
+  factory PrintOrdersDataRowsPayloadRepay.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepayProductInfo {
+  late String name;
+  late int quantity;
+  late String desc;
+  late int price;
+
+  PrintOrdersDataRowsPayloadRepayProductInfo();
+
+  factory PrintOrdersDataRowsPayloadRepayProductInfo.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayProductInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayProductInfoToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepayCustomer {
+  late String phone;
+  @JSONField(name: "first_name")
+  late String firstName;
+  @JSONField(name: "last_name")
+  late String lastName;
+  late List<PrintOrdersDataRowsPayloadRepayCustomerAddresses> addresses;
+
+  PrintOrdersDataRowsPayloadRepayCustomer();
+
+  factory PrintOrdersDataRowsPayloadRepayCustomer.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayCustomerFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayCustomerToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepayCustomerAddresses {
+  @JSONField(name: "first_name")
+  late String firstName;
+  @JSONField(name: "last_name")
+  late String lastName;
+  late String phone;
+  @JSONField(name: "country_code")
+  dynamic countryCode;
+  @JSONField(name: "country_name")
+  dynamic countryName;
+  dynamic country;
+  late String address1;
+  late String address2;
+
+  PrintOrdersDataRowsPayloadRepayCustomerAddresses();
+
+  factory PrintOrdersDataRowsPayloadRepayCustomerAddresses.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayCustomerAddressesFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayCustomerAddressesToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepayDelivery {
+  late String type;
+  @JSONField(name: "fixed_amount")
+  late PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount fixedAmount;
+  @JSONField(name: "display_name")
+  late String displayName;
+
+  PrintOrdersDataRowsPayloadRepayDelivery();
+
+  factory PrintOrdersDataRowsPayloadRepayDelivery.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayDeliveryFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayDeliveryToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+}
+
+@JsonSerializable()
+class PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount {
+  late int amount;
+  late String currency;
+
+  PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount();
+
+  factory PrintOrdersDataRowsPayloadRepayDeliveryFixedAmount.fromJson(Map<String, dynamic> json) => $PrintOrdersDataRowsPayloadRepayDeliveryFixedAmountFromJson(json);
+
+  Map<String, dynamic> toJson() => $PrintOrdersDataRowsPayloadRepayDeliveryFixedAmountToJson(this);
 
   @override
   String toString() {

@@ -165,6 +165,83 @@ class PrintShippingController extends GetxController {
     });
   }
 
+  Future<bool> onSubmit() async {
+    if (searchAddressController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input address", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    if (apartmentController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input apartment/suite/other", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    if (firstNameController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input first name", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    if (secondNameController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input second name", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    if (contactNumberController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Please input contact number", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    var address = {
+      "first_name": firstNameController.text,
+      "last_name": secondNameController.text,
+      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+      "country_code": regionEntity?.callingCode,
+      "country_name": regionEntity?.regionName,
+      "country": regionEntity?.regionName,
+      "address1": searchAddressController.text,
+      "address2": apartmentController.text,
+    };
+    await getVariantId();
+    var body = {
+      "variant_id": variantId,
+      "quantity": printController.quatity,
+      "customer": {
+        "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+        "first_name": firstNameController.text,
+        "last_name": secondNameController.text,
+        "addresses": [address],
+      },
+      "shipping_address": address,
+      "shipping_method": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
+      "name": printController.optionData.title,
+      "ps_image": printController.ai_image,
+      "ps_preview_image": printController.preview_image,
+      "payload": jsonEncode({
+        "repay": {
+          "productInfo": {
+            "name": printController.optionData.title,
+            "quantity": printController.quatity,
+            "desc": printController.optionData.desc,
+            "price": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt()
+          },
+          "customer": {
+            "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+            "first_name": firstNameController.text,
+            "last_name": secondNameController.text,
+            "addresses": [address],
+          },
+          "delivery": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.toJson(),
+          "image": printController.preview_image,
+        },
+      })
+    };
+    print(body);
+    printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
+    if (printOrderEntity == null) {
+      Fluttertoast.showToast(msg: "Something went wrong", gravity: ToastGravity.CENTER);
+      return false;
+    }
+    String payload = printOrderEntity!.data.payload;
+    orderPayload = PrintOrderDataPayload.fromJson(json.decode(payload));
+    // _payUrl = orderPayload.order.orderStatusUrl;
+    return true;
+  }
+
   gotoPaymentPage(BuildContext context) async {
     int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
     final params = {
@@ -185,7 +262,7 @@ class PrintShippingController extends GetxController {
         {
           "price_data": {
             "currency": "usd",
-            "unit_amount": (printController.total * 100).toInt(),
+            "unit_amount": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt(),
             "product_data": {
               "name": printOrderEntity?.data.name,
               "images": [printController.preview_image],
@@ -227,63 +304,6 @@ class PrintShippingController extends GetxController {
         )));
       }
     });
-  }
-
-  Future<bool> onSubmit() async {
-    if (searchAddressController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input address", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    if (apartmentController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input apartment/suite/other", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    if (firstNameController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input first name", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    if (secondNameController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input second name", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    if (contactNumberController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input contact number", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    var address = {
-      "first_name": firstNameController.text,
-      "last_name": secondNameController.text,
-      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-      "country_code": regionEntity?.callingCode,
-      "country_name": regionEntity?.regionName,
-      "country": regionEntity?.regionName,
-      "address1": searchAddressController.text,
-      "address2": apartmentController.text,
-    };
-    await getVariantId();
-    var body = {
-      "variant_id": variantId,
-      "quantity": printController.quatity,
-      "customer": {
-        "first_name": firstNameController.text,
-        "last_name": secondNameController.text,
-        "addresses": [address],
-      },
-      "shipping_address": address,
-      "shipping_method": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
-      "name": printController.optionData.title,
-      "ps_image": printController.ai_image,
-      "ps_preview_image": printController.preview_image,
-    };
-    printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
-    if (printOrderEntity == null) {
-      Fluttertoast.showToast(msg: "Something went wrong", gravity: ToastGravity.CENTER);
-      return false;
-    }
-    String payload = printOrderEntity!.data.payload;
-    orderPayload = PrintOrderDataPayload.fromJson(json.decode(payload));
-    // _payUrl = orderPayload.order.orderStatusUrl;
-    return true;
   }
 
   getVariantId() async {

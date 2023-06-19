@@ -394,6 +394,8 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<PrintOrdersEntity?> getShopifyOrders(body) async {
     var baseEntity = await get("/ps_order/all", params: body);
+    print("⚽️  ${baseEntity.toString()}");
+    print("⚽️  ${baseEntity?.data}");
     return jsonConvert.convert<PrintOrdersEntity>(baseEntity?.data);
   }
 
@@ -405,7 +407,8 @@ class CartoonizerApi extends RetryAbleRequester {
 
   // buy plan with stripe
   Future<PrintOrderEntity?> shopifyCreateOrder(body) async {
-    var baseEntity = await post("/shopify_v2/order/create", params: body);
+    var baseEntity = await post("/shopify_v2/order/create", params: body, canClickRetry: false, needRetry: false);
+    print("127.0.0.1 === ${baseEntity?.data}");
     return jsonConvert.convert<PrintOrderEntity>(baseEntity?.data);
   }
 
@@ -669,10 +672,12 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<String?> submitInvitedCode(String invitedCode) async {
-    var baseEntity = await post('/refer/create', params: {
-      'rf': invitedCode,
-      'rf_product': APP_NAME,
-    });
+    var baseEntity = await post(
+      '/refer/create',
+      params: {'rf': invitedCode, 'rf_product': APP_NAME},
+      needRetry: false,
+      canClickRetry: false,
+    );
     return baseEntity?.data['data'];
   }
 

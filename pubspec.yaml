@@ -44,7 +44,7 @@ dependencies:
   path_provider: ^2.0.8
   gallery_saver: 2.3.2
   share_plus: 6.3.4
-  url_launcher: ^6.0.18
+  url_launcher: 6.1.11
   flutter_share_me: 1.3.0
   get: ^4.6.3
   get_storage: ^2.0.3

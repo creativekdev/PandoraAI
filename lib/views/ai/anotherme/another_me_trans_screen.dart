@@ -29,13 +29,13 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dar
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/print/print_option_screen.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+import '../../print/print_option_screen.dart';
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
@@ -427,6 +427,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     isShowBg: true,
                     clickCallback: (index, text) {
                       if (index == 0) {
+                        // 分享
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {

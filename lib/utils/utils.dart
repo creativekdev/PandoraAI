@@ -45,8 +45,10 @@ Future<void> loginBack(BuildContext context) async {
 }
 
 launchURL(String url) async {
-  if (await canLaunch(url)) {
-    await launch(url);
+  print("127.0.0.1 === url: $url");
+  var uri = Uri.parse(url);
+  if (await canLaunchUrl(uri)) {
+    await launchUrl(uri);
   } else {
     throw 'Could not launch $url';
   }

@@ -20,17 +20,17 @@ class ImageUtils {
     return path;
   }
 
-  // 根据目标坐标计算原图应该显示的区域
+  // Calculate the area that the artwork should display based on the target coordinates
   static Rect getTargetCoverRect(Size source, Size target) {
     double sourceScale = source.width / source.height;
     double targetScale = target.width / target.height;
     if (sourceScale > targetScale) {
-      //原图更宽，以高度缩放取中间部分。
+      //The original image is wider and scaled to the height to take the middle part.
       double width = source.height * targetScale;
       double x = (source.width - width) / 2;
       return Rect.fromLTWH(x, 0, width, source.height);
     } else {
-      //原图更高，以宽度缩放取中间部分。
+      //The original image is higher, and the middle part is scaled by width.
       double height = source.width / targetScale;
       double y = (source.height - height) / 2;
       return Rect.fromLTWH(0, y, source.width, height);

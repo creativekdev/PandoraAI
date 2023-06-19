@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
+import 'package:cartoonizer/views/print/print_payment_screen.dart';
+import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:cartoonizer/views/print/widgets/time_selection_sheet.dart';
 import 'package:common_utils/common_utils.dart';
 
+import '../../Widgets/router/routers.dart';
+import '../../config.dart';
+import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
+import '../../models/print_payment_entity.dart';
 
 class PrintOrderController extends GetxController {
   late CartoonizerApi cartoonizerApi;
@@ -92,12 +101,75 @@ class PrintOrderController extends GetxController {
     allNeedReLoad[_status.toLowerCase()] = false;
   }
 
+  gotoPaymentPage(BuildContext context, PrintOrdersDataRows item) async {
+    // int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
+    PrintOrdersDataRowsPayload payload = PrintOrdersDataRowsPayload.fromJson(jsonDecode(item.payload));
+    final params = {
+      "order_id": payload.order.id,
+      "order_type": "ps-order",
+      "success_url": Config.instance.successUrl,
+      "cancel_url": Config.instance.cancelUrl,
+      "shipping_options": [
+        {
+          "shipping_rate_data": {
+            "type": 'fixed_amount',
+            "fixed_amount": {"amount": payload.repay.delivery.fixedAmount.amount, "currency": "usd"},
+            "display_name": item.name,
+          }
+        }
+      ],
+      "line_items": [
+        {
+          "price_data": {
+            "currency": "usd",
+            "unit_amount": payload.repay.productInfo.price,
+            "product_data": {
+              "name": item.name,
+              "images": [item.psPreviewImage],
+            },
+            "tax_behavior": "exclusive",
+          },
+          "adjustable_quantity": {"enabled": false},
+          "quantity": payload.repay.productInfo.quantity
+        }
+      ],
+    };
+
+    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
+    PrintOrderEntity orderEntity = PrintOrderEntity.fromJson({"data": item.toJson()});
+
+    Navigator.of(context)
+        .push<bool>(
+      Right2LeftRouter(
+        child: PrintPaymentScreen(
+          payUrl: payment?.data.url ?? '',
+          sessionId: payment?.data.id ?? '',
+          orderEntity: orderEntity,
+        ),
+      ),
+    )
+        .then((value) {
+      if (value == true) {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentSuccessScreen(
+          payUrl: payment?.data.url ?? '',
+          sessionId: payment?.data.id ?? '',
+          orderEntity: orderEntity,
+        )));
+      } else {
+        Navigator.of(context).push<void>(Right2LeftRouter(
+            child: PrintPaymentCancelScreen(
+          payUrl: payment?.data.url ?? '',
+          sessionId: payment?.data.id ?? '',
+          orderEntity: orderEntity,
+        )));
+      }
+    });
+  }
+
   onChangeStatus(int index) async {
     _status = statuses[index];
-    print("127.0.0.1 === ${_status}");
-    print("127.0.0.1 === $allNeedReLoad");
     bool isRefresh = allNeedReLoad[_status.toLowerCase()]!;
-    print("127.0.0.1 === ${isRefresh}");
     if (isLoadings[_status.toLowerCase()] == true) {
       return;
     }

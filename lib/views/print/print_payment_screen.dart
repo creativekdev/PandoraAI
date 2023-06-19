@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -24,6 +25,7 @@ class PrintPaymentScreen extends StatefulWidget {
 
 class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
   late IO.Socket socket;
+  late WebViewController webViewController;
 
   @override
   void initState() {
@@ -63,6 +65,10 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
       onWillPop: () async {
         // 跳转取消界面
         // widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
+        if (await webViewController.canGoBack()) {
+          webViewController.goBack();
+          return false;
+        }
         Navigator.of(context).pop(false);
         return false;
       },
@@ -77,8 +83,14 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
             height: ScreenUtil.screenSize.height,
             width: ScreenUtil.screenSize.width,
             child: WebView(
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
               navigationDelegate: (NavigationRequest request) async {
-                print(request.url);
+                if (request.url.contains(ALIPAY_SCHEML)) {
+                  launchURL(request.url);
+                  return NavigationDecision.prevent;
+                }
                 // 处理取消逻辑
                 if (request.url.contains(Config.instance.successUrl)) {
                   // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
