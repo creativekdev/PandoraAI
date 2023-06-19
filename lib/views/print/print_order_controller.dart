@@ -102,7 +102,6 @@ class PrintOrderController extends GetxController {
   }
 
   gotoPaymentPage(BuildContext context, PrintOrdersDataRows item) async {
-    // int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
     PrintOrdersDataRowsPayload payload = PrintOrdersDataRowsPayload.fromJson(jsonDecode(item.payload));
     final params = {
       "order_id": payload.order.id,

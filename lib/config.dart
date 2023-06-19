@@ -89,14 +89,14 @@ class DevelopmentConfig implements BaseConfig {
   // String aiHost = 'http://192.168.31.126:3000';
 
   // io
-  String host = 'https://socialbook.us';
-  String aiHost = 'https://ai.socialbook.us';
+  String host = 'https://socialbook.io';
+  String aiHost = 'https://ai.socialbook.io';
 
   String get apiHost => '$host/api';
   String stripePublishableKey = 'pk_test_UsnDHZEjE4QwOJxl0J7Jk2Os';
   String appsflyerKey = "yUFpSbmg7YDETaZ5CQ2HkA";
   String text2imageHost = "https://d35b8pv2lrtup8.cloudfront.net/assets/cartoonize/sd";
-  String metagramSocket = 'io.socialbook.us';
+  String metagramSocket = 'io.socialbook.io';
   String metagramSocketSchema = 'https';
   int metagramSocketPort = 443;
 
