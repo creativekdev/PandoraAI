@@ -54,8 +54,6 @@ class PrintInputContactItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(regionCodeEntity);
-    print(regionCodeEntity?.regionCode);
     bool regionIsEmpty = regionCodeEntity == null;
     print(regionIsEmpty);
     return Column(

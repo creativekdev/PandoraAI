@@ -145,7 +145,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                   showLoading();
                   bool isSuccess = await controller.onSubmit();
                   if (isSuccess) {
-                    controller.gotoPaymentPage(context);
+                    await controller.gotoPaymentPage(context);
                   }
                   hideLoading();
                 },

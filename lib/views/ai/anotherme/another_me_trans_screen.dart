@@ -36,7 +36,6 @@ import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../print/print_option_screen.dart';
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
@@ -388,15 +387,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         generate(context, controller);
                       },
                       onSharePrintTap: () async {
-<<<<<<< HEAD
-                        // Navigator.of(context)
-                        //     .push<void>(NoAnimRouter(TransResultAnimScreen(
-                        //   origin: file,
-                        //   result: transResult!,
-                        //   ratio: ratio,
-                        // )));
-=======
->>>>>>> origin/dev
                         Navigator.of(context).push<void>(Right2LeftRouter(
                             child: PrintOptionScreen(
                           file: transResult!,
@@ -437,10 +427,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     isShowBg: true,
                     clickCallback: (index, text) {
                       if (index == 0) {
-<<<<<<< HEAD
-                        // 分享
-=======
->>>>>>> origin/dev
                         showSaveDialog(context, false).then((value) async {
                           if (value != null) {
                             if (value) {

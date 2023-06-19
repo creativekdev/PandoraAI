@@ -207,24 +207,6 @@ class PrintShippingController extends GetxController {
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
           orderEntity: printOrderEntity!,
-          // cancelPayCallBack: (sessionId, payUrl) {
-          //   Navigator.of(context).pop();
-          //   Navigator.of(context).push<void>(Right2LeftRouter(
-          //       child: PrintPaymentCancelScreen(
-          //     payUrl: payUrl,
-          //     sessionId: sessionId,
-          //     orderEntity: printOrderEntity!,
-          //   )));
-          // },
-          // payCompleteCallBack: (sessionId, payUrl) {
-          //   Navigator.of(context).pop();
-          //   Navigator.of(context).push<void>(Right2LeftRouter(
-          //       child: PrintPaymentSuccessScreen(
-          //     payUrl: payUrl,
-          //     sessionId: sessionId,
-          //     orderEntity: printOrderEntity!,
-          //   )));
-          // },
         ),
       ),
     )
