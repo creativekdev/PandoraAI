@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
@@ -14,6 +13,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -116,7 +116,9 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       }
     });
     if (needUpload) {
-      File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+      EffectManager effectManager = AppDelegate().getManager();
+      var imageSize = effectManager.data?.imageMaxl ?? 512;
+      File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: imageSize);
       await uploadImageController.uploadCompressedImage(compressedImage, key: key);
       if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
         simulateProgressBarController.onError();
