@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/views/print/print_order_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../images-res.dart';
@@ -10,11 +11,18 @@ import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintPaymentSuccessScreen extends StatefulWidget {
-  const PrintPaymentSuccessScreen({Key? key, required this.sessionId, required this.payUrl, required this.orderEntity}) : super(key: key);
-
+  String source;
   final String sessionId;
   final String payUrl;
   final PrintOrderEntity orderEntity;
+
+  PrintPaymentSuccessScreen({
+    Key? key,
+    required this.sessionId,
+    required this.payUrl,
+    required this.orderEntity,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintPaymentSuccessScreen> createState() => _PrintPaymentSuccessScreenState();
@@ -26,6 +34,7 @@ class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_payment_success_screen');
     order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.data.payload)["order"]);
   }
 
@@ -108,7 +117,7 @@ class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
                   context,
                   MaterialPageRoute(
                     settings: RouteSettings(name: "/PrintOrderScreen"),
-                    builder: (context) => PrintOrderScreen(),
+                    builder: (context) => PrintOrderScreen(source: widget.source),
                   ));
             }),
           ]),

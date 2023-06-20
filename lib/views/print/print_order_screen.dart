@@ -3,6 +3,7 @@ import 'package:cartoonizer/views/print/print_order_controller.dart';
 import 'package:cartoonizer/views/print/print_order_detail_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
@@ -11,7 +12,12 @@ import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintOrderScreen extends StatefulWidget {
-  const PrintOrderScreen({Key? key}) : super(key: key);
+  String source;
+
+  PrintOrderScreen({
+    Key? key,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintOrderScreen> createState() => _PrintOrderScreenState();
@@ -23,6 +29,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_order_screen');
     controller.tabController = TabController(length: controller.statuses.length, vsync: this);
     controller.tabController!.addListener(() {
       controller.onChangeStatus(controller.tabController!.index);
@@ -134,7 +141,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
 
                                   return PrintOrderItem(rows: rows).intoGestureDetector(onTap: () {
                                     if (rows.financialStatus == "unpaid" || rows.financialStatus == "pending") {
-                                      controller.gotoPaymentPage(context, rows);
+                                      controller.gotoPaymentPage(context, rows, widget.source);
                                       return;
                                     }
                                     Navigator.push(
@@ -143,6 +150,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                                           settings: RouteSettings(name: "/PrintOrderDetailScreen"),
                                           builder: (context) => PrintOrderDetailScreen(
                                             rows: rows,
+                                            source: widget.source,
                                           ),
                                         ));
                                   });

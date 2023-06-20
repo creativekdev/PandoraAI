@@ -10,6 +10,7 @@ import 'package:cartoonizer/views/print/widgets/print_quatity_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_select_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:cartoonizer/views/print/widgets/print_web_item.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -18,33 +19,34 @@ import '../../app/app.dart';
 import '../../app/user/user_manager.dart';
 
 class PrintScreen extends StatefulWidget {
+  String source;
+  final PrintOptionData optionData;
+  final String file;
+
   PrintScreen({
     Key? key,
     required this.optionData,
     required this.file,
+    required this.source,
   }) : super(key: key);
-  final PrintOptionData optionData;
-  final String file;
 
   @override
-  State<PrintScreen> createState() => PrintScreenState(optionData: optionData, file: file);
+  State<PrintScreen> createState() => PrintScreenState();
 }
 
 class PrintScreenState extends AppState<PrintScreen> {
-  PrintScreenState({required this.optionData, required this.file}) {
-    controller = Get.put(PrintController(optionData: optionData, file: file, screenState: this));
-  }
+  late PrintOptionData optionData;
+  late String file;
+  late PrintController controller;
 
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_screen');
+    optionData = widget.optionData;
+    file = widget.file;
+    controller = Get.put(PrintController(optionData: optionData, file: file, screenState: this));
   }
-
-  PrintOptionData optionData;
-  String file;
-  late PrintController controller;
-
-  // File file = File(acontroller.transKey!);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -165,7 +167,12 @@ class PrintScreenState extends AppState<PrintScreen> {
                   if (isSuccess) {
                     UserManager userManager = AppDelegate().getManager();
                     userManager.doOnLogin(context, logPreLoginAction: 'print_shipping_screen', callback: () {
-                      Navigator.of(context).push<void>(Right2LeftRouter(child: PrintShippingScreen()));
+                      Events.printCreateOrder(source: widget.source);
+                      Navigator.of(context).push<void>(Right2LeftRouter(
+                          settings: RouteSettings(name: '/PrintShippingScreen'),
+                          child: PrintShippingScreen(
+                            source: widget.source,
+                          )));
                     }, autoExec: true);
                   }
                 },

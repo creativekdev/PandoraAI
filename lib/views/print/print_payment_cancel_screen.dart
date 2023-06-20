@@ -4,6 +4,7 @@ import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
@@ -13,11 +14,18 @@ import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintPaymentCancelScreen extends StatefulWidget {
-  const PrintPaymentCancelScreen({Key? key, required this.sessionId, required this.payUrl, required this.orderEntity}) : super(key: key);
-
+  String source;
   final String sessionId;
   final String payUrl;
   final PrintOrderEntity orderEntity;
+
+  PrintPaymentCancelScreen({
+    Key? key,
+    required this.sessionId,
+    required this.payUrl,
+    required this.orderEntity,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintPaymentCancelScreen> createState() => _PrintPaymentCancelScreenState();
@@ -29,6 +37,7 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_payment_cancel_screen');
     order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.data.payload)["order"]);
   }
 
@@ -77,26 +86,32 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
             .intoGestureDetector(onTap: () {
           Navigator.of(context)
               .push<bool>(Right2LeftRouter(
+                  settings: RouteSettings(name: '/PrintPaymentScreen'),
                   child: PrintPaymentScreen(
-            payUrl: widget.payUrl,
-            sessionId: widget.sessionId,
-            orderEntity: widget.orderEntity,
-          )))
+                    payUrl: widget.payUrl,
+                    sessionId: widget.sessionId,
+                    orderEntity: widget.orderEntity,
+                    source: widget.source,
+                  )))
               .then((value) {
             if (value == true) {
               Navigator.of(context).push<void>(Right2LeftRouter(
+                  settings: RouteSettings(name: '/PrintPaymentSuccessScreen'),
                   child: PrintPaymentSuccessScreen(
-                payUrl: widget.payUrl,
-                sessionId: widget.sessionId,
-                orderEntity: widget.orderEntity,
-              )));
+                    payUrl: widget.payUrl,
+                    sessionId: widget.sessionId,
+                    orderEntity: widget.orderEntity,
+                    source: widget.source,
+                  )));
             } else {
               Navigator.of(context).push<void>(Right2LeftRouter(
+                  settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
                   child: PrintPaymentCancelScreen(
-                payUrl: widget.payUrl,
-                sessionId: widget.sessionId,
-                orderEntity: widget.orderEntity,
-              )));
+                    payUrl: widget.payUrl,
+                    sessionId: widget.sessionId,
+                    orderEntity: widget.orderEntity,
+                    source: widget.source,
+                  )));
             }
           });
         }),

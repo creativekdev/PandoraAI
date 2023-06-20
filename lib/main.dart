@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
             var current = DateTime.now().millisecondsSinceEpoch;
             var duration = current - lastLocaleTime;
             Locale? result;
-            if (duration > 200) {
+            if (duration > 2000) {
               lastLocaleTime = current;
               debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
               theme.AppContext.currentLocales = deviceLocale.languageCode;
@@ -127,7 +127,6 @@ class MyApp extends StatelessWidget {
               };
               AppDelegate.instance.listen(listener);
             }
-            theme.AppContext.currentLocales = 'zh';
             if (result == null) {
               return deviceLocale;
             } else {

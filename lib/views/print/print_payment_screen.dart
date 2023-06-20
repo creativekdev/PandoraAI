@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -7,17 +8,19 @@ import '../../Common/importFile.dart';
 import '../../config.dart';
 import '../../models/print_order_entity.dart';
 
-// typedef CancelPayCallBack = void Function(String sessionId, String payUrl);
-// typedef PayCompleteCallBack = void Function(String sessionId, String payUrl);
-
 class PrintPaymentScreen extends StatefulWidget {
-  const PrintPaymentScreen({Key? key, required this.sessionId, required this.payUrl, required this.orderEntity}) : super(key: key);
+  String source;
   final String sessionId;
   final String payUrl;
-
-  // final CancelPayCallBack cancelPayCallBack;
-  // final PayCompleteCallBack payCompleteCallBack;
   final PrintOrderEntity orderEntity;
+
+  PrintPaymentScreen({
+    Key? key,
+    required this.sessionId,
+    required this.payUrl,
+    required this.orderEntity,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintPaymentScreen> createState() => _PrintPaymentScreenState();
@@ -30,6 +33,7 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_payment_screen');
     final wsUrl = Uri(
       host: Config.instance.metagramSocket,
       scheme: Config.instance.metagramSocketSchema,
@@ -53,7 +57,6 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
     socket?.on('pay_complete', (data) {
       // 跳转成功界面
       Navigator.of(context).pop(true);
-      // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
     });
     socket?.onDisconnect((data) {});
     socket?.connect();
@@ -64,7 +67,6 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
     return WillPopScope(
       onWillPop: () async {
         // 跳转取消界面
-        // widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
         if (await webViewController.canGoBack()) {
           webViewController.goBack();
           return false;
@@ -93,17 +95,13 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
                 }
                 // 处理取消逻辑
                 if (request.url.contains(Config.instance.successUrl)) {
-                  // widget.payCompleteCallBack(widget.sessionId, widget.payUrl);
                   return NavigationDecision.prevent;
                 }
                 if (request.url.contains(Config.instance.cancelUrl)) {
-                  // widget.cancelPayCallBack(widget.sessionId, widget.payUrl);
                   Navigator.of(context).pop(false);
-                  // return NavigationDecision.prevent;
                 }
                 return NavigationDecision.navigate;
               },
-              // backgroundColor: ColorConstant.BackgroundColor,
               initialUrl: widget.payUrl,
               javascriptMode: JavascriptMode.unrestricted,
             ),
