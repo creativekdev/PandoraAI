@@ -1,15 +1,13 @@
 import 'package:cartoonizer/Widgets/search_bar.dart';
 import 'package:cartoonizer/views/print/print_order_controller.dart';
-import 'package:cartoonizer/views/print/print_order_detail_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
-import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
+import 'package:cartoonizer/views/print/widgets/print_order_list.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../images-res.dart';
-import '../../models/print_orders_entity.dart';
 
 class PrintOrderScreen extends StatefulWidget {
   String source;
@@ -31,9 +29,6 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
     super.initState();
     Posthog().screenWithUser(screenName: 'print_order_screen');
     controller.tabController = TabController(length: controller.statuses.length, vsync: this);
-    controller.tabController!.addListener(() {
-      controller.onChangeStatus(controller.tabController!.index);
-    });
   }
 
   @override
@@ -68,15 +63,15 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                         controller: controller.searchOrderController,
                         hintStyle: TextStyle(color: Colors.white38, fontSize: $(14)),
                         style: TextStyle(color: Colors.white, fontSize: $(14)),
-                        onSearchClear: () {
-                          controller.searchOrderController.clear();
-                          // controller.onSearchOrder("");
-                          controller.name = "";
-                        },
-                        onChange: (String value) {
-                          controller.name = value;
-                        },
-                        onStartSearch: () {},
+                        // onSearchClear: () {
+                        //   controller.searchOrderController.clear();
+                        //   // controller.onSearchOrder("");
+                        //   controller.name = "";
+                        // },
+                        // onChange: (String value) {
+                        //   controller.name = value;
+                        // },
+                        // onStartSearch: () {},
                         contentPadding: EdgeInsets.only(bottom: $(10)),
                       ).intoContainer(
                         padding: EdgeInsets.only(left: $(10)),
@@ -111,10 +106,6 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                     labelColor: Colors.white,
                     indicatorColor: Colors.transparent,
                     labelStyle: TextStyle(fontSize: $(14)),
-                    onTap: (index) {
-                      controller.tabController?.index = index;
-                      controller.onChangeStatus(index);
-                    },
                     tabs: controller.statuses.map((String tab) {
                       return Tab(text: controller.getTabName(tab, context));
                     }).toList(),
@@ -127,39 +118,12 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                   child: TabBarView(
                       controller: controller.tabController,
                       children: controller.statuses.map((e) {
-                        if (controller.orders[e.toLowerCase()] != null && controller.orders[e.toLowerCase()]!.length > 0) {
-                          return _AutomaticKeepAlive(
-                            child: CustomScrollView(
-                              controller: controller.sControllers[e]
-                                ?..addListener(() {
-                                  controller.onListenSwiper(e);
-                                }),
-                              slivers: [
-                                SliverList(
-                                    delegate: SliverChildBuilderDelegate((context, index) {
-                                  PrintOrdersDataRows rows = controller.orders[e.toLowerCase()]![index];
-
-                                  return PrintOrderItem(rows: rows).intoGestureDetector(onTap: () {
-                                    if (rows.financialStatus == "unpaid" || rows.financialStatus == "pending") {
-                                      controller.gotoPaymentPage(context, rows, widget.source);
-                                      return;
-                                    }
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          settings: RouteSettings(name: "/PrintOrderDetailScreen"),
-                                          builder: (context) => PrintOrderDetailScreen(
-                                            rows: rows,
-                                            source: widget.source,
-                                          ),
-                                        ));
-                                  });
-                                }, childCount: controller.orders[e.toLowerCase()]?.length ?? 0)),
-                              ],
-                            ),
-                          );
-                        }
-                        return Center(child: TitleTextWidget(S.of(context).empty_msg, ColorConstant.White, FontWeight.normal, $(12)));
+                        return _AutomaticKeepAlive(
+                          child: PrintOrderList(
+                            tabKey: e,
+                            source: widget.source,
+                          ),
+                        );
                       }).toList()),
                 ),
               ]);

@@ -17,7 +17,7 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
       children: [
         TitleTextWidget(S.of(context).quatity, ColorConstant.White, FontWeight.normal, $(12)),
         Spacer(),
-        TitleTextWidget("+", ColorConstant.White, FontWeight.normal, $(8))
+        TitleTextWidget("+", ColorConstant.White, FontWeight.normal, $(12))
             .intoContainer(
           alignment: Alignment.center,
           width: $(24),
@@ -41,7 +41,7 @@ class _PrintQuatityItemState extends State<PrintQuatityItem> {
         ).intoContainer(
           width: $(40),
         ),
-        TitleTextWidget("-", ColorConstant.White, FontWeight.normal, $(8))
+        TitleTextWidget("-", ColorConstant.White, FontWeight.normal, $(12))
             .intoContainer(
           alignment: Alignment.center,
           width: $(24),
