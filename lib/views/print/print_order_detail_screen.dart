@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_order_detail_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
@@ -35,25 +36,15 @@ class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        title: Text(
+        middle: Text(
           S.of(context).order_details,
           style: TextStyle(
             color: Colors.white,
             fontSize: $(18),
           ),
         ),
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
-          Navigator.pop(context);
-        }),
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintOrderDetailController>(

@@ -6,6 +6,7 @@ import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/router/routers.dart';
 import '../../images-res.dart';
 import '../../models/print_order_entity.dart';
@@ -34,19 +35,11 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
-          // EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id(), 1]));
+        backAction: () {
           Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-        }),
+        },
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: ListView(children: [

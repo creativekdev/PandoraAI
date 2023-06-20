@@ -5,9 +5,9 @@ import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:google_maps_webservice/places.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../Widgets/state/app_state.dart';
-import '../../images-res.dart';
 
 class PrintShippingScreen extends StatefulWidget {
   const PrintShippingScreen({Key? key}) : super(key: key);
@@ -38,26 +38,19 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        title: Text(
+        middle: Text(
           S.of(context).shipping_details,
           style: TextStyle(
             color: Colors.white,
             fontSize: $(18),
           ),
         ),
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
+        backAction: () {
           hideSearchResults();
           Navigator.pop(context);
-        }),
+        },
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintShippingController>(

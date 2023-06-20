@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_shipping_screen.dart';
@@ -12,6 +11,7 @@ import 'package:cartoonizer/views/print/widgets/print_select_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:cartoonizer/views/print/widgets/print_web_item.dart';
 
+import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../Widgets/router/routers.dart';
 import '../../app/app.dart';
@@ -49,18 +49,8 @@ class PrintScreenState extends AppState<PrintScreen> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
-          Navigator.pop(context);
-        }),
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintController>(
