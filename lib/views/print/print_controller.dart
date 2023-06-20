@@ -218,7 +218,7 @@ class PrintController extends GetxController {
       _quatity--;
       _total = getSubTotal();
     } else {
-      Fluttertoast.showToast(msg: "qiuatity can't less than 1");
+      Fluttertoast.showToast(msg: "quality can't less than 1");
     }
     update();
   }

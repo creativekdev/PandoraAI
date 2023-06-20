@@ -22,7 +22,9 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring_controller.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -85,10 +87,26 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
             appBar: AppNavigationBar(
               backgroundColor: ColorConstant.BackgroundColor,
               trailing: Image.asset(
-                Images.ic_share,
+                Images.ic_more,
+                height: $(24),
                 width: $(24),
-              ).intoContainer().intoGestureDetector(onTap: () {
-                shareOut(context, controller);
+                color: Colors.white,
+              )
+                  .intoContainer(
+                alignment: Alignment.centerRight,
+                width: ScreenUtil.screenSize.width,
+              )
+                  .intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(context, listData: [
+                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                ], clickCallback: (index, title) {
+                  if (index == 0) {
+                    shareToDiscovery(context, controller);
+                  } else {
+                    shareOut(context, controller);
+                  }
+                });
               }),
             ),
             body: Column(
@@ -107,17 +125,26 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
                         .intoGestureDetector(
                           onTap: () => pickPhoto(context, controller),
                         )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
+                    Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                        .intoGestureDetector(
+                          onTap: () => toPrint(context, controller),
+                        )
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
                     Image.asset(Images.ic_download, height: $(24), width: $(24))
                         .intoGestureDetector(
                           onTap: () => savePhoto(context, controller),
                         )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
-                    Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                        .intoGestureDetector(
-                          onTap: () => shareToDiscovery(context, controller),
-                        )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
                   ],
                 ),
                 OutlineWidget(
@@ -291,6 +318,13 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
         // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
       }
     }
+  }
+
+  toPrint(BuildContext context, AiColoringController controller) async {
+    if (TextUtil.isEmpty(controller.resultPath)) {
+      return;
+    }
+    Print.open(context, source: 'aicoloring', file: File(controller.resultPath!));
   }
 
   savePhoto(BuildContext context, AiColoringController controller) async {

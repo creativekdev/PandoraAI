@@ -26,9 +26,11 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -167,10 +169,26 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
               }
             },
             trailing: Image.asset(
-              Images.ic_share,
+              Images.ic_more,
+              height: $(24),
               width: $(24),
-            ).intoContainer().intoGestureDetector(onTap: () {
-              shareOut(context, controller);
+              color: Colors.white,
+            )
+                .intoContainer(
+              alignment: Alignment.centerRight,
+              width: ScreenUtil.screenSize.width,
+            )
+                .intoGestureDetector(onTap: () {
+              LiPopMenu.showLinePop(context, listData: [
+                ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+              ], clickCallback: (index, title) {
+                if (index == 0) {
+                  shareToDiscovery(context, controller);
+                } else {
+                  shareOut(context, controller);
+                }
+              });
             }),
           ),
           body: Column(
@@ -189,17 +207,26 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
                       .intoGestureDetector(
                         onTap: () => pickPhoto(context, controller),
                       )
-                      .intoContainer(padding: EdgeInsets.all($(15))),
+                      .intoContainer(
+                        padding: EdgeInsets.all($(15)),
+                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                      ),
+                  Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                      .intoGestureDetector(
+                        onTap: () => toPrint(context, controller),
+                      )
+                      .intoContainer(
+                        padding: EdgeInsets.all($(15)),
+                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                      ),
                   Image.asset(Images.ic_download, height: $(24), width: $(24))
                       .intoGestureDetector(
                         onTap: () => savePhoto(context, controller),
                       )
-                      .intoContainer(padding: EdgeInsets.all($(15))),
-                  Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => shareToDiscovery(context, controller),
-                      )
-                      .intoContainer(padding: EdgeInsets.all($(15))),
+                      .intoContainer(
+                        padding: EdgeInsets.all($(15)),
+                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                      ),
                 ],
               ),
               OutlineWidget(
@@ -361,6 +388,16 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
       }
     }
+  }
+
+  toPrint(BuildContext context, StyleMorphController controller) async {
+    var selectedEffect = controller.selectedEffect;
+    if (selectedEffect == null || controller.resultMap[selectedEffect.key] == null) {
+      CommonExtension().showToast(S.of(context).select_a_style);
+      return;
+    }
+    var filePath = controller.resultMap[selectedEffect.key];
+    Print.open(context, source: 'stylemorph', file: File(filePath!));
   }
 
   savePhoto(BuildContext context, StyleMorphController controller) async {
