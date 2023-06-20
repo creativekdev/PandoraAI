@@ -29,6 +29,16 @@ class PrintOrderListController extends GetxController {
   late StreamSubscription nameListen;
   late StreamSubscription dateTimeListen;
 
+  bool _isfirstLoading = true;
+
+  set isfirstLoading(bool value) {
+    _isfirstLoading = value;
+    update();
+  }
+
+  bool get isfirstLoading => _isfirstLoading;
+
+
   String name = '';
   List<DateTime?> dates = [];
 
@@ -102,6 +112,7 @@ class PrintOrderListController extends GetxController {
       _orders = entity;
     }
     isLoading = false;
+    _isfirstLoading = false;
     update();
   }
 
@@ -109,7 +120,6 @@ class PrintOrderListController extends GetxController {
   void onReady() {
     super.onReady();
     onRequestData();
-    print("127.0.0.1 === $name, $dates");
   }
 
   @override
@@ -117,6 +127,7 @@ class PrintOrderListController extends GetxController {
     super.onClose();
     nameListen.cancel();
     dateTimeListen.cancel();
+    cartoonizerApi.unbind();
   }
 
   gotoPaymentPage(BuildContext context, PrintOrdersDataRows item, String source) async {

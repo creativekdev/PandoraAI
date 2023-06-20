@@ -24,11 +24,14 @@ class _PrintOrderListState extends State<PrintOrderList> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(
-        PrintOrderListController(
-          tabKey: widget.tabKey,
-        ),
-        tag: widget.tabKey);
+    // controller = Get.put(
+    //     PrintOrderListController(
+    //       tabKey: widget.tabKey,
+    //     ),
+    //     tag: widget.tabKey);
+    controller = PrintOrderListController(
+      tabKey: widget.tabKey,
+    );
   }
 
   @override
@@ -67,7 +70,8 @@ class _PrintOrderListState extends State<PrintOrderList> {
               ],
             );
           }
-          return Center(child: TitleTextWidget(S.of(context).empty_msg, ColorConstant.White, FontWeight.normal, $(12)));
+          return LoadingOverlay(
+              isLoading: controller.isfirstLoading, child: Center(child: TitleTextWidget(S.of(context).empty_msg, ColorConstant.White, FontWeight.normal, $(12))));
         });
   }
 
