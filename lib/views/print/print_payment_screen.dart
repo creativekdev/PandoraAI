@@ -87,8 +87,8 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
                 webViewController = controller;
               },
               navigationDelegate: (NavigationRequest request) async {
-                if (request.url.contains(ALIPAY_SCHEML)) {
-                  launchURL(request.url);
+                if (request.url.startsWith(ALIPAY_SCHEML_ANDROID) || request.url.startsWith(ALIPAY_SCHEML_IOS)) {
+                  launchURL(request.url, force: true);
                   return NavigationDecision.prevent;
                 }
                 // 处理取消逻辑

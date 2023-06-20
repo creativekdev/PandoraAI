@@ -15,7 +15,8 @@ const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
 const String PLATFORM_CHANNEL = 'io.socialbook/cartoonizer';
 const String APP_TITLE = 'Pandora AI';
 const String REF_CODE_LINK = 'pai://pandora.ai?rf=';
-const String ALIPAY_SCHEML = 'alipays://';
+const String ALIPAY_SCHEML_ANDROID = 'alipays://';
+const String ALIPAY_SCHEML_IOS = 'alipay://';
 
 class AdMobConfig {
   static bool _debug = false;
