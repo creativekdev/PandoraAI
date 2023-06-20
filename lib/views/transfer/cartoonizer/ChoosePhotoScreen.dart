@@ -37,7 +37,9 @@ import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
@@ -797,10 +799,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               },
               backgroundColor: ColorConstant.BackgroundColor,
               trailing: Image.asset(
-                Images.ic_share,
+                Images.ic_more,
+                height: $(24),
                 width: $(24),
-              ).intoGestureDetector(onTap: () async {
-                shareOut();
+                color: Colors.white,
+              )
+                  .intoContainer(
+                alignment: Alignment.centerRight,
+                width: ScreenUtil.screenSize.width,
+              )
+                  .intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(context, listData: [
+                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                ], clickCallback: (index, title) {
+                  if (index == 0) {
+                    shareToDiscovery();
+                  } else {
+                    shareOut();
+                  }
+                });
               }).offstage(offstage: !controller.isPhotoDone.value),
             ),
             body: Column(
@@ -1175,25 +1193,23 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         // onTap: () => showPickPhotoDialog(context),
                         onTap: () => pickFromRecent(context),
                       )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
+                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
                       .visibility(visible: controller.isPhotoSelect.value),
                 ),
+                Obx(() => Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                    .intoGestureDetector(
+                      onTap: () => Print.open(context, source: 'facetoon', file: File(image)),
+                    )
+                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
+                    .visibility(visible: controller.isPhotoDone.value)),
                 Obx(
                   () => Image.asset(Images.ic_download, height: $(24), width: $(24))
                       .intoGestureDetector(
                         onTap: () => showSavePhotoDialog(context),
                       )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
+                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
                       .visibility(visible: controller.isPhotoDone.value),
                 ),
-                Obx(() => Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                    .intoGestureDetector(
-                      onTap: () {
-                        shareToDiscovery();
-                      },
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
-                    .visibility(visible: controller.isPhotoDone.value)),
               ],
             ))
           ],

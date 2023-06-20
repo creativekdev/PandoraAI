@@ -24,6 +24,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -186,6 +187,9 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
       backgroundColor: Colors.transparent,
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
+        trailing: Image.asset(Images.ic_share, height: $(24), width: $(24)).intoGestureDetector(
+          onTap: () => shareOut(context),
+        ),
       ),
       body: Column(
         children: [
@@ -294,128 +298,35 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                 borderRadius: BorderRadius.circular($(8)),
               )),
           Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                  child: buildButton(context, icon: Images.ic_share_discovery, text: S.of(context).tabDiscovery)
-                      .intoContainer(
-                          alignment: Alignment.center,
-                          width: double.maxFinite,
-                          padding: EdgeInsets.symmetric(vertical: $(10)),
-                          margin: EdgeInsets.symmetric(horizontal: $(7.5)),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular($(12)),
-                              gradient: LinearGradient(
-                                colors: [Color(0xFFFF57CD), Color(0xFF9A26FF), Color(0xFF601AFF)],
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                              )))
-                      .intoGestureDetector(onTap: () {
-                AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_draw', callback: () async {
-                  var file = File(resultFilePath!);
-                  var forward = () {
-                    ShareDiscoveryScreen.push(
-                      context,
-                      effectKey: 'scribble',
-                      originalUrl: uploadImageController.imageUrl.value,
-                      image: base64Encode(file.readAsBytesSync()),
-                      isVideo: false,
-                      category: HomeCardType.scribble,
-                    ).then((value) {
-                      if (value ?? false) {
-                        Events.aidrawCompleteShare(source: source, platform: 'discovery', type: photoType);
-                        showShareSuccessDialog(context);
-                      }
-                    });
-                  };
-                  if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-                    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-                    showLoading().whenComplete(() {
-                      uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) {
-                        hideLoading().whenComplete(() {
-                          if (value) {
-                            forward.call();
-                          }
-                        });
-                      });
-                    });
-                  } else {
-                    forward.call();
-                  }
-                }, autoExec: true);
-              })),
-              Expanded(
-                child: buildButton(context, icon: Images.ic_share, text: S.of(context).share)
-                    .intoContainer(
-                        alignment: Alignment.center,
-                        width: double.maxFinite,
-                        padding: EdgeInsets.symmetric(vertical: $(10)),
-                        margin: EdgeInsets.symmetric(horizontal: $(7.5)),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular($(12)),
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFFF57CD), Color(0xFF9A26FF), Color(0xFF601AFF)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            )))
-                    .intoGestureDetector(onTap: () async {
-                  await showLoading();
-                  if (TextUtil.isEmpty(resultFilePath)) {
-                    return;
-                  }
-                  var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                  await hideLoading();
-                  ShareScreen.startShare(context,
-                      backgroundColor: Color(0x77000000),
-                      style: 'AI_Draw',
-                      image: base64Encode(uint8list),
-                      isVideo: false,
-                      originalUrl: null,
-                      effectKey: 'AI_Draw', onShareSuccess: (platform) {
-                    Events.aidrawCompleteShare(source: source, platform: platform, type: photoType);
-                  });
-                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                }),
-              ),
+              Image.asset(Images.ic_download, height: $(24), width: $(24))
+                  .intoGestureDetector(
+                    onTap: () => savePhoto(context),
+                  )
+                  .intoContainer(
+                    padding: EdgeInsets.all($(15)),
+                    margin: EdgeInsets.symmetric(horizontal: $(20)),
+                  ),
+              Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                  .intoGestureDetector(
+                    onTap: () => toPrint(context),
+                  )
+                  .intoContainer(
+                    padding: EdgeInsets.all($(15)),
+                    margin: EdgeInsets.symmetric(horizontal: $(20)),
+                  ),
+              Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
+                  .intoGestureDetector(
+                    onTap: () => shareToDiscovery(context),
+                  )
+                  .intoContainer(
+                    padding: EdgeInsets.all($(15)),
+                    margin: EdgeInsets.symmetric(horizontal: $(20)),
+                  ),
             ],
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(7.5), vertical: $(15))),
-          buildButton(
-            context,
-            icon: Images.ic_download,
-            text: S.of(context).download,
-          )
-              .intoContainer(
-                  alignment: Alignment.center,
-                  width: double.maxFinite,
-                  padding: EdgeInsets.symmetric(vertical: $(10)),
-                  margin: EdgeInsets.symmetric(horizontal: $(15)),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular($(12)),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF00FFF8),
-                          Color(0xFF1F83FF),
-                          Color(0xFF5E18FF),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      )))
-              .intoGestureDetector(onTap: () async {
-            await showLoading();
-            var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-            var list = uint8list.toList();
-            var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-            var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-            await File(imgPath).writeAsBytes(list);
-            await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
-            await hideLoading();
-            Events.aidrawCompleteDownload(type: 'image');
-            CommonExtension().showImageSavedOkToast(context);
-            delay(() {
-              UserManager userManager = AppDelegate.instance.getManager();
-              userManager.rateNoticeOperator.onSwitch(context);
-            }, milliseconds: 2000);
-          }),
+          ),
         ],
       ),
     ).intoContainer(
@@ -446,5 +357,76 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
         )
       ],
     );
+  }
+
+  toPrint(BuildContext context) {
+    Print.open(context, source: 'scribble', file: File(filePath));
+  }
+
+  savePhoto(BuildContext context) async {
+    await showLoading();
+    var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    var list = uint8list.toList();
+    var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+    var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+    await File(imgPath).writeAsBytes(list);
+    await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+    await hideLoading();
+    Events.aidrawCompleteDownload(type: 'image');
+    CommonExtension().showImageSavedOkToast(context);
+    delay(() {
+      UserManager userManager = AppDelegate.instance.getManager();
+      userManager.rateNoticeOperator.onSwitch(context);
+    }, milliseconds: 2000);
+  }
+
+  shareOut(BuildContext context) async {
+    await showLoading();
+    if (TextUtil.isEmpty(resultFilePath)) {
+      return;
+    }
+    var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+    await hideLoading();
+    ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: 'AI_Draw', image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: 'AI_Draw',
+        onShareSuccess: (platform) {
+      Events.aidrawCompleteShare(source: source, platform: platform, type: photoType);
+    });
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+  }
+
+  shareToDiscovery(BuildContext context) {
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_draw', callback: () async {
+      var file = File(resultFilePath!);
+      var forward = () {
+        ShareDiscoveryScreen.push(
+          context,
+          effectKey: 'scribble',
+          originalUrl: uploadImageController.imageUrl.value,
+          image: base64Encode(file.readAsBytesSync()),
+          isVideo: false,
+          category: HomeCardType.scribble,
+        ).then((value) {
+          if (value ?? false) {
+            Events.aidrawCompleteShare(source: source, platform: 'discovery', type: photoType);
+            showShareSuccessDialog(context);
+          }
+        });
+      };
+      if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+        File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+        showLoading().whenComplete(() {
+          uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) {
+            hideLoading().whenComplete(() {
+              if (value) {
+                forward.call();
+              }
+            });
+          });
+        });
+      } else {
+        forward.call();
+      }
+    }, autoExec: true);
   }
 }

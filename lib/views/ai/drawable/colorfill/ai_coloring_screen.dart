@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/switch_image_card.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -22,7 +23,9 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring_controller.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -85,20 +88,39 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
             appBar: AppNavigationBar(
               backgroundColor: ColorConstant.BackgroundColor,
               trailing: Image.asset(
-                Images.ic_share,
+                Images.ic_more,
+                height: $(24),
                 width: $(24),
-              ).intoContainer().intoGestureDetector(onTap: () {
-                shareOut(context, controller);
+                color: Colors.white,
+              )
+                  .intoContainer(
+                alignment: Alignment.centerRight,
+                width: ScreenUtil.screenSize.width,
+              )
+                  .intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(context, listData: [
+                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                ], clickCallback: (index, title) {
+                  if (index == 0) {
+                    shareToDiscovery(context, controller);
+                  } else {
+                    shareOut(context, controller);
+                  }
+                });
               }),
             ),
             body: Column(
               children: [
                 Expanded(
-                  child: buildImage(context, controller).listenSizeChanged(onSizeChanged: (size) {
-                    controller.imageStackSize = size;
-                    controller.calculatePosY();
-                  }),
-                ),
+                    child: SwitchImageCard(
+                  origin: controller.originFile,
+                  result: controller.resultFile,
+                  imageStackSize: controller.imageStackSize,
+                ).listenSizeChanged(onSizeChanged: (size) {
+                  controller.imageStackSize = size;
+                  controller.update();
+                })),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -107,17 +129,26 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
                         .intoGestureDetector(
                           onTap: () => pickPhoto(context, controller),
                         )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
+                    Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                        .intoGestureDetector(
+                          onTap: () => toPrint(context, controller),
+                        )
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
                     Image.asset(Images.ic_download, height: $(24), width: $(24))
                         .intoGestureDetector(
                           onTap: () => savePhoto(context, controller),
                         )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
-                    Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                        .intoGestureDetector(
-                          onTap: () => shareToDiscovery(context, controller),
-                        )
-                        .intoContainer(padding: EdgeInsets.all($(15))),
+                        .intoContainer(
+                          padding: EdgeInsets.all($(15)),
+                          margin: EdgeInsets.symmetric(horizontal: $(20)),
+                        ),
                   ],
                 ),
                 OutlineWidget(
@@ -154,57 +185,6 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
             )));
       },
     );
-  }
-
-  Widget buildImage(BuildContext context, AiColoringController controller) {
-    var origin = Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.file(controller.originFile, fit: BoxFit.fill),
-        Image.file(
-          controller.originFile,
-          fit: BoxFit.contain,
-        ).intoCenter().blur(),
-      ],
-    );
-    if (TextUtil.isEmpty(controller.resultPath)) {
-      return origin;
-    } else {
-      var showFile = controller.showOrigin ? controller.originFile : File(controller.resultPath!);
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.file(showFile, fit: BoxFit.fill),
-          Image.file(
-            showFile,
-            fit: BoxFit.contain,
-          ).intoCenter().blur(),
-          Positioned(
-            child: Listener(
-              onPointerDown: (details) {
-                controller.showOrigin = true;
-              },
-              onPointerCancel: (details) {
-                controller.showOrigin = false;
-              },
-              onPointerUp: (details) {
-                controller.showOrigin = false;
-              },
-              child: Image.asset(
-                Images.ic_metagram_show_origin,
-                width: $(28),
-              ).intoContainer(padding: EdgeInsets.all($(4))).intoMaterial(
-                    color: Color(0x11000000),
-                    borderRadius: BorderRadius.circular($(6)),
-                    elevation: 1,
-                  ),
-            ),
-            bottom: controller.imagePosBottom + $(12),
-            right: controller.imagePosRight + $(12),
-          )
-        ],
-      );
-    }
   }
 
   pickPhoto(BuildContext context, AiColoringController controller) {
@@ -291,6 +271,13 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
         // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
       }
     }
+  }
+
+  toPrint(BuildContext context, AiColoringController controller) async {
+    if (TextUtil.isEmpty(controller.resultPath)) {
+      return;
+    }
+    Print.open(context, source: 'aicoloring', file: File(controller.resultPath!));
   }
 
   savePhoto(BuildContext context, AiColoringController controller) async {
