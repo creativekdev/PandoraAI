@@ -1,7 +1,11 @@
 ///auto generate code, please do not modify;
 class Images {
    static const String american_express = 'assets/images/american_express.png';
+   static const String blur = 'assets/images/blur.png';
+   static const String brightness = 'assets/images/brightness.png';
+   static const String contrast = 'assets/images/contrast.png';
    static const String discover = 'assets/images/discover.png';
+   static const String hue = 'assets/images/hue.png';
    static const String ic_add = 'assets/images/ic_add.png';
    static const String ic_adjust = 'assets/images/ic_adjust.png';
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
@@ -197,6 +201,10 @@ class Images {
    static const String launch_branding = 'assets/images/launch_branding.png';
    static const String launch_icon = 'assets/images/launch_icon.png';
    static const String mastercard = 'assets/images/mastercard.png';
+   static const String noise = 'assets/images/noise.png';
+   static const String pixelate = 'assets/images/pixelate.png';
+   static const String saturation = 'assets/images/saturation.png';
+   static const String sharpen = 'assets/images/sharpen.png';
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
 }

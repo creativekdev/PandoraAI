@@ -2,12 +2,23 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:image/image.dart' as imgLib;
 
 class Adjust{
   int selectedID = 0;
   List<double> sliderValues = [50,50,50,0,0,0,0,0];
+  static List<String> assets = [
+    Images.brightness,
+    Images.contrast,
+    Images.saturation,
+    Images.noise,
+    Images.pixelate,
+    Images.blur,
+    Images.sharpen,
+    Images.hue
+  ];
   static List<String> filters = [
     "Brightness",
     "Contrast",
@@ -18,6 +29,7 @@ class Adjust{
     "Sharpen",
     "Hue",
   ];
+  List<int> isChanging = [1,0,0,0,0,0,0,0];
   int getCnt() {
     return filters.length;
   }
@@ -33,6 +45,10 @@ class Adjust{
   void setSliderValue(double sliderValue) {
     sliderValues[selectedID] = sliderValue;
   }
+  double getSliderValue(int id) {
+    return sliderValues[id];
+  }
+
   Future<imgLib.Image> ImAdjust(imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;
@@ -108,6 +124,7 @@ class Adjust{
         }
         break;
       case "Noise":
+        res_image = imgLib.noise(res_image, (sliderValues[selectedID] / 100 * 255).toInt());
 
         break;
       case "Pixelate":
@@ -128,12 +145,21 @@ class Adjust{
         }
         break;
       case "Blur":
-
+        res_image = imgLib.gaussianBlur(res_image, (sliderValues[selectedID].toInt()/2).toInt() + 1);
         break;
       case "Sharpen":
-
+        if(sliderValues[selectedID].toInt() > 0) {
+          final kernel = [
+            -1, -1, -1,
+            -1, 9 + sliderValues[selectedID].toInt()/100, -1,
+            -1, -1, -1
+          ];
+          res_image = imgLib.convolution(res_image, kernel);
+        }
         break;
       case "Hue":
+        final hue = (sliderValues[selectedID].toInt() - 50)/100 * 180;
+        // res_image = imgLib.adjustHue(res_image, hue);
 
         break;
       default:

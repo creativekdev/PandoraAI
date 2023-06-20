@@ -43,7 +43,7 @@ class _GridSliderState extends State<GridSlider> {
       },
       child: Container(
         width: width,
-        height: 50,
+        height: 30,
         child: CustomPaint(
           painter: MyPainter(minVal :widget.minVal, maxVal: widget.maxVal, currentPos : widget.currentPos, screenWidth: width),
         )
@@ -71,8 +71,8 @@ class MyPainter extends CustomPainter {
       ..strokeWidth = 4;
 
     canvas.drawLine(
-      Offset(screenWidth / 2, 0),
-      Offset(screenWidth / 2, 40),
+      Offset(screenWidth / 2, 5),
+      Offset(screenWidth / 2, 30),
       paintBold,
     );
 
@@ -82,15 +82,15 @@ class MyPainter extends CustomPainter {
       double xpos = screenWidth / 2 + (i - currentPos + minVal) * 10;
       if(i % 5 == 0) {
         canvas.drawLine(
+          Offset(xpos, 20),
           Offset(xpos, 30),
-          Offset(xpos, 40),
           paintBold,
         );
       }
       else {
         canvas.drawLine(
+          Offset(xpos, 20),
           Offset(xpos, 30),
-          Offset(xpos, 40),
           paint,
         );
       }

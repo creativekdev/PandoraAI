@@ -8,6 +8,7 @@ import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -21,6 +22,8 @@ import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as imgLib;
+import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+
 
 
 class ImFilterScreen extends StatefulWidget {
@@ -600,7 +603,9 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     );
   }
   Widget _buildAdjust() {
+    final ScrollController _scrollController = ScrollController();
     List<Widget> buttons = [];
+    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
     for (int i = 0; i < adjust.getCnt(); i++){
       int cur_i  = i;
       buttons.add(GestureDetector(
@@ -608,36 +613,104 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           setState(() {
             adjust.setSelectedID(cur_i);
           });
+          _scrollController.animateTo(
+            25 + 64.0 * cur_i,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
         },
-        child: Container(
+        child: (adjust.getSelectedID() != cur_i)?
+        Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: (adjust.getSelectedID() == cur_i)?
             Border.all(color: const Color(0xFF05E0D5), width: 2)
-            :Border.all(color: Colors.white, width: 2),
+            :Border.all(color: Colors.grey, width: 2),
           ),
           child: CircleAvatar(
-            backgroundImage: AssetImage(Images.ic_adjust),
-            radius: 25.0,
+            backgroundImage: AssetImage(Adjust.assets[cur_i]),
+            radius: 20.0,
             backgroundColor: Colors.transparent,
           ),
-        ),
+        )
+        : Stack(
+          children: [
+            (adjust.getSelectedValue() >= 0)?
+            AppCircleProgressBar(
+              size: 42,
+              ringWidth: 2,
+              backgroundColor: Colors.grey,
+              progress: adjust.getSelectedValue()/100,
+              loadingColors: [
+                Color(0xFF05E0D5),
+                Color(0xFF05E0D5),
+                Color(0xFF05E0D5),
+                Color(0xFF05E0D5),
+                Color(0xFF05E0D5),
+              ],
+            )
+            :AppCircleProgressBar(
+            size: 42,
+            ringWidth: 2,
+            backgroundColor: Colors.white,
+            progress: 1 - adjust.getSelectedValue()/100,
+            loadingColors: [
+              Colors.grey,
+              Colors.grey,
+              Colors.grey,
+              Colors.grey,
+              Colors.grey,
+            ],
+          ),
+            Container(
+              width: 42,
+              height: 42,// Sets maximum width of container to screen width
+              alignment: Alignment.center, // Centers contents horizontally and vertically
+              child: Text(
+                adjust.getSliderValue(cur_i).toInt().toString(),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        )
+
       ));
       buttons.add(SizedBox(width: 20));
     }
+    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
+
     return Container(
         height: itemWidth + $(40),
         child:Column(
           children:[
+            Text(
+              Adjust.filters[adjust.selectedID],
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 5),
             SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: buttons,
-            ),),
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                // mainAxisAlignment: MainAxisAlignment.end,
+                children: buttons,
+              ),
+            ),
+            SizedBox(height: 3),
             GridSlider(minVal: 0, maxVal: 100, currentPos: adjust.getSelectedValue(),
               onChanged: (newValue){
                 adjust.setSliderValue(newValue);
+                setState(() {
+                  adjust;
+                });
               }, onEnd: () async {
                 if (_imagefile != null) {
                   _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
