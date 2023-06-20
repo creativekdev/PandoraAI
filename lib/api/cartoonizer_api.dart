@@ -394,21 +394,17 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<PrintOrdersEntity?> getShopifyOrders(body) async {
     var baseEntity = await get("/ps_order/all", params: body);
-    print("⚽️  ${baseEntity.toString()}");
-    print("⚽️  ${baseEntity?.data}");
     return jsonConvert.convert<PrintOrdersEntity>(baseEntity?.data);
   }
 
   Future<BaseEntity?> getShopifyOrderDetail(int id) async {
     var baseEntity = await get("/ps_order/get/${id}");
-    print(baseEntity?.data);
     return jsonConvert.convert<BaseEntity>(baseEntity?.data);
   }
 
   // buy plan with stripe
   Future<PrintOrderEntity?> shopifyCreateOrder(body) async {
     var baseEntity = await post("/shopify_v2/order/create", params: body, canClickRetry: false, needRetry: false);
-    print("127.0.0.1 === ${baseEntity?.data}");
     return jsonConvert.convert<PrintOrderEntity>(baseEntity?.data);
   }
 
@@ -421,7 +417,6 @@ class CartoonizerApi extends RetryAbleRequester {
   // buy plan with check
   Future<PrintPaymentEntity?> buyPlanCheckout(body) async {
     var baseEntity = await post("/plan/checkout", params: body);
-    print("127.0.0.1 === ${baseEntity?.data}");
     return jsonConvert.convert<PrintPaymentEntity>(baseEntity?.data);
   }
 

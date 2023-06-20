@@ -251,6 +251,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Enter your registered email below to receive password reset instruction"),
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Forgot Your Password?"),
+        "fulfilled": MessageLookupByLibrary.simpleMessage("Fulfilled"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "generate": MessageLookupByLibrary.simpleMessage("Generate"),
         "generate_again":
@@ -384,6 +385,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "others": MessageLookupByLibrary.simpleMessage("Others"),
         "packages_purchased":
             MessageLookupByLibrary.simpleMessage("Packages purchased"),
+        "paid": MessageLookupByLibrary.simpleMessage("Paid"),
         "pandora_avatar":
             MessageLookupByLibrary.simpleMessage("Pandora Avatar"),
         "pandora_create_exit_dips": MessageLookupByLibrary.simpleMessage(
@@ -402,6 +404,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "We only use your photos to train the AI model. Photos will be deleted from our servers within 24 hours"),
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
             "Your Pandora Avatars will be generated in about %d minutes. Please explore our other features while waiting!"),
+        "partial_delivered":
+            MessageLookupByLibrary.simpleMessage("Partial delivered"),
         "pass_validation":
             MessageLookupByLibrary.simpleMessage("Please enter password"),
         "pass_validation1":
@@ -416,6 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Payment failed"),
         "payment_successfully":
             MessageLookupByLibrary.simpleMessage("Payment successfully"),
+        "pending": MessageLookupByLibrary.simpleMessage("Pending"),
         "per_day": MessageLookupByLibrary.simpleMessage("Times a day"),
         "permissionCamera":
             MessageLookupByLibrary.simpleMessage("Camera Permission"),
@@ -487,6 +492,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Reference image (optional)"),
         "reference_image_tips": MessageLookupByLibrary.simpleMessage(
             "The image you select will be used as a reference for the final"),
+        "refunded": MessageLookupByLibrary.simpleMessage("Refunded"),
         "remaining_credits":
             MessageLookupByLibrary.simpleMessage("Remaining credits"),
         "remind": MessageLookupByLibrary.simpleMessage("Remind"),
@@ -501,6 +507,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Note: If for some reason you did not receive the email, please check your spam folder or click the button below to resend."),
         "reset": MessageLookupByLibrary.simpleMessage("Reset"),
+        "restocked": MessageLookupByLibrary.simpleMessage("Restocked"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
         "restore_content": MessageLookupByLibrary.simpleMessage(
             "You will lose all of your rights until subscribe again"),
@@ -619,6 +626,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),
+        "unpaid": MessageLookupByLibrary.simpleMessage("Unpaid"),
         "update_now": MessageLookupByLibrary.simpleMessage("Update now"),
         "update_pass": MessageLookupByLibrary.simpleMessage("Update Password"),
         "update_profile":
@@ -641,6 +649,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_more_comment":
             MessageLookupByLibrary.simpleMessage("View more %d comments"),
         "view_orders": MessageLookupByLibrary.simpleMessage("View orders"),
+        "voided": MessageLookupByLibrary.simpleMessage("voided"),
         "waiting": MessageLookupByLibrary.simpleMessage("Waiting"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage(
             "Watch an ad to remove watermark\n(only this time)"),

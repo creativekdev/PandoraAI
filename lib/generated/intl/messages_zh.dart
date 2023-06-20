@@ -212,6 +212,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "forgot_password_text":
             MessageLookupByLibrary.simpleMessage("请在下面输入您的注册邮箱以接收密码重置指令"),
         "forgot_your_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
+        "fulfilled": MessageLookupByLibrary.simpleMessage("已完成"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
         "generate": MessageLookupByLibrary.simpleMessage("创建"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
@@ -319,6 +320,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("其他"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("已购买"),
+        "paid": MessageLookupByLibrary.simpleMessage("已支付"),
         "pandora_avatar":
             MessageLookupByLibrary.simpleMessage("Pandora Avatar"),
         "pandora_create_exit_dips":
@@ -336,6 +338,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "我们使用您的照片来训练AI模型并渲染您的化身。您提交的照片和AI模型将在24小时内从我们的服务器上删除。"),
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
             "您的照片将在大约%d分钟内生成，请稍候。生成结束后，我们会给你发送电子邮件，里面有你的PandoraAvatar链接!"),
+        "partial_delivered": MessageLookupByLibrary.simpleMessage("部分已交付"),
         "pass_validation": MessageLookupByLibrary.simpleMessage("请输入密码"),
         "pass_validation1": MessageLookupByLibrary.simpleMessage("密码不正确"),
         "password": MessageLookupByLibrary.simpleMessage("密码"),
@@ -345,6 +348,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "paymentBtn": MessageLookupByLibrary.simpleMessage("提交订单"),
         "payment_failed": MessageLookupByLibrary.simpleMessage("支付失败"),
         "payment_successfully": MessageLookupByLibrary.simpleMessage("支付成功"),
+        "pending": MessageLookupByLibrary.simpleMessage("待处理"),
         "per_day": MessageLookupByLibrary.simpleMessage("次每天"),
         "permissionCamera": MessageLookupByLibrary.simpleMessage("相机权限"),
         "permissionCameraContent":
@@ -403,6 +407,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "reference_image": MessageLookupByLibrary.simpleMessage("参考图片（可选）"),
         "reference_image_tips":
             MessageLookupByLibrary.simpleMessage("参考图片将影响最终结果"),
+        "refunded": MessageLookupByLibrary.simpleMessage("已退款"),
         "remaining_credits": MessageLookupByLibrary.simpleMessage("已获权益"),
         "remind": MessageLookupByLibrary.simpleMessage("提示"),
         "reply": MessageLookupByLibrary.simpleMessage("回复"),
@@ -413,6 +418,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "提示：如果没有收到邮件，请检查您的垃圾箱或者点击重试按钮"),
         "reset": MessageLookupByLibrary.simpleMessage("重置"),
+        "restocked": MessageLookupByLibrary.simpleMessage("已重新进货"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTORE"),
         "restore_content":
             MessageLookupByLibrary.simpleMessage("在再次订阅之前，您将失去所有的权益"),
@@ -459,6 +465,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "share_to": MessageLookupByLibrary.simpleMessage("分享到"),
         "shipping_delivery": MessageLookupByLibrary.simpleMessage("配送信息"),
+        "shipping_details": MessageLookupByLibrary.simpleMessage("物流信息"),
         "shipping_information": MessageLookupByLibrary.simpleMessage("收货信息"),
         "show_it": MessageLookupByLibrary.simpleMessage("显示"),
         "sign_in": MessageLookupByLibrary.simpleMessage("登录"),
@@ -507,6 +514,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "try_it_now": MessageLookupByLibrary.simpleMessage("现在就去"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
+        "unpaid": MessageLookupByLibrary.simpleMessage("未支付"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),
         "update_pass": MessageLookupByLibrary.simpleMessage("更新密码"),
         "update_profile": MessageLookupByLibrary.simpleMessage("更新个人信息"),
@@ -527,6 +535,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_more_comment":
             MessageLookupByLibrary.simpleMessage("查看更多 %d 条评论"),
         "view_orders": MessageLookupByLibrary.simpleMessage("查看订单"),
+        "voided": MessageLookupByLibrary.simpleMessage("已作废"),
         "waiting": MessageLookupByLibrary.simpleMessage("等待生成"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
         "watchAdText": MessageLookupByLibrary.simpleMessage("下载高清\n无水印图片"),

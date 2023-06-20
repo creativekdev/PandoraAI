@@ -431,5 +431,13 @@
   "search_order": "Search order",
   "start_date": "Start Date",
   "end_date": "End Date",
-  "quatity": "Quatity"
+  "quatity": "Quatity",
+  "pending": "Pending",
+  "paid": "Paid",
+  "unpaid": "Unpaid",
+  "refunded": "Refunded",
+  "voided": "voided",
+  "partial_delivered": "Partial delivered",
+  "fulfilled": "Fulfilled",
+  "restocked": "Restocked"
 }

@@ -424,7 +424,11 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                     .intoGestureDetector(onTap: () {
                   LiPopMenu.showLinePop(
                     context,
-                    isShowBg: true,
+                    listData: [
+                      ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                      ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                      ListPopItem(text: S.of(context).download, icon: Images.ic_download),
+                    ],
                     clickCallback: (index, text) {
                       if (index == 0) {
                         // 分享

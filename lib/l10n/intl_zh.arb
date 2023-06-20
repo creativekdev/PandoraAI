@@ -400,7 +400,7 @@
   "SELECT_COUNTRY_KEYWORD": "国家/地区名，地区编码或区号",
   "SELECT_REGION": "选择国家/地区",
   "Subtotal": "总计",
-  "Shipping_details": "物流信息",
+  "shipping_details": "物流信息",
   "address": "收货地址",
   "apartment_suite_other": "公寓/套房/其他",
   "search_address": "搜索地址",
@@ -431,5 +431,13 @@
   "search_order": "订单搜索",
   "start_date": "开始时间",
   "end_date": "结束时间",
-  "quatity": "数量"
+  "quatity": "数量",
+  "pending": "待处理",
+  "paid": "已支付",
+  "unpaid": "未支付",
+  "refunded": "已退款",
+  "voided": "已作废",
+  "partial_delivered": "部分已交付",
+  "fulfilled": "已完成",
+  "restocked": "已重新进货"
 }

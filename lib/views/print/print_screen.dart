@@ -170,8 +170,9 @@ class PrintScreenState extends AppState<PrintScreen> {
               ),
               PrintSubmitArea(
                 total: controller.total,
-                onTap: () {
-                  if (controller.onSubmit(context)) {
+                onTap: () async {
+                  bool isSuccess = await controller.onSubmit(context);
+                  if (isSuccess) {
                     UserManager userManager = AppDelegate().getManager();
                     userManager.doOnLogin(context, logPreLoginAction: 'print_shipping_screen', callback: () {
                       Navigator.of(context).push<void>(Right2LeftRouter(child: PrintShippingScreen()));

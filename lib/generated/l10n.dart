@@ -4379,6 +4379,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message(
+      'Pending',
+      name: 'pending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paid`
+  String get paid {
+    return Intl.message(
+      'Paid',
+      name: 'paid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unpaid`
+  String get unpaid {
+    return Intl.message(
+      'Unpaid',
+      name: 'unpaid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Refunded`
+  String get refunded {
+    return Intl.message(
+      'Refunded',
+      name: 'refunded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `voided`
+  String get voided {
+    return Intl.message(
+      'voided',
+      name: 'voided',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Partial delivered`
+  String get partial_delivered {
+    return Intl.message(
+      'Partial delivered',
+      name: 'partial_delivered',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fulfilled`
+  String get fulfilled {
+    return Intl.message(
+      'Fulfilled',
+      name: 'fulfilled',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restocked`
+  String get restocked {
+    return Intl.message(
+      'Restocked',
+      name: 'restocked',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
