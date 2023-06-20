@@ -247,7 +247,7 @@ class PrintController extends GetxController {
     _imgUrl = getImgUrl();
   }
 
-  bool onSubmit(BuildContext context) {
+  Future<bool> onSubmit(BuildContext context) async {
     List<String> keys = [];
     for (int i = 0; i < showesed.length; i++) {
       final temp = showesed[i];
@@ -259,7 +259,8 @@ class PrintController extends GetxController {
         return false;
       }
     }
-    if (_captureAndSave() == false) {
+    bool isSaveCapture = await _captureAndSave();
+    if (isSaveCapture == false) {
       // 提交失败，请提交
       Fluttertoast.showToast(msg: S.of(context).server_exception, gravity: ToastGravity.CENTER);
       return false;

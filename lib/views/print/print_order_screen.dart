@@ -6,6 +6,7 @@ import 'package:cartoonizer/views/print/widgets/print_order_item.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
@@ -41,25 +42,15 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
       length: controller.statuses.length,
       child: BlankAreaIntercept(
         child: Scaffold(
-          appBar: AppBar(
+          appBar: AppNavigationBar(
             backgroundColor: Colors.transparent,
-            title: Text(
+            middle: Text(
               S.of(context).orders,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: $(18),
               ),
             ),
-            leading: Image.asset(
-              Images.ic_back,
-              width: $(24),
-            )
-                .intoContainer(
-              margin: EdgeInsets.all($(14)),
-            )
-                .intoGestureDetector(onTap: () {
-              Navigator.pop(context);
-            }),
           ),
           backgroundColor: ColorConstant.BackgroundColor,
           body: GetBuilder<PrintOrderController>(
@@ -107,20 +98,27 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                     ],
                   ),
                 ),
-                TabBar(
-                  controller: controller.tabController,
-                  enableFeedback: false,
-                  isScrollable: true,
-                  labelColor: Colors.white,
-                  indicatorColor: Colors.transparent,
-                  labelStyle: TextStyle(fontSize: $(14)),
-                  onTap: (index) {
-                    controller.tabController?.index = index;
-                    controller.onChangeStatus(index);
-                  },
-                  tabs: controller.statuses.map((String tab) {
-                    return Tab(text: tab);
-                  }).toList(),
+                Theme(
+                  data: ThemeData(
+                    splashColor: Colors.transparent, // 点击时的水波纹颜色设置为透明
+                    highlightColor: Colors.transparent, // 点击时的背景高亮颜色设置为透明
+                  ),
+                  child: TabBar(
+                    controller: controller.tabController,
+                    enableFeedback: false,
+                    automaticIndicatorColorAdjustment: false,
+                    isScrollable: true,
+                    labelColor: Colors.white,
+                    indicatorColor: Colors.transparent,
+                    labelStyle: TextStyle(fontSize: $(14)),
+                    onTap: (index) {
+                      controller.tabController?.index = index;
+                      controller.onChangeStatus(index);
+                    },
+                    tabs: controller.statuses.map((String tab) {
+                      return Tab(text: controller.getTabName(tab, context));
+                    }).toList(),
+                  ),
                 ),
                 DividerLine(
                   left: 0,

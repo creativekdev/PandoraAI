@@ -1,8 +1,5 @@
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/screen_util.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../generated/l10n.dart';
 
 const Color _bgColor = Color(0xFF191717);
 
@@ -12,14 +9,13 @@ class LiPopMenu {
   static BuildContext? menuContext;
 
   /// 显示带线带背景 pop
-  static void showLinePop(BuildContext context,
-      {bool isShowBg = false, _ClickCallBack? clickCallback}) {
+  static void showLinePop(BuildContext context, {bool isShowBg = true, _ClickCallBack? clickCallback, required List<ListPopItem> listData}) {
     menuContext = context;
-    List _listData = [
-      {"text": S.of(context).share, "icon": Images.ic_share},
-      {"text": S.of(context).tabDiscovery, "icon": Images.ic_share_discovery},
-      {"text": S.of(context).download, "icon": Images.ic_download},
-    ];
+    // List _listData = [
+    //   {"text": S.of(context).share, "icon": Images.ic_share},
+    //   {"text": S.of(context).tabDiscovery, "icon": Images.ic_share_discovery},
+    //   {"text": S.of(context).download, "icon": Images.ic_download},
+    // ];
     // 带线
     Widget _buildMenuLineCell(dataArr) {
       return ListView.separated(
@@ -33,7 +29,7 @@ class LiPopMenu {
                   onTap: () {
                     Navigator.pop(context);
                     if (clickCallback != null) {
-                      clickCallback(index, _listData[index]['text']);
+                      clickCallback(index, listData[index].text);
                     }
                   },
                   child: Container(
@@ -42,15 +38,13 @@ class LiPopMenu {
                       children: <Widget>[
                         SizedBox(width: $(14)),
                         Image.asset(
-                          dataArr[index]['icon'],
+                          dataArr[index].icon,
                           width: $(24),
                           height: $(24),
                           // color: Color(0xFF333333),
                         ),
                         SizedBox(width: $(12)),
-                        Text(_listData[index]['text'],
-                            style: TextStyle(
-                                color: Color(0xFFFFFFFF), fontSize: $(14)))
+                        Text(listData[index].text, style: TextStyle(color: Color(0xFFFFFFFF), fontSize: $(14)))
                       ],
                     ),
                   )));
@@ -80,13 +74,7 @@ class LiPopMenu {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Container(
-                    color: _bgColor,
-                    width: $(150),
-                    height: cellH,
-                    child: _buildMenuLineCell(dataArr)))
+            ClipRRect(borderRadius: BorderRadius.circular(5), child: Container(color: _bgColor, width: $(150), height: cellH, child: _buildMenuLineCell(dataArr)))
           ],
         ),
       );
@@ -100,11 +88,10 @@ class LiPopMenu {
           useSafeArea: true,
           useRootNavigator: false,
           builder: (context) {
-            return _BasePopMenus(child: _menusView(_listData));
+            return _BasePopMenus(child: _menusView(listData));
           });
     } else {
-      Navigator.of(context)
-          .push(DialogRouter(_BasePopMenus(child: _menusView(_listData))));
+      Navigator.of(context).push(DialogRouter(_BasePopMenus(child: _menusView(listData))));
     }
   }
 
@@ -150,8 +137,7 @@ class DialogRouter extends PageRouteBuilder {
           barrierColor: Colors.white10.withAlpha(1),
           transitionDuration: const Duration(milliseconds: 150),
           pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-              child,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) => child,
         );
 }
 
@@ -188,4 +174,11 @@ class CustomDialog extends Dialog {
           ],
         ));
   }
+}
+
+class ListPopItem {
+  ListPopItem({required this.text, required this.icon});
+
+  final String text;
+  final String icon;
 }

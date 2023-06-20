@@ -20,6 +20,31 @@ class PrintOrderController extends GetxController {
   TabController? tabController;
 
   List<String> statuses = ["All", "Pending", "Unpaid", "Paid", "Refunded", "voided", "Partial delivered", "Fulfilled", "Restocked"];
+
+  String getTabName(String name, BuildContext context) {
+    switch (name) {
+      case "All":
+        return S.of(context).all;
+      case "Pending":
+        return S.of(context).pending;
+      case "Unpaid":
+        return S.of(context).unpaid;
+      case "Paid":
+        return S.of(context).paid;
+      case "Refunded":
+        return S.of(context).refunded;
+      case "voided":
+        return S.of(context).voided;
+      case "Partial delivered":
+        return S.of(context).partial_delivered;
+      case "Fulfilled":
+        return S.of(context).fulfilled;
+      case "Restocked":
+        return S.of(context).restocked;
+    }
+    return "";
+  }
+
   Map<String, ScrollController> sControllers = {
     "Pending": ScrollController(),
     "Unpaid": ScrollController(),
@@ -251,11 +276,12 @@ class PrintOrderController extends GetxController {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);
     timerUtil.setInterval(500);
-    timerUtil.setOnTimerTickCallback((millisUntilFinished) {
-      EventBusHelper().eventBus.fire(OnPrintOrderKeyChangeEvent(data: name));
-      // onSearchOrder(name);
-      timerUtil.cancel();
-    });
+    if (timerUtil.isActive() == false) {
+      timerUtil.setOnTimerTickCallback((millisUntilFinished) {
+        onSearchOrder(name);
+        timerUtil.cancel();
+      });
+    }
   }
 
   onRequestData({int from = 0, bool refresh = false, required String tabKey}) {

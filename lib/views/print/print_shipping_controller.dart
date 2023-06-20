@@ -170,10 +170,10 @@ class PrintShippingController extends GetxController {
       Fluttertoast.showToast(msg: "Please input address", gravity: ToastGravity.CENTER);
       return false;
     }
-    if (apartmentController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input apartment/suite/other", gravity: ToastGravity.CENTER);
-      return false;
-    }
+    // if (apartmentController.text.isEmpty) {
+    //   Fluttertoast.showToast(msg: "Please input apartment/suite/other", gravity: ToastGravity.CENTER);
+    //   return false;
+    // }
     if (firstNameController.text.isEmpty) {
       Fluttertoast.showToast(msg: "Please input first name", gravity: ToastGravity.CENTER);
       return false;

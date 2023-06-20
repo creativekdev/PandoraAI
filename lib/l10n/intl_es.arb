@@ -396,7 +396,7 @@
   "before": "Before",
   "after": "After",
   "Subtotal": "Subtotal",
-  "Shipping_details": "Detalles de envío",
+  "shipping_details": "Detalles de envío",
   "address": "Dirección",
   "apartment_suite_other": "Apartamento/Suite/Otro",
   "search_address": "Buscar dirección",
@@ -427,5 +427,13 @@
   "search_order": "Buscar pedido",
   "start_date": "Fecha de inicio",
   "end_date": "Fecha de fin",
-  "quatity": "Cantidad"
+  "quatity": "Cantidad",
+  "pending": "Pending",
+  "paid": "Paid",
+  "unpaid": "Unpaid",
+  "refunded": "Refunded",
+  "voided": "voided",
+  "partial_delivered": "Partial delivered",
+  "fulfilled": "Fulfilled",
+  "restocked": "Restocked"
 }
