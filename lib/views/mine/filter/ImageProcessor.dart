@@ -10,6 +10,9 @@ class ImageProcessor{
   static int getB(int pixel) {
     return  (pixel >> 16) & 0xFF;
   }
+  static int getA(int pixel) {
+    return  (pixel >> 24) & 0xFF;
+  }
   static setRGB(int pixel, int r, int g, int b){
     if(r > 255) r= 255;
     else if(r < 0) r = 0;
@@ -19,6 +22,19 @@ class ImageProcessor{
     else if(b < 0) b = 0;
 
     return (pixel & 0xFF000000) | ((b << 16) & 0x00FF0000) | ((g <<
+        8) & 0x0000FF00) | ((r) & 0x000000FF);
+  }
+  static setRGBA(int r, int g, int b, int a){
+    if(r > 255) r= 255;
+    else if(r < 0) r = 0;
+    if(g > 255) g= 255;
+    else if(g < 0) g = 0;
+    if(b > 255) b= 255;
+    else if(b < 0) b = 0;
+    if(a > 255) a= 255;
+    else if(a < 0) a = 0;
+
+    return (a & 0xFF000000) | ((b << 16) & 0x00FF0000) | ((g <<
         8) & 0x0000FF00) | ((r) & 0x000000FF);
   }
   static convolution(imgLib.Image image, List<int> kernel)

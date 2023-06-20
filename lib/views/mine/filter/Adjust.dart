@@ -1,17 +1,22 @@
 import 'dart:math';
+import 'dart:ui';
 
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:image/image.dart' as imgLib;
 
 class Adjust{
   int selectedID = 0;
-  List<double> sliderValues = [50,50,0,0,0];
+  List<double> sliderValues = [50,50,50,0,0,0,0,0];
   static List<String> filters = [
-    "BRI",
-    "CNT",
-    "GMA",
-    "CLB",
-    "HUE",
+    "Brightness",
+    "Contrast",
+    "Saturation",
+    "Noise",
+    "Pixelate",
+    "Blur",
+    "Sharpen",
+    "Hue",
   ];
   int getCnt() {
     return filters.length;
@@ -33,7 +38,7 @@ class Adjust{
     imgLib.Image res_image;
     res_image = imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
     switch (filters[selectedID]) {
-      case "BRI":
+      case "Brightness":
         for (int i = 0; i < res_image.width; i++) {
           for (int j = 0; j < res_image.height; j++) {
             var pixel = res_image.getPixel(i, j);
@@ -48,7 +53,7 @@ class Adjust{
           }
         }
         break;
-      case "CNT":
+      case "Contrast":
         int minR, minG, minB, maxR, maxG, maxB;
         minR = minG = minB = 255;
         maxR = maxG = maxB = 0;
@@ -83,13 +88,54 @@ class Adjust{
           }
         }
         break;
-      case "GMA":
-        break;
-      case "CLB":
-        break;
-      case "HUE":
-        break;
+      case "Saturation":
+        for (int i = 0; i < res_image.width; i++) {
+          for (int j = 0; j < res_image.height; j++) {
+            var pixel = res_image.getPixel(i, j);
+            int r = ImageProcessor.getR(pixel);
+            int g = ImageProcessor.getG(pixel);
+            int b = ImageProcessor.getB(pixel);
+            int a = 255;
 
+            Color color = Color.fromARGB(a, r, g, b);
+            HSVColor hsvColor = HSVColor.fromColor(color);
+            hsvColor = hsvColor.withSaturation(sliderValues[selectedID] / 100);
+            color = hsvColor.toColor();
+
+            pixel = ImageProcessor.setRGBA(color.red, color.green, color.blue, color.alpha);
+            res_image.setPixel(i, j, pixel);
+          }
+        }
+        break;
+      case "Noise":
+
+        break;
+      case "Pixelate":
+
+        int value  = sliderValues[selectedID].toInt() + 1;
+        for (int i = 0; i < res_image.width; i++) {
+          for (int j = 0; j < res_image.height; j++) {
+            var pixel = res_image.getPixel((i~/value)*value, (j~/value)*value);
+            int r = ImageProcessor.getR(pixel);
+            int g = ImageProcessor.getG(pixel);
+            int b = ImageProcessor.getB(pixel);
+            int a = 255;
+
+
+            pixel = ImageProcessor.setRGB(pixel, r,g,b);
+            res_image.setPixel(i, j, pixel);
+          }
+        }
+        break;
+      case "Blur":
+
+        break;
+      case "Sharpen":
+
+        break;
+      case "Hue":
+
+        break;
       default:
     }
     return res_image;

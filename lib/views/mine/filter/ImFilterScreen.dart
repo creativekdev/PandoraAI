@@ -629,10 +629,12 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         height: itemWidth + $(40),
         child:Column(
           children:[
-            Row(
+            SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: buttons,
-            ),
+            ),),
             GridSlider(minVal: 0, maxVal: 100, currentPos: adjust.getSelectedValue(),
               onChanged: (newValue){
                 adjust.setSliderValue(newValue);
