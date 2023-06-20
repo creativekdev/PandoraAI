@@ -29,6 +29,7 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dar
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -387,10 +388,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                         generate(context, controller);
                       },
                       onSharePrintTap: () async {
-                        Navigator.of(context).push<void>(Right2LeftRouter(
-                            child: PrintOptionScreen(
-                          file: transResult!,
-                        )));
+                        Print.open(context, source: 'anotherme_result', file: transResult!);
                       },
                     ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
                   ],

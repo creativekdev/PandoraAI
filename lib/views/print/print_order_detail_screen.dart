@@ -1,9 +1,11 @@
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_order_detail_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_info_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -11,49 +13,43 @@ import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintOrderDetailScreen extends StatefulWidget {
-  PrintOrderDetailScreen({Key? key, required this.rows}) : super(key: key);
+  String source;
   PrintOrdersDataRows rows;
 
+  PrintOrderDetailScreen({
+    Key? key,
+    required this.rows,
+    required this.source,
+  }) : super(key: key);
+
   @override
-  State<PrintOrderDetailScreen> createState() => _PrintOrderDetailScreenState(rows: rows);
+  State<PrintOrderDetailScreen> createState() => _PrintOrderDetailScreenState();
 }
 
 class _PrintOrderDetailScreenState extends State<PrintOrderDetailScreen> {
-  _PrintOrderDetailScreenState({required this.rows}) {
-    controller = Get.put(PrintOrderDetailController(rows: rows));
-  }
-
   late PrintOrderDetailController controller;
-  PrintOrdersDataRows rows;
+  late PrintOrdersDataRows rows;
 
   @override
   void initState() {
     super.initState();
-    print(rows);
+    Posthog().screenWithUser(screenName: 'print_order_detail_screen');
+    rows = widget.rows;
+    controller = Get.put(PrintOrderDetailController(rows: rows));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(
+      appBar: AppNavigationBar(
+        middle: Text(
           S.of(context).order_details,
           style: TextStyle(
             color: Colors.white,
             fontSize: $(18),
           ),
         ),
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
-          Navigator.pop(context);
-        }),
+        backgroundColor: Colors.transparent,
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintOrderDetailController>(

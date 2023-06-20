@@ -242,7 +242,7 @@ class PrintShippingController extends GetxController {
     return true;
   }
 
-  gotoPaymentPage(BuildContext context) async {
+  gotoPaymentPage(BuildContext context, String source) async {
     int amount = (effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount).toInt();
     final params = {
       "order_id": printOrderEntity?.data.id,
@@ -280,28 +280,34 @@ class PrintShippingController extends GetxController {
     Navigator.of(context)
         .push<bool>(
       Right2LeftRouter(
+        settings: RouteSettings(name: '/PrintPaymentScreen'),
         child: PrintPaymentScreen(
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
           orderEntity: printOrderEntity!,
+          source: source,
         ),
       ),
     )
         .then((value) {
       if (value == true) {
         Navigator.of(context).push<void>(Right2LeftRouter(
+            settings: RouteSettings(name: '/PrintPaymentSuccessScreen'),
             child: PrintPaymentSuccessScreen(
-          payUrl: payUrl,
-          sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
-        )));
+              payUrl: payUrl,
+              sessionId: payment?.data.id ?? '',
+              orderEntity: printOrderEntity!,
+              source: source,
+            )));
       } else {
         Navigator.of(context).push<void>(Right2LeftRouter(
+            settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
             child: PrintPaymentCancelScreen(
-          payUrl: payUrl,
-          sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
-        )));
+              payUrl: payUrl,
+              sessionId: payment?.data.id ?? '',
+              orderEntity: printOrderEntity!,
+              source: source,
+            )));
       }
     });
   }

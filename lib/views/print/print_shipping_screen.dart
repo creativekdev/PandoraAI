@@ -3,6 +3,7 @@ import 'package:cartoonizer/views/print/widgets/print_delivery_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_input_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/blank_area_intercept.dart';
@@ -10,7 +11,12 @@ import '../../Widgets/state/app_state.dart';
 import '../../images-res.dart';
 
 class PrintShippingScreen extends StatefulWidget {
-  const PrintShippingScreen({Key? key}) : super(key: key);
+  String source;
+
+  PrintShippingScreen({
+    Key? key,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintShippingScreen> createState() => _PrintShippingScreenState();
@@ -22,8 +28,9 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'print_shipping_screen');
     controller.searchAddressController.addListener(() {
-      controller.searchLocation(controller.places!, controller.searchAddressController.text).then((value) {
+      controller.searchLocation(controller.places, controller.searchAddressController.text).then((value) {
         if (controller.searchAddressController.text.isNotEmpty && controller.isResult == false) {
           hideSearchResults();
           showSearchResults();
@@ -145,7 +152,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                   showLoading();
                   bool isSuccess = await controller.onSubmit();
                   if (isSuccess) {
-                    await controller.gotoPaymentPage(context);
+                    await controller.gotoPaymentPage(context, widget.source);
                   }
                   hideLoading();
                 },

@@ -199,7 +199,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                     context,
                     MaterialPageRoute(
                       settings: RouteSettings(name: "/PrintOrderScreen"),
-                      builder: (context) => PrintOrderScreen(),
+                      builder: (context) => PrintOrderScreen(source: 'home_screen_mine'),
                     ));
               }).offstage(offstage: userManager.isNeedLogin),
               Container(height: $(12)),
