@@ -174,6 +174,7 @@ class Images {
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_style_morph_top = 'assets/images/ic_style_morph_top.png';
    static const String ic_success = 'assets/images/ic_success.png';
+   static const String ic_switch_images = 'assets/images/ic_switch_images.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';
    static const String ic_tab_effect = 'assets/images/ic_tab_effect.png';

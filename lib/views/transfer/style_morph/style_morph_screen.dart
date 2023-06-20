@@ -10,6 +10,7 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/switch_image_card.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -194,11 +195,14 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
           body: Column(
             children: [
               Expanded(
-                child: buildImage(context, controller).listenSizeChanged(onSizeChanged: (size) {
-                  controller.imageStackSize = size;
-                  controller.calculatePosY();
-                }),
-              ),
+                  child: SwitchImageCard(
+                origin: controller.originFile,
+                result: controller.resultFile,
+                imageStackSize: controller.imageStackSize,
+              ).listenSizeChanged(onSizeChanged: (size) {
+                controller.imageStackSize = size;
+                controller.update();
+              })),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -619,57 +623,6 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       );
     }
     return image;
-  }
-
-  Widget buildImage(BuildContext context, StyleMorphController controller) {
-    var origin = Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.file(controller.originFile, fit: BoxFit.fill),
-        Image.file(
-          controller.originFile,
-          fit: BoxFit.contain,
-        ).intoCenter().blur(),
-      ],
-    );
-    if (controller.selectedEffect == null || controller.resultMap[controller.selectedEffect!.key] == null) {
-      return origin;
-    } else {
-      var showFile = controller.showOrigin ? controller.originFile : File(controller.resultMap[controller.selectedEffect!.key]!);
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.file(showFile, fit: BoxFit.fill),
-          Image.file(
-            showFile,
-            fit: BoxFit.contain,
-          ).intoCenter().blur(),
-          Positioned(
-            child: Listener(
-              onPointerDown: (details) {
-                controller.showOrigin = true;
-              },
-              onPointerCancel: (details) {
-                controller.showOrigin = false;
-              },
-              onPointerUp: (details) {
-                controller.showOrigin = false;
-              },
-              child: Image.asset(
-                Images.ic_metagram_show_origin,
-                width: $(28),
-              ).intoContainer(padding: EdgeInsets.all($(4))).intoMaterial(
-                    color: Color(0x11000000),
-                    borderRadius: BorderRadius.circular($(6)),
-                    elevation: 1,
-                  ),
-            ),
-            bottom: controller.imagePosBottom + $(12),
-            right: controller.imagePosRight + $(12),
-          )
-        ],
-      );
-    }
   }
 
   Future<bool> _willPopCallback(BuildContext context) async {

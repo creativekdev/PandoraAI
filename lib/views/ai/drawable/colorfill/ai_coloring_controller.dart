@@ -33,23 +33,23 @@ class AiColoringController extends GetxController {
 
   set originFile(File file) {
     _originFile = file;
-    SyncFileImage(file: originFile).getImage().then((value) {
-      originImageScale = value.image.width / value.image.height;
-      calculatePosY();
-    });
   }
 
   String? resultPath;
+
+  File? get resultFile {
+    if (resultPath == null) {
+      return null;
+    }
+    return File(resultPath!);
+  }
 
   UserManager userManager = AppDelegate().getManager();
   CacheManager cacheManager = AppDelegate().getManager();
   RecentController recentController;
   UploadImageController uploadImageController;
 
-  double? originImageScale;
   Size? imageStackSize;
-  double imagePosBottom = 0;
-  double imagePosRight = 0;
 
   bool _showOrigin = false;
 
@@ -93,23 +93,6 @@ class AiColoringController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-  }
-
-  calculatePosY() {
-    if (originImageScale == null || imageStackSize == null) {
-      return;
-    }
-    double sizeScale = imageStackSize!.width / imageStackSize!.height;
-    if (originImageScale! > sizeScale) {
-      var height = imageStackSize!.width / originImageScale!;
-      imagePosBottom = (imageStackSize!.height - height) / 2;
-      imagePosRight = 0;
-    } else {
-      var width = imageStackSize!.height * originImageScale!;
-      imagePosRight = (imageStackSize!.width - width) / 2;
-      imagePosBottom = 0;
-    }
-    update();
   }
 
   changeOriginFile(BuildContext context, File file) {
