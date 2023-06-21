@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';

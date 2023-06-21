@@ -185,7 +185,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.cartoonize:
         return 'Facetoon';
       case HomeCardType.anotherme:
-        return 'Me-Taverse';
+        return 'Me-taverse';
       case HomeCardType.ai_avatar:
         return 'Pandora Avatar';
       case HomeCardType.UNDEFINED:

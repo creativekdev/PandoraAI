@@ -6,7 +6,6 @@ class Images {
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
    static const String ic_ai_draw_camera = 'assets/images/ic_ai_draw_camera.png';
    static const String ic_ai_draw_delete = 'assets/images/ic_ai_draw_delete.png';
-   static const String ic_ai_draw_top = 'assets/images/ic_ai_draw_top.png';
    static const String ic_ai_ground_upload = 'assets/images/ic_ai_ground_upload.png';
    static const String ic_album_checked = 'assets/images/ic_album_checked.png';
    static const String ic_am_icon = 'assets/images/ic_am_icon.png';
@@ -44,6 +43,8 @@ class Images {
    static const String ic_choose_photo_initial_header = 'assets/images/ic_choose_photo_initial_header.png';
    static const String ic_choose_photo_initial_text = 'assets/images/ic_choose_photo_initial_text.png';
    static const String ic_close = 'assets/images/ic_close.png';
+   static const String ic_compare_arrow = 'assets/images/ic_compare_arrow.png';
+   static const String ic_compare_top = 'assets/images/ic_compare_top.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
@@ -108,7 +109,6 @@ class Images {
    static const String ic_msg_notify = 'assets/images/ic_msg_notify.png';
    static const String ic_mt_result_bottom = 'assets/images/ic_mt_result_bottom.png';
    static const String ic_mt_result_middle = 'assets/images/ic_mt_result_middle.png';
-   static const String ic_mt_result_top = 'assets/images/ic_mt_result_top.png';
    static const String ic_my_orders = 'assets/images/ic_my_orders.png';
    static const String ic_net_error_icon = 'assets/images/ic_net_error_icon.png';
    static const String ic_netimage_failed = 'assets/images/ic_netimage_failed.png';
@@ -172,7 +172,6 @@ class Images {
    static const String ic_sign_youtube = 'assets/images/ic_sign_youtube.png';
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
-   static const String ic_style_morph_top = 'assets/images/ic_style_morph_top.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_switch_images = 'assets/images/ic_switch_images.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';

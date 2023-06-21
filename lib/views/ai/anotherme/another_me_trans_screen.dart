@@ -36,7 +36,6 @@ import 'package:common_utils/common_utils.dart';
 import 'package:ffmpeg_kit_flutter/ffmpeg_kit.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../print/print_option_screen.dart';
 import 'anotherme.dart';
 import 'trans_result_anim_screen.dart';
 import 'widgets/am_opt_container.dart';
@@ -325,16 +324,40 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                             children: [
                               Stack(
                                 children: [
-                                  Image.asset(Images.ic_mt_result_top),
-                                  Text(
-                                    '@${userManager.user?.getShownName() ?? 'Pandora User'}',
-                                    style: TextStyle(
-                                      color: ColorConstant.White,
-                                      fontFamily: 'Poppins',
-                                      fontSize: $(14),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ).marginOnly(left: $(16), top: $(50)),
+                                  Image.asset(Images.ic_compare_top),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                          text: 'Me-taverse',
+                                          style: TextStyle(
+                                            color: ColorConstant.White,
+                                            fontFamily: 'BlackOpsOne',
+                                            fontSize: $(32),
+                                          ),
+                                          children: [
+                                            WidgetSpan(
+                                                child: Image.asset(
+                                                  Images.ic_compare_arrow,
+                                                  height: $(16),
+                                                ).intoContainer(margin: EdgeInsets.only(left: $(8))),
+                                                alignment: PlaceholderAlignment.middle),
+                                          ],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Text(
+                                        '@${userManager.user?.getShownName() ?? 'Pandora User'}',
+                                        style: TextStyle(
+                                          color: ColorConstant.White,
+                                          fontFamily: 'Poppins',
+                                          fontSize: $(14),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ).marginOnly(left: $(16), top: $(15)),
                                 ],
                               ),
                               Expanded(

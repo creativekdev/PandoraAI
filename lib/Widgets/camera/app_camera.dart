@@ -1,38 +1,53 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/Widgets/gallery/pick_album_helper.dart';
+import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/ai/anotherme/libcopy/camera_controller.dart';
+import 'package:cartoonizer/views/ai/anotherme/libcopy/camera_preview.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/rotate_widget.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/take_photo_button.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imglib;
+import 'package:photo_manager/photo_manager.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class AppCamera extends StatefulWidget {
-  double width;
-  double height;
-  Function(AppCameraController controller) onCreate;
+  Function(XFile file, double ratio, String source) onTakePhoto;
 
   AppCamera({
     Key? key,
-    required this.width,
-    required this.height,
-    required this.onCreate,
+    required this.onTakePhoto,
   }) : super(key: key);
 
   @override
   State<AppCamera> createState() => _AppCameraState();
 }
 
-class _AppCameraState extends State<AppCamera> with AppCameraController, WidgetsBindingObserver {
-  late double width;
-  late double height;
-  CameraController? controller;
+class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, WidgetsBindingObserver {
+  late double sourceImageSize;
+  late double galleryImageSize;
+  late double cameraWidth;
+  late double cameraHeight;
+  late double appBarHeight;
+  late double bottomBarHeight;
+  CustomCameraController? cameraController;
   Future<void>? _initializeControllerFuture;
-  Completer<XFile?>? _completer;
   GlobalKey screenShotKey = GlobalKey();
   bool isFront = true;
 
@@ -41,147 +56,463 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
   CameraImage? lastScreenShot;
   int lastScreenShotStamp = 0;
   bool takingPhoto = false;
+  late AnimationController _animationController;
+  late CurvedAnimation _anim;
+  List<String> loadFailedList = [];
+  double zoomLevel = 1;
+  List<AssetEntity> assetList = [];
+
+  late AnimationController _rotateAnimController;
+
+  late PoseState pose;
 
   @override
   void initState() {
     super.initState();
-    width = widget.width;
-    height = widget.height;
-    widgetDirection = width / height > 1 ? Axis.horizontal : Axis.vertical;
+    WidgetsBinding.instance.addObserver(this);
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _anim = CurvedAnimation(parent: _animationController, curve: Curves.elasticIn);
+    _rotateAnimController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    sourceImageSize = ScreenUtil.screenSize.width;
+    galleryImageSize = ScreenUtil.screenSize.width / 7.5;
+    appBarHeight = 44 + ScreenUtil.getStatusBarHeight();
+    bottomBarHeight = $(198);
+    cameraWidth = ScreenUtil.screenSize.width;
+    cameraHeight = ScreenUtil.screenSize.height - appBarHeight - bottomBarHeight + $(66);
+    widgetDirection = cameraWidth / cameraHeight > 1 ? Axis.horizontal : Axis.vertical;
+    pose = PoseState.stand;
     availableCameras().then((value) {
       if (!mounted) {
         return;
       }
+      if (value.isEmpty) {
+        return;
+      }
       var pick = value.pick((t) => t.lensDirection == CameraLensDirection.front) ?? value.first;
-      setState(() {
-        isFront = pick.lensDirection == CameraLensDirection.front;
-        controller = CameraController(
-          pick,
-          ResolutionPreset.medium,
-          imageFormatGroup: ImageFormatGroup.yuv420,
-        );
-        widget.onCreate.call(this);
-        _initializeControllerFuture = controller!.initialize();
-      });
+      initCameraController(pick);
     });
-  }
-
-  @override
-  onDispose() {
-    controller?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
-      controller?.dispose();
+    delay(() {
+      accelerometerEvents.listen((AccelerometerEvent event) {
+        var nextPose = SensorHelper.getPose(event.x, event.y, event.z);
+        if (nextPose != null) {
+          if (nextPose != this.pose) {
+            if (mounted) {
+              EventBusHelper().eventBus.fire(OnPoseStateChangeEvent(data: nextPose));
+              setState(() {
+                pose = nextPose;
+              });
+            }
+          }
+        }
+      });
+      PickAlbumHelper.getNewest().then((value) {
+        setState(() {
+          assetList = value;
+        });
+      });
     });
   }
 
   @override
   void dispose() {
+    cameraController?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
+      cameraController?.dispose();
+    });
+    _animationController.dispose();
+    _rotateAnimController.dispose();
+    accelerometerEvents.listen(null);
     super.dispose();
-    // controller?.stopImageStream().onError((error, stackTrace) {}).whenComplete(() {
-    //   controller?.dispose();
-    // });
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    final CameraController? cameraController = controller;
+    final CustomCameraController? cc = cameraController;
 
     // App state changed before we got the chance to initialize.
-    if (cameraController == null || !cameraController.value.isInitialized) {
+    if (cc == null || !cc.value.isInitialized) {
       return;
     }
 
     if (state == AppLifecycleState.inactive) {
-      cameraController.dispose();
+      cc.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      controller = CameraController(
-        cameraController.description,
-        ResolutionPreset.medium,
-        imageFormatGroup: ImageFormatGroup.yuv420,
-      );
-      _initializeControllerFuture = controller!.initialize();
+      initCameraController(cc.description);
     }
+  }
+
+  initCameraController(CameraDescription description) {
+    cameraController = CustomCameraController(
+      description,
+      ResolutionPreset.medium,
+      imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.yuv420 : null,
+    );
+    _initializeControllerFuture = cameraController!.initialize().then((value) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+          case 'CameraAccessDeniedWithoutPrompt':
+          case 'CameraAccessRestricted':
+            // Handle access errors here.
+            break;
+          case 'AudioAccessDenied':
+          case 'AudioAccessDeniedWithoutPrompt':
+          case 'AudioAccessRestricted':
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _initializeControllerFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
-          startStream();
-          // If the Future is complete, display the preview.
-          var ratio = controller!.value.aspectRatio;
-          var surfaceWidth = height / ratio;
-          var offsetX = (surfaceWidth - width) / 2;
-          var surface = controller!.buildPreview().intoContainer(
-                width: surfaceWidth,
-                height: height,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned(
+          child: FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+              var defaultWidget = Center(child: CircularProgressIndicator()).intoContainer(
+                width: cameraWidth,
+                height: cameraHeight,
               );
-          var scrollController = ScrollController();
-          var view = SingleChildScrollView(
-            child: RepaintBoundary(key: screenShotKey, child: surface),
-            controller: scrollController,
-            physics: NeverScrollableScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-          );
-          delay(() {
-            if (scrollController.positions.isNotEmpty) {
-              scrollController.jumpTo(offsetX);
-            }
-          }, milliseconds: 64);
-          return view;
-        } else {
-          // Otherwise, display a loading indicator.
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
+              if (cameraController == null) {
+                return defaultWidget;
+              }
+              try {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  lastScreenShotStamp = DateTime.now().millisecondsSinceEpoch;
+                  if (cameraController != null && !cameraController!.disposed()) {
+                    cameraController!.startImageStream((image) {
+                      if (cameraController?.disposed() ?? true) {
+                        return;
+                      }
+                      if (takingPhoto) {
+                        return;
+                      }
+                      var currentTime = DateTime.now().millisecondsSinceEpoch;
+                      if (currentTime - lastScreenShotStamp > 200) {
+                        lastScreenShot = image;
+                        lastScreenShotStamp = currentTime;
+                      }
+                    }).onError((error, stackTrace) {});
+                  }
+                  // If the Future is complete, display the preview.
+                  var ratio = cameraController?.value.aspectRatio ?? cameraHeight / cameraWidth;
+                  var surfaceWidth = cameraHeight / ratio;
+                  var offsetX = (surfaceWidth - cameraWidth) / 2;
+                  var surface = CustomIOSCameraPreview(
+                    cameraController!,
+                  ).intoCenter().intoContainer(
+                        width: surfaceWidth,
+                        height: cameraHeight,
+                        transform: Matrix4.translationValues(-offsetX, 0, 0),
+                        alignment: Alignment.center,
+                      );
+                  var view = RepaintBoundary(key: screenShotKey, child: surface);
+                  return GestureDetector(
+                    child: view,
+                    onScaleUpdate: (details) {
+                      if (cameraController == null || (cameraController?.disposed() ?? true)) {
+                        return;
+                      }
+                      var scale = details.scale;
+                      if (scale == 1) {
+                        return;
+                      }
+                      var zoom = zoomLevel;
+                      if (scale > 1) {
+                        if (zoom == 2) {
+                          return;
+                        }
+                        zoom = zoomLevel + scale * 0.02;
+                        if (zoom > 2) {
+                          zoom = 2;
+                        }
+                      } else {
+                        if (zoom == 1) {
+                          return;
+                        }
+                        zoom = zoomLevel - scale * 0.02;
+                        if (zoom < 1) {
+                          zoom = 1;
+                        }
+                      }
+                      if (cameraController != null) {
+                        if (!cameraController!.disposed()) {
+                          cameraController?.setZoomLevel(zoom).onError((error, stackTrace) {});
+                          setState(() {
+                            zoomLevel = zoom;
+                          });
+                        }
+                      }
+                    },
+                  );
+                } else {
+                  return defaultWidget;
+                }
+              } on CameraException catch (e) {
+                return defaultWidget;
+              }
+            },
+          ),
+          top: appBarHeight,
+          bottom: bottomBarHeight - $(66),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: RotateWidget(
+            pose: pose,
+            child: Text(
+              '${zoomLevel.toStringAsFixed(1)}x',
+              style: TextStyle(color: Colors.white, fontSize: $(13)),
+            ),
+          )
+              .intoContainer(
+                  width: $(38),
+                  height: $(38),
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(bottom: $(215)),
+                  decoration: BoxDecoration(color: Color(0x33000000), border: Border.all(color: Colors.white, width: 1), borderRadius: BorderRadius.circular(32)))
+              .intoGestureDetector(onTap: () {
+            cameraController?.getMaxZoomLevel().then((value) {
+              if (zoomLevel >= min(value, 2)) {
+                zoomLevel = 1;
+              } else {
+                zoomLevel += 0.5;
+              }
+              if (zoomLevel > 2) {
+                zoomLevel = 2;
+              }
+              cameraController?.setZoomLevel(zoomLevel);
+              setState(() {});
+            });
+          }),
+        ),
+        Positioned(
+          child: Image.asset(
+            Images.ic_back,
+            height: $(24),
+            width: $(24),
+          )
+              .intoContainer(
+                padding: EdgeInsets.all($(10)),
+                margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
+              )
+              .hero(tag: AnotherMe.logoBackTag)
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+          top: 0,
+        ),
+        Positioned(
+          bottom: 0,
+          child: Column(
+            children: [
+              AnimatedBuilder(
+                animation: _anim,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(-_animationController.value * ScreenUtil.screenSize.width, 0),
+                    child: child,
+                  );
+                },
+                child: galleryContainer(context, widget.onTakePhoto),
+              ),
+              SizedBox(height: $(16)),
+              AnimatedBuilder(
+                animation: _anim,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(0, _animationController.value * $(80)),
+                    child: child,
+                  );
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      height: 50,
+                    ),
+                    TakePhotoButton(
+                      size: $(68),
+                      onTakePhoto: () {
+                        if (_animationController.isAnimating) {
+                          return;
+                        }
+                        takePhoto().then((value) {
+                          if (value != null) {
+                            _animationController.forward();
+                            delay(() async => widget.onTakePhoto.call(value.value, value.key, 'camera'), milliseconds: 300);
+                          } else {
+                            CommonExtension().showToast('Take Photo Failed');
+                          }
+                        });
+                      },
+                      onTakeVideoEnd: () {
+                        // cameraController.stopTakeVideo();
+                      },
+                      onTakeVideoStart: () async {
+                        // cameraController.takeVideo(maxDuration: 8).then((value) {
+                        //   print(value);
+                        // });
+                        return true;
+                      },
+                      maxSecond: 8,
+                    ),
+                    RotateWidget(
+                      pose: pose,
+                      child: Image.asset(
+                        Images.ic_camera_switch,
+                        width: 44,
+                        height: 44,
+                      ).intoContainer(width: 44, height: 44, decoration: BoxDecoration(color: Color(0x88000000), borderRadius: BorderRadius.circular(32))).intoGestureDetector(
+                          onTap: () {
+                        switchCamera();
+                      }),
+                    ),
+                  ],
+                ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
+              ),
+            ],
+          ).intoContainer(
+            width: ScreenUtil.screenSize.width,
+            height: bottomBarHeight,
+            alignment: Alignment.topCenter,
+          ),
+        ),
+      ],
     );
   }
 
-  Future<void> startStream() async {
-    if (controller != null) {
-      await controller!.startImageStream((image) {
-        if (takingPhoto) {
-          return;
-        }
-        var currentTime = DateTime.now().millisecondsSinceEpoch;
-        if (currentTime - lastScreenShotStamp > 200) {
-          lastScreenShot = image;
-          lastScreenShotStamp = currentTime;
-        }
-      }).onError((error, stackTrace) {});
-    }
+  Widget galleryContainer(BuildContext context, Function(XFile file, double datio, String source) callback) => Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Icon(
+            Icons.add,
+            size: $(28),
+            color: ColorConstant.White,
+          )
+              .intoContainer(
+                  alignment: Alignment.center,
+                  width: galleryImageSize,
+                  height: galleryImageSize,
+                  margin: EdgeInsets.all($(6)),
+                  decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
+              .intoGestureDetector(onTap: () {
+            choosePhoto(context, callback);
+          }),
+          Container(
+            height: galleryImageSize,
+            width: 2,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: Colors.black),
+          ),
+          Container(
+            width: ScreenUtil.screenSize.width - 2 - galleryImageSize - $(28),
+            height: galleryImageSize + $(12),
+            padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(6)),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return RotateWidget(
+                    pose: pose,
+                    child: ClipRRect(
+                      child: Image(
+                        image: MediumImage(
+                          assetList[index],
+                          width: 256,
+                          height: 256,
+                          failedImageAssets: Images.ic_netimage_failed,
+                          onError: (medium) {
+                            if (!loadFailedList.contains(medium.id)) {
+                              loadFailedList.add(medium.id);
+                            }
+                          },
+                        ),
+                        width: galleryImageSize,
+                        height: galleryImageSize,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    )).intoGestureDetector(onTap: () async {
+                  var medium = assetList[index];
+                  var file = await medium.file;
+                  if (file == null || loadFailedList.contains(medium.id)) {
+                    CommonExtension().showToast(S.of(context).wrong_image);
+                    return;
+                  }
+                  var xFile = XFile((file).path);
+                  var imageInfo = await SyncFileImage(file: file).getImage();
+                  var ratio = imageInfo.image.height / imageInfo.image.width;
+                  widget.onTakePhoto.call(xFile, ratio, 'album');
+                }).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)));
+              },
+              itemCount: assetList.length,
+            ),
+          ),
+        ],
+      ).intoContainer(
+          width: ScreenUtil.screenSize.width - $(16),
+          margin: EdgeInsets.symmetric(horizontal: $(8)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            color: Color(0x88010101),
+          ));
+
+  choosePhoto(BuildContext context, Function(XFile file, double ratio, String source) callback) async {
+    AnotherMe.checkPermissions().then((value) {
+      if (value) {
+        PickAlbumScreen.pickImage(
+          context,
+          count: 1,
+          switchAlbum: true,
+        ).then((value) async {
+          if (value != null && value.isNotEmpty) {
+            var medium = value.first;
+            var file = await medium.file;
+            if (file == null) {
+              return;
+            }
+            var xFile = XFile((file).path);
+            var imageInfo = await SyncFileImage(file: file).getImage();
+            callback.call(xFile, imageInfo.image.height / imageInfo.image.width, 'album');
+          }
+        });
+      } else {
+        showPhotoLibraryPermissionDialog(context);
+      }
+    });
   }
 
-  @override
   switchCamera() {
-    controller?.stopImageStream().onError((error, stackTrace) {});
-    controller?.dispose();
-    delay(() {
-      availableCameras().then((value) {
-        var pick = value.pick((t) => isFront ? t.lensDirection != CameraLensDirection.front : t.lensDirection == CameraLensDirection.front) ?? value.first;
-        setState(() {
+    if (cameraController == null || (cameraController?.disposed() ?? true)) {
+      return;
+    }
+    cameraController?.stopImageStream().whenComplete(() {
+      cameraController?.dispose().whenComplete(() {
+        availableCameras().then((value) {
+          var pick = value.pick((t) => isFront ? t.lensDirection != CameraLensDirection.front : t.lensDirection == CameraLensDirection.front) ?? value.first;
           isFront = pick.lensDirection == CameraLensDirection.front;
-          controller = CameraController(
-            pick,
-            ResolutionPreset.medium,
-            imageFormatGroup: ImageFormatGroup.yuv420,
-          );
-          _initializeControllerFuture = controller!.initialize();
+          zoomLevel = 1;
+          initCameraController(pick);
         });
       });
-    }, milliseconds: 500);
+    }).onError((error, stackTrace) {});
   }
 
-  @override
-  CameraController? getController() {
-    return controller;
-  }
-
-  @override
-  Future<XFile?> takePhoto() async {
+  Future<MapEntry<double, XFile>?> takePhoto() async {
     if (lastScreenShot == null) {
       return null;
     }
@@ -189,7 +520,7 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
       return null;
     }
     takingPhoto = true;
-    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection, PoseState.stand);
+    var list = await convertImagetoPng(isFront, lastScreenShot!, widgetDirection, pose);
     if (list == null) {
       takingPhoto = false;
       return null;
@@ -198,62 +529,26 @@ class _AppCameraState extends State<AppCamera> with AppCameraController, Widgets
     String filePath = '${operator.imageDir.path}${DateTime.now().millisecondsSinceEpoch}.png';
     var uint8list = Uint8List.fromList(list);
     var imageInfo = (await SyncMemoryImage(list: uint8list).getImage()).image;
-    double ratio = height / width;
-    double canvasRatio = imageInfo.height / imageInfo.width;
+    double ratio = cameraHeight / cameraWidth;
     Rect rect;
-    if (ratio > canvasRatio) {
-      var newWidth = imageInfo.height / ratio;
-      var d = (newWidth - imageInfo.width).abs() / 2;
-      rect = Rect.fromLTWH(d, 0, newWidth, imageInfo.height.toDouble());
-    } else {
-      var newHeight = imageInfo.width / ratio;
-      var d = (newHeight - imageInfo.height).abs() / 2;
-      rect = Rect.fromLTWH(0, d, imageInfo.width.toDouble(), newHeight);
-    }
+    rect = ImageUtils.getTargetCoverRect(Size(imageInfo.width.toDouble(), imageInfo.height.toDouble()), Size(cameraWidth, cameraHeight));
     File file = await cropFileToTarget(
       imageInfo,
       rect,
       filePath,
     );
+    if (pose != PoseState.stand) {
+      var im = (await SyncFileImage(file: file).getImage()).image;
+      var bytes = (await im.toByteData())!.buffer.asUint8List();
+      var orImg = imglib.Image.fromBytes(im.width, im.height, bytes);
+      var resImg = imglib.copyRotate(orImg, pose.coefficient());
+      var encodePng = imglib.encodePng(resImg);
+      await file.writeAsBytes(encodePng);
+      ratio = 1 / ratio;
+    }
     takingPhoto = false;
-    return XFile(file.path);
+    return MapEntry(ratio, XFile(file.path));
   }
-
-  @override
-  Future<XFile?> takeVideo({required int maxDuration}) async {
-    if (_completer != null) {
-      return null;
-    }
-    _completer = Completer();
-    controller?.startVideoRecording();
-    return _completer!.future;
-  }
-
-  @override
-  Future<bool> stopTakeVideo() async {
-    if (controller?.value.isRecordingVideo ?? false) {
-      var xFile = await controller?.stopVideoRecording();
-      _completer?.complete(xFile);
-      _completer = null;
-      return xFile != null;
-    } else {
-      return false;
-    }
-  }
-}
-
-abstract class AppCameraController {
-  CameraController? getController();
-
-  Future<XFile?> takePhoto();
-
-  Future<XFile?> takeVideo({required int maxDuration});
-
-  Future<bool> stopTakeVideo();
-
-  switchCamera();
-
-  onDispose();
 }
 
 /// imgLib -> Image package from https://pub.dartlang.org/packages/image

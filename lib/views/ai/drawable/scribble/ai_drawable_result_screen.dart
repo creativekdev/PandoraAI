@@ -200,16 +200,40 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
                 children: [
                   Stack(
                     children: [
-                      Image.asset(Images.ic_ai_draw_top),
-                      Text(
-                        '@${userManager.user?.getShownName() ?? 'Pandora User'}',
-                        style: TextStyle(
-                          color: ColorConstant.White,
-                          fontFamily: 'Poppins',
-                          fontSize: $(14),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ).marginOnly(left: $(16), top: $(50)),
+                      Image.asset(Images.ic_compare_top),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: 'AI-Scribble',
+                              style: TextStyle(
+                                color: ColorConstant.White,
+                                fontFamily: 'BlackOpsOne',
+                                fontSize: $(32),
+                              ),
+                              children: [
+                                WidgetSpan(
+                                    child: Image.asset(
+                                      Images.ic_compare_arrow,
+                                      height: $(16),
+                                    ).intoContainer(margin: EdgeInsets.only(left: $(8))),
+                                    alignment: PlaceholderAlignment.middle),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            '@${userManager.user?.getShownName() ?? 'Pandora User'}',
+                            style: TextStyle(
+                              color: ColorConstant.White,
+                              fontFamily: 'Poppins',
+                              fontSize: $(14),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ).marginOnly(left: $(16), top: $(15)),
                     ],
                   ),
                   Expanded(
@@ -360,7 +384,10 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   }
 
   toPrint(BuildContext context) {
-    Print.open(context, source: 'scribble', file: File(filePath));
+    if (TextUtil.isEmpty(resultFilePath)) {
+      return;
+    }
+    Print.open(context, source: 'scribble', file: File(resultFilePath!));
   }
 
   savePhoto(BuildContext context) async {

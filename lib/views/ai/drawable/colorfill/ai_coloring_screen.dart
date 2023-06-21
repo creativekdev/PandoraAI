@@ -5,6 +5,7 @@ import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -188,6 +189,22 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
   }
 
   pickPhoto(BuildContext context, AiColoringController controller) {
+    PAICamera.takePhoto(context).then((value) async {
+      if (value != null) {
+        var xFile = await CropScreen.crop(context, image: value.xFile, brightness: Brightness.dark);
+        String r;
+        if (xFile != null) {
+          r = xFile.path;
+        } else {
+          r = value.xFile.path;
+        }
+        controller.photoType = value.source;
+        CacheManager cacheManager = AppDelegate().getManager();
+        var path = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
+        controller.changeOriginFile(context, File(path));
+      }
+    });
+    return;
     showModalBottomSheet<bool>(
         context: context,
         builder: (ctxt) {
@@ -296,7 +313,7 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
       return;
     }
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-    var uint8list = await ImageUtils.printAiDrawData(controller.originFile, File(controller.resultPath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    var uint8list = await ImageUtils.printAiColoringData(controller.originFile, File(controller.resultPath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: 'lineart', image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: 'lineart',
         onShareSuccess: (platform) {
       Events.aiColoringCompleteShare(source: controller.photoType, platform: platform, type: 'image');
