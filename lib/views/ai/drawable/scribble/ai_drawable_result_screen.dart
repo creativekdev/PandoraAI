@@ -360,7 +360,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   }
 
   toPrint(BuildContext context) {
-    Print.open(context, source: 'scribble', file: File(filePath));
+    Print.open(context, source: 'scribble', file: File(resultFilePath!));
   }
 
   savePhoto(BuildContext context) async {
