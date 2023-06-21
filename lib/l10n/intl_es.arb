@@ -428,12 +428,12 @@
   "start_date": "Fecha de inicio",
   "end_date": "Fecha de fin",
   "quatity": "Cantidad",
-  "pending": "Pending",
-  "paid": "Paid",
-  "unpaid": "Unpaid",
-  "refunded": "Refunded",
-  "voided": "voided",
-  "partial_delivered": "Partial delivered",
-  "fulfilled": "Fulfilled",
-  "restocked": "Restocked"
+  "pending": "Pendiente",
+  "paid": "Pagado",
+  "unpaid": "Impagado",
+  "refunded": "Reembolsado",
+  "voided": "Anulado",
+  "partial_delivered": "Entrega parcial",
+  "fulfilled": "Cumplido",
+  "restocked": "Reabastecido"
 }

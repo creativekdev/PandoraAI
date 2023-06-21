@@ -5,7 +5,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/views/print/print_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../api/uploader.dart';
@@ -182,8 +181,6 @@ class PrintController extends GetxController {
     _origin = getOrigiPosition(productInfo?.printInfo.pages.first.x as double, productInfo?.printInfo.pages.first.y as double);
     _size = getImageRealSize(productInfo?.printInfo.pages.first.width as double, productInfo?.printInfo.pages.first.height as double);
     _imgSize = getImageRealSize(productInfo?.printInfo.width.toDouble() ?? 0.0, productInfo?.printInfo.height.toDouble() ?? 0.0);
-    LogUtil.d("scale === $_scale");
-    LogUtil.d("size === $_size");
     _total = getSubTotal();
     update();
   }
