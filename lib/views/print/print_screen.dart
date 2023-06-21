@@ -163,6 +163,7 @@ class PrintScreenState extends AppState<PrintScreen> {
               PrintSubmitArea(
                 total: controller.total,
                 onTap: () async {
+                  showLoading();
                   bool isSuccess = await controller.onSubmit(context);
                   if (isSuccess) {
                     UserManager userManager = AppDelegate().getManager();
@@ -174,6 +175,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                             source: widget.source,
                           )));
                     }, autoExec: true);
+                    hideLoading();
                   }
                 },
               ),

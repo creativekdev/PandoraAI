@@ -58,8 +58,13 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
       // 跳转成功界面
       Navigator.of(context).pop(true);
     });
+
     socket?.onDisconnect((data) {});
     socket?.connect();
+    socket?.onError((data) {
+      // 跳转失败界面
+      Navigator.of(context).pop(false);
+    });
   }
 
   @override
@@ -80,31 +85,29 @@ class _PrintPaymentScreenState extends State<PrintPaymentScreen> {
           visible: false,
         ),
         backgroundColor: ColorConstant.BackgroundColor,
-        body: SingleChildScrollView(
-          child: Container(
-            height: ScreenUtil.screenSize.height,
-            width: ScreenUtil.screenSize.width,
-            child: WebView(
-              onWebViewCreated: (controller) {
-                webViewController = controller;
-              },
-              navigationDelegate: (NavigationRequest request) async {
-                if (request.url.startsWith(ALIPAY_SCHEML_ANDROID) || request.url.startsWith(ALIPAY_SCHEML_IOS)) {
-                  launchURL(request.url, force: true);
-                  return NavigationDecision.prevent;
-                }
-                // 处理取消逻辑
-                if (request.url.contains(Config.instance.successUrl)) {
-                  return NavigationDecision.prevent;
-                }
-                if (request.url.contains(Config.instance.cancelUrl)) {
-                  Navigator.of(context).pop(false);
-                }
-                return NavigationDecision.navigate;
-              },
-              initialUrl: widget.payUrl,
-              javascriptMode: JavascriptMode.unrestricted,
-            ),
+        body: Container(
+          height: double.infinity,
+          width: ScreenUtil.screenSize.width,
+          child: WebView(
+            onWebViewCreated: (controller) {
+              webViewController = controller;
+            },
+            navigationDelegate: (NavigationRequest request) async {
+              if (request.url.startsWith(ALIPAY_SCHEML_ANDROID) || request.url.startsWith(ALIPAY_SCHEML_IOS)) {
+                launchURL(request.url, force: true);
+                return NavigationDecision.prevent;
+              }
+              // 处理取消逻辑
+              if (request.url.contains(Config.instance.successUrl)) {
+                return NavigationDecision.prevent;
+              }
+              if (request.url.contains(Config.instance.cancelUrl)) {
+                Navigator.of(context).pop(false);
+              }
+              return NavigationDecision.navigate;
+            },
+            initialUrl: widget.payUrl,
+            javascriptMode: JavascriptMode.unrestricted,
           ),
         ),
       ),

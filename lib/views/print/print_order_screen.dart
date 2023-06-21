@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Widgets/search_bar.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/views/print/print_order_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_order_list.dart';
@@ -21,7 +22,7 @@ class PrintOrderScreen extends StatefulWidget {
   State<PrintOrderScreen> createState() => _PrintOrderScreenState();
 }
 
-class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerProviderStateMixin {
+class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTickerProviderStateMixin {
   PrintOrderController controller = Get.put(PrintOrderController());
 
   @override
@@ -32,7 +33,7 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return DefaultTabController(
       length: controller.statuses.length,
       child: BlankAreaIntercept(
@@ -40,7 +41,9 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
           appBar: AppNavigationBar(
             backgroundColor: Colors.transparent,
             middle: Text(
-              S.of(context).orders,
+              S
+                  .of(context)
+                  .orders,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: $(18),
@@ -121,7 +124,13 @@ class _PrintOrderScreenState extends State<PrintOrderScreen> with SingleTickerPr
                         return _AutomaticKeepAlive(
                           child: PrintOrderList(
                             tabKey: e,
-                            source: widget.source,
+                            source: widget.source, showLoadingCallback: (bool isLoading) {
+                            if (isLoading) {
+                              showLoading();
+                            } else {
+                              hideLoading();
+                            }
+                          },
                           ),
                         );
                       }).toList()),

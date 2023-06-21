@@ -255,7 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Ingrese su dirección de correo electrónico registrada a continuación para recibir instrucciones para restablecer la contraseña"),
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Olvidé mi contraseña？"),
-        "fulfilled": MessageLookupByLibrary.simpleMessage("Fulfilled"),
+        "fulfilled": MessageLookupByLibrary.simpleMessage("Cumplido"),
         "full_name": MessageLookupByLibrary.simpleMessage("nombre completo"),
         "generate": MessageLookupByLibrary.simpleMessage("crear"),
         "generate_again": MessageLookupByLibrary.simpleMessage("Reconstruir"),
@@ -400,7 +400,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "other_replies": MessageLookupByLibrary.simpleMessage("共%d条评论 >"),
         "others": MessageLookupByLibrary.simpleMessage("Otro"),
         "packages_purchased": MessageLookupByLibrary.simpleMessage("Comprado"),
-        "paid": MessageLookupByLibrary.simpleMessage("Paid"),
+        "paid": MessageLookupByLibrary.simpleMessage("Pagado"),
         "pandora_avatar":
             MessageLookupByLibrary.simpleMessage("Pandora Avatar"),
         "pandora_create_exit_dips": MessageLookupByLibrary.simpleMessage(
@@ -420,7 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pandora_waiting_desc": MessageLookupByLibrary.simpleMessage(
             "您的照片将在大约%d分钟内生成，请稍候。生成结束后，我们会给你发送电子邮件，里面有你的PandoraAvatar链接!"),
         "partial_delivered":
-            MessageLookupByLibrary.simpleMessage("Partial delivered"),
+            MessageLookupByLibrary.simpleMessage("Entrega parcial"),
         "pass_validation":
             MessageLookupByLibrary.simpleMessage("Introduzca una contraseña"),
         "pass_validation1":
@@ -434,7 +434,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "payment_failed": MessageLookupByLibrary.simpleMessage("Pago fallido"),
         "payment_successfully":
             MessageLookupByLibrary.simpleMessage("Pago exitoso"),
-        "pending": MessageLookupByLibrary.simpleMessage("Pending"),
+        "pending": MessageLookupByLibrary.simpleMessage("Pendiente"),
         "per_day": MessageLookupByLibrary.simpleMessage("veces todos los días"),
         "permissionCamera":
             MessageLookupByLibrary.simpleMessage("Permisos de cámara"),
@@ -505,7 +505,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Imagen de referencia (opcional)"),
         "reference_image_tips": MessageLookupByLibrary.simpleMessage(
             "La imagen de referencia afectará el resultado final"),
-        "refunded": MessageLookupByLibrary.simpleMessage("Refunded"),
+        "refunded": MessageLookupByLibrary.simpleMessage("Reembolsado"),
         "remaining_credits":
             MessageLookupByLibrary.simpleMessage("Beneficios adquiridos"),
         "remind": MessageLookupByLibrary.simpleMessage("pronto"),
@@ -519,7 +519,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "resend_tips": MessageLookupByLibrary.simpleMessage(
             "Consejo: Si no recibes el correo electrónico, revisa la papelera o haz clic en el botón Inténtalo de nuevo"),
         "reset": MessageLookupByLibrary.simpleMessage("Restablecer"),
-        "restocked": MessageLookupByLibrary.simpleMessage("Restocked"),
+        "restocked": MessageLookupByLibrary.simpleMessage("Reabastecido"),
         "restore": MessageLookupByLibrary.simpleMessage("RESTAURAR"),
         "restore_content": MessageLookupByLibrary.simpleMessage(
             "Perderá todos los beneficios hasta que se suscriba nuevamente"),
@@ -645,7 +645,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("Sigue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("Diferentes avatares"),
-        "unpaid": MessageLookupByLibrary.simpleMessage("Unpaid"),
+        "unpaid": MessageLookupByLibrary.simpleMessage("Impagado"),
         "update_now": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),
         "update_pass":
             MessageLookupByLibrary.simpleMessage("Actualizar la contraseña"),
@@ -671,7 +671,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "view_more_comment":
             MessageLookupByLibrary.simpleMessage("Ver más %d comentarios"),
         "view_orders": MessageLookupByLibrary.simpleMessage("Ver pedidos"),
-        "voided": MessageLookupByLibrary.simpleMessage("voided"),
+        "voided": MessageLookupByLibrary.simpleMessage("Anulado"),
         "waiting":
             MessageLookupByLibrary.simpleMessage("Espere la compilación"),
         "watchAdHint": MessageLookupByLibrary.simpleMessage("观看广告以去除水印\n（仅一次）"),
