@@ -18,7 +18,9 @@ import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
+import 'package:cartoonizer/views/mine/filter/FilterCropScreen.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
+import 'package:cartoonizer/views/mine/filter/ImCropScreen.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as imgLib;
@@ -120,9 +122,22 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       buttons.add(GestureDetector(
         onTap: () {
           // Handle button press
-          setState(() {
-            selectedRightTab = cur;
-          });
+          if(cur == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                settings: RouteSettings(name: "/CropperScreen"),
+                builder: (context) =>
+                    CropperScreen(),
+              ),
+            ).then((value) {
+
+            });
+          } else{
+            setState(() {
+              selectedRightTab = cur;
+            });
+          }
         },
         child: Container(
           width: 50,
@@ -609,12 +624,41 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     for (int i = 0; i < adjust.getCnt(); i++){
       int cur_i  = i;
       buttons.add(GestureDetector(
-        onTap: () {
-          setState(() {
-            adjust.setSelectedID(cur_i);
-          });
+        onTap: ()  async {
+          if(adjust.getSelectedID() == cur_i && !adjust.isInitalized) {
+            adjust.previousValue = adjust.getSelectedValue();
+            adjust.setSliderValue(adjust.initSliderValues[cur_i]);
+            adjust.isInitalized = true;
+            setState((){
+              adjust;
+            });
+            if (_imagefile != null) {
+              _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
+              setState(() {
+              });
+            }
+          }
+          else if(adjust.getSelectedID() == cur_i && adjust.isInitalized) {
+            adjust.setSliderValue(adjust.previousValue);
+            adjust.isInitalized = false;
+            setState((){
+              adjust;
+            });
+            if (_imagefile != null) {
+              _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
+              setState(() {
+                _byte;
+              });
+            }
+
+          }
+          else{
+            setState(() {
+              adjust.setSelectedID(cur_i);
+            });
+          }
           _scrollController.animateTo(
-            25 + 64.0 * cur_i,
+            25 + 74.0 * cur_i,
             duration: Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
@@ -640,7 +684,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               size: 42,
               ringWidth: 2,
               backgroundColor: Colors.grey,
-              progress: adjust.getSelectedValue()/100,
+              progress: adjust.getSelectedValue()/(adjust.range[adjust.selectedID][1]),
               loadingColors: [
                 Color(0xFF05E0D5),
                 Color(0xFF05E0D5),
@@ -653,7 +697,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             size: 42,
             ringWidth: 2,
             backgroundColor: Colors.white,
-            progress: 1 - adjust.getSelectedValue()/100,
+            progress: 1 - adjust.getSelectedValue()/ adjust.range[adjust.selectedID][0],
             loadingColors: [
               Colors.grey,
               Colors.grey,
@@ -679,7 +723,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         )
 
       ));
-      buttons.add(SizedBox(width: 20));
+      buttons.add(SizedBox(width: 30));
     }
     buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
 
@@ -697,17 +741,18 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             ),
             SizedBox(height: 5),
             SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
-                children: buttons,
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  // mainAxisAlignment: MainAxisAlignment.end,
+                  children: buttons,
+                ),
               ),
-            ),
             SizedBox(height: 3),
-            GridSlider(minVal: 0, maxVal: 100, currentPos: adjust.getSelectedValue(),
+            GridSlider(minVal: adjust.range[adjust.selectedID][0], maxVal: adjust.range[adjust.selectedID][1], currentPos: adjust.getSelectedValue(),
               onChanged: (newValue){
                 adjust.setSliderValue(newValue);
+                adjust.isInitalized = false;
                 setState(() {
                   adjust;
                 });

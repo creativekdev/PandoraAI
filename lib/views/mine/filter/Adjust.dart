@@ -8,7 +8,10 @@ import 'package:image/image.dart' as imgLib;
 
 class Adjust{
   int selectedID = 0;
-  List<double> sliderValues = [50,50,50,0,0,0,0,0];
+  bool isInitalized = false;
+  double previousValue = 0.0;
+  List<double> initSliderValues = [0,50,50,0,0,0,0,0];
+  List<double> sliderValues = [0,50,50,0,0,0,0,0];
   static List<String> assets = [
     Images.brightness,
     Images.contrast,
@@ -30,6 +33,7 @@ class Adjust{
     "Hue",
   ];
   List<int> isChanging = [1,0,0,0,0,0,0,0];
+  List<List<int>> range = [[-100, 100], [0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[0, 100]];
   int getCnt() {
     return filters.length;
   }
@@ -61,9 +65,9 @@ class Adjust{
             int r = ImageProcessor.getR(pixel);
             int g = ImageProcessor.getG(pixel);
             int b = ImageProcessor.getB(pixel);
-            r = r + (sliderValues[selectedID].toInt() - 50) * 2;
-            g = g + (sliderValues[selectedID].toInt() - 50) * 2;
-            b = b + (sliderValues[selectedID].toInt() - 50) * 2;
+            r = r + (sliderValues[selectedID].toInt() ) * 2;
+            g = g + (sliderValues[selectedID].toInt() ) * 2;
+            b = b + (sliderValues[selectedID].toInt() ) * 2;
             pixel = ImageProcessor.setRGB(pixel, r, g, b);
             res_image.setPixel(i, j, pixel);
           }
