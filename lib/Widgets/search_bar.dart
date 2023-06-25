@@ -3,6 +3,7 @@ import 'package:cartoonizer/utils/screen_util.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class SearchBar extends StatefulWidget {
   TextEditingController? controller;
   Widget? searchIcon;

@@ -4090,10 +4090,10 @@ class S {
     );
   }
 
-  /// `Search address`
+  /// `Input address`
   String get search_address {
     return Intl.message(
-      'Search address',
+      'Input address',
       name: 'search_address',
       desc: '',
       args: [],
@@ -4455,6 +4455,16 @@ class S {
     return Intl.message(
       'Restocked',
       name: 'restocked',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please input %s`
+  String get pleaseInput {
+    return Intl.message(
+      'Please input %s',
+      name: 'pleaseInput',
       desc: '',
       args: [],
     );

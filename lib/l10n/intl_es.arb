@@ -403,7 +403,7 @@
   "first_name": "Nombre",
   "last_name": "Apellido",
   "contact_number": "Número de contacto",
-  "shipping_delivery": "Envío y entrega",
+  "shipping_delivery": "Rellenar la dirección",
   "business_days_7_10": "7-10 días laborables",
   "business_days_10_20": "10-20 días laborables",
   "standard": "estándar",
@@ -435,5 +435,6 @@
   "voided": "Anulado",
   "partial_delivered": "Entrega parcial",
   "fulfilled": "Cumplido",
-  "restocked": "Reabastecido"
+  "restocked": "Reabastecido",
+  "pleaseInput": "Por favor rellene %s"
 }

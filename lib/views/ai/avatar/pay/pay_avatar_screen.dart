@@ -16,6 +16,7 @@ class PayAvatarPage {
     BuildContext context,
   ) =>
       Navigator.of(context).push<bool>(MaterialPageRoute(
+        settings: RouteSettings(name: '/_PayAvatarPage'),
         builder: (context) => _PayAvatarPage(),
       ));
 }
@@ -98,7 +99,12 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
             FontWeight.normal,
             $(13),
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () {
-            Navigator.push<PayPlanEntity>(context, MaterialPageRoute(builder: (context) => PayAvatarPlansScreen(dataList: dataList))).then((value) {
+            Navigator.push<PayPlanEntity>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PayAvatarPlansScreen(dataList: dataList),
+                  settings: RouteSettings(name: '/PayAvatarPlansScreen'),
+                )).then((value) {
               if (value != null) {
                 setState(() {
                   selected = value;

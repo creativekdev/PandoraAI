@@ -51,9 +51,11 @@ class AppFeatureOperator {
       return false;
     }
     var result = await Navigator.of(context).push<bool>(Bottom2TopRouter(
-        child: AppFeaturePage(
-      entity: feature,
-    )));
+      settings: RouteSettings(name: '/AppFeaturePage'),
+      child: AppFeaturePage(
+        entity: feature,
+      ),
+    ));
     cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
 
     if (result ?? false) {

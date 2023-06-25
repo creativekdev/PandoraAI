@@ -70,12 +70,13 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
     Navigator.of(context)
         .push<bool>(
       FadeRouter(
+          settings: RouteSettings(name: '/AnotherMeTransScreen'),
           child: AnotherMeTransScreen(
-        file: file,
-        ratio: ratio,
-        resultFile: result,
-        photoType: photoType,
-      )),
+            file: file,
+            ratio: ratio,
+            resultFile: result,
+            photoType: photoType,
+          )),
     )
         .then((value) {
       if (value != null) {

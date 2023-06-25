@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
+        MaterialPageRoute(settings:RouteSettings(name: '/IntroductionScreen'), builder: (BuildContext context) => IntroductionScreen()),
         ModalRoute.withName('/IntroductionScreen'),
       );
     }

@@ -9,10 +9,9 @@ class PayAvatarAndroid {
   startPay(BuildContext context, Function(bool result) callback) async {
     Navigator.of(context)
         .push(MaterialPageRoute(
-            builder: (context) => StripePaymentScreen(
-                  planId: planId,
-                  buySingle: true,
-                )))
+      settings: RouteSettings(name: '/StripePaymentScreen'),
+      builder: (context) => StripePaymentScreen(planId: planId, buySingle: true),
+    ))
         .then((value) {
       var paymentResult = GetStorage().read('payment_result');
       if (paymentResult != null && paymentResult as bool == true) {

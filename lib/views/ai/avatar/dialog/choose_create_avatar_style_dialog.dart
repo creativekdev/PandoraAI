@@ -8,7 +8,8 @@ import 'package:cartoonizer/models/avatar_config_entity.dart';
 
 class ChooseCreateAvatarStyle {
   static Future<MapEntry<String, String>?> push(BuildContext context) async {
-    return Navigator.of(context).push<MapEntry<String, String>>(MaterialPageRoute(builder: (context) => _ChooseCreateAvatarStyleDialog()));
+    return Navigator.of(context).push<MapEntry<String, String>>(
+        MaterialPageRoute(builder: (context) => _ChooseCreateAvatarStyleDialog(), settings: RouteSettings(name: '/_ChooseCreateAvatarStyleDialog')));
   }
 }
 

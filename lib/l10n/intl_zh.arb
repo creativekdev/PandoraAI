@@ -403,7 +403,7 @@
   "shipping_details": "物流信息",
   "address": "收货地址",
   "apartment_suite_other": "公寓/套房/其他",
-  "search_address": "搜索地址",
+  "search_address": "填写地址",
   "first_name": "名字",
   "last_name": "姓氏",
   "contact_number": "联系电话",
@@ -439,5 +439,6 @@
   "voided": "已作废",
   "partial_delivered": "部分已交付",
   "fulfilled": "已完成",
-  "restocked": "已重新进货"
+  "restocked": "已重新进货",
+  "pleaseInput": "请填写 %s"
 }

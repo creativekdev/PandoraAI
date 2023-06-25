@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/config.dart';
@@ -165,9 +166,9 @@ class PrintShippingController extends GetxController {
     });
   }
 
-  Future<bool> onSubmit() async {
+  Future<bool> onSubmit(BuildContext context) async {
     if (searchAddressController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input address", gravity: ToastGravity.CENTER);
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).address));
       return false;
     }
     // if (apartmentController.text.isEmpty) {
@@ -175,15 +176,15 @@ class PrintShippingController extends GetxController {
     //   return false;
     // }
     if (firstNameController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input first name", gravity: ToastGravity.CENTER);
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).first_name));
       return false;
     }
     if (secondNameController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input second name", gravity: ToastGravity.CENTER);
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).last_name));
       return false;
     }
     if (contactNumberController.text.isEmpty) {
-      Fluttertoast.showToast(msg: "Please input contact number", gravity: ToastGravity.CENTER);
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).contact_number));
       return false;
     }
     var address = {
@@ -230,10 +231,8 @@ class PrintShippingController extends GetxController {
         },
       })
     };
-    print(body);
     printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
     if (printOrderEntity == null) {
-      Fluttertoast.showToast(msg: "Something went wrong", gravity: ToastGravity.CENTER);
       return false;
     }
     String payload = printOrderEntity!.data.payload;

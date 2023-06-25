@@ -1,4 +1,4 @@
-import 'package:cartoonizer/Widgets/search_bar.dart';
+import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/views/print/print_order_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
@@ -41,9 +41,7 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
           appBar: AppNavigationBar(
             backgroundColor: Colors.transparent,
             middle: Text(
-              S
-                  .of(context)
-                  .orders,
+              S.of(context).orders,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: $(18),
@@ -62,7 +60,7 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
                   child: Stack(
                     alignment: Alignment.centerLeft,
                     children: [
-                      SearchBar(
+                      search.SearchBar(
                         controller: controller.searchOrderController,
                         hintStyle: TextStyle(color: Colors.white38, fontSize: $(14)),
                         style: TextStyle(color: Colors.white, fontSize: $(14)),
@@ -124,13 +122,14 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
                         return _AutomaticKeepAlive(
                           child: PrintOrderList(
                             tabKey: e,
-                            source: widget.source, showLoadingCallback: (bool isLoading) {
-                            if (isLoading) {
-                              showLoading();
-                            } else {
-                              hideLoading();
-                            }
-                          },
+                            source: widget.source,
+                            showLoadingCallback: (bool isLoading) {
+                              if (isLoading) {
+                                showLoading();
+                              } else {
+                                hideLoading();
+                              }
+                            },
                           ),
                         );
                       }).toList()),

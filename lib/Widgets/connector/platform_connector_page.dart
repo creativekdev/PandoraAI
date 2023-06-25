@@ -19,6 +19,7 @@ class PlatformConnectorPage {
   }) {
     return Navigator.of(context).push<bool>(
       MaterialPageRoute(
+        settings: RouteSettings(name: '/_PlatformConnectorPage'),
         builder: (context) => _PlatformConnectorPage(platform: platform),
       ),
     );

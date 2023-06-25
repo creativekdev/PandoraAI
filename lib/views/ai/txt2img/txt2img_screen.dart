@@ -71,7 +71,10 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
       delay(() {
         var forward = () {
           Navigator.of(context).push(
-            FadeRouter(child: Txt2imgResultScreen(controller: txt2imgController)),
+            FadeRouter(
+              settings: RouteSettings(name: '/Txt2imgResultScreen'),
+              child: Txt2imgResultScreen(controller: txt2imgController),
+            ),
           );
         };
         if (!TextUtil.isEmpty(history!.initImageFilePath)) {
@@ -520,6 +523,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                       }
                       Navigator.of(context).push(
                         FadeRouter(
+                          settings: RouteSettings(name: '/Txt2imgResultScreen'),
                           child: Txt2imgResultScreen(controller: txt2imgController),
                           opaque: false,
                         ),

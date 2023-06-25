@@ -12,7 +12,10 @@ import 'package:common_utils/common_utils.dart';
 
 class SubmitAvatarDialog {
   static Future<MapEntry<String, String>?> push(BuildContext context) async {
-    return Navigator.of(context).push<MapEntry<String, String>>(MaterialPageRoute(builder: (context) => _SubmitAvatarDialog()));
+    return Navigator.of(context).push<MapEntry<String, String>>(MaterialPageRoute(
+      builder: (context) => _SubmitAvatarDialog(),
+      settings: RouteSettings(name: '/_SubmitAvatarDialog'),
+    ));
   }
 }
 

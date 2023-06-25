@@ -456,6 +456,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "La imagen ya ha sido seleccionada"),
         "platform_connecting": MessageLookupByLibrary.simpleMessage("enlace"),
         "play_ground": MessageLookupByLibrary.simpleMessage("Estudio de IA"),
+        "pleaseInput":
+            MessageLookupByLibrary.simpleMessage("Por favor rellene %s"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Introduce un nombre"),
         "please_input_invited_code": MessageLookupByLibrary.simpleMessage(
@@ -581,7 +583,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora ama"),
         "share_to": MessageLookupByLibrary.simpleMessage("Compartir en"),
         "shipping_delivery":
-            MessageLookupByLibrary.simpleMessage("Envío y entrega"),
+            MessageLookupByLibrary.simpleMessage("Rellenar la dirección"),
         "shipping_details":
             MessageLookupByLibrary.simpleMessage("Detalles de envío"),
         "shipping_information":

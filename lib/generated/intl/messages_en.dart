@@ -443,6 +443,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "platform_connecting":
             MessageLookupByLibrary.simpleMessage("Connecting"),
         "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
+        "pleaseInput": MessageLookupByLibrary.simpleMessage("Please input %s"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
         "please_input_invited_code": MessageLookupByLibrary.simpleMessage(
@@ -526,8 +527,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Scary content alert!"),
         "scary_content_alert_open_it": MessageLookupByLibrary.simpleMessage(
             "Scary content alert! Tap to show it"),
-        "search_address":
-            MessageLookupByLibrary.simpleMessage("Search address"),
+        "search_address": MessageLookupByLibrary.simpleMessage("Input address"),
         "search_order": MessageLookupByLibrary.simpleMessage("Search order"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Check it out"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),

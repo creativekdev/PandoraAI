@@ -1,14 +1,13 @@
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/search_bar.dart';
+import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/region_code_entity.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
+import 'package:cartoonizer/views/common/region/calling_codes_en.dart';
+import 'package:cartoonizer/views/common/region/calling_codes_es.dart';
 import 'package:common_utils/common_utils.dart';
-
-import 'calling_codes_en.dart';
-import 'calling_codes_es.dart';
 
 class SelectRegionPage extends StatefulWidget {
   static Future<RegionCodeEntity?> pickRegion(BuildContext context) async {
@@ -76,7 +75,7 @@ class _SelectRegionPageState extends State<SelectRegionPage> {
       ),
       body: Column(
         children: [
-          SearchBar(
+          search.SearchBar(
             controller: keywordController,
             onChange: (content) {
               setState(() {});

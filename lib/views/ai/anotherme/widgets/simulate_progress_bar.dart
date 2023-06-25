@@ -69,12 +69,15 @@ class SimulateProgressBar {
     required SimulateProgressBarConfig config,
   }) {
     return Navigator.of(context).push<SimulateProgressResult<AccountLimitType>>(
-      NoAnimRouter(_SimulateProgressBar(
-        controller: controller,
-        needUploadProgress: needUploadProgress,
-        onUpdate: onUpdate,
-        config: config,
-      )),
+      NoAnimRouter(
+        _SimulateProgressBar(
+          controller: controller,
+          needUploadProgress: needUploadProgress,
+          onUpdate: onUpdate,
+          config: config,
+        ),
+        settings: RouteSettings(name: '/_SimulateProgressBar'),
+      ),
     );
   }
 }

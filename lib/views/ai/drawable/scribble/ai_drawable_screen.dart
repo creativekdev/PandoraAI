@@ -126,6 +126,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
       }
       Navigator.of(context).push(
         FadeRouter(
+          settings: RouteSettings(name: '/AiDrawableResultScreen'),
           child: AiDrawableResultScreen(
             drawableController: drawableController,
             filePath: uploadPath,

@@ -243,11 +243,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   }
 
   Future<void> showAnim(BuildContext context) async {
-    return Navigator.of(context).push<void>(NoAnimRouter(TransResultAnimScreen(
-      origin: file,
-      result: transResult!,
-      ratio: ratio,
-    )));
+    return Navigator.of(context).push<void>(NoAnimRouter(
+      TransResultAnimScreen(
+        origin: file,
+        result: transResult!,
+        ratio: ratio,
+      ),
+      settings: RouteSettings(name: '/TransResultAnimScreen'),
+    ));
   }
 
   @override

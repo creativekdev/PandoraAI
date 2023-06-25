@@ -31,6 +31,7 @@ class PickAlbumScreen {
       return [];
     }
     return Navigator.of(context).push<List<AssetEntity>>(MaterialPageRoute(
+      settings: RouteSettings(name: '/_PickAlbumScreen'),
       builder: (context) => _PickAlbumScreen(
         switchAlbum: switchAlbum,
         selectedList: selectedList ?? [],
@@ -255,10 +256,12 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                   )
                     .intoGestureDetector(onTap: () {
                     Navigator.of(context)
-                        .push(NoAnimRouter(AlbumPopup(
-                      albums: albums,
-                      selectedAlbum: selectAlbum!,
-                    )))
+                        .push(
+                      NoAnimRouter(
+                        AlbumPopup(albums: albums, selectedAlbum: selectAlbum!),
+                        settings: RouteSettings(name: '/AlbumPopup'),
+                      ),
+                    )
                         .then((value) {
                       if (value != null) {
                         setState(() {

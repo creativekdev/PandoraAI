@@ -367,6 +367,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("该图片已经被选择"),
         "platform_connecting": MessageLookupByLibrary.simpleMessage("链接中"),
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
+        "pleaseInput": MessageLookupByLibrary.simpleMessage("请填写 %s"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "please_input_invited_code":
@@ -432,7 +433,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "scary_content_alert": MessageLookupByLibrary.simpleMessage("含恐怖元素！"),
         "scary_content_alert_open_it":
             MessageLookupByLibrary.simpleMessage("恐怖内容已被隐藏，点击显示它"),
-        "search_address": MessageLookupByLibrary.simpleMessage("搜索地址"),
+        "search_address": MessageLookupByLibrary.simpleMessage("填写地址"),
         "search_order": MessageLookupByLibrary.simpleMessage("订单搜索"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
