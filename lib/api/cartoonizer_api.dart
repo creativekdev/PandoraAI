@@ -27,7 +27,6 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
-import 'package:cartoonizer/models/print_order_entity.dart';
 import 'package:cartoonizer/models/print_payment_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
@@ -39,6 +38,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../models/print_order_entity.dart';
 import '../models/print_orders_entity.dart';
 import '../models/print_product_entity.dart';
 

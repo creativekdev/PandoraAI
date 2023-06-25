@@ -2,15 +2,16 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
 import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
-import 'package:common_utils/common_utils.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-import 'user/user_manager.dart';
+import '../config.dart';
 
 class MsgManager extends BaseManager {
   late CartoonizerApi api;
@@ -21,41 +22,74 @@ class MsgManager extends BaseManager {
   Rx<int> systemCount = 0.obs;
 
   late StreamSubscription userStateListen;
-  late TimerUtil timer;
+
+  // late TimerUtil timer;
+  late IO.Socket socket;
 
   @override
   Future<void> onCreate() async {
     super.onCreate();
     api = CartoonizerApi().bindManager(this);
-    timer = TimerUtil()
-      ..setInterval(60000)
-      ..setOnTimerTickCallback(
-        (millisUntilFinished) {
-          var manager = AppDelegate.instance.getManager<UserManager>();
-          if (!manager.isNeedLogin) {
-            loadUnreadCount();
-          }
-        },
-      );
-    userStateListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+    UserManager userManager = AppDelegate.instance.getManager();
+    if (userManager.isNeedLogin) {
+      onConnectSocket();
+    }
+
+    userStateListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) async {
       if (event.data ?? false) {
+        if (socket.disconnected) {
+          onConnectSocket();
+        }
         loadUnreadCount();
       } else {
         unreadCount.value = 0;
+        socket?.disconnect();
       }
     });
+  }
+
+  onConnectSocket() async {
+    final wsUrl = Uri(
+      host: Config.instance.metagramSocket,
+      scheme: Config.instance.metagramSocketSchema,
+      port: Config.instance.metagramSocketPort,
+      path: '/notification',
+    );
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    var sid = sharedPreferences.getString("login_cookie");
+    socket = IO.io(
+        wsUrl.toString(),
+        IO.OptionBuilder()
+            .setTransports(['websocket', 'polling'])
+            .enableReconnection() // for Flutter or Dart VM
+            .setExtraHeaders({'origin': Config.instance.host, 'cookie': "sb.connect.sid=$sid"}) // optional
+            .enableForceNewConnection()
+            .build());
+    socket?.on('notification', (data) {
+      // 请求未读消息数量
+      loadUnreadCount();
+    });
+    socket?.onConnect((data) {});
+    socket?.onError((data) {});
+    socket?.onDisconnect((data) {});
+    socket?.onConnectError((data) {});
+    socket?.onReconnectError((data) {});
+    socket?.onConnectTimeout((data) {});
+    socket?.onReconnect((data) {});
+    socket?.connect();
   }
 
   @override
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
-    delay(() => timer.startTimer(), milliseconds: 2000);
+    delay(() => loadUnreadCount(), milliseconds: 2000);
   }
 
   @override
   Future<void> onDestroy() async {
     api.unbind();
-    timer.cancel();
+    // timer.cancel();
+    socket?.dispose();
     super.onDestroy();
   }
 

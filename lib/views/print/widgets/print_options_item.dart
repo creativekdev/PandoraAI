@@ -17,21 +17,29 @@ class PrintOptionsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DividerLine(),
+        SizedBox(
+          height: $(12),
+        ),
         Container(
-          width: ScreenUtil.screenSize.width,
-          height: $(64),
-          padding: EdgeInsets.only(left: $(17), top: $(12), bottom: $(12)),
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: options.length,
-            itemBuilder: (context, index) {
-              return PrintTextOption(text: options[index]).intoGestureDetector(onTap: () {
-                onSelectTitleTap(showMap, options[index]);
-              });
-            },
+          padding: EdgeInsets.symmetric(horizontal: $(15)),
+          child: Wrap(
+            direction: Axis.horizontal,
+            runSpacing: $(12),
+            spacing: $(12),
+            children: [
+              ...options.map((e) {
+                return PrintTextOption(text: e).intoGestureDetector(onTap: () {
+                  onSelectTitleTap(showMap, e);
+                });
+              })
+            ],
           ),
+        ),
+        SizedBox(
+          height: $(12),
         ),
         DividerLine(),
       ],
@@ -45,16 +53,18 @@ class PrintTextOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14)).intoContainer(
-      alignment: Alignment.center,
-      width: $(59),
-      height: $(40),
-      margin: EdgeInsets.only(right: $(12)),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: ColorConstant.loginTitleColor,
-          width: $(1),
+    return UnconstrainedBox(
+      child: TitleTextWidget(text, ColorConstant.White, FontWeight.normal, $(14)).intoContainer(
+        alignment: Alignment.center,
+        // width: $(59),
+        height: $(40),
+        padding: EdgeInsets.symmetric(horizontal: $(8)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: ColorConstant.loginTitleColor,
+            width: $(1),
+          ),
         ),
       ),
     );
