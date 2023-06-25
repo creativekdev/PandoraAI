@@ -195,14 +195,11 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
           body: Column(
             children: [
               Expanded(
-                  child: SwitchImageCard(
-                origin: controller.originFile,
-                result: controller.resultFile,
-                imageStackSize: controller.imageStackSize,
-              ).listenSizeChanged(onSizeChanged: (size) {
-                controller.imageStackSize = size;
-                controller.update();
-              })),
+                child: SwitchImageCard(
+                  origin: controller.originFile,
+                  result: controller.resultFile,
+                ),
+              ),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,

@@ -114,14 +114,11 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
             body: Column(
               children: [
                 Expanded(
-                    child: SwitchImageCard(
-                  origin: controller.originFile,
-                  result: controller.resultFile,
-                  imageStackSize: controller.imageStackSize,
-                ).listenSizeChanged(onSizeChanged: (size) {
-                  controller.imageStackSize = size;
-                  controller.update();
-                })),
+                  child: SwitchImageCard(
+                    origin: controller.originFile,
+                    result: controller.resultFile,
+                  ),
+                ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -202,46 +199,6 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
         CacheManager cacheManager = AppDelegate().getManager();
         var path = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
         controller.changeOriginFile(context, File(path));
-      }
-    });
-    return;
-    showModalBottomSheet<bool>(
-        context: context,
-        builder: (ctxt) {
-          return Column(
-            children: [
-              SizedBox(height: $(5)),
-              Text(
-                S.of(context).take_a_selfie,
-                style: TextStyle(
-                  fontSize: $(18),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(ctxt).pop(true);
-              }),
-              Divider(height: 1, color: ColorConstant.LineColor),
-              Text(
-                S.of(context).select_from_album,
-                style: TextStyle(
-                  fontSize: $(18),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(ctxt).pop(false);
-              }),
-            ],
-            mainAxisSize: MainAxisSize.min,
-          ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))).intoMaterial(color: ColorConstant.BackgroundColor);
-        }).then((value) {
-      if (value != null) {
-        if (value) {
-          pickPhotoFromCamera(context, controller);
-        } else {
-          pickPhotoFromAlbum(context, controller);
-        }
       }
     });
   }

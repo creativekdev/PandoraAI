@@ -49,8 +49,6 @@ class AiColoringController extends GetxController {
   RecentController recentController;
   UploadImageController uploadImageController;
 
-  Size? imageStackSize;
-
   bool _showOrigin = false;
 
   set showOrigin(bool value) {

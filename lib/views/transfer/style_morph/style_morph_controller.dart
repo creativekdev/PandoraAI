@@ -39,7 +39,6 @@ class StyleMorphController extends GetxController {
   late CartoonizerApi cartoonizerApi;
 
   final String? initKey;
-  Size? imageStackSize;
 
   bool _showOrigin = false;
 

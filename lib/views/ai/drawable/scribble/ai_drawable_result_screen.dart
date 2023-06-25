@@ -8,6 +8,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/photo_view/any_photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/switch_image_card.dart';
 import 'package:cartoonizer/api/ai_draw_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -194,104 +195,9 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
       body: Column(
         children: [
           Expanded(
-              child: Stack(
-            children: [
-              Column(
-                children: [
-                  Stack(
-                    children: [
-                      Image.asset(Images.ic_compare_top),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: 'AI-Scribble',
-                              style: TextStyle(
-                                color: ColorConstant.White,
-                                fontFamily: 'BlackOpsOne',
-                                fontSize: $(32),
-                              ),
-                              children: [
-                                WidgetSpan(
-                                    child: Image.asset(
-                                      Images.ic_compare_arrow,
-                                      height: $(16),
-                                    ).intoContainer(margin: EdgeInsets.only(left: $(8))),
-                                    alignment: PlaceholderAlignment.middle),
-                              ],
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            '@${userManager.user?.getShownName() ?? 'Pandora User'}',
-                            style: TextStyle(
-                              color: ColorConstant.White,
-                              fontFamily: 'Poppins',
-                              fontSize: $(14),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ).marginOnly(left: $(16), top: $(15)),
-                    ],
-                  ),
-                  Expanded(
-                    child: Image.asset(
-                      Images.ic_mt_result_middle,
-                      fit: BoxFit.fill,
-                      width: double.maxFinite,
-                    ),
-                  ),
-                  Image.asset(Images.ic_mt_result_bottom),
-                ],
-              ),
-              Stack(
-                children: [
-                  Align(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Image.file(
-                            File(filePath),
-                            width: imageWidth,
-                            height: imageHeight,
-                            fit: BoxFit.fill,
-                          ).hero(tag: AiDrawable.localImageTag).intoGestureDetector(onTap: () {
-                            openImage(context, 0);
-                          }),
-                        ),
-                        SizedBox(width: $(4)),
-                        Expanded(
-                          child: Image.file(
-                            File(resultFilePath!),
-                            width: imageWidth,
-                            height: imageHeight,
-                            fit: BoxFit.cover,
-                          ).hero(tag: resultFilePath!).intoGestureDetector(onTap: () {
-                            openImage(context, 1);
-                          }),
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                  ),
-                  Align(
-                    child: Image.asset(
-                      Images.ic_ai_draw_arrow,
-                      width: $(18),
-                    ),
-                    alignment: Alignment.center,
-                  ),
-                ],
-              ).intoContainer(
-                // margin: EdgeInsets.only(top: $(95)),
-                padding: EdgeInsets.symmetric(horizontal: $(16)),
-              ),
-            ],
-          ).intoContainer(
-            margin: EdgeInsets.symmetric(horizontal: $(10), vertical: $(10)),
-          )),
+            child: SwitchImageCard(origin: File(filePath), result: File(resultFilePath!)),
+          ),
+          SizedBox(height: 10),
           Row(
             children: drawableController.resultFilePaths.transfer((e, index) => ClipRRect(
                   child: Image(
@@ -354,10 +260,12 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
         ],
       ),
     ).intoContainer(
-        padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(25)),
+        padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15)),
         height: ScreenUtil.screenSize.height,
         width: ScreenUtil.screenSize.width,
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill)));
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill),
+        ));
   }
 
   Widget buildButton(BuildContext context, {required String icon, required String text}) {

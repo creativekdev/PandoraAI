@@ -1,19 +1,16 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 
 class SwitchImageCard extends StatefulWidget {
   File origin;
   File? result;
-  Size? imageStackSize;
 
   SwitchImageCard({
     Key? key,
     required this.origin,
     required this.result,
-    this.imageStackSize,
   }) : super(key: key);
 
   @override
@@ -24,17 +21,12 @@ class _SwitchImageCardState extends State<SwitchImageCard> {
   late File origin;
   late File? result;
   bool showOrigin = false;
-  double? originImageScale;
-  Size? imageStackSize;
-  double imagePosBottom = 0;
-  double imagePosRight = 0;
 
   @override
   void initState() {
     super.initState();
     origin = widget.origin;
     result = widget.result;
-    update();
   }
 
   @override
@@ -42,32 +34,6 @@ class _SwitchImageCardState extends State<SwitchImageCard> {
     super.didUpdateWidget(oldWidget);
     origin = widget.origin;
     result = widget.result;
-    update();
-  }
-
-  update() {
-    imageStackSize = widget.imageStackSize;
-    SyncFileImage(file: origin).getImage().then((value) {
-      originImageScale = value.image.width / value.image.height;
-      calculatePosY();
-    });
-  }
-
-  calculatePosY() {
-    if (originImageScale == null || imageStackSize == null) {
-      return;
-    }
-    double sizeScale = imageStackSize!.width / imageStackSize!.height;
-    if (originImageScale! > sizeScale) {
-      var height = imageStackSize!.width / originImageScale!;
-      imagePosBottom = (imageStackSize!.height - height) / 2;
-      imagePosRight = 0;
-    } else {
-      var width = imageStackSize!.height * originImageScale!;
-      imagePosRight = (imageStackSize!.width - width) / 2;
-      imagePosBottom = 0;
-    }
-    setState(() {});
   }
 
   @override
@@ -119,8 +85,8 @@ class _SwitchImageCardState extends State<SwitchImageCard> {
                   borderRadius: BorderRadius.circular($(32)),
                 ),
           ),
-          bottom: imagePosBottom + $(12),
-          right: imagePosRight + $(12),
+          bottom: $(12),
+          right: $(12),
         )
       ],
     );

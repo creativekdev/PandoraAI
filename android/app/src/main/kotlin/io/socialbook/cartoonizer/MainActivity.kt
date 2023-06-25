@@ -156,7 +156,7 @@ class MainActivity : FlutterFragmentActivity() {
                         val fileOutputStream = FileOutputStream(file)
                         val result = decodeFile.compress(Bitmap.CompressFormat.JPEG, 95, fileOutputStream)
                         fileInputStream.close()
-                        fileInputStream.close()
+                        fileOutputStream.close()
                         return@runInBackground result
                     }.runOnUI {
                         if (it == null) {

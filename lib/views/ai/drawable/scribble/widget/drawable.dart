@@ -655,7 +655,7 @@ class DrawableRecord {
       result.checkMatePens = (json['checkMatePens'] as List).map((e) => DrawablePen.fromJson(e)).toList();
     }
     if (json['resultPaths'] != null) {
-      result.resultPaths = json['resultPaths'];
+      result.resultPaths = (json['resultPaths'] as List).map((e) => e.toString()).toList();
     }
     if (json['updateDt'] != null) {
       result.updateDt = json['updateDt'];
