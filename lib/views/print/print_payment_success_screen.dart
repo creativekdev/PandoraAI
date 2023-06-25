@@ -7,14 +7,13 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../images-res.dart';
-import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintPaymentSuccessScreen extends StatefulWidget {
   String source;
   final String sessionId;
   final String payUrl;
-  final PrintOrderEntity orderEntity;
+  final PrintOrdersDataRows orderEntity;
 
   PrintPaymentSuccessScreen({
     Key? key,
@@ -30,12 +29,14 @@ class PrintPaymentSuccessScreen extends StatefulWidget {
 
 class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
   late PrintOrdersDataRowsPayloadOrder order;
+  late PrintOrdersDataRowsPayloadRepay repay;
 
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'print_payment_success_screen');
-    order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.data.payload)["order"]);
+    order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.payload)["order"]);
+    repay = PrintOrdersDataRowsPayloadRepay.fromJson(jsonDecode(widget.orderEntity.payload)["repay"]);
   }
 
   @override
@@ -158,23 +159,23 @@ class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
             ),
             PrintShippingInfoItem(
               image: Images.ic_order_name,
-              value: order.customer.defaultAddress.firstName + " " + order.customer.defaultAddress.lastName,
+              value: repay.customer.firstName + " " + repay.customer.lastName,
               color: ColorConstant.White,
             ),
             if (order.contactEmail != null)
               PrintShippingInfoItem(
                 image: Images.ic_order_email,
-                value: order.contactEmail ?? '',
+                value: order.contactEmail,
                 color: ColorConstant.White,
               ),
             PrintShippingInfoItem(
               image: Images.ic_order_phone,
-              value: order.customer.defaultAddress.phone,
+              value: repay.customer.phone,
               color: ColorConstant.White,
             ),
             PrintShippingInfoItem(
               image: Images.ic_order_address,
-              value: order.customer.defaultAddress.address1 + " " + order.customer.defaultAddress.address2,
+              value: repay.customer.addresses.first.address2 + " " + repay.customer.addresses.first.address1,
               color: ColorConstant.White,
             ),
           ]),

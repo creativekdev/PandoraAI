@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/print_order_entity.g.dart';
+import 'package:cartoonizer/models/print_orders_entity.dart';
 
 @JsonSerializable()
 class PrintOrderEntity {
@@ -63,6 +64,7 @@ class PrintOrderData {
 @JsonSerializable()
 class PrintOrderDataPayload {
   late PrintOrderDataPayloadOrder order;
+  late PrintOrdersDataRowsPayloadRepay repay;
 
   PrintOrderDataPayload();
 

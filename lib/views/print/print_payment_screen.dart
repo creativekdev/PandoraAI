@@ -6,13 +6,13 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../Common/importFile.dart';
 import '../../config.dart';
-import '../../models/print_order_entity.dart';
+import '../../models/print_orders_entity.dart';
 
 class PrintPaymentScreen extends StatefulWidget {
   String source;
   final String sessionId;
   final String payUrl;
-  final PrintOrderEntity orderEntity;
+  final PrintOrdersDataRows orderEntity;
 
   PrintPaymentScreen({
     Key? key,
