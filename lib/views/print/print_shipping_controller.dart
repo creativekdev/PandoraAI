@@ -158,8 +158,6 @@ class PrintShippingController extends GetxController {
 
   onTapRegion(BuildContext context) {
     SelectRegionPage.pickRegion(context).then((value) {
-      print(value);
-      print(value?.toJson());
       if (value != null) {
         _regionEntity = value;
         update();
