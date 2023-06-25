@@ -7,7 +7,6 @@ import '../../../Common/importFile.dart';
 import '../../../Widgets/router/routers.dart';
 import '../../../api/cartoonizer_api.dart';
 import '../../../config.dart';
-import '../../../models/print_order_entity.dart';
 import '../../../models/print_orders_entity.dart';
 import '../../../models/print_payment_entity.dart';
 import '../print_payment_cancel_screen.dart';
@@ -37,7 +36,6 @@ class PrintOrderListController extends GetxController {
   }
 
   bool get isfirstLoading => _isfirstLoading;
-
 
   String name = '';
   List<DateTime?> dates = [];
@@ -164,9 +162,9 @@ class PrintOrderListController extends GetxController {
     };
 
     PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
-    PrintOrderEntity orderEntity = PrintOrderEntity.fromJson({"data": item.toJson()});
+    // PrintOrderEntity orderEntity = PrintOrderEntity.fromJson({"data": item.toJson()});
 
-    Events.printStartPay(source: source, orderId: orderEntity.data.id.toString());
+    Events.printStartPay(source: source, orderId: item.id.toString());
     Navigator.of(context)
         .push<bool>(
       Right2LeftRouter(
@@ -174,30 +172,30 @@ class PrintOrderListController extends GetxController {
         child: PrintPaymentScreen(
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
-          orderEntity: orderEntity,
+          orderEntity: item,
           source: source,
         ),
       ),
     )
         .then((value) {
       if (value == true) {
-        Events.printPayOrderSuccess(source: source, orderId: orderEntity.data.id.toString());
+        Events.printPayOrderSuccess(source: source, orderId: item.id.toString());
         Navigator.of(context).push<void>(Right2LeftRouter(
             settings: RouteSettings(name: '/PrintPaymentSuccessScreen'),
             child: PrintPaymentSuccessScreen(
               payUrl: payment?.data.url ?? '',
               sessionId: payment?.data.id ?? '',
-              orderEntity: orderEntity,
+              orderEntity: item,
               source: source,
             )));
       } else {
-        Events.printPayOrderCancel(source: source, orderId: orderEntity.data.id.toString());
+        Events.printPayOrderCancel(source: source, orderId: item.id.toString());
         Navigator.of(context).push<void>(Right2LeftRouter(
             settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
             child: PrintPaymentCancelScreen(
               payUrl: payment?.data.url ?? '',
               sessionId: payment?.data.id ?? '',
-              orderEntity: orderEntity,
+              orderEntity: item,
               source: source,
             )));
       }

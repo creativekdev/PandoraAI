@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_options_item.dart';
@@ -10,14 +11,13 @@ import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/router/routers.dart';
 import '../../images-res.dart';
-import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
 
 class PrintPaymentCancelScreen extends StatefulWidget {
   String source;
   final String sessionId;
   final String payUrl;
-  final PrintOrderEntity orderEntity;
+  final PrintOrdersDataRows orderEntity;
 
   PrintPaymentCancelScreen({
     Key? key,
@@ -33,12 +33,14 @@ class PrintPaymentCancelScreen extends StatefulWidget {
 
 class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
   late PrintOrdersDataRowsPayloadOrder order;
+  late PrintOrdersDataRowsPayloadRepay repay;
 
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'print_payment_cancel_screen');
-    order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.data.payload)["order"]);
+    order = PrintOrdersDataRowsPayloadOrder.fromJson(jsonDecode(widget.orderEntity.payload)["order"]);
+    repay = PrintOrdersDataRowsPayloadRepay.fromJson(jsonDecode(widget.orderEntity.payload)["repay"]);
   }
 
   @override
@@ -104,14 +106,18 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
                     source: widget.source,
                   )));
             } else {
-              Navigator.of(context).push<void>(Right2LeftRouter(
-                  settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
-                  child: PrintPaymentCancelScreen(
-                    payUrl: widget.payUrl,
-                    sessionId: widget.sessionId,
-                    orderEntity: widget.orderEntity,
-                    source: widget.source,
-                  )));
+              if (MyApp.routeObserver.lastRoute?.settings.name == "/PrintPaymentCancelScreen") {
+                Navigator.of(context).pop();
+              } else {
+                Navigator.of(context).push<void>(Right2LeftRouter(
+                    settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
+                    child: PrintPaymentCancelScreen(
+                      payUrl: widget.payUrl,
+                      sessionId: widget.sessionId,
+                      orderEntity: widget.orderEntity,
+                      source: widget.source,
+                    )));
+              }
             }
           });
         }),
@@ -151,7 +157,7 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
             ),
             PrintShippingInfoItem(
               image: Images.ic_order_name,
-              value: order.customer.defaultAddress.firstName + " " + order.customer.defaultAddress.lastName,
+              value: repay.customer.firstName + " " + repay.customer.lastName,
               color: ColorConstant.White,
             ),
             if (order.contactEmail != null)
@@ -162,12 +168,12 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
               ),
             PrintShippingInfoItem(
               image: Images.ic_order_phone,
-              value: order.customer.defaultAddress.phone,
+              value: repay.customer.phone,
               color: ColorConstant.White,
             ),
             PrintShippingInfoItem(
               image: Images.ic_order_address,
-              value: order.customer.defaultAddress.address1 + " " + order.customer.defaultAddress.address2,
+              value: repay.customer.addresses.first.address2 + " " + repay.customer.addresses.first.address1,
               color: ColorConstant.White,
             ),
           ]),

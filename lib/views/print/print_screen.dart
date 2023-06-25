@@ -129,9 +129,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                                       controller.onTapOption(map, value);
                                     },
                                   )
-                              ]).intoContainer(
-                                color: ColorConstant.EffectFunctionGrey,
-                              ),
+                              ]),
                             ),
                           ))
                       .values
@@ -185,8 +183,8 @@ class PrintScreenState extends AppState<PrintScreen> {
                       },
                     );
                   } else {
-                    hideLoading();
                   }
+                  hideLoading();
                 },
               ),
             ],

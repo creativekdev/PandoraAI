@@ -8,12 +8,12 @@ import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_webservice/places.dart';
 
 import '../../Controller/effect_data_controller.dart';
 import '../../Widgets/router/routers.dart';
 import '../../models/print_order_entity.dart';
+import '../../models/print_orders_entity.dart';
 import '../../models/print_payment_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../models/region_code_entity.dart';
@@ -158,7 +158,6 @@ class PrintShippingController extends GetxController {
 
   onTapRegion(BuildContext context) {
     SelectRegionPage.pickRegion(context).then((value) {
-      print(value);
       if (value != null) {
         _regionEntity = value;
         update();
@@ -191,7 +190,7 @@ class PrintShippingController extends GetxController {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
       "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-      "country_code": regionEntity?.callingCode,
+      "country_code": regionEntity?.regionCode,
       "country_name": regionEntity?.regionName,
       "country": regionEntity?.regionName,
       "address1": searchAddressController.text,
@@ -208,6 +207,7 @@ class PrintShippingController extends GetxController {
         "addresses": [address],
       },
       "shipping_address": address,
+      "shipping_price": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100.0,
       "shipping_method": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.displayName,
       "name": printController.optionData.title,
       "ps_image": printController.ai_image,
@@ -275,7 +275,7 @@ class PrintShippingController extends GetxController {
     };
 
     PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
-
+    PrintOrdersDataRows rows = PrintOrdersDataRows.fromJson(printOrderEntity!.data.toJson());
     Navigator.of(context)
         .push<bool>(
       Right2LeftRouter(
@@ -283,7 +283,7 @@ class PrintShippingController extends GetxController {
         child: PrintPaymentScreen(
           payUrl: payment?.data.url ?? '',
           sessionId: payment?.data.id ?? '',
-          orderEntity: printOrderEntity!,
+          orderEntity: rows,
           source: source,
         ),
       ),
@@ -293,18 +293,18 @@ class PrintShippingController extends GetxController {
         Navigator.of(context).push<void>(Right2LeftRouter(
             settings: RouteSettings(name: '/PrintPaymentSuccessScreen'),
             child: PrintPaymentSuccessScreen(
-              payUrl: payUrl,
+              payUrl: payment?.data.url ?? '',
               sessionId: payment?.data.id ?? '',
-              orderEntity: printOrderEntity!,
+              orderEntity: rows,
               source: source,
             )));
       } else {
         Navigator.of(context).push<void>(Right2LeftRouter(
             settings: RouteSettings(name: '/PrintPaymentCancelScreen'),
             child: PrintPaymentCancelScreen(
-              payUrl: payUrl,
+              payUrl: payment?.data.url ?? '',
               sessionId: payment?.data.id ?? '',
-              orderEntity: printOrderEntity!,
+              orderEntity: rows,
               source: source,
             )));
       }
@@ -340,6 +340,13 @@ class PrintShippingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _regionEntity = RegionCodeEntity();
+    _regionEntity?.regionCode = "US";
+    _regionEntity?.callingCode = "+1";
+    _regionEntity?.regionName = "United States";
+    _regionEntity?.regionFlag = "🇺🇸";
+    _regionEntity?.regionSyllables = [];
+
     cartoonizerApi = CartoonizerApi().bindController(this);
     _total = printController.getSubTotal() + effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100;
     _viewInit = true;

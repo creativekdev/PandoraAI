@@ -32,6 +32,7 @@ class PrintOptionItem extends StatelessWidget {
             FontWeight.normal,
             $(10),
             align: TextAlign.left,
+            maxLines: 2,
           ),
         ),
       ],
