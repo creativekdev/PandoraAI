@@ -7,6 +7,7 @@ import 'package:cartoonizer/views/print/print_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_option_item.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../Widgets/router/routers.dart';
 
@@ -46,7 +47,37 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
           init: controller,
           builder: (controller) {
             if (controller.viewInit == false) {
-              return SizedBox();
+              return SkeletonListView(
+                itemCount: 6,
+                padding: EdgeInsets.zero,
+                spacing: $(4),
+                item: Column(
+                  children: [
+                    Row(
+                      children: [
+                        UnconstrainedBox(
+                          child: SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                            width: (ScreenUtil.screenSize.width - $(20)) / 2,
+                            height: $(100),
+                          )),
+                        ),
+                        SizedBox(width: $(4)),
+                        UnconstrainedBox(
+                          child: SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                            width: (ScreenUtil.screenSize.width - $(20)) / 2,
+                            height: $(100),
+                          )),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: $(4),
+                    )
+                  ],
+                ),
+              );
             }
             return MasonryGridView.count(
               itemCount: controller.printOptionEntity.data.length,
