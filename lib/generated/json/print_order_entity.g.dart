@@ -1,5 +1,7 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/print_order_entity.dart';
+import 'package:cartoonizer/models/print_orders_entity.dart';
+
 
 PrintOrderEntity $PrintOrderEntityFromJson(Map<String, dynamic> json) {
 	final PrintOrderEntity printOrderEntity = PrintOrderEntity();
@@ -112,12 +114,17 @@ PrintOrderDataPayload $PrintOrderDataPayloadFromJson(Map<String, dynamic> json) 
 	if (order != null) {
 		printOrderDataPayload.order = order;
 	}
+	final PrintOrdersDataRowsPayloadRepay? repay = jsonConvert.convert<PrintOrdersDataRowsPayloadRepay>(json['repay']);
+	if (repay != null) {
+		printOrderDataPayload.repay = repay;
+	}
 	return printOrderDataPayload;
 }
 
 Map<String, dynamic> $PrintOrderDataPayloadToJson(PrintOrderDataPayload entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['order'] = entity.order.toJson();
+	data['repay'] = entity.repay.toJson();
 	return data;
 }
 

@@ -38,14 +38,9 @@ class Metagram {
       } else {
         EffectDataController effectDataController = Get.find<EffectDataController>();
         if (effectDataController.data?.promotionResources.isNotEmpty ?? false) {
-          var url = effectDataController.data!.promotionResources.first.url!;
-          var fileName = EncryptUtil.encodeMd5(url);
-          var type = getFileType(url);
-          var storageOperator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
-          var videoDir = storageOperator.videoDir;
-          var savePath = videoDir.path + fileName + '.' + type;
-          if (!File(savePath).existsSync()) {
-            await SyncDownloadVideo(url: url, type: type).getVideo();
+          var resource = effectDataController.data!.promotionResources.first;
+          if (resource.type == 'video') {
+            await SyncDownloadVideo(type: getFileType(resource.url ?? ''), url: resource.url ?? '').getVideo();
           }
         }
         Navigator.of(context)

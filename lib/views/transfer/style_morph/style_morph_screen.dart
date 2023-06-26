@@ -181,8 +181,8 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
             )
                 .intoGestureDetector(onTap: () {
               LiPopMenu.showLinePop(context, listData: [
-                ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
                 ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
               ], clickCallback: (index, title) {
                 if (index == 0) {
                   shareToDiscovery(context, controller);

@@ -7,9 +7,11 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:common_utils/common_utils.dart';
 
 class EffectManager extends BaseManager {
   ApiConfigEntity? _data = null;
+
   ApiConfigEntity? get data => _data;
   late CacheManager cacheManager;
   late CartoonizerApi api;
@@ -68,6 +70,11 @@ class EffectManager extends BaseManager {
             SyncDownloadImage(type: getFileType(element.url ?? ''), url: element.url ?? '').getImage();
           } else if (element.type == 'video') {
             SyncDownloadVideo(type: getFileType(element.url ?? ''), url: element.url ?? '').getVideo();
+          }
+        });
+        _data!.homeCards.forEach((element) {
+          if (!TextUtil.isEmpty(element.tutorial)) {
+            SyncDownloadVideo(type: getFileType(element.tutorial!), url: element.tutorial!).getVideo();
           }
         });
         EventBusHelper().eventBus.fire(OnEffectNsfwChangeEvent());
