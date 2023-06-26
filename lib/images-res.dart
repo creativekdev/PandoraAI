@@ -49,9 +49,9 @@ class Images {
    static const String ic_choose_photo_initial_header = 'assets/images/ic_choose_photo_initial_header.png';
    static const String ic_choose_photo_initial_text = 'assets/images/ic_choose_photo_initial_text.png';
    static const String ic_close = 'assets/images/ic_close.png';
-   static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_compare_arrow = 'assets/images/ic_compare_arrow.png';
    static const String ic_compare_top = 'assets/images/ic_compare_top.png';
+   static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
@@ -183,7 +183,6 @@ class Images {
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_slider = 'assets/images/ic_slider.png';
-   static const String ic_style_morph_top = 'assets/images/ic_style_morph_top.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_switch_images = 'assets/images/ic_switch_images.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
