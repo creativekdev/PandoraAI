@@ -108,11 +108,6 @@ dependencies:
 dependency_overrides:
   intl: 0.18.1
   image_cropper: ^4.0.1
-<<<<<<< .mine
-#  intl: 0.18.1
-=======
-
->>>>>>> .theirs
 dev_dependencies:
   flutter_test:
     sdk: flutter
