@@ -32,6 +32,7 @@ class _CropperScreenState extends State<CropperScreen> {
                   cropperKey: _cropperKey,
                   overlayType: OverlayType.grid,
                   rotationTurns: _rotationTurns,
+                  aspectRatio: 0.5,
                   image: Image.memory(_imageToCrop!),
                   onScaleStart: (details) {
                     // todo: define started action.

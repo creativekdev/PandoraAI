@@ -21,10 +21,14 @@ import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/FilterCropScreen.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/mine/filter/ImCropScreen.dart';
+import 'package:cartoonizer/views/mine/filter/ImCropper.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
+import 'package:cropperx/cropperx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+
+import 'Crop.dart';
 
 
 
@@ -49,6 +53,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   late imgLib.Image _image;
   Uint8List? _byte;
   final picker = ImagePicker();
+  final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
 
   // List<ChooseTabItemInfo> tabItemList = [];
   late ItemScrollController itemScrollController;
@@ -61,7 +66,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   int selectedEffectID = 0;
   Filter filter = new Filter();
   Adjust adjust = new Adjust();
-
+  Crop crop = new Crop();
   int currentAdjustID = 0;
 
   int selectedCropID = 0;
@@ -122,22 +127,22 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       buttons.add(GestureDetector(
         onTap: () {
           // Handle button press
-          if(cur == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                settings: RouteSettings(name: "/CropperScreen"),
-                builder: (context) =>
-                    CropperScreen(),
-              ),
-            ).then((value) {
-
-            });
-          } else{
+          // if(cur == 3) {
+          //   Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       settings: RouteSettings(name: "/CropperScreen"),
+          //       builder: (context) =>
+          //           CropperScreen(),
+          //     ),
+          //   ).then((value) {
+          //
+          //   });
+          // } else{
             setState(() {
               selectedRightTab = cur;
             });
-          }
+          // }
         },
         child: Container(
           width: 50,
@@ -475,7 +480,32 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     return Expanded(child:Container(
       margin: EdgeInsets.only(top: 5),
       child: _byte != null
-          ?Image.memory(
+          ? (selectedRightTab ==3)
+      ?Container(
+        color: Colors.black,
+        constraints: BoxConstraints(
+          maxHeight: 800.0, // Set the maximum height
+        ),
+        child: Center(
+          child: Cropper(
+            cropperKey: _cropperKey,
+            overlayType: OverlayType.grid,
+            rotationTurns: 0,
+            aspectRatio: crop.aspectRatio,
+            image: Image.memory(_byte!),
+            onScaleStart: (details) {
+              // todo: define started action.
+            },
+            onScaleUpdate: (details) {
+              // todo: define updated action.
+            },
+            onScaleEnd: (details) {
+              // todo: define ended action.
+            },
+          ),
+        ),
+      )
+      :Image.memory(
         _byte!,
         width: 300,
         height: 300,
@@ -664,19 +694,29 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           );
         },
         child: (adjust.getSelectedID() != cur_i)?
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: (adjust.getSelectedID() == cur_i)?
-            Border.all(color: const Color(0xFF05E0D5), width: 2)
-            :Border.all(color: Colors.grey, width: 2),
-          ),
-          child: CircleAvatar(
-            backgroundImage: AssetImage(Adjust.assets[cur_i]),
-            radius: 20.0,
-            backgroundColor: Colors.transparent,
-          ),
+        Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: (adjust.getSelectedID() == cur_i)?
+                Border.all(color: const Color(0xFF05E0D5), width: 2)
+                    :Border.all(color: Colors.grey, width: 2),
+              ),
+              child: CircleAvatar(
+                radius: 20.0,
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.center,
+                child: Image.asset(Adjust.assets[cur_i], width: 25, height: 25),
+              ),
+            ),
+          ]
         )
+
         : Stack(
           children: [
             (adjust.getSelectedValue() >= 0)?
@@ -770,14 +810,16 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   }
   Widget _buildCrops() {
     List<Widget> buttons = [];
-    List<List<int>> ratios = [[2, 3, 20, 30], [3,2,30,20], [3,4,22,30],[4,3,30,22],[1,1,30,30]];
     int i = 0;
-    for(List<int> ratio in ratios){
+    for(List<int> ratio in crop.ratios){
       int curi = i;
       buttons.add(
           GestureDetector(
             onTap: () {
-              selectedRightTab = curi;
+              setState(() {
+                crop.selectedID = curi;
+                crop.aspectRatio = crop.ratios[curi][0] / crop.ratios[curi][1];
+              });
             },
             child: Column(
               children: [
@@ -790,10 +832,10 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
                       height: ratio.elementAt(3).toDouble(),
                       decoration: BoxDecoration(
                         border: Border(
-                          top: BorderSide(width: 2.0, color: Colors.white),
-                          left: BorderSide(width: 2.0, color: Colors.white),
-                          right: BorderSide(width: 2.0, color: Colors.white),
-                          bottom: BorderSide(width: 2.0, color: Colors.white),
+                          top: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
+                          left: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
+                          right: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
+                          bottom: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
                         ),
                       ),
                     ),
@@ -803,7 +845,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
                 Text(
                   ratio.elementAt(0).toString() + ":" + ratio.elementAt(1).toString(),
                   style: TextStyle(
-                      color: Colors.white
+                      color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white
                   ),
                 )
               ],
