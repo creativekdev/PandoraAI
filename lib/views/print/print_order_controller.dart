@@ -12,41 +12,23 @@ class PrintOrderController extends GetxController {
   String getTabName(String name, BuildContext context) {
     switch (name) {
       case "All":
-        return S
-            .of(context)
-            .all;
+        return S.of(context).all;
       case "Pending":
-        return S
-            .of(context)
-            .pending;
+        return S.of(context).pending;
       case "Unpaid":
-        return S
-            .of(context)
-            .unpaid;
+        return S.of(context).unpaid;
       case "Paid":
-        return S
-            .of(context)
-            .paid;
+        return S.of(context).paid;
       case "Refunded":
-        return S
-            .of(context)
-            .refunded;
+        return S.of(context).refunded;
       case "voided":
-        return S
-            .of(context)
-            .voided;
+        return S.of(context).voided;
       case "Partial delivered":
-        return S
-            .of(context)
-            .partial_delivered;
+        return S.of(context).partial_delivered;
       case "Fulfilled":
-        return S
-            .of(context)
-            .fulfilled;
+        return S.of(context).fulfilled;
       case "Restocked":
-        return S
-            .of(context)
-            .restocked;
+        return S.of(context).restocked;
     }
     return "";
   }
@@ -94,11 +76,11 @@ class PrintOrderController extends GetxController {
       timerUtil.cancel();
     });
     searchOrderController.addListener(() {
-      _onTextChanged();
+      onTextChanged();
     });
   }
 
-  void _onTextChanged() {
+  void onTextChanged() {
     timerUtil.cancel();
     timerUtil.startTimer();
   }

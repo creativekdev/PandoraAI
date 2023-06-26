@@ -72,7 +72,9 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
                         // onChange: (String value) {
                         //   controller.name = value;
                         // },
-                        // onStartSearch: () {},
+                        onStartSearch: () {
+                          controller.onTextChanged();
+                        },
                         contentPadding: EdgeInsets.only(bottom: $(10)),
                       ).intoContainer(
                         padding: EdgeInsets.only(left: $(10)),

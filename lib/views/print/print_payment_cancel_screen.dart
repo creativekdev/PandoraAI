@@ -52,6 +52,10 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         backAction: () {
+          if (MyApp.routeObserver.isContainRoute('/PrintOrderScreen')) {
+            Navigator.popUntil(context, ModalRoute.withName('/PrintOrderScreen'));
+            return;
+          }
           Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
         },
       ),

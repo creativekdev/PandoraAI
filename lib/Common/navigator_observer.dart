@@ -13,6 +13,15 @@ class AppRouteObserver extends NavigatorObserver {
     return null;
   }
 
+  bool isContainRoute(String route) {
+    for (var i = 0; i < _routeHistory.length; i++) {
+      if (_routeHistory[i].settings.name == route) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
