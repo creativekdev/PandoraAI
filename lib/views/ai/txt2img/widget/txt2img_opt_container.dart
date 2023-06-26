@@ -123,7 +123,6 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
                       )
                       .intoGestureDetector(onTap: onDownloadTap)
                       .intoContainer(alignment: Alignment.center)),
-              SizedBox(width: $(16)),
               Expanded(
                 child: Image.asset(
                   Images.ic_share_print,
@@ -135,7 +134,6 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
                     .intoGestureDetector(onTap: onPrintTap)
                     .intoContainer(alignment: Alignment.center),
               ),
-              SizedBox(width: $(16)),
               Expanded(
                 child: Image.asset(
                   Images.ic_share_discovery,

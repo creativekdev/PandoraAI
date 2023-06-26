@@ -43,7 +43,10 @@ class _PAICameraScreenState extends State<PAICameraScreen> {
       backgroundColor: ColorConstant.BackgroundColor,
       body: AppCamera(onTakePhoto: (xFile, ration, source) {
         Navigator.of(context).pop(PAICameraEntity(source: source, xFile: xFile));
-      }),
+      }).intoContainer(
+        width: ScreenUtil.screenSize.width,
+        height: ScreenUtil.screenSize.height,
+      ),
     );
   }
 }

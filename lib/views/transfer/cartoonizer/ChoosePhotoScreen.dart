@@ -1180,6 +1180,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 height: $(16),
                 width: $(2),
                 color: ColorConstant.White,
+                margin: EdgeInsets.only(right: $(20)),
               ).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
             ),
             Expanded(
@@ -1188,27 +1189,21 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Obx(
-                  () => Image.asset(Images.ic_camera, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        // onTap: () => showPickPhotoDialog(context),
-                        onTap: () => pickFromRecent(context),
-                      )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
-                      .visibility(visible: controller.isPhotoSelect.value),
+                  () => Expanded(
+                      child: Image.asset(Images.ic_camera, height: $(24), width: $(24)).intoGestureDetector(
+                    // onTap: () => showPickPhotoDialog(context),
+                    onTap: () => pickFromRecent(context),
+                  )).visibility(visible: controller.isPhotoSelect.value),
                 ),
-                Obx(() => Image.asset(Images.ic_share_print, height: $(24), width: $(24))
-                    .intoGestureDetector(
+                Obx(() => Expanded(
+                        child: Image.asset(Images.ic_share_print, height: $(24), width: $(24)).intoGestureDetector(
                       onTap: () => Print.open(context, source: 'facetoon', file: File(image)),
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
-                    .visibility(visible: controller.isPhotoDone.value)),
+                    )).visibility(visible: controller.isPhotoDone.value)),
                 Obx(
-                  () => Image.asset(Images.ic_download, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => showSavePhotoDialog(context),
-                      )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(35)))
-                      .visibility(visible: controller.isPhotoDone.value),
+                  () => Expanded(
+                      child: Image.asset(Images.ic_download, height: $(24), width: $(24)).intoGestureDetector(
+                    onTap: () => showSavePhotoDialog(context),
+                  )).visibility(visible: controller.isPhotoDone.value),
                 ),
               ],
             ))
@@ -1668,7 +1663,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
             bool isLogin = !userManager.isNeedLogin;
             if (!isLogin) {
-              showDialogLogin(context, sharedPrefs);
+              delay(() => showDialogLogin(context, sharedPrefs), milliseconds: 500);
             } else {
               CommonExtension().showToast(S.of(context).DAILY_IP_LIMIT_EXCEEDED);
             }
