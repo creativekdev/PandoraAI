@@ -87,7 +87,9 @@ class DiscoveryListController extends GetxController {
       } else {
         // Set the likeId property to null for each data item in the data list.
         for (var value in dataList) {
-          value.data!.likeId = null;
+          if (value.data is DiscoveryListEntity) {
+            value.data!.likeId = null;
+          }
         }
         // Update the view.
         update();

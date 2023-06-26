@@ -374,6 +374,8 @@ class PrintShippingController extends GetxController {
     apartmentController.dispose();
     firstNameController.dispose();
     secondNameController.dispose();
+    searchAddressFocusNode.dispose();
+    zipCodeController.dispose();
     contactNumberController.dispose();
     _overlayEntry?.remove();
     _overlayEntry = null;

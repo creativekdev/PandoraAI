@@ -22,7 +22,6 @@ import 'package:cartoonizer/views/ai/anotherme/libcopy/camera_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/libcopy/camera_preview.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/rotate_widget.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/take_photo_button.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:photo_manager/photo_manager.dart';
 import 'package:sensors_plus/sensors_plus.dart';
