@@ -6,6 +6,8 @@ import 'package:cartoonizer/views/print/widgets/print_shipping_info_item.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
+import '../../app/app.dart';
+import '../../app/user/user_manager.dart';
 import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 
@@ -30,6 +32,7 @@ class PrintPaymentSuccessScreen extends StatefulWidget {
 class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
   late PrintOrdersDataRowsPayloadOrder order;
   late PrintOrdersDataRowsPayloadRepay repay;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -162,10 +165,10 @@ class _PrintPaymentSuccessScreenState extends State<PrintPaymentSuccessScreen> {
               value: repay.customer.firstName + " " + repay.customer.lastName,
               color: ColorConstant.White,
             ),
-            if (order.contactEmail != null)
+            if (userManager.user?.getShownEmail() != null)
               PrintShippingInfoItem(
                 image: Images.ic_order_email,
-                value: order.contactEmail,
+                value: userManager.user!.getShownEmail(),
                 color: ColorConstant.White,
               ),
             PrintShippingInfoItem(

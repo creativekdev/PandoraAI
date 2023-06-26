@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
@@ -10,6 +11,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/router/routers.dart';
+import '../../app/app.dart';
 import '../../images-res.dart';
 import '../../models/print_orders_entity.dart';
 
@@ -34,6 +36,7 @@ class PrintPaymentCancelScreen extends StatefulWidget {
 class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
   late PrintOrdersDataRowsPayloadOrder order;
   late PrintOrdersDataRowsPayloadRepay repay;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -160,10 +163,10 @@ class _PrintPaymentCancelScreenState extends State<PrintPaymentCancelScreen> {
               value: repay.customer.firstName + " " + repay.customer.lastName,
               color: ColorConstant.White,
             ),
-            if (order.contactEmail != null)
+            if (userManager.user?.getShownEmail() != null)
               PrintShippingInfoItem(
                 image: Images.ic_order_email,
-                value: order.contactEmail,
+                value: userManager.user!.getShownEmail(),
                 color: ColorConstant.White,
               ),
             PrintShippingInfoItem(
