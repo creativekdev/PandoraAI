@@ -3,7 +3,7 @@ import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 
 class AGOptContainer extends StatefulWidget {
-  GestureTapCallback onShareTap;
+  GestureTapCallback onPrintTap;
   GestureTapCallback onShareDiscoveryTap;
   GestureTapCallback onDownloadTap;
   GestureTapCallback onGenerateAgainTap;
@@ -15,7 +15,7 @@ class AGOptContainer extends StatefulWidget {
     required this.onDisplayTap,
     required this.onDownloadTap,
     required this.onGenerateAgainTap,
-    required this.onShareTap,
+    required this.onPrintTap,
     required this.onShareDiscoveryTap,
     required this.displayText,
   }) : super(key: key);
@@ -25,7 +25,7 @@ class AGOptContainer extends StatefulWidget {
 }
 
 class AGOptContainerState extends State<AGOptContainer> with SingleTickerProviderStateMixin {
-  late GestureTapCallback onShareTap;
+  late GestureTapCallback onPrintTap;
   late GestureTapCallback onDownloadTap;
   late GestureTapCallback onGenerateAgainTap;
   late GestureTapCallback onShareDiscoveryTap;
@@ -40,7 +40,7 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
     super.initState();
     displayText = widget.displayText;
     onDisplayTap = widget.onDisplayTap;
-    onShareTap = widget.onShareTap;
+    onPrintTap = widget.onPrintTap;
     onDownloadTap = widget.onDownloadTap;
     onGenerateAgainTap = widget.onGenerateAgainTap;
     onShareDiscoveryTap = widget.onShareDiscoveryTap;
@@ -114,18 +114,6 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
               ),
               SizedBox(width: $(16)),
               Expanded(
-                child: Image.asset(
-                  Images.ic_share,
-                  width: $(24),
-                )
-                    .intoContainer(
-                      padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)),
-                    )
-                    .intoGestureDetector(onTap: onShareTap)
-                    .intoContainer(alignment: Alignment.center),
-              ),
-              SizedBox(width: $(16)),
-              Expanded(
                   child: Image.asset(
                 Images.ic_download,
                 width: $(24),
@@ -135,7 +123,17 @@ class AGOptContainerState extends State<AGOptContainer> with SingleTickerProvide
                       )
                       .intoGestureDetector(onTap: onDownloadTap)
                       .intoContainer(alignment: Alignment.center)),
-              SizedBox(width: $(16)),
+              Expanded(
+                child: Image.asset(
+                  Images.ic_share_print,
+                  width: $(24),
+                )
+                    .intoContainer(
+                      padding: EdgeInsets.symmetric(vertical: $(10), horizontal: $(10)),
+                    )
+                    .intoGestureDetector(onTap: onPrintTap)
+                    .intoContainer(alignment: Alignment.center),
+              ),
               Expanded(
                 child: Image.asset(
                   Images.ic_share_discovery,

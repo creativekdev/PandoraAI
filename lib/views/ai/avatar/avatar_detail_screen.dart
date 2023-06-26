@@ -247,7 +247,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
                     .intoGestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => SaveAvatarsScreen(outputImages: entity.outputImages)),
+                      MaterialPageRoute(builder: (_) => SaveAvatarsScreen(outputImages: entity.outputImages), settings: RouteSettings(name: '/SaveAvatarsScreen')),
                     );
                   },
                 ).intoContainer(

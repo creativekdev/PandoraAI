@@ -150,3 +150,28 @@ Map<String, dynamic> $RecentGroundEntityToJson(RecentGroundEntity entity) {
 	data['parameters'] = entity.parameters;
 	return data;
 }
+
+RecentColoringEntity $RecentColoringEntityFromJson(Map<String, dynamic> json) {
+	final RecentColoringEntity recentColoringEntity = RecentColoringEntity();
+	final int? updateDt = jsonConvert.convert<int>(json['updateDt']);
+	if (updateDt != null) {
+		recentColoringEntity.updateDt = updateDt;
+	}
+	final String? filePath = jsonConvert.convert<String>(json['filePath']);
+	if (filePath != null) {
+		recentColoringEntity.filePath = filePath;
+	}
+	final String? originFilePath = jsonConvert.convert<String>(json['originFilePath']);
+	if (originFilePath != null) {
+		recentColoringEntity.originFilePath = originFilePath;
+	}
+	return recentColoringEntity;
+}
+
+Map<String, dynamic> $RecentColoringEntityToJson(RecentColoringEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['updateDt'] = entity.updateDt;
+	data['filePath'] = entity.filePath;
+	data['originFilePath'] = entity.originFilePath;
+	return data;
+}

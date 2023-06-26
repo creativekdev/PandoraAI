@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
             var current = DateTime.now().millisecondsSinceEpoch;
             var duration = current - lastLocaleTime;
             Locale? result;
-            if (duration > 200) {
+            if (duration > 2000) {
               lastLocaleTime = current;
               debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
               theme.AppContext.currentLocales = deviceLocale.languageCode;
@@ -236,16 +236,14 @@ class _MyHomePageState extends State<MyHomePage> {
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {
       _checkAppVersion().then((value) {
-        if (value ?? false) {
-          var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
-          thirdpartManager.adsHolder.initHolder();
-          delay(() => openApp(force: true), milliseconds: 2000);
-        }
+        var thirdpartManager = AppDelegate.instance.getManager<ThirdpartManager>();
+        thirdpartManager.adsHolder.initHolder();
+        delay(() => openApp(force: true), milliseconds: 2000);
       });
     } else {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (BuildContext context) => IntroductionScreen()),
+        MaterialPageRoute(settings:RouteSettings(name: '/IntroductionScreen'), builder: (BuildContext context) => IntroductionScreen()),
         ModalRoute.withName('/IntroductionScreen'),
       );
     }

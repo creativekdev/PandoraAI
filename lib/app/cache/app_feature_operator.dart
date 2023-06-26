@@ -7,10 +7,11 @@ import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'cache_manager.dart';
@@ -50,60 +51,18 @@ class AppFeatureOperator {
       return false;
     }
     var result = await Navigator.of(context).push<bool>(Bottom2TopRouter(
-        child: AppFeaturePage(
-      entity: feature,
-    )));
+      settings: RouteSettings(name: '/AppFeaturePage'),
+      child: AppFeaturePage(
+        entity: feature,
+      ),
+    ));
     cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
 
     if (result ?? false) {
-      onFeatureTap(context, feature.feature());
+      HomeCardTypeUtils.jump(context: context, source: 'in_app_messaging', payload: feature.feature());
       return true;
     }
     return false;
-  }
-
-  onFeatureTap(BuildContext context, AppFeaturePayload? payload) {
-    var target = HomeCardTypeUtils.build(payload?.target ?? '');
-    switch (target) {
-      case HomeCardType.txt2img:
-        Txt2img.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(context, source: 'in_app_messaging');
-          } else {
-            AnotherMe.permissionDenied(context);
-          }
-        });
-        break;
-      case HomeCardType.cartoonize:
-        var split = payload!.data?.split(',');
-        InitPos pos = InitPos();
-        if (split != null && split.length >= 2) {
-          var controller = Get.find<EffectDataController>();
-          pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
-        }
-        Cartoonize.open(
-          context,
-          source: 'in_app_messaging',
-          tabPos: pos.itemPos,
-          categoryPos: pos.categoryPos,
-          itemPos: pos.itemPos,
-        );
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(context, source: 'in_app_messaging');
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(context, source: 'in_app_messaging');
-        break;
-      default:
-        break;
-    }
   }
 }
 

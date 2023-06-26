@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_controller.dart';
@@ -21,6 +22,7 @@ import 'package:cartoonizer/views/ai/txt2img/widget/txt2img_opt_container.dart';
 import 'package:cartoonizer/views/ai/txt2img/widget/prompt_border.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -107,6 +109,9 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         blurAble: true,
+        trailing: Image.asset(Images.ic_share, height: $(24), width: $(24)).intoGestureDetector(
+          onTap: () => shareOut(context),
+        ),
       ),
       body: GetBuilder<Txt2imgController>(
         init: controller,
@@ -150,32 +155,8 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                 onGenerateAgainTap: () {
                   generate(controller);
                 },
-                onShareTap: () async {
-                  var image = await getBitmapFromContext(key.currentContext!, pixelRatio: 1.5);
-                  if (image == null) {
-                    hideLoading().whenComplete(() {
-                      CommonExtension().showToast(S.of(context).commonFailedToast);
-                    });
-                  } else {
-                    var byteData = await image.toByteData(format: ImageByteFormat.png);
-                    Uint8List list = byteData!.buffer.asUint8List();
-                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                    ShareScreen.startShare(context,
-                        backgroundColor: Color(0x77000000),
-                        style: 'txt2img',
-                        image: base64Encode(list),
-                        isVideo: false,
-                        originalUrl: null,
-                        effectKey: 'txt2img', onShareSuccess: (platform) {
-                      Events.txt2imgCompleteShare(
-                        source: 'txt2img',
-                        platform: platform,
-                        type: 'image',
-                        textDisplay: controller.displayText,
-                      );
-                    });
-                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                  }
+                onPrintTap: () async {
+                  Print.open(context, source: 'txt2img', file: File(controller.filePath!));
                 },
                 onShareDiscoveryTap: () async {
                   AppDelegate.instance.getManager<UserManager>().doOnLogin(
@@ -189,7 +170,7 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
                         originalUrl: null,
                         image: base64Encode(list),
                         isVideo: false,
-                        category: DiscoveryCategory.txt2img,
+                        category: HomeCardType.txt2img,
                         payload: controller.parameters != null
                             ? jsonEncode({
                                 "txt2img_params": controller.parameters,
@@ -374,6 +355,29 @@ class _Txt2imgResultScreenState extends AppState<Txt2imgResultScreen> {
           fit: BoxFit.contain,
         ),
       );
+    }
+  }
+
+  shareOut(BuildContext context) async {
+    var image = await getBitmapFromContext(key.currentContext!, pixelRatio: 1.5);
+    if (image == null) {
+      hideLoading().whenComplete(() {
+        CommonExtension().showToast(S.of(context).commonFailedToast);
+      });
+    } else {
+      var byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List list = byteData!.buffer.asUint8List();
+      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+      ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: 'txt2img', image: base64Encode(list), isVideo: false, originalUrl: null, effectKey: 'txt2img',
+          onShareSuccess: (platform) {
+        Events.txt2imgCompleteShare(
+          source: 'txt2img',
+          platform: platform,
+          type: 'image',
+          textDisplay: controller.displayText,
+        );
+      });
+      AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
     }
   }
 }

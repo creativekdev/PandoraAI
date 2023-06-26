@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:cartoonizer/Widgets/webview/js_list.dart';
+import 'package:cartoonizer/utils/color_util.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../Common/importFile.dart';
@@ -13,36 +17,74 @@ class PrintWebItem extends StatefulWidget {
 class _PrintWebItemState extends State<PrintWebItem> {
   double webViewHeight = 300.0;
   WebViewController? _controller;
+  late String html;
+  late List<String> imageUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    html = widget.htmlString.html();
+    imageUrl = ColorUtil.matchImageUrl(html);
+    var colors = ColorUtil.matchColorStrings(html);
+    for (var value in colors) {
+      var newRgb = ColorUtil.invertColor(value);
+      if (!newRgb.isEmpty) {
+        html = html.replaceAll(value, newRgb);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: webViewHeight,
       color: ColorConstant.BackgroundColor,
-      padding: EdgeInsets.symmetric(horizontal: $(17)),
       child: WebView(
         backgroundColor: ColorConstant.BackgroundColor,
-        initialUrl: 'about:blank',
+        initialUrl: Uri.dataFromString(html, mimeType: 'text/html', encoding: Encoding.getByName('utf-8')).toString(),
+        javascriptMode: JavascriptMode.unrestricted,
+        //inject method into dom
+        javascriptChannels: <JavascriptChannel>[
+          JavascriptChannel(
+              name: 'onSizeChanged',
+              onMessageReceived: (JavascriptMessage message) {
+                debugPrint("参数： ${message.message}");
+                var map = jsonDecode(message.message);
+                setState(() {
+                  webViewHeight = double.parse(map['height'].toString());
+                });
+                _controller?.runJavascript(JsList.getImgWidthResizeJavascript());
+              }),
+        ].toSet(),
         onWebViewCreated: (WebViewController controller) {
           _controller = controller;
-          controller.loadUrl(Uri.dataFromString(
-                  "<html><body style='color: white;'>${widget.htmlString}</body></html>",
-                  mimeType: 'text/html')
-              .toString());
         },
         onPageFinished: (String url) async {
-          _controller
-              ?.evaluateJavascript(
-            'document.documentElement.scrollHeight.toString()',
-          )
-              .then((result) {
-            double newHeight = double.tryParse(result) ?? 0.0;
-            setState(() {
-              webViewHeight = newHeight;
-            });
-          });
+          _controller?.runJavascript(JsList.getSizeChangedJavascript());
         },
       ),
     );
+  }
+}
+
+extension _HtmlStringEx on String {
+  String html() {
+    return '<html><head>'
+        '<meta charset=\'utf-8\'>'
+        '<meta name=\'viewport\' id=\'viewport\' '
+        'content=\'width=device-width,height=device-height,'
+        'target-densitydpi=high-dpi,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no\'>'
+        '</head>'
+        '<style type=\'text/css\'>'
+        'html, body p {color: #000; background: #000;}'
+        '*{margin: 0;padding: 0;outline: none;cursor: pointer;}'
+        '.main{width: 90%;margin:0 auto;}'
+        'img{width: 100%;margin: 0;padding: 0;border: 0;}'
+        'p:empty{line-height:0;}'
+        'p{margin:10px 0;}'
+        '</style>'
+        '<body><div style="padding: 12px;">'
+        '$this</div></body>'
+        '</html>';
   }
 }

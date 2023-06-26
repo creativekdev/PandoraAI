@@ -3,27 +3,34 @@ import 'dart:io';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/txt2img_result_entity.dart';
 import 'package:cartoonizer/models/txt2img_style_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:cartoonizer/utils/array_util.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../app/user/user_manager.dart';
 
 class Text2ImageApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
-  Text2ImageApi():super(client: DioNode().build());
+
+  Text2ImageApi() : super(client: DioNode().build());
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
     var userManager = AppDelegate.instance.getManager<UserManager>();
+    var effectManager = AppDelegate.instance.getManager<EffectManager>();
     Map<String, String> headers = {};
     headers['cookie'] = "sb.connect.sid=${userManager.sid}";
-    return ApiOptions(baseUrl: userManager.aiServers['sdserver'] ?? 'https://ai.pandoraai.app:7003', headers: headers);
+    var apiConfigEntity = await effectManager.loadData();
+    var pick = apiConfigEntity?.aiConfig.pick((t) => t.key == 'txt2img');
+    return ApiOptions(baseUrl: pick?.serverUrl ?? 'https://ai.pandoraai.app:7003', headers: headers);
   }
 
   Future<String?> randomPrompt() async {

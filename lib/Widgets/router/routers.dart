@@ -7,7 +7,7 @@ class ScaleRouter<T> extends PageRouteBuilder<T> {
   final Curve curve;
 
   ScaleRouter({
-    super.settings,
+    required super.settings,
     required this.child,
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
@@ -30,7 +30,7 @@ class FadeRouter<T> extends PageRouteBuilder<T> {
   final Curve curve;
 
   FadeRouter({
-    super.settings,
+    required super.settings,
     required this.child,
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
@@ -59,7 +59,7 @@ class RotateRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             pageBuilder: (context, animation, secondaryAnimation) => child,
@@ -84,7 +84,7 @@ class Top2BottomRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             transitionDuration: Duration(milliseconds: duration),
@@ -119,7 +119,7 @@ class Left2RightRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   })  : assert(true),
         super(
             opaque: opaque,
@@ -153,7 +153,7 @@ class Bottom2TopRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             transitionDuration: Duration(milliseconds: duration),
@@ -186,7 +186,7 @@ class Right2LeftRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             transitionDuration: Duration(milliseconds: duration),
@@ -219,7 +219,7 @@ class ScaleFadeRotateRouter<T> extends PageRouteBuilder<T> {
     this.duration = 500,
     this.curve = Curves.fastOutSlowIn,
     bool opaque = true,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             transitionDuration: Duration(milliseconds: duration),
@@ -258,7 +258,7 @@ class NoAnimRouter<T> extends PageRouteBuilder<T> {
   NoAnimRouter(
     this.page, {
     bool opaque = false,
-    super.settings,
+    required super.settings,
   }) : super(
             opaque: opaque,
             pageBuilder: (context, animation, secondaryAnimation) => page,

@@ -157,7 +157,12 @@ class Events {
 
   static Future<void> aidrawLoading({required String source}) => logEvent('aidraw_loading', eventValues: {'source': source});
 
-  static Future<void> aidrawCompleteSuccess() => logEvent('aidraw_completed_success');
+  static Future<void> aidrawCameraClick({required String source, required String photoType}) => logEvent('aidraw_loading', eventValues: {'source': source, 'type': photoType});
+
+  static Future<void> aidrawCompleteSuccess({required String source, required String photoType}) => logEvent('aidraw_completed_success', eventValues: {
+        'source': source,
+        'type': photoType,
+      });
 
   static Future<void> aidrawCompleteShare({
     required String source,
@@ -251,6 +256,45 @@ class Events {
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
 
   static Future<void> styleMorphGenerateAgain({required int time}) => logEvent('stylemorph_completed_generateagain', eventValues: {'time': '${time}'});
+
+  static Future<void> aiColoringLoading({required String source}) => logEvent('aicoloring_loading', eventValues: {'source': source});
+
+  static Future<void> aiColoringCameraClick({required String source, required String photoType}) =>
+      logEvent('aicoloring_loading', eventValues: {'source': source, 'type': photoType});
+
+  static Future<void> aiColoringCompleteSuccess({required String source, required String photoType}) => logEvent('aicoloring_completed_success', eventValues: {
+        'source': source,
+        'type': photoType,
+      });
+
+  static Future<void> aiColoringCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('aicoloring_completed_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
+  static Future<void> aiColoringCompleteDownload({required String type}) => logEvent('aicoloring_completed_download', eventValues: {'type': type});
+
+  static Future<void> aiColoringGenerateAgain({required int time}) => logEvent('aicoloring_completed_generateagain', eventValues: {'time': '${time}'});
+
+  static Future<void> printIconClick({required String source}) => logEvent('print_icon_click', eventValues: {'source': source});
+
+  static Future<void> printGoodsSelectClick({required String source, required String goodsId}) => logEvent('print_icon_click', eventValues: {'source': source, 'goodsId': goodsId});
+
+  static Future<void> printCreateOrder({required String source}) => logEvent('print_create_order', eventValues: {'source': source});
+
+  static Future<void> printStartPay({required String source, required String orderId}) => logEvent('print_start_pay', eventValues: {'source': source, 'orderId': orderId});
+
+  static Future<void> printPayOrderSuccess({required String source, required String orderId}) =>
+      logEvent('print_order_pay_success', eventValues: {'source': source, 'orderId': orderId});
+
+  static Future<void> printPayOrderCancel({required String source, required String orderId}) =>
+      logEvent('print_order_pay_cancel', eventValues: {'source': source, 'orderId': orderId});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

@@ -15,6 +15,7 @@ class AvatarAiManager extends BaseManager {
   AvatarConfigEntity? config;
   bool listPageAlive = false;
   late StreamSubscription userLoginListen;
+  late StreamSubscription onAppStateListener;
 
   @override
   Future<void> onCreate() async {
@@ -22,15 +23,20 @@ class AvatarAiManager extends BaseManager {
     userLoginListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       listAllAvatarAi();
     });
+    onAppStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
+      if (!(event.data ?? true)) {
+        refreshFromNet();
+      }
+    });
     api = CartoonizerApi().bindManager(this);
-
   }
 
   @override
   Future<void> onDestroy() async {
-    await super.onDestroy();
     userLoginListen.cancel();
     api.unbind();
+    onAppStateListener.cancel();
+    await super.onDestroy();
   }
 
   @override
@@ -45,19 +51,18 @@ class AvatarAiManager extends BaseManager {
 
   Future<AvatarConfigEntity?> getConfig() async {
     if (config != null) {
-      // api.getAvatarAiConfig().then((value) {
-      //   if (value != null) {
-      //     config = value;
-      //   }
-      // });
       return config;
     } else {
-      var avatarConfigEntity = await api.getAvatarAiConfig();
-      if (avatarConfigEntity != null) {
-        config = avatarConfigEntity;
-      }
-      return config;
+      return refreshFromNet();
     }
+  }
+
+  Future<AvatarConfigEntity?> refreshFromNet() async {
+    var avatarConfigEntity = await api.getAvatarAiConfig();
+    if (avatarConfigEntity != null) {
+      config = avatarConfigEntity;
+    }
+    return config;
   }
 
   Future<List<AvatarAiListEntity>?> listAllAvatarAi() async {

@@ -21,6 +21,7 @@ import 'package:cartoonizer/api/transform_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -28,13 +29,17 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/SignupScreen.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/choose_video_container.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
@@ -49,16 +54,10 @@ import '../../advertisement/reward_advertisement_screen.dart';
 import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
-enum EntrySource {
-  fromDiscovery,
-  fromEffect,
-}
-
 class ChoosePhotoScreen extends StatefulWidget {
   int tabPos;
   int pos;
   int itemPos;
-  EntrySource entrySource;
   RecentEffectModel? recentEffectModel;
 
   ChoosePhotoScreen({
@@ -66,7 +65,6 @@ class ChoosePhotoScreen extends StatefulWidget {
     required this.tabPos,
     required this.pos,
     required this.itemPos,
-    this.entrySource = EntrySource.fromEffect,
     this.recentEffectModel,
   }) : super(key: key);
 
@@ -320,12 +318,14 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
     itemScrollPositionsListener.itemPositions.removeListener(itemScrollPositionsListen);
   }
 
-  void judgeAiServers() {
-    if (userManager.aiServers.isEmpty) {
+  void judgeAiServers() async {
+    EffectManager effectManager = AppDelegate().getManager();
+    var data = await effectManager.loadData();
+    if ((data?.aiConfig ?? []).isEmpty) {
       delay(() {
         controller.changeIsLoading(true);
-        userManager.refreshUser().then((value) {
-          if (value.aiServers.isEmpty) {
+        effectManager.loadData(ignoreCache: true).then((value) {
+          if (value == null || value.aiConfig.isEmpty) {
             CommonExtension().showToast('Load server config failed');
             Navigator.of(context).pop();
           } else {
@@ -756,7 +756,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: videoUrl,
           isVideo: true,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');
@@ -773,7 +773,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           originalUrl: urlFinal,
           image: newImage,
           isVideo: false,
-          category: DiscoveryCategory.cartoonize,
+          category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
             Events.facetoonResultShare(platform: 'discovery');
@@ -799,10 +799,26 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               },
               backgroundColor: ColorConstant.BackgroundColor,
               trailing: Image.asset(
-                Images.ic_share,
+                Images.ic_more,
+                height: $(24),
                 width: $(24),
-              ).intoGestureDetector(onTap: () async {
-                shareOut();
+                color: Colors.white,
+              )
+                  .intoContainer(
+                alignment: Alignment.centerRight,
+                width: ScreenUtil.screenSize.width,
+              )
+                  .intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(context, listData: [
+                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                ], clickCallback: (index, title) {
+                  if (index == 0) {
+                    shareToDiscovery();
+                  } else {
+                    shareOut();
+                  }
+                });
               }).offstage(offstage: !controller.isPhotoDone.value),
             ),
             body: Column(
@@ -1164,6 +1180,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 height: $(16),
                 width: $(2),
                 color: ColorConstant.White,
+                margin: EdgeInsets.only(right: $(20)),
               ).offstage(offstage: !tabItemList[currentItemIndex.value].data.originalFace),
             ),
             Expanded(
@@ -1172,30 +1189,22 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Obx(
-                  () => Image.asset(Images.ic_camera, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        // onTap: () => showPickPhotoDialog(context),
-                        onTap: () => pickFromRecent(context),
-                      )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
-                      .visibility(visible: controller.isPhotoSelect.value),
+                  () => Expanded(
+                      child: Image.asset(Images.ic_camera, height: $(24), width: $(24)).intoGestureDetector(
+                    // onTap: () => showPickPhotoDialog(context),
+                    onTap: () => pickFromRecent(context),
+                  )).visibility(visible: controller.isPhotoSelect.value),
                 ),
+                Obx(() => Expanded(
+                        child: Image.asset(Images.ic_share_print, height: $(24), width: $(24)).intoGestureDetector(
+                      onTap: () => Print.open(context, source: 'facetoon', file: File(image)),
+                    )).visibility(visible: controller.isPhotoDone.value)),
                 Obx(
-                  () => Image.asset(Images.ic_download, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => showSavePhotoDialog(context),
-                      )
-                      .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
-                      .visibility(visible: controller.isPhotoDone.value),
+                  () => Expanded(
+                      child: Image.asset(Images.ic_download, height: $(24), width: $(24)).intoGestureDetector(
+                    onTap: () => showSavePhotoDialog(context),
+                  )).visibility(visible: controller.isPhotoDone.value),
                 ),
-                Obx(() => Image.asset(Images.ic_share_discovery, height: $(24), width: $(24))
-                    .intoGestureDetector(
-                      onTap: () {
-                        shareToDiscovery();
-                      },
-                    )
-                    .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)))
-                    .visibility(visible: controller.isPhotoDone.value)),
               ],
             ))
           ],
@@ -1650,10 +1659,9 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           controller.changeTransingImage(false);
           var responseBody = json.decode(tokenResponse.body);
           if (responseBody['code'] == 'DAILY_IP_LIMIT_EXCEEDED') {
-            bool isLogin = sharedPrefs.getBool("isLogin") ?? false;
-
+            bool isLogin = !userManager.isNeedLogin;
             if (!isLogin) {
-              showDialogLogin(context, sharedPrefs);
+              delay(() => showDialogLogin(context, sharedPrefs), milliseconds: 500);
             } else {
               CommonExtension().showToast(S.of(context).DAILY_IP_LIMIT_EXCEEDED);
             }
@@ -1696,7 +1704,11 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   String _getAiHostByStyle(EffectItem effect) {
     var server = effect.server;
-    return userManager.aiServers[server] ?? Config.instance.host;
+    if (server.contains('cartoonize')) {
+      server = 'cartoonize';
+    }
+    EffectManager effectManager = AppDelegate().getManager();
+    return effectManager.data!.aiConfig.pick((t) => t.key == server)?.serverUrl ?? Config.instance.host;
   }
 
   void showDialogLogin(BuildContext context, SharedPreferences sharedPrefs) {

@@ -26,6 +26,7 @@ import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../print/print_order_screen.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
@@ -156,13 +157,17 @@ class MineFragmentState extends AppState<MineFragment>
                 });
               }).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
-              ImageTextBarWidget(S.of(context).share_app,
-                      ImagesConstant.ic_share_app, true)
-                  .intoGestureDetector(onTap: () async {
-                AppDelegate.instance
-                    .getManager<ThirdpartManager>()
-                    .adsHolder
-                    .ignore = true;
+              ImageTextBarWidget(S.of(context).orders, Images.ic_my_orders, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      settings: RouteSettings(name: "/PrintOrderScreen"),
+                      builder: (context) => PrintOrderScreen(source: 'home_screen_mine'),
+                    ));
+              }).offstage(offstage: userManager.isNeedLogin),
+              line(context).offstage(offstage: userManager.isNeedLogin),
+              ImageTextBarWidget(S.of(context).share_app, ImagesConstant.ic_share_app, true).intoGestureDetector(onTap: () async {
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
                 final box = context.findRenderObject() as RenderBox?;
                 var file = File(

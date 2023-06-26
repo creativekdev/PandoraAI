@@ -149,3 +149,11 @@ class OnRetryDialogResultEvent extends BaseEvent<bool> {
 }
 
 class OnConnectionsChangeEvent extends BaseEvent {}
+
+class OnPrintOrderKeyChangeEvent extends BaseEvent<String> {
+  OnPrintOrderKeyChangeEvent({required super.data});
+}
+
+class OnPrintOrderTimeChangeEvent extends BaseEvent<List<DateTime?>> {
+  OnPrintOrderTimeChangeEvent({required super.data});
+}

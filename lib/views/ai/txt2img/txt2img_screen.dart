@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
@@ -70,7 +71,10 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
       delay(() {
         var forward = () {
           Navigator.of(context).push(
-            FadeRouter(child: Txt2imgResultScreen(controller: txt2imgController)),
+            FadeRouter(
+              settings: RouteSettings(name: '/Txt2imgResultScreen'),
+              child: Txt2imgResultScreen(controller: txt2imgController),
+            ),
           );
         };
         if (!TextUtil.isEmpty(history!.initImageFilePath)) {
@@ -78,7 +82,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
           if (file.existsSync()) {
             txt2imgController.initFile = file;
             showLoading().whenComplete(() {
-              imageCompressAndGetFile(file, imageSize: 768).then((value) {
+              imageCompressAndGetFile(file, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512).then((value) {
                 txt2imgController.uploadImageController.uploadCompressedImage(value).then((value) {
                   hideLoading().whenComplete(() {
                     forward.call();
@@ -480,7 +484,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                             if (source != null) {
                               controller.initFile = source;
                               showLoading().whenComplete(() async {
-                                File compressedImage = await imageCompressAndGetFile(source, imageSize: 768);
+                                File compressedImage = await imageCompressAndGetFile(source, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
                                 await uploadController.uploadCompressedImage(compressedImage);
                                 uploadController.update();
                                 hideLoading();
@@ -519,6 +523,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                       }
                       Navigator.of(context).push(
                         FadeRouter(
+                          settings: RouteSettings(name: '/Txt2imgResultScreen'),
                           child: Txt2imgResultScreen(controller: txt2imgController),
                           opaque: false,
                         ),

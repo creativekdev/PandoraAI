@@ -37,6 +37,7 @@ class PickPhotoScreen {
         onPickFromAiSource: onPickFromAiSource,
         floatWidget: floatWidget,
       ),
+      settings: RouteSettings(name: '/_PickPhotoScreen'),
     ));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
@@ -166,13 +167,14 @@ class AvatarAiController extends GetxController {
           if (sourceFile == null) {
             continue;
           }
-          file = await imageCompressAndGetFile(sourceFile, imageSize: 512);
+          file = await imageCompressAndGetFile(sourceFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
         } else {
           var list = await media.thumbnailDataWithSize(ThumbnailSize(512, 512), quality: 100);
           file = await imageCompressByte(Uint8List.fromList(list!), cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(originalFile.path) + ".png");
         }
       } else {
-        file = await imageCompress(originalFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(originalFile.path) + ".png");
+        file = await imageCompress(originalFile, cacheManager.storageOperator.tempDir.path + EncryptUtil.encodeMd5(originalFile.path) + ".png",
+            maxFileSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
       }
       if (stop) {
         return false;

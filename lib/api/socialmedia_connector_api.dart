@@ -6,11 +6,14 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:common_utils/common_utils.dart';
 
 class SocialMediaConnectorApi extends RetryAbleRequester {
   UserManager userManager = AppDelegate().getManager();
+
+  SocialMediaConnectorApi():super(client: DioNode().client);
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 
 // ANDROID_CHANNEL -> 单独发布的时候，需要指定一个 channel
@@ -14,6 +15,8 @@ const String KOCHAVA_IOS_ID = 'koprofilepicmaker-cartoon-photo-9i4q';
 const String PLATFORM_CHANNEL = 'io.socialbook/cartoonizer';
 const String APP_TITLE = 'Pandora AI';
 const String REF_CODE_LINK = 'pai://pandora.ai?rf=';
+const String ALIPAY_SCHEML_ANDROID = 'alipays://';
+const String ALIPAY_SCHEML_IOS = 'alipay://';
 
 class AdMobConfig {
   static bool _debug = false;
@@ -64,6 +67,10 @@ abstract class BaseConfig {
   late String metagramSocketSchema;
   late int metagramSocketPort;
 
+  String get successUrl;
+
+  String get cancelUrl;
+
 // appsflyer config
 // {"ios":{"id":id1604123460, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
 // {"android":{"id":io.socialbook.cartoonizer, devKey:"yUFpSbmg7YDETaZ5CQ2HkA", prodKey:"af_prod_key"}}
@@ -93,6 +100,10 @@ class DevelopmentConfig implements BaseConfig {
   String metagramSocket = 'io.socialbook.io';
   String metagramSocketSchema = 'https';
   int metagramSocketPort = 443;
+
+  String get successUrl => "$host/pay_success_screen";
+
+  String get cancelUrl => "$host/pay_cancel_screen";
 }
 
 class ProductionConfig implements BaseConfig {
@@ -106,6 +117,10 @@ class ProductionConfig implements BaseConfig {
   String metagramSocket = 'io.socialbook.io';
   String metagramSocketSchema = 'https';
   int metagramSocketPort = 443;
+
+  String get successUrl => "$host/pay_success_screen";
+
+  String get cancelUrl => "$host/pay_cancel_screen";
 }
 
 class Config {

@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/views/ai/avatar/dialog/choose_create_avatar_style_dialog.dart';
 import 'package:cartoonizer/views/ai/avatar/dialog/submit_avatar_dialog.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/choose_tab_bar.dart';
 import 'package:common_utils/common_utils.dart';
@@ -197,7 +198,7 @@ class AvatarIntroduceScreenState extends AppState<AvatarIntroduceScreen> {
           .intoGestureDetector(onTap: () {
         Function createAction = () {};
         createAction = () {
-          SubmitAvatarDialog.push(context).then((nameStyle) {
+          ChooseCreateAvatarStyle.push(context).then((nameStyle) {
             if (nameStyle != null) {
               Avatar.create(context, source: widget.source, name: nameStyle.key, style: nameStyle.value, state: this, onCancel: () {
                 createAction.call();

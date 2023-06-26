@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
-import 'package:cartoonizer/Common/events.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/ThemeConstant.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
@@ -28,6 +27,7 @@ import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/print_option_entity.dart';
+import 'package:cartoonizer/models/print_payment_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -38,6 +38,8 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../models/print_order_entity.dart';
+import '../models/print_orders_entity.dart';
 import '../models/print_product_entity.dart';
 
 class CartoonizerApi extends RetryAbleRequester {
@@ -100,7 +102,6 @@ class CartoonizerApi extends RetryAbleRequester {
         return OnlineModel(
           user: user,
           loginSuccess: login,
-          aiServers: data['ai_servers'],
           adConfig: adConfig,
           dailyLimitRuleEntity: dailyLimitRuleEntity,
           feature: featureEntity,
@@ -110,7 +111,6 @@ class CartoonizerApi extends RetryAbleRequester {
     return OnlineModel(
       user: null,
       loginSuccess: false,
-      aiServers: {},
       adConfig: AdConfigEntity(),
       dailyLimitRuleEntity: DailyLimitRuleEntity(),
       feature: null,
@@ -332,7 +332,6 @@ class CartoonizerApi extends RetryAbleRequester {
       }
     }, toastOnFailed: false, needRetry: false);
     if (baseEntity != null) {
-      print("127.0.0.1  baseEntity $baseEntity");
       var entity = jsonConvert.convert<PrintProductEntity>(baseEntity.data);
       return entity;
     }
@@ -393,10 +392,32 @@ class CartoonizerApi extends RetryAbleRequester {
     return baseEntity?.data?['data'];
   }
 
+  Future<PrintOrdersEntity?> getShopifyOrders(body) async {
+    var baseEntity = await get("/ps_order/all", params: body);
+    return jsonConvert.convert<PrintOrdersEntity>(baseEntity?.data);
+  }
+
+  Future<BaseEntity?> getShopifyOrderDetail(int id) async {
+    var baseEntity = await get("/ps_order/get/${id}");
+    return jsonConvert.convert<BaseEntity>(baseEntity?.data);
+  }
+
+  // buy plan with stripe
+  Future<PrintOrderEntity?> shopifyCreateOrder(body) async {
+    var baseEntity = await post("/shopify_v2/order/create", params: body, canClickRetry: false, needRetry: false);
+    return jsonConvert.convert<PrintOrderEntity>(baseEntity?.data);
+  }
+
   // buy plan with stripe
   Future<BaseEntity?> buyPlan(body) async {
     var baseEntity = await post("/plan/buy", params: body);
     return baseEntity;
+  }
+
+  // buy plan with check
+  Future<PrintPaymentEntity?> buyPlanCheckout(body) async {
+    var baseEntity = await post("/plan/checkout", params: body);
+    return jsonConvert.convert<PrintPaymentEntity>(baseEntity?.data);
   }
 
   // buy plan with stripe
@@ -476,7 +497,11 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<ApiConfigEntity?> getHomeConfig() async {
-    var baseEntity = await get("/tool/cartoonize_config/v6");
+    var baseEntity = await get(
+      "/tool/cartoonize_config/v6",
+      needRetry: true,
+      canClickRetry: true,
+    );
     if (baseEntity == null) return null;
     return ApiConfigEntity.fromJson(baseEntity.data);
   }
@@ -569,6 +594,14 @@ class CartoonizerApi extends RetryAbleRequester {
     return await get('/log/anotherme', params: params);
   }
 
+  Future<BaseEntity?> logScribble(Map<String, dynamic> params) async {
+    return await get('/log/scribble', params: params);
+  }
+
+  Future<BaseEntity?> logStyleMorph(Map<String, dynamic> params) async {
+    return await get('/log/stylemorph', params: params);
+  }
+
   Future<BaseEntity?> logTxt2Img(Map<String, dynamic> params) async {
     if (params.containsKey('init_images')) {
       return await get('/log/img2img', params: params);
@@ -628,11 +661,18 @@ class CartoonizerApi extends RetryAbleRequester {
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 
+  Future<GenerateLimitEntity?> getAiColoringLimit() async {
+    var baseEntity = await get('/tool/lineart/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+
   Future<String?> submitInvitedCode(String invitedCode) async {
-    var baseEntity = await post('/refer/create', params: {
-      'rf': invitedCode,
-      'rf_product': APP_NAME,
-    });
+    var baseEntity = await post(
+      '/refer/create',
+      params: {'rf': invitedCode, 'rf_product': APP_NAME},
+      needRetry: false,
+      canClickRetry: false,
+    );
     return baseEntity?.data['data'];
   }
 
@@ -673,6 +713,9 @@ class CartoonizerApi extends RetryAbleRequester {
     required String headers,
     required int statusCode,
   }) async {
+    if (api.contains('/log/api_error')) {
+      return null;
+    }
     return await post(
       '/log/api_error',
       params: {

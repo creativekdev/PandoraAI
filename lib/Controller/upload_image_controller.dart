@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -89,6 +90,23 @@ class UploadImageController extends GetxController {
     return true;
   }
 
+  Future<void> deleteUploadData(File? imageFile, {String? key}) async {
+    if (imageFile == null && key == null) {
+      return;
+    }
+    if (imageFile != null) {
+      if (key == null) {
+        key = await md5File(imageFile);
+      }
+    }
+    var cacheFile = imageUploadCache.pick((t) => t.key == key);
+    if (cacheFile != null) {
+      imageUploadCache.remove(cacheFile);
+      _saveUploadCacheMap();
+      updateImageUrl('');
+    }
+  }
+
   Future<bool> uploadCompressedImage(File? imageFile, {String? key, bool cache = true}) async {
     if (imageFile == null) {
       return false;
@@ -132,6 +150,7 @@ class UploadImageController extends GetxController {
     if (url == null) {
       return false;
     }
+    var imageInfo = await SyncFileImage(file: imageFile).getImage();
     var baseEntity = await Uploader().uploadFile(url, imageFile, c_type);
     if (baseEntity != null) {
       var imageUrl = url.split("?")[0];

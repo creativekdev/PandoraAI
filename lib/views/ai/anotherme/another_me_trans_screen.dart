@@ -6,10 +6,12 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/switch_image_card.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -19,14 +21,17 @@ import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -64,8 +69,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   UploadImageController uploadImageController = Get.find();
   RecentController recentController = Get.find();
   GlobalKey<AMOptContainerState> optKey = GlobalKey();
-  late double resultCardWidth;
-  late double resultCardHeight;
   late double dividerSize;
   File? transResult;
   late String photoType;
@@ -78,8 +81,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     ratio = widget.ratio;
     photoType = widget.photoType;
     dividerSize = $(4);
-    resultCardWidth = ScreenUtil.screenSize.width - $(32);
-    resultCardHeight = ratio > ImageUtils.axisRatioFlag ? (resultCardWidth - dividerSize) / 2 * ratio : resultCardWidth * ratio * 2 + dividerSize;
     file = widget.file;
     transResult = widget.resultFile;
     delay(() {
@@ -215,7 +216,9 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       simulateProgressBarController.uploadComplete();
       if (value) {
         uploadImageController.getCachedIdByKey(key).then((cachedId) {
-          controller.startTransfer(uploadImageController.imageUrl.value, cachedId).then((value) {
+          controller.startTransfer(uploadImageController.imageUrl.value, cachedId, (response) {
+            uploadImageController.deleteUploadData(null, key: key);
+          }).then((value) {
             if (value != null) {
               if (value.entity != null) {
                 uploadImageController.updateCachedId(file, value.entity!.cacheId ?? '');
@@ -238,11 +241,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   }
 
   Future<void> showAnim(BuildContext context) async {
-    return Navigator.of(context).push<void>(NoAnimRouter(TransResultAnimScreen(
-      origin: file,
-      result: transResult!,
-      ratio: ratio,
-    )));
+    return Navigator.of(context).push<void>(NoAnimRouter(
+      TransResultAnimScreen(
+        origin: file,
+        result: transResult!,
+        ratio: ratio,
+      ),
+      settings: RouteSettings(name: '/TransResultAnimScreen'),
+    ));
   }
 
   @override
@@ -307,230 +313,184 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 ]));
           }
           return Scaffold(
-            backgroundColor: ColorConstant.BackgroundColor,
-            body: Stack(
-              children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              Stack(
-                                children: [
-                                  Image.asset(Images.ic_mt_result_top),
-                                  Text(
-                                    '@${userManager.user?.getShownName() ?? 'Pandora User'}',
-                                    style: TextStyle(
-                                      color: ColorConstant.White,
-                                      fontFamily: 'Poppins',
-                                      fontSize: $(14),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ).marginOnly(left: $(16), top: $(50)),
-                                ],
-                              ),
-                              Expanded(
-                                child: Image.asset(
-                                  Images.ic_mt_result_middle,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Image.asset(Images.ic_mt_result_bottom),
-                            ],
-                          ),
-                          ClipRRect(
-                            child: TransResultNewCard(
-                              originalImage: file,
-                              resultImage: File(controller.transKey!),
-                              width: resultCardWidth,
-                              height: resultCardHeight,
-                              direction: ratio > ImageUtils.axisRatioFlag ? Axis.horizontal : Axis.vertical,
-                              dividerSize: dividerSize,
-                            ),
-                            borderRadius: BorderRadius.circular($(12)),
-                          )
-                              .intoContainer(
-                                margin: EdgeInsets.only(right: 2, left: 2),
-                              )
-                              .intoCenter()
-                              .intoContainer(padding: EdgeInsets.only(top: 48)),
-                          Image.asset(
-                            ratio > ImageUtils.axisRatioFlag ? Images.ic_another_arrow_right : Images.ic_another_arrow_down,
-                            width: $(18),
-                          ).intoContainer(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.only(top: $(48)),
-                          ),
-                        ],
-                      ).intoContainer(
-                        margin: EdgeInsets.only(right: 14, left: 14, top: 50 + ScreenUtil.getStatusBarHeight(), bottom: $(13)),
-                      ),
-                    ),
-                    AMOptContainer(
-                      key: optKey,
-                      onChoosePhotoTap: () {
-                        optKey.currentState!.dismiss().whenComplete(() {
-                          controller.clear(uploadImageController);
-                          Events.metaverseCompleteTakeAgain();
-                          Navigator.of(context).pop(false);
-                        });
-                      },
-                      onDownloadTap: () async {
-                        showSaveDialog(context, true).then((value) async {
-                          if (value != null) {
-                            if (value) {
-                              showDialog<String>(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
-                                if (!TextUtil.isEmpty(value)) {
-                                  await showLoading();
-                                  await GallerySaver.saveVideo(value!, true, toDcim: true, albumName: saveAlbumName);
+            backgroundColor: Colors.transparent,
+            appBar: AppNavigationBar(
+              backgroundColor: Colors.transparent,
+              backAction: () {
+                Navigator.of(context).pop(true);
+              },
+              trailing: Image.asset(
+                Images.ic_more,
+                height: $(24),
+                width: $(24),
+                color: Colors.white,
+              ).intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(
+                  context,
+                  listData: [
+                    ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                    ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                  ],
+                  clickCallback: (index, text) {
+                    if (index == 0) {
+                      // 分享
+                      showSaveDialog(context, false).then((value) async {
+                        if (value != null) {
+                          if (value) {
+                            showDialog<String>(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
+                              if (!TextUtil.isEmpty(value)) {
+                                await showLoading();
+                                if (TextUtil.isEmpty(value)) {
                                   await hideLoading();
-                                  Events.metaverseCompleteDownload(type: 'video');
-                                  CommonExtension().showVideoSavedOkToast(context);
-                                  delay(() {
-                                    UserManager userManager = AppDelegate.instance.getManager();
-                                    userManager.rateNoticeOperator.onSwitch(context);
-                                  }, milliseconds: 2000);
+                                  return;
                                 }
-                              });
-                            } else {
+                                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                                await hideLoading();
+                                ShareScreen.startShare(context,
+                                    backgroundColor: Color(0x77000000),
+                                    style: 'Me-taverse',
+                                    image: value!,
+                                    isVideo: true,
+                                    originalUrl: null,
+                                    preShareVideo: (platform, filePath) async {
+                                      if (Platform.isIOS) {
+                                        var newFile = filePath + '.ins.mp4';
+                                        if (File(newFile).existsSync()) {
+                                          return newFile;
+                                        }
+                                        var command = FFmpegUtil.commandVideoToInstagram(originFile: filePath, targetFile: newFile);
+                                        var session = await FFmpegKit.execute(command);
+                                        FFmpegKit.cancel(session.getSessionId());
+                                        return newFile;
+                                      } else {
+                                        return filePath;
+                                      }
+                                    },
+                                    effectKey: 'Me-taverse',
+                                    onShareSuccess: (platform) {
+                                      Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
+                                    });
+                                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                              }
+                            });
+                          } else {
+                            await showLoading();
+                            if (TextUtil.isEmpty(controller.transKey)) {
+                              return;
+                            }
+                            var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+                            await hideLoading();
+                            ShareScreen.startShare(context,
+                                backgroundColor: Color(0x77000000),
+                                style: 'Me-taverse',
+                                image: base64Encode(uint8list),
+                                isVideo: false,
+                                originalUrl: null,
+                                effectKey: 'Me-taverse', onShareSuccess: (platform) {
+                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'image');
+                            });
+                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+                          }
+                        }
+                      });
+                    } else if (index == 1) {
+                      if (TextUtil.isEmpty(controller.transKey)) {
+                        return;
+                      }
+                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
+                        var file = File(controller.transKey!);
+                        ShareDiscoveryScreen.push(
+                          context,
+                          effectKey: 'Me-taverse',
+                          originalUrl: uploadImageController.imageUrl.value,
+                          image: base64Encode(file.readAsBytesSync()),
+                          isVideo: false,
+                          category: HomeCardType.anotherme,
+                        ).then((value) {
+                          if (value ?? false) {
+                            Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
+                            showShareSuccessDialog(context);
+                          }
+                        });
+                      }, autoExec: true);
+                    }
+                  },
+                );
+              }),
+            ),
+            body: Column(
+              children: [
+                Expanded(
+                  child: SwitchImageCard(
+                    origin: file,
+                    result: File(controller.transKey!),
+                  ),
+                ),
+                AMOptContainer(
+                  key: optKey,
+                  onChoosePhotoTap: () {
+                    optKey.currentState!.dismiss().whenComplete(() {
+                      controller.clear(uploadImageController);
+                      Events.metaverseCompleteTakeAgain();
+                      Navigator.of(context).pop(false);
+                    });
+                  },
+                  onDownloadTap: () {
+                    showSaveDialog(context, true).then((value) async {
+                      if (value != null) {
+                        if (value) {
+                          showDialog<String>(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
+                            if (!TextUtil.isEmpty(value)) {
                               await showLoading();
-                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              var list = uint8list.toList();
-                              var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-                              var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-                              await File(imgPath).writeAsBytes(list);
-                              await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+                              await GallerySaver.saveVideo(value!, true, toDcim: true, albumName: saveAlbumName);
                               await hideLoading();
-                              Events.metaverseCompleteDownload(type: 'image');
-                              CommonExtension().showImageSavedOkToast(context);
+                              Events.metaverseCompleteDownload(type: 'video');
+                              CommonExtension().showVideoSavedOkToast(context);
                               delay(() {
                                 UserManager userManager = AppDelegate.instance.getManager();
                                 userManager.rateNoticeOperator.onSwitch(context);
                               }, milliseconds: 2000);
                             }
-                          }
-                        });
-                      },
-                      onGenerateAgainTap: () {
-                        controller.clearTransKey();
-                        generate(context, controller);
-                      },
-                      onShareDiscoveryTap: () async {
-                        if (TextUtil.isEmpty(controller.transKey)) {
-                          return;
-                        }
-                        AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
-                          var file = File(controller.transKey!);
-                          ShareDiscoveryScreen.push(
-                            context,
-                            effectKey: 'Me-taverse',
-                            originalUrl: uploadImageController.imageUrl.value,
-                            image: base64Encode(file.readAsBytesSync()),
-                            isVideo: false,
-                            category: DiscoveryCategory.another_me,
-                          ).then((value) {
-                            if (value ?? false) {
-                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
-                              showShareSuccessDialog(context);
-                            }
                           });
-                        }, autoExec: true);
-                      },
-                      onShareTap: () async {
-                        showSaveDialog(context, false).then((value) async {
-                          if (value != null) {
-                            if (value) {
-                              showDialog<String>(
-                                  context: context,
-                                  barrierDismissible: false,
-                                  builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
-                                if (!TextUtil.isEmpty(value)) {
-                                  await showLoading();
-                                  if (TextUtil.isEmpty(value)) {
-                                    await hideLoading();
-                                    return;
-                                  }
-                                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                                  await hideLoading();
-                                  ShareScreen.startShare(context,
-                                      backgroundColor: Color(0x77000000),
-                                      style: 'Me-taverse',
-                                      image: value!,
-                                      isVideo: true,
-                                      originalUrl: null,
-                                      preShareVideo: (platform, filePath) async {
-                                        if (Platform.isIOS) {
-                                          var newFile = filePath + '.ins.mp4';
-                                          if (File(newFile).existsSync()) {
-                                            return newFile;
-                                          }
-                                          var command = FFmpegUtil.commandVideoToInstagram(originFile: filePath, targetFile: newFile);
-                                          var session = await FFmpegKit.execute(command);
-                                          FFmpegKit.cancel(session.getSessionId());
-                                          return newFile;
-                                        } else {
-                                          return filePath;
-                                        }
-                                      },
-                                      effectKey: 'Me-taverse',
-                                      onShareSuccess: (platform) {
-                                        Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
-                                      });
-                                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                                }
-                              });
-                            } else {
-                              if (TextUtil.isEmpty(controller.transKey)) {
-                                return;
-                              }
-                              await showLoading();
-                              var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                              await hideLoading();
-                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                              ShareScreen.startShare(context,
-                                  backgroundColor: Color(0x77000000),
-                                  style: 'Me-taverse',
-                                  image: base64Encode(uint8list),
-                                  isVideo: false,
-                                  originalUrl: null,
-                                  effectKey: 'Me-taverse', onShareSuccess: (platform) {
-                                Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'image');
-                              });
-                              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                            }
-                          }
-                        });
-                      },
-                    ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(35)))
-                  ],
-                ).intoContainer(
-                  width: ScreenUtil.screenSize.width,
-                  height: ScreenUtil.screenSize.height,
-                ),
-                Image.asset(
-                  Images.ic_back,
-                  height: $(24),
-                  width: $(24),
-                )
-                    .intoContainer(
-                      padding: EdgeInsets.all($(10)),
-                      margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight(), left: $(5)),
-                    )
-                    .hero(tag: AnotherMe.logoBackTag)
-                    .intoGestureDetector(onTap: () {
-                  Navigator.pop(context, true);
-                }),
+                        } else {
+                          await showLoading();
+                          var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                          var list = uint8list.toList();
+                          var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+                          var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+                          await File(imgPath).writeAsBytes(list);
+                          await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+                          await hideLoading();
+                          Events.metaverseCompleteDownload(type: 'image');
+                          CommonExtension().showImageSavedOkToast(context);
+                          delay(() {
+                            UserManager userManager = AppDelegate.instance.getManager();
+                            userManager.rateNoticeOperator.onSwitch(context);
+                          }, milliseconds: 2000);
+                        }
+                      }
+                    });
+                  },
+                  onGenerateAgainTap: () {
+                    controller.clearTransKey();
+                    generate(context, controller);
+                  },
+                  onSharePrintTap: () async {
+                    Print.open(context, source: 'anotherme_result', file: transResult!);
+                  },
+                ).intoContainer(padding: EdgeInsets.only(top: $(10), bottom: $(10)))
               ],
-            ).intoContainer(
-                height: ScreenUtil.screenSize.height,
-                width: ScreenUtil.screenSize.width,
-                decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill))),
-          );
+            ),
+          ).intoContainer(
+              padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context) + $(15)),
+              decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_another_me_trans_bg), fit: BoxFit.fill)));
         },
       ),
       onWillPop: () async {

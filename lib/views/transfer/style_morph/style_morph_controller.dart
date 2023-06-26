@@ -23,10 +23,6 @@ class StyleMorphController extends GetxController {
 
   set originFile(File file) {
     _originFile = file;
-    SyncFileImage(file: originFile).getImage().then((value) {
-      originImageScale = value.image.width / value.image.height;
-      calculatePosY();
-    });
   }
 
   late List<EffectCategory> categories;
@@ -43,12 +39,15 @@ class StyleMorphController extends GetxController {
   late CartoonizerApi cartoonizerApi;
 
   final String? initKey;
-  double? originImageScale;
-  Size? imageStackSize;
-  double imagePosBottom = 0;
-  double imagePosRight = 0;
 
   bool _showOrigin = false;
+
+  File? get resultFile {
+    if (selectedEffect == null || resultMap[selectedEffect!.key] == null) {
+      return null;
+    }
+    return File(resultMap[selectedEffect!.key]!);
+  }
 
   set showOrigin(bool value) {
     _showOrigin = value;
@@ -100,32 +99,10 @@ class StyleMorphController extends GetxController {
     }
   }
 
-  calculatePosY() {
-    if (originImageScale == null || imageStackSize == null) {
-      return;
-    }
-    double sizeScale = imageStackSize!.width / imageStackSize!.height;
-    if (originImageScale! > sizeScale) {
-      var height = imageStackSize!.width / originImageScale!;
-      imagePosBottom = (imageStackSize!.height - height) / 2;
-      imagePosRight = 0;
-    } else {
-      var width = imageStackSize!.height * originImageScale!;
-      imagePosRight = (imageStackSize!.width - width) / 2;
-      imagePosBottom = 0;
-    }
-    update();
-  }
-
-  @override
-  void onReady() {
-    cartoonizerApi.unbind();
-    api.unbind();
-    super.onReady();
-  }
-
   @override
   void dispose() {
+    cartoonizerApi.unbind();
+    api.unbind();
     super.dispose();
   }
 
@@ -133,7 +110,7 @@ class StyleMorphController extends GetxController {
 
   void onSuccess() {}
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId) async {
+  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
     if (selectedEffect == null) {
       CommonExtension().showToast('Please select template');
       return null;
@@ -151,7 +128,7 @@ class StyleMorphController extends GetxController {
       }
     }
     var rootPath = cacheManager.storageOperator.recordTxt2imgDir.path;
-    var baseEntity = await api.startTransfer(initImage: imageUrl, templateName: selectedEffect!.key, directoryPath: rootPath);
+    var baseEntity = await api.startTransfer(initImage: imageUrl, templateName: selectedEffect!.key, directoryPath: rootPath, onFailed: onFailed);
     if (baseEntity != null) {
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();

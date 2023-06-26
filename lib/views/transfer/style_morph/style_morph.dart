@@ -48,7 +48,7 @@ class StyleMorph {
               ..originalPath = path,
             initKey: initKey,
             photoType: 'gallery'),
-        settings: RouteSettings(name: 'StyleMorphScreen'),
+        settings: RouteSettings(name: '/StyleMorphScreen'),
       ),
     );
   }
@@ -63,7 +63,7 @@ class StyleMorph {
           photoType: 'gallery',
           initKey: initKey,
         ),
-        settings: RouteSettings(name: 'StyleMorphScreen'),
+        settings: RouteSettings(name: '/StyleMorphScreen'),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
 import 'package:cartoonizer/models/shipping_method_entity.dart';
@@ -16,6 +17,8 @@ class ApiConfigEntity {
   List<DiscoveryResource> promotionResources = [];
   late EffectData stylemorph;
   List<ShippingMethodEntity> shippingMethods = [];
+  int imageMaxl = 512;
+  List<AiServerEntity> aiConfig = [];
 
   ApiConfigEntity._instance();
 
@@ -50,6 +53,12 @@ class ApiConfigEntity {
     if (json['shipping_methods'] != null) {
       entity.shippingMethods = (json['shipping_methods'] as List).map((e) => ShippingMethodEntity.fromJson(e)).toList();
     }
+    if (json['image_maxl'] != null) {
+      entity.imageMaxl = json['image_maxl'] as int;
+    }
+    if (json['ai_config'] != null) {
+      entity.aiConfig = (json['ai_config'] as List).map((e) => AiServerEntity.fromJson(e)).toList();
+    }
     return entity;
   }
 
@@ -68,6 +77,8 @@ class ApiConfigEntity {
     result['promotion_resources'] = promotionResources.map((e) => e.toJson()).toList();
     result['stylemorph'] = stylemorph.toJson();
     result['shipping_methods'] = shippingMethods.map((e) => e.toJson()).toList();
+    result['ai_config'] = aiConfig.map((e) => e.toJson()).toList();
+    result['image_maxl'] = imageMaxl;
     return result;
   }
 

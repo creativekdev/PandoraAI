@@ -73,7 +73,7 @@ class DioNode {
       LogUtil.v('response: $url  response: $result', tag: tag);
       return handler.next(response);
     }, onError: (e, handler) {
-      if (!kReleaseMode || !logResponseEnable) {
+      if (kReleaseMode || !logResponseEnable) {
         return handler.next(e);
       }
       String url = e.requestOptions.baseUrl + e.requestOptions.path;

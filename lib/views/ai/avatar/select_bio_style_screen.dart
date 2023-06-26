@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/avatar_ai_manager.dart';
 class SelectStyleScreen {
   static Future<String?> push(BuildContext context, {String? gender}) {
     return Navigator.of(context).push<String>(MaterialPageRoute(
+      settings: RouteSettings(name: '/_SelectGenderScreen'),
       builder: (context) => _SelectGenderScreen(bioStyle: gender),
     ));
   }

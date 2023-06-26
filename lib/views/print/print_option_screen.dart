@@ -1,17 +1,25 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/views/print/print_option_controller.dart';
 import 'package:cartoonizer/views/print/print_screen.dart';
 import 'package:cartoonizer/views/print/widgets/print_option_item.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../Widgets/router/routers.dart';
 
 class PrintOptionScreen extends StatefulWidget {
-  PrintOptionScreen({Key? key, required this.file}) : super(key: key);
+  String source;
   File file;
+
+  PrintOptionScreen({
+    Key? key,
+    required this.file,
+    required this.source,
+  }) : super(key: key);
 
   @override
   State<PrintOptionScreen> createState() => _PrintOptionScreenState();
@@ -21,29 +29,55 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
   PrintOptionController controller = Get.put(PrintOptionController());
 
   @override
+  void initState() {
+    super.initState();
+    Posthog().screenWithUser(screenName: 'print_option_screen');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        leading: Image.asset(
-          Images.ic_back,
-          width: $(24),
-        )
-            .intoContainer(
-          margin: EdgeInsets.all($(14)),
-        )
-            .intoGestureDetector(onTap: () {
-          Navigator.pop(context);
-        }),
       ),
-      backgroundColor: Colors.black,
+      backgroundColor: ColorConstant.BackgroundColor,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: $(8)),
         child: GetBuilder<PrintOptionController>(
           init: controller,
           builder: (controller) {
             if (controller.viewInit == false) {
-              return SizedBox();
+              return SkeletonListView(
+                itemCount: 6,
+                padding: EdgeInsets.zero,
+                spacing: $(4),
+                item: Column(
+                  children: [
+                    Row(
+                      children: [
+                        UnconstrainedBox(
+                          child: SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                            width: (ScreenUtil.screenSize.width - $(20)) / 2,
+                            height: $(100),
+                          )),
+                        ),
+                        SizedBox(width: $(4)),
+                        UnconstrainedBox(
+                          child: SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                            width: (ScreenUtil.screenSize.width - $(20)) / 2,
+                            height: $(100),
+                          )),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: $(4),
+                    )
+                  ],
+                ),
+              );
             }
             return MasonryGridView.count(
               itemCount: controller.printOptionEntity.data.length,
@@ -51,14 +85,18 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
               mainAxisSpacing: $(4),
               crossAxisSpacing: $(4),
               itemBuilder: (context, index) {
+                var data = controller.printOptionEntity.data[index];
                 return PrintOptionItem(
-                  data: controller.printOptionEntity.data[index],
+                  data: data,
                 ).intoGestureDetector(onTap: () {
-                  print(index);
+                  Events.printGoodsSelectClick(source: widget.source, goodsId: data.id.toString());
                   Navigator.of(context).push<void>(Right2LeftRouter(
+                      settings: RouteSettings(name: '/PrintScreen'),
                       child: PrintScreen(
-                    optionData: controller.printOptionEntity.data[index],
-                  )));
+                        optionData: data,
+                        file: widget.file.path,
+                        source: widget.source,
+                      )));
                 });
               },
             );

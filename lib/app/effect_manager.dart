@@ -1,15 +1,16 @@
-
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 
 class EffectManager extends BaseManager {
   ApiConfigEntity? _data = null;
+  ApiConfigEntity? get data => _data;
   late CacheManager cacheManager;
   late CartoonizerApi api;
   late Map<String, double> _scaleCachedMap = {};

@@ -8,7 +8,6 @@ class PrintOptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TitleTextWidget(btnText, ColorConstant.White, FontWeight.w600, 16)
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -21,7 +20,7 @@ class PrintOptionItem extends StatelessWidget {
             context: context,
             imageUrl: data.thumbnail,
             width: (ScreenUtil.screenSize.width - $(20)) / 2,
-            height: $(178),
+            height: (ScreenUtil.screenSize.width - $(20)) / 2,
             fit: BoxFit.cover,
           ),
         ),
@@ -33,11 +32,12 @@ class PrintOptionItem extends StatelessWidget {
             FontWeight.normal,
             $(10),
             align: TextAlign.left,
+            maxLines: 2,
           ),
         ),
       ],
     ).intoContainer(
-        height: $(222),
+        height: (ScreenUtil.screenSize.width - $(20)) / 2 + $(44),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular($(8)),
           color: ColorConstant.EffectFunctionGrey,

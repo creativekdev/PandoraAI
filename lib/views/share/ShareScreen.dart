@@ -9,6 +9,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
@@ -246,7 +247,7 @@ class _ShareScreenState extends State<ShareScreen> {
             originalUrl: widget.originalUrl,
             image: widget.image,
             isVideo: widget.isVideo,
-            category: DiscoveryCategory.ai_avatar,
+            category: HomeCardType.ai_avatar,
           ).then((value) {
             if (value ?? false) {
               widget.onShareSuccess?.call(shareType.value());

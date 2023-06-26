@@ -13,7 +13,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
-import 'package:cartoonizer/views/ai/drawable/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
@@ -135,7 +135,7 @@ class NotificationManager extends BaseManager {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       var pushModuleEntity = PushModuleExtraEntity.fromJson(message.data);
       EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
-      onNotificationTap(HomeCardTypeUtils.build(pushModuleEntity.type));
+      HomeCardTypeUtils.jumpWithHomeType(Get.context!, 'push_click', HomeCardTypeUtils.build(pushModuleEntity.type), InitPos());
     } else {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       try {
@@ -148,40 +148,6 @@ class NotificationManager extends BaseManager {
       }
     }
     return null;
-  }
-
-  onNotificationTap(HomeCardType type) {
-    switch (type) {
-      case HomeCardType.txt2img:
-        Txt2img.open(Get.context!, source: 'push_click');
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.checkPermissions().then((value) async {
-          if (value) {
-            AnotherMe.open(Get.context!, source: 'push_click');
-          } else {
-            AnotherMe.permissionDenied(Get.context!);
-          }
-        });
-        break;
-      case HomeCardType.cartoonize:
-        // nothing
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.open(Get.context!, source: 'push_click');
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(Get.context!, source: 'push_click');
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(Get.context!, source: 'push_click');
-        break;
-      case HomeCardType.UNDEFINED:
-        break;
-      case HomeCardType.style_morph:
-        StyleMorph.open(Get.context!, 'push_click');
-        break;
-    }
   }
 }
 

@@ -380,7 +380,12 @@ class _AvatarAiListScreenState extends AppState<AvatarAiListScreen> with SingleT
             avatarAiManager.getAvatarAiDetail(token: data.token).then((value) {
               hideLoading().whenComplete(() {
                 if (value != null) {
-                  Navigator.of(context).push(Right2LeftRouter(child: AvatarDetailScreen(entity: value)));
+                  Navigator.of(context).push(
+                    Right2LeftRouter(
+                      settings: RouteSettings(name: '/AvatarDetailScreen'),
+                      child: AvatarDetailScreen(entity: value),
+                    ),
+                  );
                 }
               });
             });

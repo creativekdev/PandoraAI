@@ -69,7 +69,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+      MaterialPageRoute(builder: (BuildContext context) => HomeScreen(), settings: RouteSettings(name: '/HomeScreen')),
       ModalRoute.withName('/HomeScreen'),
     );
   }

@@ -15,22 +15,22 @@ class ImageUtils {
     var fileType = getFileType(tempFilePath);
     var path = targetPath + fileName + '.' + fileType;
     if (!File(path).existsSync()) {
-      await imageCompress(File(tempFilePath), path, format: _buildCompressFormat(fileType), ignoreSize: true);
+      await File(tempFilePath).copy(path);
     }
     return path;
   }
 
-  // 根据目标坐标计算原图应该显示的区域
+  // Calculate the area that the artwork should display based on the target coordinates
   static Rect getTargetCoverRect(Size source, Size target) {
     double sourceScale = source.width / source.height;
     double targetScale = target.width / target.height;
     if (sourceScale > targetScale) {
-      //原图更宽，以高度缩放取中间部分。
+      //The original image is wider and scaled to the height to take the middle part.
       double width = source.height * targetScale;
       double x = (source.width - width) / 2;
       return Rect.fromLTWH(x, 0, width, source.height);
     } else {
-      //原图更高，以宽度缩放取中间部分。
+      //The original image is higher, and the middle part is scaled by width.
       double height = source.width / targetScale;
       double y = (source.height - height) / 2;
       return Rect.fromLTWH(0, y, source.width, height);
@@ -134,23 +134,28 @@ class ImageUtils {
   static double dp(double source) => source * scaleSize;
 
   static Future<Uint8List> printAiDrawData(File originalImage, File resultImage, String userEmail) async {
-    return printImageData(originalImage, resultImage, userEmail, Images.ic_ai_draw_top, arrowRes: Images.ic_ai_draw_arrow);
+    return printImageData(originalImage, resultImage, userEmail, 'AI-Scribble', arrowRes: Images.ic_ai_draw_arrow);
+  }
+
+  static Future<Uint8List> printAiColoringData(File originalImage, File resultImage, String userEmail) async {
+    return printImageData(originalImage, resultImage, userEmail, 'AI-Coloring', arrowRes: Images.ic_ai_draw_arrow);
   }
 
   static Future<Uint8List> printStyleMorphDrawData(File originalImage, File resultImage, String userEmail) async {
-    return printImageData(originalImage, resultImage, userEmail, Images.ic_style_morph_top, arrowRes: Images.ic_ai_draw_arrow);
+    return printImageData(originalImage, resultImage, userEmail, 'StyleMorph', arrowRes: Images.ic_ai_draw_arrow);
   }
 
   static Future<Uint8List> printAnotherMeData(File originalImage, File resultImage, String userEmail) async {
-    return printImageData(originalImage, resultImage, userEmail, Images.ic_mt_result_top);
+    return printImageData(originalImage, resultImage, userEmail, 'Me-taverse');
   }
 
   ///375 设计宽度下，对应输出1080宽度下缩放比2.88
   ///appIcon宽度64，二维码宽度64，标题字体17，描述文案字体13
   ///底部app推广高度105
-  static Future<Uint8List> printImageData(dynamic originalImage, File resultImage, String userEmail, String topRes, {String? arrowRes}) async {
+  static Future<Uint8List> printImageData(dynamic originalImage, File resultImage, String userEmail, String functionName, {String? arrowRes}) async {
     var bgSource = await SyncAssetImage(assets: Images.ic_another_me_trans_bg).getImage();
-    var bgHeadInfo = await SyncAssetImage(assets: topRes).getImage();
+    var bgHeadInfo = await SyncAssetImage(assets: Images.ic_compare_top).getImage();
+    var bgHeadArrowInfo = await SyncAssetImage(assets: Images.ic_compare_arrow).getImage();
     var bgMiddleInfo = await SyncAssetImage(assets: Images.ic_mt_result_middle).getImage();
     var bgBottomInfo = await SyncAssetImage(assets: Images.ic_mt_result_bottom).getImage();
     ImageInfo originalImageInfo;
@@ -170,7 +175,8 @@ class ImageUtils {
     double width = dp(375);
     double headWidth = dp(360);
     double headBgHeight = headWidth * bgHeadInfo.image.height / bgHeadInfo.image.width;
-    Offset userNamePos = Offset(dp(25), dp(70));
+    Offset functionPos = Offset(dp(25), dp(28));
+    Offset userNamePos = Offset(dp(25), dp(65));
     double headHeight = dp(100);
     double bottomBgHeight = headWidth * bgBottomInfo.image.height / bgBottomInfo.image.width;
     double bottomHeight = dp(105);
@@ -179,6 +185,7 @@ class ImageUtils {
 
     double appIconSize = dp(64);
     double qrcodeSize = dp(64);
+    double functionSize = dp(32);
     double titleSize = dp(17);
     double nameSize = dp(13);
     double descSize = dp(13);
@@ -217,7 +224,27 @@ class ImageUtils {
     var bottomDstRect = Rect.fromLTWH(dp(8), headBgHeight + padding + middleHeight, headWidth, bottomBgHeight);
     canvas.drawImageRect(bgBottomInfo.image, bottomSrcRect, bottomDstRect, Paint());
 
-    // 绘制标题文本
+    var functionPainter = TextPainter(
+      text: TextSpan(
+          text: functionName,
+          style: TextStyle(
+            fontFamily: 'BlackOpsOne',
+            fontWeight: FontWeight.normal,
+            color: ColorConstant.White,
+            fontSize: functionSize,
+          )),
+      ellipsis: '...',
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.justify,
+      textWidthBasis: TextWidthBasis.longestLine,
+      maxLines: 2,
+    )..layout(maxWidth: headWidth);
+    functionPainter.paint(canvas, functionPos);
+
+    var arrowImageSrcRect = Rect.fromLTWH(0, 0, bgHeadArrowInfo.image.width.toDouble(), bgHeadArrowInfo.image.height.toDouble());
+    var arrowImageDstRect = Rect.fromLTWH(dp(33) + functionPainter.width, dp(40), dp(42), $(46));
+    canvas.drawImageRect(bgHeadArrowInfo.image, arrowImageSrcRect, arrowImageDstRect, Paint());
+
     var emailPainter = TextPainter(
       text: TextSpan(
           text: userEmail,

@@ -4,7 +4,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/views/ai/drawable/widget/drawable.dart';
+import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 
 abstract class RecordHolder<T> {
   CacheManager _cacheManager = AppDelegate().getManager();
@@ -210,6 +210,42 @@ class AIDrawRecordHolder extends RecordHolder<DrawableRecord> {
   Future<bool> saveToCache(List<DrawableRecord> data) async {
     return await _cacheManager.setJson(
       CacheManager.keyRecentAIDraw,
+      data.map((e) => e.toJson()).toList(),
+    );
+  }
+}
+
+class AIColoringRecordHolder extends RecordHolder<RecentColoringEntity> {
+  @override
+  Future<List<RecentColoringEntity>> loadFromCache() async {
+    List<RecentColoringEntity> result = [];
+    try {
+      var json = _cacheManager.getJson(CacheManager.keyRecentAIColoring);
+      result = (json as List<dynamic>).map((e) => RecentColoringEntity.fromJson(e)).toList();
+      result = await result.filterSync((t) async {
+        if (File(t.filePath ?? '').existsSync() && File(t.originFilePath ?? '').existsSync()) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    } catch (e) {}
+    return result;
+  }
+
+  @override
+  Future<bool> record(List<RecentColoringEntity> source, RecentColoringEntity data, {bool toCache = true}) async {
+    source.insert(0, data);
+    if (toCache) {
+      await saveToCache(source);
+    }
+    return true;
+  }
+
+  @override
+  Future<bool> saveToCache(List<RecentColoringEntity> data) async {
+    return await _cacheManager.setJson(
+      CacheManager.keyRecentAIColoring,
       data.map((e) => e.toJson()).toList(),
     );
   }
