@@ -399,6 +399,7 @@
   "shipping_details": "Detalles de envío",
   "address": "Dirección",
   "apartment_suite_other": "Apartamento/Suite/Otro",
+  "zip_code": "Código postal",
   "search_address": "Buscar dirección",
   "first_name": "Nombre",
   "last_name": "Apellido",

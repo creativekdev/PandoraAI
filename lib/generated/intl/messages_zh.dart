@@ -560,7 +560,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "your_post_has_been_submitted_successfully":
             MessageLookupByLibrary.simpleMessage("您已分享成功"),
         "youtube": MessageLookupByLibrary.simpleMessage("使用YouTube账号"),
-        "zip_code": MessageLookupByLibrary.simpleMessage("邮政编码"),
+        "zip_code": MessageLookupByLibrary.simpleMessage("邮编"),
         "zip_code_validation_message":
             MessageLookupByLibrary.simpleMessage("无效的邮编")
       };

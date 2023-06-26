@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
@@ -28,9 +29,11 @@ class PrintShippingController extends GetxController {
 
   TextEditingController searchAddressController = TextEditingController();
   TextEditingController apartmentController = TextEditingController();
+  TextEditingController zipCodeController = TextEditingController();
   TextEditingController firstNameController = TextEditingController();
   TextEditingController secondNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
+  FocusNode searchAddressFocusNode = FocusNode();
 
   EffectDataController effectdatacontroller = Get.find();
   PrintController printController = Get.find();
@@ -55,6 +58,7 @@ class PrintShippingController extends GetxController {
 
   set variantId(String value) {
     _variantId = value;
+    searchAddressFocusNode.hasFocus;
     update();
   }
 
@@ -170,10 +174,10 @@ class PrintShippingController extends GetxController {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).address));
       return false;
     }
-    // if (apartmentController.text.isEmpty) {
-    //   Fluttertoast.showToast(msg: "Please input apartment/suite/other", gravity: ToastGravity.CENTER);
-    //   return false;
-    // }
+    if (zipCodeController.text.isEmpty) {
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).zip_code));
+      return false;
+    }
     if (firstNameController.text.isEmpty) {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).first_name));
       return false;
@@ -195,6 +199,8 @@ class PrintShippingController extends GetxController {
       "country": regionEntity?.regionName,
       "address1": searchAddressController.text,
       "address2": apartmentController.text,
+      "zip": zipCodeController.text,
+      "default": false
     };
     await getVariantId();
     var body = {
@@ -205,6 +211,9 @@ class PrintShippingController extends GetxController {
         "first_name": firstNameController.text,
         "last_name": secondNameController.text,
         "addresses": [address],
+        "send_email_welcome": false,
+        "email": UserManager().user?.getShownEmail() ?? '',
+        "name": firstNameController.text + " " + secondNameController.text
       },
       "shipping_address": address,
       "shipping_price": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100.0,
@@ -365,6 +374,8 @@ class PrintShippingController extends GetxController {
     apartmentController.dispose();
     firstNameController.dispose();
     secondNameController.dispose();
+    searchAddressFocusNode.dispose();
+    zipCodeController.dispose();
     contactNumberController.dispose();
     _overlayEntry?.remove();
     _overlayEntry = null;

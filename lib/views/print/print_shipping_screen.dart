@@ -33,7 +33,9 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
       controller.searchLocation(controller.places, controller.searchAddressController.text).then((value) {
         if (controller.searchAddressController.text.isNotEmpty && controller.isResult == false) {
           hideSearchResults();
-          showSearchResults();
+          if (controller.searchAddressFocusNode.hasFocus) {
+            showSearchResults();
+          }
         } else {
           hideSearchResults();
         }
@@ -55,8 +57,9 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
           ),
         ),
         backAction: () {
-          hideSearchResults();
           Navigator.pop(context);
+          controller.searchAddressFocusNode.unfocus();
+          hideSearchResults();
         },
       ),
       backgroundColor: ColorConstant.BackgroundColor,
@@ -75,6 +78,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         child: PrintInputItem(
                           title: S.of(context).search_address,
                           controller: controller.searchAddressController,
+                          focusNode: controller.searchAddressFocusNode,
                           completeCallback: () {
                             hideSearchResults();
                           },
@@ -84,6 +88,12 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         child: PrintInputItem(
                           title: S.of(context).apartment_suite_other,
                           controller: controller.apartmentController,
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: PrintInputItem(
+                          title: S.of(context).zip_code,
+                          controller: controller.zipCodeController,
                         ),
                       ),
                       SliverToBoxAdapter(
@@ -163,7 +173,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
     if (controller.overlayEntry == null && overlayState != null) {
       controller.overlayEntry = OverlayEntry(builder: (context) {
         return Positioned(
-          top: $(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(48), // 输入框下方的偏移量，根据你的界面布局进行调整
+          top: $(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(24), // 输入框下方的偏移量，根据你的界面布局进行调整
           left: $(15),
           right: $(15),
           child: Material(

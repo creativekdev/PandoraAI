@@ -3,10 +3,11 @@ import '../../../images-res.dart';
 import '../../../models/region_code_entity.dart';
 
 class PrintInputItem extends StatelessWidget {
-  PrintInputItem({Key? key, required this.title, required this.controller, this.completeCallback}) : super(key: key);
+  PrintInputItem({Key? key, required this.title, required this.controller, this.completeCallback, this.focusNode}) : super(key: key);
   final String title;
   TextEditingController controller;
   GestureTapCallback? completeCallback;
+  FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class PrintInputItem extends StatelessWidget {
         TitleTextWidget(title, ColorConstant.White, FontWeight.normal, $(14), align: TextAlign.left),
         SizedBox(height: $(8)),
         TextField(
+          focusNode: focusNode,
           style: TextStyle(
             color: ColorConstant.White,
             fontSize: $(14),
