@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
@@ -12,9 +14,11 @@ import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
+import 'package:cartoonizer/views/common/video_preview_screen.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
+import 'package:common_utils/common_utils.dart';
 
 ///auto generate code, please do not modify;
 enum HomeCardType {
@@ -124,34 +128,63 @@ class HomeCardTypeUtils {
     InitPos pos, {
     Txt2imgInitData? initData,
   }) {
-    switch (target) {
-      case HomeCardType.txt2img:
-        Txt2img.open(context, source: source, initData: initData);
-        break;
-      case HomeCardType.anotherme:
-        AnotherMe.open(context, source: source);
-        break;
-      case HomeCardType.cartoonize:
-        Cartoonize.open(context, source: source, tabPos: pos.itemPos, categoryPos: pos.categoryPos, itemPos: pos.itemPos);
-        break;
-      case HomeCardType.ai_avatar:
-        Avatar.open(context, source: source);
-        break;
-      case HomeCardType.scribble:
-        AiDrawable.open(context, source: source);
-        break;
-      case HomeCardType.metagram:
-        Metagram.openBySelf(context, source: source);
-        break;
-      case HomeCardType.style_morph:
-        StyleMorph.open(context, source);
-        break;
-      case HomeCardType.UNDEFINED:
-        CommonExtension().showToast(S.of(context).oldversion_tips);
-        break;
-      case HomeCardType.lineart:
-        AiColoring.open(context, source: source);
-        break;
+    var action = () {
+      switch (target) {
+        case HomeCardType.txt2img:
+          Txt2img.open(context, source: source, initData: initData);
+          break;
+        case HomeCardType.anotherme:
+          AnotherMe.open(context, source: source);
+          break;
+        case HomeCardType.cartoonize:
+          Cartoonize.open(context, source: source, tabPos: pos.itemPos, categoryPos: pos.categoryPos, itemPos: pos.itemPos);
+          break;
+        case HomeCardType.ai_avatar:
+          Avatar.open(context, source: source);
+          break;
+        case HomeCardType.scribble:
+          AiDrawable.open(context, source: source);
+          break;
+        case HomeCardType.metagram:
+          Metagram.openBySelf(context, source: source);
+          break;
+        case HomeCardType.style_morph:
+          StyleMorph.open(context, source);
+          break;
+        case HomeCardType.UNDEFINED:
+          CommonExtension().showToast(S.of(context).oldversion_tips);
+          break;
+        case HomeCardType.lineart:
+          AiColoring.open(context, source: source);
+          break;
+      }
+    };
+    EffectDataController dataController = Get.find();
+    var pick = dataController.data!.homeCards.pick((t) => t.type == target.value());
+    if (!TextUtil.isEmpty(pick?.tutorial)) {
+      CacheManager cacheManager = AppDelegate.instance.getManager();
+      var key = EncryptUtil.encodeMd5(pick!.tutorial!);
+      var bool = cacheManager.getBool('${CacheManager.viewPreviewOpen}:$key');
+      if (bool) {
+        action.call();
+      } else {
+        Navigator.of(context)
+            .push(MaterialPageRoute(
+          settings: RouteSettings(name: '/ViewPreviewScreen'),
+          builder: (_) => ViewPreviewScreen(
+            url: pick.tutorial!,
+            title: target.title(),
+          ),
+        ))
+            .then((value) {
+          if (value == true) {
+            cacheManager.setBool('${CacheManager.viewPreviewOpen}:$key', true);
+            action.call();
+          }
+        });
+      }
+    } else {
+      action.call();
     }
   }
 }

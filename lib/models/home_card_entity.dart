@@ -4,11 +4,11 @@ import 'package:cartoonizer/generated/json/home_card_entity.g.dart';
 
 @JsonSerializable()
 class HomeCardEntity {
-
-	late String type;
+  late String type;
   @JSONField(name: "cover_image")
-	late String url;
-  
+  late String url;
+  String? tutorial;
+
   HomeCardEntity();
 
   factory HomeCardEntity.fromJson(Map<String, dynamic> json) => $HomeCardEntityFromJson(json);
