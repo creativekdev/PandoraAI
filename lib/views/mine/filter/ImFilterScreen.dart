@@ -18,15 +18,11 @@ import 'package:cartoonizer/models/upload_record_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
-import 'package:cartoonizer/views/mine/filter/FilterCropScreen.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
-import 'package:cartoonizer/views/mine/filter/ImCropScreen.dart';
-import 'package:cartoonizer/views/mine/filter/ImCropper.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as imgLib;
-import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 
 import 'Crop.dart';
 
@@ -145,8 +141,8 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           // }
         },
         child: Container(
-          width: 50,
-          height: 50,
+          width: 40,
+          height: 40,
           decoration: (selectedRightTab == cur)?
           BoxDecoration(
             gradient: LinearGradient(
@@ -154,18 +150,18 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               end: Alignment.bottomRight,
               colors: [const Color(0xFF68F0AF),const Color(0xFF05E0D5)],
             ),
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(20),
             // image: DecorationImage(
             //   image: AssetImage(img),
             //   fit: BoxFit.cover,
             // ),
           ):
           BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: FractionallySizedBox(
-            widthFactor: 0.5,
-            heightFactor: 0.5,
+            widthFactor: 0.6,
+            heightFactor: 0.6,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 image: DecorationImage(
@@ -218,7 +214,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             ),
             padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
             margin: const EdgeInsets.only(right: 10.0),
-            height: 320,
+            height: 265,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: buttons
@@ -227,11 +223,11 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           Container(
             decoration: BoxDecoration(
                 color: Color.fromARGB(100, 22, 44, 33),
-                borderRadius: BorderRadius.all(Radius.circular(50))
+                borderRadius: BorderRadius.all(Radius.circular(40))
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+            padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
             margin: const EdgeInsets.only(right: 10.0),
-            height: 60,
+            height: 52,
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: adjustbutton
@@ -473,7 +469,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       ],
     )
         .intoContainer(
-      margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23), bottom: $(10)),
+      margin: EdgeInsets.only(top: $(10), left: $(23), right: $(23), bottom: $(2)),
     );
   }
   Widget _buildImageView() {
@@ -483,16 +479,13 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           ? (selectedRightTab ==3)
       ?Container(
         color: Colors.black,
-        constraints: BoxConstraints(
-          maxHeight: 800.0, // Set the maximum height
-        ),
         child: Center(
           child: Cropper(
             cropperKey: _cropperKey,
             overlayType: OverlayType.grid,
             rotationTurns: 0,
             aspectRatio: crop.aspectRatio,
-            image: Image.memory(_byte!),
+            image: Image.memory(_byte!,fit: BoxFit.contain,),
             onScaleStart: (details) {
               // todo: define started action.
             },
@@ -507,19 +500,13 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       )
       :Image.memory(
         _byte!,
-        width: 300,
-        height: 300,
-        fit: BoxFit.fill,
+        fit: BoxFit.contain,
       )
           : _imagefile != null
           ? Container(
-        width: 300,
-        height: 300,
-        child: Image.file(_imagefile!),
+        child: Image.file(_imagefile!,fit: BoxFit.contain),
       )
           : Container(
-        width: 300,
-        height: 300,
         child: Image.asset(Images.ic_choose_photo_initial_header),
       ),
     ),);
@@ -584,7 +571,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(40),
+      height: $(115),
     );
   }
   Widget _buildFiltersController(){
@@ -644,7 +631,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(40),
+      height: $(115),
     );
   }
   Widget _buildAdjust() {
@@ -768,13 +755,13 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
 
     return Container(
-        height: itemWidth + $(40),
+        height:  $(115),
         child:Column(
           children:[
             Text(
               Adjust.filters[adjust.selectedID],
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 10,
                 color: Colors.white,
               ),
               textAlign: TextAlign.center,
@@ -856,7 +843,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       i++;
     }
     return Container(
-      height: itemWidth + $(40),
+      height: $(115),
       child:Center(
         child:Row(
           mainAxisSize: MainAxisSize.min,
@@ -918,7 +905,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         return Container();
       },
     ).intoContainer(
-      height: itemWidth + $(40),
+      height: $(115),
     );
 
   }
@@ -935,7 +922,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       case 4:
         return _buildBackground();
       default:
-        return Container(height: itemWidth + $(10));
+        return Container(height: $(115));
     }
   }
   @override
