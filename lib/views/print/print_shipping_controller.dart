@@ -56,6 +56,15 @@ class PrintShippingController extends GetxController {
 
   String _variantId = "";
 
+  String getZipCode(List<AddressComponent> addressComponents) {
+    for (AddressComponent component in addressComponents) {
+      if (component.types.contains('postal_code')) {
+        return component.shortName;
+      }
+    }
+    return "";
+  }
+
   set variantId(String value) {
     _variantId = value;
     searchAddressFocusNode.hasFocus;
