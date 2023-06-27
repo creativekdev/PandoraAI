@@ -150,7 +150,6 @@ class UploadImageController extends GetxController {
     if (url == null) {
       return false;
     }
-    var imageInfo = await SyncFileImage(file: imageFile).getImage();
     var baseEntity = await Uploader().uploadFile(url, imageFile, c_type);
     if (baseEntity != null) {
       var imageUrl = url.split("?")[0];

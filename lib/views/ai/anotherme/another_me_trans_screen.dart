@@ -461,12 +461,12 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           });
                         } else {
                           await showLoading();
-                          var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                          var list = uint8list.toList();
-                          var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-                          var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-                          await File(imgPath).writeAsBytes(list);
-                          await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+                          // var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+                          // var list = uint8list.toList();
+                          // var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+                          // var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+                          // await File(imgPath).writeAsBytes(list);
+                          await GallerySaver.saveImage(controller.transKey!, albumName: saveAlbumName);
                           await hideLoading();
                           Events.metaverseCompleteDownload(type: 'image');
                           CommonExtension().showImageSavedOkToast(context);

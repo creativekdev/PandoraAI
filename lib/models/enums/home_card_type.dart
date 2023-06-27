@@ -165,7 +165,6 @@ class HomeCardTypeUtils {
       CacheManager cacheManager = AppDelegate.instance.getManager();
       var key = EncryptUtil.encodeMd5(pick!.tutorial!);
       var bool = cacheManager.getBool('${CacheManager.viewPreviewOpen}:$key');
-      bool = false;
       if (bool) {
         action.call();
       } else {

@@ -96,6 +96,7 @@ class PrintDeliveryitem extends StatelessWidget {
   }
 
   String getDescription(String type, BuildContext context) {
+    type = type.toLowerCase();
     if (type == "standard") {
       return S.of(context).business_days_10_20;
     }
