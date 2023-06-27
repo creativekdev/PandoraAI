@@ -1,6 +1,7 @@
 import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:event_bus/event_bus.dart';
 
 /// EventBusHelper
@@ -156,4 +157,8 @@ class OnPrintOrderKeyChangeEvent extends BaseEvent<String> {
 
 class OnPrintOrderTimeChangeEvent extends BaseEvent<List<DateTime?>> {
   OnPrintOrderTimeChangeEvent({required super.data});
+}
+
+class OnNetworkStateChangeEvent extends BaseEvent<ConnectivityResult> {
+  OnNetworkStateChangeEvent({required super.data});
 }

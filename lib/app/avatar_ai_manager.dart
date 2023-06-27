@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
 class AvatarAiManager extends BaseManager {
@@ -16,6 +18,7 @@ class AvatarAiManager extends BaseManager {
   bool listPageAlive = false;
   late StreamSubscription userLoginListen;
   late StreamSubscription onAppStateListener;
+  late StreamSubscription networkListener;
 
   @override
   Future<void> onCreate() async {
@@ -28,6 +31,13 @@ class AvatarAiManager extends BaseManager {
         refreshFromNet();
       }
     });
+    networkListener = EventBusHelper().eventBus.on<OnNetworkStateChangeEvent>().listen((event) {
+      if (config == null) {
+        if (event.data != ConnectivityResult.none) {
+          getConfig();
+        }
+      }
+    });
     api = CartoonizerApi().bindManager(this);
   }
 
@@ -36,6 +46,7 @@ class AvatarAiManager extends BaseManager {
     userLoginListen.cancel();
     api.unbind();
     onAppStateListener.cancel();
+    networkListener.cancel();
     await super.onDestroy();
   }
 
@@ -46,7 +57,11 @@ class AvatarAiManager extends BaseManager {
     if (!userManager.isNeedLogin) {
       listAllAvatarAi();
     }
-    getConfig();
+    getConnectionStatus().then((value) {
+      if (value) {
+        getConfig();
+      }
+    });
   }
 
   Future<AvatarConfigEntity?> getConfig() async {

@@ -47,6 +47,7 @@ class DiscoveryListController extends GetxController {
   late StreamSubscription onCreateCommentListener;
   late StreamSubscription onDeleteListener;
   late StreamSubscription onNewPostEventListener;
+  late StreamSubscription networkListener;
   late TabController tabController;
 
   late ScrollController scrollController;
@@ -166,6 +167,13 @@ class DiscoveryListController extends GetxController {
     onNewPostEventListener = EventBusHelper().eventBus.on<OnNewPostEvent>().listen((event) {
       onLoadFirstPage();
     });
+    networkListener = EventBusHelper().eventBus.on<OnNetworkStateChangeEvent>().listen((event) {
+      if (dataList.isEmpty) {
+        if (event.data != ConnectivityResult.none) {
+          onLoadFirstPage();
+        }
+      }
+    });
   }
 
   @override
@@ -185,6 +193,7 @@ class DiscoveryListController extends GetxController {
     onCreateCommentListener.cancel();
     onDeleteListener.cancel();
     onNewPostEventListener.cancel();
+    networkListener.cancel();
     super.dispose();
   }
 

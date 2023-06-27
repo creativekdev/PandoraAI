@@ -33,7 +33,7 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           if (videoFile != null)
@@ -47,6 +47,16 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                 }
               },
             ).intoContainer(width: ScreenUtil.screenSize.width).intoCenter(),
+          Positioned(
+            child: Container(
+              width: ScreenUtil.screenSize.width,
+              height: ScreenUtil.getStatusBarHeight(),
+              color: Color(0x44000000),
+            ),
+            top: 0,
+            left: 0,
+            right: 0,
+          ),
           Positioned(
             child: Icon(
               Icons.close,
@@ -64,7 +74,7 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
               Navigator.of(context).pop(true);
             }),
             top: ScreenUtil.getStatusBarHeight(),
-            right: $(0),
+            right: $(7),
           ),
           Positioned(
             child: Column(
@@ -91,12 +101,13 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                 )
                     .intoGestureDetector(onTap: () {
                   Navigator.of(context).pop(true);
-                }),
+                }).intoContainer(color: Colors.black, padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(15))),
+                SizedBox(height: ScreenUtil.getBottomPadding(context)),
               ],
             ),
-            left: $(25),
-            right: $(25),
-            bottom: ScreenUtil.getBottomPadding(context),
+            left: $(0),
+            right: $(0),
+            bottom: $(0),
           ),
         ],
       ),

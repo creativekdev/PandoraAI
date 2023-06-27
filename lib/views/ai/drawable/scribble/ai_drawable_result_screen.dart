@@ -300,12 +300,12 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
 
   savePhoto(BuildContext context) async {
     await showLoading();
-    var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-    var list = uint8list.toList();
-    var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-    var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
-    await File(imgPath).writeAsBytes(list);
-    await GallerySaver.saveImage(imgPath, albumName: saveAlbumName);
+    // var uint8list = await ImageUtils.printAiDrawData(File(filePath), File(resultFilePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    // var list = uint8list.toList();
+    // var path = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+    // var imgPath = path + '${DateTime.now().millisecondsSinceEpoch}.png';
+    // await File(imgPath).writeAsBytes(list);
+    await GallerySaver.saveImage(resultFilePath!, albumName: saveAlbumName);
     await hideLoading();
     Events.aidrawCompleteDownload(type: 'image');
     CommonExtension().showImageSavedOkToast(context);

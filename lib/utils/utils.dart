@@ -44,6 +44,11 @@ Future<void> loginBack(BuildContext context) async {
   }
 }
 
+Future<bool> getConnectionStatus() async {
+  var connectivityResult = await (Connectivity().checkConnectivity());
+  return (connectivityResult != ConnectivityResult.none);
+}
+
 launchURL(String url, {bool force = false}) async {
   var uri = Uri.parse(url);
   if (force) {

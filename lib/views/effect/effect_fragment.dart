@@ -16,6 +16,7 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
@@ -251,9 +252,4 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
           ],
         ),
       );
-
-  Future<bool> getConnectionStatus() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    return (connectivityResult != ConnectivityResult.none);
-  }
 }

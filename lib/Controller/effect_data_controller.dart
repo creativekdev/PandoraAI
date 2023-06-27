@@ -72,6 +72,7 @@ class EffectDataController extends GetxController {
 
   List<String> tagList = [];
   late StreamSubscription onAppStateListener;
+  late StreamSubscription networkListener;
 
   @override
   void onInit() {
@@ -82,18 +83,24 @@ class EffectDataController extends GetxController {
         loadData();
       }
     });
+    networkListener = EventBusHelper().eventBus.on<OnNetworkStateChangeEvent>().listen((event) {
+      if (data == null) {
+        loadData();
+      }
+    });
   }
 
   @override
   dispose() {
     onAppStateListener.cancel();
+    networkListener.cancel();
     super.dispose();
   }
 
   @override
   void onReady() {
     super.onReady();
-    // loadData();
+    loadData();
   }
 
   loadData() {

@@ -76,7 +76,7 @@ extension _HtmlStringEx on String {
         'target-densitydpi=high-dpi,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no\'>'
         '</head>'
         '<style type=\'text/css\'>'
-        'html, body p {color: #000; background: #000;}'
+        'html, body p {color: #000; background: #000; font-family: "Arial", sans-serif; }'
         '*{margin: 0;padding: 0;outline: none;cursor: pointer;}'
         '.main{width: 90%;margin:0 auto;}'
         'img{width: 100%;margin: 0;padding: 0;border: 0;}'

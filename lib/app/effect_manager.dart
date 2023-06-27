@@ -49,7 +49,7 @@ class EffectManager extends BaseManager {
   }
 
   Future<ApiConfigEntity?> loadData({bool ignoreCache = false}) async {
-    if (ignoreCache || !loaded) {
+    if (ignoreCache || !loaded || _data == null) {
       var data = await api.getHomeConfig();
       if (data != null) {
         _data = data;
