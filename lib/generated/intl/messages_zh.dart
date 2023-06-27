@@ -478,6 +478,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "我们很高兴你喜欢我们的工具！现在注册或登录，只需2分钟，你可以体验更多的功能！"),
         "standard": MessageLookupByLibrary.simpleMessage("标准"),
         "start_date": MessageLookupByLibrary.simpleMessage("开始时间"),
+        "start_now": MessageLookupByLibrary.simpleMessage("开始使用"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
         "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
@@ -560,7 +561,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "your_post_has_been_submitted_successfully":
             MessageLookupByLibrary.simpleMessage("您已分享成功"),
         "youtube": MessageLookupByLibrary.simpleMessage("使用YouTube账号"),
-        "zip_code": MessageLookupByLibrary.simpleMessage("邮编"),
+        "zip_code": MessageLookupByLibrary.simpleMessage("邮政编码"),
         "zip_code_validation_message":
             MessageLookupByLibrary.simpleMessage("无效的邮编")
       };

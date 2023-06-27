@@ -403,7 +403,6 @@
   "shipping_details": "Shipping details",
   "address": "Address",
   "apartment_suite_other": "Apartment/Suite/Other",
-  "zip_code": "Zip Code",
   "search_address": "Input address",
   "first_name": "First Name",
   "last_name": "Last Name",
@@ -441,5 +440,6 @@
   "partial_delivered": "Partial delivered",
   "fulfilled": "Fulfilled",
   "restocked": "Restocked",
-  "pleaseInput": "Please input %s"
+  "pleaseInput": "Please input %s",
+  "start_now": "Start Now"
 }

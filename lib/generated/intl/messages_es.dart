@@ -600,6 +600,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "¡Nos alegra que te haya gustado nuestra herramienta! Regístrese o inicie sesión ahora, solo toma 2 minutos y puede experimentar más funciones！"),
         "standard": MessageLookupByLibrary.simpleMessage("estándar"),
         "start_date": MessageLookupByLibrary.simpleMessage("Fecha de inicio"),
+        "start_now": MessageLookupByLibrary.simpleMessage("Empieza ahora"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),

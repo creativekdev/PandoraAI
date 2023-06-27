@@ -9,6 +9,7 @@ import 'package:cartoonizer/models/msg_entity.dart';
 import 'package:cartoonizer/models/page_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/views/msg/msg_list_controller.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import '../config.dart';
@@ -23,21 +24,16 @@ class MsgManager extends BaseManager {
 
   late StreamSubscription userStateListen;
 
-  // late TimerUtil timer;
-  late IO.Socket socket;
+  IO.Socket? socket;
 
   @override
   Future<void> onCreate() async {
     super.onCreate();
     api = CartoonizerApi().bindManager(this);
-    UserManager userManager = AppDelegate.instance.getManager();
-    if (userManager.isNeedLogin) {
-      onConnectSocket();
-    }
 
     userStateListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) async {
       if (event.data ?? false) {
-        if (socket.disconnected) {
+        if (socket?.disconnected ?? true) {
           onConnectSocket();
         }
         loadUnreadCount();
@@ -55,40 +51,57 @@ class MsgManager extends BaseManager {
       port: Config.instance.metagramSocketPort,
       path: '/notification',
     );
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    var sid = sharedPreferences.getString("login_cookie");
+    UserManager userManager = AppDelegate.instance.getManager();
     socket = IO.io(
         wsUrl.toString(),
         IO.OptionBuilder()
+            .setTimeout(60000)
             .setTransports(['websocket', 'polling'])
-            .enableReconnection() // for Flutter or Dart VM
-            .setExtraHeaders({'origin': Config.instance.host, 'cookie': "sb.connect.sid=$sid"}) // optional
+            .enableReconnection()
+            .setExtraHeaders({'origin': Config.instance.host, 'cookie': "sb.connect.sid=${userManager.sid}"}) // optional
             .enableForceNewConnection()
             .build());
     socket?.on('notification', (data) {
-      // 请求未读消息数量
+      LogUtil.d(data, tag: 'socket-notification');
       loadUnreadCount();
     });
-    socket?.onConnect((data) {});
-    socket?.onError((data) {});
-    socket?.onDisconnect((data) {});
-    socket?.onConnectError((data) {});
-    socket?.onReconnectError((data) {});
-    socket?.onConnectTimeout((data) {});
-    socket?.onReconnect((data) {});
+    socket?.onConnect((data) {
+      LogUtil.d(data, tag: 'socket-onConnect');
+    });
+    socket?.onError((data) {
+      LogUtil.d(data, tag: 'socket-onError');
+    });
+    socket?.onDisconnect((data) {
+      LogUtil.d(data, tag: 'socket-onDisconnect');
+    });
+    socket?.onConnectError((data) {
+      LogUtil.d(data, tag: 'socket-onConnectError');
+    });
+    socket?.onReconnectError((data) {
+      LogUtil.d(data, tag: 'socket-onReconnectError');
+    });
+    socket?.onConnectTimeout((data) {
+      LogUtil.d(data, tag: 'socket-onConnectTimeout');
+    });
+    socket?.onReconnect((data) {
+      LogUtil.d(data, tag: 'socket-onReconnect');
+    });
     socket?.connect();
   }
 
   @override
   Future<void> onAllManagerCreate() async {
     super.onAllManagerCreate();
-    delay(() => loadUnreadCount(), milliseconds: 2000);
+    UserManager userManager = AppDelegate.instance.getManager();
+    if (!userManager.isNeedLogin) {
+      onConnectSocket();
+      delay(() => loadUnreadCount(), milliseconds: 2000);
+    }
   }
 
   @override
   Future<void> onDestroy() async {
     api.unbind();
-    // timer.cancel();
     socket?.dispose();
     super.onDestroy();
   }

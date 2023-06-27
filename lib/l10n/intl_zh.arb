@@ -403,7 +403,6 @@
   "shipping_details": "物流信息",
   "address": "收货地址",
   "apartment_suite_other": "公寓/套房/其他",
-  "zip_code": "邮编",
   "search_address": "填写地址",
   "first_name": "名字",
   "last_name": "姓氏",
@@ -441,5 +440,6 @@
   "partial_delivered": "部分已交付",
   "fulfilled": "已完成",
   "restocked": "已重新进货",
-  "pleaseInput": "请填写 %s"
+  "pleaseInput": "请填写 %s",
+  "start_now": "开始使用"
 }

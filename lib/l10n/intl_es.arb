@@ -399,7 +399,6 @@
   "shipping_details": "Detalles de envío",
   "address": "Dirección",
   "apartment_suite_other": "Apartamento/Suite/Otro",
-  "zip_code": "Código postal",
   "search_address": "Buscar dirección",
   "first_name": "Nombre",
   "last_name": "Apellido",
@@ -437,5 +436,6 @@
   "partial_delivered": "Entrega parcial",
   "fulfilled": "Cumplido",
   "restocked": "Reabastecido",
-  "pleaseInput": "Por favor rellene %s"
+  "pleaseInput": "Por favor rellene %s",
+  "start_now": "Empieza ahora"
 }
