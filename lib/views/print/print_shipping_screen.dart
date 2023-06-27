@@ -200,10 +200,11 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                           .intoContainer(
                         height: $(40),
                       )
-                          .intoGestureDetector(onTap: () {
+                          .intoGestureDetector(onTap: () async {
+                        PlacesDetailsResponse detail = await controller.places.getDetailsByPlaceId(prediction.placeId!);
+                        controller.zipCodeController.text = controller.getZipCode(detail.result.addressComponents);
                         controller.isResult = true;
                         controller.searchAddressController.text = prediction.description!;
-
                         FocusScope.of(context).unfocus();
                         // 处理选择的搜索结果
                         hideSearchResults();
