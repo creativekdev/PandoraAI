@@ -584,6 +584,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
         "standard": MessageLookupByLibrary.simpleMessage("standard"),
         "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
+        "start_now": MessageLookupByLibrary.simpleMessage("Start Now"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),

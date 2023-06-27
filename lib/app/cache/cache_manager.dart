@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/cache/app_feature_operator.dart';
 import 'package:cartoonizer/app/cache/img_summary_cache.dart';
 import 'package:cartoonizer/app/cache/photo_source_operator.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/utils/array_util.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,6 +87,16 @@ class CacheManager extends BaseManager {
     _featureOperator = AppFeatureOperator(cacheManager: this);
     _imgSummaryCache = ImgSummaryCache(cacheManager: this);
     _imgSummaryCache.init();
+  }
+
+  List<String> keys(String partKey) {
+    return _sharedPreferences
+        .getKeys()
+        .toList()
+        .filter(
+          (t) => t.contains(partKey),
+        )
+        .toList();
   }
 
   String rateConfigKey() {

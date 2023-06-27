@@ -120,6 +120,9 @@ class _SettingScreenState extends AppState<SettingScreen> {
                       showLoading().whenComplete(() {
                         cacheManager.setJson(CacheManager.photoSourceFace, null);
                         cacheManager.setJson(CacheManager.photoSourceOther, null);
+                        cacheManager.keys(CacheManager.viewPreviewOpen).forEach((element) {
+                          cacheManager.setBool(element, null);
+                        });
                         cacheManager.storageOperator.clearDirectories([
                           cacheManager.storageOperator.videoDir,
                           cacheManager.storageOperator.imageDir,
