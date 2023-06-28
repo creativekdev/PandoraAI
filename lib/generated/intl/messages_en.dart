@@ -451,6 +451,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Connecting"),
         "play_ground": MessageLookupByLibrary.simpleMessage("Play Ground"),
         "pleaseInput": MessageLookupByLibrary.simpleMessage("Please input %s"),
+        "pleaseSelect":
+            MessageLookupByLibrary.simpleMessage("Please select a \$s"),
+        "pleaseSelectColor":
+            MessageLookupByLibrary.simpleMessage("Please select a Color"),
+        "pleaseSelectModel":
+            MessageLookupByLibrary.simpleMessage("Please select a Model"),
+        "pleaseSelectSize":
+            MessageLookupByLibrary.simpleMessage("Please select a Size"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Please enter an avatar name"),
         "please_input_invited_code": MessageLookupByLibrary.simpleMessage(

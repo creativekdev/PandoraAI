@@ -453,5 +453,9 @@
   "size": "尺寸",
   "color": "颜色",
   "quantity": "数量",
-  "model": "款式"
+  "model": "款式",
+  "pleaseSelectSize": "请选择尺寸",
+  "pleaseSelectColor": "请选择颜色",
+  "pleaseSelectModel": "请选择款式",
+  "pleaseSelect": "请选择%s"
 }

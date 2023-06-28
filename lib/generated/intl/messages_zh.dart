@@ -374,6 +374,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "platform_connecting": MessageLookupByLibrary.simpleMessage("链接中"),
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "pleaseInput": MessageLookupByLibrary.simpleMessage("请填写 %s"),
+        "pleaseSelect": MessageLookupByLibrary.simpleMessage("请选择%s"),
+        "pleaseSelectColor": MessageLookupByLibrary.simpleMessage("请选择颜色"),
+        "pleaseSelectModel": MessageLookupByLibrary.simpleMessage("请选择款式"),
+        "pleaseSelectSize": MessageLookupByLibrary.simpleMessage("请选择尺寸"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("请输入名称"),
         "please_input_invited_code":

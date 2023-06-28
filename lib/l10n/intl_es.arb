@@ -453,5 +453,9 @@
   "size": "Tamaño",
   "color": "Color",
   "quantity": "Cantidad",
-  "model": "Modelo"
+  "model": "Modelo",
+  "pleaseSelectSize": "Por favor, seleccione una talla",
+  "pleaseSelectColor": "Por favor, seleccione un color",
+  "pleaseSelectModel": "Por favor, seleccione un modelo",
+  "pleaseSelect": "Please select seleccione un $s"
 }

@@ -214,10 +214,10 @@ class PrintController extends GetxController {
     if (_quantity > 1) {
       _quantity--;
       _total = getSubTotal();
+      update();
     } else {
-      Fluttertoast.showToast(msg: "quantity can't less than 1");
+      return;
     }
-    update();
   }
 
   getSubTotal() {
@@ -252,7 +252,7 @@ class PrintController extends GetxController {
     }
     for (var i = 0; i < keys.length; i++) {
       if (selectOptions[keys[i]] == null) {
-        Fluttertoast.showToast(msg: "Please select ${keys[i]}", gravity: ToastGravity.CENTER);
+        Fluttertoast.showToast(msg: keys[i].selectToastIntl, gravity: ToastGravity.CENTER);
         return false;
       }
     }
@@ -378,5 +378,19 @@ class PrintController extends GetxController {
       }
     }
     return map;
+  }
+}
+
+extension _StringEx on String {
+  String get selectToastIntl {
+    switch (this.toLowerCase()) {
+      case 'color':
+        return S.of(Get.context!).pleaseSelectColor;
+      case 'size':
+        return S.of(Get.context!).pleaseSelectSize;
+      case 'model':
+        return S.of(Get.context!).pleaseSelectModel;
+    }
+    return S.of(Get.context!).pleaseSelect.replaceAll('%s', this);
   }
 }

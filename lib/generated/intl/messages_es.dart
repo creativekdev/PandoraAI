@@ -473,6 +473,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("Estudio de IA"),
         "pleaseInput":
             MessageLookupByLibrary.simpleMessage("Por favor rellene %s"),
+        "pleaseSelect": MessageLookupByLibrary.simpleMessage(
+            "Please select seleccione un \$s"),
+        "pleaseSelectColor": MessageLookupByLibrary.simpleMessage(
+            "Por favor, seleccione un color"),
+        "pleaseSelectModel": MessageLookupByLibrary.simpleMessage(
+            "Por favor, seleccione un modelo"),
+        "pleaseSelectSize": MessageLookupByLibrary.simpleMessage(
+            "Por favor, seleccione una talla"),
         "please_enter_an_avatar_name":
             MessageLookupByLibrary.simpleMessage("Introduce un nombre"),
         "please_input_invited_code": MessageLookupByLibrary.simpleMessage(

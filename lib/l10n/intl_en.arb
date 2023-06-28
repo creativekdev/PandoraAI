@@ -453,5 +453,9 @@
   "size": "Size",
   "color": "Color",
   "quantity": "Quantity",
-  "model": "Model"
+  "model": "Model",
+  "pleaseSelectSize": "Please select a Size",
+  "pleaseSelectColor": "Please select a Color",
+  "pleaseSelectModel": "Please select a Model",
+  "pleaseSelect": "Please select a $s"
 }

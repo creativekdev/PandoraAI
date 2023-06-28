@@ -4100,6 +4100,26 @@ class S {
     );
   }
 
+  /// `City`
+  String get city {
+    return Intl.message(
+      'City',
+      name: 'city',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country/Region`
+  String get country_region {
+    return Intl.message(
+      'Country/Region',
+      name: 'country_region',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `First Name`
   String get first_name {
     return Intl.message(
@@ -4575,6 +4595,46 @@ class S {
     return Intl.message(
       'Model',
       name: 'model',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a Size`
+  String get pleaseSelectSize {
+    return Intl.message(
+      'Please select a Size',
+      name: 'pleaseSelectSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a Color`
+  String get pleaseSelectColor {
+    return Intl.message(
+      'Please select a Color',
+      name: 'pleaseSelectColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a Model`
+  String get pleaseSelectModel {
+    return Intl.message(
+      'Please select a Model',
+      name: 'pleaseSelectModel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a $s`
+  String get pleaseSelect {
+    return Intl.message(
+      'Please select a \$s',
+      name: 'pleaseSelect',
       desc: '',
       args: [],
     );
