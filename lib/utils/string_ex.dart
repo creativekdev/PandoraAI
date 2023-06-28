@@ -53,58 +53,7 @@ extension StringEx on String {
     if (Get.context == null) {
       return this;
     }
-    BuildContext context = Get.context!;
-    S.of(context);
-    switch (this.toLowerCase()) {
-      case 'not_found':
-        return S.of(context).not_found;
-      case 'invalid password':
-        return S.of(context).invalid_password;
-      case 'oops failed':
-        return S.of(context).commonFailedToast;
-      case 'recent':
-        return S.of(context).recent;
-      case 'get inspired':
-        return S.of(context).get_inspired;
-      case 'facetoon':
-        return S.of(context).face_toon;
-      case 'effects':
-        return S.of(context).effects;
-      case 'january':
-        return S.of(context).january;
-      case 'february':
-        return S.of(context).february;
-      case 'march':
-        return S.of(context).march;
-      case 'april':
-        return S.of(context).april;
-      case 'may':
-        return S.of(context).may;
-      case 'june':
-        return S.of(context).june;
-      case 'july':
-        return S.of(context).july;
-      case 'august':
-        return S.of(context).august;
-      case 'september':
-        return S.of(context).september;
-      case 'october':
-        return S.of(context).october;
-      case 'november':
-        return S.of(context).november;
-      case 'december':
-        return S.of(context).december;
-      case 'man':
-        return S.of(context).man;
-      case 'woman':
-        return S.of(context).woman;
-      case 'cat':
-        return S.of(context).cat;
-      case 'dog':
-        return S.of(context).dog;
-      default:
-        return this;
-    }
+    return _intlMap[this.toLowerCase()]?.call() ?? this;
   }
 
   String get fileImageType {
@@ -126,3 +75,42 @@ extension StringEx on String {
     return result;
   }
 }
+
+typedef StringRender = String Function();
+
+Map<String, StringRender> _intlMap = {
+  'not_found': () => S.of(Get.context!).not_found,
+  'invalid password': () => S.of(Get.context!).invalid_password,
+  'oops failed': () => S.of(Get.context!).commonFailedToast,
+  'recent': () => S.of(Get.context!).recent,
+  'get inspired': () => S.of(Get.context!).get_inspired,
+  'facetoon': () => S.of(Get.context!).face_toon,
+  'effects': () => S.of(Get.context!).effects,
+  'january': () => S.of(Get.context!).january,
+  'february': () => S.of(Get.context!).february,
+  'march': () => S.of(Get.context!).march,
+  'april': () => S.of(Get.context!).april,
+  'may': () => S.of(Get.context!).may,
+  'june': () => S.of(Get.context!).june,
+  'july': () => S.of(Get.context!).july,
+  'august': () => S.of(Get.context!).august,
+  'september': () => S.of(Get.context!).september,
+  'october': () => S.of(Get.context!).october,
+  'november': () => S.of(Get.context!).november,
+  'december': () => S.of(Get.context!).december,
+  'monday': () => S.of(Get.context!).monday,
+  'tuesday': () => S.of(Get.context!).tuesday,
+  'wednesday': () => S.of(Get.context!).wednesday,
+  'thursday': () => S.of(Get.context!).thursday,
+  'friday': () => S.of(Get.context!).friday,
+  'saturday': () => S.of(Get.context!).saturday,
+  'sunday': () => S.of(Get.context!).sunday,
+  'man': () => S.of(Get.context!).man,
+  'woman': () => S.of(Get.context!).woman,
+  'cat': () => S.of(Get.context!).cat,
+  'dog': () => S.of(Get.context!).dog,
+  'size': () => S.of(Get.context!).size,
+  'model': () => S.of(Get.context!).model,
+  'quantity': () => S.of(Get.context!).quantity,
+  'color': () => S.of(Get.context!).color,
+};

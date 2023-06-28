@@ -214,7 +214,7 @@ class PrintShippingController extends GetxController {
     await getVariantId();
     var body = {
       "variant_id": variantId,
-      "quantity": printController.quatity,
+      "quantity": printController.quantity,
       "customer": {
         "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
         "first_name": firstNameController.text,
@@ -234,7 +234,7 @@ class PrintShippingController extends GetxController {
         "repay": {
           "productInfo": {
             "name": printController.optionData.title,
-            "quantity": printController.quatity,
+            "quantity": printController.quantity,
             "desc": printController.optionData.desc,
             "price": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt()
           },
@@ -287,7 +287,7 @@ class PrintShippingController extends GetxController {
             "tax_behavior": "exclusive",
           },
           "adjustable_quantity": {"enabled": false},
-          "quantity": printController.quatity
+          "quantity": printController.quantity
         }
       ],
     };

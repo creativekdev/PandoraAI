@@ -116,7 +116,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                                   title: value.keys.first,
                                   content: controller.selectOptions[value.keys.first] ?? '',
                                   imgUrl: controller.imgUrl,
-                                  showImage: value.keys.first == "Color" && controller.selectOptions[value.keys.first] != null,
+                                  showImage: value.keys.first.toLowerCase() == "color" && controller.selectOptions[value.keys.first] != null,
                                 ).intoGestureDetector(onTap: () {
                                   controller.onTapOptions(value, key);
                                 }),
@@ -136,7 +136,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                       .toList(),
                   SliverToBoxAdapter(
                     child: PrintQuatityItem(
-                      quatity: "${controller.quatity}",
+                      quantity: "${controller.quantity}",
                       onAddTap: () {
                         controller.onAddTap();
                       },
@@ -182,8 +182,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                         hideLoading();
                       },
                     );
-                  } else {
-                  }
+                  } else {}
                   hideLoading();
                 },
               ),

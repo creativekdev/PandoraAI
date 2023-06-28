@@ -135,14 +135,14 @@ class PrintController extends GetxController {
 
   Size get size => _size;
 
-  int _quatity = 1;
+  int _quantity = 1;
 
-  set quatity(int value) {
-    _quatity = value;
+  set quantity(int value) {
+    _quantity = value;
     update();
   }
 
-  int get quatity => _quatity;
+  int get quantity => _quantity;
 
   double _total = 0;
 
@@ -205,23 +205,23 @@ class PrintController extends GetxController {
   }
 
   onAddTap() {
-    _quatity++;
+    _quantity++;
     _total = getSubTotal();
     update();
   }
 
   onSubTap() {
-    if (_quatity > 1) {
-      _quatity--;
+    if (_quantity > 1) {
+      _quantity--;
       _total = getSubTotal();
     } else {
-      Fluttertoast.showToast(msg: "quality can't less than 1");
+      Fluttertoast.showToast(msg: "quantity can't less than 1");
     }
     update();
   }
 
   getSubTotal() {
-    double total = _quatity * double.parse(product?.data.rows.first.variants.edges.first.node.price ?? "0");
+    double total = _quantity * double.parse(product?.data.rows.first.variants.edges.first.node.price ?? "0");
     return getNeedDouble(total);
   }
 

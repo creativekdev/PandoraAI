@@ -24,6 +24,15 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "Sus solicitudes diarias han alcanzado su límite, inténtelo de nuevo mañana"),
+        "SELECT_COUNTRY_CALLING_CODE":
+            MessageLookupByLibrary.simpleMessage("Seleccionar región"),
+        "SELECT_COUNTRY_CALLING_CODE_HINT":
+            MessageLookupByLibrary.simpleMessage(
+                "Por favor, seleccione la región"),
+        "SELECT_COUNTRY_KEYWORD": MessageLookupByLibrary.simpleMessage(
+            "RegionName, RegionCode o CallingCode"),
+        "SELECT_REGION":
+            MessageLookupByLibrary.simpleMessage("Seleccionar región"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Usuarios de Pandora"),
@@ -141,6 +150,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "code_send_to_email": MessageLookupByLibrary.simpleMessage(
             "Tu código de verificación ha sido enviado"),
         "collapse": MessageLookupByLibrary.simpleMessage("Colapso"),
+        "color": MessageLookupByLibrary.simpleMessage("Color"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Observaciones presentadas"),
         "comments": MessageLookupByLibrary.simpleMessage("Comentarios"),
@@ -228,7 +238,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "expand": MessageLookupByLibrary.simpleMessage("desplegar"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "Las imágenes producidas por la IA son impredecibles y pueden contener imágenes incómodas como desnudez y mutilación, que están fuera de nuestro control. Por lo tanto, asegúrese de conocer todos los riesgos antes de hacer clic en Continuar"),
-        "expedited": MessageLookupByLibrary.simpleMessage("acelerado"),
+        "expedited": MessageLookupByLibrary.simpleMessage("Acelerado"),
         "expired_date": MessageLookupByLibrary.simpleMessage("Válido hasta"),
         "explain": MessageLookupByLibrary.simpleMessage("ilustrar"),
         "explore_more": MessageLookupByLibrary.simpleMessage("Ir a explorar"),
@@ -255,6 +265,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Ingrese su dirección de correo electrónico registrada a continuación para recibir instrucciones para restablecer la contraseña"),
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Olvidé mi contraseña？"),
+        "friday": MessageLookupByLibrary.simpleMessage("Viernes"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("Cumplido"),
         "full_name": MessageLookupByLibrary.simpleMessage("nombre completo"),
         "generate": MessageLookupByLibrary.simpleMessage("crear"),
@@ -337,6 +348,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Compartir imágenes"),
         "metaverse_share_video":
             MessageLookupByLibrary.simpleMessage("Compartir vídeos"),
+        "model": MessageLookupByLibrary.simpleMessage("Modelo"),
+        "monday": MessageLookupByLibrary.simpleMessage("Lunes"),
         "month": MessageLookupByLibrary.simpleMessage("mes"),
         "month_1": MessageLookupByLibrary.simpleMessage("1 mes"),
         "month_3": MessageLookupByLibrary.simpleMessage("3 meses"),
@@ -476,7 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Política de privacidad"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("？"),
-        "quatity": MessageLookupByLibrary.simpleMessage("Cantidad"),
+        "quantity": MessageLookupByLibrary.simpleMessage("Cantidad"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
             "¿Cómo fue tu experiencia? ¿Quieres puntuarnos?"),
         "rate_pandora_ai": MessageLookupByLibrary.simpleMessage("Califícanos"),
@@ -528,6 +541,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore_msg": MessageLookupByLibrary.simpleMessage(
             "¿Está seguro de que desea cancelar su suscripción？"),
         "retry": MessageLookupByLibrary.simpleMessage("reintentar"),
+        "saturday": MessageLookupByLibrary.simpleMessage("Sábado"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
             "Guarde imágenes HD sin marca de agua"),
@@ -598,12 +612,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Regístrate para desbloquear más funciones"),
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "¡Nos alegra que te haya gustado nuestra herramienta! Regístrese o inicie sesión ahora, solo toma 2 minutos y puede experimentar más funciones！"),
-        "standard": MessageLookupByLibrary.simpleMessage("estándar"),
+        "size": MessageLookupByLibrary.simpleMessage("Tamaño"),
+        "standard": MessageLookupByLibrary.simpleMessage("Estándar"),
         "start_date": MessageLookupByLibrary.simpleMessage("Fecha de inicio"),
         "start_now": MessageLookupByLibrary.simpleMessage("Empieza ahora"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
+        "sunday": MessageLookupByLibrary.simpleMessage("Domingo"),
         "system":
             MessageLookupByLibrary.simpleMessage("Notificaciones del sistema"),
         "system_msg":
@@ -632,6 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "this_user_has_not_posted_anything":
             MessageLookupByLibrary.simpleMessage(
                 "El usuario aún no ha compartido nada"),
+        "thursday": MessageLookupByLibrary.simpleMessage("Jueves"),
         "tiktok":
             MessageLookupByLibrary.simpleMessage("Usar una cuenta de TikTok"),
         "tiktok_login": MessageLookupByLibrary.simpleMessage("Tiktock"),
@@ -645,6 +662,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Cargar..."),
         "try_again": MessageLookupByLibrary.simpleMessage("Inténtalo de nuevo"),
         "try_it_now": MessageLookupByLibrary.simpleMessage("Ir ahora"),
+        "tuesday": MessageLookupByLibrary.simpleMessage("Martes"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Sigue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("Diferentes avatares"),
@@ -681,6 +699,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "watchAdText": MessageLookupByLibrary.simpleMessage("下载高清\n无水印图片"),
         "watchAdToShareText":
             MessageLookupByLibrary.simpleMessage("分享高清\n无水印图片"),
+        "wednesday": MessageLookupByLibrary.simpleMessage("Miércoles"),
         "welcome": MessageLookupByLibrary.simpleMessage("Bienvenido！"),
         "welcome1": MessageLookupByLibrary.simpleMessage("Bienvenido"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("欢迎\n回来"),

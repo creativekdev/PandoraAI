@@ -59,7 +59,7 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
                           child: SkeletonAvatar(
                               style: SkeletonAvatarStyle(
                             width: (ScreenUtil.screenSize.width - $(20)) / 2,
-                            height: $(100),
+                            height: $(220),
                           )),
                         ),
                         SizedBox(width: $(4)),
@@ -67,7 +67,7 @@ class _PrintOptionScreenState extends State<PrintOptionScreen> {
                           child: SkeletonAvatar(
                               style: SkeletonAvatarStyle(
                             width: (ScreenUtil.screenSize.width - $(20)) / 2,
-                            height: $(100),
+                            height: $(220),
                           )),
                         )
                       ],

@@ -143,6 +143,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "code_send_to_email":
             MessageLookupByLibrary.simpleMessage("Your code was emailed to "),
         "collapse": MessageLookupByLibrary.simpleMessage("Collapse"),
+        "color": MessageLookupByLibrary.simpleMessage("Color"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Comment posted"),
         "comments": MessageLookupByLibrary.simpleMessage("Comments"),
@@ -225,7 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "expand": MessageLookupByLibrary.simpleMessage("Expand"),
         "expect_details": MessageLookupByLibrary.simpleMessage(
             "The AI that Pandora Avatar uses can generate unpredictable results which may include artistic nudes, defects or shocking images. This is not within our countrol. Please acknowledge and accept full responsibility and risk before continue."),
-        "expedited": MessageLookupByLibrary.simpleMessage("expedited"),
+        "expedited": MessageLookupByLibrary.simpleMessage("Expedited"),
         "expired_date": MessageLookupByLibrary.simpleMessage("Expired Date"),
         "explain": MessageLookupByLibrary.simpleMessage("Explain"),
         "explore_more": MessageLookupByLibrary.simpleMessage("Explore More"),
@@ -251,6 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Enter your registered email below to receive password reset instruction"),
         "forgot_your_password":
             MessageLookupByLibrary.simpleMessage("Forgot Your Password?"),
+        "friday": MessageLookupByLibrary.simpleMessage("Friday"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("Fulfilled"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "generate": MessageLookupByLibrary.simpleMessage("Generate"),
@@ -325,6 +327,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Share Image"),
         "metaverse_share_video":
             MessageLookupByLibrary.simpleMessage("Share Video"),
+        "model": MessageLookupByLibrary.simpleMessage("Model"),
+        "monday": MessageLookupByLibrary.simpleMessage("Monday"),
         "month": MessageLookupByLibrary.simpleMessage("Month"),
         "month_1": MessageLookupByLibrary.simpleMessage("1 month"),
         "month_3": MessageLookupByLibrary.simpleMessage("3 month"),
@@ -462,7 +466,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Privacy policy"),
         "pro": MessageLookupByLibrary.simpleMessage("Pro"),
         "q1": MessageLookupByLibrary.simpleMessage("?"),
-        "quatity": MessageLookupByLibrary.simpleMessage("Quatity"),
+        "quantity": MessageLookupByLibrary.simpleMessage("Quantity"),
         "rate_description": MessageLookupByLibrary.simpleMessage(
             "If you enjoy using Pandora AI, would you mind taking a moment to rate it?"),
         "rate_pandora_ai":
@@ -515,6 +519,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore_msg": MessageLookupByLibrary.simpleMessage(
             "Are you sure to unsubscribe?"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+        "saturday": MessageLookupByLibrary.simpleMessage("Saturday"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to save %d images"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
@@ -582,12 +587,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Sign up for more uses"),
         "signup_text2": MessageLookupByLibrary.simpleMessage(
             "We\'re glad you\'re enjoying our tool! Sign up now or log in, it only takes 2 minutes and you can enjoy more uses!"),
-        "standard": MessageLookupByLibrary.simpleMessage("standard"),
+        "size": MessageLookupByLibrary.simpleMessage("Size"),
+        "standard": MessageLookupByLibrary.simpleMessage("Standard"),
         "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
         "start_now": MessageLookupByLibrary.simpleMessage("Start Now"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
+        "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "system_msg": MessageLookupByLibrary.simpleMessage("System Message"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
@@ -613,6 +620,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "this_user_has_not_posted_anything":
             MessageLookupByLibrary.simpleMessage(
                 "This user has not posted anything"),
+        "thursday": MessageLookupByLibrary.simpleMessage("Thursday"),
         "tiktok": MessageLookupByLibrary.simpleMessage("Continue with TikTok"),
         "tiktok_login": MessageLookupByLibrary.simpleMessage("TikTok"),
         "toastImageSaved": MessageLookupByLibrary.simpleMessage("Image Saved"),
@@ -624,6 +632,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "trans_uploading": MessageLookupByLibrary.simpleMessage("Uploading..."),
         "try_again": MessageLookupByLibrary.simpleMessage("Try again"),
         "try_it_now": MessageLookupByLibrary.simpleMessage("Try it now"),
+        "tuesday": MessageLookupByLibrary.simpleMessage("Tuesday"),
         "txtContinue": MessageLookupByLibrary.simpleMessage("Continue"),
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),
@@ -658,6 +667,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Download HD image\nwithout watermark"),
         "watchAdToShareText": MessageLookupByLibrary.simpleMessage(
             "Share HD image\nwithout watermark"),
+        "wednesday": MessageLookupByLibrary.simpleMessage("Wednesday"),
         "welcome": MessageLookupByLibrary.simpleMessage("Welcome Back!"),
         "welcome1": MessageLookupByLibrary.simpleMessage("Welcome"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("Welcome\nBack"),

@@ -431,7 +431,6 @@
   "search_order": "订单搜索",
   "start_date": "开始时间",
   "end_date": "结束时间",
-  "quatity": "数量",
   "pending": "待处理",
   "paid": "已支付",
   "unpaid": "未支付",
@@ -441,5 +440,16 @@
   "fulfilled": "已完成",
   "restocked": "已重新进货",
   "pleaseInput": "请填写 %s",
-  "start_now": "开始使用"
+  "start_now": "开始使用",
+  "monday": "周一",
+  "tuesday": "周二",
+  "wednesday": "周三",
+  "thursday": "周四",
+  "friday": "周五",
+  "saturday": "周六",
+  "sunday": "周天",
+  "size": "尺寸",
+  "color": "颜色",
+  "quantity": "数量",
+  "model": "款式"
 }

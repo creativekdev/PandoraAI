@@ -8,12 +8,6 @@ class PrintOptionsItem extends StatelessWidget {
   final List<String> options;
   ValueCallBack onSelectTitleTap;
 
-  // GestureTapCallback onShareTap;
-  // GestureTapCallback onSharePrintTap;
-  //
-  // // GestureTapCallback onDownloadTap;
-  // GestureTapCallback onGenerateAgainTap;
-
   @override
   Widget build(BuildContext context) {
     return Column(

@@ -1,4 +1,5 @@
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -14,12 +15,16 @@ class PrintSelectItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-          TitleTextWidget(title, ColorConstant.White, FontWeight.normal, $(12)),
-          if (content.isNotEmpty) TitleTextWidget(content, ColorConstant.White, FontWeight.w500, $(14)),
-        ]),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TitleTextWidget(title.intl, ColorConstant.White, FontWeight.normal, $(12)),
+            if (content.isNotEmpty) TitleTextWidget(content, ColorConstant.White, FontWeight.w500, $(14)),
+          ],
+        ),
         Spacer(),
-        if (imgUrl.isNotEmpty && title == "Color" && showImage)
+        if (imgUrl.isNotEmpty && title.toLowerCase() == "color" && showImage)
           CachedNetworkImageUtils.custom(
             context: context,
             useOld: false,
