@@ -208,20 +208,25 @@ class PrintShippingController extends GetxController {
   }
 
   Future<bool> onSubmit(BuildContext context) async {
+    if (countryController.text.isEmpty) {
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).country_region));
+      return false;
+    }
     if (searchAddressController.text.isEmpty) {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).address));
       return false;
     }
-    if (zipCodeController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).zip_code));
-      return false;
-    }
+
     if (firstNameController.text.isEmpty) {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).first_name));
       return false;
     }
     if (secondNameController.text.isEmpty) {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).last_name));
+      return false;
+    }
+    if (zipCodeController.text.isEmpty) {
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).zip_code));
       return false;
     }
     if (contactNumberController.text.isEmpty) {
