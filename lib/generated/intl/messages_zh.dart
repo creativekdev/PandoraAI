@@ -115,6 +115,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "您选择了 %selected 张照片，%badImages\n确定上传 %goodCount 张照片吗？"),
         "choose_your_scale": MessageLookupByLibrary.simpleMessage("尺寸"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage("选择风格（可选）"),
+        "city": MessageLookupByLibrary.simpleMessage("城市"),
         "clean_successfully": MessageLookupByLibrary.simpleMessage("清除成功"),
         "clear": MessageLookupByLibrary.simpleMessage("清除"),
         "clear_cache_tips":
@@ -133,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
         "contact_number": MessageLookupByLibrary.simpleMessage("联系电话"),
         "copy_successfully": MessageLookupByLibrary.simpleMessage("已复制到剪贴板"),
+        "country_region": MessageLookupByLibrary.simpleMessage("国家/地区"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
         "create": MessageLookupByLibrary.simpleMessage("创建"),
         "createAccount": MessageLookupByLibrary.simpleMessage("创建\n账号"),

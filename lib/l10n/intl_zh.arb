@@ -404,6 +404,8 @@
   "address": "收货地址",
   "apartment_suite_other": "公寓/套房/其他",
   "search_address": "填写地址",
+  "city": "城市",
+  "country_region": "国家/地区",
   "first_name": "名字",
   "last_name": "姓氏",
   "contact_number": "联系电话",

@@ -134,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "choose_your_scale": MessageLookupByLibrary.simpleMessage("Size"),
         "choose_your_style": MessageLookupByLibrary.simpleMessage(
             "Choose your style (optional)"),
+        "city": MessageLookupByLibrary.simpleMessage("City"),
         "clean_successfully":
             MessageLookupByLibrary.simpleMessage("Clear Successfully"),
         "clear": MessageLookupByLibrary.simpleMessage("Clear"),
@@ -160,6 +161,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Contact Number"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copy Successfully"),
+        "country_region":
+            MessageLookupByLibrary.simpleMessage("Country/Region"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage(
             "Please enter confirm password"),
         "create": MessageLookupByLibrary.simpleMessage("Create"),

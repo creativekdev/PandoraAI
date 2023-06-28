@@ -33,6 +33,10 @@ class PrintShippingController extends GetxController {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController secondNameController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+
   FocusNode searchAddressFocusNode = FocusNode();
 
   EffectDataController effectdatacontroller = Get.find();
@@ -59,6 +63,15 @@ class PrintShippingController extends GetxController {
   String getZipCode(List<AddressComponent> addressComponents) {
     for (AddressComponent component in addressComponents) {
       if (component.types.contains('postal_code')) {
+        return component.shortName;
+      }
+    }
+    return "";
+  }
+
+  String getCityName(List<AddressComponent> addressComponents) {
+    for (AddressComponent component in addressComponents) {
+      if (component.types.contains('political') && component.types.contains('locality')) {
         return component.shortName;
       }
     }
@@ -94,6 +107,7 @@ class PrintShippingController extends GetxController {
   }
 
   List<Prediction> get predictions => _predictions;
+  List<Component> components = [];
 
   Future searchLocation(GoogleMapsPlaces places, String text) async {
     if (text.isEmpty) {
@@ -105,7 +119,7 @@ class PrintShippingController extends GetxController {
       text, // 搜索关键字
       types: ['geocode'], // 限制搜索结果类型为地理编码（地址）
       // language: 'en', // 搜索结果的语言
-      // components: [Component(Component.country, 'us')], // 限制搜索结果的条件
+      components: components, // 限制搜索结果的条件
     );
 
     // 处理搜索结果
@@ -152,6 +166,15 @@ class PrintShippingController extends GetxController {
   // String? callingCode;
   // String? regionCode;
   // String? regionFlag;
+  late RegionCodeEntity? _countryEntity;
+
+  set countryEntity(RegionCodeEntity? value) {
+    _countryEntity = value;
+    update();
+  }
+
+  RegionCodeEntity? get countryEntity => _countryEntity;
+
   RegionCodeEntity? _regionEntity;
 
   set regionEntity(RegionCodeEntity? value) {
@@ -169,10 +192,16 @@ class PrintShippingController extends GetxController {
     update();
   }
 
-  onTapRegion(BuildContext context) {
-    SelectRegionPage.pickRegion(context).then((value) {
+  onTapRegion(BuildContext context, SelectRegionType type) {
+    SelectRegionPage.pickRegion(context, type: type).then((value) {
       if (value != null) {
-        _regionEntity = value;
+        if (type == SelectRegionType.callingCode) {
+          _regionEntity = value;
+        } else if (type == SelectRegionType.country) {
+          _countryEntity = value;
+          countryController.text = _countryEntity!.regionName!;
+          components = [Component(Component.country, _countryEntity!.regionCode!)];
+        }
         update();
       }
     });
@@ -203,13 +232,13 @@ class PrintShippingController extends GetxController {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
       "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-      "country_code": regionEntity?.regionCode,
-      "country_name": regionEntity?.regionName,
-      "country": regionEntity?.regionName,
+      "country_code": countryEntity?.regionCode,
+      "country": countryEntity?.regionName,
       "address1": searchAddressController.text,
       "address2": apartmentController.text,
       "zip": zipCodeController.text,
-      "default": false
+      "default": false,
+      "city": cityController.text
     };
     await getVariantId();
     var body = {

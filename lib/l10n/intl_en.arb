@@ -404,6 +404,8 @@
   "address": "Address",
   "apartment_suite_other": "Apartment/Suite/Other",
   "search_address": "Input address",
+  "city": "City",
+  "country_region": "Country/Region",
   "first_name": "First Name",
   "last_name": "Last Name",
   "contact_number": "Contact Number",
