@@ -400,6 +400,8 @@
   "address": "Dirección",
   "apartment_suite_other": "Apartamento/Suite/Otro",
   "search_address": "Buscar dirección",
+  "city": "Ville",
+  "country_region": "Pays/Région",
   "first_name": "Nombre",
   "last_name": "Apellido",
   "contact_number": "Número de contacto",

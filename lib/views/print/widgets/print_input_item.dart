@@ -2,47 +2,58 @@ import '../../../Common/importFile.dart';
 import '../../../images-res.dart';
 import '../../../models/region_code_entity.dart';
 
+typedef InputItemAction = Function();
+
 class PrintInputItem extends StatelessWidget {
-  PrintInputItem({Key? key, required this.title, required this.controller, this.completeCallback, this.focusNode}) : super(key: key);
+  PrintInputItem({Key? key, required this.title, required this.controller, this.completeCallback, this.focusNode, required this.width, this.canEdit = true, this.onTap})
+      : super(key: key);
   final String title;
   TextEditingController controller;
   GestureTapCallback? completeCallback;
   FocusNode? focusNode;
+  final double width;
+  final bool canEdit;
+  final InputItemAction? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: $(16)),
-        TitleTextWidget(title, ColorConstant.White, FontWeight.normal, $(14), align: TextAlign.left),
-        SizedBox(height: $(8)),
-        TextField(
-          focusNode: focusNode,
-          style: TextStyle(
-            color: ColorConstant.White,
-            fontSize: $(14),
-          ),
-          maxLines: 1,
-          cursorColor: ColorConstant.White,
-          controller: controller,
-          onEditingComplete: () {
-            FocusScope.of(context).unfocus();
-            completeCallback?.call();
-          },
-          decoration: InputDecoration(
-            fillColor: ColorConstant.EffectCardColor,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular($(8)),
-              borderSide: BorderSide.none,
+    return Container(
+      width: width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: $(16)),
+          TitleTextWidget(title, ColorConstant.White, FontWeight.normal, $(14), align: TextAlign.left),
+          SizedBox(height: $(8)),
+          TextField(
+            focusNode: focusNode,
+            style: TextStyle(
+              color: ColorConstant.White,
+              fontSize: $(14),
             ),
-          ),
-        ).intoContainer(
-            decoration: BoxDecoration(
-          color: Color(0xFF0F0F0F),
-          borderRadius: BorderRadius.circular($(8)),
-        )),
-      ],
+            maxLines: 1,
+            readOnly: !canEdit,
+            cursorColor: ColorConstant.White,
+            controller: controller,
+            onEditingComplete: () {
+              FocusScope.of(context).unfocus();
+              completeCallback?.call();
+            },
+            onTap: onTap,
+            decoration: InputDecoration(
+              fillColor: ColorConstant.EffectCardColor,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular($(8)),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ).intoContainer(
+              decoration: BoxDecoration(
+            color: Color(0xFF0F0F0F),
+            borderRadius: BorderRadius.circular($(8)),
+          )),
+        ],
+      ),
     );
   }
 }

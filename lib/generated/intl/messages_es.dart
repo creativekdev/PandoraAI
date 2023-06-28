@@ -131,6 +131,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "choose_your_scale": MessageLookupByLibrary.simpleMessage("tamaño"),
         "choose_your_style":
             MessageLookupByLibrary.simpleMessage("Elegir un estilo (opcional)"),
+        "city": MessageLookupByLibrary.simpleMessage("Ville"),
         "clean_successfully": MessageLookupByLibrary.simpleMessage(
             "La limpieza se ha realizado correctamente"),
         "clear": MessageLookupByLibrary.simpleMessage("purga"),
@@ -155,6 +156,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Número de contacto"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copiado al portapapeles"),
+        "country_region": MessageLookupByLibrary.simpleMessage("Pays/Région"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage(
             "La contraseña no es la misma dos veces"),
         "create": MessageLookupByLibrary.simpleMessage("crear"),

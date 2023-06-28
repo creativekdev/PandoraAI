@@ -4100,6 +4100,26 @@ class S {
     );
   }
 
+  /// `City`
+  String get city {
+    return Intl.message(
+      'City',
+      name: 'city',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country/Region`
+  String get country_region {
+    return Intl.message(
+      'Country/Region',
+      name: 'country_region',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `First Name`
   String get first_name {
     return Intl.message(

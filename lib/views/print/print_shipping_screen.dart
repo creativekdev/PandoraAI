@@ -9,6 +9,7 @@ import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../Widgets/state/app_state.dart';
+import '../common/region/select_region_page.dart';
 
 class PrintShippingScreen extends StatefulWidget {
   String source;
@@ -72,40 +73,81 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 child: BlankAreaIntercept(
                   child: CustomScrollView(
+                    controller: controller.scrollController,
                     slivers: [
                       SliverToBoxAdapter(child: TitleTextWidget(S.of(context).address, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
+                          width: ScreenUtil.screenSize.width - $(30),
+                          title: S.of(context).country_region,
+                          controller: controller.countryController,
+                          canEdit: false,
+                          onTap: () {
+                            controller.onTapRegion(context, SelectRegionType.country);
+                          },
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: PrintInputItem(
+                          width: ScreenUtil.screenSize.width - $(30),
                           title: S.of(context).search_address,
                           controller: controller.searchAddressController,
                           focusNode: controller.searchAddressFocusNode,
                           completeCallback: () {
                             hideSearchResults();
                           },
+                          onTap: () {
+                            controller.scrollController.animateTo(
+                              $(110),
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.linear,
+                            );
+                          },
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
+                          width: ScreenUtil.screenSize.width - $(30),
                           title: S.of(context).apartment_suite_other,
                           controller: controller.apartmentController,
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          title: S.of(context).zip_code,
-                          controller: controller.zipCodeController,
+                        child: Row(
+                          children: [
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).first_name,
+                              controller: controller.firstNameController,
+                            ),
+                            SizedBox(
+                              width: $(15),
+                            ),
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).last_name,
+                              controller: controller.secondNameController,
+                            )
+                          ],
                         ),
                       ),
                       SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          title: S.of(context).first_name,
-                          controller: controller.firstNameController,
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          title: S.of(context).last_name,
-                          controller: controller.secondNameController,
+                        child: Row(
+                          children: [
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).city,
+                              controller: controller.cityController,
+                            ),
+                            SizedBox(
+                              width: $(15),
+                            ),
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).zip_code,
+                              controller: controller.zipCodeController,
+                            )
+                          ],
                         ),
                       ),
                       SliverToBoxAdapter(
@@ -114,7 +156,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                           controller: controller.contactNumberController,
                           regionCodeEntity: controller.regionEntity,
                           onTap: () {
-                            controller.onTapRegion(context);
+                            controller.onTapRegion(context, SelectRegionType.callingCode);
                           },
                         ),
                       ),
@@ -203,6 +245,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                           .intoGestureDetector(onTap: () async {
                         PlacesDetailsResponse detail = await controller.places.getDetailsByPlaceId(prediction.placeId!);
                         controller.zipCodeController.text = controller.getZipCode(detail.result.addressComponents);
+                        controller.cityController.text = controller.getCityName(detail.result.addressComponents);
                         controller.isResult = true;
                         controller.searchAddressController.text = prediction.description!;
                         FocusScope.of(context).unfocus();
