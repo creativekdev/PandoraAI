@@ -250,6 +250,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         controller.cityController.text = controller.getCityName(detail.result.addressComponents);
                         controller.isResult = true;
                         controller.searchAddressController.text = prediction.description!;
+                        controller.formattedAddress = detail.result.formattedAddress!;
                         FocusScope.of(context).unfocus();
                         // 处理选择的搜索结果
                         hideSearchResults();
