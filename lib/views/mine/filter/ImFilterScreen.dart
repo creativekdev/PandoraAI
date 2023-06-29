@@ -10,6 +10,9 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/api/filter_api.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/OfflineEffectModel.dart';
@@ -20,7 +23,9 @@ import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/transfer/pick_photo_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:cropperx/cropperx.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -50,6 +55,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Uint8List? _byte;
   final picker = ImagePicker();
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
+  bool originalShowing = false;
 
   // List<ChooseTabItemInfo> tabItemList = [];
   late ItemScrollController itemScrollController;
@@ -63,9 +69,11 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Filter filter = new Filter();
   Adjust adjust = new Adjust();
   Crop crop = new Crop();
+
   int currentAdjustID = 0;
 
   int selectedCropID = 0;
+  var processedImageURL = null;
 
   late ImagePicker imagePicker;
 
@@ -98,6 +106,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       _imagefile = File(pickedFile!.path);
       _image = await getLibImage(await getImage(_imagefile!));
       _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
+      await filter.calcAvatars(_image);
 
       setState(() {
         _imagefile;
@@ -177,8 +186,20 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     }
     List<Widget> adjustbutton = [];
     adjustbutton.add(GestureDetector(
-      onTap: () {
-        // Handle button press
+      onTapDown: (TapDownDetails details) {
+        setState(() {
+          originalShowing = true;
+        });
+      },
+      onTapUp: (TapUpDetails details) {
+        setState(() {
+          originalShowing = false;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          originalShowing = false;
+        });
       },
       child: Container(
         width: 50,
@@ -398,6 +419,13 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     );
   }
   Future<void> saveToAlbum() async {
+      if(_byte == null) return;
+      String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+      var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
+      await file.writeAsBytes(_byte!);
+      await GallerySaver.saveImage(file.path, albumName: "PandoraAI");
+      CommonExtension().showImageSavedOkToast(context);
+
     // var imageData = (await SyncFileImage(file: File(image)).getImage()).image;
     // if (lastBuildType == _BuildType.waterMark) {
     //   var assetImage = AssetImage(Images.ic_watermark).resolve(ImageConfiguration.empty);
@@ -475,8 +503,12 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Widget _buildImageView() {
     return Expanded(child:Container(
       margin: EdgeInsets.only(top: 5),
-      child: _byte != null
-          ? (selectedRightTab ==3)
+      child: _byte != null ?
+      originalShowing?
+      Container(
+        child: Image.file(_imagefile!,fit: BoxFit.contain),
+      )
+      :(selectedRightTab ==3 && crop.selectedID > 0)
       ?Container(
         color: Colors.black,
         child: Center(
@@ -484,7 +516,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             cropperKey: _cropperKey,
             overlayType: OverlayType.grid,
             rotationTurns: 0,
-            aspectRatio: crop.aspectRatio,
+            aspectRatio: (crop.isPortrait)? crop.ratios[crop.selectedID]:1/crop.ratios[crop.selectedID],
             image: Image.memory(_byte!,fit: BoxFit.contain,),
             onScaleStart: (details) {
               // todo: define started action.
@@ -502,10 +534,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
         _byte!,
         fit: BoxFit.contain,
       )
-          : _imagefile != null
-          ? Container(
-        child: Image.file(_imagefile!,fit: BoxFit.contain),
-      )
+
           : Container(
         child: Image.asset(Images.ic_choose_photo_initial_header),
       ),
@@ -577,7 +606,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Widget _buildFiltersController(){
     return ScrollablePositionedList.separated(
       initialScrollIndex: 0,
-      itemCount: Filter.filters.length,
+      itemCount: filter.avatars.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -610,12 +639,10 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
                       margin: EdgeInsets.all(2.0),
                       width: 60,
                       height: 60,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(Images.ic_choose_photo_initial_header),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child:Image.memory(
+                        filter.avatars[index],
+                        fit: BoxFit.cover,
+                      )
                     ),
                   ),
                 ),
@@ -637,7 +664,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Widget _buildAdjust() {
     final ScrollController _scrollController = ScrollController();
     List<Widget> buttons = [];
-    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
+    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2 - (45 / 2)) );
     for (int i = 0; i < adjust.getCnt(); i++){
       int cur_i  = i;
       buttons.add(GestureDetector(
@@ -675,7 +702,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             });
           }
           _scrollController.animateTo(
-            25 + 74.0 * cur_i,
+            74.0 * cur_i,
             duration: Duration(milliseconds: 500),
             curve: Curves.easeInOut,
           );
@@ -708,7 +735,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
           children: [
             (adjust.getSelectedValue() >= 0)?
             AppCircleProgressBar(
-              size: 42,
+              size: 45,
               ringWidth: 2,
               backgroundColor: Colors.grey,
               progress: adjust.getSelectedValue()/(adjust.range[adjust.selectedID][1]),
@@ -721,7 +748,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               ],
             )
             :AppCircleProgressBar(
-            size: 42,
+            size: 45,
             ringWidth: 2,
             backgroundColor: Colors.white,
             progress: 1 - adjust.getSelectedValue()/ adjust.range[adjust.selectedID][0],
@@ -734,8 +761,8 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
             ],
           ),
             Container(
-              width: 42,
-              height: 42,// Sets maximum width of container to screen width
+              width: 45,
+              height: 45,// Sets maximum width of container to screen width
               alignment: Alignment.center, // Centers contents horizontally and vertically
               child: Text(
                 adjust.getSliderValue(cur_i).toInt().toString(),
@@ -752,7 +779,7 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       ));
       buttons.add(SizedBox(width: 30));
     }
-    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2));
+    buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2 - 45));
 
     return Container(
         height:  $(115),
@@ -798,39 +825,20 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
   Widget _buildCrops() {
     List<Widget> buttons = [];
     int i = 0;
-    for(List<int> ratio in crop.ratios){
+    for(String title in crop.titles){
       int curi = i;
       buttons.add(
           GestureDetector(
             onTap: () {
               setState(() {
                 crop.selectedID = curi;
-                crop.aspectRatio = crop.ratios[curi][0] / crop.ratios[curi][1];
+                // crop.aspectRatio = crop.ratios[curi][0] / crop.ratios[curi][1];
               });
             },
             child: Column(
               children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  child: Center(
-                    child: Container(
-                      width: ratio.elementAt(2).toDouble(),
-                      height: ratio.elementAt(3).toDouble(),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
-                          left: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
-                          right: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
-                          bottom: BorderSide(width: 2.0, color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white),
-                        ),
-                      ),
-                    ),
-                  )
-                ),
-                SizedBox(height: 10,),
                 Text(
-                  ratio.elementAt(0).toString() + ":" + ratio.elementAt(1).toString(),
+                  title,
                   style: TextStyle(
                       color: (crop.selectedID == curi)? Color(0xFF05E0D5): Colors.white
                   ),
@@ -845,9 +853,47 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
     return Container(
       height: $(115),
       child:Center(
-        child:Row(
+        child:Column(
           mainAxisSize: MainAxisSize.min,
-          children: buttons,
+          children: [
+            (crop.selectedID >= 2)?
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                InkWell(
+                  onTap: () {
+                    // Handle button press
+                    setState(() {
+                      crop.isPortrait = false;
+                    });
+                    print('Button pressed!');
+                  },
+                  child: Container(
+                    child: (!crop.isPortrait)? Image.asset(Images.ic_landscape_selected):Image.asset(Images.ic_landscape), // Replace with your image path
+                  ),
+                ),
+                SizedBox(width: 30),
+                InkWell(
+                  onTap: () {
+                    // Handle button press
+                    setState(() {
+                      crop.isPortrait = true;
+                    });
+                    print('Button pressed!');
+                  },
+                  child: Container(
+                    child: (crop.isPortrait)?Image.asset(Images.ic_portrat_selected):Image.asset(Images.ic_portrat), // Replace with your image path
+                  ),
+                )
+              ],
+            )
+            :SizedBox(height: 32,),
+            SizedBox(height: 30,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: buttons,
+            )
+          ],
         )
       )
     );
@@ -859,10 +905,28 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
         return GestureDetector(
-            onTap: () {
+            onTap: () async {
               setState(() {
                 filter.setSelectedID(index);
               });
+              try{
+                File compressedImage = await imageCompressAndGetFile(_imagefile!, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+                await uploadImageController.uploadCompressedImage(compressedImage);
+                uploadImageController.update();
+                var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
+                File imagefile = File(url!);
+                _image = await getLibImage(await getImage(imagefile!));
+                _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
+
+                setState(() {
+                  _byte;
+                });
+                LogUtil.v(url);
+              }
+              catch(error){
+                LogUtil.v(error);
+              }
+
             },
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

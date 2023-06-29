@@ -1,7 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
-import 'package:opencv_4/factory/pathfrom.dart';
-import 'package:opencv_4/opencv_4.dart';
+
 
 import 'package:image/image.dart' as imgLib;
 
@@ -25,7 +24,15 @@ class Filter{
   int getSelectedID() {
     return selectedID;
   }
-
+  List<Uint8List> avatars = [];
+  Future<bool> calcAvatars(imgLib.Image _image) async {
+    imgLib.Image resizedImage = imgLib.copyResize(_image, width:60, height: 60);
+    avatars.clear();
+    for(String filter in filters) {
+      avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter,resizedImage))));
+    }
+    return true;
+  }
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;

@@ -94,7 +94,7 @@ dependencies:
   camera: 0.10.5
   image: 3.2.2
   sensors_plus: 2.0.5
-  opencv_4: ^1.0.0
+#  opencv_4: ^1.0.0
   ffmpeg_kit_flutter: 5.1.0
   posthog_flutter: 2.0.3
   uni_links: 0.5.1

@@ -89,6 +89,8 @@ class Images {
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_invitation_dialog_bg = 'assets/images/ic_invitation_dialog_bg.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
+   static const String ic_landscape = 'assets/images/ic_landscape.png';
+   static const String ic_landscape_selected = 'assets/images/ic_landscape_selected.png';
    static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
    static const String ic_letter = 'assets/images/ic_letter.png';
    static const String ic_limit_icon = 'assets/images/ic_limit_icon.png';
@@ -139,6 +141,8 @@ class Images {
    static const String ic_pencil4 = 'assets/images/ic_pencil4.png';
    static const String ic_pencil5 = 'assets/images/ic_pencil5.png';
    static const String ic_policy = 'assets/images/ic_policy.png';
+   static const String ic_portrat = 'assets/images/ic_portrat.png';
+   static const String ic_portrat_selected = 'assets/images/ic_portrat_selected.png';
    static const String ic_premium = 'assets/images/ic_premium.png';
    static const String ic_print_payment_failure = 'assets/images/ic_print_payment_failure.png';
    static const String ic_print_payment_success = 'assets/images/ic_print_payment_success.png';
