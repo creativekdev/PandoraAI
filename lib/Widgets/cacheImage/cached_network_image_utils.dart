@@ -203,8 +203,8 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   @override
   didUpdateWidget(FutureLoadingImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    initData();
     if (widget.url != oldWidget.url) {
+      initData();
       updateData();
     }
   }

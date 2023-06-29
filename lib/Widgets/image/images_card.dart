@@ -47,8 +47,6 @@ class _ImagesCardState extends State<ImagesCard> {
   void didUpdateWidget(covariant ImagesCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.images.toString() != images.toString()) {
-      imageWidth = 0;
-      imageHeight = 0;
       _init();
     }
   }
