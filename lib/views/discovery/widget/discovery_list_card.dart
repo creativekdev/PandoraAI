@@ -1,14 +1,12 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/expand_text.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/image/images_card.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
-import 'package:cartoonizer/views/discovery/discovery.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
@@ -49,32 +47,27 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Divider(height: 1, color: ColorConstant.LineColor).visibility(visible: hasLine),
-        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName)
-            .intoGestureDetector(onTap: () {
-              UserManager userManager = AppDelegate.instance.getManager();
-              bool isMe = userManager.user?.id == data.userId;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MyDiscoveryScreen(
-                    userId: data.userId,
-                    title: isMe ? S.of(context).setting_my_discovery : null,
-                  ),
-                  settings: RouteSettings(name: "/UserDiscoveryScreen"),
-                ),
-              );
-            })
-            .hero(tag: '${data.userAvatar}${data.userName}${data.id}')
-            .intoContainer(
-              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
+        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName).intoGestureDetector(onTap: () {
+          UserManager userManager = AppDelegate.instance.getManager();
+          bool isMe = userManager.user?.id == data.userId;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyDiscoveryScreen(
+                userId: data.userId,
+                title: isMe ? S.of(context).setting_my_discovery : null,
+              ),
+              settings: RouteSettings(name: "/UserDiscoveryScreen"),
             ),
-        resources.length != 1 ? buildImages(context) : buildResourceItem(context, resources.first, width: width * 2 + $(1), maxHeight: ScreenUtil.screenSize.height),
+          );
+        }).intoContainer(
+          margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
+        ),
+        buildImages(context),
         data.getPrompt() != null
-            ? TitleTextWidget(data.getPrompt()!, Color(0xffb3b3b3), FontWeight.w500, $(14), maxLines: 99, align: TextAlign.start)
-                .intoContainer(
-                  padding: EdgeInsets.only(left: $(15), right: $(15), top: $(10)),
-                )
-                .hero(tag: data.getPrompt()!)
+            ? TitleTextWidget(data.getPrompt()!, Color(0xffb3b3b3), FontWeight.w500, $(14), maxLines: 99, align: TextAlign.start).intoContainer(
+                padding: EdgeInsets.only(left: $(15), right: $(15), top: $(10)),
+              )
             : SizedBox.shrink(),
         Row(
           children: [
@@ -115,7 +108,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
               },
             ).ignore(ignoring: ignoreLikeBtn),
           ],
-        ).intoContainer(margin: EdgeInsets.only(top: $(8), left: $(9), right: $(9))).hero(tag: Discovery.attrTag(data.id)),
+        ).intoContainer(margin: EdgeInsets.only(top: $(8), left: $(9), right: $(9))),
         TitleTextWidget(S.of(context).all_likes.replaceAll('%d', '${data.likes}'), ColorConstant.White, FontWeight.w400, $(14), align: TextAlign.start)
             .intoContainer(width: double.maxFinite, margin: EdgeInsets.symmetric(horizontal: $(15)), alignment: Alignment.centerLeft)
             .visibility(visible: false),
@@ -125,12 +118,10 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
           minLines: 2,
           overflow: TextOverflow.ellipsis,
           width: ScreenUtil.screenSize.width - $(30),
-        )
-            .intoContainer(
-              alignment: Alignment.centerLeft,
-              padding: EdgeInsets.symmetric(horizontal: $(15)),
-            )
-            .hero(tag: Discovery.textTag(data.id)),
+        ).intoContainer(
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.symmetric(horizontal: $(15)),
+        ),
         Text(
           S.of(context).view_all_comment.replaceAll('%d', '${data.comments}'),
           style: TextStyle(color: ColorConstant.DiscoveryBtn, fontSize: $(12), fontFamily: 'Poppins'),
@@ -155,7 +146,7 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     } else {
       return CachedNetworkImageUtils.custom(
           context: context,
-          useOld: true,
+          useOld: false,
           imageUrl: resource.url ?? '',
           width: width,
           height: height,
@@ -172,55 +163,14 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
   Widget buildImages(
     BuildContext context,
   ) {
-    var localHeight = getLocalHeight(resources[1].url!, width);
-    return Row(
-      children: [
-        localHeight != null
-            ? buildResourceItem(context, resources[0], width: width, height: localHeight)
-            : FutureBuilder<double?>(
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return buildResourceItem(context, resources[0], width: width, height: snapshot.data);
-                  } else {
-                    return Container(width: width, height: width);
-                  }
-                },
-                future: getHeight(resources[1].url!, width),
-              ).intoContainer(width: width),
-        SizedBox(width: $(1)),
-        buildResourceItem(context, resources[1], width: width)
-      ],
-    ).intoContainer(
-      width: ScreenUtil.screenSize.width,
-      alignment: Alignment.center,
+    return ImagesCard(
+      images: resources.map((e) => e.url!).toList(),
+      alignType: AlignType.last,
+      placeholderWidgetBuilder: (context, url, width, height) {
+        return SkeletonAvatar(
+          style: SkeletonAvatarStyle(width: width, height: height),
+        );
+      },
     );
-  }
-
-  double? getLocalHeight(String url, double width) {
-    CacheManager cacheManager = AppDelegate().getManager();
-    var imgSummaryCache = cacheManager.imgSummaryCache;
-    var scale = imgSummaryCache.getScale(url: url);
-    if (scale != null) {
-      return width / scale;
-    }
-    return null;
-  }
-
-  Future<double?> getHeight(String url, double width) async {
-    CacheManager cacheManager = AppDelegate().getManager();
-    var imgSummaryCache = cacheManager.imgSummaryCache;
-    var scale = imgSummaryCache.getScale(url: url);
-    if (scale != null) {
-      return width / scale;
-    } else {
-      try {
-        var imageInfo = await SyncCachedNetworkImage(url: url).getImage();
-        scale = imageInfo.image.width / imageInfo.image.height;
-        imgSummaryCache.setScale(url: url, scale: scale);
-        return width / scale;
-      } catch (e) {
-        return null;
-      }
-    }
   }
 }

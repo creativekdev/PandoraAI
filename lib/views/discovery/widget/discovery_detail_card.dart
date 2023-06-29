@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
+import 'package:cartoonizer/Widgets/image/images_card.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
@@ -19,6 +20,7 @@ import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:like_button/like_button.dart';
 import 'package:mmoo_forbidshot/mmoo_forbidshot.dart';
+import 'package:skeletons/skeletons.dart';
 
 import 'discovery_attr_holder.dart';
 import 'user_info_header_widget.dart';
@@ -50,39 +52,26 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     var data = controller.discoveryEntity;
     return Column(
       children: [
-        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName)
-            .intoGestureDetector(onTap: () {
-              UserManager userManager = AppDelegate.instance.getManager();
-              bool isMe = userManager.user?.id == data.userId;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MyDiscoveryScreen(
-                    userId: data.userId,
-                    title: isMe ? S.of(context).setting_my_discovery : null,
-                  ),
-                  settings: RouteSettings(name: "/UserDiscoveryScreen"),
-                ),
-              );
-            })
-            .hero(tag: '${data.userAvatar}${data.userName}${data.id}')
-            .intoContainer(
-              margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
+        UserInfoHeaderWidget(avatar: data.userAvatar, name: data.userName).intoGestureDetector(onTap: () {
+          UserManager userManager = AppDelegate.instance.getManager();
+          bool isMe = userManager.user?.id == data.userId;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => MyDiscoveryScreen(
+                userId: data.userId,
+                title: isMe ? S.of(context).setting_my_discovery : null,
+              ),
+              settings: RouteSettings(name: "/UserDiscoveryScreen"),
             ),
-        controller.resources.length != 1
-            ? buildImages(context, imageListWidth).intoContainer(
-                width: ScreenUtil.screenSize.width,
-                alignment: Alignment.center,
-              )
-            : buildResourceItem(
-                context,
-                controller.resources.first,
-                width: imageListWidth * 2 + $(1),
-              ).intoGestureDetector(onTap: () {
-                if (controller.resources.first.type == 'image') {
-                  openImage(context, 0);
-                }
-              }),
+          );
+        }).intoContainer(
+          margin: EdgeInsets.only(left: $(15), right: $(15), top: $(10), bottom: $(16)),
+        ),
+        buildImages(context, imageListWidth).intoContainer(
+          width: ScreenUtil.screenSize.width,
+          alignment: Alignment.center,
+        ),
         data.getPrompt() != null
             ? TitleTextWidget(data.getPrompt()!, Color(0xffb3b3b3), FontWeight.w500, $(14), maxLines: 99, align: TextAlign.start)
                 .intoContainer(
@@ -212,7 +201,7 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
             Container().blur(),
             CachedNetworkImageUtils.custom(
                 context: context,
-                useOld: true,
+                useOld: false,
                 imageUrl: resource.url ?? '',
                 fit: fit,
                 width: width,
@@ -241,7 +230,7 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
       } else {
         return CachedNetworkImageUtils.custom(
             context: context,
-            useOld: true,
+            useOld: false,
             imageUrl: resource.url ?? '',
             fit: fit,
             width: width,
@@ -303,41 +292,16 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     BuildContext context,
     double width,
   ) {
-    var resources = controller.resources;
-    var localHeight = getLocalHeight(resources[1].url!, width);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        localHeight != null
-            ? buildResourceItem(context, resources[0], width: width, height: localHeight).intoGestureDetector(onTap: () {
-                if (resources[0].type == 'image') {
-                  openImage(context, 0);
-                }
-              })
-            : FutureBuilder<double?>(
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return buildResourceItem(context, resources[0], width: width, height: snapshot.data).intoGestureDetector(onTap: () {
-                      if (resources[0].type == 'image') {
-                        openImage(context, 0);
-                      }
-                    });
-                  } else {
-                    return Container(width: width, height: width);
-                  }
-                },
-                future: getHeight(resources[1].url!, width),
-              ).intoContainer(width: width),
-        SizedBox(width: $(1)),
-        buildResourceItem(context, resources[1], width: width).intoGestureDetector(onTap: () {
-          if (resources[1].type == 'image') {
-            openImage(context, 1);
-          }
-        })
-      ],
-    ).intoContainer(
-      width: ScreenUtil.screenSize.width,
-      alignment: Alignment.center,
+    return ImagesCard(
+      images: controller.resources.map((e) => e.url!).toList(),
+      placeholderWidgetBuilder: (context, url, width, height) {
+        return SkeletonAvatar(
+          style: SkeletonAvatarStyle(width: width, height: height),
+        );
+      },
+      onTap: (url, index) {
+        openImage(context, index);
+      },
     );
   }
 

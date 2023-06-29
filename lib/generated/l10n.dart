@@ -4630,10 +4630,10 @@ class S {
     );
   }
 
-  /// `Please select a $s`
+  /// `Please select the $s`
   String get pleaseSelect {
     return Intl.message(
-      'Please select a \$s',
+      'Please select the \$s',
       name: 'pleaseSelect',
       desc: '',
       args: [],

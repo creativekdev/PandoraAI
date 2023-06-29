@@ -11,11 +11,13 @@ class DiscoveryListController extends GetxController {
   late SocialMediaConnectorApi socialMediaConnectorApi;
 
   List<TagData> tags = [
+    TagData(title: '# StyleMorph', tag: 'stylemorph'),
+    TagData(title: '# AIColoring', tag: 'lineart'),
     TagData(title: '# Me-taverse', tag: 'another_me'),
     TagData(title: '# AITextToImage', tag: 'txt2img'),
     TagData(title: '# AIScribble', tag: 'scribble'),
     TagData(title: '# Facetoon', tag: 'cartoonize'),
-    TagData(title: '# PandoraAvatar', tag: 'ai_avatar')
+    TagData(title: '# PandoraAvatar', tag: 'ai_avatar'),
   ];
   TagData? _currentTag;
 

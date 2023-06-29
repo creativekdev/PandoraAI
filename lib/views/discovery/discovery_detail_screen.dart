@@ -51,6 +51,8 @@ extension DiscoveryListEntityEx on DiscoveryListEntity {
         return 'metagram';
       case HomeCardType.style_morph:
         return 'stylemorph';
+      case HomeCardType.lineart:
+        return 'lineart';
       case HomeCardType.UNDEFINED:
         return null;
     }

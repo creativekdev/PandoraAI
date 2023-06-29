@@ -251,13 +251,13 @@ class MineFragmentState extends AppState<MineFragment>
                       .ignore = false;
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              line(context),
-              ImageTextBarWidget("Filter test", Images.ic_premium, true)
-                  .intoGestureDetector(onTap: () {
-                    ImFilter.open(
-                      context
-                    );
-                }),
+              // line(context),
+              // ImageTextBarWidget("Filter test", Images.ic_premium, true)
+              //     .intoGestureDetector(onTap: () {
+              //       ImFilter.open(
+              //         context
+              //       );
+              //   }),
               Container(height: $(12)),
               ImageTextBarWidget(
                       S.of(context).settings, Images.ic_settings, true)

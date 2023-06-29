@@ -17,7 +17,6 @@ import 'image_cache_manager.dart';
 class CachedNetworkImageUtils {
   static Widget custom({
     bool useOld = true,
-    bool useCachedScale = false,
     required BuildContext context,
     Key? key,
     required String imageUrl,
@@ -100,7 +99,6 @@ class CachedNetworkImageUtils {
         ? FutureLoadingImage(
             key: key is GlobalKey<FutureLoadingImageState> ? key : null,
             url: imageUrl,
-            useCachedScale: useCachedScale,
             errorWidget: errorWidget,
             placeholder: placeholder,
             width: width,
@@ -154,7 +152,6 @@ class FutureLoadingImage extends StatefulWidget {
   BlendMode? colorBlendMode;
   Color? color;
   AlignmentGeometry alignment;
-  bool useCachedScale;
 
   FutureLoadingImage({
     Key? key,
@@ -168,7 +165,6 @@ class FutureLoadingImage extends StatefulWidget {
     this.colorBlendMode,
     this.color,
     required this.alignment,
-    this.useCachedScale = false,
   });
 
   @override
@@ -178,7 +174,6 @@ class FutureLoadingImage extends StatefulWidget {
 }
 
 class FutureLoadingImageState extends State<FutureLoadingImage> {
-  late bool useCachedScale;
   late String url;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late bool downloading = true;
@@ -196,6 +191,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   PlaceholderWidgetBuilder? placeholder;
   LoadingErrorWidgetBuilder? errorWidget;
   File? data;
+  FileImage? fileImage;
 
   @override
   initState() {
@@ -231,7 +227,6 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     placeholder = widget.placeholder;
     errorWidget = widget.errorWidget;
     alignment = widget.alignment;
-    useCachedScale = widget.useCachedScale;
   }
 
   void updateData() {
@@ -239,49 +234,45 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     var fileType = getFileType(url);
     downloading = true;
     SyncDownloadImage(url: url, type: fileType).getImage().then((value) {
-      if(mounted) {
-        setState(() {
-          downloading = false;
-          this.data = value;
-        });
+      this.data = value;
+      if (mounted) {
+        fileImage = FileImage(data!);
+        if (width != null && height != null) {
+          setState(() {
+            downloading = false;
+          });
+        } else {
+          var resolve = fileImage!.resolve(ImageConfiguration.empty);
+          resolve.addListener(ImageStreamListener((image, synchronousCall) {
+            if (width == double.maxFinite) {
+              width = ScreenUtil.getCurrentWidgetSize(context).width;
+            }
+            if (height == double.maxFinite) {
+              height = null;
+            }
+            var cacheScale = cacheManager.imageScaleOperator.getScale(url);
+            if (cacheScale == null) {
+              var scale = image.image.width / image.image.height;
+              cacheManager.imageScaleOperator.setScale(url, scale);
+              cacheScale = scale;
+            }
+            if (width == null && height == null) {
+              width = image.image.width.toDouble();
+              height = image.image.height.toDouble();
+            } else if (width == null) {
+              width = height! * cacheScale;
+            } else if (height == null) {
+              height = width! / cacheScale;
+            }
+            if (mounted) {
+              setState(() {
+                downloading = false;
+              });
+            }
+          }));
+        }
       }
     });
-    return;
-    downloadListener = DownloadListener(
-        onChanged: (count, total) {},
-        onError: (error) {
-          if (mounted) {
-            setState(() {
-              this.data = null;
-              downloading = false;
-            });
-          }
-        },
-        onFinished: (File file) {
-          if (mounted) {
-            setState(() {
-              var imageDir = cacheManager.storageOperator.imageDir;
-              var savePath = imageDir.path + fileName;
-              this.data = File(savePath);
-              downloading = false;
-            });
-          }
-        });
-    fileName = EncryptUtil.encodeMd5(url);
-    downloading = true;
-    var imageDir = cacheManager.storageOperator.imageDir;
-    var savePath = imageDir.path + fileName;
-    File data = File(savePath);
-    if (data.existsSync()) {
-      this.data = data;
-      downloading = false;
-    } else {
-      downloading = true;
-      Downloader.instance.download(url, savePath).then((value) {
-        key = value;
-        Downloader.instance.subscribe(key!, downloadListener!);
-      });
-    }
   }
 
   @override
@@ -292,39 +283,11 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (data == null || !data!.existsSync()) {
       return errorWidget!.call(context, url, Exception('load image Failed'));
     }
-    var fileImage = FileImage(data!);
-    var resolve = fileImage.resolve(ImageConfiguration.empty);
-    resolve.addListener(ImageStreamListener((image, synchronousCall) {
-      var scale = image.image.width / image.image.height;
-      var cacheScale = cacheManager.imageScaleOperator.getScale(url);
-      if (cacheScale == null) {
-        if (scale > 1.05) {
-          cacheScale = 1.5;
-        } else if (scale < 0.95) {
-          cacheScale = 0.75;
-        } else {
-          cacheScale = 1;
-        }
-        cacheManager.imageScaleOperator.setScale(url, cacheScale);
-      }
-      if (width == null && height == null) {
-        width = image.image.width.toDouble();
-        if (useCachedScale) {
-          height = width! / cacheScale;
-        } else {
-          height = image.image.height.toDouble();
-        }
-      } else if (width == null) {
-        width = height! * (useCachedScale ? cacheScale : scale);
-      } else if (height == null) {
-        height = width! / (useCachedScale ? cacheScale : scale);
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    }));
+    if (width == null || height == null || fileImage == null) {
+      return placeholder!.call(context, url);
+    }
     return Image(
-      image: fileImage,
+      image: fileImage!,
       width: width,
       height: height,
       fit: fit,

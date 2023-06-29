@@ -161,7 +161,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                               ClipRRect(
                                 child: CachedNetworkImageUtils.custom(
                                   context: context,
-                                  useOld: true,
+                                  useOld: false,
                                   imageUrl: config.url.appendHash,
                                   fit: BoxFit.cover,
                                   width: double.maxFinite,

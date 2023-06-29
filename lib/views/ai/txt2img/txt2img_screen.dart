@@ -371,6 +371,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                   ClipRRect(
                                     child: CachedNetworkImageUtils.custom(
                                       context: context,
+                                      useOld: false,
                                       imageUrl: data.url!.appendHash,
                                       width: imageSize,
                                       height: imageSize - $(6),

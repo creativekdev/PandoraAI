@@ -106,6 +106,7 @@ class UserManager extends BaseManager {
   RateNoticeOperator get rateNoticeOperator => _rateNoticeOperator;
   late StreamSubscription _userStataListen;
   late StreamSubscription _networkListen;
+
   @override
   Future<void> onCreate() async {
     super.onCreate();
@@ -121,7 +122,7 @@ class UserManager extends BaseManager {
       }
     });
     _networkListen = EventBusHelper().eventBus.on<OnNetworkStateChangeEvent>().listen((event) {
-      if(event.data != ConnectivityResult.none) {
+      if (event.data != ConnectivityResult.none) {
         refreshUser();
       }
     });
@@ -161,16 +162,6 @@ class UserManager extends BaseManager {
   }
 
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
-    var bool = await getConnectionStatus();
-    if (!bool) {
-      return OnlineModel(
-        user: null,
-        loginSuccess: false,
-        adConfig: AdConfigEntity(),
-        dailyLimitRuleEntity: DailyLimitRuleEntity(),
-        feature: null,
-      );
-    }
     var value = await api.getCurrentUser();
     adConfig = value.adConfig;
     limitRule = value.dailyLimitRuleEntity;

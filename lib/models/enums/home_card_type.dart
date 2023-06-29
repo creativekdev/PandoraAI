@@ -151,11 +151,11 @@ class HomeCardTypeUtils {
         case HomeCardType.style_morph:
           StyleMorph.open(context, source);
           break;
-        case HomeCardType.UNDEFINED:
-          CommonExtension().showToast(S.of(context).oldversion_tips);
-          break;
         case HomeCardType.lineart:
           AiColoring.open(context, source: source);
+          break;
+        case HomeCardType.UNDEFINED:
+          CommonExtension().showToast(S.of(context).oldversion_tips);
           break;
       }
     };

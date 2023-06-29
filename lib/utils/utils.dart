@@ -109,6 +109,9 @@ String getFileName(String url) {
 }
 
 String getFileType(String fileName) {
+  if (fileName.contains('?')) {
+    fileName = fileName.split('?').first;
+  }
   return fileName.substring(fileName.lastIndexOf(".") + 1);
 }
 

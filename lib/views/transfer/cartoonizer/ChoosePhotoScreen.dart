@@ -1223,15 +1223,17 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(16), fontWeight: FontWeight.w600),
             ),
           ],
-        ).intoContainer(
-          width: double.maxFinite,
-          padding: EdgeInsets.symmetric(vertical: $(10)),
-          margin: EdgeInsets.only(bottom: $(10), left: $(30), right: $(30)),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: ColorConstant.DiscoveryBtn,
-            borderRadius: BorderRadius.circular($(8)),
-          )).intoGestureDetector(onTap: () {
+        )
+          .intoContainer(
+              width: double.maxFinite,
+              padding: EdgeInsets.symmetric(vertical: $(10)),
+              margin: EdgeInsets.only(bottom: $(10), left: $(30), right: $(30)),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: ColorConstant.DiscoveryBtn,
+                borderRadius: BorderRadius.circular($(8)),
+              ))
+          .intoGestureDetector(onTap: () {
           pickFromRecent(context);
         }).visibility(
           visible: true,
@@ -1267,7 +1269,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   Widget _imageWidget(BuildContext context, {required String imageUrl}) {
     return CachedNetworkImageUtils.custom(
-      useOld: true,
+      useOld: false,
       context: context,
       imageUrl: imageUrl,
       fit: BoxFit.cover,
@@ -1278,7 +1280,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           height: itemWidth,
           width: itemWidth,
           child: Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator().intoContainer(
+              height: itemWidth * 0.7,
+              width: itemWidth * 0.7,
+            ),
           ),
         );
       },
@@ -1287,7 +1292,10 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           height: itemWidth,
           width: itemWidth,
           child: Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator().intoContainer(
+              height: itemWidth * 0.7,
+              width: itemWidth * 0.7,
+            ),
           ),
         );
       },

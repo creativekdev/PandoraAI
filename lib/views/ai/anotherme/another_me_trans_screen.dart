@@ -328,11 +328,31 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 LiPopMenu.showLinePop(
                   context,
                   listData: [
-                    ListPopItem(text: S.of(context).share, icon: Images.ic_share),
                     ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
+                    ListPopItem(text: S.of(context).share, icon: Images.ic_share),
                   ],
                   clickCallback: (index, text) {
                     if (index == 0) {
+                      if (TextUtil.isEmpty(controller.transKey)) {
+                        return;
+                      }
+                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
+                        var file = File(controller.transKey!);
+                        ShareDiscoveryScreen.push(
+                          context,
+                          effectKey: 'Me-taverse',
+                          originalUrl: uploadImageController.imageUrl.value,
+                          image: base64Encode(file.readAsBytesSync()),
+                          isVideo: false,
+                          category: HomeCardType.anotherme,
+                        ).then((value) {
+                          if (value ?? false) {
+                            Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
+                            showShareSuccessDialog(context);
+                          }
+                        });
+                      }, autoExec: true);
+                    } else if (index == 1) {
                       // 分享
                       showSaveDialog(context, false).then((value) async {
                         if (value != null) {
@@ -397,26 +417,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                           }
                         }
                       });
-                    } else if (index == 1) {
-                      if (TextUtil.isEmpty(controller.transKey)) {
-                        return;
-                      }
-                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
-                        var file = File(controller.transKey!);
-                        ShareDiscoveryScreen.push(
-                          context,
-                          effectKey: 'Me-taverse',
-                          originalUrl: uploadImageController.imageUrl.value,
-                          image: base64Encode(file.readAsBytesSync()),
-                          isVideo: false,
-                          category: HomeCardType.anotherme,
-                        ).then((value) {
-                          if (value ?? false) {
-                            Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
-                            showShareSuccessDialog(context);
-                          }
-                        });
-                      }, autoExec: true);
                     }
                   },
                 );
