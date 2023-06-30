@@ -17,7 +17,7 @@ class AiServerEntity {
   int parentDailyLimit = 0;
   @JSONField(name: 'child_daily_limit')
   int childDailyLimit = 0;
-  late String server;
+  String? server;
   @JSONField(name: 'cn_server')
   String? cnServer;
   late String modified;
@@ -39,8 +39,8 @@ class AiServerEntity {
 extension AiServerEntityEx on AiServerEntity {
   String get serverUrl {
     if (AppContext.currentLocales == 'zh') {
-      return cnServer ?? server;
+      return cnServer ?? server ?? '';
     }
-    return server;
+    return server ?? '';
   }
 }
