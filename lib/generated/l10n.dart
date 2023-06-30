@@ -4050,6 +4050,36 @@ class S {
     );
   }
 
+  /// `Select State`
+  String get SELECT_STATE {
+    return Intl.message(
+      'Select State',
+      name: 'SELECT_STATE',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `State`
+  String get STATE {
+    return Intl.message(
+      'State',
+      name: 'STATE',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `StateName or StateCode`
+  String get SELECT_STATE_KEYWORD {
+    return Intl.message(
+      'StateName or StateCode',
+      name: 'SELECT_STATE_KEYWORD',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Subtotal`
   String get Subtotal {
     return Intl.message(

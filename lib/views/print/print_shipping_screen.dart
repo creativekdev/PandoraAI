@@ -76,17 +76,48 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                     controller: controller.scrollController,
                     slivers: [
                       SliverToBoxAdapter(child: TitleTextWidget(S.of(context).address, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
-                      SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          width: ScreenUtil.screenSize.width - $(30),
-                          title: S.of(context).country_region,
-                          controller: controller.countryController,
-                          canEdit: false,
-                          onTap: () {
-                            controller.onTapRegion(context, SelectRegionType.country);
-                          },
-                        ),
-                      ),
+                      controller.isShowSate
+                          ? SliverToBoxAdapter(
+                              child: Row(
+                                children: [
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).country_region,
+                                    controller: controller.countryController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapRegion(context, SelectRegionType.country);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: $(15),
+                                  ),
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).STATE,
+                                    controller: controller.stateController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapState(context);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SliverToBoxAdapter(
+                              child: PrintInputItem(
+                                width: ScreenUtil.screenSize.width - $(30),
+                                title: S.of(context).country_region,
+                                controller: controller.countryController,
+                                canEdit: false,
+                                onTap: () {
+                                  controller.onTapRegion(context, SelectRegionType.country);
+                                  hideSearchResults();
+                                },
+                              ),
+                            ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
                           width: ScreenUtil.screenSize.width - $(30),
@@ -215,20 +246,19 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
     if (controller.overlayEntry == null && overlayState != null) {
       controller.overlayEntry = OverlayEntry(builder: (context) {
         return Positioned(
-          top: $(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(24), // 输入框下方的偏移量，根据你的界面布局进行调整
+          top: $(120) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight(), // 输入框下方的偏移量，根据你的界面布局进行调整
           left: $(15),
           right: $(15),
           child: Material(
+            color: Colors.transparent,
             child: Container(
-              height:
-                  ScreenUtil.screenSize.height - ($(131) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight() + $(48)) - ScreenUtil.getKeyboardHeight(context),
+              height: ScreenUtil.screenSize.height - ($(120) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight()) - ScreenUtil.getKeyboardHeight(context),
               // 悬浮面板的高度，根据你的需求进行调整
-              color: ColorConstant.BackgroundColor,
               child: GetBuilder<PrintShippingController>(
                 init: controller,
                 builder: (controller) {
                   return ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: $(10)),
+                    // padding: EdgeInsets.symmetric(horizontal: $(10)),
                     itemCount: controller.predictions.length, // 根据搜索结果的数量进行调整
                     itemBuilder: (context, index) {
                       Prediction prediction = controller.predictions[index];
@@ -240,14 +270,18 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         align: TextAlign.left,
                       )
                           .intoContainer(
+                        color: ColorConstant.BackgroundColor,
+                        padding: EdgeInsets.symmetric(horizontal: $(10)),
                         height: $(40),
                       )
                           .intoGestureDetector(onTap: () async {
                         PlacesDetailsResponse detail = await controller.places.getDetailsByPlaceId(prediction.placeId!);
                         controller.zipCodeController.text = controller.getZipCode(detail.result.addressComponents);
                         controller.cityController.text = controller.getCityName(detail.result.addressComponents);
+                        controller.setStateEntity(detail.result.addressComponents);
                         controller.isResult = true;
                         controller.searchAddressController.text = prediction.description!;
+                        controller.formattedAddress = detail.result.formattedAddress!;
                         FocusScope.of(context).unfocus();
                         // 处理选择的搜索结果
                         hideSearchResults();

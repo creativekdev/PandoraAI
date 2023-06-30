@@ -31,6 +31,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "SELECT_COUNTRY_KEYWORD": MessageLookupByLibrary.simpleMessage(
             "RegionName, RegionCode or CallingCode"),
         "SELECT_REGION": MessageLookupByLibrary.simpleMessage("Select Region"),
+        "SELECT_STATE": MessageLookupByLibrary.simpleMessage("Select State"),
+        "SELECT_STATE_KEYWORD":
+            MessageLookupByLibrary.simpleMessage("StateName or StateCode"),
+        "STATE": MessageLookupByLibrary.simpleMessage("State"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Pandora User"),

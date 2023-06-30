@@ -31,6 +31,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "SELECT_COUNTRY_KEYWORD":
             MessageLookupByLibrary.simpleMessage("国家/地区名，地区编码或区号"),
         "SELECT_REGION": MessageLookupByLibrary.simpleMessage("选择国家/地区"),
+        "SELECT_STATE": MessageLookupByLibrary.simpleMessage("选择省/州"),
+        "SELECT_STATE_KEYWORD":
+            MessageLookupByLibrary.simpleMessage("省/州名或者州编码"),
+        "STATE": MessageLookupByLibrary.simpleMessage("省/州"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("总计"),
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),
         "activate_failed": MessageLookupByLibrary.simpleMessage("激活失败"),
