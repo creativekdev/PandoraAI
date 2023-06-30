@@ -5,6 +5,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/models/state_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
@@ -19,6 +20,8 @@ import '../../models/print_payment_entity.dart';
 import '../../models/print_product_entity.dart';
 import '../../models/region_code_entity.dart';
 import '../common/region/select_region_page.dart';
+import '../common/state/select_state_page.dart';
+import '../common/state/states_en.dart';
 
 class PrintShippingController extends GetxController {
   PrintShippingController() {
@@ -35,6 +38,7 @@ class PrintShippingController extends GetxController {
   TextEditingController contactNumberController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController countryController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
   ScrollController scrollController = ScrollController();
 
   FocusNode searchAddressFocusNode = FocusNode();
@@ -67,6 +71,17 @@ class PrintShippingController extends GetxController {
       }
     }
     return "";
+  }
+
+  setStateEntity(List<AddressComponent> addressComponents) {
+    for (AddressComponent component in addressComponents) {
+      if (component.types.contains('political') && component.types.contains('administrative_area_level_1')) {
+        stateController.text = component.longName;
+        _stateEntity?.name = component.longName;
+        _stateEntity?.code = component.shortName;
+        break;
+      }
+    }
   }
 
   String _formattedAddress = "";
@@ -170,11 +185,25 @@ class PrintShippingController extends GetxController {
     update();
   }
 
-  // String? regionName;
-  // String? callingCode;
-  // String? regionCode;
-  // String? regionFlag;
-  late RegionCodeEntity? _countryEntity;
+  bool _isShowState = false;
+
+  set isShowState(bool value) {
+    _isShowState = value;
+    update();
+  }
+
+  bool get isShowSate => _isShowState;
+
+  StateEntity? _stateEntity;
+
+  set stateEntity(StateEntity? value) {
+    _stateEntity = value;
+    update();
+  }
+
+  StateEntity? get stateEntity => _stateEntity;
+
+  RegionCodeEntity? _countryEntity;
 
   set countryEntity(RegionCodeEntity? value) {
     _countryEntity = value;
@@ -208,6 +237,7 @@ class PrintShippingController extends GetxController {
         } else if (type == SelectRegionType.country) {
           _countryEntity = value;
           countryController.text = _countryEntity!.regionName!;
+          _isShowState = getStateList();
           components = [Component(Component.country, _countryEntity!.regionCode!)];
         }
         update();
@@ -215,73 +245,70 @@ class PrintShippingController extends GetxController {
     });
   }
 
+  onTapState(BuildContext context) {
+    if (countryController.text.isNotEmpty) {
+      SelectStatePage.pickRegion(context, countryEntity?.regionCode ?? '').then((value) {
+        if (value != null) {
+          stateController.text = value.name!;
+          update();
+        }
+      });
+    }
+  }
+
+  bool getStateList() {
+    if (_countryEntity == null) {
+      return false;
+    }
+    return (states_en[_countryEntity?.regionCode ?? ''] ?? []).length > 0;
+  }
+
   Future<bool> onSubmit(BuildContext context) async {
     if (countryController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .country_region));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).country_region));
+      return false;
+    }
+    if (getStateList() && stateController.text.isEmpty) {
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).STATE));
       return false;
     }
     if (searchAddressController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .address));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).address));
       return false;
     }
 
     if (firstNameController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .first_name));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).first_name));
       return false;
     }
     if (secondNameController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .last_name));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).last_name));
       return false;
     }
     if (zipCodeController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .zip_code));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).zip_code));
       return false;
     }
     if (contactNumberController.text.isEmpty) {
-      CommonExtension().showToast(S
-          .of(context)
-          .pleaseInput
-          .replaceAll('%s', S
-          .of(context)
-          .contact_number));
+      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).contact_number));
       return false;
     }
+
     var address = {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
       "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
       "country_code": countryEntity?.regionCode,
       "country": countryEntity?.regionName,
-      "address1": formattedAddress,
+      "address1": formattedAddress.isEmpty
+          ? "${searchAddressController.text} ,${cityController.text} ,${stateEntity?.code} ${zipCodeController.text}, ${countryController.text}"
+          : formattedAddress,
       "address2": apartmentController.text,
       "zip": zipCodeController.text,
       "default": false,
-      "city": cityController.text
+      "city": cityController.text,
+      "province": stateEntity?.name,
+      "province_code": stateEntity?.code
     };
     await getVariantId();
     var body = {
@@ -308,16 +335,7 @@ class PrintShippingController extends GetxController {
             "name": printController.optionData.title,
             "quantity": printController.quatity,
             "desc": printController.optionData.desc,
-            "price": (double.parse(printController
-                .product
-                ?.data
-                .rows
-                .first
-                .variants
-                .edges
-                .first
-                .node
-                .price ?? "0") * 100).toInt()
+            "price": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt()
           },
           "customer": {
             "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
@@ -360,16 +378,7 @@ class PrintShippingController extends GetxController {
         {
           "price_data": {
             "currency": "usd",
-            "unit_amount": (double.parse(printController
-                .product
-                ?.data
-                .rows
-                .first
-                .variants
-                .edges
-                .first
-                .node
-                .price ?? "0") * 100).toInt(),
+            "unit_amount": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt(),
             "product_data": {
               "name": printOrderEntity?.data.name,
               "images": [printController.preview_image],
@@ -433,9 +442,7 @@ class PrintShippingController extends GetxController {
         }
       }
       if (found) {
-        variantId = variant.node.id
-            .split("/")
-            .last;
+        variantId = variant.node.id.split("/").last;
       }
     }
   }

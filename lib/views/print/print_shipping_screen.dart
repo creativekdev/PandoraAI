@@ -76,18 +76,48 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                     controller: controller.scrollController,
                     slivers: [
                       SliverToBoxAdapter(child: TitleTextWidget(S.of(context).address, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
-                      SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          width: ScreenUtil.screenSize.width - $(30),
-                          title: S.of(context).country_region,
-                          controller: controller.countryController,
-                          canEdit: false,
-                          onTap: () {
-                            controller.onTapRegion(context, SelectRegionType.country);
-                            hideSearchResults();
-                          },
-                        ),
-                      ),
+                      controller.isShowSate
+                          ? SliverToBoxAdapter(
+                              child: Row(
+                                children: [
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).country_region,
+                                    controller: controller.countryController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapRegion(context, SelectRegionType.country);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: $(15),
+                                  ),
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).STATE,
+                                    controller: controller.stateController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapState(context);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SliverToBoxAdapter(
+                              child: PrintInputItem(
+                                width: ScreenUtil.screenSize.width - $(30),
+                                title: S.of(context).country_region,
+                                controller: controller.countryController,
+                                canEdit: false,
+                                onTap: () {
+                                  controller.onTapRegion(context, SelectRegionType.country);
+                                  hideSearchResults();
+                                },
+                              ),
+                            ),
                       SliverToBoxAdapter(
                         child: PrintInputItem(
                           width: ScreenUtil.screenSize.width - $(30),
@@ -248,6 +278,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         PlacesDetailsResponse detail = await controller.places.getDetailsByPlaceId(prediction.placeId!);
                         controller.zipCodeController.text = controller.getZipCode(detail.result.addressComponents);
                         controller.cityController.text = controller.getCityName(detail.result.addressComponents);
+                        controller.setStateEntity(detail.result.addressComponents);
                         controller.isResult = true;
                         controller.searchAddressController.text = prediction.description!;
                         controller.formattedAddress = detail.result.formattedAddress!;

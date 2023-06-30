@@ -439,5 +439,12 @@
   "fulfilled": "Cumplido",
   "restocked": "Reabastecido",
   "pleaseInput": "Por favor rellene %s",
-  "start_now": "Empieza ahora"
+  "start_now": "Empieza ahora",
+  "SELECT_COUNTRY_CALLING_CODE": "Sélectionner une région",
+  "SELECT_COUNTRY_CALLING_CODE_HINT": "Veuillez sélectionner une région",
+  "SELECT_COUNTRY_KEYWORD": "Nom de la région, Code de la région ou Code d'appel en français",
+  "SELECT_REGION": "Sélectionnez une région",
+  "SELECT_STATE": "Sélectionnez un État",
+  "STATE": "Un État",
+  "SELECT_STATE_KEYWORD": "Nom de l'État ou Code de l'État"
 }

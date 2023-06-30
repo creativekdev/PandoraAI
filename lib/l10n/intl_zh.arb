@@ -443,5 +443,8 @@
   "fulfilled": "已完成",
   "restocked": "已重新进货",
   "pleaseInput": "请填写 %s",
-  "start_now": "开始使用"
+  "start_now": "开始使用",
+  "SELECT_STATE": "选择省/州",
+  "STATE": "省/州",
+  "SELECT_STATE_KEYWORD": "省/州名或者州编码"
 }
