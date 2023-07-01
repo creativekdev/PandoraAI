@@ -55,7 +55,7 @@ class _SelectStatePageState extends State<SelectStatePage> {
     if (data.code!.toUpperCase().contains(keyword.toUpperCase())) {
       return true;
     }
-    if (data.name!.contains(keyword)) {
+    if (data.name!.toLowerCase().contains(keyword.toLowerCase())) {
       return true;
     }
     return false;
@@ -148,7 +148,7 @@ class _StateWithCodeCard extends StatelessWidget {
               '${data.name}',
               style: TextStyle(
                 color: Color(0xfff9f9f9),
-                fontSize: $(24),
+                fontSize: $(16),
                 fontFamily: 'Poppins',
               ),
             ),
