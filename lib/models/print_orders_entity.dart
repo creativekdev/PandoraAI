@@ -44,7 +44,7 @@ class PrintOrdersDataRows {
   late int userId;
   late int price;
   @JSONField(name: "total_price")
-  late int totalPrice;
+  late double totalPrice;
   @JSONField(name: "event_time")
   late String eventTime;
   late String payload;
