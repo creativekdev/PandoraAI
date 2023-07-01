@@ -42,6 +42,7 @@ class _ImagesCardState extends State<ImagesCard> {
   late double space;
   late PlaceholderWidgetBuilder placeholderWidgetBuilder;
   Function(String imageUrl, int index)? onTap;
+  double totalWidth = 0;
 
   @override
   void didUpdateWidget(covariant ImagesCard oldWidget) {
@@ -67,9 +68,9 @@ class _ImagesCardState extends State<ImagesCard> {
       if (!mounted) {
         return;
       }
-      var currentWidgetSize = ScreenUtil.getCurrentWidgetSize(context);
-      var totalWidth = currentWidgetSize.width - space * images.length - 1;
-      imageWidth = totalWidth / images.length;
+      totalWidth = ScreenUtil.getCurrentWidgetSize(context).width;
+      var imgTotalWidth = totalWidth - space * images.length - 1;
+      imageWidth = imgTotalWidth / images.length;
       calculateSize();
       if (mounted) {
         setState(() {});
@@ -82,10 +83,9 @@ class _ImagesCardState extends State<ImagesCard> {
       case AlignType.first:
         SyncDownloadImage(type: getFileType(images.first), url: images.first).getImage().then((value) {
           SyncFileImage(file: value!).getImage().then((value) {
+            imageHeight = imageWidth / (value.image.width / value.image.height);
             if (mounted) {
-              setState(() {
-                imageHeight = imageWidth / (value.image.width / value.image.height);
-              });
+              setState(() {});
             }
           });
         });
@@ -93,10 +93,9 @@ class _ImagesCardState extends State<ImagesCard> {
       case AlignType.last:
         SyncDownloadImage(type: getFileType(images.last), url: images.last).getImage().then((value) {
           SyncFileImage(file: value!).getImage().then((value) {
+            imageHeight = imageWidth / (value.image.width / value.image.height);
             if (mounted) {
-              setState(() {
-                imageHeight = imageWidth / (value.image.width / value.image.height);
-              });
+              setState(() {});
             }
           });
         });
@@ -108,9 +107,9 @@ class _ImagesCardState extends State<ImagesCard> {
               var height = imageWidth / (value.image.width / value.image.height);
               if (height > imageHeight) {
                 imageHeight = height;
-                if (mounted) {
-                  setState(() {});
-                }
+              }
+              if (mounted) {
+                setState(() {});
               }
             });
           });
@@ -144,9 +143,10 @@ class _ImagesCardState extends State<ImagesCard> {
     }
     if (imageHeight == 0) {
       return Row(
-        children:
-            images.transfer((e, index) => placeholderWidgetBuilder.call(context, e, imageWidth, imageWidth).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : space))),
-      );
+        children: images.transfer(
+          (e, index) => placeholderWidgetBuilder.call(context, e, imageWidth, imageWidth).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : space)),
+        ),
+      ).intoContainer(width: totalWidth);
     }
     return Row(
       children: images.transfer((e, index) => CachedNetworkImageUtils.custom(
@@ -165,7 +165,7 @@ class _ImagesCardState extends State<ImagesCard> {
                       : () {
                           onTap?.call(e, index);
                         })
-              .intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : space))),
-    );
+              .intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : space), height: imageHeight, width: imageWidth)),
+    ).intoContainer(height: imageHeight, width: totalWidth);
   }
 }

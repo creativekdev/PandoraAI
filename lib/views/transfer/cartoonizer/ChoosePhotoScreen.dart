@@ -1275,30 +1275,6 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       fit: BoxFit.cover,
       height: itemWidth,
       width: itemWidth,
-      placeholder: (context, url) {
-        return Container(
-          height: itemWidth,
-          width: itemWidth,
-          child: Center(
-            child: CircularProgressIndicator().intoContainer(
-              height: itemWidth * 0.7,
-              width: itemWidth * 0.7,
-            ),
-          ),
-        );
-      },
-      errorWidget: (context, url, error) {
-        return Container(
-          height: itemWidth,
-          width: itemWidth,
-          child: Center(
-            child: CircularProgressIndicator().intoContainer(
-              height: itemWidth * 0.7,
-              width: itemWidth * 0.7,
-            ),
-          ),
-        );
-      },
     );
   }
 

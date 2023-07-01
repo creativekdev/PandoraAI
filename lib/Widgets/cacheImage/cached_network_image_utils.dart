@@ -3,20 +3,20 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/effect_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:skeletons/skeletons.dart';
 
 import 'image_cache_manager.dart';
 
 class CachedNetworkImageUtils {
   static Widget custom({
-    bool useOld = true,
+    bool useOld = false,
     required BuildContext context,
     Key? key,
     required String imageUrl,
@@ -52,12 +52,20 @@ class CachedNetworkImageUtils {
     }
     if (placeholder == null) {
       placeholder = (context, url) {
-        return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
+        return SkeletonAvatar(
+          style: SkeletonAvatarStyle(height: height ?? width ?? $(25), width: width ?? height ?? $(25)),
+        );
+        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (errorWidget == null) {
       errorWidget = (context, url, error) {
-        return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
+        return Image.asset(
+          Images.ic_net_error_icon,
+          width: width ?? height ?? $(25),
+          height: height ?? width ?? $(25),
+        );
+        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (TextUtil.isEmpty(imageUrl.trim())) {
