@@ -3,9 +3,7 @@ import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/common/state/states_en.dart';
-import 'package:cartoonizer/views/common/state/states_es.dart';
-import 'package:cartoonizer/views/common/state/states_zh.dart';
+import 'package:cartoonizer/views/common/state/states_list.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../models/state_entity.dart';
@@ -122,14 +120,7 @@ class _SelectStatePageState extends State<SelectStatePage> {
   }
 
   List<Map<String, dynamic>> _getStateList() {
-    if (AppContext.currentLocales == 'en') {
-      return states_en[country] ?? [];
-    } else if (AppContext.currentLocales == 'zh') {
-      return states_zh[country] ?? [];
-    } else if (AppContext.currentLocales == 'es') {
-      return states_es[country] ?? [];
-    }
-    return states_en[country] ?? [];
+    return states_list[country] ?? [];
   }
 }
 

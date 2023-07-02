@@ -21,7 +21,7 @@ import '../../models/print_product_entity.dart';
 import '../../models/region_code_entity.dart';
 import '../common/region/select_region_page.dart';
 import '../common/state/select_state_page.dart';
-import '../common/state/states_en.dart';
+import '../common/state/states_list.dart';
 
 class PrintShippingController extends GetxController {
   PrintShippingController() {
@@ -260,7 +260,7 @@ class PrintShippingController extends GetxController {
     if (_countryEntity == null) {
       return false;
     }
-    return (states_en[_countryEntity?.regionCode ?? ''] ?? []).length > 0;
+    return (states_list[_countryEntity?.regionCode ?? ''] ?? []).length > 0;
   }
 
   Future<bool> onSubmit(BuildContext context) async {
