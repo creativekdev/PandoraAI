@@ -46,6 +46,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
   bool _showPurchasePlan = false;
   String? _queryProductError;
   UserManager userManager = AppDelegate().getManager();
+  bool purchaseSuccess = false;
 
   @override
   void initState() {
@@ -85,8 +86,10 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
     var response = await API.post("/api/plan/apple_store/buy", body: body);
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      purchaseSuccess = true;
       return Future<bool>.value(true);
     } else {
+      purchaseSuccess = false;
       return Future<bool>.value(false);
     }
   }
@@ -114,7 +117,6 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         _purchasePending = false;
       });
     }
-    EventBusHelper().eventBus.fire(OnPaySuccessEvent());
   }
 
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
@@ -432,95 +434,102 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingOverlay(
-      isLoading: _loading,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            Row(
+    return WillPopScope(
+        child: LoadingOverlay(
+          isLoading: _loading,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Column(
               children: [
-                Image.asset(
-                  Images.ic_back,
-                  height: $(24),
-                  width: $(24),
-                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop();
-                }),
+                Row(
+                  children: [
+                    Image.asset(
+                      Images.ic_back,
+                      height: $(24),
+                      width: $(24),
+                    ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () {
+                      Navigator.of(context).pop();
+                    }),
+                    Expanded(
+                      child: SizedBox(),
+                    ),
+                    if (_isAvailable)
+                      GestureDetector(
+                        onTap: () async {
+                          if (userManager.isNeedLogin) {
+                            return;
+                          }
+                          // setState(() {
+                          //   _loading = true;
+                          // });
+                          _inAppPurchase.restorePurchases();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(255, 255, 255, 0.8),
+                            borderRadius: BorderRadius.circular(1.w),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
+                            child: TitleTextWidget(S.of(context).restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
+                          ),
+                        ),
+                      ),
+                    SizedBox(width: $(24)),
+                  ],
+                ).intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight())),
                 Expanded(
-                  child: SizedBox(),
-                ),
-                if (_isAvailable)
-                  GestureDetector(
-                    onTap: () async {
-                      if (userManager.isNeedLogin) {
-                        return;
-                      }
-                      // setState(() {
-                      //   _loading = true;
-                      // });
-                      _inAppPurchase.restorePurchases();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 255, 255, 0.8),
-                        borderRadius: BorderRadius.circular(1.w),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.6.h),
-                        child: TitleTextWidget(S.of(context).restore, ColorConstant.BtnTextColor, FontWeight.w500, 11.sp),
-                      ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Card(
+                          color: Color(0xcc000000),
+                          shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(3.w),
+                          ),
+                          margin: EdgeInsets.only(top: $(100), left: $(24), right: $(24)),
+                          elevation: 2.h,
+                          child: Column(
+                            children: [
+                              TitleTextWidget('Pandora AI Pro', Colors.white, FontWeight.w500, $(23)),
+                              SizedBox(height: $(10)),
+                              attrItem(context, title: S.of(context).no_ads, imageRes: Images.ic_no_ads),
+                              SizedBox(height: $(10)),
+                              attrItem(context, title: S.of(context).no_watermark1, imageRes: Images.ic_no_watermark),
+                              SizedBox(height: $(10)),
+                              attrItem(context, title: S.of(context).high_resolution, imageRes: Images.ic_hd),
+                              SizedBox(height: $(10)),
+                              attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
+                              SizedBox(height: $(10)),
+                              attrItem(context,
+                                  title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${userManager.limitRule.anotherme?.plan ?? 0}'), imageRes: Images.ic_buy_metaverse),
+                              SizedBox(height: $(10)),
+                              attrItem(context,
+                                  title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${userManager.limitRule.txt2img?.plan ?? 0}'), imageRes: Images.ic_buy_ai_artist),
+                            ],
+                          ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15))),
+                        ),
+                        SizedBox(height: 2.h),
+                        _buildProductList(),
+                      ],
                     ),
                   ),
-                SizedBox(width: $(24)),
-              ],
-            ).intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight())),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Card(
-                      color: Color(0xcc000000),
-                      shadowColor: Color.fromRGBO(0, 0, 0, 0.4),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3.w),
-                      ),
-                      margin: EdgeInsets.only(top: $(100), left: $(24), right: $(24)),
-                      elevation: 2.h,
-                      child: Column(
-                        children: [
-                          TitleTextWidget('Pandora AI Pro', Colors.white, FontWeight.w500, $(23)),
-                          SizedBox(height: $(10)),
-                          attrItem(context, title: S.of(context).no_ads, imageRes: Images.ic_no_ads),
-                          SizedBox(height: $(10)),
-                          attrItem(context, title: S.of(context).no_watermark1, imageRes: Images.ic_no_watermark),
-                          SizedBox(height: $(10)),
-                          attrItem(context, title: S.of(context).high_resolution, imageRes: Images.ic_hd),
-                          SizedBox(height: $(10)),
-                          attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
-                          SizedBox(height: $(10)),
-                          attrItem(context,
-                              title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${userManager.limitRule.anotherme?.plan ?? 0}'), imageRes: Images.ic_buy_metaverse),
-                          SizedBox(height: $(10)),
-                          attrItem(context,
-                              title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${userManager.limitRule.txt2img?.plan ?? 0}'), imageRes: Images.ic_buy_ai_artist),
-                        ],
-                      ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15))),
-                    ),
-                    SizedBox(height: 2.h),
-                    _buildProductList(),
-                  ],
                 ),
-              ),
+                _buildPurchaseButton(),
+                SizedBox(height: ScreenUtil.getBottomPadding(context) + $(15))
+              ],
             ),
-            _buildPurchaseButton(),
-            SizedBox(height: ScreenUtil.getBottomPadding(context) + $(15))
-          ],
+          ).intoContainer(
+            decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_buy_bg), fit: BoxFit.fill)),
+          ),
         ),
-      ).intoContainer(
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage(Images.ic_buy_bg), fit: BoxFit.fill)),
-      ),
-    );
+        onWillPop: () async {
+          if (purchaseSuccess) {
+            EventBusHelper().eventBus.fire(OnPaySuccessEvent());
+          }
+          return true;
+        });
   }
 
   Widget attrItem(BuildContext context, {required title, required String imageRes}) {

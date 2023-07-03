@@ -235,6 +235,9 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     placeholder = widget.placeholder;
     errorWidget = widget.errorWidget;
     alignment = widget.alignment;
+    if (height == double.maxFinite) {
+      height = null;
+    }
   }
 
   void updateData() {

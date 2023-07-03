@@ -1317,7 +1317,13 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         controller.updateImageFile(compressedImage);
         controller.updateImageUrl("");
       } else if (entity == null) {
-        XFile? image = await imagePicker.pickImage(source: source, imageQuality: 100, preferredCameraDevice: CameraDevice.front);
+        XFile? image = await imagePicker.pickImage(
+          source: source,
+          imageQuality: 100,
+          preferredCameraDevice: CameraDevice.front,
+          maxWidth: (effectDataController.data?.imageMaxl ?? 512).toDouble(),
+          maxHeight: (effectDataController.data?.imageMaxl ?? 512).toDouble(),
+        );
         if (image == null) {
           CommonExtension().showToast("cancelled");
           return false;

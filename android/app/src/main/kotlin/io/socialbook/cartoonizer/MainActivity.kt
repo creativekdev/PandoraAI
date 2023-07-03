@@ -3,13 +3,9 @@ package io.socialbook.cartoonizer
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.annotation.NonNull
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.get
-import androidx.core.graphics.set
 import com.bytedance.sdk.open.tiktok.TikTokOpenApiFactory
 import com.bytedance.sdk.open.tiktok.TikTokOpenConfig
 import com.bytedance.sdk.open.tiktok.api.TikTokOpenApi
@@ -17,14 +13,16 @@ import com.bytedance.sdk.open.tiktok.authorize.model.Authorization
 import com.facebook.share.model.SharePhoto
 import com.facebook.share.model.SharePhotoContent
 import com.facebook.share.widget.ShareDialog
-import com.fluttercandies.flutter_image_compress.ext.compress
-import com.fluttercandies.flutter_image_compress.handle.heif.HeifHandler
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.socialbook.cartoonizer.converter.AsyncTaskHelper
 import io.socialbook.cartoonizer.converter.YuvConverter
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 
 class MainActivity : FlutterFragmentActivity() {
 

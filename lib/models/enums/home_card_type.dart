@@ -129,6 +129,7 @@ class HomeCardTypeUtils {
     Txt2imgInitData? initData,
   }) {
     var action = () {
+      var context = Get.context!;
       switch (target) {
         case HomeCardType.txt2img:
           Txt2img.open(context, source: source, initData: initData);
@@ -179,7 +180,7 @@ class HomeCardTypeUtils {
             .then((value) {
           if (value == true) {
             cacheManager.setBool('${CacheManager.viewPreviewOpen}:$key', true);
-            action.call();
+            delay(() => action.call());
           }
         });
       }
