@@ -2,8 +2,10 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -172,9 +174,9 @@ class PrintController extends GetxController {
   bool get viewInit => _viewInit;
 
   onSuccess(PrintProductEntity entity, PrintProductNeedInfoEntity info) {
-    _viewInit = true;
     product = entity;
     productInfo = info;
+    onDownLoadBackImage();
     options = getOptionsData(entity);
     showesed = getInitIsShowed(options.keys.toList());
     _scale = getImageScale(productInfo?.printInfo.width.toDouble() ?? 0.0);
@@ -183,6 +185,14 @@ class PrintController extends GetxController {
     _imgSize = getImageRealSize(productInfo?.printInfo.width.toDouble() ?? 0.0, productInfo?.printInfo.height.toDouble() ?? 0.0);
     _total = getSubTotal();
     update();
+  }
+
+  onDownLoadBackImage() async {
+    Map<String, dynamic> colorMap = productInfo!.printInfo.productColorMap;
+    Iterable colorBgs = colorMap.values;
+    colorBgs.forEach((element) async {
+      SyncDownloadImage(url: element, type: getFileType(element).fileImageType).getImage();
+    });
   }
 
   onTapOptions(Map<String, bool> map, int index) {
