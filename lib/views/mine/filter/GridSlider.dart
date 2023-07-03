@@ -43,7 +43,7 @@ class _GridSliderState extends State<GridSlider> {
       },
       child: Container(
         width: width,
-        height: 30,
+        height: $(30),
         child: CustomPaint(
           painter: MyPainter(minVal :widget.minVal, maxVal: widget.maxVal, currentPos : widget.currentPos, screenWidth: width),
         )

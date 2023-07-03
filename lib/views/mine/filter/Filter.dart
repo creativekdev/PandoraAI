@@ -26,7 +26,16 @@ class Filter{
   }
   List<Uint8List> avatars = [];
   Future<bool> calcAvatars(imgLib.Image _image) async {
-    imgLib.Image resizedImage = imgLib.copyResize(_image, width:60, height: 60);
+    int _width, _height;
+    if(_image.height > _image.width) {
+      _height = $(60).toInt();
+      _width = _height * _image.width ~/ _image.height;
+    } else {
+      _width = $(60).toInt();
+      _height = _width * _image.height ~/ _image.width;
+
+    }
+    imgLib.Image resizedImage = imgLib.copyResize(_image, width:_width, height: _height);
     avatars.clear();
     for(String filter in filters) {
       avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter,resizedImage))));
