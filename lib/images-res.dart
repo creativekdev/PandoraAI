@@ -1,6 +1,7 @@
 ///auto generate code, please do not modify;
 class Images {
    static const String american_express = 'assets/images/american_express.png';
+   static const String android_launcher_bg = 'assets/images/android_launcher_bg.png';
    static const String blur = 'assets/images/blur.png';
    static const String brightness = 'assets/images/brightness.png';
    static const String contrast = 'assets/images/contrast.png';
