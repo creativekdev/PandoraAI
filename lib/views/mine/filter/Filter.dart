@@ -27,15 +27,20 @@ class Filter{
   List<Uint8List> avatars = [];
   Future<bool> calcAvatars(imgLib.Image _image) async {
     int _width, _height;
+    int st_width, st_height;
     if(_image.height > _image.width) {
-      _height = $(60).toInt();
-      _width = _height * _image.width ~/ _image.height;
+      st_width = 0;
+      st_height = (_image.height - _image.width) ~/ 2;
+    _height = _image.width;
+    _width = _image.width;
     } else {
-      _width = $(60).toInt();
-      _height = _width * _image.height ~/ _image.width;
-
+      _width = _image.height;
+      _height =_image.height;
+      st_width = (_image.width - _image.height) ~/ 2;;
+      st_height = 0;
     }
-    imgLib.Image resizedImage = imgLib.copyResize(_image, width:_width, height: _height);
+    imgLib.Image cropedImage = imgLib.copyCrop(_image,st_width ,st_height, _width, _height );
+    imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width:$(60).toInt(), height: $(60).toInt());
     avatars.clear();
     for(String filter in filters) {
       avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter,resizedImage))));
