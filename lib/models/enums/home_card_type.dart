@@ -175,6 +175,7 @@ class HomeCardTypeUtils {
           builder: (_) => ViewPreviewScreen(
             url: pick.tutorial!,
             title: target.title(),
+            description: target.description(),
           ),
         ))
             .then((value) {
@@ -211,6 +212,15 @@ extension HomeCardTypeEx on HomeCardType {
         return 'stylemorph';
       case HomeCardType.lineart:
         return 'lineart';
+    }
+  }
+
+  description() {
+    switch (this) {
+      case HomeCardType.lineart:
+        return 'Upload a sketch picture to generate a colorful AI artwork';
+      default:
+        return '';
     }
   }
 

@@ -1,7 +1,6 @@
 ///auto generate code, please do not modify;
 class Images {
    static const String american_express = 'assets/images/american_express.png';
-   static const String android_launcher_bg = 'assets/images/android_launcher_bg.png';
    static const String blur = 'assets/images/blur.png';
    static const String brightness = 'assets/images/brightness.png';
    static const String contrast = 'assets/images/contrast.png';
@@ -19,6 +18,8 @@ class Images {
    static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
+   static const String ic_app_large = 'assets/images/ic_app_large.png';
+   static const String ic_app_large_round = 'assets/images/ic_app_large_round.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
@@ -210,7 +211,6 @@ class Images {
    static const String introduction_bg2 = 'assets/images/introduction_bg2.png';
    static const String introduction_bg3 = 'assets/images/introduction_bg3.png';
    static const String launch_branding = 'assets/images/launch_branding.png';
-   static const String launch_icon = 'assets/images/launch_icon.png';
    static const String mastercard = 'assets/images/mastercard.png';
    static const String noise = 'assets/images/noise.png';
    static const String pixelate = 'assets/images/pixelate.png';

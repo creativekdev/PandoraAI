@@ -10,8 +10,14 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 class ViewPreviewScreen extends StatefulWidget {
   String url;
   String title;
+  String description;
 
-  ViewPreviewScreen({super.key, required this.url, required this.title});
+  ViewPreviewScreen({
+    super.key,
+    required this.url,
+    required this.title,
+    required this.description,
+  });
 
   @override
   State<ViewPreviewScreen> createState() => _ViewPreviewScreenState();
@@ -98,6 +104,8 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                     ),
                   ),
                 ),
+                TitleTextWidget(widget.description, ColorConstant.White, FontWeight.w500, $(20), maxLines: 10)
+                    .intoContainer(color: Colors.black, padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(10))),
                 TitleTextWidget(S.of(context).start_now, Colors.white, FontWeight.normal, $(16))
                     .intoContainer(
                   alignment: Alignment.center,
