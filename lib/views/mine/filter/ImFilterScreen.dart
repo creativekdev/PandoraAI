@@ -694,8 +694,8 @@ class _ImFilterScreenState extends State<ImFilterScreen> with SingleTickerProvid
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: (adjust.getSelectedID() == cur_i)?
-                Border.all(color: const Color(0xFF05E0D5), width: 2)
-                    :Border.all(color: Colors.grey, width: 2),
+                Border.all(color: const Color(0xFF05E0D5), width: $(2))
+                    :Border.all(color: Colors.grey, width: $(2)),
               ),
               child: CircleAvatar(
                 radius: $(20),
