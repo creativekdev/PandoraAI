@@ -200,6 +200,7 @@ class Images {
    static const String ic_trans_result_bg = 'assets/images/ic_trans_result_bg.png';
    static const String ic_txt2img_no_style = 'assets/images/ic_txt2img_no_style.png';
    static const String ic_unchecked = 'assets/images/ic_unchecked.png';
+   static const String ic_use = 'assets/images/ic_use.png';
    static const String ic_user = 'assets/images/ic_user.png';
    static const String ic_user_round = 'assets/images/ic_user_round.png';
    static const String ic_video = 'assets/images/ic_video.png';

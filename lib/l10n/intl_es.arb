@@ -460,5 +460,6 @@
   "pleaseSelect": "Please select seleccione un $s",
   "SELECT_STATE": "Sélectionnez un État",
   "STATE": "Un État",
-  "SELECT_STATE_KEYWORD": "Nom de l'État ou Code de l'État"
+  "SELECT_STATE_KEYWORD": "Nom de l'État ou Code de l'État",
+  "use_style": "Usar estilo"
 }

@@ -547,6 +547,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "upload_image": MessageLookupByLibrary.simpleMessage("上传图片"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
         "uploading_photos": MessageLookupByLibrary.simpleMessage("上传图片"),
+        "use_style": MessageLookupByLibrary.simpleMessage("使用"),
         "variations": MessageLookupByLibrary.simpleMessage("规格"),
         "variations_of_styles":
             MessageLookupByLibrary.simpleMessage("10种风格，每种10张变化"),

@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/rate_notice_operator.dart';
 import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:common_utils/common_utils.dart';
 
 // dev
@@ -73,6 +74,8 @@ class EffectDataController extends GetxController {
   List<String> tagList = [];
   late StreamSubscription onAppStateListener;
   late StreamSubscription networkListener;
+
+  late HomePageEntity homeEntity;
 
   @override
   void onInit() {

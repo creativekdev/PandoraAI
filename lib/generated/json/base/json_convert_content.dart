@@ -16,6 +16,8 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/models/home_post_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/msg_entity.dart';
@@ -68,6 +70,11 @@ class JsonConvert {
     (DiscoveryResource).toString(): DiscoveryResource.fromJson,
     (GenerateLimitEntity).toString(): GenerateLimitEntity.fromJson,
     (HomeCardEntity).toString(): HomeCardEntity.fromJson,
+    (HomePageEntity).toString(): HomePageEntity.fromJson,
+    (HomePageHomepageTools).toString(): HomePageHomepageTools.fromJson,
+    (HomePageHomepageGalleries).toString(): HomePageHomepageGalleries.fromJson,
+    (HomePostEntity).toString(): HomePostEntity.fromJson,
+    (HomePostData).toString(): HomePostData.fromJson,
     (MetagramPageEntity).toString(): MetagramPageEntity.fromJson,
     (SocialPostPageEntity).toString(): SocialPostPageEntity.fromJson,
     (MetagramItemEntity).toString(): MetagramItemEntity.fromJson,
@@ -352,6 +359,21 @@ class JsonConvert {
     }
     if (<HomeCardEntity>[] is M) {
       return data.map<HomeCardEntity>((Map<String, dynamic> e) => HomeCardEntity.fromJson(e)).toList() as M;
+    }
+    if (<HomePageEntity>[] is M) {
+      return data.map<HomePageEntity>((Map<String, dynamic> e) => HomePageEntity.fromJson(e)).toList() as M;
+    }
+    if (<HomePageHomepageTools>[] is M) {
+      return data.map<HomePageHomepageTools>((Map<String, dynamic> e) => HomePageHomepageTools.fromJson(e)).toList() as M;
+    }
+    if (<HomePageHomepageGalleries>[] is M) {
+      return data.map<HomePageHomepageGalleries>((Map<String, dynamic> e) => HomePageHomepageGalleries.fromJson(e)).toList() as M;
+    }
+    if (<HomePostEntity>[] is M) {
+      return data.map<HomePostEntity>((Map<String, dynamic> e) => HomePostEntity.fromJson(e)).toList() as M;
+    }
+    if (<HomePostData>[] is M) {
+      return data.map<HomePostData>((Map<String, dynamic> e) => HomePostData.fromJson(e)).toList() as M;
     }
     if (<MetagramPageEntity>[] is M) {
       return data.map<MetagramPageEntity>((Map<String, dynamic> e) => MetagramPageEntity.fromJson(e)).toList() as M;

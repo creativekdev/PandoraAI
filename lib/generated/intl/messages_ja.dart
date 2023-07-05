@@ -586,6 +586,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "upload_image": MessageLookupByLibrary.simpleMessage("写真をアップロードする"),
         "upload_photos": MessageLookupByLibrary.simpleMessage("写真をアップロードする"),
         "uploading_photos": MessageLookupByLibrary.simpleMessage("写真をアップロードする"),
+        "use_style": MessageLookupByLibrary.simpleMessage("使用する"),
         "variations": MessageLookupByLibrary.simpleMessage("仕様"),
         "variations_of_styles":
             MessageLookupByLibrary.simpleMessage("10種類のスタイル、各10の変更"),

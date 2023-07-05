@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
 class SyncDownloadImage {

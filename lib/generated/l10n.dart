@@ -4669,6 +4669,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Use Style`
+  String get use_style {
+    return Intl.message(
+      'Use Style',
+      name: 'use_style',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

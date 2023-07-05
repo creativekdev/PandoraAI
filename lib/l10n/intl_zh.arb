@@ -461,5 +461,6 @@
   "pleaseSelect": "请选择%s",
   "SELECT_STATE": "选择省/州",
   "STATE": "省/州",
-  "SELECT_STATE_KEYWORD": "省/州名或者州编码"
+  "SELECT_STATE_KEYWORD": "省/州名或者州编码",
+  "use_style": "使用"
 }

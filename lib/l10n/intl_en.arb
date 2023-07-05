@@ -460,5 +460,6 @@
   "pleaseSelectSize": "Please select a Size",
   "pleaseSelectColor": "Please select a Color",
   "pleaseSelectModel": "Please select a Model",
-  "pleaseSelect": "Please select the $s"
+  "pleaseSelect": "Please select the $s",
+  "use_style": "Use Style"
 }

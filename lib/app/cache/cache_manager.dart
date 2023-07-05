@@ -31,7 +31,7 @@ class CacheManager extends BaseManager {
   static const keyLastEffectTabAttached = "last_effect_tab_attached";
   static const _rateConfig = 'rate_config';
   static const effectLastRandomTime = 'effect_last_random_time';
-  static const effectAllData = 'effect_config_data';
+  static const effectAllData = 'effect_config_data_new';
   static const scaleCacheData = 'scaleCacheData';
   static const nsfwOpen = 'nsfw_open';
   static const imageUploadHistory = 'image_upload_history';

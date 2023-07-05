@@ -461,5 +461,6 @@
   "pleaseSelect": "％sを選択してください",
   "SELECT_STATE": "州/州を選択",
   "STATE": "県/国",
-  "SELECT_STATE_KEYWORD": "県/国家または状態"
+  "SELECT_STATE_KEYWORD": "県/国家または状態",
+  "use_style": "使用する"
 }
