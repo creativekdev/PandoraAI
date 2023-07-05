@@ -200,6 +200,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   LoadingErrorWidgetBuilder? errorWidget;
   File? data;
   FileImage? fileImage;
+  int retryCount = 1;
 
   @override
   initState() {
@@ -292,11 +293,16 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
       return placeholder!.call(context, url);
     }
     if (data == null || !data!.existsSync()) {
+      if (retryCount == 1) {
+        retryCount--;
+        updateData();
+      }
       return errorWidget!.call(context, url, Exception('load image Failed'));
     }
     if (width == null || height == null || fileImage == null) {
       return placeholder!.call(context, url);
     }
+    retryCount = 1;
     return Image(
       image: fileImage!,
       width: width,
@@ -307,8 +313,6 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
       color: color,
       alignment: alignment,
       errorBuilder: (context, error, strace) {
-        data?.deleteSync();
-        this.data = null;
         updateData();
         return errorWidget!.call(context, url, Exception('load image Failed'));
       },

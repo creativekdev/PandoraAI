@@ -164,7 +164,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                   useOld: false,
                                   imageUrl: config.url.appendHash,
                                   fit: BoxFit.cover,
-                                  width: double.maxFinite,
+                                  width: ScreenUtil.screenSize.width - $(30),
                                   placeholder: (context, url) => CircularProgressIndicator()
                                       .intoContainer(
                                         width: $(25),
@@ -172,7 +172,8 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                       )
                                       .intoCenter()
                                       .intoContainer(
-                                        width: double.maxFinite,
+                                        width: ScreenUtil.screenSize.width - $(30),
+                                        // width: double.maxFinite,
                                         height: $(150),
                                       ),
                                 ),

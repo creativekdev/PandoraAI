@@ -47,9 +47,9 @@ class ExceptionHandler {
       if (toastOnFailed && !needRetry) {
         var data = e.response!.data;
         if (data == null) {
-          CommonExtension().showToast("Oops failed!");
+          CommonExtension().showToast("Oops failed".intl);
         } else if (data is Map) {
-          CommonExtension().showToast((data['message'] ?? "Oops failed!").toString());
+          CommonExtension().showToast((data['message'] ?? "Oops failed".intl).toString());
         } else {
           CommonExtension().showToast(data.toString());
         }

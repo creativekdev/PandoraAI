@@ -31,9 +31,11 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
     super.initState();
     Posthog().screenWithUser(screenName: 'video_preview_screen', eventValues: {'title': widget.title});
     SyncDownloadVideo(url: widget.url, type: getFileType(widget.url)).getVideo().then((value) {
-      setState(() {
-        videoFile = value;
-      });
+      if (mounted) {
+        setState(() {
+          videoFile = value;
+        });
+      }
     });
   }
 
