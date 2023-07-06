@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/Crop.dart';
 import 'package:cropperx/cropperx.dart';
@@ -66,8 +68,9 @@ class _DecorationCropperState extends State<DecorationCropper> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.bottom - $(115) - $(8) - $(12) -$(13) - $(24) - AppBar().preferredSize.height;
+    double screenWidth = Get.width;
+    double heightPadding =  Get.statusBarHeight;
+    double screenHeight = Get.height -heightPadding / 2 - AppBar().preferredSize.height - $(115) - $(8) - $(12) - $(24);
     double _ratio = widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID];
     if(screenWidth / screenHeight > _ratio) {
       _height = screenHeight;
