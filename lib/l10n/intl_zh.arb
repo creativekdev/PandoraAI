@@ -462,6 +462,7 @@
   "pleaseSelectColor": "请选择颜色",
   "pleaseSelectModel": "请选择款式",
   "pleaseSelect": "请选择%s",
+  "use_style": "使用"
   "album": "Album",
   "template": "Template",
   "colors": "Colors"

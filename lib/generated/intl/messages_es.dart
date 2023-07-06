@@ -701,6 +701,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Subir una imagen"),
         "uploading_photos":
             MessageLookupByLibrary.simpleMessage("Subir una imagen"),
+        "use_style": MessageLookupByLibrary.simpleMessage("Usar estilo"),
         "variations": MessageLookupByLibrary.simpleMessage("Variaciones"),
         "variations_of_styles": MessageLookupByLibrary.simpleMessage(
             "10 estilos, 10 variaciones cada uno"),

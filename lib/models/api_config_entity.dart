@@ -4,11 +4,13 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/home_card_entity.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/models/shipping_method_entity.dart';
 import 'package:cartoonizer/utils/map_util.dart';
 
 class ApiConfigEntity {
   late List<EffectData> datas;
+  late HomePageEntity homepage;
   late Map<String, dynamic> locale;
   CampaignTab? campaignTab;
   List<String> tags = [];
@@ -44,11 +46,11 @@ class ApiConfigEntity {
     if (json['hash'] != null) {
       entity.hash = json['hash'];
     }
-    if (json['promotion_resources'] != null) {
-      entity.promotionResources = (json['promotion_resources'] as List).map((e) => DiscoveryResource.fromJson(e)).toList();
-    }
-    if (json['stylemorph'] != null) {
-      entity.stylemorph = EffectData.fromJson('stylemorph', json['stylemorph'], entity.locale);
+    // if (json['promotion_resources'] != null) {
+    //   entity.promotionResources = (json['promotion_resources'] as List).map((e) => DiscoveryResource.fromJson(e)).toList();
+    // }
+    if (json['data']['stylemorph'] != null) {
+      entity.stylemorph = EffectData.fromJson('stylemorph', json['data']['stylemorph'], entity.locale);
     }
     if (json['shipping_methods'] != null) {
       entity.shippingMethods = (json['shipping_methods'] as List).map((e) => ShippingMethodEntity.fromJson(e)).toList();
@@ -58,6 +60,21 @@ class ApiConfigEntity {
     }
     if (json['ai_config'] != null) {
       entity.aiConfig = (json['ai_config'] as List).map((e) => AiServerEntity.fromJson(e)).toList();
+    }
+    if (json['homepage'] != null) {
+      entity.homepage = HomePageEntity.fromJson(json['homepage']);
+      entity.homepage.galleries.forEach((element) {
+        element.title = element.category.localeValue(entity.locale);
+      });
+      entity.homepage.banners.forEach((element) {
+        element.title = element.category.localeValue(entity.locale);
+      });
+      entity.homepage.tools.forEach((element) {
+        element.title = element.category.localeValue(entity.locale);
+      });
+      entity.homepage.features.forEach((element) {
+        element.title = element.category.localeValue(entity.locale);
+      });
     }
     return entity;
   }

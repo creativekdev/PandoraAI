@@ -461,6 +461,8 @@
   "pleaseSelectColor": "Please select a Color",
   "pleaseSelectModel": "Please select a Model",
   "pleaseSelect": "Please select the $s",
+  "use_style": "Use Style"
+  "pleaseSelect": "Please select the $s",
   "album": "Album",
   "template": "Template",
   "colors": "Colors"

@@ -21,6 +21,7 @@ import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/generate_limit_entity.dart';
+import 'package:cartoonizer/models/home_post_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/models/msg_count_entity.dart';
 import 'package:cartoonizer/models/online_model.dart';
@@ -499,12 +500,18 @@ class CartoonizerApi extends RetryAbleRequester {
 
   Future<ApiConfigEntity?> getHomeConfig() async {
     var baseEntity = await get(
-      "/tool/cartoonize_config/v6",
+      "/tool/cartoonize_config_new/v7",
       needRetry: true,
       canClickRetry: true,
     );
     if (baseEntity == null) return null;
-    return ApiConfigEntity.fromJson(baseEntity.data);
+    return ApiConfigEntity.fromJson(baseEntity.data["data"]);
+  }
+
+  Future<HomePostEntity?> socialHomePost({required int from, required int size, required String category}) async {
+    var params = <String, dynamic>{'from': from, 'size': size, 'category': category};
+    var baseEntity = await get('/social_post/home', params: params);
+    return jsonConvert.convert<HomePostEntity>(baseEntity?.data);
   }
 
   Future<BaseEntity?> deleteDiscovery(int id) async {

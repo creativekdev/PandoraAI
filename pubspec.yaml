@@ -106,7 +106,9 @@ dependencies:
   kochava_tracker: 2.0.2
   flutter_google_places: 0.3.0
   calendar_date_picker2: 0.5.2
-  cropperx: ^1.1.1  
+  cropperx: ^1.1.1
+  card_swiper: 2.0.4
+  flutter_swiper_null_safety: 1.0.2
 dependency_overrides:
   intl: 0.18.1
 
