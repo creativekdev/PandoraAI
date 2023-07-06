@@ -270,4 +270,9 @@ class ColorUtil {
   static String colorToCss(Color color) {
     return 'rgba(${color.red},${color.green},${color.blue},${color.opacity})';
   }
+
+  static String colorToHexString(Color color) {
+    return '#${color.alpha.toRadixString(16)}${color.value.toRadixString(16)}';
+  }
+
 }
