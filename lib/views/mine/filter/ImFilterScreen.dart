@@ -179,8 +179,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           originalShowing = false;
         });
       },
-      child: (selectedRightTab != TABS.CROP)
-          ? Container(
+      child: Container(
               width: $(40),
               height: $(40),
               decoration: BoxDecoration(
@@ -198,26 +197,32 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                   ),
                 ),
               ),
-            )
-          : Container(),
+            ),
     ));
     return Align(
         alignment: Alignment.centerRight,
-        child: Wrap(direction: Axis.vertical, spacing: $(40), children: [
-          Container(
-              decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-              padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
-              margin: const EdgeInsets.only(right: 10),
-              height: $(220),
-              //265,
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: buttons)),
-          Container(
-              decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(40)))),
-              padding: EdgeInsets.symmetric(horizontal: $(1), vertical: $(1)),
-              margin: const EdgeInsets.only(right: 10),
-              height: $(42),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: adjustbutton))
-        ]));
+        child: Container(
+            height: $(350),
+            width: $(50),
+            margin: EdgeInsets.only(right: $(10)),
+            child: Column(children: [
+              Container(
+                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                  padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
+                  height: $(220),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)
+              ),
+              SizedBox(height:$(50)),
+              (selectedRightTab != TABS.CROP)
+              ?Container(
+                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                  height: $(42),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton)
+              )
+                  :Container()
+            ])
+        )
+    );
   }
 
   Future<void> saveToAlbum() async {
