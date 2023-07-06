@@ -53,6 +53,8 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
   late StreamSubscription onUserLoginListener;
   bool proVisible = false;
 
+  EffectFragmentState();
+
   @override
   void initState() {
     super.initState();

@@ -4670,6 +4670,16 @@ class S {
     );
   }
 
+  /// `Use Style`
+  String get use_style {
+    return Intl.message(
+      'Use Style',
+      name: 'use_style',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Album`
   String get album {
     return Intl.message(
