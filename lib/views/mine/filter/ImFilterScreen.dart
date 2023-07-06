@@ -6,8 +6,8 @@ import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/api/filter_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -15,6 +15,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
@@ -626,72 +627,14 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   }
 
   Widget _buildBackground() {
-    return ScrollablePositionedList.separated(
-      initialScrollIndex: 0,
-      itemCount: 10,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return GestureDetector(
-            onTap: () async {
-              setState(() {
-                filter.setSelectedID(index);
-              });
-              try {
-                File compressedImage = await imageCompressAndGetFile(_imagefile!, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-                await uploadImageController.uploadCompressedImage(compressedImage);
-                uploadImageController.update();
-                var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
-                File imagefile = File(url!);
-                _image = await getLibImage(await getImage(imagefile!));
-                _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
-
-                setState(() {
-                  _byte;
-                });
-                LogUtil.v(url);
-              } catch (error) {
-                LogUtil.v(error);
-              }
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: $(65),
-                  height: $(65),
-                  decoration: (filter.getSelectedID() == index)
-                      ? BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Color(0xFF05E0D5),
-                            width: $(2),
-                            style: BorderStyle.solid,
-                          ),
-                        )
-                      : null,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: EdgeInsets.all(2.0),
-                      width: $(60),
-                      height: $(60),
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(Images.ic_choose_photo_initial_header),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: $(40)),
-              ],
-            ));
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return Container();
+    return BackgroundPickerBar(
+      imageRatio: 16 / 9,
+      onPick: (BackgroundData data) {
+        // todo
       },
     ).intoContainer(
+      width: double.maxFinite,
+      padding: EdgeInsets.symmetric(horizontal: $(4)),
       height: $(115),
     );
   }

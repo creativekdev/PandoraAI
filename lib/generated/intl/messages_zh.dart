@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage("清除当前画板"),
         "ai_draw_reset_tips_desc":
             MessageLookupByLibrary.simpleMessage("清除将会丢失当前的所有操作"),
+        "album": MessageLookupByLibrary.simpleMessage("Album"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("现在去设置"),
         "album_to_settings_tips":
@@ -129,6 +130,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("您的验证码已经发送到"),
         "collapse": MessageLookupByLibrary.simpleMessage("收起"),
         "color": MessageLookupByLibrary.simpleMessage("颜色"),
+        "colors": MessageLookupByLibrary.simpleMessage("Colors"),
         "comment_posted": MessageLookupByLibrary.simpleMessage("评论已提交"),
         "comments": MessageLookupByLibrary.simpleMessage("评论"),
         "commonFailedToast": MessageLookupByLibrary.simpleMessage("操作失败"),
@@ -507,6 +509,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tabMine": MessageLookupByLibrary.simpleMessage("我的"),
         "take_a_selfie": MessageLookupByLibrary.simpleMessage("自拍一张"),
         "take_selfie": MessageLookupByLibrary.simpleMessage("或者拍照"),
+        "template": MessageLookupByLibrary.simpleMessage("Template"),
         "template_not_available":
             MessageLookupByLibrary.simpleMessage("此模板已经不再可用"),
         "term_condition": MessageLookupByLibrary.simpleMessage("法律和条款"),

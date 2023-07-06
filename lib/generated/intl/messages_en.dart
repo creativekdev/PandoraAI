@@ -55,6 +55,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Clear current drawing"),
         "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(
             "By clearing the current drawing, you will lose all of your progress."),
+        "album": MessageLookupByLibrary.simpleMessage("Album"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("Go to settings"),
         "album_to_settings_tips":
@@ -149,6 +150,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Your code was emailed to "),
         "collapse": MessageLookupByLibrary.simpleMessage("Collapse"),
         "color": MessageLookupByLibrary.simpleMessage("Color"),
+        "colors": MessageLookupByLibrary.simpleMessage("Colors"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Comment posted"),
         "comments": MessageLookupByLibrary.simpleMessage("Comments"),
@@ -618,6 +620,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "tabMine": MessageLookupByLibrary.simpleMessage("My"),
         "take_a_selfie": MessageLookupByLibrary.simpleMessage("Take a selfie"),
         "take_selfie": MessageLookupByLibrary.simpleMessage("Or take a selfie"),
+        "template": MessageLookupByLibrary.simpleMessage("Template"),
         "template_not_available": MessageLookupByLibrary.simpleMessage(
             "This template is not available now"),
         "term_condition":
