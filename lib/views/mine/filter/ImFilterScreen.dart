@@ -626,6 +626,9 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Widget _buildBackground() {
     return BackgroundPickerBar(
       imageRatio: 16 / 9,
+      onPick: (BackgroundData data) {
+        // todo
+      },
     ).intoContainer(
       width: double.maxFinite,
       padding: EdgeInsets.symmetric(horizontal: $(4)),

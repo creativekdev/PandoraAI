@@ -71,7 +71,13 @@ class BackgroundData {
 class BackgroundPickerBar extends StatefulWidget {
   double imageRatio;
 
-  BackgroundPickerBar({super.key, required this.imageRatio});
+  Function(BackgroundData data) onPick;
+
+  BackgroundPickerBar({
+    super.key,
+    required this.imageRatio,
+    required this.onPick,
+  });
 
   @override
   State<BackgroundPickerBar> createState() => _BackgroundPickerBarState();
@@ -127,7 +133,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           imageRatio: imageRatio,
         ).then((value) {
           if (value != null) {
-            print(value.toJson().toString());
+            widget.onPick.call(value);
           }
         });
       }),
