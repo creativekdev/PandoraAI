@@ -129,9 +129,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                             child: PaiSwiper(
                               entity: _.data?.homepage?.banners,
                               onClickItem: (index, data) {
-                                // var type = HomeCardTypeUtils.build(data.category);
-                                // HomeCardTypeUtils.jumpWithHomeType(context, 'home_page', type, InitPos());
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page', homeData: data);
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page', data: data);
                               },
                             ),
                           ),

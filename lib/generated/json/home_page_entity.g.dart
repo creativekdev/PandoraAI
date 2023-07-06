@@ -4,7 +4,7 @@ import 'package:cartoonizer/models/home_page_entity.dart';
 
 HomePageEntity $HomePageEntityFromJson(Map<String, dynamic> json) {
   final HomePageEntity homePageEntity = HomePageEntity();
-  final List<HomePageHomepageTools>? banners = jsonConvert.convertListNotNull<HomePageHomepageTools>(json['banners']);
+  final List<DiscoveryListEntity>? banners = jsonConvert.convertListNotNull<DiscoveryListEntity>(json['banners']);
   if (banners != null) {
     homePageEntity.banners = banners;
   }

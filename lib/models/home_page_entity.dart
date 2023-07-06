@@ -6,7 +6,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 
 @JsonSerializable()
 class HomePageEntity {
-  late List<HomePageHomepageTools> banners;
+  late List<DiscoveryListEntity> banners;
   late List<HomePageHomepageTools> tools;
   late List<HomePageHomepageTools> features;
   late List<HomePageHomepageGalleries> galleries;

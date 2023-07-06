@@ -2,13 +2,13 @@ import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../models/home_page_entity.dart';
+import '../../models/discovery_list_entity.dart';
 
-typedef OnClickItem = Function(int index, HomePageHomepageTools data);
+typedef OnClickItem = Function(int index, DiscoveryListEntity data);
 
 class PaiSwiper extends StatelessWidget {
   const PaiSwiper({Key? key, required this.entity, required this.onClickItem}) : super(key: key);
-  final List<HomePageHomepageTools>? entity;
+  final List<DiscoveryListEntity>? entity;
   final OnClickItem onClickItem;
 
   @override
@@ -18,23 +18,26 @@ class PaiSwiper extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: $(15)),
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
-          HomePageHomepageTools data = entity![index];
-          return UnconstrainedBox(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular($(8)),
-              child: CachedNetworkImageUtils.custom(
-                fit: BoxFit.cover,
-                useOld: false,
-                height: $(150),
-                width: ScreenUtil.screenSize.width - $(30),
-                context: context,
-                imageUrl: data.url,
-              ),
-            ),
-          );
+          List<DiscoveryResource> list = entity![index].resourceList();
+          DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == 'image');
+          return resource == null
+              ? SizedBox.shrink()
+              : UnconstrainedBox(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular($(8)),
+                    child: CachedNetworkImageUtils.custom(
+                      fit: BoxFit.cover,
+                      useOld: false,
+                      height: $(150),
+                      width: ScreenUtil.screenSize.width - $(30),
+                      context: context,
+                      imageUrl: resource.url!,
+                    ),
+                  ),
+                );
         },
         onTap: (index) {
-          HomePageHomepageTools data = entity![index];
+          DiscoveryListEntity data = entity![index];
           onClickItem(index, data);
         },
         itemHeight: $(150),

@@ -118,7 +118,11 @@ class HomeCardTypeUtils {
             ..height = height;
         }
       }
-      Events.discoveryTemplateClick(source: source, style: style);
+      if (source == "home_page") {
+        Events.homeTemplateClick(source: source, style: style);
+      } else {
+        Events.discoveryTemplateClick(source: source, style: style);
+      }
       jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     } else if (homeData != null) {
       var target = build(homeData.category);
