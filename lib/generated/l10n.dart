@@ -4669,6 +4669,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Album`
+  String get album {
+    return Intl.message(
+      'Album',
+      name: 'album',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Template`
+  String get template {
+    return Intl.message(
+      'Template',
+      name: 'template',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Colors`
+  String get colors {
+    return Intl.message(
+      'Colors',
+      name: 'colors',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

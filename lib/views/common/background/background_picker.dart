@@ -13,20 +13,28 @@ import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {
-  static Future<BackgroundData?> pickBackground(BuildContext context) async {
+  static Future<BackgroundData?> pickBackground(
+    BuildContext context, {
+    required double imageRatio,
+  }) async {
     var bool = await AnotherMe.checkPermissions();
     if (bool) {
-      return _open(context);
+      return _open(context, imageRatio: imageRatio);
     } else {
       AnotherMe.permissionDenied(context);
       return null;
     }
   }
 
-  static Future<BackgroundData?> _open(BuildContext context) async {
+  static Future<BackgroundData?> _open(
+    BuildContext context, {
+    required double imageRatio,
+  }) async {
     return Navigator.of(context).push(
       NoAnimRouter(
-        BackgroundPickerHolder(),
+        BackgroundPickerHolder(
+          imageRatio: imageRatio,
+        ),
         settings: RouteSettings(name: '/BackgroundPickerHolder'),
       ),
     );
@@ -61,7 +69,9 @@ class BackgroundData {
 }
 
 class BackgroundPickerBar extends StatefulWidget {
-  const BackgroundPickerBar({super.key});
+  double imageRatio;
+
+  BackgroundPickerBar({super.key, required this.imageRatio});
 
   @override
   State<BackgroundPickerBar> createState() => _BackgroundPickerBarState();
@@ -69,6 +79,7 @@ class BackgroundPickerBar extends StatefulWidget {
 
 class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   double itemSize = 0;
+  late double imageRatio;
 
   final List<Color> defaultColors = [Colors.white, Colors.black, Colors.transparent, Colors.yellow];
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -77,6 +88,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   @override
   void initState() {
     super.initState();
+    imageRatio = widget.imageRatio;
     List<Map<String, dynamic>> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
     dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList();
     if (dataList.length < 4) {
@@ -87,6 +99,12 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
       });
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant BackgroundPickerBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    imageRatio = widget.imageRatio;
   }
 
   @override
@@ -104,7 +122,14 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               margin: EdgeInsets.symmetric(horizontal: $(4)),
               decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
           .intoGestureDetector(onTap: () {
-        BackgroundPicker.pickBackground(context).then((value) {});
+        BackgroundPicker.pickBackground(
+          context,
+          imageRatio: imageRatio,
+        ).then((value) {
+          if (value != null) {
+            print(value.toJson().toString());
+          }
+        });
       }),
     ];
     child.addAll(dataList

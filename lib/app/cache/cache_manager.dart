@@ -57,6 +57,7 @@ class CacheManager extends BaseManager {
   static const platformConnections = 'platform_connections';
   static const viewPreviewOpen = 'video_preview_open';
   static const backgroundPickHistory = 'backgroundPickHistory';
+  static const backgroundTabIndexHistory= 'backgroundTabIndexHistory';
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

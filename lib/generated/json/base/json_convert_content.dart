@@ -11,6 +11,7 @@ import 'package:cartoonizer/models/another_me_result_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/models/back_pick_template_entity.dart';
 import 'package:cartoonizer/models/color_fill_result_entity.dart';
 import 'package:cartoonizer/models/crop_record_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
@@ -58,6 +59,8 @@ class JsonConvert {
 		(AvatarChildEntity).toString(): AvatarChildEntity.fromJson,
 		(AvatarConfigEntity).toString(): AvatarConfigEntity.fromJson,
 		(AvatarConfigData).toString(): AvatarConfigData.fromJson,
+		(BackPickTemplateEntity).toString(): BackPickTemplateEntity.fromJson,
+		(BackPickS3FileEntity).toString(): BackPickS3FileEntity.fromJson,
 		(ColorFillResultEntity).toString(): ColorFillResultEntity.fromJson,
 		(CropRecordEntity).toString(): CropRecordEntity.fromJson,
 		(DailyLimitRuleEntity).toString(): DailyLimitRuleEntity.fromJson,
@@ -325,6 +328,12 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<AvatarConfigData>[] is M){
 			return data.map<AvatarConfigData>((Map<String, dynamic> e) => AvatarConfigData.fromJson(e)).toList() as M;
+		}
+		if(<BackPickTemplateEntity>[] is M){
+			return data.map<BackPickTemplateEntity>((Map<String, dynamic> e) => BackPickTemplateEntity.fromJson(e)).toList() as M;
+		}
+		if(<BackPickS3FileEntity>[] is M){
+			return data.map<BackPickS3FileEntity>((Map<String, dynamic> e) => BackPickS3FileEntity.fromJson(e)).toList() as M;
 		}
 		if(<ColorFillResultEntity>[] is M){
 			return data.map<ColorFillResultEntity>((Map<String, dynamic> e) => ColorFillResultEntity.fromJson(e)).toList() as M;
