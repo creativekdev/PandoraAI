@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/Crop.dart';
 import 'package:cropperx/cropperx.dart';
@@ -58,25 +59,24 @@ class DecorationCropper extends StatefulWidget {
   late GlobalKey cropperKey;
   late Crop crop;
   late Uint8List? byte;
-  DecorationCropper({required this.cropperKey, required this.crop, required this.byte});
+  GlobalKey globalKey;
+  DecorationCropper({required this.cropperKey, required this.crop, required this.byte, required this.globalKey});
   @override
   _DecorationCropperState createState() => _DecorationCropperState();
 }
 
 class _DecorationCropperState extends State<DecorationCropper> {
-  double _width = 0, _height = 0;
-
+  double _height = 0, _width = 0;
   @override
   Widget build(BuildContext context) {
-    double screenWidth = Get.width;
-    double heightPadding =  Get.statusBarHeight;
-    double screenHeight = Get.height -heightPadding / 2 - AppBar().preferredSize.height - $(115) - $(8) - $(12) - $(24);
+
+    Size size = ScreenUtil.getCurrentWidgetSize(widget.globalKey.currentContext!);
     double _ratio = widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID];
-    if(screenWidth / screenHeight > _ratio) {
-      _height = screenHeight;
+    if(size.width / (size.height - $(6)) > _ratio) {
+      _height = size.height - $(6);
       _width = (_height - $(8)) * _ratio + $(8);
     } else{
-      _width = screenWidth;
+      _width = size.width;
       _height = (_width - $(8)) / _ratio + $(8);
     }
     return Stack(

@@ -48,6 +48,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   late imgLib.Image _image;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
+  GlobalKey _ImageViewerBackgroundKey = GlobalKey();
   bool originalShowing = false;
 
   late double itemWidth;
@@ -205,15 +206,15 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         child: Wrap(direction: Axis.vertical, spacing: $(40), children: [
           Container(
               decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-              padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-              margin: const EdgeInsets.only(right: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
+              margin: const EdgeInsets.only(right: 10),
               height: $(220),
               //265,
               child: Column(mainAxisAlignment: MainAxisAlignment.start, children: buttons)),
           Container(
               decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(40)))),
-              padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-              margin: const EdgeInsets.only(right: 10.0),
+              padding: EdgeInsets.symmetric(horizontal: $(1), vertical: $(1)),
+              margin: const EdgeInsets.only(right: 10),
               height: $(42),
               child: Column(mainAxisAlignment: MainAxisAlignment.start, children: adjustbutton))
         ]));
@@ -258,23 +259,39 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
 
   Widget _buildImageView() {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(top: $(5)),
-        child: _byte != null
-            ? originalShowing
-                ? Container(
-                    child: Image.file(_imagefile!, fit: BoxFit.contain),
-                  )
-                : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
-                    ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte)))
-                    : Image.memory(
-                        _byte!,
-                        fit: BoxFit.contain,
+      child: Stack(children: <Widget>[
+        Container(key:_ImageViewerBackgroundKey),
+        Column(
+          children: [
+            Expanded(
+                child: Row(
+                  children: [
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(top: $(5)),
+                            child: _byte != null
+                                ? originalShowing
+                                  ? Container(
+                                    child: Image.file(_imagefile!, fit: BoxFit.contain),
+                                  )
+                                  : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
+                                  ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte, globalKey: _ImageViewerBackgroundKey,)))
+                                  : Image.memory(
+                                    _byte!,
+                                    fit: BoxFit.contain,
+                                  )
+                                  : Container(
+                                child: Image.asset(Images.ic_choose_photo_initial_header),
+                                ),
+                          )
                       )
-            : Container(
-                child: Image.asset(Images.ic_choose_photo_initial_header),
-              ),
-      ),
+                    ],
+                  ))
+          ],
+        ),
+        _buildRightTab()
+      ]
+    ),
     );
   }
 
@@ -658,8 +675,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Stack(children: <Widget>[
-      Scaffold(
+    return Scaffold(
         backgroundColor: ColorConstant.BackgroundColor,
         appBar: AppNavigationBar(
           backAction: () async {
@@ -684,8 +700,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
             // SizedBox(height: ScreenUtil.getBottomPadding(context)),
           ],
         ),
-      ),
-      _buildRightTab()
-    ]);
+      );
   }
 }
