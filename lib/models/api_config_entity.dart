@@ -50,6 +50,9 @@ class ApiConfigEntity {
     if (json['hash'] != null) {
       entity.hash = json['hash'];
     }
+    if (json['promotion_resources'] != null) {
+      entity.promotionResources = (json['promotion_resources'] as List).map((e) => DiscoveryResource.fromJson(e)).toList();
+    }
     if (json['shipping_methods'] != null) {
       entity.shippingMethods = (json['shipping_methods'] as List).map((e) => ShippingMethodEntity.fromJson(e)).toList();
     }
