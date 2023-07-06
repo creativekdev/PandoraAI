@@ -43,7 +43,7 @@ class _GridSliderState extends State<GridSlider> {
       },
       child: Container(
         width: width,
-        height: 30,
+        height: $(30),
         child: CustomPaint(
           painter: MyPainter(minVal :widget.minVal, maxVal: widget.maxVal, currentPos : widget.currentPos, screenWidth: width),
         )
@@ -63,12 +63,12 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 2;
+      ..color = Colors.white
+      ..strokeWidth = 1;
 
     Paint paintBold = Paint()
       ..color = Colors.white
-      ..strokeWidth = 4;
+      ..strokeWidth = 2;
 
     canvas.drawLine(
       Offset(screenWidth / 2, 5),
@@ -80,7 +80,7 @@ class MyPainter extends CustomPainter {
     // int midrange = (range / 2).floor() + currentPos;
     for(int i  = 0; i < range; i++) {
       double xpos = screenWidth / 2 + (i - currentPos + minVal) * 10;
-      if(i % 5 == 0) {
+      if(i % 10 == 0) {
         canvas.drawLine(
           Offset(xpos, 20),
           Offset(xpos, 30),

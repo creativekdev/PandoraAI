@@ -19,6 +19,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -71,6 +72,8 @@ void main() async {
   MobileAds.instance.initialize();
   // await MobileAds.instance.updateRequestConfiguration(RequestConfiguration(testDeviceIds: ['F6236D69A8A84479F17A3C6D0EAB1C53']));
   // run app
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) => runApp(MyApp()));
 }
 
@@ -155,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    FlutterNativeSplash.remove();
     onSplashAdLoadingListener = EventBusHelper().eventBus.on<OnSplashAdLoadingChangeEvent>().listen((event) {
       if (!AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.isLoadingAd) {
         openApp();
@@ -243,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(settings:RouteSettings(name: '/IntroductionScreen'), builder: (BuildContext context) => IntroductionScreen()),
+        MaterialPageRoute(settings: RouteSettings(name: '/IntroductionScreen'), builder: (BuildContext context) => IntroductionScreen()),
         ModalRoute.withName('/IntroductionScreen'),
       );
     }

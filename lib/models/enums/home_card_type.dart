@@ -179,6 +179,7 @@ class HomeCardTypeUtils {
     Txt2imgInitData? initData,
   }) {
     var action = () {
+      var context = Get.context!;
       switch (target) {
         case HomeCardType.txt2img:
           Txt2img.open(context, source: source, initData: initData);
@@ -224,12 +225,13 @@ class HomeCardTypeUtils {
           builder: (_) => ViewPreviewScreen(
             url: pick.tutorial!,
             title: target.title(),
+            description: target.description(),
           ),
         ))
             .then((value) {
           if (value == true) {
             cacheManager.setBool('${CacheManager.viewPreviewOpen}:$key', true);
-            action.call();
+            delay(() => action.call());
           }
         });
       }
@@ -260,6 +262,15 @@ extension HomeCardTypeEx on HomeCardType {
         return 'stylemorph';
       case HomeCardType.lineart:
         return 'lineart';
+    }
+  }
+
+  description() {
+    switch (this) {
+      case HomeCardType.lineart:
+        return 'Upload a sketch picture to generate a colorful AI artwork';
+      default:
+        return '';
     }
   }
 

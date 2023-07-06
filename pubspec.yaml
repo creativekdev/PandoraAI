@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.5.3+273
+version: 1.5.3+275
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
@@ -94,7 +94,7 @@ dependencies:
   camera: 0.10.5
   image: 3.2.2
   sensors_plus: 2.0.5
-  opencv_4: ^1.0.0
+#  opencv_4: ^1.0.0
   ffmpeg_kit_flutter: 5.1.0
   posthog_flutter: 2.0.3
   uni_links: 0.5.1
@@ -111,7 +111,6 @@ dependencies:
   flutter_swiper_null_safety: 1.0.2
 dependency_overrides:
   intl: 0.18.1
-  image_cropper: ^4.0.1
 
 dev_dependencies:
   flutter_test:

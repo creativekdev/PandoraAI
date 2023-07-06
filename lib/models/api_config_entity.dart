@@ -9,7 +9,7 @@ import 'package:cartoonizer/models/shipping_method_entity.dart';
 import 'package:cartoonizer/utils/map_util.dart';
 
 class ApiConfigEntity {
-  late List<EffectData> datas;
+  late List<EffectData> data;
   late HomePageEntity homepage;
   late Map<String, dynamic> locale;
   CampaignTab? campaignTab;
@@ -17,10 +17,14 @@ class ApiConfigEntity {
   List<HomeCardEntity> homeCards = [];
   String? hash;
   List<DiscoveryResource> promotionResources = [];
-  late EffectData stylemorph;
+
   List<ShippingMethodEntity> shippingMethods = [];
   int imageMaxl = 512;
   List<AiServerEntity> aiConfig = [];
+
+  EffectData? get stylemorph => data.pick((t) => t.key == 'stylemorph');
+
+  List<EffectData> get datas => data.filter((t) => t.key != 'stylemorph');
 
   ApiConfigEntity._instance();
 
@@ -28,10 +32,10 @@ class ApiConfigEntity {
     ApiConfigEntity entity = ApiConfigEntity._instance();
     entity.locale = json['locale'] ?? {};
     if (json['data'] != null) {
-      entity.datas = [];
+      entity.data = [];
       Map<String, dynamic> data = json['data'];
       for (var key in data.keys) {
-        entity.datas.add(EffectData.fromJson(key, data[key], entity.locale));
+        entity.data.add(EffectData.fromJson(key, data[key], entity.locale));
       }
     }
     if (json['campaign_tab'] != null) {
@@ -45,12 +49,6 @@ class ApiConfigEntity {
     }
     if (json['hash'] != null) {
       entity.hash = json['hash'];
-    }
-    // if (json['promotion_resources'] != null) {
-    //   entity.promotionResources = (json['promotion_resources'] as List).map((e) => DiscoveryResource.fromJson(e)).toList();
-    // }
-    if (json['data']['stylemorph'] != null) {
-      entity.stylemorph = EffectData.fromJson('stylemorph', json['data']['stylemorph'], entity.locale);
     }
     if (json['shipping_methods'] != null) {
       entity.shippingMethods = (json['shipping_methods'] as List).map((e) => ShippingMethodEntity.fromJson(e)).toList();
@@ -66,9 +64,9 @@ class ApiConfigEntity {
       entity.homepage.galleries.forEach((element) {
         element.title = element.category.localeValue(entity.locale);
       });
-      entity.homepage.banners.forEach((element) {
-        element.title = element.category.localeValue(entity.locale);
-      });
+      // entity.homepage.banners.forEach((element) {
+      //   element.title = element.category.localeValue(entity.locale);
+      // });
       entity.homepage.tools.forEach((element) {
         element.title = element.category.localeValue(entity.locale);
       });
@@ -81,7 +79,7 @@ class ApiConfigEntity {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> result = {};
-    result['data'] = datas.map((e) => MapEntry(e.key, e.toJson())).toList().toMap();
+    result['data'] = data.map((e) => MapEntry(e.key, e.toJson())).toList().toMap();
     result['locale'] = locale;
     if (campaignTab != null) {
       result['campaign_tab'] = campaignTab!.toJson();
@@ -92,7 +90,6 @@ class ApiConfigEntity {
       result['hash'] = hash!;
     }
     result['promotion_resources'] = promotionResources.map((e) => e.toJson()).toList();
-    result['stylemorph'] = stylemorph.toJson();
     result['shipping_methods'] = shippingMethods.map((e) => e.toJson()).toList();
     result['ai_config'] = aiConfig.map((e) => e.toJson()).toList();
     result['image_maxl'] = imageMaxl;

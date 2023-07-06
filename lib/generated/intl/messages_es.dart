@@ -58,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Borra la mesa de trabajo actual"),
         "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(
             "La purga perderá todas las operaciones actuales"),
+        "album": MessageLookupByLibrary.simpleMessage("Album"),
         "album_to_settings_button":
             MessageLookupByLibrary.simpleMessage("Ahora ve a la configuración"),
         "album_to_settings_tips":
@@ -157,6 +158,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Tu código de verificación ha sido enviado"),
         "collapse": MessageLookupByLibrary.simpleMessage("Colapso"),
         "color": MessageLookupByLibrary.simpleMessage("Color"),
+        "colors": MessageLookupByLibrary.simpleMessage("Colors"),
         "comment_posted":
             MessageLookupByLibrary.simpleMessage("Observaciones presentadas"),
         "comments": MessageLookupByLibrary.simpleMessage("Comentarios"),
@@ -646,6 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "take_a_selfie":
             MessageLookupByLibrary.simpleMessage("Hazte un selfie"),
         "take_selfie": MessageLookupByLibrary.simpleMessage("O tomar fotos"),
+        "template": MessageLookupByLibrary.simpleMessage("Template"),
         "template_not_available": MessageLookupByLibrary.simpleMessage(
             "Esta plantilla ya no está disponible"),
         "term_condition":

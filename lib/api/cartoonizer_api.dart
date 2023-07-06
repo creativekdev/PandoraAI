@@ -15,6 +15,7 @@ import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
 import 'package:cartoonizer/models/avatar_config_entity.dart';
+import 'package:cartoonizer/models/back_pick_template_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -595,8 +596,6 @@ class CartoonizerApi extends RetryAbleRequester {
     return jsonConvert.convert<AvatarConfigEntity>(baseEntity?.data);
   }
 
-  Future<BaseEntity?> getInspirationText() async {}
-
   Future<BaseEntity?> logAnotherMe(Map<String, dynamic> params) async {
     return await get('/log/anotherme', params: params);
   }
@@ -735,6 +734,22 @@ class CartoonizerApi extends RetryAbleRequester {
       needRetry: false,
       toastOnFailed: false,
     );
+  }
+
+  Future<List<BackPickTemplateEntity>?> listBackgroundImages({
+    required int from,
+    required int size,
+    String? keyword,
+  }) async {
+    Map<String, dynamic> params = {
+      'from': from,
+      'size': size,
+    };
+    if (!TextUtil.isEmpty(keyword)) {
+      params['q'] = keyword;
+    }
+    var baseEntity = await get('/tool/canva/resource/backgrounds', params: params);
+    return jsonConvert.convertListNotNull<BackPickTemplateEntity>(baseEntity?.data['data']);
   }
 }
 

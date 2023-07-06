@@ -128,7 +128,7 @@ Future<bool> mkdir(Directory file) async {
   return true;
 }
 
-Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFileSize = 2 * mb}) async {
+Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFileSize = 4 * mb}) async {
   var length = await file.length();
   if (length < 200 * kb) {
     return file;
@@ -168,7 +168,7 @@ Future<File> imageCompress(
   String targetPath, {
   CompressFormat format = CompressFormat.png,
   bool ignoreSize = false,
-  int maxFileSize = 2 * mb,
+  int maxFileSize = 4 * mb,
 }) async {
   EffectDataController dataController = Get.find();
   int imageSize = dataController.data?.imageMaxl ?? 512;

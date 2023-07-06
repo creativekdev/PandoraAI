@@ -37,20 +37,26 @@ class SyncDownloadVideo {
     var savePath = videoDir.path + fileName + '.' + type;
     File data = File(savePath);
     if (data.existsSync()) {
-      _completer.complete(data);
+      if (!_completer.isCompleted) {
+        _completer.complete(data);
+      }
       downloading = false;
     } else {
       downloadListener = DownloadListener(
           onChanged: (count, total) {},
           onError: (error) {
-            _completer.complete(null);
+            if (!_completer.isCompleted) {
+              _completer.complete(null);
+            }
             downloading = false;
             Downloader.instance.unsubscribeSync(key, downloadListener!);
           },
           onFinished: (File file) {
             var videoDir = storageOperator.videoDir;
             var savePath = videoDir.path + fileName + '.' + type;
-            _completer.complete(File(savePath));
+            if (!_completer.isCompleted) {
+              _completer.complete(File(savePath));
+            }
             downloading = false;
           });
       downloading = true;

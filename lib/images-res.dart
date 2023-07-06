@@ -1,7 +1,6 @@
 ///auto generate code, please do not modify;
 class Images {
    static const String american_express = 'assets/images/american_express.png';
-   static const String android_launcher_bg = 'assets/images/android_launcher_bg.png';
    static const String blur = 'assets/images/blur.png';
    static const String brightness = 'assets/images/brightness.png';
    static const String contrast = 'assets/images/contrast.png';
@@ -19,6 +18,8 @@ class Images {
    static const String ic_another_arrow_right = 'assets/images/ic_another_arrow_right.png';
    static const String ic_another_me_trans_bg = 'assets/images/ic_another_me_trans_bg.png';
    static const String ic_app = 'assets/images/ic_app.png';
+   static const String ic_app_large = 'assets/images/ic_app_large.png';
+   static const String ic_app_large_round = 'assets/images/ic_app_large_round.png';
    static const String ic_app_qrcode = 'assets/images/ic_app_qrcode.png';
    static const String ic_arrow_right = 'assets/images/ic_arrow_right.png';
    static const String ic_avatar_ai = 'assets/images/ic_avatar_ai.png';
@@ -90,6 +91,8 @@ class Images {
    static const String ic_introduction_next = 'assets/images/ic_introduction_next.png';
    static const String ic_invitation_dialog_bg = 'assets/images/ic_invitation_dialog_bg.png';
    static const String ic_jelly_email = 'assets/images/ic_jelly_email.png';
+   static const String ic_landscape = 'assets/images/ic_landscape.png';
+   static const String ic_landscape_selected = 'assets/images/ic_landscape_selected.png';
    static const String ic_launcher_bg = 'assets/images/ic_launcher_bg.png';
    static const String ic_letter = 'assets/images/ic_letter.png';
    static const String ic_limit_icon = 'assets/images/ic_limit_icon.png';
@@ -140,6 +143,8 @@ class Images {
    static const String ic_pencil4 = 'assets/images/ic_pencil4.png';
    static const String ic_pencil5 = 'assets/images/ic_pencil5.png';
    static const String ic_policy = 'assets/images/ic_policy.png';
+   static const String ic_portrat = 'assets/images/ic_portrat.png';
+   static const String ic_portrat_selected = 'assets/images/ic_portrat_selected.png';
    static const String ic_premium = 'assets/images/ic_premium.png';
    static const String ic_print_payment_failure = 'assets/images/ic_print_payment_failure.png';
    static const String ic_print_payment_success = 'assets/images/ic_print_payment_success.png';
@@ -211,7 +216,6 @@ class Images {
    static const String introduction_bg2 = 'assets/images/introduction_bg2.png';
    static const String introduction_bg3 = 'assets/images/introduction_bg3.png';
    static const String launch_branding = 'assets/images/launch_branding.png';
-   static const String launch_icon = 'assets/images/launch_icon.png';
    static const String mastercard = 'assets/images/mastercard.png';
    static const String noise = 'assets/images/noise.png';
    static const String pixelate = 'assets/images/pixelate.png';

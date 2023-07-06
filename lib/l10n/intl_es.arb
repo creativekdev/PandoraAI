@@ -399,6 +399,9 @@
   "SELECT_COUNTRY_CALLING_CODE_HINT": "Por favor, seleccione la región",
   "SELECT_COUNTRY_KEYWORD": "RegionName, RegionCode o CallingCode",
   "SELECT_REGION": "Seleccionar región",
+  "SELECT_STATE": "Sélectionnez un État",
+  "STATE": "Un État",
+  "SELECT_STATE_KEYWORD": "Nom de l'État ou Code de l'État",
   "Subtotal": "Subtotal",
   "shipping_details": "Detalles de envío",
   "address": "Dirección",
@@ -458,8 +461,8 @@
   "pleaseSelectColor": "Por favor, seleccione un color",
   "pleaseSelectModel": "Por favor, seleccione un modelo",
   "pleaseSelect": "Please select seleccione un $s",
-  "SELECT_STATE": "Sélectionnez un État",
-  "STATE": "Un État",
-  "SELECT_STATE_KEYWORD": "Nom de l'État ou Code de l'État",
-  "use_style": "Usar estilo"
+  "use_style": "Usar estilo",
+  "album": "Album",
+  "template": "Template",
+  "colors": "Colors"
 }

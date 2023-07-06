@@ -113,4 +113,7 @@ Map<String, StringRender> _intlMap = {
   'model': () => S.of(Get.context!).model,
   'quantity': () => S.of(Get.context!).quantity,
   'color': () => S.of(Get.context!).color,
+  'colors': () => S.of(Get.context!).colors,
+  'template': () => S.of(Get.context!).template,
+  'album': () => S.of(Get.context!).album,
 };

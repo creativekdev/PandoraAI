@@ -3,14 +3,21 @@ import 'dart:io';
 import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class ViewPreviewScreen extends StatefulWidget {
   String url;
   String title;
+  String description;
 
-  ViewPreviewScreen({super.key, required this.url, required this.title});
+  ViewPreviewScreen({
+    super.key,
+    required this.url,
+    required this.title,
+    required this.description,
+  });
 
   @override
   State<ViewPreviewScreen> createState() => _ViewPreviewScreenState();
@@ -24,9 +31,11 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
     super.initState();
     Posthog().screenWithUser(screenName: 'video_preview_screen', eventValues: {'title': widget.title});
     SyncDownloadVideo(url: widget.url, type: getFileType(widget.url)).getVideo().then((value) {
-      setState(() {
-        videoFile = value;
-      });
+      if (mounted) {
+        setState(() {
+          videoFile = value;
+        });
+      }
     });
   }
 
@@ -43,7 +52,9 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
               loop: false,
               onCompleted: () {
                 if (mounted) {
-                  Navigator.of(context).pop(true);
+                  if (MyApp.routeObserver.currentRoute?.settings.name == '/ViewPreviewScreen') {
+                    Navigator.of(context).pop(true);
+                  }
                 }
               },
             ).intoContainer(width: ScreenUtil.screenSize.width).intoCenter(),
@@ -71,7 +82,9 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                       borderRadius: BorderRadius.circular($(32)),
                     ))
                 .intoGestureDetector(onTap: () {
-              Navigator.of(context).pop(true);
+              if (MyApp.routeObserver.currentRoute?.settings.name == '/ViewPreviewScreen') {
+                Navigator.of(context).pop(true);
+              }
             }),
             top: ScreenUtil.getStatusBarHeight(),
             right: $(7),
@@ -93,6 +106,8 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                     ),
                   ),
                 ),
+                TitleTextWidget(widget.description, ColorConstant.White, FontWeight.w500, $(20), maxLines: 10)
+                    .intoContainer(color: Colors.black, padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(10))),
                 TitleTextWidget(S.of(context).start_now, Colors.white, FontWeight.normal, $(16))
                     .intoContainer(
                   alignment: Alignment.center,
@@ -100,7 +115,9 @@ class _ViewPreviewScreenState extends State<ViewPreviewScreen> {
                   decoration: BoxDecoration(color: ColorConstant.DiscoveryBtn, borderRadius: BorderRadius.circular($(32))),
                 )
                     .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop(true);
+                  if (MyApp.routeObserver.currentRoute?.settings.name == '/ViewPreviewScreen') {
+                    Navigator.of(context).pop(true);
+                  }
                 }).intoContainer(color: Colors.black, padding: EdgeInsets.symmetric(horizontal: $(25), vertical: $(15))),
                 SizedBox(height: ScreenUtil.getBottomPadding(context)),
               ],

@@ -12,6 +12,9 @@ class Adjust{
   double previousValue = 0.0;
   List<double> initSliderValues = [0,50,50,0,0,0,0,0];
   List<double> sliderValues = [0,50,50,0,0,0,0,0];
+  List<int> isChanging = [1,0,0,0,0,0,0,0];
+  List<List<int>> range = [[-100, 100], [0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[-180, 180]];
+
   static List<String> assets = [
     Images.brightness,
     Images.contrast,
@@ -32,8 +35,6 @@ class Adjust{
     "Sharpen",
     "Hue",
   ];
-  List<int> isChanging = [1,0,0,0,0,0,0,0];
-  List<List<int>> range = [[-100, 100], [0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[0, 100],[0, 100]];
   int getCnt() {
     return filters.length;
   }
@@ -162,8 +163,16 @@ class Adjust{
         }
         break;
       case "Hue":
-        final hue = (sliderValues[selectedID].toInt() - 50)/100 * 180;
+        // final hue = (sliderValues[selectedID].toInt() - 50)/100 * 180;
         // res_image = imgLib.adjustHue(res_image, hue);
+        double alpha = sliderValues[selectedID] / 180 * 3.141592 ;
+        final matrix = <double>[
+          cos(alpha), sin(alpha), 0, 0,
+          -sin(alpha), cos(alpha), 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1,
+        ];
+        res_image = imgLib.convolution(res_image, matrix);
 
         break;
       default:
