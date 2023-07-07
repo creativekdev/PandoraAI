@@ -17,6 +17,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
+import 'package:cartoonizer/views/mine/filter/BackgroundRemoval.dart';
 import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
@@ -44,8 +45,8 @@ class ImFilterScreen extends StatefulWidget {
 
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
 
-  File? _imagefile;
-  late imgLib.Image _image;
+  File? _imageFile, _personImageFile;
+  late imgLib.Image _image, _personImage;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey _ImageViewerBackgroundKey = GlobalKey();
@@ -60,6 +61,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Filter filter = new Filter();
   Adjust adjust = new Adjust();
   Crop crop = new Crop();
+  BackgroundRemoval backgroundRemoval = new BackgroundRemoval();
 
   int currentAdjustID = 0;
 
@@ -86,13 +88,27 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           PAICamera.takePhoto(context).then((value) async {
             if (value != null) {
               var pickFile = File(value.xFile.path);
-              _imagefile = File(pickFile.path);
-              _image = await getLibImage(await getImage(_imagefile!));
+              _imageFile = File(pickFile.path);
+              _image = await getLibImage(await getImage(_imageFile!));
               _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
               await filter.calcAvatars(_image);
+
+              try {
+                ///background removal calculation
+                File compressedImage = await imageCompressAndGetFile(_imageFile!, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+                await uploadImageController.uploadCompressedImage(compressedImage);
+                uploadImageController.update();
+                var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
+                _personImageFile = File(url!);
+                _personImage = await getLibImage(await getImage(_personImageFile!));
+                // _byte = Uint8List.fromList(imgLib.encodeJpg(_personImage));
+              } catch (e) {
+                print('An exception occurred: $e');
+              }
               hideLoading();
               setState(() {
-                _imagefile;
+                _byte;
+                _imageFile;
               });
             } else {
               hideLoading();
@@ -108,7 +124,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   }
 
   _Filter(String filterStr) async {
-    if (_imagefile != null) {
+    if (_imageFile != null) {
       _byte = Uint8List.fromList(imgLib.encodeJpg(await Filter.ImFilter(filterStr, _image)));
       setState(() {
         _byte;
@@ -138,10 +154,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                     colors: [const Color(0xFF68F0AF), const Color(0xFF05E0D5)],
                   ),
                   borderRadius: BorderRadius.circular($(20)),
-                  // image: DecorationImage(
-                  //   image: AssetImage(img),
-                  //   fit: BoxFit.cover,
-                  // ),
                 )
               : BoxDecoration(
                   borderRadius: BorderRadius.circular($(20)),
@@ -277,7 +289,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                             child: _byte != null
                                 ? originalShowing
                                   ? Container(
-                                    child: Image.file(_imagefile!, fit: BoxFit.contain),
+                                    child: Image.file(_imageFile!, fit: BoxFit.contain),
                                   )
                                   : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
                                   ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte, globalKey: _ImageViewerBackgroundKey,)))
@@ -433,7 +445,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               setState(() {
                 adjust;
               });
-              if (_imagefile != null) {
+              if (_imageFile != null) {
                 _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                 setState(() {});
               }
@@ -443,7 +455,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               setState(() {
                 adjust;
               });
-              if (_imagefile != null) {
+              if (_imageFile != null) {
                 _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                 setState(() {
                   _byte;
@@ -560,7 +572,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                 });
               },
               onEnd: () async {
-                if (_imagefile != null) {
+                if (_imageFile != null) {
                   _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                   setState(() {
                     _byte;
@@ -651,8 +663,11 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Widget _buildBackground() {
     return BackgroundPickerBar(
       imageRatio: 16 / 9,
-      onPick: (BackgroundData data) {
-        // todo
+      onPick: (BackgroundData data) async {
+        _byte = Uint8List.fromList(imgLib.encodeJpg(await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!)));
+        setState(() {
+          _byte;
+        });
       },
     ).intoContainer(
       width: double.maxFinite,
