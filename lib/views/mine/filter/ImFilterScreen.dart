@@ -22,6 +22,7 @@ import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:cropperx/cropperx.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -241,7 +242,15 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     if (_byte == null) return;
     String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
     var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
-    await file.writeAsBytes(_byte!);
+    if(selectedRightTab == TABS.CROP && crop.selectedID > 0) {
+      Uint8List? _croppedByte = await Cropper.crop(
+        cropperKey: _cropperKey,
+      );
+      await file.writeAsBytes(_croppedByte!);
+    }
+    else{
+      await file.writeAsBytes(_byte!);
+    }
     await GallerySaver.saveImage(file.path, albumName: "PandoraAI");
     CommonExtension().showImageSavedOkToast(context);
   }
