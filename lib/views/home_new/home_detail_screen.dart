@@ -81,7 +81,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
               ),
             )
                 .intoGestureDetector(onTap: () {
-              HomeCardTypeUtils.jump(context: context, source: widget.source, data: widget.post);
+              HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${widget.post.category}", data: widget.post);
             }),
           )
         ],
