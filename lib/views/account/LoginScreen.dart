@@ -4,17 +4,20 @@ import 'package:cartoonizer/Widgets/auth/auth.dart';
 import 'package:cartoonizer/Widgets/auth/auth_api.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/auth.dart';
+import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter/gestures.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
@@ -42,11 +45,17 @@ class _LoginScreenState extends AppState<LoginScreen> {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
 
+  bool agreementCheck = false;
+  late TapGestureRecognizer agreementTap;
+  late TapGestureRecognizer termTap;
+
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'login_screen');
     Events.loginShow(source: cacheManager.getString(CacheManager.preLoginAction));
+    agreementTap = TapGestureRecognizer();
+    termTap = TapGestureRecognizer();
     thirdpartManager.adsHolder.ignore = true;
     delay(() {
       if (widget.toSignUp) {
@@ -58,6 +67,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
 
   @override
   void dispose() {
+    agreementTap.dispose();
+    termTap.dispose();
     emailController.dispose();
     passController.dispose();
     thirdpartManager.adsHolder.ignore = false;
@@ -221,6 +232,8 @@ class _LoginScreenState extends AppState<LoginScreen> {
                   CommonExtension().showToast(S.of(context).pass_validation);
                 } else if (!emailController.text.trim().isEmail) {
                   CommonExtension().showToast(S.of(context).email_validation1);
+                } else if (!agreementCheck) {
+                  CommonExtension().showToast(S.of(context).pleaseReadAndAgreePrivacyAndTermsOfUse);
                 } else {
                   FocusManager.instance.primaryFocus?.unfocus();
                   showLoading().whenComplete(() async {
@@ -236,11 +249,43 @@ class _LoginScreenState extends AppState<LoginScreen> {
                   });
                 }
               }),
+              SizedBox(height: $(15)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildCheckIcon(context, agreementCheck).intoGestureDetector(onTap: () {
+                    setState(() {
+                      agreementCheck = !agreementCheck;
+                    });
+                  }),
+                  Expanded(
+                      child: RichText(
+                    text: TextSpan(text: S.of(context).IHaveReadAndAgreeTo, style: TextStyle(fontSize: $(14)), children: [
+                      TextSpan(
+                          text: S.of(context).UserAgreement,
+                          style: TextStyle(color: ColorConstant.BlueColor),
+                          recognizer: agreementTap
+                            ..onTap = () {
+                              AppWebView.open(context, url: USER_PRIVACY);
+                            }),
+                      TextSpan(text: S.of(context).and, style: TextStyle(color: ColorConstant.White)),
+                      TextSpan(
+                          text: S.of(context).TermsOfUse,
+                          style: TextStyle(color: ColorConstant.BlueColor),
+                          recognizer: termTap
+                            ..onTap = () {
+                              AppWebView.open(context, url: TERM_AND_USE);
+                            }),
+                    ]),
+                    maxLines: 3,
+                  )),
+                ],
+              ).hero(tag: "agreement"),
               Container(
                 margin: EdgeInsets.only(
                   left: $(20),
                   right: $(20),
-                  top: $(80),
+                  top: $(60),
                   bottom: $(30),
                 ),
                 child: Row(
@@ -303,6 +348,26 @@ class _LoginScreenState extends AppState<LoginScreen> {
         ),
       ),
     ).blankAreaIntercept();
+  }
+
+  Widget buildCheckIcon(BuildContext context, bool check) {
+    return (check
+            ? Image.asset(
+                Images.ic_album_checked,
+                width: $(12),
+                color: Colors.white,
+              ).intoContainer(
+                alignment: Alignment.center,
+                width: $(16),
+                height: $(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(16)), color: ColorConstant.BlueColor),
+              )
+            : Container(
+                width: $(16),
+                height: $(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(16)), border: Border.all(width: 1, color: Colors.white)),
+              ))
+        .intoContainer(padding: EdgeInsets.only(right: $(6), bottom: $(10), top: $(2)), color: Colors.transparent);
   }
 
   void toSignUp(Object? prefixPage, BuildContext context) {

@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
+        "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("选择国家/地区"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -36,6 +37,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("省/州名或者州编码"),
         "STATE": MessageLookupByLibrary.simpleMessage("省/州"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("总计"),
+        "TermsOfUse": MessageLookupByLibrary.simpleMessage("《使用条款》"),
+        "UserAgreement": MessageLookupByLibrary.simpleMessage("《用户协议》"),
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),
         "activate_failed": MessageLookupByLibrary.simpleMessage("激活失败"),
         "activate_successfully": MessageLookupByLibrary.simpleMessage("激活成功！"),
@@ -378,6 +381,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "platform_connecting": MessageLookupByLibrary.simpleMessage("链接中"),
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "pleaseInput": MessageLookupByLibrary.simpleMessage("请填写 %s"),
+        "pleaseReadAndAgreePrivacyAndTermsOfUse":
+            MessageLookupByLibrary.simpleMessage("请阅读并统一用户协议和使用条款"),
         "pleaseSelect": MessageLookupByLibrary.simpleMessage("请选择%s"),
         "pleaseSelectColor": MessageLookupByLibrary.simpleMessage("请选择颜色"),
         "pleaseSelectModel": MessageLookupByLibrary.simpleMessage("请选择款式"),

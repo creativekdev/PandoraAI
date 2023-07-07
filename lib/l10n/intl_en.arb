@@ -460,5 +460,9 @@
   "pleaseSelectSize": "Please select a Size",
   "pleaseSelectColor": "Please select a Color",
   "pleaseSelectModel": "Please select a Model",
-  "pleaseSelect": "Please select the $s"
+  "pleaseSelect": "Please select the $s",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "Please read and agree User Privacy and Terms of use",
+  "IHaveReadAndAgreeTo": "I have read and agree to",
+  "UserAgreement": " User Agreement ",
+  "TermsOfUse": " Terms of use"
 }

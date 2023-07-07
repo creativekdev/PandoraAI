@@ -24,6 +24,8 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "Sus solicitudes diarias han alcanzado su límite, inténtelo de nuevo mañana"),
+        "IHaveReadAndAgreeTo":
+            MessageLookupByLibrary.simpleMessage("He leído y acepto el"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("Seleccionar región"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -39,6 +41,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Nom de l\'État ou Code de l\'État"),
         "STATE": MessageLookupByLibrary.simpleMessage("Un État"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
+        "TermsOfUse":
+            MessageLookupByLibrary.simpleMessage(" Condiciones de uso"),
+        "UserAgreement":
+            MessageLookupByLibrary.simpleMessage(" Acuerdo del Usuario "),
         "accountCancelled":
             MessageLookupByLibrary.simpleMessage("Usuarios de Pandora"),
         "activate_failed":
@@ -478,6 +484,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("Estudio de IA"),
         "pleaseInput":
             MessageLookupByLibrary.simpleMessage("Por favor rellene %s"),
+        "pleaseReadAndAgreePrivacyAndTermsOfUse":
+            MessageLookupByLibrary.simpleMessage(
+                "Lea y acepte la privacidad del usuario y los términos de uso"),
         "pleaseSelect": MessageLookupByLibrary.simpleMessage(
             "Please select seleccione un \$s"),
         "pleaseSelectColor": MessageLookupByLibrary.simpleMessage(

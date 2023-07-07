@@ -77,9 +77,12 @@ class AvatarAiController extends GetxController {
     update();
     var minCount = minSize - imageList.length;
     if (minCount < 0) {
-      isLoading = false;
-      update();
-      return false;
+      minCount = maxSize - imageList.length;
+      if (minCount <= 0) {
+        isLoading = false;
+        update();
+        return false;
+      }
     }
     var photos = await PickAlbumScreen.pickImage(
       context,

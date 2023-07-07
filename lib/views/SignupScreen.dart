@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -19,6 +20,7 @@ import 'package:cartoonizer/views/EmailVerificationScreen.dart';
 import 'package:cartoonizer/views/account/widget/icon_input.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart';
@@ -49,6 +51,8 @@ class _SignupScreenState extends AppState<SignupScreen> {
       source: cacheManager.getString(CacheManager.preSignupAction),
       prePage: cacheManager.getString(CacheManager.preLoginAction),
     );
+    agreementTap = TapGestureRecognizer();
+    termTap = TapGestureRecognizer();
     api = CartoonizerApi().bindState(this);
   }
 
@@ -62,6 +66,10 @@ class _SignupScreenState extends AppState<SignupScreen> {
   var token;
   var tokenId;
   static const platform = MethodChannel(PLATFORM_CHANNEL);
+
+  bool agreementCheck = false;
+  late TapGestureRecognizer agreementTap;
+  late TapGestureRecognizer termTap;
 
   Future<dynamic> signInWithGoogle() async {
     try {
@@ -147,6 +155,10 @@ class _SignupScreenState extends AppState<SignupScreen> {
     }
     if (pass != cpass) {
       CommonExtension().showToast("Please confirm password!");
+      return;
+    }
+    if (!agreementCheck) {
+      CommonExtension().showToast(S.of(context).pleaseReadAndAgreePrivacyAndTermsOfUse);
       return;
     }
     await showLoading();
@@ -510,11 +522,43 @@ class _SignupScreenState extends AppState<SignupScreen> {
                   .intoGestureDetector(onTap: () {
                 signUpNormal();
               }),
+              SizedBox(height: $(15)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildCheckIcon(context, agreementCheck).intoGestureDetector(onTap: () {
+                    setState(() {
+                      agreementCheck = !agreementCheck;
+                    });
+                  }),
+                  Expanded(
+                      child: RichText(
+                    text: TextSpan(text: S.of(context).IHaveReadAndAgreeTo, style: TextStyle(fontSize: $(14)), children: [
+                      TextSpan(
+                          text: S.of(context).UserAgreement,
+                          style: TextStyle(color: ColorConstant.BlueColor),
+                          recognizer: agreementTap
+                            ..onTap = () {
+                              AppWebView.open(context, url: USER_PRIVACY);
+                            }),
+                      TextSpan(text: S.of(context).and, style: TextStyle(color: ColorConstant.White)),
+                      TextSpan(
+                          text: S.of(context).TermsOfUse,
+                          style: TextStyle(color: ColorConstant.BlueColor),
+                          recognizer: termTap
+                            ..onTap = () {
+                              AppWebView.open(context, url: TERM_AND_USE);
+                            }),
+                    ]),
+                    maxLines: 3,
+                  )),
+                ],
+              ).hero(tag: "agreement"),
               Container(
                 margin: EdgeInsets.only(
                   left: $(20),
                   right: $(20),
-                  top: $(45),
+                  top: $(35),
                   bottom: $(30),
                 ),
                 child: Row(
@@ -605,6 +649,26 @@ class _SignupScreenState extends AppState<SignupScreen> {
         ),
       ),
     ).blankAreaIntercept();
+  }
+
+  Widget buildCheckIcon(BuildContext context, bool check) {
+    return (check
+            ? Image.asset(
+                Images.ic_album_checked,
+                width: $(12),
+                color: Colors.white,
+              ).intoContainer(
+                alignment: Alignment.center,
+                width: $(16),
+                height: $(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(16)), color: ColorConstant.BlueColor),
+              )
+            : Container(
+                width: $(16),
+                height: $(16),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular($(16)), border: Border.all(width: 1, color: Colors.white)),
+              ))
+        .intoContainer(padding: EdgeInsets.only(right: $(6), bottom: $(10), top: $(2)), color: Colors.transparent);
   }
 
   Future<void> onLoginSuccess(BuildContext context) async {

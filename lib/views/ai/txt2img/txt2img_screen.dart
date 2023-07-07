@@ -451,15 +451,15 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                     )
                                   : Stack(
                                       children: [
-                                        CachedNetworkImageUtils.custom(context: context, imageUrl: uploadController.imageUrl.value, height: $(150), fit: BoxFit.contain),
+                                        CachedNetworkImageUtils.custom(context: context, imageUrl: uploadController.imageUrl.value, height: $(160), fit: BoxFit.contain),
                                         Positioned(
                                           child: Icon(
                                             Icons.close,
-                                            size: $(18),
+                                            size: $(17),
                                             color: ColorConstant.White,
                                           )
                                               .intoContainer(
-                                                  padding: EdgeInsets.all(3),
+                                                  padding: EdgeInsets.all($(5)),
                                                   decoration: BoxDecoration(
                                                     borderRadius: BorderRadius.circular(16),
                                                     color: Color(0x99000000),
@@ -474,7 +474,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                       ],
                                     ).intoContainer(
                                       width: double.maxFinite,
-                                      height: $(150),
+                                      height: $(160),
                                       color: Colors.transparent,
                                       alignment: Alignment.center,
                                     )))

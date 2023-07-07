@@ -399,6 +399,9 @@
   "SELECT_COUNTRY_CALLING_CODE_HINT": "请选择国家/地区",
   "SELECT_COUNTRY_KEYWORD": "国家/地区名，地区编码或区号",
   "SELECT_REGION": "选择国家/地区",
+  "SELECT_STATE": "选择省/州",
+  "STATE": "省/州",
+  "SELECT_STATE_KEYWORD": "省/州名或者州编码",
   "Subtotal": "总计",
   "shipping_details": "物流信息",
   "address": "收货地址",
@@ -459,7 +462,8 @@
   "pleaseSelectColor": "请选择颜色",
   "pleaseSelectModel": "请选择款式",
   "pleaseSelect": "请选择%s",
-  "SELECT_STATE": "选择省/州",
-  "STATE": "省/州",
-  "SELECT_STATE_KEYWORD": "省/州名或者州编码"
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "请阅读并统一用户协议和使用条款",
+  "IHaveReadAndAgreeTo": "我已阅读并同意",
+  "UserAgreement": "《用户协议》",
+  "TermsOfUse": "《使用条款》"
 }
