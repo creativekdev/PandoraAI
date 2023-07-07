@@ -461,7 +461,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         originalUrl: uploadImageController.imageUrl.value,
         image: base64Encode(file.readAsBytesSync()),
         isVideo: false,
-        category: HomeCardType.style_morph,
+        category: HomeCardType.stylemorph,
       ).then((value) {
         if (value ?? false) {
           Events.styleMorphCompleteShare(source: photoType, platform: 'discovery', type: 'image');

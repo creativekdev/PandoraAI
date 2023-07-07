@@ -124,7 +124,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         case HomeCardType.scribble:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#AIScribble");
           break;
-        case HomeCardType.style_morph:
+        case HomeCardType.stylemorph:
           textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#StyleMorph");
           break;
         case HomeCardType.metagram:

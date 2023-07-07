@@ -49,7 +49,7 @@ extension DiscoveryListEntityEx on DiscoveryListEntity {
         return 'scribble';
       case HomeCardType.metagram:
         return 'metagram';
-      case HomeCardType.style_morph:
+      case HomeCardType.stylemorph:
         return 'stylemorph';
       case HomeCardType.lineart:
         return 'lineart';

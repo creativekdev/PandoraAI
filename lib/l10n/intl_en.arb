@@ -464,5 +464,9 @@
   "use_style": "Use Style",
   "album": "Album",
   "template": "Template",
-  "colors": "Colors"
+  "colors": "Colors",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "Please read and agree User Privacy and Terms of use",
+  "IHaveReadAndAgreeTo": "I have read and agree to",
+  "UserAgreement": " User Agreement ",
+  "TermsOfUse": " Terms of use"
 }
