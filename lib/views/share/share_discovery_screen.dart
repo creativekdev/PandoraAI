@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/bad_words.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -23,6 +24,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' as path;
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -147,12 +149,27 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     textEditingController.dispose();
   }
 
+  String getBadWord(String text) {
+    text = text.toLowerCase();
+    for (String word in bad_words) {
+      if (text.contains("$word ") || text.contains("$word,") || text.contains("$word.") || text.contains("$word!")) {
+        return word;
+      }
+    }
+    return "";
+  }
+
   submit() {
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
       text = textHint;
     }
     FocusScope.of(context).requestFocus(FocusNode());
+    String badWord = getBadWord(text);
+    if (badWord.isNotEmpty) {
+      Fluttertoast.showToast(msg: "Your input contain bad word: $badWord", gravity: ToastGravity.CENTER);
+      return;
+    }
     showLoading().whenComplete(() {
       if (isVideo) {
         GallerySaver.saveVideo(image, false).then((value) {
