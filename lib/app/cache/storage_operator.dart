@@ -14,6 +14,7 @@ const _recordDir = 'recordDir/';
 const _recordMetaverse = 'metaverse/';
 const _recordCartoonize = 'cartoonize/';
 const _recordTxt2img = 'aiGround/';
+const _recordBackgroundRemoval = 'backgroundremoval/';
 const _recordStyleMorph = 'styleMorph/';
 const _recordAiDraw = 'aiDraw/';
 const _recordAiColoring = 'aiColoring/';
@@ -51,6 +52,9 @@ class StorageOperator {
   Directory get recordStyleMorphDir => Directory('$_mainPath$_recordDir$_recordStyleMorph');
 
   Directory get recordAiColoringDir => Directory('$_mainPath$_recordDir$_recordAiColoring');
+
+  Directory get recordBackgroundRemovalDir => Directory('$_mainPath$_recordDir$_recordBackgroundRemoval');
+
 
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();

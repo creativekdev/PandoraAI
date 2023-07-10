@@ -17,14 +17,25 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
+import 'package:cartoonizer/views/mine/filter/BackgroundRemoval.dart';
 import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:cropperx/cropperx.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image/image.dart' as imgLib;
 
 import 'Crop.dart';
+
+enum TABS{
+  EFFECT,
+  FILTER,
+  ADJUST,
+  CROP,
+  BACKGROUND,
+  TEXT
+}
 
 class ImFilterScreen extends StatefulWidget {
   ImFilterScreen({Key? key}) : super(key: key);
@@ -34,28 +45,24 @@ class ImFilterScreen extends StatefulWidget {
 }
 
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
-  final int Tab_Effect = 0;
-  final int Tab_Filter = 1;
-  final int Tab_Adjust = 2;
-  final int Tab_Crop = 3;
-  final int Tab_Background = 4;
-  final int Tab_Text = 5;
 
-  File? _imagefile;
-  late imgLib.Image _image;
+  File? _imageFile, _personImageFile;
+  late imgLib.Image _image, _personImage;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
+  GlobalKey _ImageViewerBackgroundKey = GlobalKey();
   bool originalShowing = false;
 
   late double itemWidth;
   var currentItemIndex = 0.obs;
   List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
-  int selectedRightTab = 0;
+  late TABS selectedRightTab = TABS.EFFECT;
 
   int selectedEffectID = 0;
   Filter filter = new Filter();
   Adjust adjust = new Adjust();
   Crop crop = new Crop();
+  BackgroundRemoval backgroundRemoval = new BackgroundRemoval();
 
   int currentAdjustID = 0;
 
@@ -82,13 +89,27 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           PAICamera.takePhoto(context).then((value) async {
             if (value != null) {
               var pickFile = File(value.xFile.path);
-              _imagefile = File(pickFile.path);
-              _image = await getLibImage(await getImage(_imagefile!));
+              _imageFile = File(pickFile.path);
+              _image = await getLibImage(await getImage(_imageFile!));
               _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
               await filter.calcAvatars(_image);
+
+              try {
+                ///background removal calculation
+                File compressedImage = await imageCompressAndGetFile(_imageFile!, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+                await uploadImageController.uploadCompressedImage(compressedImage);
+                uploadImageController.update();
+                var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
+                _personImageFile = File(url!);
+                _personImage = await getLibImage(await getImage(_personImageFile!));
+                // _byte = Uint8List.fromList(imgLib.encodeJpg(_personImage));
+              } catch (e) {
+                print('An exception occurred: $e');
+              }
               hideLoading();
               setState(() {
-                _imagefile;
+                _byte;
+                _imageFile;
               });
             } else {
               hideLoading();
@@ -104,7 +125,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   }
 
   _Filter(String filterStr) async {
-    if (_imagefile != null) {
+    if (_imageFile != null) {
       _byte = Uint8List.fromList(imgLib.encodeJpg(await Filter.ImFilter(filterStr, _image)));
       setState(() {
         _byte;
@@ -120,13 +141,13 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       buttons.add(GestureDetector(
         onTap: () {
           setState(() {
-            selectedRightTab = cur;
+            selectedRightTab = TABS.values[cur];
           });
         },
         child: Container(
           width: $(40),
           height: $(40),
-          decoration: (selectedRightTab == cur)
+          decoration: (selectedRightTab == TABS.values[cur])
               ? BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -134,10 +155,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                     colors: [const Color(0xFF68F0AF), const Color(0xFF05E0D5)],
                   ),
                   borderRadius: BorderRadius.circular($(20)),
-                  // image: DecorationImage(
-                  //   image: AssetImage(img),
-                  //   fit: BoxFit.cover,
-                  // ),
                 )
               : BoxDecoration(
                   borderRadius: BorderRadius.circular($(20)),
@@ -175,16 +192,15 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           originalShowing = false;
         });
       },
-      child: (selectedRightTab != Tab_Crop)
-          ? Container(
-              width: $(50),
-              height: $(50),
+      child: Container(
+              width: $(40),
+              height: $(40),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular($(25)),
+                borderRadius: BorderRadius.circular($(20)),
               ),
               child: FractionallySizedBox(
-                widthFactor: 0.5,
-                heightFactor: 0.5,
+                widthFactor: 0.6,
+                heightFactor: 0.6,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -194,33 +210,47 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                   ),
                 ),
               ),
-            )
-          : Container(),
+            ),
     ));
     return Align(
         alignment: Alignment.centerRight,
-        child: Wrap(direction: Axis.vertical, spacing: $(40), children: [
-          Container(
-              decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-              padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-              margin: const EdgeInsets.only(right: 10.0),
-              height: $(220),
-              //265,
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: buttons)),
-          Container(
-              decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(40)))),
-              padding: EdgeInsets.symmetric(horizontal: 1.0, vertical: 1.0),
-              margin: const EdgeInsets.only(right: 10.0),
-              height: $(52),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: adjustbutton))
-        ]));
+        child: Container(
+            height: $(350),
+            width: $(50),
+            margin: EdgeInsets.only(right: $(10)),
+            child: Column(children: [
+              Container(
+                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                  padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
+                  height: $(220),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)
+              ),
+              SizedBox(height:$(50)),
+              (selectedRightTab != TABS.CROP)
+              ?Container(
+                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                  height: $(42),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton)
+              )
+                  :Container()
+            ])
+        )
+    );
   }
 
   Future<void> saveToAlbum() async {
     if (_byte == null) return;
     String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
     var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
-    await file.writeAsBytes(_byte!);
+    if(selectedRightTab == TABS.CROP && crop.selectedID > 0) {
+      Uint8List? _croppedByte = await Cropper.crop(
+        cropperKey: _cropperKey,
+      );
+      await file.writeAsBytes(_croppedByte!);
+    }
+    else{
+      await file.writeAsBytes(_byte!);
+    }
     await GallerySaver.saveImage(file.path, albumName: "PandoraAI");
     CommonExtension().showImageSavedOkToast(context);
   }
@@ -255,23 +285,39 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
 
   Widget _buildImageView() {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(top: $(5)),
-        child: _byte != null
-            ? originalShowing
-                ? Container(
-                    child: Image.file(_imagefile!, fit: BoxFit.contain),
-                  )
-                : (selectedRightTab == Tab_Crop && crop.selectedID > 0)
-                    ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte)))
-                    : Image.memory(
-                        _byte!,
-                        fit: BoxFit.contain,
+      child: Stack(children: <Widget>[
+        Container(key:_ImageViewerBackgroundKey),
+        Column(
+          children: [
+            Expanded(
+                child: Row(
+                  children: [
+                      Expanded(
+                          child: Container(
+                            margin: EdgeInsets.only(top: $(5)),
+                            child: _byte != null
+                                ? originalShowing
+                                  ? Container(
+                                    child: Image.file(_imageFile!, fit: BoxFit.contain),
+                                  )
+                                  : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
+                                  ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte, globalKey: _ImageViewerBackgroundKey,)))
+                                  : Image.memory(
+                                    _byte!,
+                                    fit: BoxFit.contain,
+                                  )
+                                  : Container(
+                                child: Image.asset(Images.ic_choose_photo_initial_header),
+                                ),
+                          )
                       )
-            : Container(
-                child: Image.asset(Images.ic_choose_photo_initial_header),
-              ),
-      ),
+                    ],
+                  ))
+          ],
+        ),
+        _buildRightTab()
+      ]
+    ),
     );
   }
 
@@ -408,7 +454,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               setState(() {
                 adjust;
               });
-              if (_imagefile != null) {
+              if (_imageFile != null) {
                 _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                 setState(() {});
               }
@@ -418,7 +464,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               setState(() {
                 adjust;
               });
-              if (_imagefile != null) {
+              if (_imageFile != null) {
                 _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                 setState(() {
                   _byte;
@@ -535,7 +581,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                 });
               },
               onEnd: () async {
-                if (_imagefile != null) {
+                if (_imageFile != null) {
                   _byte = Uint8List.fromList(imgLib.encodeJpg(await adjust.ImAdjust(_image)));
                   setState(() {
                     _byte;
@@ -626,8 +672,11 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Widget _buildBackground() {
     return BackgroundPickerBar(
       imageRatio: 16 / 9,
-      onPick: (BackgroundData data) {
-        // todo
+      onPick: (BackgroundData data) async {
+        _byte = Uint8List.fromList(imgLib.encodeJpg(await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!)));
+        setState(() {
+          _byte;
+        });
       },
     ).intoContainer(
       width: double.maxFinite,
@@ -638,15 +687,15 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
 
   Widget _buildBottomTabbar() {
     switch (selectedRightTab) {
-      case 0:
+      case TABS.EFFECT:
         return _buildEffectController();
-      case 1:
+      case TABS.FILTER:
         return _buildFiltersController();
-      case 2:
+      case TABS.ADJUST:
         return _buildAdjust();
-      case 3:
+      case TABS.CROP:
         return _buildCrops();
-      case 4:
+      case TABS.BACKGROUND:
         return _buildBackground();
       default:
         return Container(height: $(115));
@@ -655,8 +704,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Stack(children: <Widget>[
-      Scaffold(
+    return Scaffold(
         backgroundColor: ColorConstant.BackgroundColor,
         appBar: AppNavigationBar(
           backAction: () async {
@@ -678,11 +726,9 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
             _buildInOutControlPad(),
             SizedBox(height: $(8)),
             _buildBottomTabbar(),
-            SizedBox(height: ScreenUtil.getBottomPadding(context)),
+            // SizedBox(height: ScreenUtil.getBottomPadding(context)),
           ],
         ),
-      ),
-      _buildRightTab()
-    ]);
+      );
   }
 }
