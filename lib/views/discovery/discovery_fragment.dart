@@ -1,23 +1,19 @@
 import 'dart:ui';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/indicator/line_tab_indicator.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
-import 'package:cartoonizer/views/share/share_discovery_screen.dart';
+import 'package:cartoonizer/views/discovery/widget/showReportMenu.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -293,6 +289,16 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                                   settings: RouteSettings(name: "/DiscoveryDetailScreen"),
                                 ),
                               );
+                            },
+                            longPressCallback: (olpdt) async {
+                              PopmenuUtil.showPopMenu(context, olpdt, [
+                                LongPressItem(
+                                    text: "Report",
+                                    onTap: () {
+                                      listController.onLongPressAction(data.data, context);
+                                      Navigator.of(context).pop();
+                                    })
+                              ]);
                             },
                             onCommentTap: () {
                               Navigator.push(

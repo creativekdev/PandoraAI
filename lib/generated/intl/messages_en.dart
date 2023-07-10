@@ -22,10 +22,15 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "AgreeAndContinue":
+            MessageLookupByLibrary.simpleMessage("Agree And Continue"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "You have run out of your daily credits. Please come back tomorrow."),
         "IHaveReadAndAgreeTo":
             MessageLookupByLibrary.simpleMessage("I have read and agree to"),
+        "InputBadWord": MessageLookupByLibrary.simpleMessage(
+            "Your input contains the bad word: \$s"),
+        "Report": MessageLookupByLibrary.simpleMessage("Report"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("Select Region"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -38,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("StateName or StateCode"),
         "STATE": MessageLookupByLibrary.simpleMessage("State"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
+        "TermsOfPost": MessageLookupByLibrary.simpleMessage(
+            "Pandora AI is a place for safe exploration of the world around us. For that reason, please follow the following policies. These policies apply to all formats, including Reviews, Photos, and Videos. Content that does not meet these criteria is automatically processed to detect and remove.\n1. Do not post content that includes any form of hate speech.\n2. Do not post content that harass other people, or encourage others to participate in harassment.\n3. Do not post offensive content.\n4. Do not post obscene and profane content.\n5. Do not post sexually explicit content.\n6. Do not post adult-themed content.\n7. Do not post violent or gory content involving people or animals.\n8. Do not post content that is illegal or depicts illegal activity.\n9. Do not create, post or distribute content that exploits or abuses children.\n10. Do not post terrorist content.\n11. Do not post repetitive content or gibberish.\nPromply notify us at support@socialbook.io if you discover or otherwise suspect any objectionable content."),
         "TermsOfUse": MessageLookupByLibrary.simpleMessage(" Terms of use"),
         "UserAgreement":
             MessageLookupByLibrary.simpleMessage(" User Agreement "),

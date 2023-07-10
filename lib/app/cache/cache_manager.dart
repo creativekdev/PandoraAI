@@ -56,6 +56,7 @@ class CacheManager extends BaseManager {
   static const commentList = 'commentList';
   static const platformConnections = 'platform_connections';
   static const viewPreviewOpen = 'video_preview_open';
+  static const postOfTerm = "post_of_term";
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
@@ -95,7 +96,7 @@ class CacheManager extends BaseManager {
         .toList()
         .filter(
           (t) => t.contains(partKey),
-        )
+    )
         .toList();
   }
 
@@ -105,6 +106,10 @@ class CacheManager extends BaseManager {
 
   String getString(String key) {
     return _sharedPreferences.getString(key) ?? '';
+  }
+
+  bool containKey(String key) {
+    return _sharedPreferences.containsKey(key);
   }
 
   Future<bool> setString(String key, String? value) async {

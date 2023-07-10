@@ -22,9 +22,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意并继续"),
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
         "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
+        "InputBadWord": MessageLookupByLibrary.simpleMessage("您的输入包含不良词语: \$s"),
+        "Report": MessageLookupByLibrary.simpleMessage("投诉"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("选择国家/地区"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -37,6 +40,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("省/州名或者州编码"),
         "STATE": MessageLookupByLibrary.simpleMessage("省/州"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("总计"),
+        "TermsOfPost": MessageLookupByLibrary.simpleMessage(
+            "Pandora AI是一个安全探索周围世界的地方。因此，请遵守以下政策。这些政策适用于所有格式，包括评论、照片和视频。不符合这些标准的内容将自动进行处理以检测和删除。\n\n不要发布包含任何形式的仇恨言论的内容。\n不要发布骚扰他人的内容，或鼓励他人参与骚扰行为。\n不要发布冒犯性的内容。\n不要发布淫秽和亵渎的内容。\n不要发布性行为明确的内容。\n不要发布成人主题的内容。\n不要发布涉及人或动物的暴力或血腥的内容。\n不要发布非法内容或描绘非法活动的内容。\n不要创建、发布或分发剥削或虐待儿童的内容。\n不要发布恐怖主义内容。\n不要发布重复的内容或无意义的内容。\n如果你发现或怀疑任何不合适的内容，请立即通过support@socialbook.io通知我们。"),
         "TermsOfUse": MessageLookupByLibrary.simpleMessage("《使用条款》"),
         "UserAgreement": MessageLookupByLibrary.simpleMessage("《用户协议》"),
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),

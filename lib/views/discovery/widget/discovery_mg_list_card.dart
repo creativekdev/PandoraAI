@@ -26,12 +26,7 @@ class DiscoveryMgListCard extends StatelessWidget {
   double width;
   late double imageSize;
 
-  DiscoveryMgListCard({
-    Key? key,
-    required this.data,
-    required this.onTap,
-    required this.width,
-  }) : super(key: key) {
+  DiscoveryMgListCard({Key? key, required this.data, required this.onTap, required this.width}) : super(key: key) {
     colors = _cList[Random().nextInt(_cList.length)];
     userAvatars = data.coverImage?.split(',');
     previewImages = data.previewImages?.split(',') ?? [];

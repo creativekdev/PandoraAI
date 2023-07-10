@@ -496,11 +496,11 @@ class CartoonizerApi extends RetryAbleRequester {
     });
   }
 
-  Future<BaseEntity?> postReport(String postid) async {
+  Future<BaseEntity?> postReport(int postid) async {
     return post('/social_post/report/$postid');
   }
 
-  Future<BaseEntity?> postCommentReport(String postid) async {
+  Future<BaseEntity?> postCommentReport(int postid) async {
     return post('/social_post_comment/report/$postid');
   }
 

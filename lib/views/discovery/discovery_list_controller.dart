@@ -6,6 +6,8 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 
+import '../../Common/Extension.dart';
+
 class DiscoveryListController extends GetxController {
   late CartoonizerApi api;
   late SocialMediaConnectorApi socialMediaConnectorApi;
@@ -82,6 +84,7 @@ class DiscoveryListController extends GetxController {
       }
       lastScrollPos = newPos;
     });
+
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       // Check if the event data is null or true and the list is not loading.
       if (event.data ?? true && !listLoading) {
@@ -324,6 +327,12 @@ class DiscoveryListController extends GetxController {
       });
       return list.length != pageSize;
     }
+  }
+
+  void onLongPressAction(DiscoveryListEntity data, BuildContext context) {
+    api.postReport(data.id).then((value) {
+      CommonExtension().showToast(S.of(context).successful);
+    });
   }
 }
 

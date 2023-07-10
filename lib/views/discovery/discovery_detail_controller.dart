@@ -33,6 +33,12 @@ class DiscoveryDetailController extends GetxController {
   bool _isRequesting = false;
   Rx<int> loadingCommentId = 0.obs;
 
+  void onReportAction(DiscoveryCommentListEntity data, BuildContext context) {
+    api.postCommentReport(data.id).then((value) {
+      CommonExtension().showToast(S.of(context).successful);
+    });
+  }
+
   @override
   void onInit() {
     super.onInit();

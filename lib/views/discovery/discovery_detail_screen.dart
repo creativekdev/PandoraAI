@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
@@ -15,6 +13,7 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
+import 'package:cartoonizer/views/discovery/widget/show_comment_actions.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
@@ -208,9 +207,18 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
         middle: TitleTextWidget(S.of(context).discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-        trailing: TitleTextWidget(S.of(context).delete, ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
-          showDeleteDialog();
-        }).visibility(visible: userManager.user?.id == controller.discoveryEntity.userId),
+        trailing: userManager.user?.id == controller.discoveryEntity.userId
+            ? TitleTextWidget(S.of(context).delete, ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
+                showDeleteDialog();
+              })
+            : Image.asset(
+                Images.ic_report,
+                color: ColorConstant.White,
+              ).intoGestureDetector(onTap: () {
+                controller.api.postReport(widget.discoveryEntity.id).then((value) {
+                  CommonExtension().showToast(S.of(context).successful);
+                });
+              }),
       ),
       body: GetBuilder<DiscoveryDetailController>(
         init: Get.find<DiscoveryDetailController>(),
@@ -403,7 +411,15 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
             authorId: controller.discoveryEntity.userId,
             hasLine: index != 0,
             onCommentTap: () {
-              onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
+              showCommentActions(context, replyAction: () {
+                Navigator.of(context).pop();
+                onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
+              }, reportAction: () {
+                controller.onReportAction(data, context);
+                Navigator.of(context).pop();
+              }, cancelAction: () {
+                Navigator.of(context).pop();
+              }, title: "@${data.userName}: ${data.text}");
             },
             isTopComments: true,
             ignoreLikeBtn: controller.likeLocalAddAlready.value,
