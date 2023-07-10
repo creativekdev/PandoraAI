@@ -124,6 +124,7 @@ class PrintScreenState extends AppState<PrintScreen> {
                                 if (value.values.first)
                                   PrintOptionsItem(
                                     showMap: value,
+                                    content: controller.selectOptions[value.keys.first] ?? '',
                                     options: controller.options[value.keys.first],
                                     onSelectTitleTap: (map, value) {
                                       controller.onTapOption(map, value);

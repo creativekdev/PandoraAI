@@ -3,8 +3,9 @@ import '../../../Common/importFile.dart';
 typedef ValueCallBack = void Function(Map<String, bool> map, String value);
 
 class PrintOptionsItem extends StatelessWidget {
-  PrintOptionsItem({Key? key, required this.showMap, required this.options, required this.onSelectTitleTap}) : super(key: key);
+  PrintOptionsItem({Key? key, required this.showMap, required this.options, required this.onSelectTitleTap, this.content = ""}) : super(key: key);
   final Map<String, bool> showMap;
+  final String content;
   final List<String> options;
   ValueCallBack onSelectTitleTap;
 
@@ -25,7 +26,10 @@ class PrintOptionsItem extends StatelessWidget {
             spacing: $(12),
             children: [
               ...options.map((e) {
-                return PrintTextOption(text: e).intoGestureDetector(onTap: () {
+                return PrintTextOption(
+                  text: e,
+                  isSelect: e == content,
+                ).intoGestureDetector(onTap: () {
                   onSelectTitleTap(showMap, e);
                 });
               })
@@ -42,8 +46,9 @@ class PrintOptionsItem extends StatelessWidget {
 }
 
 class PrintTextOption extends StatelessWidget {
-  PrintTextOption({Key? key, required this.text}) : super(key: key);
+  PrintTextOption({Key? key, required this.text, required this.isSelect}) : super(key: key);
   final String text;
+  final bool isSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +61,7 @@ class PrintTextOption extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: ColorConstant.loginTitleColor,
+            color: isSelect ? ColorConstant.BlueColor : ColorConstant.loginTitleColor,
             width: $(1),
           ),
         ),
