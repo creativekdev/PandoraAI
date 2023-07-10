@@ -274,5 +274,10 @@ class ColorUtil {
   static String colorToHexString(Color color) {
     return '#${color.alpha.toRadixString(16)}${color.value.toRadixString(16)}';
   }
+}
 
+extension ColorEx on Color {
+  String hexValue() {
+    return ColorUtil.colorToHexString(this);
+  }
 }

@@ -3,6 +3,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/views/common/background/widgets/back_colors_picker.dart';
 import 'background_picker.dart';
 import 'widgets/back_image_picker.dart';
 import 'widgets/back_template_picker.dart';
@@ -66,7 +67,9 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
       },
       {
         'title': 'colors',
-        'build': (context) => Container(),
+        'build': (context) => BackColorsPicker(onPickColor: (color) {
+              //todo
+            }),
       }
     ];
     if (currentIndex >= titleList.length) {
