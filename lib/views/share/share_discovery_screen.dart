@@ -175,6 +175,10 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   }
 
   submit() {
+    if (!cacheManager.getBool(CacheManager.postOfTerm)) {
+      CommonExtension().showToast(S.of(context).selectTermOfPost);
+      return;
+    }
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
       text = textHint;

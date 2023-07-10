@@ -462,6 +462,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_order": MessageLookupByLibrary.simpleMessage("订单搜索"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
+        "selectTermOfPost": MessageLookupByLibrary.simpleMessage("请勾选用户协议"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_completed": MessageLookupByLibrary.simpleMessage("选择完成"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),

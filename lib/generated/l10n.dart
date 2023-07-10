@@ -4749,6 +4749,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please check the terms of use`
+  String get selectTermOfPost {
+    return Intl.message(
+      'Please check the terms of use',
+      name: 'selectTermOfPost',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

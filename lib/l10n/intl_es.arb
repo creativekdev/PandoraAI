@@ -468,5 +468,6 @@
   "TermsOfPost": "Pandora AI es un lugar para la exploración segura del mundo que nos rodea. Por esa razón, sigue las siguientes políticas. Estas políticas se aplican a todos los formatos, incluyendo reseñas, fotos y videos. El contenido que no cumpla con estos criterios se procesa automáticamente para detectarlo y eliminarlo.\n\nNo publiques contenido que incluya cualquier forma de discurso de odio.\nNo publiques contenido que acose a otras personas o anime a otros a participar en el acoso.\nNo publiques contenido ofensivo.\nNo publiques contenido obsceno y profano.\nNo publiques contenido sexualmente explícito.\nNo publiques contenido para adultos.\nNo publiques contenido violento o sangriento que involucre personas o animales.\nNo publiques contenido que sea ilegal o que represente actividades ilegales.\nNo crees, publiques ni distribuyas contenido que explote o abuse de niños.\nNo publiques contenido terrorista.\nNo publiques contenido repetitivo o sin sentido.\nNotifícanos de inmediato a support@socialbook.io si descubres o sospechas de cualquier contenido objetable.",
   "AgreeAndContinue": "Aceptar y Continuar",
   "InputBadWord": "Su entrada contiene la mala palabra: $s",
-  "Report": "Reportar"
+  "Report": "Reportar",
+  "selectTermOfPost": "Por favor, marca el acuerdo de usuario"
 }
