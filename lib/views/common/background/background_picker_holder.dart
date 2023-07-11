@@ -3,6 +3,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/views/common/background/widgets/back_colors_picker.dart';
 import 'background_picker.dart';
 import 'widgets/back_image_picker.dart';
 import 'widgets/back_template_picker.dart';
@@ -58,11 +59,17 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
       },
       {
         'title': 'album',
-        'build': (context) => BackImagePicker(),
+        'build': (context) => BackImagePicker(
+            parent: this,
+            onPickFile: (path) {
+              dismiss(data: BackgroundData()..filePath = path);
+            }),
       },
       {
         'title': 'colors',
-        'build': (context) => Container(),
+        'build': (context) => BackColorsPicker(onPickColor: (color) {
+              //todo
+            }),
       }
     ];
     if (currentIndex >= titleList.length) {
@@ -117,67 +124,70 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                   dismiss();
                 })),
                 AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(0, (1 - _controller.value) * contentHeight),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: $(50),
-                              height: $(5),
-                              margin: EdgeInsets.symmetric(vertical: $(12)),
-                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular($(12))),
-                            ),
-                            Theme(
-                                data: ThemeData(
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                ),
-                                child: TabBar(
-                                  indicatorColor: Colors.black,
-                                  isScrollable: true,
-                                  tabs: titleList
-                                      .map((e) => Text(
-                                            e['title'].toString().intl,
-                                            style: TextStyle(fontSize: $(13)),
-                                          ).intoContainer(
-                                              padding: EdgeInsets.symmetric(
-                                            vertical: 6,
-                                          )))
-                                      .toList(),
-                                  controller: tabController,
-                                  onTap: (index) {
-                                    if (currentIndex == index) {
-                                      return;
-                                    }
-                                    currentIndex = index;
-                                    pageController.jumpToPage(index);
-                                  },
-                                )),
-                            Expanded(
-                              child: PageView.builder(
-                                itemBuilder: (context, index) => (titleList[index]['build']! as WidgetBuilder)(context),
-                                controller: pageController,
-                                onPageChanged: (index) {
-                                  if (currentIndex == index) {
-                                    return;
-                                  }
-                                  currentIndex = index;
-                                  tabController.index = index;
-                                },
-                              ),
-                            ),
-                          ],
-                        ).intoContainer(
-                            height: contentHeight,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular($(12)), topRight: Radius.circular($(12))),
-                            )),
-                      );
-                    }),
+                  animation: _controller,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, (1 - _controller.value) * contentHeight),
+                      child: child,
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: $(50),
+                        height: $(5),
+                        margin: EdgeInsets.symmetric(vertical: $(12)),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular($(12))),
+                      ),
+                      Theme(
+                          data: ThemeData(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                          ),
+                          child: TabBar(
+                            indicatorColor: Colors.black,
+                            isScrollable: true,
+                            tabs: titleList
+                                .map((e) => Text(
+                                      e['title'].toString().intl,
+                                      style: TextStyle(fontSize: $(13)),
+                                    ).intoContainer(
+                                        padding: EdgeInsets.symmetric(
+                                      vertical: 6,
+                                    )))
+                                .toList(),
+                            controller: tabController,
+                            onTap: (index) {
+                              if (currentIndex == index) {
+                                return;
+                              }
+                              currentIndex = index;
+                              pageController.jumpToPage(index);
+                            },
+                          )),
+                      Expanded(
+                        child: PageView.builder(
+                          itemCount: titleList.length,
+                          itemBuilder: (context, index) => (titleList[index]['build']! as WidgetBuilder)(context),
+                          controller: pageController,
+                          onPageChanged: (index) {
+                            if (currentIndex == index) {
+                              return;
+                            }
+                            currentIndex = index;
+                            tabController.index = index;
+                          },
+                        ),
+                      ),
+                    ],
+                  ).intoContainer(
+                      height: contentHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular($(12)), topRight: Radius.circular($(12))),
+                      )),
+                ),
               ],
             )
                 .intoContainer(

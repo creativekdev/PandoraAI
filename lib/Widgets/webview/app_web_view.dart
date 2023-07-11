@@ -2,12 +2,8 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/ChoosePhotoScreenController.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/webview/js_list.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum LoadType { URL, HTML_DATA }
@@ -15,6 +11,18 @@ enum LoadType { URL, HTML_DATA }
 class AppWebView extends StatefulWidget {
   String url;
   LoadType loadType;
+
+  static Future<dynamic> open(
+    BuildContext context, {
+    required String url,
+    LoadType loadType = LoadType.URL,
+    Key? key,
+  }) async {
+    return Navigator.of(context).push(MaterialPageRoute(
+      settings: RouteSettings(name: '/AppWebView'),
+      builder: (_) => AppWebView(url: url, loadType: loadType),
+    ));
+  }
 
   AppWebView({
     required this.url,
@@ -32,7 +40,7 @@ class AppWebViewState extends AppState<AppWebView> {
   late WebViewController _controller;
   late String loadUri;
   String? _title;
-  ChoosePhotoScreenController controller = Get.put(ChoosePhotoScreenController());
+  double progress = 0;
 
   @override
   initState() {
@@ -47,7 +55,6 @@ class AppWebViewState extends AppState<AppWebView> {
   @override
   dispose() {
     super.dispose();
-    Get.delete<ChoosePhotoScreenController>();
   }
 
   ///事件通知，js端调用flutter方法执行的结果，通过此方法回调
@@ -92,24 +99,48 @@ class AppWebViewState extends AppState<AppWebView> {
             Navigator.pop(context);
           }
         },
-        backIcon: Icon(
-          Icons.arrow_back_ios,
-          size: $(24),
-          color: Colors.white,
-        ),
         middle: Text(
           _title ?? '',
           softWrap: false,
           overflow: TextOverflow.ellipsis,
         ),
+        trailing: Icon(
+          Icons.close_rounded,
+          color: Colors.white,
+          size: $(24),
+        )
+            .intoContainer(
+          padding: EdgeInsets.only(top: $(8), bottom: $(8), left: $(8)),
+          color: Colors.transparent,
+        )
+            .intoGestureDetector(onTap: () {
+          Navigator.pop(context);
+        }),
+        child: PreferredSize(
+          child: LinearProgressIndicator(
+            backgroundColor: Colors.white70.withOpacity(0),
+            value: progress == 1.0 ? 0 : progress,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
+          ),
+          preferredSize: Size.fromHeight(3.0),
+        ),
+        childHeight: 4.0,
       ),
       body: WebView(
         initialUrl: loadUri,
+        backgroundColor: Colors.transparent,
         //允许JS执行
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (c) {
           c.clearCache();
           _controller = c;
+        },
+        onProgress: (int pro) {
+          if (mounted) {
+            setState(() {
+              progress = (pro / 100.0);
+            });
+          }
         },
         //页面加载完成，这里更新title
         onPageFinished: (url) {
@@ -125,23 +156,6 @@ class AppWebViewState extends AppState<AppWebView> {
                 print("参数： ${message.message}");
                 CommonExtension().showToast(message.message);
                 _onEventFinished("showToast", "执行结束");
-              }),
-          JavascriptChannel(
-              name: 'getPayStatus',
-              onMessageReceived: (JavascriptMessage message) {
-                debugPrint("参数： ${message.message}");
-                UserManager userManager = AppDelegate().getManager();
-                bool payStatus;
-                if (userManager.isNeedLogin) {
-                  payStatus = false;
-                } else {
-                  if (userManager.user!.userSubscription.isEmpty) {
-                    payStatus = false;
-                  } else {
-                    payStatus = true;
-                  }
-                }
-                _controller.runJavascript(JsList.postToWebView("getPayStatus", {'result': '${payStatus ? '1' : '0'}'}));
               }),
           JavascriptChannel(
               name: 'popRoute',

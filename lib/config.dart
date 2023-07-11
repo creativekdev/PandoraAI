@@ -17,6 +17,9 @@ const String APP_TITLE = 'Pandora AI';
 const String REF_CODE_LINK = 'pai://pandora.ai?rf=';
 const String ALIPAY_SCHEML_ANDROID = 'alipays://';
 const String ALIPAY_SCHEML_IOS = 'alipay://';
+const String USER_PRIVACY = "https://socialbook.io/privacy/cartoonizer";
+const String TERM_AND_USE = "https://socialbook.io/terms";
+const String HELP_URL = "https://socialbook.io/help/";
 
 class AdMobConfig {
   static bool _debug = false;

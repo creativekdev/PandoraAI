@@ -8,6 +8,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
@@ -28,7 +29,7 @@ enum HomeCardType {
   txt2img,
   scribble,
   metagram,
-  style_morph,
+  stylemorph,
   lineart,
   UNDEFINED,
 }
@@ -51,7 +52,7 @@ class HomeCardTypeUtils {
         return HomeCardType.metagram;
       case 'stylemorph':
       case 'style_morph':
-        return HomeCardType.style_morph;
+        return HomeCardType.stylemorph;
       case 'lineart':
         return HomeCardType.lineart;
       default:
@@ -64,6 +65,7 @@ class HomeCardTypeUtils {
     required String source,
     AppFeaturePayload? payload,
     DiscoveryListEntity? data,
+    HomePageHomepageTools? homeData,
   }) {
     if (payload != null) {
       var target = HomeCardTypeUtils.build(payload.target ?? '');
@@ -116,7 +118,55 @@ class HomeCardTypeUtils {
             ..height = height;
         }
       }
-      Events.discoveryTemplateClick(source: source, style: style);
+      if (source == "home_page") {
+        Events.homeTemplateClick(source: source, style: style);
+      } else {
+        Events.discoveryTemplateClick(source: source, style: style);
+      }
+      jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
+    } else if (homeData != null) {
+      var target = build(homeData.category);
+      InitPos initPos = InitPos();
+      Txt2imgInitData? txt2imgInitData;
+      String style = target.value();
+      if (target == HomeCardType.cartoonize) {
+        EffectDataController effectDataController = Get.find<EffectDataController>();
+        if (effectDataController.data == null) {
+          return;
+        }
+        String key = homeData.cartoonizeKey;
+        int tabPos = effectDataController.data!.tabPos(key);
+        int categoryPos = 0;
+        int itemPos = 0;
+        if (tabPos == -1) {
+          CommonExtension().showToast(S.of(context).template_not_available);
+          return;
+        }
+        EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+        EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+        categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+        itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
+        initPos = InitPos()
+          ..categoryPos = categoryPos
+          ..itemPos = itemPos
+          ..tabPos = tabPos;
+        style = '$style-${effectItem.key}';
+      } else if (target == HomeCardType.txt2img) {
+        Map? payload;
+        try {
+          payload = json.decode(homeData.payload ?? '');
+        } catch (e) {}
+        if (payload != null && payload['txt2img_params'] != null) {
+          var params = payload['txt2img_params'];
+          int width = params['width'] ?? 512;
+          int height = params['height'] ?? 512;
+          txt2imgInitData = Txt2imgInitData()
+            ..prompt = params['prompt']
+            ..width = width
+            ..height = height;
+        }
+      }
+      Events.homeTemplateClick(source: source, style: style);
       jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     }
   }
@@ -149,7 +199,7 @@ class HomeCardTypeUtils {
         case HomeCardType.metagram:
           Metagram.openBySelf(context, source: source);
           break;
-        case HomeCardType.style_morph:
+        case HomeCardType.stylemorph:
           StyleMorph.open(context, source);
           break;
         case HomeCardType.lineart:
@@ -197,7 +247,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.cartoonize:
         return 'cartoonize';
       case HomeCardType.anotherme:
-        return 'another_me';
+        return 'anotherme';
       case HomeCardType.ai_avatar:
         return 'ai_avatar';
       case HomeCardType.txt2img:
@@ -208,7 +258,7 @@ extension HomeCardTypeEx on HomeCardType {
         return 'scribble';
       case HomeCardType.metagram:
         return 'metagram';
-      case HomeCardType.style_morph:
+      case HomeCardType.stylemorph:
         return 'stylemorph';
       case HomeCardType.lineart:
         return 'lineart';
@@ -240,7 +290,7 @@ extension HomeCardTypeEx on HomeCardType {
         return 'AI Scribble';
       case HomeCardType.metagram:
         return 'Metagram';
-      case HomeCardType.style_morph:
+      case HomeCardType.stylemorph:
         return 'Style Morph';
       case HomeCardType.lineart:
         return 'AI Coloring';

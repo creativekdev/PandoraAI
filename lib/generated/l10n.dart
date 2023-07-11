@@ -4670,6 +4670,16 @@ class S {
     );
   }
 
+  /// `Use Style`
+  String get use_style {
+    return Intl.message(
+      'Use Style',
+      name: 'use_style',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Album`
   String get album {
     return Intl.message(
@@ -4695,6 +4705,46 @@ class S {
     return Intl.message(
       'Colors',
       name: 'colors',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please read and agree User Privacy and Terms of use`
+  String get pleaseReadAndAgreePrivacyAndTermsOfUse {
+    return Intl.message(
+      'Please read and agree User Privacy and Terms of use',
+      name: 'pleaseReadAndAgreePrivacyAndTermsOfUse',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `I have read and agree to`
+  String get IHaveReadAndAgreeTo {
+    return Intl.message(
+      'I have read and agree to',
+      name: 'IHaveReadAndAgreeTo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` User Agreement `
+  String get UserAgreement {
+    return Intl.message(
+      ' User Agreement ',
+      name: 'UserAgreement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` Terms of use`
+  String get TermsOfUse {
+    return Intl.message(
+      ' Terms of use',
+      name: 'TermsOfUse',
       desc: '',
       args: [],
     );

@@ -1,9 +1,9 @@
 import 'dart:io';
+
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/social_user_info.dart';
-
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:kochava_tracker/kochava_tracker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -192,6 +192,12 @@ class Events {
     required String style,
   }) =>
       logEvent('discovery_detail_trytemplate_click', eventValues: {'source': source, 'style': style});
+
+  static Future<void> homeTemplateClick({
+    required String source,
+    required String style,
+  }) =>
+      logEvent('home_template_click', eventValues: {'source': source, 'style': style});
 
   static Future<void> discoveryLikeClick({
     required String source,

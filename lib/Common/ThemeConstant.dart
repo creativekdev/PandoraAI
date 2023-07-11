@@ -63,4 +63,23 @@ class ColorConstant {
   static const Color aiDrawGrey = Color(0xfff5f5f6);
   static const Color aiDrawBlue = Color(0xff2778ff);
   // static const Color aiDrawGrey = Color(0xff1e1f1e);
+
+  Color r11CircleColor = Color(0xFF2C2C2C);
+  Color r12CircleColor = Color(0xFF000Ddd);
+  Color r13CircleColor = Color(0xFFF2483F);
+  Color r14CircleColor = Color(0xFFE72866);
+  Color r15CircleColor = Color(0xFF9B2AAE);
+  Color r16CircleColor = Color(0xFF673BB4);
+  Color r21CircleColor = Color(0xFF4051B2);
+  Color r22CircleColor = Color(0xFF2895EF);
+  Color r23CircleColor = Color(0xFF17A8F1);
+  Color r24CircleColor = Color(0xFF16BAD2);
+  Color r25CircleColor = Color(0xFF0E9587);
+  Color r26CircleColor = Color(0xFF4EAE53);
+  Color r31CircleColor = Color(0xFF8BC250);
+  Color r32CircleColor = Color(0xFFCDDB47);
+  Color r33CircleColor = Color(0xFFFEEA4C);
+  Color r34CircleColor = Color(0xFFFEC12E);
+  Color r35CircleColor = Color(0xFFFD9928);
+  Color r36CircleColor = Color(0xFFFC5B31);
 }

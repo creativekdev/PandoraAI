@@ -50,7 +50,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   late StreamSubscription onTabDoubleClickListener;
   late StreamSubscription onSwitchTabListener;
   late TabController tabController;
-  final List<String> tabs = ['Metagram', 'Discovery'];
+  final List<String> tabs = ['Discovery', 'Metagram'];
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
         if (event.data!.first == tabId.id()) {
           var pos = event.data!.last;
           tabController.index = pos;
-          listController.isMetagram = pos == 0;
+          listController.isMetagram = pos == 1;
           easyRefreshController.callRefresh();
           calculateHeaderHeight();
           if (mounted) {
@@ -173,7 +173,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                 if (tabController.index != index) {
                   Events.discoveryTabClick(tab: tabs[index]);
                 }
-                listController.isMetagram = index == 0;
+                listController.isMetagram = index == 1;
                 easyRefreshController.callRefresh();
                 setState(() {
                   calculateHeaderHeight();

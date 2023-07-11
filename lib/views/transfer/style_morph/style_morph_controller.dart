@@ -71,7 +71,7 @@ class StyleMorphController extends GetxController {
     cartoonizerApi = CartoonizerApi().bindController(this);
     api = StyleMorphApi().bindController(this);
     var controller = Get.find<EffectDataController>();
-    categories = controller.data?.stylemorph.children ?? [];
+    categories = controller.data?.stylemorph?.children ?? [];
     if (categories.isNotEmpty) {
       if (resultMap.isNotEmpty) {
         categories.forEach((category) {

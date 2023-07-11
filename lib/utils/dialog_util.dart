@@ -31,7 +31,7 @@ showShareSuccessDialog(BuildContext context) {
                         top: BorderSide(color: ColorConstant.LineColor, width: 1),
                       )))
                   .intoGestureDetector(onTap: () {
-                EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id(), 1]));
+                EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.DISCOVERY.id(), 0]));
                 Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
               }),
             ),

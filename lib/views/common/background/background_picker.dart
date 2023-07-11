@@ -133,12 +133,16 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           imageRatio: imageRatio,
         ).then((value) {
           if (value != null) {
+            setState(() {
+              dataList.insert(0, value);
+            });
             widget.onPick.call(value);
           }
         });
       }),
     ];
     child.addAll(dataList
+        .sublist(0, 4)
         .map(
           (e) => ClipRRect(
             child: buildItem(e),

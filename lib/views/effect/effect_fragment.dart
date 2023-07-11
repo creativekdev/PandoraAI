@@ -5,7 +5,6 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -14,14 +13,22 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/models/enums/home_card_type.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/effect/effect_tab_state.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:skeletons/skeletons.dart';
+
+import '../../Widgets/router/routers.dart';
+import '../../models/discovery_list_entity.dart';
+import '../../models/enums/home_card_type.dart';
+import '../../utils/utils.dart';
+import '../home_new/home_detail_screen.dart';
+import '../home_new/home_details_screen.dart';
+import '../home_new/pai_content_view.dart';
+import '../home_new/pai_recommend_view.dart';
+import '../home_new/pai_sliver_view.dart';
+import '../home_new/pai_swiper.dart';
+import 'home_effect_skeletonView.dart';
 
 class EffectFragment extends StatefulWidget {
   AppTabId tabId;
@@ -45,6 +52,8 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
   late StreamSubscription onUserStateChangeListener;
   late StreamSubscription onUserLoginListener;
   bool proVisible = false;
+
+  EffectFragmentState();
 
   @override
   void initState() {
@@ -99,20 +108,10 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
-        var list = _.data?.homeCards ?? [];
         return Stack(
           children: [
             _.loading
-                ? SkeletonListView(
-                    itemCount: 4,
-                    item: SkeletonItem(
-                      child: Column(children: [
-                        SkeletonLine(style: SkeletonLineStyle(height: $(42))),
-                        SizedBox(height: $(10)),
-                        SkeletonLine(style: SkeletonLineStyle(height: $(160))),
-                      ]),
-                    ).intoContainer(margin: EdgeInsets.only(top: $(15))),
-                  ).intoContainer(margin: EdgeInsets.only(top: 55 + ScreenUtil.getStatusBarHeight()))
+                ? HomeEffectSkeletonView()
                 : _.data == null
                     ? FutureBuilder(
                         future: getConnectionStatus(),
@@ -125,68 +124,118 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                             userManager.refreshUser();
                           });
                         })
-                    : ListView.builder(
-                        padding: EdgeInsets.only(
-                          top: 55 + ScreenUtil.getStatusBarHeight(),
-                          bottom: ScreenUtil.getBottomPadding(context) + 70,
-                        ),
-                        itemBuilder: (context, index) {
-                          var config = list[index];
-                          var type = HomeCardTypeUtils.build(config.type);
-                          if (type == HomeCardType.UNDEFINED) {
-                            return Container();
-                          }
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TitleTextWidget(
-                                      type.title(),
-                                      ColorConstant.White,
-                                      FontWeight.w500,
-                                      $(17),
-                                      align: TextAlign.start,
+                    : CustomScrollView(
+                        slivers: [
+                          SliverPadding(padding: EdgeInsets.only(top: ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight())),
+                          SliverToBoxAdapter(
+                            child: PaiSwiper(
+                              entity: _.data?.homepage?.banners,
+                              onClickItem: (index, data) {
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', data: data);
+                              },
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: PaiSliverView(
+                              list: _.data?.homepage?.tools,
+                              onClickItem: (data) {
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', homeData: data);
+                              },
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: PaiRecommendView(
+                              list: _.data?.homepage?.features,
+                              onClickItem: (data) {
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', homeData: data);
+                              },
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: PaiContentView(
+                              height: $(172),
+                              onTap: (String category, List<DiscoveryListEntity>? posts) {
+                                Navigator.of(context).push<bool>(
+                                  Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
+                                    child: HomeDetailsScreen(
+                                      posts: posts,
+                                      category: category,
+                                      source: "home_page",
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.keyboard_arrow_right,
-                                    color: Colors.white,
-                                    size: $(22),
+                                );
+                              },
+                              onTapItem: (int index) {
+                                Navigator.of(context).push<void>(Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailScreen'),
+                                    child: HomeDetailScreen(
+                                      post: _.data!.homepage!.galleries[0]!.socialPosts[index]!,
+                                      source: "home_page",
+                                    )));
+                              },
+                              galleries: _.data?.homepage?.galleries[0],
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: PaiContentView(
+                              height: $(96),
+                              onTap: (String category, List<DiscoveryListEntity>? posts) {
+                                Navigator.of(context).push<bool>(
+                                  Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
+                                    child: HomeDetailsScreen(
+                                      posts: posts,
+                                      category: category,
+                                      source: "home_page",
+                                    ),
                                   ),
-                                ],
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                              ).intoContainer(padding: EdgeInsets.only(left: $(15), right: $(8), bottom: $(8), top: $(18))),
-                              ClipRRect(
-                                child: CachedNetworkImageUtils.custom(
-                                  context: context,
-                                  useOld: false,
-                                  imageUrl: config.url.appendHash,
-                                  fit: BoxFit.cover,
-                                  width: ScreenUtil.screenSize.width - $(30),
-                                  placeholder: (context, url) => CircularProgressIndicator()
-                                      .intoContainer(
-                                        width: $(25),
-                                        height: $(25),
-                                      )
-                                      .intoCenter()
-                                      .intoContainer(
-                                        width: ScreenUtil.screenSize.width - $(30),
-                                        // width: double.maxFinite,
-                                        height: $(150),
-                                      ),
-                                ),
-                                borderRadius: BorderRadius.circular($(20)),
-                              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
-                            ],
-                          ).intoGestureDetector(onTap: () {
-                            HomeCardTypeUtils.jumpWithHomeType(context, 'home_page', type, InitPos());
-                          });
-                        },
-                        itemCount: list.length,
+                                );
+                              },
+                              onTapItem: (int index) {
+                                Navigator.of(context).push<void>(Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailScreen'),
+                                    child: HomeDetailScreen(
+                                      post: _.data!.homepage!.galleries[1]!.socialPosts[index]!,
+                                      source: "home_page",
+                                    )));
+                              },
+                              galleries: _.data?.homepage?.galleries[1],
+                            ),
+                          ),
+                          SliverToBoxAdapter(
+                            child: PaiContentView(
+                              height: $(172),
+                              onTap: (String category, List<DiscoveryListEntity>? posts) {
+                                Navigator.of(context).push<bool>(
+                                  Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
+                                    child: HomeDetailsScreen(
+                                      posts: posts,
+                                      category: category,
+                                      source: "home_page",
+                                    ),
+                                  ),
+                                );
+                              },
+                              onTapItem: (int index) {
+                                Navigator.of(context).push<void>(
+                                  Right2LeftRouter(
+                                    settings: RouteSettings(name: '/HomeDetailScreen'),
+                                    child: HomeDetailScreen(
+                                      post: _.data!.homepage!.galleries[2]!.socialPosts[index]!,
+                                      source: "home_page",
+                                    ),
+                                  ),
+                                );
+                              },
+                              galleries: _.data?.homepage?.galleries[2],
+                            ),
+                          ),
+                          SliverPadding(padding: EdgeInsets.only(bottom: $(80) + ScreenUtil.getBottomPadding(context)))
+                        ],
                       ),
-            header(context),
+            header(context)
           ],
         );
       },
