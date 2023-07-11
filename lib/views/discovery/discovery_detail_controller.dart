@@ -8,6 +8,9 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../app/user/user_manager.dart';
 
 class DiscoveryDetailController extends GetxController {
   DiscoveryListEntity discoveryEntity;
@@ -34,8 +37,46 @@ class DiscoveryDetailController extends GetxController {
   Rx<int> loadingCommentId = 0.obs;
 
   void onReportAction(DiscoveryCommentListEntity data, BuildContext context) {
+    UserManager userManager = AppDelegate.instance.getManager();
+    userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryDetailScreen', callback: () {
+      reportCommentAction(data, context);
+    });
+  }
+
+  reportCommentAction(DiscoveryCommentListEntity data, BuildContext context) {
+    CacheManager manager = CacheManager().getManager();
+    UserManager userManager = AppDelegate.instance.getManager();
+    final String posts = manager.getString("${CacheManager.reportOfCommentPosts}_${userManager.user?.id}");
+    if (posts.contains("${data.id.toString()},")) {
+      CommonExtension().showToast(S.of(context).HaveReport, gravity: ToastGravity.CENTER);
+      return;
+    }
     api.postCommentReport(data.id).then((value) {
-      CommonExtension().showToast(S.of(context).successful);
+      final String posts = manager.getString("${CacheManager.reportOfCommentPosts}_${userManager.user?.id}");
+      if (posts.isEmpty) {
+        manager.setString("${CacheManager.reportOfCommentPosts}_${userManager.user?.id}", "${data.id.toString()},");
+      } else {
+        manager.setString("${CacheManager.reportOfCommentPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
+      }
+      CommonExtension().showToast(S.of(context).ReceivedReport, gravity: ToastGravity.CENTER);
+    });
+  }
+
+  reportAction(DiscoveryListEntity data, BuildContext context) {
+    CacheManager manager = CacheManager().getManager();
+    UserManager userManager = AppDelegate.instance.getManager();
+    final String posts = manager.getString("${CacheManager.reportOfPosts}_${userManager.user?.id}");
+    if (posts.contains("${data.id.toString()},")) {
+      CommonExtension().showToast(S.of(context).HaveReport, gravity: ToastGravity.CENTER);
+      return;
+    }
+    api.postReport(data.id).then((value) {
+      if (posts.isEmpty) {
+        manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "${data.id.toString()},");
+      } else {
+        manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
+      }
+      CommonExtension().showToast(S.of(context).ReceivedReport, gravity: ToastGravity.CENTER);
     });
   }
 

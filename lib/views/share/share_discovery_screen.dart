@@ -175,7 +175,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   }
 
   submit() {
-    if (!cacheManager.getBool(CacheManager.postOfTerm)) {
+    if (cacheManager.getBool(CacheManager.postOfTerm) != true) {
       CommonExtension().showToast(S.of(context).selectTermOfPost);
       return;
     }

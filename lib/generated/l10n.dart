@@ -4759,6 +4759,26 @@ class S {
       args: [],
     );
   }
+
+  /// `We have received your report`
+  String get ReceivedReport {
+    return Intl.message(
+      'We have received your report',
+      name: 'ReceivedReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have already reported it`
+  String get HaveReport {
+    return Intl.message(
+      'You have already reported it',
+      name: 'HaveReport',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

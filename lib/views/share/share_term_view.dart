@@ -23,6 +23,7 @@ showShareTermDialog(BuildContext context, onClickAgreeMentAction agreeAction) {
             Expanded(
                 child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TitleTextWidget(
                     S.of(context).TermsOfUse,

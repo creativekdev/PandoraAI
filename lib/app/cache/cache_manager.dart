@@ -57,6 +57,8 @@ class CacheManager extends BaseManager {
   static const platformConnections = 'platform_connections';
   static const viewPreviewOpen = 'video_preview_open';
   static const postOfTerm = "post_of_term";
+  static const reportOfPosts = "report_of_posts";
+  static const reportOfCommentPosts = "report_of_comment_posts";
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
@@ -96,7 +98,7 @@ class CacheManager extends BaseManager {
         .toList()
         .filter(
           (t) => t.contains(partKey),
-    )
+        )
         .toList();
   }
 

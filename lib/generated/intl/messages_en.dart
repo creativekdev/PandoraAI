@@ -26,10 +26,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Agree And Continue"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "You have run out of your daily credits. Please come back tomorrow."),
+        "HaveReport": MessageLookupByLibrary.simpleMessage(
+            "You have already reported it"),
         "IHaveReadAndAgreeTo":
             MessageLookupByLibrary.simpleMessage("I have read and agree to"),
         "InputBadWord": MessageLookupByLibrary.simpleMessage(
             "Your input contains the bad word: \$s"),
+        "ReceivedReport": MessageLookupByLibrary.simpleMessage(
+            "We have received your report"),
         "Report": MessageLookupByLibrary.simpleMessage("Report"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("Select Region"),

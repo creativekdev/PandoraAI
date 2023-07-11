@@ -469,5 +469,7 @@
   "AgreeAndContinue": "Aceptar y Continuar",
   "InputBadWord": "Su entrada contiene la mala palabra: $s",
   "Report": "Reportar",
-  "selectTermOfPost": "Por favor, marca el acuerdo de usuario"
+  "selectTermOfPost": "Por favor, marca el acuerdo de usuario",
+  "ReceivedReport": "Ha recibido su informe",
+  "HaveReport": "Ya lo has denunciado"
 }

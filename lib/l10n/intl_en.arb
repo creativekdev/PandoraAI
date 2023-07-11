@@ -469,5 +469,7 @@
   "AgreeAndContinue": "Agree And Continue",
   "InputBadWord": "Your input contains the bad word: $s",
   "Report": "Report",
-  "selectTermOfPost": "Please check the terms of use"
+  "selectTermOfPost": "Please check the terms of use",
+  "ReceivedReport": "We have received your report",
+  "HaveReport": "You have already reported it"
 }

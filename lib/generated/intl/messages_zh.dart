@@ -25,9 +25,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意并继续"),
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
+        "HaveReport": MessageLookupByLibrary.simpleMessage("你已经举报过"),
         "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
         "InputBadWord": MessageLookupByLibrary.simpleMessage("您的输入包含不良词语: \$s"),
-        "Report": MessageLookupByLibrary.simpleMessage("投诉"),
+        "ReceivedReport": MessageLookupByLibrary.simpleMessage("已收到你的举报"),
+        "Report": MessageLookupByLibrary.simpleMessage("举报"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("选择国家/地区"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":

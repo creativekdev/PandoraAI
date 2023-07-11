@@ -10,6 +10,7 @@ import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
@@ -212,11 +213,17 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
                 showDeleteDialog();
               })
             : Image.asset(
-                Images.ic_report,
+                Images.ic_more,
                 color: ColorConstant.White,
+                width: $(20),
               ).intoGestureDetector(onTap: () {
-                controller.api.postReport(widget.discoveryEntity.id).then((value) {
-                  CommonExtension().showToast(S.of(context).successful);
+                LiPopMenu.showLinePop(context, listData: [ListPopItem(text: S.of(context).Report, icon: Images.ic_report)], clickCallback: (index, text) {
+                  if (index == 0) {
+                    UserManager userManager = AppDelegate.instance.getManager();
+                    userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryDetailScreen', callback: () {
+                      controller.reportAction(widget.discoveryEntity, context);
+                    });
+                  }
                 });
               }),
       ),

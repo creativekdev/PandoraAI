@@ -291,14 +291,15 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                               );
                             },
                             longPressCallback: (olpdt) async {
-                              PopmenuUtil.showPopMenu(context, olpdt, [
-                                LongPressItem(
-                                    text: "Report",
-                                    onTap: () {
-                                      listController.onLongPressAction(data.data, context);
-                                      Navigator.of(context).pop();
-                                    })
-                              ]);
+                              PopmenuUtil.showPopMenu(
+                                  context,
+                                  olpdt,
+                                  LongPressItem(
+                                      text: S.of(context).Report,
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                        listController.onLongPressAction(data.data, context);
+                                      }));
                             },
                             onCommentTap: () {
                               Navigator.push(
