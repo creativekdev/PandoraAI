@@ -68,7 +68,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
       {
         'title': 'colors',
         'build': (context) => BackColorsPicker(onPickColor: (color) {
-              //todo
+              dismiss(data: BackgroundData()..color = color);
             }),
       }
     ];
