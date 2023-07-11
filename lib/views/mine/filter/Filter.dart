@@ -25,7 +25,8 @@ class Filter{
     "DRC",
     "MNO",
     "SLS",
-    "NOI"
+    "NOI",
+    "CTN",
   ];
   void setSelectedID(int id) {
     selectedID = id;
@@ -342,6 +343,9 @@ class Filter{
             res_image.setPixel(x, y, modifiedPixel);
           }
         }
+        break;
+      case "CTN":
+        // imgLib;
 
         break;
       default:
