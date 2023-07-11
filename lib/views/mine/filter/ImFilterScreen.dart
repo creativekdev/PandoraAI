@@ -25,8 +25,10 @@ import 'package:common_utils/common_utils.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image/image.dart' as imgLib;
+import 'dart:ui' as ui;
 
 import 'Crop.dart';
+import 'ImageMergingWidget.dart';
 
 enum TABS{
   EFFECT,
@@ -47,7 +49,9 @@ class ImFilterScreen extends StatefulWidget {
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
 
   File? _imageFile, _personImageFile;
-  late imgLib.Image _image, _personImage;
+  late imgLib.Image _image, _personImage, _backgroundImage, _addedImage;
+  late ui.Image _personImageForUi;
+  bool _isPersonImageInitialized = false, _isBackgroundImageInitialized = false;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey _ImageViewerBackgroundKey = GlobalKey();
@@ -81,7 +85,13 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   void dispose() {
     super.dispose();
   }
-
+  Future<ui.Image> convertImage(imgLib.Image image) async {
+    List<int> pngBytes = imgLib.encodePng(image);
+    Uint8List uint8List = Uint8List.fromList(pngBytes);
+    ui.Codec codec = await ui.instantiateImageCodec(uint8List);
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
+  }
   pickImage() {
     showLoading().whenComplete(() {
       AnotherMe.checkPermissions().then((value) {
@@ -102,6 +112,8 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                 var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
                 _personImageFile = File(url!);
                 _personImage = await getLibImage(await getImage(_personImageFile!));
+                _personImageForUi = await convertImage(_personImage);
+                _isPersonImageInitialized = true;
                 // _byte = Uint8List.fromList(imgLib.encodeJpg(_personImage));
               } catch (e) {
                 print('An exception occurred: $e');
@@ -110,6 +122,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               setState(() {
                 _byte;
                 _imageFile;
+                _isPersonImageInitialized;
               });
             } else {
               hideLoading();
@@ -302,7 +315,17 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                                   )
                                   : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
                                   ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte, globalKey: _ImageViewerBackgroundKey,)))
-                                  : Image.memory(
+                                  : (selectedRightTab== TABS.BACKGROUND && _isPersonImageInitialized && _isBackgroundImageInitialized)
+                                  ?ImageMergingWidget(personImage: _personImage, personImageForUI: _personImageForUi, backgroundImage: _backgroundImage,
+                                    onAddImage: (image){
+                                      _isBackgroundImageInitialized = false;
+                                      _addedImage = image;
+                                      _byte = Uint8List.fromList(imgLib.encodeJpg(_addedImage));
+                                      setState(() {
+                                        _byte;
+                                      });
+                                    },)
+                                  :Image.memory(
                                     _byte!,
                                     fit: BoxFit.contain,
                                   )
@@ -673,9 +696,12 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     return BackgroundPickerBar(
       imageRatio: 16 / 9,
       onPick: (BackgroundData data) async {
-        _byte = Uint8List.fromList(imgLib.encodeJpg(await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!)));
+        // _backgroundImage = await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!);
+        File backFile = File(data.filePath!);
+        _backgroundImage = await getLibImage(await getImage(backFile));
+        _isBackgroundImageInitialized = true;
         setState(() {
-          _byte;
+          _isBackgroundImageInitialized;
         });
       },
     ).intoContainer(
