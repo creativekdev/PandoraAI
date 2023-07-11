@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../Common/Extension.dart';
@@ -335,14 +336,9 @@ class DiscoveryListController extends GetxController {
 
   void onLongPressAction(DiscoveryListEntity data, BuildContext context) {
     UserManager userManager = AppDelegate.instance.getManager();
-    // if (userManager.isNeedLogin) {
-    //   Navigator.of(context).pop();
     userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryListScreen', callback: () {
       reportAction(data, context);
     });
-    // } else {
-    //   reportAction(data, context);
-    // }
   }
 
   reportAction(DiscoveryListEntity data, BuildContext context) {
@@ -359,7 +355,7 @@ class DiscoveryListController extends GetxController {
       } else {
         manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
       }
-      CommonExtension().showToast(S.of(context).ReceivedReport, gravity: ToastGravity.CENTER);
+      showReportDialog(context);
     });
   }
 }

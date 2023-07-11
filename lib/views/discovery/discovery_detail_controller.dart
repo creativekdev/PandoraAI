@@ -8,6 +8,7 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../app/user/user_manager.dart';
@@ -58,7 +59,7 @@ class DiscoveryDetailController extends GetxController {
       } else {
         manager.setString("${CacheManager.reportOfCommentPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
       }
-      CommonExtension().showToast(S.of(context).ReceivedReport, gravity: ToastGravity.CENTER);
+      showReportDialog(context);
     });
   }
 
@@ -76,7 +77,7 @@ class DiscoveryDetailController extends GetxController {
       } else {
         manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
       }
-      CommonExtension().showToast(S.of(context).ReceivedReport, gravity: ToastGravity.CENTER);
+      showReportDialog(context);
     });
   }
 
