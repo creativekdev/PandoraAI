@@ -4,76 +4,82 @@ typedef onClickAgreeMentAction = Function();
 
 showShareTermDialog(BuildContext context, onClickAgreeMentAction agreeAction) {
   showModalBottomSheet(
+      isScrollControlled: true,
+      constraints: BoxConstraints(minHeight: ScreenUtil.screenSize.height * 0.8, maxHeight: ScreenUtil.screenSize.height * 0.8),
       context: context,
       builder: (context) {
-        return ListView(
+        return Column(
           children: [
-            UnconstrainedBox(
-              child: Container(
-                margin: EdgeInsets.only(top: $(16)),
-                width: $(40),
-                height: $(5),
-                alignment: Alignment.topCenter,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular($(3)),
-                ),
+            Container(
+              width: $(40),
+              height: $(5),
+              alignment: Alignment.topCenter,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular($(3)),
               ),
             ),
-            TitleTextWidget(
-              S.of(context).TermsOfUse,
-              ColorConstant.White,
-              FontWeight.w600,
-              $(36),
-              align: TextAlign.left,
-            ).intoPadding(
-                padding: EdgeInsets.only(
-              left: $(16),
-              top: $(35),
-            )),
+            SizedBox(height: $(10)),
             Expanded(
-              child: TitleTextWidget(
-                S.of(context).TermsOfPost,
-                ColorConstant.White,
-                FontWeight.w400,
-                $(15),
-                align: TextAlign.left,
-                maxLines: 1000,
+                child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TitleTextWidget(
+                    S.of(context).TermsOfUse,
+                    ColorConstant.White,
+                    FontWeight.w600,
+                    $(36),
+                    align: TextAlign.left,
+                  ).intoPadding(
+                      padding: EdgeInsets.only(
+                    left: $(16),
+                    top: $(25),
+                  )),
+                  TitleTextWidget(
+                    S.of(context).TermsOfPost,
+                    ColorConstant.White,
+                    FontWeight.w400,
+                    $(15),
+                    align: TextAlign.left,
+                    maxLines: 1000,
+                  ).intoContainer(
+                      width: ScreenUtil.screenSize.width - $(32),
+                      padding: EdgeInsets.only(
+                        left: $(16),
+                        right: $(16),
+                        top: $(35),
+                      )),
+                  TitleTextWidget(
+                    S.of(context).AgreeAndContinue,
+                    ColorConstant.White,
+                    FontWeight.w500,
+                    $(15),
+                  )
+                      .intoContainer(
+                    height: $(48),
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(
+                      left: $(16),
+                      right: $(16),
+                      top: $(35),
+                      bottom: $(35),
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorConstant.BlueColor,
+                      borderRadius: BorderRadius.circular(
+                        $(
+                          $(8),
+                        ),
+                      ),
+                    ),
+                  )
+                      .intoGestureDetector(onTap: () {
+                    Navigator.of(context).pop();
+                    agreeAction();
+                  }),
+                ],
               ),
-            ).intoContainer(
-                width: ScreenUtil.screenSize.width - $(32),
-                padding: EdgeInsets.only(
-                  left: $(16),
-                  right: $(16),
-                  top: $(35),
-                )),
-            TitleTextWidget(
-              S.of(context).AgreeAndContinue,
-              ColorConstant.White,
-              FontWeight.w500,
-              $(15),
-            )
-                .intoContainer(
-              height: $(48),
-              alignment: Alignment.center,
-              margin: EdgeInsets.only(
-                left: $(16),
-                right: $(16),
-                top: $(35),
-                bottom: $(35),
-              ),
-              decoration: BoxDecoration(
-                color: ColorConstant.BlueColor,
-                borderRadius: BorderRadius.circular(
-                  $(
-                    $(8),
-                  ),
-                ),
-              ),
-            )
-                .intoGestureDetector(onTap: () {
-              agreeAction();
-            }),
+            )),
           ],
         ).intoContainer(
             padding: EdgeInsets.only(top: $(16), bottom: $(10)),
