@@ -3,13 +3,17 @@ import '../../../images-res.dart';
 
 class PopmenuUtil {
   static Future showPopMenu(BuildContext context, LongPressStartDetails details, LongPressItem item) {
+    double left = details.globalPosition.dx - $(64) > 0 ? details.globalPosition.dx - $(64) : $(15);
+    if (left + $(128) > ScreenUtil.screenSize.width) {
+      left = ScreenUtil.screenSize.width - $(143);
+    }
     return showDialog(
         context: context,
         builder: (context) {
           return Stack(
             children: [
               Positioned(
-                  left: details.globalPosition.dx - $(64),
+                  left: left,
                   top: details.globalPosition.dy - $(24),
                   child: UnconstrainedBox(
                       child: Container(
