@@ -470,7 +470,7 @@
   "AgreeAndContinue": "同意并继续",
   "InputBadWord": "您的输入包含不良词语: $s",
   "Report": "举报",
-  "selectTermOfPost": "请勾选用户协议",
+  "selectTermOfPost": "请查看并同意《使用条款》",
   "ReceivedReport": "已收到你的举报",
-  "HaveReport": "你已经举报过"
+  "HaveReport": "你已经举报过了"
 }

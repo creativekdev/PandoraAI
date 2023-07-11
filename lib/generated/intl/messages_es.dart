@@ -594,7 +594,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "see_it_now": MessageLookupByLibrary.simpleMessage("Ve a verlo"),
         "select": MessageLookupByLibrary.simpleMessage("elegir"),
         "selectTermOfPost": MessageLookupByLibrary.simpleMessage(
-            "Por favor, marca el acuerdo de usuario"),
+            "Por favor, marca el Condiciones de uso"),
         "select_a_style": MessageLookupByLibrary.simpleMessage(
             "Por favor, seleccione un estilo"),
         "select_completed":

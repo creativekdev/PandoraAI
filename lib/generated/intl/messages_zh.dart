@@ -25,7 +25,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意并继续"),
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
-        "HaveReport": MessageLookupByLibrary.simpleMessage("你已经举报过"),
+        "HaveReport": MessageLookupByLibrary.simpleMessage("你已经举报过了"),
         "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
         "InputBadWord": MessageLookupByLibrary.simpleMessage("您的输入包含不良词语: \$s"),
         "ReceivedReport": MessageLookupByLibrary.simpleMessage("已收到你的举报"),
@@ -464,7 +464,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_order": MessageLookupByLibrary.simpleMessage("订单搜索"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
-        "selectTermOfPost": MessageLookupByLibrary.simpleMessage("请勾选用户协议"),
+        "selectTermOfPost":
+            MessageLookupByLibrary.simpleMessage("请查看并同意《使用条款》"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_completed": MessageLookupByLibrary.simpleMessage("选择完成"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),

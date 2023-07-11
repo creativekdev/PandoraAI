@@ -177,6 +177,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   submit() {
     if (cacheManager.getBool(CacheManager.postOfTerm) != true) {
       CommonExtension().showToast(S.of(context).selectTermOfPost);
+      showTermsDialog(context);
       return;
     }
     var text = textEditingController.text.trim();
@@ -530,13 +531,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                             style: TextStyle(color: ColorConstant.BlueColor),
                             recognizer: termTap
                               ..onTap = () {
-                                showShareTermDialog(context, () {
-                                  bool isAgree = cacheManager.getBool(CacheManager.postOfTerm);
-                                  if (isAgree != true) {
-                                    cacheManager.setBool(CacheManager.postOfTerm, true);
-                                    setState(() {});
-                                  }
-                                });
+                                showTermsDialog(context);
                               }),
                       ]),
                       maxLines: 3,
@@ -554,5 +549,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           }
           return true;
         });
+  }
+
+  showTermsDialog(BuildContext context) {
+    showShareTermDialog(context, () {
+      bool isAgree = cacheManager.getBool(CacheManager.postOfTerm);
+      if (isAgree != true) {
+        cacheManager.setBool(CacheManager.postOfTerm, true);
+        setState(() {});
+      }
+    });
   }
 }
