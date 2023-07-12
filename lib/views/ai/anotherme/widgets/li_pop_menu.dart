@@ -9,14 +9,8 @@ class LiPopMenu {
   static BuildContext? menuContext;
 
   /// 显示带线带背景 pop
-  static void showLinePop(BuildContext context, {bool isShowBg = true, _ClickCallBack? clickCallback, required List<ListPopItem> listData}) {
+  static void showLinePop(BuildContext context, {bool isShowBg = true, _ClickCallBack? clickCallback, required List<ListPopItem> listData, Color? color}) {
     menuContext = context;
-    // List _listData = [
-    //   {"text": S.of(context).share, "icon": Images.ic_share},
-    //   {"text": S.of(context).tabDiscovery, "icon": Images.ic_share_discovery},
-    //   {"text": S.of(context).download, "icon": Images.ic_download},
-    // ];
-    // 带线
     Widget _buildMenuLineCell(dataArr) {
       return ListView.separated(
         itemCount: dataArr.length,
@@ -41,7 +35,7 @@ class LiPopMenu {
                           dataArr[index].icon,
                           width: $(24),
                           height: $(24),
-                          // color: Color(0xFF333333),
+                          color: color,
                         ),
                         SizedBox(width: $(12)),
                         Text(listData[index].text, style: TextStyle(color: Color(0xFFFFFFFF), fontSize: $(14)))

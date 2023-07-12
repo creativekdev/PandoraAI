@@ -2,9 +2,16 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
+import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../../Common/Extension.dart';
+import '../../app/app.dart';
 
 class DiscoveryListController extends GetxController {
   late CartoonizerApi api;
@@ -82,6 +89,7 @@ class DiscoveryListController extends GetxController {
       }
       lastScrollPos = newPos;
     });
+
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       // Check if the event data is null or true and the list is not loading.
       if (event.data ?? true && !listLoading) {
@@ -324,6 +332,31 @@ class DiscoveryListController extends GetxController {
       });
       return list.length != pageSize;
     }
+  }
+
+  void onLongPressAction(DiscoveryListEntity data, BuildContext context) {
+    UserManager userManager = AppDelegate.instance.getManager();
+    userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryListScreen', callback: () {
+      reportAction(data, context);
+    });
+  }
+
+  reportAction(DiscoveryListEntity data, BuildContext context) {
+    CacheManager manager = CacheManager().getManager();
+    UserManager userManager = AppDelegate.instance.getManager();
+    final String posts = manager.getString("${CacheManager.reportOfPosts}_${userManager.user?.id}");
+    if (posts.contains("${data.id.toString()},")) {
+      CommonExtension().showToast(S.of(context).HaveReport, gravity: ToastGravity.CENTER);
+      return;
+    }
+    api.postReport(data.id).then((value) {
+      if (posts.isEmpty) {
+        manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "${data.id.toString()},");
+      } else {
+        manager.setString("${CacheManager.reportOfPosts}_${userManager.user?.id}", "$posts${data.id.toString()},");
+      }
+      showReportDialog(context);
+    });
   }
 }
 

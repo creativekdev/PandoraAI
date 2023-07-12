@@ -498,6 +498,14 @@ class CartoonizerApi extends RetryAbleRequester {
     });
   }
 
+  Future<BaseEntity?> postReport(int postid) async {
+    return post('/social_post/report/$postid');
+  }
+
+  Future<BaseEntity?> postCommentReport(int postid) async {
+    return post('/social_post_comment/report/$postid');
+  }
+
   Future<ApiConfigEntity?> getHomeConfig() async {
     var baseEntity = await get(
       "/tool/cartoonize_config_new/v7",
