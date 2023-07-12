@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/home_page_entity.g.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 @JsonSerializable()
 class HomePageEntity {
@@ -35,18 +36,49 @@ class HomePageEntity {
 
 @JsonSerializable()
 class HomePageHomepageTools {
-  late String category;
-  @JSONField(name: "resource_type")
-  late String resourceType;
+  @JSONField(name: 'category')
+  String? categoryString;
+
+  @JSONField(serialize: false, deserialize: false)
+  HomeCardType? _category;
+
+  HomeCardType get category {
+    if (_category == null) {
+      _category = HomeCardTypeUtils.build(categoryString);
+    }
+    return _category!;
+  }
+
+  set category(HomeCardType type) {
+    _category = type;
+    categoryString = _category!.value();
+  }
+
+  @JSONField(name: 'resource_type')
+  String? typeString;
+  @JSONField(serialize: false, deserialize: false)
+  DiscoveryResourceType? _resourceType;
+
+  DiscoveryResourceType get resourceType {
+    if (_resourceType == null) {
+      _resourceType = DiscoveryResourceTypeUtil.build(typeString);
+    }
+    return _resourceType!;
+  }
+
+  set resourceType(DiscoveryResourceType type) {
+    _resourceType = type;
+    typeString = _resourceType!.value();
+  }
+
   late String url;
   String? payload;
   late String title;
   @JSONField(name: "cartoonize_key")
   String? cartoonizeKey;
 
-  HomePageHomepageTools({String? url, String? resourceType}) {
+  HomePageHomepageTools({String? url}) {
     this.url = url ?? '';
-    this.resourceType = resourceType ?? '';
   }
 
   factory HomePageHomepageTools.fromJson(Map<String, dynamic> json) => $HomePageHomepageToolsFromJson(json);
@@ -61,7 +93,23 @@ class HomePageHomepageTools {
 
 @JsonSerializable()
 class HomePageHomepageGalleries {
-  late String category;
+  @JSONField(name: 'category')
+  String? categoryString;
+
+  @JSONField(serialize: false, deserialize: false)
+  HomeCardType? _category;
+
+  HomeCardType get category {
+    if (_category == null) {
+      _category = HomeCardTypeUtils.build(categoryString);
+    }
+    return _category!;
+  }
+
+  set category(HomeCardType type) {
+    _category = type;
+    categoryString = _category!.value();
+  }
   @JSONField(name: "social_posts")
   late List<DiscoveryListEntity> socialPosts;
   String? title;

@@ -2,6 +2,8 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+
 
 HomePageEntity $HomePageEntityFromJson(Map<String, dynamic> json) {
 	final HomePageEntity homePageEntity = HomePageEntity();
@@ -35,13 +37,13 @@ Map<String, dynamic> $HomePageEntityToJson(HomePageEntity entity) {
 
 HomePageHomepageTools $HomePageHomepageToolsFromJson(Map<String, dynamic> json) {
 	final HomePageHomepageTools homePageHomepageTools = HomePageHomepageTools();
-	final String? category = jsonConvert.convert<String>(json['category']);
-	if (category != null) {
-		homePageHomepageTools.category = category;
+	final String? categoryString = jsonConvert.convert<String>(json['category']);
+	if (categoryString != null) {
+		homePageHomepageTools.categoryString = categoryString;
 	}
-	final String? resourceType = jsonConvert.convert<String>(json['resource_type']);
-	if (resourceType != null) {
-		homePageHomepageTools.resourceType = resourceType;
+	final String? typeString = jsonConvert.convert<String>(json['resource_type']);
+	if (typeString != null) {
+		homePageHomepageTools.typeString = typeString;
 	}
 	final String? url = jsonConvert.convert<String>(json['url']);
 	if (url != null) {
@@ -64,8 +66,8 @@ HomePageHomepageTools $HomePageHomepageToolsFromJson(Map<String, dynamic> json) 
 
 Map<String, dynamic> $HomePageHomepageToolsToJson(HomePageHomepageTools entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['category'] = entity.category;
-	data['resource_type'] = entity.resourceType;
+	data['category'] = entity.categoryString;
+	data['resource_type'] = entity.typeString;
 	data['url'] = entity.url;
 	data['payload'] = entity.payload;
 	data['title'] = entity.title;
@@ -75,9 +77,9 @@ Map<String, dynamic> $HomePageHomepageToolsToJson(HomePageHomepageTools entity) 
 
 HomePageHomepageGalleries $HomePageHomepageGalleriesFromJson(Map<String, dynamic> json) {
 	final HomePageHomepageGalleries homePageHomepageGalleries = HomePageHomepageGalleries();
-	final String? category = jsonConvert.convert<String>(json['category']);
-	if (category != null) {
-		homePageHomepageGalleries.category = category;
+	final String? categoryString = jsonConvert.convert<String>(json['category']);
+	if (categoryString != null) {
+		homePageHomepageGalleries.categoryString = categoryString;
 	}
 	final List<DiscoveryListEntity>? socialPosts = jsonConvert.convertListNotNull<DiscoveryListEntity>(json['social_posts']);
 	if (socialPosts != null) {
@@ -92,7 +94,7 @@ HomePageHomepageGalleries $HomePageHomepageGalleriesFromJson(Map<String, dynamic
 
 Map<String, dynamic> $HomePageHomepageGalleriesToJson(HomePageHomepageGalleries entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['category'] = entity.category;
+	data['category'] = entity.categoryString;
 	data['social_posts'] =  entity.socialPosts.map((v) => v.toJson()).toList();
 	data['title'] = entity.title;
 	return data;

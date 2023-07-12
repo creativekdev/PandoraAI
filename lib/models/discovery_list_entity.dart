@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/discovery_list_entity.g.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 @JsonSerializable()
 class DiscoveryListEntity {
@@ -23,7 +24,24 @@ class DiscoveryListEntity {
   late String modified;
   late int id;
   late String status;
-  String category = '';
+  @JSONField(name: 'category')
+  String? categoryString;
+
+  @JSONField(serialize: false, deserialize: false)
+  HomeCardType? _category;
+
+  HomeCardType get category {
+    if (_category == null) {
+      _category = HomeCardTypeUtils.build(categoryString);
+    }
+    return _category!;
+  }
+
+  set category(HomeCardType type) {
+    _category = type;
+    categoryString = _category!.value();
+  }
+
   @JSONField(name: "cartoonize_key")
   late String cartoonizeKey;
   @JSONField(name: "like_id")

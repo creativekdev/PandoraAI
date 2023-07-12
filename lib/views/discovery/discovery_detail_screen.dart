@@ -24,8 +24,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 extension DiscoveryListEntityEx on DiscoveryListEntity {
   String? getStyle(BuildContext context) {
     EffectDataController effectDataController = Get.find();
-    var type = HomeCardTypeUtils.build(category);
-    switch (type) {
+    switch (category) {
       case HomeCardType.cartoonize:
         if (effectDataController.data == null) {
           return null;
@@ -54,6 +53,10 @@ extension DiscoveryListEntityEx on DiscoveryListEntity {
       case HomeCardType.lineart:
         return 'lineart';
       case HomeCardType.UNDEFINED:
+        return null;
+      case HomeCardType.removeBg:
+        return 'removebg';
+      case HomeCardType.nothing:
         return null;
     }
   }

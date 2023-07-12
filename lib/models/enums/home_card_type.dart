@@ -86,7 +86,7 @@ class HomeCardTypeUtils {
       }
       jumpWithHomeType(context, source, target, pos);
     } else if (data != null) {
-      var target = build(data.category);
+      var target = data.category;
       InitPos initPos = InitPos();
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
@@ -134,7 +134,7 @@ class HomeCardTypeUtils {
       }
       jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     } else if (homeData != null) {
-      var target = build(homeData.category);
+      var target = homeData.category;
       InitPos initPos = InitPos();
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
@@ -279,7 +279,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.txt2img:
         return 'txt2img';
       case HomeCardType.UNDEFINED:
-        return '';
+        return 'undefined';
       case HomeCardType.scribble:
         return 'scribble';
       case HomeCardType.metagram:
@@ -304,7 +304,7 @@ extension HomeCardTypeEx on HomeCardType {
     }
   }
 
-  title() {
+  String title() {
     switch (this) {
       case HomeCardType.cartoonize:
         return 'Facetoon';

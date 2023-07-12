@@ -135,6 +135,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           if (value != null) {
             setState(() {
               dataList.insert(0, value);
+              cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
             });
             widget.onPick.call(value);
           }
