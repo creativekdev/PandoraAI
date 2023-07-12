@@ -42,7 +42,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Activate failure."),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("Activate successfully!"),
+        "add_address":
+            MessageLookupByLibrary.simpleMessage("Add Shipping Address"),
         "address": MessageLookupByLibrary.simpleMessage("Address"),
+        "addresses": MessageLookupByLibrary.simpleMessage("Addresses"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1":
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
@@ -187,6 +190,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Your account has been successfully deleted. We always welcome you to use our service again."),
         "delete_account_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to delete your account?"),
+        "delete_address_success": MessageLookupByLibrary.simpleMessage(
+            "Address deleted successfully"),
         "delete_succeed":
             MessageLookupByLibrary.simpleMessage("delete succeed"),
         "deny": MessageLookupByLibrary.simpleMessage("Deny"),
@@ -212,6 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "edit_address": MessageLookupByLibrary.simpleMessage("Edit Address"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
         "effectRecentEmptyHint": MessageLookupByLibrary.simpleMessage(
             "No record of your usage found\nPlease make your first profile pic to view your history here"),
@@ -537,6 +543,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "Are you sure to unsubscribe?"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
         "saturday": MessageLookupByLibrary.simpleMessage("Saturday"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "save_address_success":
+            MessageLookupByLibrary.simpleMessage("Address saved successfully"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to save %d images"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
@@ -655,6 +664,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),
         "unpaid": MessageLookupByLibrary.simpleMessage("Unpaid"),
+        "update_address_success": MessageLookupByLibrary.simpleMessage(
+            "Address deleted successfully"),
         "update_now": MessageLookupByLibrary.simpleMessage("Update now"),
         "update_pass": MessageLookupByLibrary.simpleMessage("Update Password"),
         "update_profile":

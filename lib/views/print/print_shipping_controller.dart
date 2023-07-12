@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/models/state_entity.dart';
+import 'package:cartoonizer/models/get_address_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
 import 'package:cartoonizer/views/print/print_payment_cancel_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_screen.dart';
@@ -14,34 +12,17 @@ import 'package:google_maps_webservice/places.dart';
 
 import '../../Controller/effect_data_controller.dart';
 import '../../Widgets/router/routers.dart';
+import '../../app/user/user_manager.dart';
+import '../../models/address_entity.dart';
 import '../../models/print_order_entity.dart';
 import '../../models/print_orders_entity.dart';
 import '../../models/print_payment_entity.dart';
 import '../../models/print_product_entity.dart';
-import '../../models/region_code_entity.dart';
-import '../common/region/select_region_page.dart';
-import '../common/state/select_state_page.dart';
-import '../common/state/states_list.dart';
 
 class PrintShippingController extends GetxController {
-  PrintShippingController() {
-    _places = GoogleMapsPlaces(apiKey: googleMapApiKey);
-  }
-
   late CartoonizerApi cartoonizerApi;
 
-  TextEditingController searchAddressController = TextEditingController();
-  TextEditingController apartmentController = TextEditingController();
-  TextEditingController zipCodeController = TextEditingController();
-  TextEditingController firstNameController = TextEditingController();
-  TextEditingController secondNameController = TextEditingController();
-  TextEditingController contactNumberController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
-  TextEditingController countryController = TextEditingController();
-  TextEditingController stateController = TextEditingController();
   ScrollController scrollController = ScrollController();
-
-  FocusNode searchAddressFocusNode = FocusNode();
 
   EffectDataController effectdatacontroller = Get.find();
   PrintController printController = Get.find();
@@ -64,46 +45,16 @@ class PrintShippingController extends GetxController {
 
   String _variantId = "";
 
-  String getZipCode(List<AddressComponent> addressComponents) {
-    for (AddressComponent component in addressComponents) {
-      if (component.types.contains('postal_code')) {
-        return component.shortName;
-      }
-    }
-    return "";
-  }
-
-  setStateEntity(List<AddressComponent> addressComponents) {
-    for (AddressComponent component in addressComponents) {
-      if (component.types.contains('political') && component.types.contains('administrative_area_level_1')) {
-        stateController.text = component.longName;
-        _stateEntity?.name = component.longName;
-        _stateEntity?.code = component.shortName;
-        break;
-      }
-    }
-  }
-
-  String _formattedAddress = "";
-
-  set formattedAddress(String value) {
-    _formattedAddress = value;
-  }
-
-  String get formattedAddress => _formattedAddress;
-
-  String getCityName(List<AddressComponent> addressComponents) {
-    for (AddressComponent component in addressComponents) {
-      if (component.types.contains('political') && component.types.contains('locality')) {
-        return component.shortName;
-      }
-    }
-    return "";
-  }
+  // String _formattedAddress = "";
+  //
+  // set formattedAddress(String value) {
+  //   _formattedAddress = value;
+  // }
+  //
+  // String get formattedAddress => _formattedAddress;
 
   set variantId(String value) {
     _variantId = value;
-    searchAddressFocusNode.hasFocus;
     update();
   }
 
@@ -111,9 +62,12 @@ class PrintShippingController extends GetxController {
 
   double get total => _total;
 
-  List<Prediction> _predictions = [];
   late PrintOrderDataPayload orderPayload;
   late PrintOrderEntity? printOrderEntity;
+
+  // late GetAddressEntity? address;
+  late List<AddressDataCustomerAddress> addresses;
+  AddressDataCustomerAddress? seletedAddress = null;
 
   bool _isResult = false;
 
@@ -124,51 +78,7 @@ class PrintShippingController extends GetxController {
 
   bool get isResult => _isResult;
 
-  set predictions(List<Prediction> value) {
-    _predictions = value;
-    update();
-  }
-
-  List<Prediction> get predictions => _predictions;
   List<Component> components = [];
-
-  Future searchLocation(GoogleMapsPlaces places, String text) async {
-    if (text.isEmpty) {
-      _predictions = [];
-      return;
-    }
-    // 进行地点搜索操作
-    PlacesAutocompleteResponse response = await places.autocomplete(
-      text, // 搜索关键字
-      types: ['geocode'], // 限制搜索结果类型为地理编码（地址）
-      // language: 'en', // 搜索结果的语言
-      components: components, // 限制搜索结果的条件
-    );
-
-    // 处理搜索结果
-    if (response.isOkay) {
-      _predictions = response.predictions;
-    }
-  }
-
-  OverlayEntry? _overlayEntry;
-
-  set overlayEntry(OverlayEntry? value) {
-    _overlayEntry = value;
-    update();
-  }
-
-  OverlayEntry? get overlayEntry => _overlayEntry;
-  final String googleMapApiKey = 'AIzaSyAb_K04sbhK0h7hDPeHlOcNPtlX059TxHk'; // 替换为你的 Google Maps API 密钥
-
-  GoogleMapsPlaces? _places;
-
-  set places(GoogleMapsPlaces value) {
-    _places = value;
-    update();
-  }
-
-  GoogleMapsPlaces get places => _places!;
 
   int _deliveryIndex = 0;
 
@@ -177,6 +87,14 @@ class PrintShippingController extends GetxController {
   set deliveryIndex(int value) {
     _deliveryIndex = value;
     update();
+  }
+
+  onUpdateAddress(int index) {
+    AddressDataCustomerAddress? address = addresses[index];
+    if (address.id != seletedAddress?.id) {
+      seletedAddress = address;
+      update();
+    }
   }
 
   onTapDeliveryType(int index) {
@@ -194,134 +112,70 @@ class PrintShippingController extends GetxController {
 
   bool get isShowSate => _isShowState;
 
-  StateEntity? _stateEntity;
-
-  set stateEntity(StateEntity? value) {
-    _stateEntity = value;
-    update();
-  }
-
-  StateEntity? get stateEntity => _stateEntity;
-
-  RegionCodeEntity? _countryEntity;
-
-  set countryEntity(RegionCodeEntity? value) {
-    _countryEntity = value;
-    update();
-  }
-
-  RegionCodeEntity? get countryEntity => _countryEntity;
-
-  RegionCodeEntity? _regionEntity;
-
-  set regionEntity(RegionCodeEntity? value) {
-    _regionEntity = value;
-    update();
-  }
-
-  RegionCodeEntity? get regionEntity => _regionEntity;
+  // StateEntity? _stateEntity;
+  //
+  // set stateEntity(StateEntity? value) {
+  //   _stateEntity = value;
+  //   update();
+  // }
+  //
+  // StateEntity? get stateEntity => _stateEntity;
+  //
+  // RegionCodeEntity? _countryEntity;
+  //
+  // set countryEntity(RegionCodeEntity? value) {
+  //   _countryEntity = value;
+  //   update();
+  // }
+  //
+  // RegionCodeEntity? get countryEntity => _countryEntity;
+  //
+  // RegionCodeEntity? _regionEntity;
+  //
+  // set regionEntity(RegionCodeEntity? value) {
+  //   _regionEntity = value;
+  //   update();
+  // }
+  //
+  // RegionCodeEntity? get regionEntity => _regionEntity;
 
   bool _viewInit = false;
 
   set viewInit(bool value) {
     _viewInit = value;
-
     update();
   }
 
-  onTapRegion(BuildContext context, SelectRegionType type) {
-    SelectRegionPage.pickRegion(context, type: type).then((value) {
-      if (value != null) {
-        if (type == SelectRegionType.callingCode) {
-          _regionEntity = value;
-        } else if (type == SelectRegionType.country) {
-          _countryEntity = value;
-          countryController.text = _countryEntity!.regionName!;
-          _isShowState = getStateList();
-          components = [Component(Component.country, _countryEntity!.regionCode!)];
-        }
-        update();
-      }
-    });
-  }
-
-  onTapState(BuildContext context) {
-    if (countryController.text.isNotEmpty) {
-      SelectStatePage.pickRegion(context, countryEntity?.regionCode ?? '').then((value) {
-        if (value != null) {
-          stateController.text = value.name!;
-          update();
-        }
-      });
-    }
-  }
-
-  bool getStateList() {
-    if (_countryEntity == null) {
-      return false;
-    }
-    return (states_list[_countryEntity?.regionCode ?? ''] ?? []).length > 0;
-  }
-
   Future<bool> onSubmit(BuildContext context) async {
-    if (countryController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).country_region));
+    if (seletedAddress == null) {
       return false;
     }
-    if (getStateList() && stateController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).STATE));
-      return false;
-    }
-    if (searchAddressController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).address));
-      return false;
-    }
-
-    if (firstNameController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).first_name));
-      return false;
-    }
-    if (secondNameController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).last_name));
-      return false;
-    }
-    if (zipCodeController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).zip_code));
-      return false;
-    }
-    if (contactNumberController.text.isEmpty) {
-      CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).contact_number));
-      return false;
-    }
-
     var address = {
-      "first_name": firstNameController.text,
-      "last_name": secondNameController.text,
-      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-      "country_code": countryEntity?.regionCode,
-      "country": countryEntity?.regionName,
-      "address1": formattedAddress.isEmpty
-          ? "${searchAddressController.text} ,${cityController.text} ,${stateEntity?.code} ${zipCodeController.text}, ${countryController.text}"
-          : formattedAddress,
-      "address2": apartmentController.text,
-      "zip": zipCodeController.text,
-      "default": false,
-      "city": cityController.text,
-      "province": stateEntity?.name,
-      "province_code": stateEntity?.code
+      "first_name": seletedAddress?.firstName,
+      "last_name": seletedAddress?.lastName,
+      "phone": seletedAddress?.phone,
+      "country_code": seletedAddress?.countryCode,
+      "country": seletedAddress?.country,
+      "address1": seletedAddress?.address1,
+      "address2": seletedAddress?.address2,
+      "zip": seletedAddress?.zip,
+      "default": true,
+      "city": seletedAddress?.city,
+      "province": seletedAddress?.province,
+      "province_code": seletedAddress?.provinceCode
     };
     await getVariantId();
     var body = {
       "variant_id": variantId,
       "quantity": printController.quantity,
       "customer": {
-        "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-        "first_name": firstNameController.text,
-        "last_name": secondNameController.text,
+        "phone": seletedAddress?.phone,
+        "first_name": seletedAddress?.firstName,
+        "last_name": seletedAddress?.lastName,
         "addresses": [address],
         "send_email_welcome": false,
         "email": UserManager().user?.getShownEmail() ?? '',
-        "name": firstNameController.text + " " + secondNameController.text
+        "name": "${seletedAddress?.firstName} ${seletedAddress?.lastName}"
       },
       "shipping_address": address,
       "shipping_price": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100.0,
@@ -338,9 +192,9 @@ class PrintShippingController extends GetxController {
             "price": (double.parse(printController.product?.data.rows.first.variants.edges.first.node.price ?? "0") * 100).toInt()
           },
           "customer": {
-            "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
-            "first_name": firstNameController.text,
-            "last_name": secondNameController.text,
+            "phone": seletedAddress?.phone,
+            "first_name": seletedAddress?.firstName,
+            "last_name": seletedAddress?.lastName,
             "addresses": [address],
           },
           "delivery": effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.toJson(),
@@ -449,43 +303,37 @@ class PrintShippingController extends GetxController {
 
   bool get viewInit => _viewInit;
 
-  onSuccess() {
+  @override
+  void onInit() {
+    super.onInit();
+    // _regionEntity = RegionCodeEntity();
+    // _regionEntity?.regionCode = "US";
+    // _regionEntity?.callingCode = "+1";
+    // _regionEntity?.regionName = "United States";
+    // _regionEntity?.regionFlag = "🇺🇸";
+    // _regionEntity?.regionSyllables = [];
+
+    cartoonizerApi = CartoonizerApi().bindController(this);
+    _total = printController.getSubTotal() + effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100;
+  }
+
+  onRequestAddress() async {
+    GetAddressEntity? address = await cartoonizerApi.getAddress();
+    addresses = address?.data?.customer.addresses ?? [];
+    seletedAddress = addresses.first;
     _viewInit = true;
     update();
   }
 
   @override
-  void onInit() {
-    super.onInit();
-    _regionEntity = RegionCodeEntity();
-    _regionEntity?.regionCode = "US";
-    _regionEntity?.callingCode = "+1";
-    _regionEntity?.regionName = "United States";
-    _regionEntity?.regionFlag = "🇺🇸";
-    _regionEntity?.regionSyllables = [];
-
-    cartoonizerApi = CartoonizerApi().bindController(this);
-    _total = printController.getSubTotal() + effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100;
-    _viewInit = true;
-  }
-
-  @override
   void onReady() {
     super.onReady();
+    onRequestAddress();
   }
 
   @override
   void dispose() {
     super.dispose();
     cartoonizerApi.unbind();
-    searchAddressController.dispose();
-    apartmentController.dispose();
-    firstNameController.dispose();
-    secondNameController.dispose();
-    searchAddressFocusNode.dispose();
-    zipCodeController.dispose();
-    contactNumberController.dispose();
-    _overlayEntry?.remove();
-    _overlayEntry = null;
   }
 }

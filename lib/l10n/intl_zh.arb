@@ -465,5 +465,12 @@
   "use_style": "使用",
   "album": "Album",
   "template": "Template",
-  "colors": "Colors"
+  "colors": "Colors",
+  "save": "保存",
+  "edit_address": "编辑地址",
+  "save_address_success": "地址保存成功",
+  "delete_address_success": "地址删除成功",
+  "update_address_success": "地址更新成功",
+  "addresses": "地址列表",
+  "add_address": "添加收货地址"
 }

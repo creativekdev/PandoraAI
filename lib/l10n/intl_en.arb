@@ -464,5 +464,12 @@
   "use_style": "Use Style",
   "album": "Album",
   "template": "Template",
-  "colors": "Colors"
+  "colors": "Colors",
+  "save": "Save",
+  "edit_address": "Edit Address",
+  "save_address_success": "Address saved successfully",
+  "delete_address_success": "Address deleted successfully",
+  "update_address_success": "Address deleted successfully",
+  "addresses": "Addresses",
+  "add_address": "Add Shipping Address"
 }

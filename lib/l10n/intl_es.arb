@@ -464,5 +464,12 @@
   "use_style": "Usar estilo",
   "album": "Album",
   "template": "Template",
-  "colors": "Colors"
+  "colors": "Colors",
+  "save": "Guardar",
+  "edit_address": "Editar Dirección",
+  "save_address_success": "Dirección guardada con éxito",
+  "delete_address_success": "Dirección eliminada con éxito",
+  "update_address_success": "Dirección eliminada con éxito",
+  "addresses": "Discurso",
+  "add_address": "Añadir dirección de recepción"
 }
