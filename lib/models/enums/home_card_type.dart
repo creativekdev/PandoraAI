@@ -35,6 +35,7 @@ enum HomeCardType {
   lineart,
   UNDEFINED,
   removeBg,
+  nothing,
 }
 
 class HomeCardTypeUtils {
@@ -60,6 +61,9 @@ class HomeCardTypeUtils {
         return HomeCardType.lineart;
       case 'removebg':
         return HomeCardType.removeBg;
+      case '':
+      case null:
+        return HomeCardType.nothing;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -227,6 +231,9 @@ class HomeCardTypeUtils {
         case HomeCardType.removeBg:
           ImFilter.open(context, source: source, tab: TABS.BACKGROUND);
           break;
+        case HomeCardType.nothing:
+          //do nothing
+          break;
       }
     };
     EffectDataController dataController = Get.find();
@@ -283,6 +290,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'lineart';
       case HomeCardType.removeBg:
         return 'removeBg';
+      case HomeCardType.nothing:
+        return '';
     }
   }
 
@@ -317,6 +326,8 @@ extension HomeCardTypeEx on HomeCardType {
         return 'AI Coloring';
       case HomeCardType.removeBg:
         return 'Background Remover';
+      case HomeCardType.nothing:
+        return '';
     }
   }
 }
