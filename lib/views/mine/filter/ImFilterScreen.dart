@@ -14,40 +14,42 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/BackgroundRemoval.dart';
 import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image/image.dart' as imgLib;
+import 'dart:ui' as ui;
 
 import 'Crop.dart';
+import 'ImageMergingWidget.dart';
 
-enum TABS{
-  EFFECT,
-  FILTER,
-  ADJUST,
-  CROP,
-  BACKGROUND,
-  TEXT
-}
+enum TABS { EFFECT, FILTER, ADJUST, CROP, BACKGROUND, TEXT }
 
 class ImFilterScreen extends StatefulWidget {
-  ImFilterScreen({Key? key}) : super(key: key);
+  String filePath;
+  TABS tab;
+
+  ImFilterScreen({
+    Key? key,
+    required this.filePath,
+    this.tab = TABS.EFFECT,
+  }) : super(key: key);
 
   @override
   _ImFilterScreenState createState() => _ImFilterScreenState();
 }
 
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
-
-  File? _imageFile, _personImageFile;
-  late imgLib.Image _image, _personImage;
+  late File _imageFile;
+  File? _personImageFile;
+  late imgLib.Image _image, _personImage, _backgroundImage, _addedImage;
+  late ui.Image _personImageForUi;
+  bool _isPersonImageInitialized = false, _isBackgroundImageInitialized = false;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey _ImageViewerBackgroundKey = GlobalKey();
@@ -56,7 +58,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   late double itemWidth;
   var currentItemIndex = 0.obs;
   List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
-  late TABS selectedRightTab = TABS.EFFECT;
+  late TABS selectedRightTab;
 
   int selectedEffectID = 0;
   Filter filter = new Filter();
@@ -75,6 +77,14 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   void initState() {
     super.initState();
     itemWidth = (ScreenUtil.screenSize.width - $(90)) / 5;
+    selectedRightTab = widget.tab;
+    delay(() {
+      showLoading().whenComplete(() {
+        onSelectImage(widget.filePath).whenComplete(() {
+          hideLoading();
+        });
+      });
+    });
   }
 
   @override
@@ -82,55 +92,60 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     super.dispose();
   }
 
+  Future<ui.Image> convertImage(imgLib.Image image) async {
+    List<int> pngBytes = imgLib.encodePng(image);
+    Uint8List uint8List = Uint8List.fromList(pngBytes);
+    ui.Codec codec = await ui.instantiateImageCodec(uint8List);
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    return frameInfo.image;
+  }
+
+  Future onSelectImage(String filePath) async {
+    var pickFile = File(filePath);
+    _imageFile = File(pickFile.path);
+    uploadImageController.updateImageUrl('');
+    _image = await getLibImage(await getImage(_imageFile));
+    _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
+    await filter.calcAvatars(_image);
+
+    try {
+      ///background removal calculation
+      File compressedImage = await imageCompressAndGetFile(_imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+      await uploadImageController.uploadCompressedImage(compressedImage);
+      uploadImageController.update();
+      var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
+      _personImageFile = File(url!);
+      _personImage = await getLibImage(await getImage(_personImageFile!));
+      _personImageForUi = await convertImage(_personImage);
+      _isPersonImageInitialized = true;
+    } catch (e) {
+      print('An exception occurred: $e');
+    }
+    setState(() {
+      _byte;
+      _imageFile;
+      _isPersonImageInitialized;
+    });
+  }
+
   pickImage() {
     showLoading().whenComplete(() {
-      AnotherMe.checkPermissions().then((value) {
-        if (value) {
-          PAICamera.takePhoto(context).then((value) async {
-            if (value != null) {
-              var pickFile = File(value.xFile.path);
-              _imageFile = File(pickFile.path);
-              _image = await getLibImage(await getImage(_imageFile!));
-              _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
-              await filter.calcAvatars(_image);
-
-              try {
-                ///background removal calculation
-                File compressedImage = await imageCompressAndGetFile(_imageFile!, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-                await uploadImageController.uploadCompressedImage(compressedImage);
-                uploadImageController.update();
-                var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
-                _personImageFile = File(url!);
-                _personImage = await getLibImage(await getImage(_personImageFile!));
-                // _byte = Uint8List.fromList(imgLib.encodeJpg(_personImage));
-              } catch (e) {
-                print('An exception occurred: $e');
-              }
-              hideLoading();
-              setState(() {
-                _byte;
-                _imageFile;
-              });
-            } else {
-              hideLoading();
-            }
-          });
+      PAICamera.takePhoto(context).then((value) async {
+        if (value != null) {
+          await onSelectImage(value.xFile.path);
+          hideLoading();
         } else {
-          hideLoading().whenComplete(() {
-            AnotherMe.permissionDenied(context);
-          });
+          hideLoading();
         }
       });
     });
   }
 
   _Filter(String filterStr) async {
-    if (_imageFile != null) {
-      _byte = Uint8List.fromList(imgLib.encodeJpg(await Filter.ImFilter(filterStr, _image)));
-      setState(() {
-        _byte;
-      });
-    }
+    _byte = Uint8List.fromList(imgLib.encodeJpg(await Filter.ImFilter(filterStr, _image)));
+    setState(() {
+      _byte;
+    });
   }
 
   Widget _buildRightTab() {
@@ -193,24 +208,24 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         });
       },
       child: Container(
-              width: $(40),
-              height: $(40),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular($(20)),
-              ),
-              child: FractionallySizedBox(
-                widthFactor: 0.6,
-                heightFactor: 0.6,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(Images.ic_reduction),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+        width: $(40),
+        height: $(40),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular($(20)),
+        ),
+        child: FractionallySizedBox(
+          widthFactor: 0.6,
+          heightFactor: 0.6,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(Images.ic_reduction),
+                fit: BoxFit.cover,
               ),
             ),
+          ),
+        ),
+      ),
     ));
     return Align(
         alignment: Alignment.centerRight,
@@ -223,32 +238,27 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                   decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
                   padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
                   height: $(220),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)
-              ),
-              SizedBox(height:$(50)),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
+              SizedBox(height: $(50)),
               (selectedRightTab != TABS.CROP)
-              ?Container(
-                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-                  height: $(42),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton)
-              )
-                  :Container()
-            ])
-        )
-    );
+                  ? Container(
+                      decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                      height: $(42),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton))
+                  : Container()
+            ])));
   }
 
   Future<void> saveToAlbum() async {
     if (_byte == null) return;
     String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
     var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
-    if(selectedRightTab == TABS.CROP && crop.selectedID > 0) {
+    if (selectedRightTab == TABS.CROP && crop.selectedID > 0) {
       Uint8List? _croppedByte = await Cropper.crop(
         cropperKey: _cropperKey,
       );
       await file.writeAsBytes(_croppedByte!);
-    }
-    else{
+    } else {
       await file.writeAsBytes(_byte!);
     }
     await GallerySaver.saveImage(file.path, albumName: "PandoraAI");
@@ -286,38 +296,52 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Widget _buildImageView() {
     return Expanded(
       child: Stack(children: <Widget>[
-        Container(key:_ImageViewerBackgroundKey),
+        Container(key: _ImageViewerBackgroundKey),
         Column(
           children: [
             Expanded(
                 child: Row(
-                  children: [
-                      Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(top: $(5)),
-                            child: _byte != null
-                                ? originalShowing
-                                  ? Container(
-                                    child: Image.file(_imageFile!, fit: BoxFit.contain),
-                                  )
-                                  : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
-                                  ? Container(color: Colors.black, child: Center(child: DecorationCropper(cropperKey: _cropperKey, crop: crop, byte: _byte, globalKey: _ImageViewerBackgroundKey,)))
-                                  : Image.memory(
-                                    _byte!,
-                                    fit: BoxFit.contain,
-                                  )
-                                  : Container(
-                                child: Image.asset(Images.ic_choose_photo_initial_header),
-                                ),
-                          )
-                      )
-                    ],
-                  ))
+              children: [
+                Expanded(
+                    child: Container(
+                  margin: EdgeInsets.only(top: $(5)),
+                  child: _byte != null
+                      ? originalShowing
+                          ? Container(
+                              child: Image.file(_imageFile!, fit: BoxFit.contain),
+                            )
+                          : (selectedRightTab == TABS.CROP && crop.selectedID > 0)
+                              ? Container(
+                                  color: Colors.black,
+                                  child: Center(
+                                      child: DecorationCropper(
+                                    cropperKey: _cropperKey,
+                                    crop: crop,
+                                    byte: _byte,
+                                    globalKey: _ImageViewerBackgroundKey,
+                                  )))
+                              :  (selectedRightTab== TABS.BACKGROUND && _isPersonImageInitialized && _isBackgroundImageInitialized)
+                                  ?ImageMergingWidget(personImage: _personImage, personImageForUI: _personImageForUi, backgroundImage: _backgroundImage,
+                                    onAddImage: (image){
+                                      _isBackgroundImageInitialized = false;
+                                      _addedImage = image;
+                                      _byte = Uint8List.fromList(imgLib.encodeJpg(_addedImage));
+                                      setState(() {
+                                        _byte;
+                                      });
+                                    },)
+                                : Image.memory(
+                                  _byte!,
+                                  fit: BoxFit.contain,
+                                )
+                      : Container(),
+                ))
+              ],
+            ))
           ],
         ),
         _buildRightTab()
-      ]
-    ),
+      ]),
     );
   }
 
@@ -673,9 +697,12 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     return BackgroundPickerBar(
       imageRatio: 16 / 9,
       onPick: (BackgroundData data) async {
-        _byte = Uint8List.fromList(imgLib.encodeJpg(await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!)));
+        // _backgroundImage = await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!);
+        File backFile = File(data.filePath!);
+        _backgroundImage = await getLibImage(await getImage(backFile));
+        _isBackgroundImageInitialized = true;
         setState(() {
-          _byte;
+          _isBackgroundImageInitialized;
         });
       },
     ).intoContainer(
@@ -705,30 +732,30 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorConstant.BackgroundColor,
+      appBar: AppNavigationBar(
+        backAction: () async {
+          // if (await _willPopCallback(context)) {
+          Navigator.of(context).pop();
+          // }
+        },
         backgroundColor: ColorConstant.BackgroundColor,
-        appBar: AppNavigationBar(
-          backAction: () async {
-            // if (await _willPopCallback(context)) {
-            Navigator.of(context).pop();
-            // }
-          },
-          backgroundColor: ColorConstant.BackgroundColor,
-          trailing: Image.asset(
-            Images.ic_share,
-            width: $(24),
-          ).intoGestureDetector(onTap: () async {
-            // shareOut();
-          }),
-        ),
-        body: Column(
-          children: [
-            _buildImageView(),
-            _buildInOutControlPad(),
-            SizedBox(height: $(8)),
-            _buildBottomTabbar(),
-            // SizedBox(height: ScreenUtil.getBottomPadding(context)),
-          ],
-        ),
-      );
+        trailing: Image.asset(
+          Images.ic_share,
+          width: $(24),
+        ).intoGestureDetector(onTap: () async {
+          // shareOut();
+        }),
+      ),
+      body: Column(
+        children: [
+          _buildImageView(),
+          _buildInOutControlPad(),
+          SizedBox(height: $(8)),
+          _buildBottomTabbar(),
+          SizedBox(height: ScreenUtil.getBottomPadding(context)),
+        ],
+      ),
+    );
   }
 }

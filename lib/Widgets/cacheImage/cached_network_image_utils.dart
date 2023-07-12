@@ -215,6 +215,10 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (widget.url != oldWidget.url) {
       initData();
       updateData();
+    } else {
+      if (!downloading && fileImage == null) {
+        _getImage();
+      }
     }
   }
 
@@ -243,45 +247,57 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
 
   void updateData() {
     url = widget.url;
+    _getImage();
+  }
+
+  _getImage() async {
     var fileType = getFileType(url);
     downloading = true;
     SyncDownloadImage(url: url, type: fileType).getImage().then((value) {
-      this.data = value;
-      if (mounted) {
-        fileImage = FileImage(data!);
-        if (width != null && height != null) {
+      if (value != null) {
+        this.data = value;
+        if (mounted) {
+          fileImage = FileImage(data!);
+          if (width != null && height != null) {
+            setState(() {
+              downloading = false;
+            });
+          } else {
+            var resolve = fileImage!.resolve(ImageConfiguration.empty);
+            resolve.addListener(ImageStreamListener((image, synchronousCall) {
+              if (width == double.maxFinite) {
+                width = ScreenUtil.getCurrentWidgetSize(context).width;
+              }
+              if (height == double.maxFinite) {
+                height = null;
+              }
+              var cacheScale = cacheManager.imageScaleOperator.getScale(url);
+              if (cacheScale == null) {
+                var scale = image.image.width / image.image.height;
+                cacheManager.imageScaleOperator.setScale(url, scale);
+                cacheScale = scale;
+              }
+              if (width == null && height == null) {
+                width = image.image.width.toDouble();
+                height = image.image.height.toDouble();
+              } else if (width == null) {
+                width = height! * cacheScale;
+              } else if (height == null) {
+                height = width! / cacheScale;
+              }
+              if (mounted) {
+                setState(() {
+                  downloading = false;
+                });
+              }
+            }));
+          }
+        }
+      } else {
+        if (mounted) {
           setState(() {
             downloading = false;
           });
-        } else {
-          var resolve = fileImage!.resolve(ImageConfiguration.empty);
-          resolve.addListener(ImageStreamListener((image, synchronousCall) {
-            if (width == double.maxFinite) {
-              width = ScreenUtil.getCurrentWidgetSize(context).width;
-            }
-            if (height == double.maxFinite) {
-              height = null;
-            }
-            var cacheScale = cacheManager.imageScaleOperator.getScale(url);
-            if (cacheScale == null) {
-              var scale = image.image.width / image.image.height;
-              cacheManager.imageScaleOperator.setScale(url, scale);
-              cacheScale = scale;
-            }
-            if (width == null && height == null) {
-              width = image.image.width.toDouble();
-              height = image.image.height.toDouble();
-            } else if (width == null) {
-              width = height! * cacheScale;
-            } else if (height == null) {
-              height = width! / cacheScale;
-            }
-            if (mounted) {
-              setState(() {
-                downloading = false;
-              });
-            }
-          }));
         }
       }
     });

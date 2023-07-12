@@ -58,6 +58,9 @@ class CacheManager extends BaseManager {
   static const viewPreviewOpen = 'video_preview_open';
   static const backgroundPickHistory = 'backgroundPickHistory';
   static const backgroundTabIndexHistory= 'backgroundTabIndexHistory';
+  static const postOfTerm = "post_of_term";
+  static const reportOfPosts = "report_of_posts";
+  static const reportOfCommentPosts = "report_of_comment_posts";
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
@@ -107,6 +110,10 @@ class CacheManager extends BaseManager {
 
   String getString(String key) {
     return _sharedPreferences.getString(key) ?? '';
+  }
+
+  bool containKey(String key) {
+    return _sharedPreferences.containsKey(key);
   }
 
   Future<bool> setString(String key, String? value) async {

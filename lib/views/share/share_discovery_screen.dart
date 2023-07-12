@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/bad_words.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -22,7 +23,9 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/share/share_term_view.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter/gestures.dart';
 import 'package:path/path.dart' as path;
 import 'package:posthog_flutter/posthog_flutter.dart';
 
@@ -91,6 +94,8 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   String textHint = '';
   String? payload;
+  late TapGestureRecognizer termTap;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -103,10 +108,12 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     image = widget.image;
     originalUrl = widget.originalUrl;
     effectKey = widget.effectKey;
+    termTap = TapGestureRecognizer();
     payload = widget.payload;
     if (!isVideo) {
       imageData = base64Decode(image);
     }
+
     delay(() {
       switch (widget.category) {
         case HomeCardType.ai_avatar:
@@ -137,6 +144,16 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           break;
       }
       FocusScope.of(context).requestFocus(focusNode);
+      if (cacheManager.containKey(CacheManager.postOfTerm) == false) {
+        cacheManager.setBool(CacheManager.postOfTerm, false);
+        showShareTermDialog(context, () {
+          bool isAgree = cacheManager.getBool(CacheManager.postOfTerm);
+          if (isAgree != true) {
+            cacheManager.setBool(CacheManager.postOfTerm, true);
+            setState(() {});
+          }
+        });
+      }
     }, milliseconds: 500);
   }
 
@@ -147,12 +164,32 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
     textEditingController.dispose();
   }
 
+  String getBadWord(String text) {
+    text = text.toLowerCase();
+    for (String word in bad_words) {
+      if (text.contains("$word ") || text.contains("$word,") || text.contains("$word.") || text.contains("$word!")) {
+        return word;
+      }
+    }
+    return "";
+  }
+
   submit() {
+    if (cacheManager.getBool(CacheManager.postOfTerm) != true) {
+      CommonExtension().showToast(S.of(context).selectTermOfPost);
+      showTermsDialog(context);
+      return;
+    }
     var text = textEditingController.text.trim();
     if (text.isEmpty) {
       text = textHint;
     }
     FocusScope.of(context).requestFocus(FocusNode());
+    String badWord = getBadWord(text);
+    if (badWord.isNotEmpty) {
+      CommonExtension().showToast(S.of(context).InputBadWord.replaceAll('%s', badWord));
+      return;
+    }
     showLoading().whenComplete(() {
       if (isVideo) {
         GallerySaver.saveVideo(image, false).then((value) {
@@ -167,7 +204,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               } else {
                 var imageUrl = value.key;
                 var list = [
-                  DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
+                  DiscoveryResource()
+                    ..type = DiscoveryResourceType.video
+                    ..url = imageUrl,
                 ];
                 if (includeOriginal && originalUrl != null) {
                   var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
@@ -190,7 +229,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                     return;
                   }
                   list.add(
-                    DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
+                    DiscoveryResource()
+                      ..type = DiscoveryResourceType.image
+                      ..url = keyValue.key,
                   );
                 }
                 api
@@ -235,7 +276,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             if (baseEntity != null) {
               var imageUrl = url.split("?")[0];
               var list = [
-                DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
+                DiscoveryResource()
+                  ..type = DiscoveryResourceType.image
+                  ..url = imageUrl,
               ];
               if (includeOriginal && originalUrl != null) {
                 var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
@@ -258,7 +301,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   return;
                 }
                 list.add(
-                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
+                  DiscoveryResource()
+                    ..type = DiscoveryResourceType.image
+                    ..url = keyValue.key,
                 );
               }
               api
@@ -329,6 +374,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   Widget buildWidget(BuildContext context) {
     return WillPopScope(
         child: Scaffold(
+          key: scaffoldKey,
           backgroundColor: ColorConstant.BackgroundColor,
           appBar: AppNavigationBar(
             backgroundColor: Colors.transparent,
@@ -474,6 +520,32 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                           });
                         },
                       ),
+                SizedBox(
+                  height: $(15),
+                ),
+                Row(
+                  children: [
+                    Image.asset(cacheManager.getBool(CacheManager.postOfTerm) ? Images.ic_checked : Images.ic_unchecked, width: $(16)).intoGestureDetector(onTap: () {
+                      bool isAgree = cacheManager.getBool(CacheManager.postOfTerm);
+                      cacheManager.setBool(CacheManager.postOfTerm, !isAgree);
+                      setState(() {});
+                    }),
+                    SizedBox(width: $(6)),
+                    Expanded(
+                        child: RichText(
+                      text: TextSpan(text: S.of(context).IHaveReadAndAgreeTo, style: TextStyle(fontSize: $(14)), children: [
+                        TextSpan(
+                            text: S.of(context).TermsOfUse,
+                            style: TextStyle(color: ColorConstant.BlueColor),
+                            recognizer: termTap
+                              ..onTap = () {
+                                showTermsDialog(context);
+                              }),
+                      ]),
+                      maxLines: 3,
+                    )),
+                  ],
+                )
               ],
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(20), vertical: $(25))),
           ),
@@ -485,5 +557,15 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           }
           return true;
         });
+  }
+
+  showTermsDialog(BuildContext context) {
+    showShareTermDialog(context, () {
+      bool isAgree = cacheManager.getBool(CacheManager.postOfTerm);
+      if (isAgree != true) {
+        cacheManager.setBool(CacheManager.postOfTerm, true);
+        setState(() {});
+      }
+    });
   }
 }

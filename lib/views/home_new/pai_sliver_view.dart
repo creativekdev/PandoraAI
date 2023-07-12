@@ -1,3 +1,5 @@
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../models/home_page_entity.dart';
@@ -36,6 +38,7 @@ class SliverItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = (ScreenUtil.screenSize.width - $(54)) / 4;
+    var title = entity.category.title();
     return Column(
       children: [
         ClipRRect(
@@ -50,11 +53,13 @@ class SliverItem extends StatelessWidget {
           ),
         ),
         TitleTextWidget(
-          entity.title,
+          title.isEmpty ? entity.categoryString! : title,
           ColorConstant.White,
           FontWeight.w400,
           $(12),
+          maxLines: 1,
         ).intoContainer(
+          width: width,
           padding: EdgeInsets.only(top: $(8), bottom: $(8)),
         )
       ],

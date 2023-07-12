@@ -22,10 +22,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "AgreeAndContinue":
+            MessageLookupByLibrary.simpleMessage("Aceptar y Continuar"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "Sus solicitudes diarias han alcanzado su límite, inténtelo de nuevo mañana"),
+        "HaveReport":
+            MessageLookupByLibrary.simpleMessage("Ya lo has denunciado"),
         "IHaveReadAndAgreeTo":
             MessageLookupByLibrary.simpleMessage("He leído y acepto el"),
+        "InputBadWord": MessageLookupByLibrary.simpleMessage(
+            "Su entrada contiene la mala palabra: \$s"),
+        "ReceivedReport":
+            MessageLookupByLibrary.simpleMessage("Ha recibido su informe"),
+        "Report": MessageLookupByLibrary.simpleMessage("Reportar"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("Seleccionar región"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -41,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Nom de l\'État ou Code de l\'État"),
         "STATE": MessageLookupByLibrary.simpleMessage("Un État"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
+        "TermsOfPost": MessageLookupByLibrary.simpleMessage(
+            "Pandora AI es un lugar para la exploración segura del mundo que nos rodea. Por esa razón, sigue las siguientes políticas. Estas políticas se aplican a todos los formatos, incluyendo reseñas, fotos y videos. El contenido que no cumpla con estos criterios se procesa automáticamente para detectarlo y eliminarlo.\n\nNo publiques contenido que incluya cualquier forma de discurso de odio.\nNo publiques contenido que acose a otras personas o anime a otros a participar en el acoso.\nNo publiques contenido ofensivo.\nNo publiques contenido obsceno y profano.\nNo publiques contenido sexualmente explícito.\nNo publiques contenido para adultos.\nNo publiques contenido violento o sangriento que involucre personas o animales.\nNo publiques contenido que sea ilegal o que represente actividades ilegales.\nNo crees, publiques ni distribuyas contenido que explote o abuse de niños.\nNo publiques contenido terrorista.\nNo publiques contenido repetitivo o sin sentido.\nNotifícanos de inmediato a support@socialbook.io si descubres o sospechas de cualquier contenido objetable."),
         "TermsOfUse":
             MessageLookupByLibrary.simpleMessage(" Condiciones de uso"),
         "UserAgreement":
@@ -594,6 +605,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_order": MessageLookupByLibrary.simpleMessage("Buscar pedido"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Ve a verlo"),
         "select": MessageLookupByLibrary.simpleMessage("elegir"),
+        "selectTermOfPost": MessageLookupByLibrary.simpleMessage(
+            "Por favor, marca el Condiciones de uso"),
         "select_a_style": MessageLookupByLibrary.simpleMessage(
             "Por favor, seleccione un estilo"),
         "select_completed":

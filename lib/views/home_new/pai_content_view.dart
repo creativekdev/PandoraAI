@@ -47,7 +47,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     setState(() {
       isLoading = true;
     });
-    cartoonizerApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.category ?? '').then((value) {
+    cartoonizerApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.categoryString ?? '').then((value) {
       setState(() {
         socialPost?.addAll(value?.data.rows ?? []);
         isLoading = false;
@@ -94,7 +94,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.category ?? '', socialPost);
+                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost);
                 },
               )
             ],
@@ -145,7 +145,7 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<DiscoveryResource> list = post.resourceList();
-    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == 'image');
+    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return resource == null
         ? SizedBox.shrink()
         : ClipRRect(

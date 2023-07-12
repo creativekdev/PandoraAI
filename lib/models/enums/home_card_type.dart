@@ -16,6 +16,8 @@ import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/common/video_preview_screen.dart';
+import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
+import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
@@ -32,11 +34,13 @@ enum HomeCardType {
   stylemorph,
   lineart,
   UNDEFINED,
+  removeBg,
+  nothing,
 }
 
 class HomeCardTypeUtils {
   static HomeCardType build(String? value) {
-    switch (value?.toLowerCase()) {
+    switch (value) {
       case 'cartoonize':
         return HomeCardType.cartoonize;
       case 'anotherme':
@@ -55,6 +59,11 @@ class HomeCardTypeUtils {
         return HomeCardType.stylemorph;
       case 'lineart':
         return HomeCardType.lineart;
+      case 'removebg':
+        return HomeCardType.removeBg;
+      case '':
+      case null:
+        return HomeCardType.nothing;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -77,7 +86,7 @@ class HomeCardTypeUtils {
       }
       jumpWithHomeType(context, source, target, pos);
     } else if (data != null) {
-      var target = build(data.category);
+      var target = data.category;
       InitPos initPos = InitPos();
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
@@ -125,32 +134,43 @@ class HomeCardTypeUtils {
       }
       jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     } else if (homeData != null) {
-      var target = build(homeData.category);
+      var target = homeData.category;
       InitPos initPos = InitPos();
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
       if (target == HomeCardType.cartoonize) {
-        EffectDataController effectDataController = Get.find<EffectDataController>();
-        if (effectDataController.data == null) {
-          return;
+        if (TextUtil.isEmpty(homeData.cartoonizeKey)) {
+          EffectDataController effectDataController = Get.find<EffectDataController>();
+          if (effectDataController.data == null) {
+            return;
+          }
+          initPos = InitPos()
+            ..categoryPos = 0
+            ..itemPos = 0
+            ..tabPos = 0;
+        } else {
+          EffectDataController effectDataController = Get.find<EffectDataController>();
+          if (effectDataController.data == null) {
+            return;
+          }
+          String key = homeData.cartoonizeKey ?? '';
+          int tabPos = effectDataController.data!.tabPos(key);
+          int categoryPos = 0;
+          int itemPos = 0;
+          if (tabPos == -1) {
+            CommonExtension().showToast(S.of(context).template_not_available);
+            return;
+          }
+          EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+          EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+          categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+          itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
+          initPos = InitPos()
+            ..categoryPos = categoryPos
+            ..itemPos = itemPos
+            ..tabPos = tabPos;
+          style = '$style-${effectItem.key}';
         }
-        String key = homeData.cartoonizeKey;
-        int tabPos = effectDataController.data!.tabPos(key);
-        int categoryPos = 0;
-        int itemPos = 0;
-        if (tabPos == -1) {
-          CommonExtension().showToast(S.of(context).template_not_available);
-          return;
-        }
-        EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-        EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-        categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-        itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-        initPos = InitPos()
-          ..categoryPos = categoryPos
-          ..itemPos = itemPos
-          ..tabPos = tabPos;
-        style = '$style-${effectItem.key}';
       } else if (target == HomeCardType.txt2img) {
         Map? payload;
         try {
@@ -208,6 +228,12 @@ class HomeCardTypeUtils {
         case HomeCardType.UNDEFINED:
           CommonExtension().showToast(S.of(context).oldversion_tips);
           break;
+        case HomeCardType.removeBg:
+          ImFilter.open(context, source: source, tab: TABS.BACKGROUND);
+          break;
+        case HomeCardType.nothing:
+          //do nothing
+          break;
       }
     };
     EffectDataController dataController = Get.find();
@@ -253,7 +279,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.txt2img:
         return 'txt2img';
       case HomeCardType.UNDEFINED:
-        return '';
+        return 'undefined';
       case HomeCardType.scribble:
         return 'scribble';
       case HomeCardType.metagram:
@@ -262,6 +288,10 @@ extension HomeCardTypeEx on HomeCardType {
         return 'stylemorph';
       case HomeCardType.lineart:
         return 'lineart';
+      case HomeCardType.removeBg:
+        return 'removeBg';
+      case HomeCardType.nothing:
+        return '';
     }
   }
 
@@ -274,7 +304,7 @@ extension HomeCardTypeEx on HomeCardType {
     }
   }
 
-  title() {
+  String title() {
     switch (this) {
       case HomeCardType.cartoonize:
         return 'Facetoon';
@@ -294,6 +324,10 @@ extension HomeCardTypeEx on HomeCardType {
         return 'Style Morph';
       case HomeCardType.lineart:
         return 'AI Coloring';
+      case HomeCardType.removeBg:
+        return 'Background Remover';
+      case HomeCardType.nothing:
+        return '';
     }
   }
 }

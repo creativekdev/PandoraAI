@@ -3,7 +3,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 
 class BackColorsPicker extends StatefulWidget {
-  Function(String color) onPickColor;
+  Function(Color? color) onPickColor;
 
   BackColorsPicker({
     super.key,
@@ -15,8 +15,13 @@ class BackColorsPicker extends StatefulWidget {
 }
 
 class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepAliveClientMixin {
-  int? value;
   String userTypeColor = '';
+  Color? color;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,20 +32,23 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
           PaletteWidget(
             onChange: (color, opacity) {
               setState(() {
-                value = color.value;
+                this.color = Color.fromRGBO(color.red, color.green, color.blue, opacity);
+                userTypeColor = '#${color.value.toRadixString(16)}';
               });
             },
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(10)),
-          TitleTextWidget('#${value?.toRadixString(16)}', Colors.white, FontWeight.normal, $(18)),
+          TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18)),
           TitleTextWidget(S.of(context).ok, ColorConstant.White, FontWeight.w500, $(17))
               .intoContainer(
-                width: double.maxFinite,
-                padding: EdgeInsets.symmetric(vertical: $(10)),
-                margin: EdgeInsets.symmetric(horizontal: $(15)),
-                decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(32))),
-              )
-              .intoGestureDetector(onTap: () {}),
+            width: double.maxFinite,
+            padding: EdgeInsets.symmetric(vertical: $(10)),
+            margin: EdgeInsets.symmetric(horizontal: $(15)),
+            decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(32))),
+          )
+              .intoGestureDetector(onTap: () {
+            widget.onPickColor.call(color);
+          }),
           SizedBox(height: $(16)),
         ],
       ),

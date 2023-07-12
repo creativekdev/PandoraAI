@@ -56,10 +56,7 @@ class FilterApi extends RetryAbleRequester {
     return baseEntity?.data?['data'];
   }
 
-  Future<String?> removeBgAndSave({
-    required String imageUrl
-  }) async {
-    if (!(await cacheManager.storageOperator.recordBackgroundRemovalDir.exists())) cacheManager.storageOperator.recordBackgroundRemovalDir.create(recursive: true);
+  Future<String?> removeBgAndSave({required String imageUrl}) async {
     var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
     String? dataString = await removeBg(imageUrl: imageUrl);
     String key = EncryptUtil.encodeMd5(dataString!);
@@ -68,6 +65,7 @@ class FilterApi extends RetryAbleRequester {
     await File(filePath).writeAsBytes(base64decode.toList());
     return filePath;
   }
+
   String getFileName(String directoryPath, String encode) {
     return '${directoryPath}$encode.png';
   }

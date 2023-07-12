@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
-import 'package:cartoonizer/Widgets/image/images_card.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
@@ -166,7 +166,7 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
   }
 
   Widget buildResourceItem(BuildContext context, DiscoveryResource resource, {required double width, double? height, BoxFit fit = BoxFit.cover}) {
-    if (resource.type == DiscoveryResourceType.video.value()) {
+    if (resource.type == DiscoveryResourceType.video) {
       return EffectVideoPlayer(url: resource.url ?? '').intoContainer(height: (ScreenUtil.screenSize.width - $(32)) / 2).hero(tag: resource.url ?? '');
     } else {
       if (fit == BoxFit.contain) {
@@ -264,7 +264,7 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     }
     List<String> images = controller.resources
         .filter(
-          (t) => t.type == DiscoveryResourceType.image.value(),
+          (t) => t.type == DiscoveryResourceType.image,
         )
         .map((e) => e.url ?? '')
         .toList();
@@ -292,8 +292,8 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     BuildContext context,
     double width,
   ) {
-    return ImagesCard(
-      images: controller.resources.map((e) => e.url!).toList(),
+    return DiscoveryResourcesCard(
+      datas: controller.resources,
       placeholderWidgetBuilder: (context, url, width, height) {
         return SkeletonAvatar(
           style: SkeletonAvatarStyle(width: width, height: height),
