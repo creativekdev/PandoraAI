@@ -12,7 +12,7 @@ class PaiSliverView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: $(15)),
+        padding: EdgeInsets.symmetric(horizontal: $(14)),
         child: Wrap(
             spacing: $(8),
             runSpacing: $(8),

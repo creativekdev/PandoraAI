@@ -471,5 +471,9 @@
   "delete_address_success": "Address deleted successfully",
   "update_address_success": "Address deleted successfully",
   "addresses": "Addresses",
-  "add_address": "Add Shipping Address"
+  "add_address": "Add Shipping Address",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "Please read and agree User Privacy and Terms of use",
+  "IHaveReadAndAgreeTo": "I have read and agree to",
+  "UserAgreement": " User Agreement ",
+  "TermsOfUse": " Terms of use"
 }

@@ -472,5 +472,9 @@
   "delete_address_success": "地址删除成功",
   "update_address_success": "地址更新成功",
   "addresses": "地址列表",
-  "add_address": "添加收货地址"
+  "add_address": "添加收货地址",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "请阅读并统一用户协议和使用条款",
+  "IHaveReadAndAgreeTo": "我已阅读并同意",
+  "UserAgreement": "《用户协议》",
+  "TermsOfUse": "《使用条款》"
 }

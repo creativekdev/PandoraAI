@@ -45,14 +45,6 @@ class PrintShippingController extends GetxController {
 
   String _variantId = "";
 
-  // String _formattedAddress = "";
-  //
-  // set formattedAddress(String value) {
-  //   _formattedAddress = value;
-  // }
-  //
-  // String get formattedAddress => _formattedAddress;
-
   set variantId(String value) {
     _variantId = value;
     update();
@@ -111,33 +103,6 @@ class PrintShippingController extends GetxController {
   }
 
   bool get isShowSate => _isShowState;
-
-  // StateEntity? _stateEntity;
-  //
-  // set stateEntity(StateEntity? value) {
-  //   _stateEntity = value;
-  //   update();
-  // }
-  //
-  // StateEntity? get stateEntity => _stateEntity;
-  //
-  // RegionCodeEntity? _countryEntity;
-  //
-  // set countryEntity(RegionCodeEntity? value) {
-  //   _countryEntity = value;
-  //   update();
-  // }
-  //
-  // RegionCodeEntity? get countryEntity => _countryEntity;
-  //
-  // RegionCodeEntity? _regionEntity;
-  //
-  // set regionEntity(RegionCodeEntity? value) {
-  //   _regionEntity = value;
-  //   update();
-  // }
-  //
-  // RegionCodeEntity? get regionEntity => _regionEntity;
 
   bool _viewInit = false;
 
@@ -306,13 +271,6 @@ class PrintShippingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // _regionEntity = RegionCodeEntity();
-    // _regionEntity?.regionCode = "US";
-    // _regionEntity?.callingCode = "+1";
-    // _regionEntity?.regionName = "United States";
-    // _regionEntity?.regionFlag = "🇺🇸";
-    // _regionEntity?.regionSyllables = [];
-
     cartoonizerApi = CartoonizerApi().bindController(this);
     _total = printController.getSubTotal() + effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100;
   }

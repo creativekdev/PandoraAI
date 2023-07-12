@@ -471,5 +471,9 @@
   "delete_address_success": "Dirección eliminada con éxito",
   "update_address_success": "Dirección eliminada con éxito",
   "addresses": "Discurso",
-  "add_address": "Añadir dirección de recepción"
+  "add_address": "Añadir dirección de recepción",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "Lea y acepte la privacidad del usuario y los términos de uso",
+  "IHaveReadAndAgreeTo": "He leído y acepto el",
+  "UserAgreement": " Acuerdo del Usuario ",
+  "TermsOfUse": " Condiciones de uso"
 }

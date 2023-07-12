@@ -59,27 +59,17 @@ class AvatarAiController extends GetxController {
     return '${S.of(context).select} $minSize-$maxSize ${S.of(context).selfies}';
   }
 
-  // Future<bool> pickImageFromCamera() async {
-  //   var photos = await ImagesPicker.openCamera(
-  //         pickType: PickType.image,
-  //       ) ??
-  //       [];
-  //   imageList.addAll(photos);
-  //   if (imageList.length > maxSize) {
-  //     imageList = imageList.sublist(0, maxSize);
-  //   }
-  //   update();
-  //   return photos.isNotEmpty;
-  // }
-
   Future<bool> pickImageFromGallery(BuildContext context) async {
     isLoading = true;
     update();
     var minCount = minSize - imageList.length;
     if (minCount < 0) {
-      isLoading = false;
-      update();
-      return false;
+      minCount = maxSize - imageList.length;
+      if (minCount <= 0) {
+        isLoading = false;
+        update();
+        return false;
+      }
     }
     var photos = await PickAlbumScreen.pickImage(
       context,
