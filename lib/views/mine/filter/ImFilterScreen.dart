@@ -32,10 +32,12 @@ enum TABS { EFFECT, FILTER, ADJUST, CROP, BACKGROUND, TEXT }
 
 class ImFilterScreen extends StatefulWidget {
   String filePath;
+  TABS tab;
 
   ImFilterScreen({
     Key? key,
     required this.filePath,
+    this.tab = TABS.EFFECT,
   }) : super(key: key);
 
   @override
@@ -56,7 +58,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   late double itemWidth;
   var currentItemIndex = 0.obs;
   List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
-  late TABS selectedRightTab = TABS.EFFECT;
+  late TABS selectedRightTab;
 
   int selectedEffectID = 0;
   Filter filter = new Filter();
@@ -75,6 +77,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   void initState() {
     super.initState();
     itemWidth = (ScreenUtil.screenSize.width - $(90)) / 5;
+    selectedRightTab = widget.tab;
     delay(() {
       showLoading().whenComplete(() {
         onSelectImage(widget.filePath).whenComplete(() {
@@ -100,7 +103,8 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Future onSelectImage(String filePath) async {
     var pickFile = File(filePath);
     _imageFile = File(pickFile.path);
-    _image = await getLibImage(await getImage(_imageFile!));
+    uploadImageController.updateImageUrl('');
+    _image = await getLibImage(await getImage(_imageFile));
     _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
     await filter.calcAvatars(_image);
 
@@ -749,7 +753,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           _buildInOutControlPad(),
           SizedBox(height: $(8)),
           _buildBottomTabbar(),
-          // SizedBox(height: ScreenUtil.getBottomPadding(context)),
+          SizedBox(height: ScreenUtil.getBottomPadding(context)),
         ],
       ),
     );

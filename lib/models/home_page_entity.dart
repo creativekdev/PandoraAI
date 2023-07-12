@@ -11,7 +11,17 @@ class HomePageEntity {
   late List<HomePageHomepageTools> features;
   late List<HomePageHomepageGalleries> galleries;
 
-  HomePageEntity();
+  HomePageEntity({
+    List<DiscoveryListEntity>? banners,
+    List<HomePageHomepageTools>? tools,
+    List<HomePageHomepageTools>? features,
+    List<HomePageHomepageGalleries>? galleries,
+  }) {
+    this.banners = banners ?? [];
+    this.tools = tools ?? [];
+    this.features = features ?? [];
+    this.galleries = galleries ?? [];
+  }
 
   factory HomePageEntity.fromJson(Map<String, dynamic> json) => $HomePageEntityFromJson(json);
 
@@ -29,12 +39,15 @@ class HomePageHomepageTools {
   @JSONField(name: "resource_type")
   late String resourceType;
   late String url;
-  late String payload;
+  String? payload;
   late String title;
   @JSONField(name: "cartoonize_key")
-  late String cartoonizeKey;
+  String? cartoonizeKey;
 
-  HomePageHomepageTools();
+  HomePageHomepageTools({String? url, String? resourceType}) {
+    this.url = url ?? '';
+    this.resourceType = resourceType ?? '';
+  }
 
   factory HomePageHomepageTools.fromJson(Map<String, dynamic> json) => $HomePageHomepageToolsFromJson(json);
 
@@ -51,7 +64,7 @@ class HomePageHomepageGalleries {
   late String category;
   @JSONField(name: "social_posts")
   late List<DiscoveryListEntity> socialPosts;
-  late String title;
+  String? title;
 
   HomePageHomepageGalleries();
 

@@ -1044,7 +1044,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         lastChangeByTap = false;
                       }, milliseconds: 32);
                     }).visibility(visible: tabList.length > 1),
-                SizedBox(height: MediaQuery.of(context).padding.bottom),
+                SizedBox(height: MediaQuery.of(context).padding.bottom + $(12)),
               ],
             ),
           ).ignore(ignoring: controller.isLoading.value)),

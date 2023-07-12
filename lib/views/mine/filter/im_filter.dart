@@ -8,8 +8,8 @@ import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
 
 class ImFilter {
-  static Future open(BuildContext context) async {
-    // Events.facetoonLoading(source: source);
+  static Future open(BuildContext context, {required TABS tab, required String source}) async {
+    Events.imEditionLoading(source: source);
     var paiCameraEntity = await PAICamera.takePhoto(context);
     if (paiCameraEntity == null) {
       return;
@@ -20,7 +20,10 @@ class ImFilter {
       context,
       MaterialPageRoute(
         settings: RouteSettings(name: "/ImFilterScreen"),
-        builder: (context) => ImFilterScreen(filePath: path),
+        builder: (context) => ImFilterScreen(
+          filePath: path,
+          tab: tab,
+        ),
       ),
     ).then((value) {
       AppDelegate.instance.getManager<UserManager>().refreshUser();
