@@ -125,9 +125,9 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 
 DiscoveryResource $DiscoveryResourceFromJson(Map<String, dynamic> json) {
 	final DiscoveryResource discoveryResource = DiscoveryResource();
-	final String? type = jsonConvert.convert<String>(json['type']);
-	if (type != null) {
-		discoveryResource.type = type;
+	final String? typeString = jsonConvert.convert<String>(json['type']);
+	if (typeString != null) {
+		discoveryResource.typeString = typeString;
 	}
 	final String? url = jsonConvert.convert<String>(json['url']);
 	if (url != null) {
@@ -138,7 +138,7 @@ DiscoveryResource $DiscoveryResourceFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $DiscoveryResourceToJson(DiscoveryResource entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['type'] = entity.type;
+	data['type'] = entity.typeString;
 	data['url'] = entity.url;
 	return data;
 }

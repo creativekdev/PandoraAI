@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -66,9 +67,9 @@ class EffectManager extends BaseManager {
         });
         //download metagram resources
         _data!.promotionResources.forEach((element) {
-          if (element.type == 'image') {
+          if (element.type == DiscoveryResourceType.image) {
             SyncDownloadImage(type: getFileType(element.url ?? ''), url: element.url ?? '').getImage();
-          } else if (element.type == 'video') {
+          } else if (element.type == DiscoveryResourceType.video) {
             SyncDownloadVideo(type: getFileType(element.url ?? ''), url: element.url ?? '').getVideo();
           }
         });

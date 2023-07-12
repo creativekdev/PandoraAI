@@ -79,7 +79,7 @@ class MyDiscoveryListCard extends StatelessWidget {
   }
 
   Widget buildResourceItem(BuildContext context, DiscoveryResource resource) {
-    if (resource.type == DiscoveryResourceType.video.value()) {
+    if (resource.type == DiscoveryResourceType.video) {
       return EffectVideoPlayer(
         url: resource.url ?? '',
       ).intoContainer(height: imgWidth, width: imgWidth, padding: EdgeInsets.all(3));

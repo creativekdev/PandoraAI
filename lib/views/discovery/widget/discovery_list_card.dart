@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/expand_text.dart';
-import 'package:cartoonizer/Widgets/image/images_card.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -147,33 +147,11 @@ class DiscoveryListCard extends StatelessWidget with DiscoveryAttrHolder {
     );
   }
 
-  Widget buildResourceItem(BuildContext context, DiscoveryResource resource, {required double width, double? maxHeight, double? height}) {
-    if (resource.type == DiscoveryResourceType.video.value()) {
-      return EffectVideoPlayer(
-        url: resource.url ?? '',
-      ).intoContainer(height: width).hero(tag: resource.url ?? '');
-    } else {
-      return CachedNetworkImageUtils.custom(
-          context: context,
-          useOld: false,
-          imageUrl: resource.url ?? '',
-          width: width,
-          height: height,
-          fit: BoxFit.cover,
-          placeholder: (context, url) {
-            return SkeletonLine(style: SkeletonLineStyle(height: height));
-          },
-          errorWidget: (context, url, error) {
-            return SkeletonLine(style: SkeletonLineStyle(height: height));
-          }).intoContainer(constraints: BoxConstraints(maxHeight: height ?? maxHeight ?? double.infinity)).hero(tag: resource.url ?? '');
-    }
-  }
-
   Widget buildImages(
     BuildContext context,
   ) {
-    return ImagesCard(
-      images: resources.map((e) => e.url!).toList(),
+    return DiscoveryResourcesCard(
+      datas: resources,
       alignType: AlignType.last,
       placeholderWidgetBuilder: (context, url, width, height) {
         return SkeletonAvatar(

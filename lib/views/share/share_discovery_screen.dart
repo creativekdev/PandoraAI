@@ -204,7 +204,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
               } else {
                 var imageUrl = value.key;
                 var list = [
-                  DiscoveryResource(type: DiscoveryResourceType.video.value(), url: imageUrl),
+                  DiscoveryResource()
+                    ..type = DiscoveryResourceType.video
+                    ..url = imageUrl,
                 ];
                 if (includeOriginal && originalUrl != null) {
                   var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
@@ -227,7 +229,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                     return;
                   }
                   list.add(
-                    DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
+                    DiscoveryResource()
+                      ..type = DiscoveryResourceType.image
+                      ..url = keyValue.key,
                   );
                 }
                 api
@@ -272,7 +276,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
             if (baseEntity != null) {
               var imageUrl = url.split("?")[0];
               var list = [
-                DiscoveryResource(type: DiscoveryResourceType.image.value(), url: imageUrl),
+                DiscoveryResource()
+                  ..type = DiscoveryResourceType.image
+                  ..url = imageUrl,
               ];
               if (includeOriginal && originalUrl != null) {
                 var fileType = originalUrl!.substring(originalUrl!.lastIndexOf(".") + 1);
@@ -295,7 +301,9 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                   return;
                 }
                 list.add(
-                  DiscoveryResource(type: DiscoveryResourceType.image.value(), url: keyValue.key),
+                  DiscoveryResource()
+                    ..type = DiscoveryResourceType.image
+                    ..url = keyValue.key,
                 );
               }
               api

@@ -99,13 +99,26 @@ class DiscoveryListEntity {
 
 @JsonSerializable()
 class DiscoveryResource {
-  String? type;
+  @JSONField(name: 'type')
+  String? typeString;
   String? url;
 
-  DiscoveryResource({
-    this.type,
-    this.url,
-  });
+  @JSONField(serialize: false, deserialize: false)
+  DiscoveryResourceType? _type;
+
+  DiscoveryResourceType get type {
+    if (_type == null) {
+      _type = DiscoveryResourceTypeUtil.build(typeString);
+    }
+    return _type!;
+  }
+
+  set type(DiscoveryResourceType type) {
+    _type = type;
+    typeString = _type!.value();
+  }
+
+  DiscoveryResource();
 
   factory DiscoveryResource.fromJson(Map<String, dynamic> json) => $DiscoveryResourceFromJson(json);
 
@@ -119,9 +132,19 @@ class DiscoveryResource {
   DiscoveryResource copy() => DiscoveryResource.fromJson(toJson());
 }
 
-enum DiscoveryResourceType {
-  image,
-  video,
+enum DiscoveryResourceType { image, video, UNDEFINED }
+
+class DiscoveryResourceTypeUtil {
+  static DiscoveryResourceType build(String? value) {
+    switch (value) {
+      case 'image':
+        return DiscoveryResourceType.image;
+      case 'video':
+        return DiscoveryResourceType.video;
+      default:
+        return DiscoveryResourceType.UNDEFINED;
+    }
+  }
 }
 
 extension DiscoveryResourceTypeEx on DiscoveryResourceType {
@@ -131,6 +154,8 @@ extension DiscoveryResourceTypeEx on DiscoveryResourceType {
         return 'image';
       case DiscoveryResourceType.video:
         return 'video';
+      case DiscoveryResourceType.UNDEFINED:
+        return '';
     }
   }
 }

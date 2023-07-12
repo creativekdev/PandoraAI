@@ -19,7 +19,7 @@ class PaiSwiper extends StatelessWidget {
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
           List<DiscoveryResource> list = entity![index].resourceList();
-          DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == 'image');
+          DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
           return resource == null
               ? SizedBox.shrink()
               : UnconstrainedBox(

@@ -145,7 +145,7 @@ class _Item extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<DiscoveryResource> list = post.resourceList();
-    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == 'image');
+    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return resource == null
         ? SizedBox.shrink()
         : ClipRRect(
