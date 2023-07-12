@@ -249,7 +249,7 @@ class PrintEditAddressController extends GetxController {
     var address = {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
-      "phone": "${_regionEntity?.callingCode ?? "+1"}" + contactNumberController.text,
+      "phone": "${_regionEntity?.callingCode ?? "+1"} ${contactNumberController.text}",
       "country_code": countryEntity?.regionCode,
       "country": countryEntity?.regionName,
       "address1": formattedAddress.isEmpty
@@ -327,15 +327,24 @@ class PrintEditAddressController extends GetxController {
     }
 
     cartoonizerApi = CartoonizerApi().bindController(this);
-    _viewInit = true;
+    getPhoneBy();
   }
 
   Future<void> getPhoneBy() async {
     if (_address != null) {
-      PhoneNumber number = await PhoneNumber.getRegionInfoFromPhoneNumber(_address?.phone ?? '');
-      _regionEntity = getRegionEntityBy(number.isoCode ?? 'US');
-      contactNumberController.text = _address?.phone.substring(_regionEntity?.callingCode?.length ?? 0) ?? '';
+      PhoneNumber number;
+      try {
+        number = await PhoneNumber.getRegionInfoFromPhoneNumber(_address?.phone ?? '');
+      } catch (_) {
+      } finally {
+        _regionEntity = getRegionEntityBy('US');
+        contactNumberController.text = _address?.phone.substring(_regionEntity?.callingCode?.length ?? 0) ?? '';
+        _viewInit = true;
+        update();
+      }
     }
+    _viewInit = true;
+    update();
   }
 
   List<Map<String, dynamic>> _getCallingCodeList() {

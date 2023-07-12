@@ -52,7 +52,7 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
             if (controller.viewInit == false) {
               return SkeletonListView(
                 itemCount: 6,
-                padding: EdgeInsets.zero,
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
                 spacing: $(4),
                 item: Column(
                   children: [
@@ -61,14 +61,14 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
                         UnconstrainedBox(
                           child: SkeletonAvatar(
                               style: SkeletonAvatarStyle(
-                            width: ScreenUtil.screenSize.width - $(15),
+                            width: ScreenUtil.screenSize.width - $(30),
                             height: $(100),
                           )),
                         ),
                       ],
                     ),
                     SizedBox(
-                      height: $(8),
+                      height: $(15),
                     )
                   ],
                 ),

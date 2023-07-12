@@ -2,6 +2,7 @@ import 'package:cartoonizer/views/print/print_edit_address_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_input_item.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
@@ -79,159 +80,177 @@ class _PrintEditAddressScreenState extends AppState<PrintEditAddressScreen> {
       body: GetBuilder<PrintEditAddressController>(
         init: controller,
         builder: (controller) {
-          return FutureBuilder(
-              future: controller.getPhoneBy(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Stack(
+          if (controller.viewInit == false) {
+            return SkeletonListView(
+              itemCount: 30,
+              padding: EdgeInsets.symmetric(horizontal: $(15)),
+              spacing: $(4),
+              item: Column(
+                children: [
+                  Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: $(15)),
-                        child: BlankAreaIntercept(
-                          child: CustomScrollView(
-                            controller: controller.scrollController,
-                            slivers: [
-                              controller.isShowSate
-                                  ? SliverToBoxAdapter(
-                                      child: Row(
-                                        children: [
-                                          PrintInputItem(
-                                            width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                            title: S.of(context).country_region,
-                                            controller: controller.countryController,
-                                            canEdit: false,
-                                            onTap: () {
-                                              controller.onTapRegion(context, SelectRegionType.country);
-                                              hideSearchResults();
-                                            },
-                                          ),
-                                          SizedBox(
-                                            width: $(15),
-                                          ),
-                                          PrintInputItem(
-                                            width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                            title: S.of(context).STATE,
-                                            controller: controller.stateController,
-                                            canEdit: false,
-                                            onTap: () {
-                                              controller.onTapState(context);
-                                              hideSearchResults();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : SliverToBoxAdapter(
-                                      child: PrintInputItem(
-                                        width: ScreenUtil.screenSize.width - $(30),
-                                        title: S.of(context).country_region,
-                                        controller: controller.countryController,
-                                        canEdit: false,
-                                        onTap: () {
-                                          controller.onTapRegion(context, SelectRegionType.country);
-                                          hideSearchResults();
-                                        },
-                                      ),
-                                    ),
-                              SliverToBoxAdapter(
-                                child: PrintInputItem(
-                                  width: ScreenUtil.screenSize.width - $(30),
-                                  title: S.of(context).search_address,
-                                  controller: controller.searchAddressController,
-                                  focusNode: controller.searchAddressFocusNode,
-                                  completeCallback: () {
-                                    hideSearchResults();
-                                  },
-                                  onTap: () {
-                                    controller.scrollController.animateTo(
-                                      $(110),
-                                      duration: Duration(milliseconds: 300),
-                                      curve: Curves.linear,
-                                    );
-                                  },
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: PrintInputItem(
-                                  width: ScreenUtil.screenSize.width - $(30),
-                                  title: S.of(context).apartment_suite_other,
-                                  controller: controller.apartmentController,
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: Row(
-                                  children: [
-                                    PrintInputItem(
-                                      width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                      title: S.of(context).first_name,
-                                      controller: controller.firstNameController,
-                                    ),
-                                    SizedBox(
-                                      width: $(15),
-                                    ),
-                                    PrintInputItem(
-                                      width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                      title: S.of(context).last_name,
-                                      controller: controller.secondNameController,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: Row(
-                                  children: [
-                                    PrintInputItem(
-                                      width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                      title: S.of(context).city,
-                                      controller: controller.cityController,
-                                    ),
-                                    SizedBox(
-                                      width: $(15),
-                                    ),
-                                    PrintInputItem(
-                                      width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                      title: S.of(context).zip_code,
-                                      controller: controller.zipCodeController,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: PrintInputContactItem(
-                                  title: S.of(context).contact_number,
-                                  controller: controller.contactNumberController,
-                                  regionCodeEntity: controller.regionEntity,
-                                  onTap: () {
-                                    controller.onTapRegion(context, SelectRegionType.callingCode);
-                                  },
-                                ),
-                              ),
-                              SliverPadding(
-                                padding: EdgeInsets.only(top: $(119), bottom: $(60)),
-                                sliver: SliverToBoxAdapter(
-                                  child: TitleTextWidget(S.of(context).save, ColorConstant.White, FontWeight.w500, $(17))
-                                      .intoContainer(
-                                    alignment: Alignment.center,
-                                    height: $(48),
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular($(10)), color: ColorConstant.BlueColor),
-                                  )
-                                      .intoGestureDetector(onTap: () async {
-                                    showLoading();
-
-                                    await controller.onSubmit(context);
-                                    hideLoading();
-                                  }),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                      UnconstrainedBox(
+                        child: SkeletonAvatar(
+                            style: SkeletonAvatarStyle(
+                          width: ScreenUtil.screenSize.width - $(30),
+                          height: $(50),
+                        )),
                       ),
                     ],
-                  );
-                }
-                return SizedBox();
-              });
+                  ),
+                  SizedBox(
+                    height: $(15),
+                  )
+                ],
+              ),
+            );
+          }
+          return Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: $(15)),
+                child: BlankAreaIntercept(
+                  child: CustomScrollView(
+                    controller: controller.scrollController,
+                    slivers: [
+                      controller.isShowSate
+                          ? SliverToBoxAdapter(
+                              child: Row(
+                                children: [
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).country_region,
+                                    controller: controller.countryController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapRegion(context, SelectRegionType.country);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: $(15),
+                                  ),
+                                  PrintInputItem(
+                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                                    title: S.of(context).STATE,
+                                    controller: controller.stateController,
+                                    canEdit: false,
+                                    onTap: () {
+                                      controller.onTapState(context);
+                                      hideSearchResults();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SliverToBoxAdapter(
+                              child: PrintInputItem(
+                                width: ScreenUtil.screenSize.width - $(30),
+                                title: S.of(context).country_region,
+                                controller: controller.countryController,
+                                canEdit: false,
+                                onTap: () {
+                                  controller.onTapRegion(context, SelectRegionType.country);
+                                  hideSearchResults();
+                                },
+                              ),
+                            ),
+                      SliverToBoxAdapter(
+                        child: PrintInputItem(
+                          width: ScreenUtil.screenSize.width - $(30),
+                          title: S.of(context).search_address,
+                          controller: controller.searchAddressController,
+                          focusNode: controller.searchAddressFocusNode,
+                          completeCallback: () {
+                            hideSearchResults();
+                          },
+                          onTap: () {
+                            controller.scrollController.animateTo(
+                              $(110),
+                              duration: Duration(milliseconds: 300),
+                              curve: Curves.linear,
+                            );
+                          },
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: PrintInputItem(
+                          width: ScreenUtil.screenSize.width - $(30),
+                          title: S.of(context).apartment_suite_other,
+                          controller: controller.apartmentController,
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Row(
+                          children: [
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).first_name,
+                              controller: controller.firstNameController,
+                            ),
+                            SizedBox(
+                              width: $(15),
+                            ),
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).last_name,
+                              controller: controller.secondNameController,
+                            )
+                          ],
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: Row(
+                          children: [
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).city,
+                              controller: controller.cityController,
+                            ),
+                            SizedBox(
+                              width: $(15),
+                            ),
+                            PrintInputItem(
+                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                              title: S.of(context).zip_code,
+                              controller: controller.zipCodeController,
+                            )
+                          ],
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: PrintInputContactItem(
+                          title: S.of(context).contact_number,
+                          controller: controller.contactNumberController,
+                          regionCodeEntity: controller.regionEntity,
+                          onTap: () {
+                            controller.onTapRegion(context, SelectRegionType.callingCode);
+                          },
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: EdgeInsets.only(top: $(119), bottom: $(60)),
+                        sliver: SliverToBoxAdapter(
+                          child: TitleTextWidget(S.of(context).save, ColorConstant.White, FontWeight.w500, $(17))
+                              .intoContainer(
+                            alignment: Alignment.center,
+                            height: $(48),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular($(10)), color: ColorConstant.BlueColor),
+                          )
+                              .intoGestureDetector(onTap: () async {
+                            showLoading();
+
+                            await controller.onSubmit(context);
+                            hideLoading();
+                          }),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );

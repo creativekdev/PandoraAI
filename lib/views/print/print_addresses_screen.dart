@@ -55,16 +55,31 @@ class _PrintAddressScreenState extends AppState<PrintAddressScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (address.xDefault)
-                                  Image.asset(
-                                    Images.ic_recent_checked,
-                                    width: $(20),
-                                  ).intoPadding(
-                                    padding: EdgeInsets.only(
-                                      top: $(16),
-                                      left: $(8),
-                                    ),
-                                  ),
+                                address.xDefault
+                                    ? Image.asset(
+                                        Images.ic_recent_checked,
+                                        width: $(20),
+                                      ).blur().intoPadding(
+                                          padding: EdgeInsets.only(
+                                            top: $(16),
+                                            left: $(8),
+                                          ),
+                                        )
+                                    : Container(
+                                        margin: EdgeInsets.only(
+                                          top: $(16),
+                                          left: $(8),
+                                        ),
+                                        width: $(16),
+                                        height: $(16),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(32),
+                                        ),
+                                      ).blur(),
                                 TitleTextWidget(
                                   address.name,
                                   ColorConstant.White,
