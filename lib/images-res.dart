@@ -53,6 +53,7 @@ class Images {
    static const String ic_close = 'assets/images/ic_close.png';
    static const String ic_compare_arrow = 'assets/images/ic_compare_arrow.png';
    static const String ic_compare_top = 'assets/images/ic_compare_top.png';
+   static const String ic_confirm = 'assets/images/ic_confirm.png';
    static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
