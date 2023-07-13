@@ -9,7 +9,7 @@ class LiPopMenu {
   static BuildContext? menuContext;
 
   /// 显示带线带背景 pop
-  static void showLinePop(BuildContext context, {bool isShowBg = true, _ClickCallBack? clickCallback, required List<ListPopItem> listData, Color? color}) {
+  static void showLinePop(BuildContext context, {bool isShowBg = true, required List<ListPopItem> listData, Color? color}) {
     menuContext = context;
     Widget _buildMenuLineCell(dataArr) {
       return ListView.separated(
@@ -22,9 +22,7 @@ class LiPopMenu {
               child: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    if (clickCallback != null) {
-                      clickCallback(index, listData[index].text);
-                    }
+                    listData[index].onTap?.call();
                   },
                   child: Container(
                     height: $(57),
@@ -171,8 +169,9 @@ class CustomDialog extends Dialog {
 }
 
 class ListPopItem {
-  ListPopItem({required this.text, required this.icon});
+  ListPopItem({required this.text, required this.icon, required this.onTap});
 
+  Function()? onTap;
   final String text;
   final String icon;
 }

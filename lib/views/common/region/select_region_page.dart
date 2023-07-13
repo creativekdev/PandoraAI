@@ -3,6 +3,7 @@ import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/region_code_entity.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_en.dart';
@@ -137,11 +138,11 @@ class _SelectRegionPageState extends State<SelectRegionPage> {
   }
 
   List<Map<String, dynamic>> _getCallingCodeList() {
-    if (AppContext.currentLocales == 'en') {
+    if (MyApp.currentLocales == 'en') {
       return calling_code_en;
-    } else if (AppContext.currentLocales == 'zh') {
+    } else if (MyApp.currentLocales == 'zh') {
       return calling_code_zh;
-    } else if (AppContext.currentLocales == 'es') {
+    } else if (MyApp.currentLocales == 'es') {
       return calling_code_es;
     }
     return calling_code_en;

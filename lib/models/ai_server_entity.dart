@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/generated/json/ai_server_entity.g.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
+import 'package:cartoonizer/main.dart';
 
 @JsonSerializable()
 class AiServerEntity {
@@ -38,7 +38,7 @@ class AiServerEntity {
 
 extension AiServerEntityEx on AiServerEntity {
   String get serverUrl {
-    if (AppContext.currentLocales == 'zh') {
+    if (MyApp.currentLocales == 'zh') {
       return cnServer ?? server ?? '';
     }
     return server ?? '';

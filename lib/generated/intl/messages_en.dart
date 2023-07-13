@@ -617,8 +617,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "shareIncludeOriginal": MessageLookupByLibrary.simpleMessage(
             "Also share the original image"),
         "share_app": MessageLookupByLibrary.simpleMessage("Share App"),
+        "share_out": MessageLookupByLibrary.simpleMessage("Share with friends"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "share_to": MessageLookupByLibrary.simpleMessage("Share to"),
+        "share_to_discovery":
+            MessageLookupByLibrary.simpleMessage("Share to Discovery"),
         "shipping_delivery":
             MessageLookupByLibrary.simpleMessage("Shipping & Delivery"),
         "shipping_details":

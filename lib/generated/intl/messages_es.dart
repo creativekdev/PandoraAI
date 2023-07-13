@@ -644,8 +644,12 @@ class MessageLookup extends MessageLookupByLibrary {
             "Compartir también la imagen original"),
         "share_app":
             MessageLookupByLibrary.simpleMessage("Compartir la aplicación"),
+        "share_out":
+            MessageLookupByLibrary.simpleMessage("Compartir con amigos"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora ama"),
         "share_to": MessageLookupByLibrary.simpleMessage("Compartir en"),
+        "share_to_discovery":
+            MessageLookupByLibrary.simpleMessage("Compartir en Discovery"),
         "shipping_delivery":
             MessageLookupByLibrary.simpleMessage("Rellenar la dirección"),
         "shipping_details":

@@ -84,19 +84,17 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
         if (value != null) {
           controller = VideoPlayerController.file(value)
             ..setLooping(loop)
-            ..initialize().then((value) {
-              controller!.addListener(() {
-                judgePlaySection();
-              });
-              setState(() {
-                play();
-              });
-            });
-        } else {
+            ..initialize();
+          controller!.addListener(() {
+            judgePlaySection();
+          });
           setState(() {
-            downloading = false;
+            play();
           });
         }
+        setState(() {
+          downloading = false;
+        });
       });
     }
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {

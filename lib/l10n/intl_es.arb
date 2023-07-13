@@ -483,5 +483,7 @@
   "selectTermOfPost": "Por favor, marca el Condiciones de uso",
   "ReceivedReport": "Ha recibido su informe",
   "HaveReport": "Ya lo has denunciado",
-  "copy": "Copiar"
+  "copy": "Copiar",
+  "share_to_discovery": "Compartir en Discovery",
+  "share_out": "Compartir con amigos"
 }
