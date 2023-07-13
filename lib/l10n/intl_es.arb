@@ -482,5 +482,6 @@
   "Report": "Reportar",
   "selectTermOfPost": "Por favor, marca el Condiciones de uso",
   "ReceivedReport": "Ha recibido su informe",
-  "HaveReport": "Ya lo has denunciado"
+  "HaveReport": "Ya lo has denunciado",
+  "copy": "Copiar"
 }

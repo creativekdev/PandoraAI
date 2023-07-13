@@ -1,38 +1,66 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../images-res.dart';
 import '../../models/discovery_list_entity.dart';
 import '../../models/enums/home_card_type.dart';
+import 'home_detail_controller.dart';
 
 class HomeDetailScreen extends StatefulWidget {
-  const HomeDetailScreen({Key? key, required this.post, required this.source}) : super(key: key);
-  final DiscoveryListEntity post;
+  const HomeDetailScreen({Key? key, required this.posts, required this.source, required this.title, required this.index}) : super(key: key);
+  final List<DiscoveryListEntity> posts;
+  final String title;
   final String source;
+  final int index;
 
   @override
   State<HomeDetailScreen> createState() => _HomeDetailScreenState();
 }
 
 class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
+  HomeDetailController controller = HomeDetailController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.posts = widget.posts;
+    controller.index = widget.index;
+    controller.category = widget.title;
+    controller.pageController = PageController(initialPage: widget.index);
+  }
+
   @override
   Widget buildWidget(BuildContext context) {
-    List<dynamic> resources = jsonDecode(widget.post.resources) as List<dynamic>;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: ColorConstant.BackgroundColor,
       body: Stack(
         children: [
-          CachedNetworkImageUtils.custom(
-            context: context,
-            imageUrl: resources.first["url"],
-            height: ScreenUtil.screenSize.height,
-            fit: BoxFit.cover,
-          ),
+          GetBuilder<HomeDetailController>(
+              init: controller,
+              builder: (context) {
+                return PageView.builder(
+                  controller: controller.pageController,
+                  itemBuilder: (BuildContext context, int index) {
+                    List<dynamic> resources = jsonDecode(controller.posts![index].resources) as List<dynamic>;
+                    return CachedNetworkImageUtils.custom(
+                      context: context,
+                      imageUrl: resources.first["url"],
+                      height: ScreenUtil.screenSize.height,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                  itemCount: controller.posts?.length ?? 0,
+                  scrollDirection: Axis.vertical,
+                  onPageChanged: (index) {
+                    controller.index = index;
+                  },
+                );
+              }),
           Positioned(
             top: ScreenUtil.getStatusBarHeight() + $(5),
             left: $(15),
@@ -44,6 +72,19 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
+            ),
+          ),
+          Positioned(
+            top: ScreenUtil.getStatusBarHeight() + $(5),
+            left: $(45),
+            right: $(45),
+            child: GestureDetector(
+              child: TitleTextWidget(
+                widget.title.toUpperCaseFirst,
+                ColorConstant.White,
+                FontWeight.w500,
+                $(17),
+              ),
             ),
           ),
           Positioned(
@@ -81,7 +122,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
               ),
             )
                 .intoGestureDetector(onTap: () {
-              HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${widget.post.category}", data: widget.post);
+              HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![widget.index]);
             }),
           )
         ],

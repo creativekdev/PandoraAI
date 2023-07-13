@@ -1,4 +1,5 @@
 import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -6,7 +7,7 @@ import '../../api/cartoonizer_api.dart';
 import '../../models/discovery_list_entity.dart';
 
 typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts);
-typedef OnClickItem = Function(int index);
+typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts);
 
 class PaiContentView extends StatefulWidget {
   const PaiContentView({Key? key, required this.height, required this.onTap, required this.onTapItem, required this.galleries}) : super(key: key);
@@ -62,13 +63,13 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: $(15)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
       child: Column(
         children: [
           Row(
             children: [
               TitleTextWidget(
-                widget.galleries?.title ?? '',
+                (widget.galleries?.title ?? '').toUpperCaseFirst,
                 ColorConstant.White,
                 FontWeight.w500,
                 $(17),
@@ -76,7 +77,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               Spacer(),
               TitleTextWidget(
                 "${S.of(context).all} >",
-                ColorConstant.White,
+                ColorConstant.DividerColor,
                 FontWeight.w400,
                 $(12),
               )
@@ -87,7 +88,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
-                    color: ColorConstant.White,
+                    color: ColorConstant.White.withOpacity(0.1),
                   ),
                   borderRadius: BorderRadius.circular($(10)),
                 ),
@@ -112,7 +113,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               itemCount: this.socialPost?.length ?? 0,
               itemBuilder: (context, index) => _Item(widget.height, this.socialPost![index]).intoGestureDetector(
                 onTap: () {
-                  widget.onTapItem(index);
+                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost);
                 },
               ),
             ),

@@ -4,7 +4,11 @@ import 'package:cartoonizer/utils/string_ex.dart';
 typedef onClickItemAction = Function();
 
 showCommentActions(BuildContext context,
-    {required onClickItemAction replyAction, required onClickItemAction reportAction, required onClickItemAction cancelAction, required String title}) {
+    {required onClickItemAction replyAction,
+    required onClickItemAction reportAction,
+    required onClickItemAction copyAction,
+    required onClickItemAction cancelAction,
+    required String title}) {
   showModalBottomSheet(
       constraints: BoxConstraints(
         maxHeight: $(284),
@@ -13,59 +17,10 @@ showCommentActions(BuildContext context,
       builder: (context) {
         return ListView(
           children: [
-            TitleTextWidget(
-              title,
-              ColorConstant.DiscoveryCommentGrey,
-              FontWeight.w400,
-              $(13),
-              align: TextAlign.center,
-            ).intoPadding(
-                padding: EdgeInsets.only(
-              top: $(16),
-              bottom: $(16),
-            )),
-            Divider(
-              indent: $(16),
-              color: ColorConstant.LightLineColor,
-              endIndent: $(16),
-              height: $(1),
-            ),
-            TitleTextWidget(
-              S.of(context).reply.toUpperCaseFirst,
-              ColorConstant.White,
-              FontWeight.w400,
-              $(17),
-              align: TextAlign.center,
-            )
-                .intoPadding(
-                    padding: EdgeInsets.only(
-              bottom: $(16),
-              top: $(16),
-            ))
-                .intoGestureDetector(onTap: () {
-              replyAction();
-            }),
-            Divider(
-              indent: $(16),
-              color: ColorConstant.LightLineColor,
-              endIndent: $(16),
-              height: $(1),
-            ),
-            TitleTextWidget(
-              S.of(context).Report,
-              ColorConstant.White,
-              FontWeight.w400,
-              $(17),
-              align: TextAlign.center,
-            )
-                .intoPadding(
-                    padding: EdgeInsets.only(
-              bottom: $(16),
-              top: $(16),
-            ))
-                .intoGestureDetector(onTap: () {
-              reportAction();
-            }),
+            _Item(title: title, showLine: true, color: ColorConstant.DiscoveryCommentGrey),
+            _Item(title: S.of(context).reply.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: replyAction),
+            _Item(title: S.of(context).copy.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: copyAction),
+            _Item(title: S.of(context).Report.toUpperCaseFirst, showLine: false, color: ColorConstant.White).intoGestureDetector(onTap: reportAction),
             Container(
               height: $(8),
               color: ColorConstant.BackgroundColorBlur,
@@ -96,4 +51,38 @@ showCommentActions(BuildContext context,
                 )));
       },
       backgroundColor: Colors.transparent);
+}
+
+class _Item extends StatelessWidget {
+  final String title;
+  final bool showLine;
+  final Color color;
+
+  const _Item({super.key, required this.title, required this.showLine, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitleTextWidget(
+          title,
+          color,
+          FontWeight.w400,
+          $(13),
+          align: TextAlign.center,
+        ).intoPadding(
+            padding: EdgeInsets.only(
+          top: $(16),
+          bottom: $(16),
+        )),
+        if (showLine)
+          Divider(
+            indent: $(16),
+            color: ColorConstant.LightLineColor,
+            endIndent: $(16),
+            height: $(1),
+          ),
+      ],
+    );
+  }
 }

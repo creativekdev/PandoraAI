@@ -47,8 +47,8 @@ class PaiSwiper extends StatelessWidget {
             builder: DotSwiperPaginationBuilder(
           color: Colors.grey,
           activeColor: Colors.white,
-          size: $(8),
-          activeSize: $(8),
+          size: $(6),
+          activeSize: $(6),
         )),
       ),
     );

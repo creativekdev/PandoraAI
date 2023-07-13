@@ -13,12 +13,13 @@ class PaiRecommendView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: $(14)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
       child: Wrap(
         spacing: $(8),
         runSpacing: $(8),
-        children: list!
+        children: finalList!
             .map(
               (e) => RecommendItem(
                 e,
@@ -39,7 +40,7 @@ class RecommendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - $(46)) / 3;
+    double width = (ScreenUtil.screenSize.width - $(48)) / 3;
     var title = data.category.title();
     return Column(
       children: [
@@ -56,7 +57,7 @@ class RecommendItem extends StatelessWidget {
         ),
         TitleTextWidget(
           title.isEmpty ? data.categoryString! : title,
-          ColorConstant.White,
+          ColorConstant.DividerColor,
           FontWeight.w400,
           $(12),
           maxLines: 1,

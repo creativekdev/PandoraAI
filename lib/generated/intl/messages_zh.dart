@@ -151,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "congratulations": MessageLookupByLibrary.simpleMessage("祝贺你!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
         "contact_number": MessageLookupByLibrary.simpleMessage("联系电话"),
+        "copy": MessageLookupByLibrary.simpleMessage("复制"),
         "copy_successfully": MessageLookupByLibrary.simpleMessage("已复制到剪贴板"),
         "country_region": MessageLookupByLibrary.simpleMessage("国家/地区"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),

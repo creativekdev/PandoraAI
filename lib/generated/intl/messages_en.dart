@@ -184,6 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Connect with us"),
         "contact_number":
             MessageLookupByLibrary.simpleMessage("Contact Number"),
+        "copy": MessageLookupByLibrary.simpleMessage("Copy"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copy Successfully"),
         "country_region":

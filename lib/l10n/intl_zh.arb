@@ -483,5 +483,6 @@
   "Report": "举报",
   "selectTermOfPost": "请查看并同意《使用条款》",
   "ReceivedReport": "已收到你的举报",
-  "HaveReport": "你已经举报过了"
+  "HaveReport": "你已经举报过了",
+  "copy": "复制"
 }

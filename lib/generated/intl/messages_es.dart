@@ -191,6 +191,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connect_with_us": MessageLookupByLibrary.simpleMessage("Contáctenos"),
         "contact_number":
             MessageLookupByLibrary.simpleMessage("Número de contacto"),
+        "copy": MessageLookupByLibrary.simpleMessage("Copiar"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copiado al portapapeles"),
         "country_region": MessageLookupByLibrary.simpleMessage("Pays/Région"),
