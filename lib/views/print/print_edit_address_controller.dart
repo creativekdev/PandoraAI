@@ -1,7 +1,10 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/address_entity.dart';
 import 'package:cartoonizer/models/state_entity.dart';
+import 'package:cartoonizer/views/common/region/calling_codes_es.dart';
+import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -11,8 +14,6 @@ import '../../models/print_order_entity.dart';
 import '../../models/region_code_entity.dart';
 import '../../network/base_requester.dart';
 import '../common/region/calling_codes_en.dart';
-import '../common/region/calling_codes_es.dart';
-import '../common/region/calling_codes_zh.dart';
 import '../common/region/select_region_page.dart';
 import '../common/state/select_state_page.dart';
 import '../common/state/states_list.dart';
@@ -348,11 +349,11 @@ class PrintEditAddressController extends GetxController {
   }
 
   List<Map<String, dynamic>> _getCallingCodeList() {
-    if (AppContext.currentLocales == 'en') {
+    if (MyApp.currentLocales == 'en') {
       return calling_code_en;
-    } else if (AppContext.currentLocales == 'zh') {
+    } else if (MyApp.currentLocales == 'zh') {
       return calling_code_zh;
-    } else if (AppContext.currentLocales == 'es') {
+    } else if (MyApp.currentLocales == 'es') {
       return calling_code_es;
     }
     return calling_code_en;
