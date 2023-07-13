@@ -328,97 +328,19 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                 LiPopMenu.showLinePop(
                   context,
                   listData: [
-                    ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
-                    ListPopItem(text: S.of(context).share, icon: Images.ic_share),
+                    ListPopItem(
+                        text: S.of(context).share_to_discovery,
+                        icon: Images.ic_share_discovery,
+                        onTap: () {
+                          shareToDiscovery(controller);
+                        }),
+                    ListPopItem(
+                        text: S.of(context).share_out,
+                        icon: Images.ic_share,
+                        onTap: () {
+                          shareToOut(controller);
+                        }),
                   ],
-                  clickCallback: (index, text) {
-                    if (index == 0) {
-                      if (TextUtil.isEmpty(controller.transKey)) {
-                        return;
-                      }
-                      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
-                        var file = File(controller.transKey!);
-                        ShareDiscoveryScreen.push(
-                          context,
-                          effectKey: 'Me-taverse',
-                          originalUrl: uploadImageController.imageUrl.value,
-                          image: base64Encode(file.readAsBytesSync()),
-                          isVideo: false,
-                          category: HomeCardType.anotherme,
-                        ).then((value) {
-                          if (value ?? false) {
-                            Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
-                            showShareSuccessDialog(context);
-                          }
-                        });
-                      }, autoExec: true);
-                    } else if (index == 1) {
-                      // 分享
-                      showSaveDialog(context, false).then((value) async {
-                        if (value != null) {
-                          if (value) {
-                            showDialog<String>(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio)).then((value) async {
-                              if (!TextUtil.isEmpty(value)) {
-                                await showLoading();
-                                if (TextUtil.isEmpty(value)) {
-                                  await hideLoading();
-                                  return;
-                                }
-                                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                                await hideLoading();
-                                ShareScreen.startShare(context,
-                                    backgroundColor: Color(0x77000000),
-                                    style: 'Me-taverse',
-                                    image: value!,
-                                    isVideo: true,
-                                    originalUrl: null,
-                                    preShareVideo: (platform, filePath) async {
-                                      if (Platform.isIOS) {
-                                        var newFile = filePath + '.ins.mp4';
-                                        if (File(newFile).existsSync()) {
-                                          return newFile;
-                                        }
-                                        var command = FFmpegUtil.commandVideoToInstagram(originFile: filePath, targetFile: newFile);
-                                        var session = await FFmpegKit.execute(command);
-                                        FFmpegKit.cancel(session.getSessionId());
-                                        return newFile;
-                                      } else {
-                                        return filePath;
-                                      }
-                                    },
-                                    effectKey: 'Me-taverse',
-                                    onShareSuccess: (platform) {
-                                      Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
-                                    });
-                                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                              }
-                            });
-                          } else {
-                            await showLoading();
-                            if (TextUtil.isEmpty(controller.transKey)) {
-                              return;
-                            }
-                            var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-                            await hideLoading();
-                            ShareScreen.startShare(context,
-                                backgroundColor: Color(0x77000000),
-                                style: 'Me-taverse',
-                                image: base64Encode(uint8list),
-                                isVideo: false,
-                                originalUrl: null,
-                                effectKey: 'Me-taverse', onShareSuccess: (platform) {
-                              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'image');
-                            });
-                            AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-                          }
-                        }
-                      });
-                    }
-                  },
                 );
               }),
             ),
@@ -535,5 +457,130 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                   )));
         },
         backgroundColor: Colors.transparent);
+  }
+
+  shareToDiscovery(AnotherMeController controller) {
+    if (TextUtil.isEmpty(controller.transKey)) {
+      return;
+    }
+    showSaveDialog(context, false).then((value) {
+      if (value == null) {
+        return;
+      }
+      Function action = () {};
+      if (value) {
+        action = () {
+          showDialog<String>(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
+              .then((value) async {
+            if (!TextUtil.isEmpty(value)) {
+              await showLoading();
+              if (TextUtil.isEmpty(value)) {
+                await hideLoading();
+                return;
+              }
+              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+              await hideLoading();
+              ShareDiscoveryScreen.push(
+                context,
+                image: value!,
+                isVideo: true,
+                effectKey: '',
+                category: HomeCardType.anotherme,
+              ).then((value) {
+                if (value ?? false) {
+                  Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'video');
+                  showShareSuccessDialog(context);
+                }
+              });
+              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+            }
+          });
+        };
+      } else {
+        action = () {
+          var file = File(controller.transKey!);
+          ShareDiscoveryScreen.push(
+            context,
+            effectKey: 'Me-taverse',
+            originalUrl: uploadImageController.imageUrl.value,
+            image: base64Encode(file.readAsBytesSync()),
+            isVideo: false,
+            category: HomeCardType.anotherme,
+          ).then((value) {
+            if (value ?? false) {
+              Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: 'discovery', type: 'image');
+              showShareSuccessDialog(context);
+            }
+          });
+        };
+      }
+      AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_metaverse', callback: () {
+        action.call();
+      }, autoExec: true);
+    });
+  }
+
+  shareToOut(AnotherMeController controller) {
+    showSaveDialog(context, false).then((value) async {
+      if (value != null) {
+        if (value) {
+          showDialog<String>(context: context, barrierDismissible: false, builder: (_) => TransResultVideoBuildDialog(result: transResult!, origin: file, ratio: ratio))
+              .then((value) async {
+            if (!TextUtil.isEmpty(value)) {
+              await showLoading();
+              if (TextUtil.isEmpty(value)) {
+                await hideLoading();
+                return;
+              }
+              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+              await hideLoading();
+              ShareScreen.startShare(context,
+                  backgroundColor: Color(0x77000000),
+                  style: 'Me-taverse',
+                  image: value!,
+                  isVideo: true,
+                  originalUrl: null,
+                  preShareVideo: (platform, filePath) async {
+                    if (Platform.isIOS) {
+                      var newFile = filePath + '.ins.mp4';
+                      if (File(newFile).existsSync()) {
+                        return newFile;
+                      }
+                      var command = FFmpegUtil.commandVideoToInstagram(originFile: filePath, targetFile: newFile);
+                      var session = await FFmpegKit.execute(command);
+                      FFmpegKit.cancel(session.getSessionId());
+                      return newFile;
+                    } else {
+                      return filePath;
+                    }
+                  },
+                  effectKey: 'Me-taverse',
+                  onShareSuccess: (platform) {
+                    Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'video');
+                  });
+              AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+            }
+          });
+        } else {
+          await showLoading();
+          if (TextUtil.isEmpty(controller.transKey)) {
+            return;
+          }
+          var uint8list = await ImageUtils.printAnotherMeData(file, File(controller.transKey!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+          await hideLoading();
+          ShareScreen.startShare(context,
+              backgroundColor: Color(0x77000000),
+              style: 'Me-taverse',
+              image: base64Encode(uint8list),
+              isVideo: false,
+              originalUrl: null,
+              effectKey: 'Me-taverse', onShareSuccess: (platform) {
+            Events.metaverseCompleteShare(source: photoType == 'recently' ? 'recently' : 'metaverse', platform: platform, type: 'image');
+          });
+          AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+        }
+      }
+    });
   }
 }

@@ -475,5 +475,7 @@
   "Report": "Report",
   "selectTermOfPost": "Please check the terms of use",
   "ReceivedReport": "We have received your report",
-  "HaveReport": "You have already reported it"
+  "HaveReport": "You have already reported it",
+  "share_to_discovery": "Share to Discovery",
+  "share_out": "Share with friends"
 }

@@ -79,6 +79,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   int lastLocaleTime = 0;
+  static String currentLocales = 'en';
 
   static AppRouteObserver routeObserver = AppRouteObserver();
 
@@ -106,11 +107,11 @@ class MyApp extends StatelessWidget {
             if (duration > 2000) {
               lastLocaleTime = current;
               debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
-              theme.AppContext.currentLocales = deviceLocale.languageCode;
+              currentLocales = deviceLocale.languageCode;
               result = deviceLocale;
             } else {
               for (var locale in supportedLocales) {
-                if (locale.languageCode == theme.AppContext.currentLocales) {
+                if (locale.languageCode == currentLocales) {
                   result = locale;
                   break;
                 }

@@ -4819,6 +4819,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Share to Discovery`
+  String get share_to_discovery {
+    return Intl.message(
+      'Share to Discovery',
+      name: 'share_to_discovery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share with friends`
+  String get share_out {
+    return Intl.message(
+      'Share with friends',
+      name: 'share_out',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -4828,6 +4848,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
       Locale.fromSubtags(languageCode: 'es'),
+      Locale.fromSubtags(languageCode: 'ja'),
       Locale.fromSubtags(languageCode: 'zh'),
     ];
   }

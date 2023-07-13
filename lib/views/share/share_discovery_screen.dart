@@ -142,6 +142,12 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
           break;
         case HomeCardType.UNDEFINED:
           break;
+        case HomeCardType.removeBg:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#RemoveBackground");
+          break;
+        case HomeCardType.nothing:
+          textHint = '';
+          break;
       }
       FocusScope.of(context).requestFocus(focusNode);
       if (cacheManager.containKey(CacheManager.postOfTerm) == false) {
@@ -472,7 +478,10 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
                     SizedBox(width: $(8)),
                     Expanded(
                         child: (isVideo
-                                ? EffectVideoPlayer(url: image)
+                                ? EffectVideoPlayer(
+                                    url: image,
+                                    isFile: true,
+                                  )
                                 : Image.memory(
                                     imageData!,
                                     fit: BoxFit.cover,

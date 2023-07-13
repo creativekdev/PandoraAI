@@ -220,14 +220,21 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
                 color: ColorConstant.White,
                 width: $(20),
               ).intoGestureDetector(onTap: () {
-                LiPopMenu.showLinePop(context, color: Colors.white, listData: [ListPopItem(text: S.of(context).Report, icon: Images.ic_report)], clickCallback: (index, text) {
-                  if (index == 0) {
-                    UserManager userManager = AppDelegate.instance.getManager();
-                    userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryDetailScreen', callback: () {
-                      controller.reportAction(widget.discoveryEntity, context);
-                    });
-                  }
-                });
+                LiPopMenu.showLinePop(
+                  context,
+                  color: Colors.white,
+                  listData: [
+                    ListPopItem(
+                        text: S.of(context).Report,
+                        icon: Images.ic_report,
+                        onTap: () {
+                          UserManager userManager = AppDelegate.instance.getManager();
+                          userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryDetailScreen', callback: () {
+                            controller.reportAction(widget.discoveryEntity, context);
+                          });
+                        })
+                  ],
+                );
               }),
       ),
       body: GetBuilder<DiscoveryDetailController>(

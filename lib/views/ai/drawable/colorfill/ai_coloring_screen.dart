@@ -99,16 +99,23 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
                 width: ScreenUtil.screenSize.width,
               )
                   .intoGestureDetector(onTap: () {
-                LiPopMenu.showLinePop(context, listData: [
-                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
-                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
-                ], clickCallback: (index, title) {
-                  if (index == 0) {
-                    shareToDiscovery(context, controller);
-                  } else {
-                    shareOut(context, controller);
-                  }
-                });
+                LiPopMenu.showLinePop(
+                  context,
+                  listData: [
+                    ListPopItem(
+                        text: S.of(context).share_to_discovery,
+                        icon: Images.ic_share_discovery,
+                        onTap: () {
+                          shareToDiscovery(context, controller);
+                        }),
+                    ListPopItem(
+                        text: S.of(context).share_out,
+                        icon: Images.ic_share,
+                        onTap: () {
+                          shareOut(context, controller);
+                        }),
+                  ],
+                );
               }),
             ),
             body: Column(

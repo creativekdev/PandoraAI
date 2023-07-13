@@ -5,8 +5,8 @@ import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:ffmpeg_kit_flutter/ffprobe_kit.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/image/sync_download_video.dart';
@@ -102,7 +102,16 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
         } else {
           SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
             if (value != null) {
-              FFprobeKit.getMediaInformation(value.path).then((value) {});
+              FFmpegUtil.getVideoRatio(value.path).then((value) {
+                if (value != null) {
+                  itemHeight = itemWidth / value;
+                } else {
+                  itemHeight = itemWidth;
+                }
+                if (mounted) {
+                  setState(() {});
+                }
+              });
             }
           });
         }
@@ -121,7 +130,16 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
         } else {
           SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
             if (value != null) {
-              FFprobeKit.getMediaInformation(value.path).then((value) {});
+              FFmpegUtil.getVideoRatio(value.path).then((value) {
+                if (value != null) {
+                  itemHeight = itemWidth / value;
+                } else {
+                  itemHeight = itemWidth;
+                }
+                if (mounted) {
+                  setState(() {});
+                }
+              });
             }
           });
         }
@@ -139,6 +157,22 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
                   setState(() {});
                 }
               });
+            });
+          } else {
+            SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {
+              if (value != null) {
+                FFmpegUtil.getVideoRatio(value.path).then((value) {
+                  if (value != null) {
+                    var height = itemHeight = itemWidth / value;
+                    if (height > itemHeight) {
+                      itemHeight = height;
+                    }
+                  }
+                  if (mounted) {
+                    setState(() {});
+                  }
+                });
+              }
             });
           }
         }
@@ -159,6 +193,25 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
                   setState(() {});
                 }
               });
+            });
+          } else {
+            SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {
+              if (value != null) {
+                FFmpegUtil.getVideoRatio(value.path).then((value) {
+                  if (value != null) {
+                    var height = itemHeight = itemWidth / value;
+                    if (itemHeight == 0) {
+                      itemHeight = height;
+                    }
+                    if (height < itemHeight) {
+                      itemHeight = height;
+                    }
+                  }
+                  if (mounted) {
+                    setState(() {});
+                  }
+                });
+              }
             });
           }
         }

@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
@@ -597,7 +598,7 @@ class CartoonizerApi extends RetryAbleRequester {
   Future<AvatarConfigEntity?> getAvatarAiConfig() async {
     var baseEntity = await get('/ai_avatar/config/v1',
         params: {
-          'language': AppContext.currentLocales,
+          'language': MyApp.currentLocales,
         },
         needRetry: true,
         canClickRetry: true);
