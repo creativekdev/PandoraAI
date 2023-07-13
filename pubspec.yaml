@@ -109,6 +109,7 @@ dependencies:
   cropperx: ^1.1.1
   card_swiper: 2.0.4
   flutter_swiper_null_safety: 1.0.2
+  intl_phone_number_input: 0.7.3+1
 dependency_overrides:
   intl: 0.18.1
 

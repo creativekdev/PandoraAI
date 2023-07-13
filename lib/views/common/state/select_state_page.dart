@@ -40,7 +40,6 @@ class _SelectStatePageState extends State<SelectStatePage> {
     delay(() {
       setState(() {
         dataList = jsonConvert.convertListNotNull<StateEntity>(_getStateList())!;
-        print("127.0.0.1 ==== $dataList");
       });
     });
   }

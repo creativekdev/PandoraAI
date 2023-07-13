@@ -12,6 +12,7 @@ import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
+import 'package:cartoonizer/models/address_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
@@ -41,6 +42,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../models/get_address_entity.dart';
 import '../models/print_order_entity.dart';
 import '../models/print_orders_entity.dart';
 import '../models/print_product_entity.dart';
@@ -494,6 +496,43 @@ class CartoonizerApi extends RetryAbleRequester {
   }
 
   Future<BaseEntity?> feedback(String feedback) async {
+    return post('/user/feedback', params: {
+      'message': feedback,
+    });
+  }
+
+  Future<AddressEntity?> createAddress(Map<String, dynamic> map) async {
+    final baseEntity = await post('/shopify_v2/customer/create_address', params: {"address": map});
+    AddressEntity? entity = jsonConvert.convert<AddressEntity>(baseEntity?.data);
+    if (entity != null) {
+      EventBusHelper().eventBus.fire(OnAddPrintAddressEvent(address: entity.data.customerAddress));
+    }
+    return entity;
+  }
+
+  Future<BaseEntity?> deletePrintAddress(int address_id) async {
+    final baseEntity = await delete('/shopify_v2/customer/delete_address', data: {"address_id": address_id});
+    if (baseEntity != null) {
+      EventBusHelper().eventBus.fire(OnDeletePrintAddressEvent(id: address_id));
+    }
+    return baseEntity;
+  }
+
+  Future<AddressEntity?> updateAddress(Map<String, dynamic> map, int address_id) async {
+    final baseEntity = await post('/shopify_v2/customer/update_address', params: {"address": map, "address_id": address_id});
+    AddressEntity? entity = jsonConvert.convert<AddressEntity>(baseEntity?.data);
+    if (entity != null) {
+      EventBusHelper().eventBus.fire(OnUpdatePrintAddressEvent(address: entity.data.customerAddress));
+    }
+    return entity;
+  }
+
+  Future<GetAddressEntity?> getAddress() async {
+    final baseEntity = await get('/shopify_v2/customer/get');
+    return jsonConvert.convert<GetAddressEntity>(baseEntity?.data);
+  }
+
+  Future<BaseEntity?> deleteAddress(String feedback) async {
     return post('/user/feedback', params: {
       'message': feedback,
     });

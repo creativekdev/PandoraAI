@@ -72,8 +72,10 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       settings: RouteSettings(name: '/HomeDetailScreen'),
                       child: HomeDetailScreen(
-                        post: data,
+                        posts: controller.posts!,
+                        title: widget.category,
                         source: widget.source,
+                        index: index,
                       )));
                 });
               },

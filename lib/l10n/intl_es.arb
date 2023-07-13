@@ -465,6 +465,13 @@
   "album": "Album",
   "template": "Template",
   "colors": "Colors",
+  "save": "Guardar",
+  "edit_address": "Editar Dirección",
+  "save_address_success": "Dirección guardada con éxito",
+  "delete_address_success": "Dirección eliminada con éxito",
+  "update_address_success": "Dirección eliminada con éxito",
+  "addresses": "Discurso",
+  "add_address": "Añadir dirección de recepción",
   "pleaseReadAndAgreePrivacyAndTermsOfUse": "Lea y acepte la privacidad del usuario y los términos de uso",
   "IHaveReadAndAgreeTo": "He leído y acepto el",
   "UserAgreement": " Acuerdo del Usuario ",
@@ -476,6 +483,7 @@
   "selectTermOfPost": "Por favor, marca el Condiciones de uso",
   "ReceivedReport": "Ha recibido su informe",
   "HaveReport": "Ya lo has denunciado",
+  "copy": "Copiar",
   "share_to_discovery": "Compartir en Discovery",
   "share_out": "Compartir con amigos"
 }

@@ -3,16 +3,29 @@ import 'package:cartoonizer/Common/importFile.dart';
 import '../../api/cartoonizer_api.dart';
 import '../../models/discovery_list_entity.dart';
 
-class HomeDetailsController extends GetxController {
-  HomeDetailsController();
+class HomeDetailController extends GetxController {
+  HomeDetailController();
 
   late CartoonizerApi cartoonizerApi;
 
-  late ScrollController scrollController;
+  late PageController pageController;
 
   bool _isLoading = false;
 
   String? category;
+
+  int? _index;
+
+  set index(int? value) {
+    _index = value;
+    if (_index == _posts!.length - 2) {
+      onLoadMore();
+      update();
+    }
+  }
+
+  int? get index => _index;
+
   List<DiscoveryListEntity>? _posts;
 
   set posts(List<DiscoveryListEntity>? value) {
@@ -26,12 +39,6 @@ class HomeDetailsController extends GetxController {
   void onInit() {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);
-    scrollController = ScrollController()
-      ..addListener(() {
-        if (scrollController.position.pixels + $(80) >= scrollController.position.maxScrollExtent) {
-          onLoadMore();
-        }
-      });
   }
 
   onLoadMore() async {
@@ -50,6 +57,6 @@ class HomeDetailsController extends GetxController {
   void dispose() {
     super.dispose();
     cartoonizerApi.unbind();
-    scrollController.dispose();
+    pageController.dispose();
   }
 }

@@ -1,15 +1,15 @@
+import 'package:cartoonizer/views/print/print_addresses_screen.dart';
 import 'package:cartoonizer/views/print/print_shipping_controller.dart';
 import 'package:cartoonizer/views/print/widgets/print_delivery_item.dart';
-import 'package:cartoonizer/views/print/widgets/print_input_item.dart';
 import 'package:cartoonizer/views/print/widgets/print_submit_area.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
+import '../../Widgets/router/routers.dart';
 import '../../Widgets/state/app_state.dart';
-import '../common/region/select_region_page.dart';
 
 class PrintShippingScreen extends StatefulWidget {
   String source;
@@ -30,19 +30,6 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'print_shipping_screen');
-    controller.searchAddressController.addListener(() {
-      controller.searchLocation(controller.places, controller.searchAddressController.text).then((value) {
-        if (controller.searchAddressController.text.isNotEmpty && controller.isResult == false) {
-          hideSearchResults();
-          if (controller.searchAddressFocusNode.hasFocus) {
-            showSearchResults();
-          }
-        } else {
-          hideSearchResults();
-        }
-        controller.isResult = false;
-      });
-    });
   }
 
   @override
@@ -57,251 +44,170 @@ class _PrintShippingScreenState extends AppState<PrintShippingScreen> {
             fontSize: $(18),
           ),
         ),
-        backAction: () {
-          Navigator.pop(context);
-          controller.searchAddressFocusNode.unfocus();
-          hideSearchResults();
-        },
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintShippingController>(
-        init: controller,
-        builder: (controller) {
-          return Stack(
-            children: [
-              Padding(
+          init: controller,
+          builder: (controller) {
+            if (controller.viewInit == false) {
+              return SkeletonListView(
+                itemCount: 6,
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
-                child: BlankAreaIntercept(
-                  child: CustomScrollView(
-                    controller: controller.scrollController,
-                    slivers: [
-                      SliverToBoxAdapter(child: TitleTextWidget(S.of(context).address, ColorConstant.White, FontWeight.w500, $(16), align: TextAlign.left)),
-                      controller.isShowSate
-                          ? SliverToBoxAdapter(
-                              child: Row(
+                spacing: $(4),
+                item: Column(
+                  children: [
+                    Row(
+                      children: [
+                        UnconstrainedBox(
+                          child: SkeletonAvatar(
+                              style: SkeletonAvatarStyle(
+                            width: ScreenUtil.screenSize.width - $(30),
+                            height: $(100),
+                          )),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: $(15),
+                    )
+                  ],
+                ),
+              );
+            }
+            return Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: $(15)),
+                  child: BlankAreaIntercept(
+                    child: CustomScrollView(
+                      controller: controller.scrollController,
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: $(16),
+                                color: ColorConstant.White,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  PrintInputItem(
-                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                    title: S.of(context).country_region,
-                                    controller: controller.countryController,
-                                    canEdit: false,
-                                    onTap: () {
-                                      controller.onTapRegion(context, SelectRegionType.country);
-                                      hideSearchResults();
-                                    },
-                                  ),
-                                  SizedBox(
-                                    width: $(15),
-                                  ),
-                                  PrintInputItem(
-                                    width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                                    title: S.of(context).STATE,
-                                    controller: controller.stateController,
-                                    canEdit: false,
-                                    onTap: () {
-                                      controller.onTapState(context);
-                                      hideSearchResults();
-                                    },
-                                  ),
+                                  TitleTextWidget(
+                                    controller.seletedAddress != null ? "${controller.seletedAddress?.address1}${controller.seletedAddress?.address2}" : S.of(context).add_address,
+                                    ColorConstant.White,
+                                    FontWeight.bold,
+                                    $(14),
+                                    align: TextAlign.left,
+                                    maxLines: 3,
+                                  ).intoContainer(width: ScreenUtil.screenSize.width - $(96), padding: EdgeInsets.only(bottom: controller.seletedAddress != null ? $(10) : 0)),
+                                  if (controller.seletedAddress != null)
+                                    Row(
+                                      children: [
+                                        TitleTextWidget(
+                                          "${controller.seletedAddress?.name}",
+                                          ColorConstant.White,
+                                          FontWeight.bold,
+                                          $(14),
+                                          align: TextAlign.left,
+                                        ).intoContainer(padding: EdgeInsets.only(right: $(5))),
+                                        TitleTextWidget(
+                                          "${controller.seletedAddress?.phone}",
+                                          ColorConstant.White,
+                                          FontWeight.bold,
+                                          $(14),
+                                          align: TextAlign.left,
+                                        )
+                                      ],
+                                    )
                                 ],
+                              ).intoContainer(
+                                  padding: EdgeInsets.only(
+                                right: $(5),
+                                left: $(5),
+                              )),
+                              Spacer(),
+                              Icon(
+                                Icons.navigate_next,
+                                size: $(24),
+                                color: ColorConstant.White,
                               ),
-                            )
-                          : SliverToBoxAdapter(
-                              child: PrintInputItem(
-                                width: ScreenUtil.screenSize.width - $(30),
-                                title: S.of(context).country_region,
-                                controller: controller.countryController,
-                                canEdit: false,
-                                onTap: () {
-                                  controller.onTapRegion(context, SelectRegionType.country);
-                                  hideSearchResults();
-                                },
-                              ),
-                            ),
-                      SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          width: ScreenUtil.screenSize.width - $(30),
-                          title: S.of(context).search_address,
-                          controller: controller.searchAddressController,
-                          focusNode: controller.searchAddressFocusNode,
-                          completeCallback: () {
-                            hideSearchResults();
-                          },
-                          onTap: () {
-                            controller.scrollController.animateTo(
-                              $(110),
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.linear,
-                            );
-                          },
+                            ],
+                          )
+                              .intoContainer(
+                                  padding: EdgeInsets.only(
+                                    top: $(16),
+                                    bottom: $(16),
+                                    left: $(8),
+                                    right: $(8),
+                                  ),
+                                  margin: EdgeInsets.only(
+                                    top: $(16),
+                                  ),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF1B1C1D),
+                                    borderRadius: BorderRadius.circular($(8)),
+                                  ))
+                              .intoGestureDetector(onTap: () {
+                            Navigator.of(context)
+                                .push<int>(Right2LeftRouter(
+                                    settings: RouteSettings(name: '/PrintAddressScreen'),
+                                    child: PrintAddressScreen(
+                                      source: widget.source,
+                                      addresses: controller.addresses ?? [],
+                                    )))
+                                .then((value) {
+                              controller.onUpdateAddress(value!);
+                            });
+                          }),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: PrintInputItem(
-                          width: ScreenUtil.screenSize.width - $(30),
-                          title: S.of(context).apartment_suite_other,
-                          controller: controller.apartmentController,
+                        SliverToBoxAdapter(
+                          child: PrintDeliveryTitle(),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Row(
-                          children: [
-                            PrintInputItem(
-                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                              title: S.of(context).first_name,
-                              controller: controller.firstNameController,
-                            ),
-                            SizedBox(
-                              width: $(15),
-                            ),
-                            PrintInputItem(
-                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                              title: S.of(context).last_name,
-                              controller: controller.secondNameController,
-                            )
-                          ],
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Row(
-                          children: [
-                            PrintInputItem(
-                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                              title: S.of(context).city,
-                              controller: controller.cityController,
-                            ),
-                            SizedBox(
-                              width: $(15),
-                            ),
-                            PrintInputItem(
-                              width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                              title: S.of(context).zip_code,
-                              controller: controller.zipCodeController,
-                            )
-                          ],
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: PrintInputContactItem(
-                          title: S.of(context).contact_number,
-                          controller: controller.contactNumberController,
-                          regionCodeEntity: controller.regionEntity,
-                          onTap: () {
-                            controller.onTapRegion(context, SelectRegionType.callingCode);
-                          },
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: PrintDeliveryTitle(),
-                      ),
-                      ...controller.effectdatacontroller.data!.shippingMethods
-                          .asMap()
-                          .map(
-                            (index, value) => MapEntry(
-                              index,
-                              SliverToBoxAdapter(
-                                child: PrintDeliveryitem(
-                                  shippingMethodEntity: value,
-                                  isSelected: index == controller.deliveryIndex,
-                                ).intoGestureDetector(
-                                  onTap: () {
-                                    controller.onTapDeliveryType(index);
-                                  },
+                        ...controller.effectdatacontroller.data!.shippingMethods
+                            .asMap()
+                            .map(
+                              (index, value) => MapEntry(
+                                index,
+                                SliverToBoxAdapter(
+                                  child: PrintDeliveryitem(
+                                    shippingMethodEntity: value,
+                                    isSelected: index == controller.deliveryIndex,
+                                  ).intoGestureDetector(
+                                    onTap: () {
+                                      controller.onTapDeliveryType(index);
+                                    },
+                                  ),
                                 ),
                               ),
-                            ),
-                          )
-                          .values
-                          .toList(),
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: $(144),
+                            )
+                            .values
+                            .toList(),
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: $(144),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              PrintSubmitArea(
-                total: controller.total,
-                onTap: () async {
-                  showLoading();
-                  bool isSuccess = await controller.onSubmit(context);
-                  if (isSuccess) {
-                    await controller.gotoPaymentPage(context, widget.source);
-                  }
-                  hideLoading();
-                },
-              ),
-            ],
-          );
-        },
-      ),
+                PrintSubmitArea(
+                  total: controller.total,
+                  onTap: () async {
+                    showLoading();
+                    bool isSuccess = await controller.onSubmit(context);
+                    if (isSuccess) {
+                      await controller.gotoPaymentPage(context, widget.source);
+                    }
+                    hideLoading();
+                  },
+                ),
+              ],
+            );
+          }),
     );
-  }
-
-  // 显示地理位置搜索结果
-  void showSearchResults() {
-    OverlayState? overlayState = Overlay.of(context);
-    if (controller.overlayEntry == null && overlayState != null) {
-      controller.overlayEntry = OverlayEntry(builder: (context) {
-        return Positioned(
-          top: $(120) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight(), // 输入框下方的偏移量，根据你的界面布局进行调整
-          left: $(15),
-          right: $(15),
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              height: ScreenUtil.screenSize.height - ($(120) + ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight()) - ScreenUtil.getKeyboardHeight(context),
-              // 悬浮面板的高度，根据你的需求进行调整
-              child: GetBuilder<PrintShippingController>(
-                init: controller,
-                builder: (controller) {
-                  return ListView.builder(
-                    // padding: EdgeInsets.symmetric(horizontal: $(10)),
-                    itemCount: controller.predictions.length, // 根据搜索结果的数量进行调整
-                    itemBuilder: (context, index) {
-                      Prediction prediction = controller.predictions[index];
-                      return TitleTextWidget(
-                        prediction.description ?? '',
-                        ColorConstant.White,
-                        FontWeight.normal,
-                        $(12),
-                        align: TextAlign.left,
-                      )
-                          .intoContainer(
-                        color: ColorConstant.BackgroundColor,
-                        padding: EdgeInsets.symmetric(horizontal: $(10)),
-                        height: $(40),
-                      )
-                          .intoGestureDetector(onTap: () async {
-                        PlacesDetailsResponse detail = await controller.places.getDetailsByPlaceId(prediction.placeId!);
-                        controller.zipCodeController.text = controller.getZipCode(detail.result.addressComponents);
-                        controller.cityController.text = controller.getCityName(detail.result.addressComponents);
-                        controller.setStateEntity(detail.result.addressComponents);
-                        controller.isResult = true;
-                        controller.searchAddressController.text = prediction.description!;
-                        controller.formattedAddress = detail.result.formattedAddress!;
-                        FocusScope.of(context).unfocus();
-                        // 处理选择的搜索结果
-                        hideSearchResults();
-                      });
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      });
-      overlayState.insert(controller.overlayEntry!);
-    }
-  }
-
-  // 隐藏地理位置搜索结果
-  void hideSearchResults() {
-    controller.overlayEntry?.remove();
-    controller.overlayEntry = null;
   }
 
   @override

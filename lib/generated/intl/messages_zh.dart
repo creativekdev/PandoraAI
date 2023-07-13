@@ -49,7 +49,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),
         "activate_failed": MessageLookupByLibrary.simpleMessage("激活失败"),
         "activate_successfully": MessageLookupByLibrary.simpleMessage("激活成功！"),
+        "add_address": MessageLookupByLibrary.simpleMessage("添加收货地址"),
         "address": MessageLookupByLibrary.simpleMessage("收货地址"),
+        "addresses": MessageLookupByLibrary.simpleMessage("地址列表"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
@@ -149,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "congratulations": MessageLookupByLibrary.simpleMessage("祝贺你!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
         "contact_number": MessageLookupByLibrary.simpleMessage("联系电话"),
+        "copy": MessageLookupByLibrary.simpleMessage("复制"),
         "copy_successfully": MessageLookupByLibrary.simpleMessage("已复制到剪贴板"),
         "country_region": MessageLookupByLibrary.simpleMessage("国家/地区"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
@@ -166,6 +169,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("您的账号已经被注销，我们期待您的下次使用！"),
         "delete_account_tips":
             MessageLookupByLibrary.simpleMessage("您确定要永久注销您的账户吗？"),
+        "delete_address_success":
+            MessageLookupByLibrary.simpleMessage("地址删除成功"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("删除成功"),
         "deny": MessageLookupByLibrary.simpleMessage("拒绝"),
         "disconnect": MessageLookupByLibrary.simpleMessage("解除绑定"),
@@ -190,6 +195,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
         "edit": MessageLookupByLibrary.simpleMessage("编辑"),
+        "edit_address": MessageLookupByLibrary.simpleMessage("编辑地址"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("编辑信息"),
         "effectRecentEmptyHint":
             MessageLookupByLibrary.simpleMessage("暂无转化记录，您可以在这里查看您的转换历史"),
@@ -454,6 +460,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore_msg": MessageLookupByLibrary.simpleMessage("您确定要取消订阅么？"),
         "retry": MessageLookupByLibrary.simpleMessage("重试"),
         "saturday": MessageLookupByLibrary.simpleMessage("周六"),
+        "save": MessageLookupByLibrary.simpleMessage("保存"),
+        "save_address_success": MessageLookupByLibrary.simpleMessage("地址保存成功"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage("保存高清无水印图片"),
         "save_into_album": MessageLookupByLibrary.simpleMessage("保存到相册"),
@@ -555,6 +563,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "unpaid": MessageLookupByLibrary.simpleMessage("未支付"),
+        "update_address_success":
+            MessageLookupByLibrary.simpleMessage("地址更新成功"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),
         "update_pass": MessageLookupByLibrary.simpleMessage("更新密码"),
         "update_profile": MessageLookupByLibrary.simpleMessage("更新个人信息"),

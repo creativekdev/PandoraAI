@@ -62,7 +62,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Error de activación"),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("Activación correcta！"),
+        "add_address": MessageLookupByLibrary.simpleMessage(
+            "Añadir dirección de recepción"),
         "address": MessageLookupByLibrary.simpleMessage("Dirección"),
+        "addresses": MessageLookupByLibrary.simpleMessage("Discurso"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage(
             "Al registrarse, usted acepta"),
@@ -188,6 +191,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "connect_with_us": MessageLookupByLibrary.simpleMessage("Contáctenos"),
         "contact_number":
             MessageLookupByLibrary.simpleMessage("Número de contacto"),
+        "copy": MessageLookupByLibrary.simpleMessage("Copiar"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copiado al portapapeles"),
         "country_region": MessageLookupByLibrary.simpleMessage("Pays/Région"),
@@ -211,6 +215,8 @@ class MessageLookup extends MessageLookupByLibrary {
                 "Su cuenta ha sido cancelada y esperamos su próximo uso！"),
         "delete_account_tips": MessageLookupByLibrary.simpleMessage(
             "¿Está seguro de que desea cerrar permanentemente su cuenta？"),
+        "delete_address_success": MessageLookupByLibrary.simpleMessage(
+            "Dirección eliminada con éxito"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage(
             "La eliminación se ha realizado correctamente"),
         "deny": MessageLookupByLibrary.simpleMessage("rehusar"),
@@ -237,6 +243,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("terminar"),
         "download": MessageLookupByLibrary.simpleMessage("Descargar"),
         "edit": MessageLookupByLibrary.simpleMessage("editar"),
+        "edit_address":
+            MessageLookupByLibrary.simpleMessage("Editar Dirección"),
         "edit_profile":
             MessageLookupByLibrary.simpleMessage("Editar la información"),
         "effectRecentEmptyHint": MessageLookupByLibrary.simpleMessage(
@@ -579,6 +587,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "¿Está seguro de que desea cancelar su suscripción？"),
         "retry": MessageLookupByLibrary.simpleMessage("reintentar"),
         "saturday": MessageLookupByLibrary.simpleMessage("Sábado"),
+        "save": MessageLookupByLibrary.simpleMessage("Guardar"),
+        "save_address_success": MessageLookupByLibrary.simpleMessage(
+            "Dirección guardada con éxito"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
             "Guarde imágenes HD sin marca de agua"),
@@ -711,6 +722,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("Diferentes avatares"),
         "unpaid": MessageLookupByLibrary.simpleMessage("Impagado"),
+        "update_address_success": MessageLookupByLibrary.simpleMessage(
+            "Dirección eliminada con éxito"),
         "update_now": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),
         "update_pass":
             MessageLookupByLibrary.simpleMessage("Actualizar la contraseña"),

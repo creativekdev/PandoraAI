@@ -465,6 +465,13 @@
   "album": "Album",
   "template": "Template",
   "colors": "Colors",
+  "save": "Save",
+  "edit_address": "Edit Address",
+  "save_address_success": "Address saved successfully",
+  "delete_address_success": "Address deleted successfully",
+  "update_address_success": "Address deleted successfully",
+  "addresses": "Addresses",
+  "add_address": "Add Shipping Address",
   "pleaseReadAndAgreePrivacyAndTermsOfUse": "Please read and agree User Privacy and Terms of use",
   "IHaveReadAndAgreeTo": "I have read and agree to",
   "UserAgreement": " User Agreement ",
@@ -476,6 +483,7 @@
   "selectTermOfPost": "Please check the terms of use",
   "ReceivedReport": "We have received your report",
   "HaveReport": "You have already reported it",
+  "copy": "Copy",
   "share_to_discovery": "Share to Discovery",
   "share_out": "Share with friends"
 }

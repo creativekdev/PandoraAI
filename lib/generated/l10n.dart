@@ -4710,6 +4710,76 @@ class S {
     );
   }
 
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Address`
+  String get edit_address {
+    return Intl.message(
+      'Edit Address',
+      name: 'edit_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address saved successfully`
+  String get save_address_success {
+    return Intl.message(
+      'Address saved successfully',
+      name: 'save_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address deleted successfully`
+  String get delete_address_success {
+    return Intl.message(
+      'Address deleted successfully',
+      name: 'delete_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address deleted successfully`
+  String get update_address_success {
+    return Intl.message(
+      'Address deleted successfully',
+      name: 'update_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Addresses`
+  String get addresses {
+    return Intl.message(
+      'Addresses',
+      name: 'addresses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Shipping Address`
+  String get add_address {
+    return Intl.message(
+      'Add Shipping Address',
+      name: 'add_address',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please read and agree User Privacy and Terms of use`
   String get pleaseReadAndAgreePrivacyAndTermsOfUse {
     return Intl.message(
@@ -4815,6 +4885,16 @@ class S {
     return Intl.message(
       'You have already reported it',
       name: 'HaveReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy`
+  String get copy {
+    return Intl.message(
+      'Copy',
+      name: 'copy',
       desc: '',
       args: [],
     );

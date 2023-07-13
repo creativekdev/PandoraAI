@@ -14,7 +14,7 @@ class PaiSwiper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: $(200),
+      height: (ScreenUtil.screenSize.width - $(30)) * 0.75 + $(50),
       padding: EdgeInsets.symmetric(horizontal: $(15)),
       child: Swiper(
         itemBuilder: (BuildContext context, int index) {
@@ -28,7 +28,7 @@ class PaiSwiper extends StatelessWidget {
                     child: CachedNetworkImageUtils.custom(
                       fit: BoxFit.cover,
                       useOld: false,
-                      height: $(150),
+                      height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
                       width: ScreenUtil.screenSize.width - $(30),
                       context: context,
                       imageUrl: resource.url!,
@@ -40,15 +40,15 @@ class PaiSwiper extends StatelessWidget {
           DiscoveryListEntity data = entity![index];
           onClickItem(index, data);
         },
-        itemHeight: $(150),
+        itemHeight: (ScreenUtil.screenSize.width - $(30)) * 0.75,
         itemCount: entity?.length ?? 0,
         autoplay: true,
         pagination: SwiperPagination(
             builder: DotSwiperPaginationBuilder(
           color: Colors.grey,
           activeColor: Colors.white,
-          size: $(8),
-          activeSize: $(8),
+          size: $(6),
+          activeSize: $(6),
         )),
       ),
     );

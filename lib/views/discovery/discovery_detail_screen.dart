@@ -434,6 +434,10 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
               }, reportAction: () {
                 controller.onReportAction(data, context);
                 Navigator.of(context).pop();
+              }, copyAction: () {
+                Clipboard.setData(ClipboardData(text: data.text));
+                CommonExtension().showToast(S.of(context).copy_successfully);
+                Navigator.of(context).pop();
               }, cancelAction: () {
                 Navigator.of(context).pop();
               }, title: "@${data.userName}: ${data.text}");

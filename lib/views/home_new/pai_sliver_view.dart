@@ -13,20 +13,36 @@ class PaiSliverView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: $(14)),
-        child: Wrap(
-            spacing: $(8),
-            runSpacing: $(8),
-            children: list!
-                .map(
-                  (e) => SliverItem(
-                    entity: e,
-                  ).intoGestureDetector(onTap: () {
-                    onClickItem(e);
-                  }),
-                )
-                .toList()));
+        padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TitleTextWidget(
+              'Tools',
+              ColorConstant.White,
+              FontWeight.w500,
+              $(17),
+              align: TextAlign.left,
+            ).intoContainer(
+                padding: EdgeInsets.only(
+              bottom: $(8),
+            )),
+            Wrap(
+                spacing: $(12),
+                runSpacing: $(12),
+                children: finalList!
+                    .map(
+                      (e) => SliverItem(
+                        entity: e,
+                      ).intoGestureDetector(onTap: () {
+                        onClickItem(e);
+                      }),
+                    )
+                    .toList()),
+          ],
+        ));
   }
 }
 
@@ -37,7 +53,7 @@ class SliverItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - $(54)) / 4;
+    double width = (ScreenUtil.screenSize.width - $(68)) / 4;
     var title = entity.category.title();
     return Column(
       children: [
@@ -54,7 +70,7 @@ class SliverItem extends StatelessWidget {
         ),
         TitleTextWidget(
           title.isEmpty ? entity.categoryString! : title,
-          ColorConstant.White,
+          ColorConstant.DividerColor,
           FontWeight.w400,
           $(12),
           maxLines: 1,

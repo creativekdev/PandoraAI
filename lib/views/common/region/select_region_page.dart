@@ -5,9 +5,9 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/region_code_entity.dart';
-import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_en.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_es.dart';
+import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
 import 'package:common_utils/common_utils.dart';
 
 enum SelectRegionType {
@@ -19,9 +19,10 @@ class SelectRegionPage extends StatefulWidget {
   static Future<RegionCodeEntity?> pickRegion(BuildContext context, {SelectRegionType type = SelectRegionType.callingCode}) async {
     return Navigator.of(context).push(MaterialPageRoute(
       settings: RouteSettings(name: "/SelectRegionPage"),
-      builder: (context) => SelectRegionPage(
-        type: type,
-      ),
+      builder: (context) =>
+          SelectRegionPage(
+            type: type,
+          ),
     ));
   }
 
@@ -83,7 +84,9 @@ class _SelectRegionPageState extends State<SelectRegionPage> {
       appBar: AppNavigationBar(
         backgroundColor: ColorConstant.BackgroundColor,
         middle: Text(
-          S.of(context).SELECT_COUNTRY_CALLING_CODE,
+          S
+              .of(context)
+              .SELECT_COUNTRY_CALLING_CODE,
           style: TextStyle(fontFamily: 'Poppins', fontSize: $(18), color: Colors.white),
         ),
       ),
@@ -107,7 +110,9 @@ class _SelectRegionPageState extends State<SelectRegionPage> {
               size: $(20),
               color: Color(0xff999999),
             ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12))),
-            hint: S.of(context).SELECT_COUNTRY_KEYWORD,
+            hint: S
+                .of(context)
+                .SELECT_COUNTRY_KEYWORD,
           ).intoContainer(
               padding: EdgeInsets.only(left: $(12)),
               margin: EdgeInsets.symmetric(horizontal: $(15)),
@@ -171,13 +176,13 @@ class _RegionWithCodeCard extends StatelessWidget {
             ),
             Expanded(
                 child: Text(
-              '  ${data.regionName}',
-              style: TextStyle(
-                color: Color(0xfff9f9f9),
-                fontSize: $(16),
-                fontFamily: 'Poppins',
-              ),
-            )),
+                  '  ${data.regionName}',
+                  style: TextStyle(
+                    color: Color(0xfff9f9f9),
+                    fontSize: $(16),
+                    fontFamily: 'Poppins',
+                  ),
+                )),
             if (type == SelectRegionType.callingCode)
               Text(
                 data.callingCode!,

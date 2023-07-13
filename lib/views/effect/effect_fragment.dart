@@ -166,12 +166,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                   ),
                                 );
                               },
-                              onTapItem: (int index) {
+                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
                                 Navigator.of(context).push<void>(Right2LeftRouter(
                                     settings: RouteSettings(name: '/HomeDetailScreen'),
                                     child: HomeDetailScreen(
-                                      post: _.data!.homepage!.galleries[0]!.socialPosts[index]!,
+                                      posts: _.data!.homepage!.galleries[0]!.socialPosts,
                                       source: "home_page",
+                                      title: category,
+                                      index: index,
                                     )));
                               },
                               galleries: _.data?.homepage?.galleries[0],
@@ -192,12 +194,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                   ),
                                 );
                               },
-                              onTapItem: (int index) {
+                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
                                 Navigator.of(context).push<void>(Right2LeftRouter(
                                     settings: RouteSettings(name: '/HomeDetailScreen'),
                                     child: HomeDetailScreen(
-                                      post: _.data!.homepage!.galleries[1]!.socialPosts[index]!,
+                                      posts: _.data!.homepage!.galleries[1]!.socialPosts,
                                       source: "home_page",
+                                      title: category,
+                                      index: index,
                                     )));
                               },
                               galleries: _.data?.homepage?.galleries[1],
@@ -218,13 +222,15 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Effect
                                   ),
                                 );
                               },
-                              onTapItem: (int index) {
+                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
                                 Navigator.of(context).push<void>(
                                   Right2LeftRouter(
                                     settings: RouteSettings(name: '/HomeDetailScreen'),
                                     child: HomeDetailScreen(
-                                      post: _.data!.homepage!.galleries[2]!.socialPosts[index]!,
+                                      posts: _.data!.homepage!.galleries[2]!.socialPosts,
                                       source: "home_page",
+                                      title: category,
+                                      index: index,
                                     ),
                                   ),
                                 );

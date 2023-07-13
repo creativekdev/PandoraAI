@@ -7,6 +7,7 @@ class Images {
    static const String discover = 'assets/images/discover.png';
    static const String hue = 'assets/images/hue.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_address_selected = 'assets/images/ic_address_selected.png';
    static const String ic_adjust = 'assets/images/ic_adjust.png';
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
    static const String ic_ai_draw_camera = 'assets/images/ic_ai_draw_camera.png';
@@ -66,6 +67,7 @@ class Images {
    static const String ic_download = 'assets/images/ic_download.png';
    static const String ic_draw_result_bg = 'assets/images/ic_draw_result_bg.png';
    static const String ic_drawable_arrow = 'assets/images/ic_drawable_arrow.png';
+   static const String ic_edit = 'assets/images/ic_edit.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
    static const String ic_effect = 'assets/images/ic_effect.png';
    static const String ic_email = 'assets/images/ic_email.png';
