@@ -539,7 +539,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: agreementTap
                             ..onTap = () {
-                              AppWebView.open(context, url: USER_PRIVACY);
+                              AppWebView.open(context, url: USER_PRIVACY, source: 'sign_up_screen');
                             }),
                       TextSpan(text: S.of(context).and, style: TextStyle(color: ColorConstant.White)),
                       TextSpan(
@@ -547,7 +547,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: termTap
                             ..onTap = () {
-                              AppWebView.open(context, url: TERM_AND_USE);
+                              AppWebView.open(context, url: TERM_AND_USE, source: 'sign_up_screen');
                             }),
                     ]),
                     maxLines: 3,

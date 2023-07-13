@@ -4,6 +4,11 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
+import 'package:cartoonizer/models/app_feature_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:common_utils/common_utils.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum LoadType { URL, HTML_DATA }
@@ -11,21 +16,28 @@ enum LoadType { URL, HTML_DATA }
 class AppWebView extends StatefulWidget {
   String url;
   LoadType loadType;
+  String source;
 
   static Future<dynamic> open(
     BuildContext context, {
     required String url,
     LoadType loadType = LoadType.URL,
     Key? key,
+    required String source,
   }) async {
     return Navigator.of(context).push(MaterialPageRoute(
       settings: RouteSettings(name: '/AppWebView'),
-      builder: (_) => AppWebView(url: url, loadType: loadType),
+      builder: (_) => AppWebView(
+        url: url,
+        loadType: loadType,
+        source: source,
+      ),
     ));
   }
 
   AppWebView({
     required this.url,
+    required this.source,
     this.loadType = LoadType.URL,
     Key? key,
   }) : super(key: key);
@@ -45,6 +57,7 @@ class AppWebViewState extends AppState<AppWebView> {
   @override
   initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'app_web_view');
     if (widget.loadType == LoadType.URL) {
       loadUri = widget.url;
     } else {
@@ -60,8 +73,7 @@ class AppWebViewState extends AppState<AppWebView> {
   ///事件通知，js端调用flutter方法执行的结果，通过此方法回调
   _onEventFinished(String key, String value) {
     var event = {"method": "$key", "data": "$value"};
-    var string = json.encode(event).toString();
-    // _controller.evaluateJavascript("window.postMessage($string, '*')");
+    LogUtil.d(event, tag: 'JavascriptChannel');
   }
 
   Future<bool> _onBackPressured() async {
@@ -133,6 +145,7 @@ class AppWebViewState extends AppState<AppWebView> {
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (c) {
           c.clearCache();
+          Events.webviewLoading(source: widget.source);
           _controller = c;
         },
         onProgress: (int pro) {
@@ -151,17 +164,31 @@ class AppWebViewState extends AppState<AppWebView> {
         //向js开放方法
         javascriptChannels: <JavascriptChannel>[
           JavascriptChannel(
-              name: "showToast",
+              name: "appShowToast",
               onMessageReceived: (JavascriptMessage message) {
-                print("参数： ${message.message}");
+                _onEventFinished("showToast", message.message);
                 CommonExtension().showToast(message.message);
-                _onEventFinished("showToast", "执行结束");
               }),
           JavascriptChannel(
-              name: 'popRoute',
+              name: 'appPop',
               onMessageReceived: (JavascriptMessage message) async {
-                debugPrint("参数： ${message.message}");
+                _onEventFinished("appPop", message.message);
                 Navigator.pop(context);
+              }),
+          JavascriptChannel(
+              name: 'appJumpFunction',
+              onMessageReceived: (JavascriptMessage message) async {
+                _onEventFinished("appJumpFunction", message.message);
+                try {
+                  var json = jsonDecode(message.message);
+                  var payload = jsonConvert.convert<AppFeaturePayload>(json);
+                  HomeCardTypeUtils.jump(
+                    context: context,
+                    source: widget.source,
+                    payload: payload,
+                  );
+                  Navigator.pop(context);
+                } on FormatException catch (e) {}
               }),
         ].toSet(),
       ),

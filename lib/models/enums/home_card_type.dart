@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
+import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -36,6 +37,7 @@ enum HomeCardType {
   UNDEFINED,
   removeBg,
   nothing,
+  url,
 }
 
 class HomeCardTypeUtils {
@@ -64,6 +66,8 @@ class HomeCardTypeUtils {
       case '':
       case null:
         return HomeCardType.nothing;
+      case 'url':
+        return HomeCardType.url;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -78,19 +82,27 @@ class HomeCardTypeUtils {
   }) {
     if (payload != null) {
       var target = HomeCardTypeUtils.build(payload.target ?? '');
-      var split = payload.data?.split(',');
-      InitPos pos = InitPos();
-      if (split != null && split.length >= 2) {
-        var controller = Get.find<EffectDataController>();
-        pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
+      if (target == HomeCardType.url) {
+        AppWebView.open(context, url: payload.data!, source: source);
+      } else {
+        var split = payload.data?.split(',');
+        InitPos pos = InitPos();
+        if (split != null && split.length >= 2) {
+          var controller = Get.find<EffectDataController>();
+          pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
+        }
+        jumpWithHomeType(context, source, target, pos);
       }
-      jumpWithHomeType(context, source, target, pos);
     } else if (data != null) {
       var target = data.category;
       InitPos initPos = InitPos();
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
-      if (target == HomeCardType.cartoonize) {
+      if (target == HomeCardType.url) {
+        var payload = jsonDecode(data.payload!);
+        var url = payload['url'].toString();
+        AppWebView.open(context, url: url, source: source);
+      } else if (target == HomeCardType.cartoonize) {
         EffectDataController effectDataController = Get.find<EffectDataController>();
         if (effectDataController.data == null) {
           return;
@@ -135,59 +147,65 @@ class HomeCardTypeUtils {
       jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     } else if (homeData != null) {
       var target = homeData.category;
-      InitPos initPos = InitPos();
-      Txt2imgInitData? txt2imgInitData;
-      String style = target.value();
-      if (target == HomeCardType.cartoonize) {
-        if (TextUtil.isEmpty(homeData.cartoonizeKey)) {
-          EffectDataController effectDataController = Get.find<EffectDataController>();
-          if (effectDataController.data == null) {
-            return;
+      if (target == HomeCardType.url) {
+        var payload = jsonDecode(homeData.payload!);
+        var url = payload['url'].toString();
+        AppWebView.open(context, url: url, source: source);
+      } else {
+        InitPos initPos = InitPos();
+        Txt2imgInitData? txt2imgInitData;
+        String style = target.value();
+        if (target == HomeCardType.cartoonize) {
+          if (TextUtil.isEmpty(homeData.cartoonizeKey)) {
+            EffectDataController effectDataController = Get.find<EffectDataController>();
+            if (effectDataController.data == null) {
+              return;
+            }
+            initPos = InitPos()
+              ..categoryPos = 0
+              ..itemPos = 0
+              ..tabPos = 0;
+          } else {
+            EffectDataController effectDataController = Get.find<EffectDataController>();
+            if (effectDataController.data == null) {
+              return;
+            }
+            String key = homeData.cartoonizeKey ?? '';
+            int tabPos = effectDataController.data!.tabPos(key);
+            int categoryPos = 0;
+            int itemPos = 0;
+            if (tabPos == -1) {
+              CommonExtension().showToast(S.of(context).template_not_available);
+              return;
+            }
+            EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
+            EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
+            categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
+            itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
+            initPos = InitPos()
+              ..categoryPos = categoryPos
+              ..itemPos = itemPos
+              ..tabPos = tabPos;
+            style = '$style-${effectItem.key}';
           }
-          initPos = InitPos()
-            ..categoryPos = 0
-            ..itemPos = 0
-            ..tabPos = 0;
-        } else {
-          EffectDataController effectDataController = Get.find<EffectDataController>();
-          if (effectDataController.data == null) {
-            return;
+        } else if (target == HomeCardType.txt2img) {
+          Map? payload;
+          try {
+            payload = json.decode(homeData.payload ?? '');
+          } catch (e) {}
+          if (payload != null && payload['txt2img_params'] != null) {
+            var params = payload['txt2img_params'];
+            int width = params['width'] ?? 512;
+            int height = params['height'] ?? 512;
+            txt2imgInitData = Txt2imgInitData()
+              ..prompt = params['prompt']
+              ..width = width
+              ..height = height;
           }
-          String key = homeData.cartoonizeKey ?? '';
-          int tabPos = effectDataController.data!.tabPos(key);
-          int categoryPos = 0;
-          int itemPos = 0;
-          if (tabPos == -1) {
-            CommonExtension().showToast(S.of(context).template_not_available);
-            return;
-          }
-          EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-          EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-          categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-          itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-          initPos = InitPos()
-            ..categoryPos = categoryPos
-            ..itemPos = itemPos
-            ..tabPos = tabPos;
-          style = '$style-${effectItem.key}';
         }
-      } else if (target == HomeCardType.txt2img) {
-        Map? payload;
-        try {
-          payload = json.decode(homeData.payload ?? '');
-        } catch (e) {}
-        if (payload != null && payload['txt2img_params'] != null) {
-          var params = payload['txt2img_params'];
-          int width = params['width'] ?? 512;
-          int height = params['height'] ?? 512;
-          txt2imgInitData = Txt2imgInitData()
-            ..prompt = params['prompt']
-            ..width = width
-            ..height = height;
-        }
+        Events.homeTemplateClick(source: source, style: style);
+        jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
       }
-      Events.homeTemplateClick(source: source, style: style);
-      jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
     }
   }
 
@@ -197,10 +215,14 @@ class HomeCardTypeUtils {
     HomeCardType target,
     InitPos pos, {
     Txt2imgInitData? initData,
+    String? url,
   }) {
     var action = () {
       var context = Get.context!;
       switch (target) {
+        case HomeCardType.url:
+          AppWebView.open(context, url: url!, source: source);
+          break;
         case HomeCardType.txt2img:
           Txt2img.open(context, source: source, initData: initData);
           break;
@@ -291,6 +313,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.removeBg:
         return 'removeBg';
       case HomeCardType.nothing:
+      case HomeCardType.url:
         return '';
     }
   }
@@ -327,6 +350,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.removeBg:
         return 'Background Remover';
       case HomeCardType.nothing:
+      case HomeCardType.url:
         return '';
     }
   }
