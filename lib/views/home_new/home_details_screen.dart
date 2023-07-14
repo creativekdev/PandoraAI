@@ -27,7 +27,7 @@ class HomeDetailsScreen extends StatefulWidget {
 }
 
 class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
-  HomeDetailsController controller = HomeDetailsController();
+  HomeDetailsController controller = Get.put(HomeDetailsController());
 
   @override
   void initState() {

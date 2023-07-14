@@ -4,7 +4,12 @@ import '../../api/cartoonizer_api.dart';
 import '../../models/discovery_list_entity.dart';
 
 class HomeDetailController extends GetxController {
-  HomeDetailController();
+  HomeDetailController({required int index, required List<DiscoveryListEntity>? posts, required String? categoryVaule}) {
+    _index = index;
+    _posts = posts;
+    category = categoryVaule;
+    pageController = PageController(initialPage: index);
+  }
 
   late CartoonizerApi cartoonizerApi;
 

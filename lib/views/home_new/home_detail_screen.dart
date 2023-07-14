@@ -22,15 +22,12 @@ class HomeDetailScreen extends StatefulWidget {
 }
 
 class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
-  HomeDetailController controller = HomeDetailController();
+  late HomeDetailController controller;
 
   @override
   void initState() {
     super.initState();
-    controller.posts = widget.posts;
-    controller.index = widget.index;
-    controller.category = widget.title;
-    controller.pageController = PageController(initialPage: widget.index);
+    controller = HomeDetailController(index: widget.index, posts: widget.posts, categoryVaule: widget.title);
   }
 
   @override
@@ -48,6 +45,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     List<dynamic> resources = jsonDecode(controller.posts![index].resources) as List<dynamic>;
                     return CachedNetworkImageUtils.custom(
+                      useOld: true,
                       context: context,
                       imageUrl: resources.first["url"],
                       height: ScreenUtil.screenSize.height,
@@ -128,6 +126,12 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Get.delete<HomeDetailController>();
   }
 }
 
