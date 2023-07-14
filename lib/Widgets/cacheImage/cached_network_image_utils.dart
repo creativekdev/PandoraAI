@@ -198,8 +198,10 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
 
   PlaceholderWidgetBuilder? placeholder;
   LoadingErrorWidgetBuilder? errorWidget;
-  File? data;
-  FileImage? fileImage;
+  String? filePath;
+
+  // File? data;
+  // FileImage? fileImage;
   int retryCount = 1;
 
   @override
@@ -216,7 +218,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
       initData();
       updateData();
     } else {
-      if (!downloading && fileImage == null) {
+      if (!downloading && filePath == null) {
         _getImage();
       }
     }
@@ -225,7 +227,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
   @override
   dispose() {
     super.dispose();
-    data = null;
+    filePath = null;
     placeholder = null;
     errorWidget = null;
   }
@@ -255,15 +257,15 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     downloading = true;
     SyncDownloadImage(url: url, type: fileType).getImage().then((value) {
       if (value != null) {
-        this.data = value;
+        this.filePath = value.path;
         if (mounted) {
-          fileImage = FileImage(data!);
+          var fileImage = FileImage(value);
           if (width != null && height != null) {
             setState(() {
               downloading = false;
             });
           } else {
-            var resolve = fileImage!.resolve(ImageConfiguration.empty);
+            var resolve = fileImage.resolve(ImageConfiguration.empty);
             resolve.addListener(ImageStreamListener((image, synchronousCall) {
               if (width == double.maxFinite) {
                 width = ScreenUtil.getCurrentWidgetSize(context).width;
@@ -294,6 +296,7 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
           }
         }
       } else {
+        filePath = null;
         if (mounted) {
           setState(() {
             downloading = false;
@@ -308,19 +311,22 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (downloading) {
       return placeholder!.call(context, url);
     }
-    if (data == null || !data!.existsSync()) {
+    if (filePath == null) {
       if (retryCount == 1) {
         retryCount--;
         updateData();
       }
       return errorWidget!.call(context, url, Exception('load image Failed'));
     }
-    if (width == null || height == null || fileImage == null) {
+    if (width == null || height == null) {
       return placeholder!.call(context, url);
     }
     retryCount = 1;
+    if (!TickerMode.of(context)) {
+      return SizedBox(width: width, height: height);
+    }
     return Image(
-      image: fileImage!,
+      image: FileImage(File(filePath!)),
       width: width,
       height: height,
       fit: fit,
