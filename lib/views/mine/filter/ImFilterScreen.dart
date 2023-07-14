@@ -47,9 +47,9 @@ class ImFilterScreen extends StatefulWidget {
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
   late File _imageFile;
   File? _personImageFile;
-  late imgLib.Image _image, _personImage, _backgroundImage, _addedImage;
+  double _imageRatio= 16 / 9;
+  late imgLib.Image _image, _personImage, _backgroundImage;
   late ui.Image _personImageForUi;
-  bool _isPersonImageInitialized = false, _isBackgroundImageInitialized = false;
   Uint8List? _byte;
   final GlobalKey _cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey _ImageViewerBackgroundKey = GlobalKey();
@@ -103,6 +103,8 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Future onSelectImage(String filePath) async {
     var pickFile = File(filePath);
     _imageFile = File(pickFile.path);
+    _image = await getLibImage(await getImage(_imageFile!));
+    _imageRatio = _image.width / _image.height;
     uploadImageController.updateImageUrl('');
     _image = await getLibImage(await getImage(_imageFile));
     _byte = Uint8List.fromList(imgLib.encodeJpg(_image));
@@ -117,14 +119,13 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       _personImageFile = File(url!);
       _personImage = await getLibImage(await getImage(_personImageFile!));
       _personImageForUi = await convertImage(_personImage);
-      _isPersonImageInitialized = true;
     } catch (e) {
       print('An exception occurred: $e');
     }
     setState(() {
       _byte;
       _imageFile;
-      _isPersonImageInitialized;
+      _imageRatio;
     });
   }
 
@@ -320,16 +321,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                                     byte: _byte,
                                     globalKey: _ImageViewerBackgroundKey,
                                   )))
-                              :  (selectedRightTab== TABS.BACKGROUND && _isPersonImageInitialized && _isBackgroundImageInitialized)
-                                  ?ImageMergingWidget(personImage: _personImage, personImageForUI: _personImageForUi, backgroundImage: _backgroundImage,
-                                    onAddImage: (image){
-                                      _isBackgroundImageInitialized = false;
-                                      _addedImage = image;
-                                      _byte = Uint8List.fromList(imgLib.encodeJpg(_addedImage));
-                                      setState(() {
-                                        _byte;
-                                      });
-                                    },)
                                 : Image.memory(
                                   _byte!,
                                   fit: BoxFit.contain,
@@ -692,18 +683,44 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           ],
         )));
   }
+  void showPersonEditScreenDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
 
-  Widget _buildBackground() {
+        return Dialog(
+          // Adjust the following properties to make the dialog full screen
+          insetPadding: EdgeInsets.all(0),
+          child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black, // Set your desired background color here
+          ),
+          child:ImageMergingWidget(personImage: _personImage, personImageForUI: _personImageForUi, backgroundImage: _backgroundImage,
+            onAddImage: (image){
+              Navigator.of(context).pop(Uint8List.fromList(imgLib.encodeJpg(image)));
+            },),
+          )
+        );
+      },
+    ).then((byte) {
+      setState(() {
+        _byte = byte;
+      });
+    });
+  }
+  Widget _buildBackground(BuildContext context) {
     return BackgroundPickerBar(
-      imageRatio: 16 / 9,
+      imageRatio: _imageRatio,
       onPick: (BackgroundData data) async {
         // _backgroundImage = await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!);
-        File backFile = File(data.filePath!);
-        _backgroundImage = await getLibImage(await getImage(backFile));
-        _isBackgroundImageInitialized = true;
-        setState(() {
-          _isBackgroundImageInitialized;
-        });
+        if(data.filePath != null){
+          File backFile = File(data.filePath!);
+          _backgroundImage = await getLibImage(await getImage(backFile));
+        } else {
+          _backgroundImage = imgLib.Image(_personImage.width, _personImage.height);
+          imgLib.fill(_backgroundImage, data.color!.value);
+        }
+        showPersonEditScreenDialog(context);
       },
     ).intoContainer(
       width: double.maxFinite,
@@ -712,7 +729,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     );
   }
 
-  Widget _buildBottomTabbar() {
+  Widget _buildBottomTabbar(BuildContext context) {
     switch (selectedRightTab) {
       case TABS.EFFECT:
         return _buildEffectController();
@@ -723,7 +740,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       case TABS.CROP:
         return _buildCrops();
       case TABS.BACKGROUND:
-        return _buildBackground();
+        return _buildBackground(context);
       default:
         return Container(height: $(115));
     }
@@ -752,7 +769,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           _buildImageView(),
           _buildInOutControlPad(),
           SizedBox(height: $(8)),
-          _buildBottomTabbar(),
+          _buildBottomTabbar(context),
           SizedBox(height: ScreenUtil.getBottomPadding(context)),
         ],
       ),

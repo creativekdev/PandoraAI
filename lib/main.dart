@@ -211,8 +211,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           confirmText: S.of(context).update_now,
           confirmCallback: () {
-            var url = Config.getStoreLink();
-            launchURL(url);
+            if (Platform.isAndroid) {
+              const platform = MethodChannel(PLATFORM_CHANNEL);
+              platform.invokeMethod<bool>("openAppStore").then((value) {
+                if (value == false) {
+                  var url = Config.getStoreLink();
+                  launchURL(url);
+                }
+              });
+            } else {
+              var url = Config.getStoreLink();
+              launchURL(url);
+            }
           },
         ),
       );

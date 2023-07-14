@@ -52,10 +52,10 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
       setState(() {
         socialPost?.addAll(value?.data.rows ?? []);
         isLoading = false;
-        _scrollController = ScrollController(
-          initialScrollOffset: currentPosition,
-          keepScrollOffset: true,
-        );
+        // _scrollController = ScrollController(
+        //   initialScrollOffset: currentPosition,
+        //   keepScrollOffset: true,
+        // );
       });
     });
   }

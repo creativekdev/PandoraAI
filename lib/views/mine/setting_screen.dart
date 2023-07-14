@@ -84,21 +84,21 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                AppWebView.open(context, url: HELP_URL);
+                AppWebView.open(context, url: HELP_URL, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                AppWebView.open(context, url: TERM_AND_USE);
+                AppWebView.open(context, url: TERM_AND_USE, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                AppWebView.open(context, url: USER_PRIVACY);
+                AppWebView.open(context, url: USER_PRIVACY, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),

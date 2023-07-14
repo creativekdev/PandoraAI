@@ -303,6 +303,8 @@ class Events {
       logEvent('print_order_pay_cancel', eventValues: {'source': source, 'orderId': orderId});
 
   static Future<void> imEditionLoading({required String source}) => logEvent('image_edition_loading', eventValues: {'source': source});
+
+  static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source} );
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

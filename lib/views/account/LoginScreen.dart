@@ -266,7 +266,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: agreementTap
                             ..onTap = () {
-                              AppWebView.open(context, url: USER_PRIVACY);
+                              AppWebView.open(context, url: USER_PRIVACY, source: 'login_screen');
                             }),
                       TextSpan(text: S.of(context).and, style: TextStyle(color: ColorConstant.White)),
                       TextSpan(
@@ -274,7 +274,7 @@ class _LoginScreenState extends AppState<LoginScreen> {
                           style: TextStyle(color: ColorConstant.BlueColor),
                           recognizer: termTap
                             ..onTap = () {
-                              AppWebView.open(context, url: TERM_AND_USE);
+                              AppWebView.open(context, url: TERM_AND_USE, source: 'login_source');
                             }),
                     ]),
                     maxLines: 3,
