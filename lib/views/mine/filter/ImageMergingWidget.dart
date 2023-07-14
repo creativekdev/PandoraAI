@@ -15,7 +15,6 @@ class ImageMergingWidget extends StatefulWidget {
   final Function(imgLib.Image) onAddImage;
   ImageMergingWidget({required this.personImage, required this.personImageForUI, required this.backgroundImage, required this.onAddImage}) {
     personByte = Uint8List.fromList(imgLib.encodeJpg(personImage));
-    backgroundImage = imgLib.copyResize(backgroundImage, width: personImage.width, height: personImage.height);
     backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage));
     posX = posY = 0;
     ratio = 1;
@@ -29,14 +28,28 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = ScreenUtil.getCurrentWidgetSize(context);
+    double W, H, w1, h1, w2, h2;
+    double r1, r2;
+    W = size.width;
+    H = size.height;
+    w1 = widget.backgroundImage.width.toDouble();
+    h1 = widget.backgroundImage.height.toDouble();
+    w2 = widget.personImage.width.toDouble();
+    h2 = widget.personImage.height.toDouble();
+    if(w1 / h1 > W / H) r1 = w1 / W;
+    else r1 = h1 / H;
+    if(w2 / h2 > W / H) r2 = w2 / W;
+    else r2 = h2 / H;
+
     return GestureDetector(
       onPanStart: (details) {
 
       },
       onPanUpdate: (details){
         setState(() {
-          widget.posX += details.delta.dx;
-          widget.posY += details.delta.dy;
+          widget.posX += details.delta.dx ;
+          widget.posY += details.delta.dy ;
         });
 
       },
@@ -45,27 +58,23 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
       },
       child: Stack(
         children: [
-          Column(
-            children: [
-            Expanded(
-              child: Row(
-                children: [
-                Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: $(5)),
-                  child: Image.memory(
-                      widget.backgroundByte!,
-                      fit: BoxFit.contain,
-                    ),
-                  ))
-                ]
-              )
-            )]
+          Container(
+            width: size.width,
+            height: size.height,
+            child: Image.memory(
+              widget.backgroundByte!,
+              fit: BoxFit.contain,
+            ),
           ),
-          CustomPaint(
-            painter: AlphaImagePainter(widget.personImageForUI!, dx: widget.posX, dy: widget.posY, ratio: widget.ratio ),
-            child: Container(
-            ), // You can replace this with your own UI elements
+          Container(
+            child:CustomPaint(
+
+              painter: AlphaImagePainter(widget.personImageForUI!, dx: widget.posX, dy: widget.posY, ratio: widget.ratio ),
+              child: Container(
+                width: size.width,
+                height: size.height,
+              ), // You can replace this with your own UI elements
+            )
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -85,15 +94,21 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
                  )),
                  InkWell(
                    onTap: () async {
-                     imgLib.Image res_image = imgLib.copyResize(widget.backgroundImage, width: widget.backgroundImage.width, height: widget.backgroundImage.height);
-                     imgLib.Image person_image = imgLib.copyResize(widget.personImage, width: (widget.personImage.width * widget.ratio).toInt(), height: (widget.personImage.height* widget.ratio).toInt());
+
+                     imgLib.Image res_image = widget.backgroundImage;
+                     imgLib.Image person_image = widget.personImage;
                      for (int i = 0; i < res_image.width; i++) {
                        for (int j = 0; j < res_image.height; j++) {
                          var pixel1 = res_image.getPixel(i, j);
-                         int ii = i - widget.posX.toInt();
-                         int jj = j - widget.posY.toInt();
-                         if(0<=ii && ii <person_image.width && 0<=jj && jj < person_image.height) {
-                           var pixel2 = person_image.getPixel(ii, jj);
+
+                         double ii = W / 2 - (w1 / 2 - i) / r1;
+                         double jj = H / 2 - (h1 / 2 - j) / r1;
+                         double iiid = (ii - widget.posX - W / 2) / widget.ratio + w2 / 2;
+                         double jjjd = (jj - widget.posY - H / 2) / widget.ratio + h2 / 2;
+                         int iii = iiid.toInt();
+                         int jjj = jjjd.toInt();
+                         if(0<=iii && iii <person_image.width && 0<=jjj && jjj < person_image.height) {
+                           var pixel2 = person_image.getPixel(iii, jjj);
                            double alpha2 = imgLib.getAlpha(pixel2)/255;
                            int red = (imgLib.getRed(pixel1)*(1- alpha2) + imgLib.getRed(pixel2) * alpha2).toInt();
                            int green = (imgLib.getGreen(pixel1)*(1- alpha2) + imgLib.getGreen(pixel2) * alpha2).toInt();
@@ -128,24 +143,11 @@ class AlphaImagePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size)  {
-
-    final Size imageSize = Size(
-      personImageForUI.width.toDouble(),
-      personImageForUI.height.toDouble(),
-    );
-
-    final FittedSizes sizes = applyBoxFit(BoxFit.contain, imageSize, size);
-    final Rect sourceRect =
-    Alignment.center.inscribe(sizes.source, Offset.zero & imageSize);
-    final Rect destinationRect =
-    Alignment.center.inscribe(sizes.destination, Offset.zero & size);
-
-    canvas.translate(dx, dy);
+    canvas.translate(dx + size.width / 2 - personImageForUI.width * ratio / 2,  dy + size.height / 2 - personImageForUI.height * ratio / 2);
     canvas.scale(ratio);
-    canvas.drawImageRect(personImageForUI, sourceRect, destinationRect, Paint());
+
+    canvas.drawImage(personImageForUI, Offset(0, 0), Paint());
   }
-
-
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {

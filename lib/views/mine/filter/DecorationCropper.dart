@@ -48,7 +48,6 @@ class RectanglePainter extends CustomPainter {
 
     final rect7 = Rect.fromLTWH(width - 50, height / 2 - 25, 50, 50);
     canvas.drawRect(rect7, paint);
-
   }
 
   @override

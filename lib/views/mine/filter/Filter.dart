@@ -346,6 +346,17 @@ class Filter{
         break;
       case "CTN":
         // imgLib;
+        for (int x = 0; x < res_image.width; x++) {
+          for (int y = 0; y < res_image.height; y++) {
+            final pixel = res_image.getPixel(x, y);
+
+            // Convert the pixel to grayscale
+            final luminance = imgLib.getLuminance(pixel);
+            final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+
+            res_image.setPixel(x, y, modifiedPixel);
+          }
+        }
 
         break;
       default:
