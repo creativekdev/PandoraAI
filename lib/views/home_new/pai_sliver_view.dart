@@ -15,34 +15,19 @@ class PaiSliverView extends StatelessWidget {
   Widget build(BuildContext context) {
     final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-        padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TitleTextWidget(
-              'Tools',
-              ColorConstant.White,
-              FontWeight.w500,
-              $(17),
-              align: TextAlign.left,
-            ).intoContainer(
-                padding: EdgeInsets.only(
-              bottom: $(8),
-            )),
-            Wrap(
-                spacing: $(12),
-                runSpacing: $(12),
-                children: finalList!
-                    .map(
-                      (e) => SliverItem(
-                        entity: e,
-                      ).intoGestureDetector(onTap: () {
-                        onClickItem(e);
-                      }),
-                    )
-                    .toList()),
-          ],
-        ));
+        padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
+        child: Wrap(
+            spacing: $(12),
+            runSpacing: $(12),
+            children: finalList!
+                .map(
+                  (e) => SliverItem(
+                    entity: e,
+                  ).intoGestureDetector(onTap: () {
+                    onClickItem(e);
+                  }),
+                )
+                .toList()));
   }
 }
 

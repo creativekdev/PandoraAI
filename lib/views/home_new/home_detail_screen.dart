@@ -122,7 +122,15 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                 .intoGestureDetector(onTap: () {
               HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![widget.index]);
             }),
-          )
+          ),
+          GetBuilder<HomeDetailController>(
+              init: controller,
+              builder: (context) {
+                if (!controller.isShowedGuide) {
+                  return SwipeGuideAnimation();
+                }
+                return SizedBox();
+              }),
         ],
       ),
     );
@@ -152,6 +160,81 @@ class HomeDetailItem extends StatelessWidget {
         width: (ScreenUtil.screenSize.width - $(20)) / 2,
         height: $(300),
         fit: BoxFit.fill,
+      ),
+    );
+  }
+}
+
+class SwipeGuideAnimation extends StatefulWidget {
+  @override
+  _SwipeGuideAnimationState createState() => _SwipeGuideAnimationState();
+}
+
+class _SwipeGuideAnimationState extends State<SwipeGuideAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 2000),
+      vsync: this,
+    );
+    _animation = Tween<double>(begin: 1.0, end: 0.8).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutQuart),
+    );
+
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.reset();
+        _animationController.forward();
+      }
+    });
+
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Stack(
+        children: [
+          Container(
+            color: Colors.black45,
+          ),
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(bottom: $(150)),
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Transform.translate(
+                  offset: Offset(0.0, ScreenUtil.screenSize.height * _animation.value * 0.3),
+                  child: child,
+                );
+              },
+              child: Icon(
+                Icons.swipe_up_outlined,
+                color: ColorConstant.White,
+                size: $(30),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: EdgeInsets.only(bottom: $(150)),
+              child: TitleTextWidget(S.of(context).swipe_up_for_more, ColorConstant.White, FontWeight.w600, $(14)),
+            ),
+          ),
+        ],
       ),
     );
   }

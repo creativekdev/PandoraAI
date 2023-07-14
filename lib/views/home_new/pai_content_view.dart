@@ -63,16 +63,20 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TitleTextWidget(
                 (widget.galleries?.title ?? '').toUpperCaseFirst,
                 ColorConstant.White,
                 FontWeight.w500,
-                $(17),
+                $(16),
+              ).intoContainer(
+                alignment: Alignment.center,
               ),
               Spacer(),
               TitleTextWidget(
@@ -82,13 +86,12 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
                 $(12),
               )
                   .intoContainer(
-                height: $(20),
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(horizontal: $(8)),
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
-                    color: ColorConstant.White.withOpacity(0.1),
+                    color: ColorConstant.White.withOpacity(0.5),
                   ),
                   borderRadius: BorderRadius.circular($(10)),
                 ),
@@ -119,7 +122,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
             ),
           ),
           SizedBox(
-            height: $(16),
+            height: $(12),
           ),
         ],
       ),

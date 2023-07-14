@@ -563,6 +563,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("記入する"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("日曜日"),
+        "swipe_up_for_more":
+            MessageLookupByLibrary.simpleMessage("Swipe Up For More"),
         "system": MessageLookupByLibrary.simpleMessage("システム通知"),
         "system_msg": MessageLookupByLibrary.simpleMessage("システムメッセージ"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),

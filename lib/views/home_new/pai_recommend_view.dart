@@ -15,7 +15,7 @@ class PaiRecommendView extends StatelessWidget {
   Widget build(BuildContext context) {
     final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(16)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Wrap(
         spacing: $(8),
         runSpacing: $(8),

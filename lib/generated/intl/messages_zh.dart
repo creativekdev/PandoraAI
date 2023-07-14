@@ -525,6 +525,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("周日"),
+        "swipe_up_for_more": MessageLookupByLibrary.simpleMessage("上滑获取更多"),
         "system": MessageLookupByLibrary.simpleMessage("系统通知"),
         "system_msg": MessageLookupByLibrary.simpleMessage("系统消息"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),

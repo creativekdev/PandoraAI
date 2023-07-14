@@ -674,6 +674,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
         "sunday": MessageLookupByLibrary.simpleMessage("Domingo"),
+        "swipe_up_for_more":
+            MessageLookupByLibrary.simpleMessage("もっと見るには上にスワイプしてください"),
         "system":
             MessageLookupByLibrary.simpleMessage("Notificaciones del sistema"),
         "system_msg":

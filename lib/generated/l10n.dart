@@ -4919,6 +4919,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Swipe Up For More`
+  String get swipe_up_for_more {
+    return Intl.message(
+      'Swipe Up For More',
+      name: 'swipe_up_for_more',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

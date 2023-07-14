@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
 import '../../api/cartoonizer_api.dart';
+import '../../app/cache/cache_manager.dart';
 import '../../models/discovery_list_entity.dart';
 
 class HomeDetailController extends GetxController {
@@ -9,9 +10,15 @@ class HomeDetailController extends GetxController {
     _posts = posts;
     category = categoryVaule;
     pageController = PageController(initialPage: index);
+    manager = CacheManager().getManager();
+    isShowedGuide = manager.getBool(CacheManager.showedGuideOfHomeDetail);
   }
 
+  late CacheManager manager;
+
   late CartoonizerApi cartoonizerApi;
+
+  late bool isShowedGuide;
 
   late PageController pageController;
 
@@ -23,8 +30,13 @@ class HomeDetailController extends GetxController {
 
   set index(int? value) {
     _index = value;
-    if (_index == _posts!.length - 2) {
+    if (_index! >= (_posts!.length - 2)) {
       onLoadMore();
+      update();
+    }
+    if (isShowedGuide == false) {
+      manager.setBool(CacheManager.showedGuideOfHomeDetail, true);
+      isShowedGuide = true;
       update();
     }
   }

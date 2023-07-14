@@ -646,6 +646,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
         "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),
+        "swipe_up_for_more":
+            MessageLookupByLibrary.simpleMessage("Swipe Up For More"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "system_msg": MessageLookupByLibrary.simpleMessage("System Message"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
