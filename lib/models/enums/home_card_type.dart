@@ -338,7 +338,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.UNDEFINED:
         return '';
       case HomeCardType.txt2img:
-        return 'AI Artist: Text to Image';
+        return 'Text to Image';
       case HomeCardType.scribble:
         return 'AI Scribble';
       case HomeCardType.metagram:
@@ -348,7 +348,7 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.lineart:
         return 'AI Coloring';
       case HomeCardType.removeBg:
-        return 'Background Remover';
+        return 'Bg Remover';
       case HomeCardType.nothing:
       case HomeCardType.url:
         return '';

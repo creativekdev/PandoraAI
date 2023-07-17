@@ -220,10 +220,10 @@ class _SwipeGuideAnimationState extends State<SwipeGuideAnimation> with SingleTi
                   child: child,
                 );
               },
-              child: Icon(
-                Icons.swipe_up_outlined,
+              child: Image.asset(
+                Images.ic_swipe,
                 color: ColorConstant.White,
-                size: $(30),
+                width: $(30),
               ),
             ),
           ),

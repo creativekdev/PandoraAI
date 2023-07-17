@@ -42,7 +42,7 @@ class PaiSwiper extends StatelessWidget {
         },
         itemHeight: (ScreenUtil.screenSize.width - $(30)) * 0.75,
         itemCount: entity?.length ?? 0,
-        autoplay: true,
+        autoplay: false,
         pagination: SwiperPagination(
             builder: DotSwiperPaginationBuilder(
           color: Colors.grey,

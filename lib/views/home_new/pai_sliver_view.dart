@@ -60,7 +60,7 @@ class SliverItem extends StatelessWidget {
           $(12),
           maxLines: 1,
         ).intoContainer(
-          width: width,
+          // width: width,
           padding: EdgeInsets.only(top: $(8), bottom: $(8)),
         )
       ],
