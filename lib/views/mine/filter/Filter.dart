@@ -346,14 +346,68 @@ class Filter{
         break;
       case "CTN":
         // imgLib;
+        List<int> group = [];
+        List<int> cnt = [];
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
+            final red = imgLib.getRed(pixel);
+            final green = imgLib.getGreen(pixel);
+            final blue = imgLib.getBlue(pixel);
+            int k;
+            for(k = 0; k < group.length; k++) {
+              final pixel2 = group[k];
+              final r = imgLib.getRed(pixel2);
+              final g = imgLib.getGreen(pixel2);
+              final b = imgLib.getBlue(pixel2);
+              int dr = r - red;
+              int dg = g - green;
+              int db = b - blue;
+              if((dr*dr + dg*dg + db*db)<6000) {
+                int rr = (red * cnt[k] + r) ~/(cnt[k] + 1);
+                int gg = (green * cnt[k] + g) ~/(cnt[k] + 1);
+                int bb = (blue * cnt[k] + b) ~/(cnt[k] + 1);
 
+                group[k] = imgLib.getColor(rr, gg, bb);
+                cnt[k]++;
+                break;
+              }
+            }
+            if(k==group.length) {
+              group.add(pixel);
+              cnt.add(0);
+            }
+          }
+        }
+        for (int x = 0; x < res_image.width; x++) {
+          for (int y = 0; y < res_image.height; y++) {
+            final int pixel = res_image.getPixel(x, y);
+            int mink = 0;
+            for(int k = 0; k < group.length; k++) {
+              final r1 = imgLib.getRed(pixel);
+              final g1 = imgLib.getGreen(pixel);
+              final b1 = imgLib.getBlue(pixel);
+              final r2 = imgLib.getRed(group[k]);
+              final g2 = imgLib.getGreen(group[k]);
+              final b2 = imgLib.getBlue(group[k]);
+              final r3 = imgLib.getRed(group[mink]);
+              final g3 = imgLib.getGreen(group[mink]);
+              final b3 = imgLib.getBlue(group[mink]);
+              int dr1 = r1 - r2;
+              int dg1 = g1 - g2;
+              int db1 = b1 - b2;
+              int dr2 = r1 - r3;
+              int dg2 = g1 - g3;
+              int db2 = b1 - b3;
+              if((dr1 * dr1 + dg1 * dg1 + db1 * db1) <(dr2 * dr2 + dg2 * dg2 + db2 * db2)) mink = k;
+            }
             // Convert the pixel to grayscale
-            final luminance = imgLib.getLuminance(pixel);
-            final modifiedPixel = imgLib.getColor(luminance, luminance, luminance);
+            final red = imgLib.getRed(group[mink]);
+            final green = imgLib.getGreen(group[mink]);
+            final blue = imgLib.getBlue(group[mink]);
 
+
+            final modifiedPixel = imgLib.getColor(red, green, blue);
             res_image.setPixel(x, y, modifiedPixel);
           }
         }
