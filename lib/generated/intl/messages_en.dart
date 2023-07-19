@@ -233,6 +233,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("dog"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
         "edit_address": MessageLookupByLibrary.simpleMessage("Edit Address"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),

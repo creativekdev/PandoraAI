@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -32,14 +32,14 @@ class _FeedbackDialog extends StatefulWidget {
 }
 
 class _FeedbackDialogState extends AppState<_FeedbackDialog> {
-  late CartoonizerApi api;
+  late AppApi api;
   late TextEditingController textEditingController;
   CacheManager cacheManager = AppDelegate().getManager();
 
   @override
   void initState() {
     super.initState();
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     textEditingController = TextEditingController();
   }
 

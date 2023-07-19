@@ -200,6 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
+        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
         "edit": MessageLookupByLibrary.simpleMessage("編集"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("情報を編集する"),
         "effectRecentEmptyHint":
@@ -564,7 +565,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("日曜日"),
         "swipe_up_for_more":
-            MessageLookupByLibrary.simpleMessage("Swipe Up For More"),
+            MessageLookupByLibrary.simpleMessage("もっと見るには上にスワイプしてください"),
         "system": MessageLookupByLibrary.simpleMessage("システム通知"),
         "system_msg": MessageLookupByLibrary.simpleMessage("システムメッセージ"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),

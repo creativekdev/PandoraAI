@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/models/print_product_need_info_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/print/print_screen.dart';
@@ -21,7 +21,7 @@ class PrintController extends GetxController {
   final PrintScreenState screenState;
 
   PrintOptionData optionData;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   GlobalKey repaintKey = GlobalKey();
 
   PrintProductEntity? product;
@@ -50,7 +50,7 @@ class PrintController extends GetxController {
         "file_name": f_name,
         "content_type": c_type,
       };
-      cartoonizerApi.getPresignedUrl(params).then((value) async {
+      appApi.getPresignedUrl(params).then((value) async {
         if (value != null) {
           Uint8List imageBytes = await imageFile.readAsBytes();
           var baseEntity = await Uploader().upload(value, imageBytes, c_type);
@@ -82,7 +82,7 @@ class PrintController extends GetxController {
       "file_name": f_name,
       "content_type": c_type,
     };
-    var value = await cartoonizerApi.getPresignedUrl(params);
+    var value = await appApi.getPresignedUrl(params);
     if (value != null) {
       Uint8List pngBytes = byteData!.buffer.asUint8List();
       var baseEntity = await Uploader().upload(value, pngBytes, c_type);
@@ -250,7 +250,7 @@ class PrintController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     _imgUrl = getImgUrl();
   }
 
@@ -280,7 +280,7 @@ class PrintController extends GetxController {
   }
 
   onRequestData() async {
-    final shopify = cartoonizerApi.shopifyProducts(product_ids: optionData.shopifyProductId, is_admin_shop: 1);
+    final shopify = appApi.shopifyProducts(product_ids: optionData.shopifyProductId, is_admin_shop: 1);
 
     final productInfo = DioNode().build().get(optionData.contentUrl);
     dynamic response = await productInfo;
@@ -360,7 +360,7 @@ class PrintController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 
   List<Map<String, bool>> getInitIsShowed(List<String> keys) {

@@ -473,7 +473,7 @@
   "update_address_success": "地址更新成功",
   "addresses": "地址列表",
   "add_address": "添加收货地址",
-  "pleaseReadAndAgreePrivacyAndTermsOfUse": "请阅读并统一用户协议和使用条款",
+  "pleaseReadAndAgreePrivacyAndTermsOfUse": "请阅读并同意用户协议和使用条款",
   "IHaveReadAndAgreeTo": "我已阅读并同意",
   "UserAgreement": "《用户协议》",
   "TermsOfUse": "《使用条款》",
@@ -487,5 +487,6 @@
   "copy": "复制",
   "share_to_discovery": "分享到发现",
   "share_out": "分享给朋友",
-  "swipe_up_for_more": "上滑获取更多"
+  "swipe_up_for_more": "上滑获取更多",
+  "downloading": "正在下载..."
 }

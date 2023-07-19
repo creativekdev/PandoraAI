@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
-import '../../api/cartoonizer_api.dart';
+import '../../api/app_api.dart';
 import '../../app/cache/cache_manager.dart';
 import '../../models/discovery_list_entity.dart';
 
@@ -16,7 +16,7 @@ class HomeDetailController extends GetxController {
 
   late CacheManager manager;
 
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   late bool isShowedGuide;
 
@@ -55,7 +55,7 @@ class HomeDetailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
   }
 
   onLoadMore() async {
@@ -63,7 +63,7 @@ class HomeDetailController extends GetxController {
       return;
     }
     _isLoading = true;
-    cartoonizerApi.socialHomePost(from: _posts?.length ?? 0, size: 10, category: category ?? '').then((value) {
+    appApi.socialHomePost(from: _posts?.length ?? 0, size: 10, category: category ?? '').then((value) {
       _posts?.addAll(value?.data.rows ?? []);
       _isLoading = false;
       update();
@@ -73,7 +73,7 @@ class HomeDetailController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     pageController.dispose();
   }
 }

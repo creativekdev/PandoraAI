@@ -6,7 +6,6 @@ import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
-import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
@@ -85,17 +84,12 @@ class HomeCardTypeUtils {
       if (target == HomeCardType.url) {
         AppWebView.open(context, url: payload.data!, source: source);
       } else {
-        var split = payload.data?.split(',');
-        InitPos pos = InitPos();
-        if (split != null && split.length >= 2) {
-          var controller = Get.find<EffectDataController>();
-          pos = controller.findItemPos(split[0], split[1], split.length > 2 ? split[2] : null);
-        }
-        jumpWithHomeType(context, source, target, pos);
+        List<String?> split = payload.data?.split(',') ?? [null];
+        jumpWithHomeType(context, source, target, initKey: split.last);
       }
     } else if (data != null) {
       var target = data.category;
-      InitPos initPos = InitPos();
+      String? initKey;
       Txt2imgInitData? txt2imgInitData;
       String style = target.value();
       if (target == HomeCardType.url) {
@@ -103,27 +97,8 @@ class HomeCardTypeUtils {
         var url = payload['url'].toString();
         AppWebView.open(context, url: url, source: source);
       } else if (target == HomeCardType.cartoonize) {
-        EffectDataController effectDataController = Get.find<EffectDataController>();
-        if (effectDataController.data == null) {
-          return;
-        }
-        String key = data.cartoonizeKey;
-        int tabPos = effectDataController.data!.tabPos(key);
-        int categoryPos = 0;
-        int itemPos = 0;
-        if (tabPos == -1) {
-          CommonExtension().showToast(S.of(context).template_not_available);
-          return;
-        }
-        EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-        EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-        categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-        itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-        initPos = InitPos()
-          ..categoryPos = categoryPos
-          ..itemPos = itemPos
-          ..tabPos = tabPos;
-        style = '$style-${effectItem.key}';
+        initKey = data.cartoonizeKey;
+        style = '$style-${initKey}';
       } else if (target == HomeCardType.txt2img) {
         Map? payload;
         try {
@@ -144,7 +119,7 @@ class HomeCardTypeUtils {
       } else {
         Events.discoveryTemplateClick(source: source, style: style);
       }
-      jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
+      jumpWithHomeType(context, source, target, initKey: initKey, initData: txt2imgInitData);
     } else if (homeData != null) {
       var target = homeData.category;
       if (target == HomeCardType.url) {
@@ -152,41 +127,17 @@ class HomeCardTypeUtils {
         var url = payload['url'].toString();
         AppWebView.open(context, url: url, source: source);
       } else {
-        InitPos initPos = InitPos();
         Txt2imgInitData? txt2imgInitData;
         String style = target.value();
+        String? initKey;
         if (target == HomeCardType.cartoonize) {
-          if (TextUtil.isEmpty(homeData.cartoonizeKey)) {
+          if (!TextUtil.isEmpty(homeData.cartoonizeKey)) {
+            initKey = homeData.cartoonizeKey;
             EffectDataController effectDataController = Get.find<EffectDataController>();
             if (effectDataController.data == null) {
               return;
             }
-            initPos = InitPos()
-              ..categoryPos = 0
-              ..itemPos = 0
-              ..tabPos = 0;
-          } else {
-            EffectDataController effectDataController = Get.find<EffectDataController>();
-            if (effectDataController.data == null) {
-              return;
-            }
-            String key = homeData.cartoonizeKey ?? '';
-            int tabPos = effectDataController.data!.tabPos(key);
-            int categoryPos = 0;
-            int itemPos = 0;
-            if (tabPos == -1) {
-              CommonExtension().showToast(S.of(context).template_not_available);
-              return;
-            }
-            EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-            EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-            categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-            itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-            initPos = InitPos()
-              ..categoryPos = categoryPos
-              ..itemPos = itemPos
-              ..tabPos = tabPos;
-            style = '$style-${effectItem.key}';
+            style = '$style-${initKey}';
           }
         } else if (target == HomeCardType.txt2img) {
           Map? payload;
@@ -204,7 +155,7 @@ class HomeCardTypeUtils {
           }
         }
         Events.homeTemplateClick(source: source, style: style);
-        jumpWithHomeType(context, source, target, initPos, initData: txt2imgInitData);
+        jumpWithHomeType(context, source, target, initKey: initKey, initData: txt2imgInitData);
       }
     }
   }
@@ -212,9 +163,9 @@ class HomeCardTypeUtils {
   static jumpWithHomeType(
     BuildContext context,
     String source,
-    HomeCardType target,
-    InitPos pos, {
+    HomeCardType target, {
     Txt2imgInitData? initData,
+    String? initKey,
     String? url,
   }) {
     var action = () {
@@ -230,7 +181,7 @@ class HomeCardTypeUtils {
           AnotherMe.open(context, source: source);
           break;
         case HomeCardType.cartoonize:
-          Cartoonize.open(context, source: source, tabPos: pos.itemPos, categoryPos: pos.categoryPos, itemPos: pos.itemPos);
+          Cartoonize.open(context, source: source, initKey: initKey);
           break;
         case HomeCardType.ai_avatar:
           Avatar.open(context, source: source);

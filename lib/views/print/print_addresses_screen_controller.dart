@@ -1,11 +1,11 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 
 import '../../models/address_entity.dart';
 
 class PrintAddressesScreenController extends GetxController {
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   late StreamSubscription onDeleteListener;
   late StreamSubscription onUpdateListener;
   late StreamSubscription onAddListener;
@@ -19,7 +19,7 @@ class PrintAddressesScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     onDeleteListener = EventBusHelper().eventBus.on<OnDeletePrintAddressEvent>().listen((event) {
       for (var value in addresses) {
         if (value.id == event.data) {
@@ -57,7 +57,7 @@ class PrintAddressesScreenController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     onDeleteListener.cancel();
     onAddListener.cancel();
     onUpdateListener.cancel();

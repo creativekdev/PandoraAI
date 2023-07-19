@@ -242,6 +242,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("perro"),
         "done": MessageLookupByLibrary.simpleMessage("terminar"),
         "download": MessageLookupByLibrary.simpleMessage("Descargar"),
+        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
         "edit": MessageLookupByLibrary.simpleMessage("editar"),
         "edit_address":
             MessageLookupByLibrary.simpleMessage("Editar Dirección"),
@@ -674,8 +675,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
         "sunday": MessageLookupByLibrary.simpleMessage("Domingo"),
-        "swipe_up_for_more":
-            MessageLookupByLibrary.simpleMessage("もっと見るには上にスワイプしてください"),
+        "swipe_up_for_more": MessageLookupByLibrary.simpleMessage(
+            "Desliza hacia arriba para obtener más"),
         "system":
             MessageLookupByLibrary.simpleMessage("Notificaciones del sistema"),
         "system_msg":

@@ -9,7 +9,7 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/selected_button.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -86,7 +86,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   String? originalUrl;
   Uint8List? imageData;
   late TextEditingController textEditingController;
-  late CartoonizerApi api;
+  late AppApi api;
   late String effectKey;
   bool includeOriginal = true;
   Size? imageSize;
@@ -101,7 +101,7 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'share_discovery_screen');
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     textEditingController = TextEditingController();
     // canSubmit = textEditingController.text.trim().isNotEmpty;
     isVideo = widget.isVideo;

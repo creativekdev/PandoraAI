@@ -194,6 +194,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
+        "downloading": MessageLookupByLibrary.simpleMessage("正在下载..."),
         "edit": MessageLookupByLibrary.simpleMessage("编辑"),
         "edit_address": MessageLookupByLibrary.simpleMessage("编辑地址"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("编辑信息"),
@@ -397,7 +398,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "pleaseInput": MessageLookupByLibrary.simpleMessage("请填写 %s"),
         "pleaseReadAndAgreePrivacyAndTermsOfUse":
-            MessageLookupByLibrary.simpleMessage("请阅读并统一用户协议和使用条款"),
+            MessageLookupByLibrary.simpleMessage("请阅读并同意用户协议和使用条款"),
         "pleaseSelect": MessageLookupByLibrary.simpleMessage("请选择%s"),
         "pleaseSelectColor": MessageLookupByLibrary.simpleMessage("请选择颜色"),
         "pleaseSelectModel": MessageLookupByLibrary.simpleMessage("请选择款式"),

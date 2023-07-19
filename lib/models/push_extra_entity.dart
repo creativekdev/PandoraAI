@@ -1,32 +1,32 @@
 import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/push_extra_entity.g.dart';
-
-@JsonSerializable()
-class PushExtraEntity {
-  String tab;
-  String category;
-  String effect;
-
-  PushExtraEntity({this.effect = '', this.category = '', this.tab = ''});
-
-  factory PushExtraEntity.fromJson(Map<String, dynamic> json) => $PushExtraEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => $PushExtraEntityToJson(this);
-
-  @override
-  String toString() {
-    return jsonEncode(this);
-  }
-}
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 @JsonSerializable()
 class PushModuleExtraEntity {
-  String type;
+  @JSONField(name: 'type')
+  String? typeString;
 
-  PushModuleExtraEntity({
-    this.type = '',
-  });
+  @JSONField(serialize: false, deserialize: false)
+  HomeCardType? _type;
+
+  HomeCardType get type {
+    if (_type == null) {
+      _type = HomeCardTypeUtils.build(typeString);
+    }
+    return _type!;
+  }
+
+  set type(HomeCardType type) {
+    _type = type;
+    typeString = _type!.value();
+  }
+
+  String? initKey;
+  String? url;
+
+  PushModuleExtraEntity();
 
   factory PushModuleExtraEntity.fromJson(Map<String, dynamic> json) => $PushModuleExtraEntityFromJson(json);
 

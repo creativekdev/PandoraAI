@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/models/get_address_entity.dart';
 import 'package:cartoonizer/views/print/print_controller.dart';
@@ -20,7 +20,7 @@ import '../../models/print_payment_entity.dart';
 import '../../models/print_product_entity.dart';
 
 class PrintShippingController extends GetxController {
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   ScrollController scrollController = ScrollController();
 
@@ -167,7 +167,7 @@ class PrintShippingController extends GetxController {
         },
       })
     };
-    printOrderEntity = await cartoonizerApi.shopifyCreateOrder(body);
+    printOrderEntity = await appApi.shopifyCreateOrder(body);
     if (printOrderEntity == null) {
       return false;
     }
@@ -210,7 +210,7 @@ class PrintShippingController extends GetxController {
       ],
     };
 
-    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
+    PrintPaymentEntity? payment = await appApi.buyPlanCheckout(params);
     PrintOrdersDataRows rows = PrintOrdersDataRows.fromJson(printOrderEntity!.data.toJson());
     Navigator.of(context)
         .push<bool>(
@@ -271,12 +271,12 @@ class PrintShippingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     _total = printController.getSubTotal() + effectdatacontroller.data!.shippingMethods[_deliveryIndex].shippingRateData.fixedAmount.amount / 100;
   }
 
   onRequestAddress() async {
-    GetAddressEntity? address = await cartoonizerApi.getAddress();
+    GetAddressEntity? address = await appApi.getAddress();
     addresses = address?.data?.customer.addresses ?? [];
     seletedAddress = addresses.first;
     _viewInit = true;
@@ -292,6 +292,6 @@ class PrintShippingController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 }

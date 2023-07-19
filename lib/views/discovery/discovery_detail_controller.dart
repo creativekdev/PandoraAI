@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -15,7 +15,7 @@ import '../../app/user/user_manager.dart';
 
 class DiscoveryDetailController extends GetxController {
   DiscoveryListEntity discoveryEntity;
-  late CartoonizerApi api;
+  late AppApi api;
 
   int pageSize = 20;
   List<DiscoveryCommentListEntity> dataList = [];
@@ -86,7 +86,7 @@ class DiscoveryDetailController extends GetxController {
     super.onInit();
     resources = discoveryEntity.resourceList();
     liked.value = discoveryEntity.likeId != null;
-    api = CartoonizerApi().bindController(this);
+    api = AppApi().bindController(this);
     onLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? true) {
         loadFirstPage();

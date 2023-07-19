@@ -19,6 +19,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.socialbook.cartoonizer.converter.AsyncTaskHelper
 import io.socialbook.cartoonizer.converter.YuvConverter
+import io.socialbook.cartoonizer.download.DownloadUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -169,6 +170,13 @@ class MainActivity : FlutterFragmentActivity() {
 
                 "openAppStore" -> {
                     toAppStore(result)
+                }
+                "updateAppByApk" -> {
+                    val url = call.argument<String>("url")
+                    val name = call.argument<String>("name")
+                    val desc = call.argument<String>("desc")
+                    DownloadUtils(this).downloadAPK(url, name, desc)
+                    result.success(true)
                 }
             }
         }

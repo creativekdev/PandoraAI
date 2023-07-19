@@ -140,24 +140,11 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       return;
     }
     String key = controller.discoveryEntity.cartoonizeKey;
-    int tabPos = effectDataController.data!.tabPos(key);
-    int categoryPos = 0;
-    int itemPos = 0;
-    if (tabPos == -1) {
-      CommonExtension().showToast(S.of(context).template_not_available);
-      return;
-    }
-    EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-    EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-    Events.discoveryTemplateClick(source: source, style: 'facetoon-${effectItem.key}');
+    Events.discoveryTemplateClick(source: source, style: 'facetoon-${key}');
     Cartoonize.open(
       context,
       source: source + '-try-template',
-      tabPos: tabPos,
-      categoryPos: categoryPos,
-      itemPos: itemPos,
+      initKey: key,
     );
   }
 

@@ -1,7 +1,7 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
@@ -15,7 +15,7 @@ class EffectManager extends BaseManager {
 
   ApiConfigEntity? get data => _data;
   late CacheManager cacheManager;
-  late CartoonizerApi api;
+  late AppApi api;
   late Map<String, double> _scaleCachedMap = {};
   Map<String, bool> nsfwStateMap = {};
   bool loaded = false;
@@ -23,7 +23,7 @@ class EffectManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
-    api = CartoonizerApi.quickResponse().bindManager(this);
+    api = AppApi.quickResponse().bindManager(this);
   }
 
   @override

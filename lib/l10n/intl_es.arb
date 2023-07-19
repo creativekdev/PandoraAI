@@ -486,5 +486,6 @@
   "copy": "Copiar",
   "share_to_discovery": "Compartir en Discovery",
   "share_out": "Compartir con amigos",
-  "swipe_up_for_more": "もっと見るには上にスワイプしてください"
+  "swipe_up_for_more": "Desliza hacia arriba para obtener más",
+  "downloading": "Downloading..."
 }

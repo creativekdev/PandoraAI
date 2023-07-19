@@ -43,11 +43,12 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                 return PageView.builder(
                   controller: controller.pageController,
                   itemBuilder: (BuildContext context, int index) {
-                    List<dynamic> resources = jsonDecode(controller.posts![index].resources) as List<dynamic>;
+                    var resourceList = controller.posts![index].resourceList();
+                    var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
                     return CachedNetworkImageUtils.custom(
                       useOld: true,
                       context: context,
-                      imageUrl: resources.first["url"],
+                      imageUrl: pick?.url ?? '',
                       height: ScreenUtil.screenSize.height,
                       fit: BoxFit.cover,
                     );
@@ -61,12 +62,13 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
               }),
           Positioned(
             top: ScreenUtil.getStatusBarHeight() + $(5),
-            left: $(15),
+            left: 0,
             child: GestureDetector(
-              child: Icon(
-                Icons.arrow_back_ios,
+              child: Image.asset(
+                Images.ic_back,
                 color: ColorConstant.White,
-              ),
+                width: $(24),
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12))),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -86,7 +88,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
             ),
           ),
           Positioned(
-            bottom: $(49),
+            bottom: $(30) + ScreenUtil.getBottomPadding(context),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -107,13 +109,11 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
             )
                 .intoContainer(
               width: ScreenUtil.screenSize.width - $(96),
-              height: $(48),
+              padding: EdgeInsets.symmetric(vertical: $(12)),
               margin: EdgeInsets.symmetric(horizontal: $(48)),
               decoration: BoxDecoration(
                 color: Colors.white38,
-                borderRadius: BorderRadius.circular(
-                  $(24),
-                ),
+                borderRadius: BorderRadius.circular($(24)),
                 border: Border.all(
                   color: ColorConstant.White,
                 ),

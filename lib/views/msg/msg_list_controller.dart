@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
@@ -25,12 +25,12 @@ class MsgListController extends GetxController {
     update();
   }
 
-  late CartoonizerApi api;
+  late AppApi api;
 
   @override
   void onInit() {
     super.onInit();
-    api = CartoonizerApi().bindController(this);
+    api = AppApi().bindController(this);
   }
 
   @override
