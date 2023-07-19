@@ -146,26 +146,15 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
   bool get wantKeepAlive => true;
 
   pickEffectItemAndOpen(BuildContext context, RecentEffectModel data) async {
-    var key = data.itemList.first.key!;
-    var tabPos = effectDataController.data!.tabPos(key);
-    EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-    EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-    var categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-    var itemP = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
     var pick = recentController.effectList.pick((e) => data.originalPath == e.originalPath);
 
     var fileExist = await File(pick!.originalPath ?? "").exists();
     Cartoonize.open(
       context,
       source: 'recently',
-      categoryPos: categoryPos,
-      itemPos: itemP,
-      tabPos: tabPos,
-      recentEffectModel: fileExist ? pick : null,
+      record: fileExist ? pick : null,
+      initKey: data.itemList.first.key,
     );
-    AppDelegate.instance.getManager<UserManager>().refreshUser(context: context).then((value) {
-      setState(() {});
-    });
   }
 
   pickStyleMorphItemAndOpen(BuildContext context, RecentStyleMorphModel data) async {

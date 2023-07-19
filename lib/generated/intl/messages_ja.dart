@@ -200,6 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
+        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
         "edit": MessageLookupByLibrary.simpleMessage("編集"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("情報を編集する"),
         "effectRecentEmptyHint":

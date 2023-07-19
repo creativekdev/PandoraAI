@@ -4,7 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -26,7 +26,7 @@ class AvatarAiController extends GetxController {
   int maxSize = 8;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   AvatarAiManager aiManager = AppDelegate.instance.getManager();
-  late CartoonizerApi api;
+  late AppApi api;
   bool isLoading = false;
 
   bool get hasChosen => imageList.isNotEmpty;
@@ -40,7 +40,7 @@ class AvatarAiController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    api = CartoonizerApi().bindController(this);
+    api = AppApi().bindController(this);
     minSize = aiManager.config?.data.minImageCount ?? 5;
     maxSize = aiManager.config?.data.maxImageCount ?? 8;
   }

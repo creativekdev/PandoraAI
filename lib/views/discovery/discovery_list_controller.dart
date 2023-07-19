@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -14,7 +14,7 @@ import '../../Common/Extension.dart';
 import '../../app/app.dart';
 
 class DiscoveryListController extends GetxController {
-  late CartoonizerApi api;
+  late AppApi api;
   late SocialMediaConnectorApi socialMediaConnectorApi;
 
   List<TagData> tags = [
@@ -68,10 +68,16 @@ class DiscoveryListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    api = CartoonizerApi().bindController(this);
+    api = AppApi().bindController(this);
     socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
     scrollController = ScrollController();
     scrollController.addListener(() {
+      if (scrollController.positions.isEmpty) {
+        return;
+      }
+      if (scrollController.positions.length != 1) {
+        return;
+      }
       var newPos = scrollController.position.pixels;
       if (newPos < 0) {
         return;

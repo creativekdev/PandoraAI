@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
@@ -75,7 +75,7 @@ class MetagramItemEditController extends GetxController {
   }
 
   late Uploader api;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   late SocialMediaConnectorApi socialMediaConnectorApi;
 
   MetagramItemEditController({
@@ -97,7 +97,7 @@ class MetagramItemEditController extends GetxController {
     currentType = HomeCardTypeUtils.build(entity.category);
     entity.category;
     api = Uploader().bindController(this);
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     socialMediaConnectorApi = SocialMediaConnectorApi().bindController(this);
     var originMd5 = EncryptUtil.encodeMd5(resources.last.url ?? '');
     var resultMd5 = EncryptUtil.encodeMd5(resources.first.url ?? '');
@@ -164,7 +164,7 @@ class MetagramItemEditController extends GetxController {
   @override
   void dispose() {
     api.unbind();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     socialMediaConnectorApi.unbind();
     super.dispose();
   }
@@ -174,7 +174,7 @@ class MetagramItemEditController extends GetxController {
       CommonExtension().showToast('Oops failed, please retry a few later');
       return null;
     }
-    var metaverseLimitEntity = await cartoonizerApi.getMetaverseLimit();
+    var metaverseLimitEntity = await appApi.getMetaverseLimit();
     if (metaverseLimitEntity != null) {
       if (metaverseLimitEntity.usedCount >= metaverseLimitEntity.dailyLimit) {
         if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
@@ -202,7 +202,7 @@ class MetagramItemEditController extends GetxController {
     await File(name).writeAsBytes(imageUint8List.toList(), flush: true);
     _transKey = name;
     transResult = File(_transKey!);
-    CartoonizerApi().logAnotherMe({
+    AppApi().logAnotherMe({
       'init_images': [imageUrl],
       'result_id': baseEntity.s,
     });
@@ -239,7 +239,7 @@ class MetagramItemEditController extends GetxController {
       "file_name": f_name,
       "content_type": c_type,
     };
-    var url = await cartoonizerApi.getPresignedUrl(params);
+    var url = await appApi.getPresignedUrl(params);
     if (url == null) {
       return null;
     }

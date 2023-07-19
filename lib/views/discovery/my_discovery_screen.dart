@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
@@ -34,7 +34,7 @@ class MyDiscoveryScreen extends StatefulWidget {
 class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
   EasyRefreshController _refreshController = EasyRefreshController();
   UserManager userManager = AppDelegate.instance.getManager();
-  late CartoonizerApi api;
+  late AppApi api;
   int page = 0;
   int size = 20;
   Map<int, List<DiscoveryListEntity>> dataMap = {};
@@ -61,7 +61,7 @@ class MyDiscoveryState extends AppState<MyDiscoveryScreen> {
         emptyText = widget.title == null ? S.of(context).this_user_has_not_posted_anything : S.of(context).you_have_not_posted_anything;
       });
     });
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     delay(() => loadFirstPage());
     imgWidth = (ScreenUtil.screenSize.width - $(90)) / 3;
     onDeleteListen = EventBusHelper().eventBus.on<OnDeleteDiscoveryEvent>().listen((event) {

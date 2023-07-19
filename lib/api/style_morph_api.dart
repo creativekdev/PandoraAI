@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -54,7 +54,7 @@ class StyleMorphApi extends RetryAbleRequester {
     await File(filePath).writeAsBytes(base64decode.toList());
     result.filePath = filePath;
     result.s = baseEntity!.s;
-    CartoonizerApi().logStyleMorph({
+    AppApi().logStyleMorph({
       'init_images': [initImage],
       'template_name': templateName,
       'result_id': baseEntity.s,

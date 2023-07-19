@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -20,7 +23,7 @@ enum AlignType {
 
 typedef PlaceholderWidgetBuilder = Widget Function(BuildContext context, DiscoveryResource data, double width, double height);
 
-class DiscoveryResourcesCard extends StatefulWidget {
+class DiscoveryResourcesCard extends StatelessWidget {
   final AlignType alignType;
   final List<DiscoveryResource> datas;
   final double space;
@@ -37,10 +40,57 @@ class DiscoveryResourcesCard extends StatefulWidget {
   });
 
   @override
-  State<DiscoveryResourcesCard> createState() => _DiscoveryResourcesCardState();
+  Widget build(BuildContext context) {
+    var widthTotal = ScreenUtil.getCurrentWidgetSize(context).width;
+    var width = (widthTotal - (space * datas.length - 1)) / max(datas.length, 1);
+    return Row(
+      children: datas.transfer(
+        (e, index) => Expanded(child: buildItem(e, context, width, index), flex: 1),
+      ),
+    );
+  }
+
+  Widget buildItem(DiscoveryResource e, BuildContext context, double width, int index) {
+    if (e.type == DiscoveryResourceType.image) {
+      return CachedNetworkImageUtils.custom(
+        context: context,
+        imageUrl: e.url!,
+        placeholder: (context, url) {
+          return placeholderWidgetBuilder.call(context, e, width, width);
+        },
+      ).intoGestureDetector(
+          onTap: onTap == null
+              ? null
+              : () {
+                  onTap?.call(e, index);
+                });
+    } else {
+      return EffectVideoPlayer(url: e.url!);
+    }
+  }
 }
 
-class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
+class DiscoveryResourcesCard2 extends StatefulWidget {
+  final AlignType alignType;
+  final List<DiscoveryResource> datas;
+  final double space;
+  final PlaceholderWidgetBuilder placeholderWidgetBuilder;
+  final Function(DiscoveryResource data, int index)? onTap;
+
+  const DiscoveryResourcesCard2({
+    super.key,
+    this.alignType = AlignType.last,
+    required this.datas,
+    this.space = 1,
+    required this.placeholderWidgetBuilder,
+    this.onTap,
+  });
+
+  @override
+  State<DiscoveryResourcesCard2> createState() => _DiscoveryResourcesCardState();
+}
+
+class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
   late AlignType alignType;
   List<DiscoveryResource> datas = [];
   double itemWidth = 0;
@@ -51,7 +101,7 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
   double totalWidth = 0;
 
   @override
-  void didUpdateWidget(covariant DiscoveryResourcesCard oldWidget) {
+  void didUpdateWidget(covariant DiscoveryResourcesCard2 oldWidget) {
     super.didUpdateWidget(oldWidget);
     var newString = jsonEncode(widget.datas.map((e) => e.toJson()).toList());
     var oldString = jsonEncode(datas.map((e) => e.toJson()).toList());
@@ -230,6 +280,9 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
           (e, index) => placeholderWidgetBuilder.call(context, e, itemWidth, itemWidth).intoContainer(margin: EdgeInsets.only(left: index == 0 ? 0 : space)),
         ),
       ).intoContainer(width: totalWidth);
+    }
+    if (!TickerMode.of(context)) {
+      return SizedBox(width: ScreenUtil.getCurrentWidgetSize(context).width, height: itemHeight);
     }
     return Row(
       children: datas.transfer((e, index) {

@@ -3,7 +3,7 @@ import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../api/cartoonizer_api.dart';
+import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 
 typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts);
@@ -27,12 +27,12 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   List<DiscoveryListEntity>? socialPost;
 
   bool isLoading = false;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   @override
   void initState() {
     super.initState();
-    cartoonizerApi = CartoonizerApi();
+    appApi = AppApi();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels + $(80) >= _scrollController.position.maxScrollExtent) {
         _loadNextPage();
@@ -48,7 +48,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     setState(() {
       isLoading = true;
     });
-    cartoonizerApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.categoryString ?? '').then((value) {
+    appApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.categoryString ?? '').then((value) {
       setState(() {
         socialPost?.addAll(value?.data.rows ?? []);
         isLoading = false;
@@ -130,7 +130,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   void dispose() {
     super.dispose();
     _scrollController.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 
   @override

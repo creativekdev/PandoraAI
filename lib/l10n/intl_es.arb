@@ -485,5 +485,6 @@
   "HaveReport": "Ya lo has denunciado",
   "copy": "Copiar",
   "share_to_discovery": "Compartir en Discovery",
-  "share_out": "Compartir con amigos"
+  "share_out": "Compartir con amigos",
+  "downloading": "Downloading..."
 }

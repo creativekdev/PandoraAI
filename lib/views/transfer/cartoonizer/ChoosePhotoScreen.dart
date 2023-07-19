@@ -706,7 +706,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               isVideo: controller.isVideo.value,
               originalUrl: urlFinal,
               effectKey: selectedEffect.key, onShareSuccess: (platform) {
-            Events.facetoonResultShare(platform: platform);
+            // Events.facetoonResultShare(platform: platform);
           });
           AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         } else {
@@ -719,14 +719,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       var newImage = await composeImageWithWatermark();
       controller.changeIsLoading(false);
       ShareScreen.startShare(context,
-          backgroundColor: Color(0x77000000),
-          style: selectedEffect.key,
-          image: (controller.isVideo.value) ? videoPath : newImage,
-          isVideo: controller.isVideo.value,
-          originalUrl: urlFinal,
-          effectKey: selectedEffect.key, onShareSuccess: (platform) {
-        Events.facetoonResultShare(platform: platform);
-      }).then((value) {
+              backgroundColor: Color(0x77000000),
+              style: selectedEffect.key,
+              image: (controller.isVideo.value) ? videoPath : newImage,
+              isVideo: controller.isVideo.value,
+              originalUrl: urlFinal,
+              effectKey: selectedEffect.key, onShareSuccess: (platform) {
+        // Events.facetoonResultShare(platform: platform);
+      })
+          .then((value) {
         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
       });
     }
@@ -759,7 +760,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            Events.facetoonResultShare(platform: 'discovery');
+            // Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -776,7 +777,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            Events.facetoonResultShare(platform: 'discovery');
+            // Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -1523,7 +1524,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               aiHost: aiHost,
             );
             if (baseEntity != null) {
-              final Map parsed = baseEntity.data;
+              // final Map parsed = baseEntity.data;
+              final Map parsed = {};
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
                 uploadImageController.updateCachedId(controller.image.value, cachedId!);
@@ -1598,7 +1600,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             selectedEffect.handleApiParams(dataBody);
             var baseEntity = await transformApi.transform('${aiHost}/api/image/cartoonize/token', rootPath, dataBody, aiHost: aiHost);
             if (baseEntity != null) {
-              final Map parsed = baseEntity.data;
+              // final Map parsed = baseEntity.data;
+              final Map parsed = {};
               var dataEncode = EncryptUtil.encodeMd5(parsed['data'].toString());
               if (parsed['data'].toString().startsWith('<')) {
                 successForward = () async {

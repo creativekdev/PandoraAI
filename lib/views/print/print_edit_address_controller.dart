@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/address_entity.dart';
 import 'package:cartoonizer/models/state_entity.dart';
@@ -25,7 +25,7 @@ class PrintEditAddressController extends GetxController {
   }
 
   late AddressDataCustomerAddress? _address;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   TextEditingController searchAddressController = TextEditingController();
   TextEditingController apartmentController = TextEditingController();
@@ -265,14 +265,14 @@ class PrintEditAddressController extends GetxController {
     };
 
     if (_address != null) {
-      await cartoonizerApi.updateAddress(address, _address!.id).then((value) {
+      await appApi.updateAddress(address, _address!.id).then((value) {
         if (value?.data is AddressData) {
           CommonExtension().showToast(S.of(context).update_address_success);
           Navigator.pop(context);
         }
       });
     } else {
-      await cartoonizerApi.createAddress(address).then((value) {
+      await appApi.createAddress(address).then((value) {
         if (value?.data is AddressData) {
           CommonExtension().showToast(S.of(context).save_address_success);
           Navigator.pop(context);
@@ -283,7 +283,7 @@ class PrintEditAddressController extends GetxController {
   }
 
   Future<bool> onDeleteAddress(BuildContext context) async {
-    BaseEntity? entity = await cartoonizerApi.deletePrintAddress(8332508365020);
+    BaseEntity? entity = await appApi.deletePrintAddress(8332508365020);
     if (entity == null) {
       return false;
     } else {
@@ -327,7 +327,7 @@ class PrintEditAddressController extends GetxController {
       _regionEntity?.regionSyllables = [];
     }
 
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     getPhoneBy();
   }
 
@@ -378,7 +378,7 @@ class PrintEditAddressController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     searchAddressController.dispose();
     apartmentController.dispose();
     firstNameController.dispose();

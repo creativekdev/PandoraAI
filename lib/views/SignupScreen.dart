@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/auth/sign_list_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
 import 'package:cartoonizer/api/api.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -41,7 +41,7 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends AppState<SignupScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
-  late CartoonizerApi api;
+  late AppApi api;
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _SignupScreenState extends AppState<SignupScreen> {
     );
     agreementTap = TapGestureRecognizer();
     termTap = TapGestureRecognizer();
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
   }
 
   bool isShow = true;

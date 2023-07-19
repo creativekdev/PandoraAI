@@ -3,7 +3,6 @@ import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
 

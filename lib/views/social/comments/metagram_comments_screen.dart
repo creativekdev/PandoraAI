@@ -113,14 +113,14 @@ class _MetagramCommentsScreenState extends AppState<MetagramCommentsScreen> {
                   controller.likeLocalAddAlready.value = true;
                   if (liked) {
                     // controller.data.likes--;
-                    controller.cartoonizerApi.discoveryUnLike(controller.data.id!, controller.data.likeId!).then((value) {
+                    controller.appApi.discoveryUnLike(controller.data.id!, controller.data.likeId!).then((value) {
                       controller.likeLocalAddAlready.value = false;
                     });
                     result = false;
                     controller.data.liked.value = false;
                   } else {
                     // controller.data.likes++;
-                    controller.cartoonizerApi.discoveryLike(controller.data.id!, source: 'metagram_comment_page', style: 'metagram').then((value) {
+                    controller.appApi.discoveryLike(controller.data.id!, source: 'metagram_comment_page', style: 'metagram').then((value) {
                       controller.likeLocalAddAlready.value = false;
                     });
                     result = true;

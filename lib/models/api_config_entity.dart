@@ -24,6 +24,8 @@ class ApiConfigEntity {
 
   EffectData? get stylemorph => data.pick((t) => t.key == 'stylemorph');
 
+  EffectData? get cartoonize => data.pick((t) => t.key == 'cartoonize');
+
   List<EffectData> get datas => data.filter((t) => t.key != 'stylemorph');
 
   ApiConfigEntity._instance();

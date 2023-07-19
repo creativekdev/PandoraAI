@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/photo_view/photo_pager.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/config.dart';
@@ -35,7 +35,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
   late AvatarAiListEntity entity;
   List<List<AvatarChildEntity>> dataList = [];
   late double itemSize;
-  late CartoonizerApi api;
+  late AppApi api;
   AvatarAiManager aiManager = AppDelegate.instance.getManager();
   CustomPopupMenuController customPopupMenuController = CustomPopupMenuController();
   EasyRefreshController _refreshController = EasyRefreshController();
@@ -47,7 +47,7 @@ class _AvatarDetailScreenState extends AppState<AvatarDetailScreen> {
     super.initState();
     Posthog().screenWithUser(screenName: 'avatar_ai_detail_screen');
     Events.avatarResultDetailShow();
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     entity = widget.entity;
     itemSize = (ScreenUtil.screenSize.width - $(35)) / 2;
     initDataList();

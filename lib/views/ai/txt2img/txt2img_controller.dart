@@ -7,7 +7,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/text2image_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -119,7 +119,7 @@ class Txt2imgController extends GetxController {
         text += ', (art by ${selectedStyle!.name})';
       }
     }
-    var groundLimitEntity = await CartoonizerApi().getTxt2ImgLimit();
+    var groundLimitEntity = await AppApi().getTxt2ImgLimit();
     if (groundLimitEntity != null) {
       if (groundLimitEntity.usedCount >= groundLimitEntity.dailyLimit) {
         if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
@@ -155,7 +155,7 @@ class Txt2imgController extends GetxController {
       if (!TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
         params['init_images'] = [uploadImageController.imageUrl.value];
       }
-      CartoonizerApi().logTxt2Img(params);
+      AppApi().logTxt2Img(params);
       return TransferResult()..data = result;
     } else {
       return null;

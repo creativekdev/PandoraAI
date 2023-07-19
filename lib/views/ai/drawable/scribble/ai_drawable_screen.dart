@@ -7,7 +7,7 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -82,7 +82,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
 
   toResult() async {
     showLoading().whenComplete(() async {
-      var aiDrawLimitEntity = await CartoonizerApi().getAiDrawLimit();
+      var aiDrawLimitEntity = await AppApi().getAiDrawLimit();
       if (aiDrawLimitEntity == null) {
         hideLoading();
       } else {

@@ -47,6 +47,7 @@ class CachedNetworkImageUtils {
     int? maxWidthDiskCache = 1024,
     int? maxHeightDiskCache = 1024,
   }) {
+    useOld = true;
     if (cacheManager == null) {
       cacheManager = CachedImageCacheManager();
     }
@@ -55,7 +56,6 @@ class CachedNetworkImageUtils {
         return SkeletonAvatar(
           style: SkeletonAvatarStyle(height: height ?? width ?? $(25), width: width ?? height ?? $(25)),
         );
-        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (errorWidget == null) {
@@ -65,7 +65,6 @@ class CachedNetworkImageUtils {
           width: width ?? height ?? $(25),
           height: height ?? width ?? $(25),
         );
-        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (TextUtil.isEmpty(imageUrl.trim())) {

@@ -82,7 +82,18 @@ class Events {
 
   static Future<void> facetoonGenerated({required String style}) => logEvent('facetoon_generate', eventValues: {'style': style});
 
-  static Future<void> facetoonResultShare({required String platform}) => logEvent('facetoon_result_share', eventValues: {'platform': platform});
+  static Future<void> facetoonGeneratedAgain({required String style, required int time}) => logEvent('facetoon_generate_again', eventValues: {'time': time});
+
+  static Future<void> facetoonResultShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('facetoon_result_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
 
   static Future<void> facetoonResultSave({required String type}) => logEvent('facetoon_result_save', eventValues: {'type': type});
 
@@ -304,7 +315,7 @@ class Events {
 
   static Future<void> imEditionLoading({required String source}) => logEvent('image_edition_loading', eventValues: {'source': source});
 
-  static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source} );
+  static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

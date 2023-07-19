@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/socialmedia_connector_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -11,7 +11,7 @@ import 'package:cartoonizer/models/metagram_page_entity.dart';
 
 class MetagramCommentsController extends GetxController {
   late SocialMediaConnectorApi api;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   MetagramItemEntity data;
 
   List<DiscoveryCommentListEntity> dataList = [];
@@ -31,7 +31,7 @@ class MetagramCommentsController extends GetxController {
   void onInit() {
     super.onInit();
     api = SocialMediaConnectorApi().bindController(this);
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     onLikeEventListener = EventBusHelper().eventBus.on<OnCommentLikeEvent>().listen((event) {
       var id = event.data!.key;
       var likeId = event.data!.value;
@@ -113,7 +113,7 @@ class MetagramCommentsController extends GetxController {
   @override
   void dispose() {
     api.unbind();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     super.dispose();
   }
 
@@ -122,7 +122,7 @@ class MetagramCommentsController extends GetxController {
       return;
     }
     _isRequesting = true;
-    cartoonizerApi
+    appApi
         .listDiscoveryComments(
       from: 0,
       pageSize: pageSize,
@@ -145,7 +145,7 @@ class MetagramCommentsController extends GetxController {
       return;
     }
     _isRequesting = true;
-    cartoonizerApi
+    appApi
         .listDiscoveryComments(
       from: dataList.length,
       pageSize: pageSize,
@@ -166,7 +166,7 @@ class MetagramCommentsController extends GetxController {
     entity.likes--;
     likeLocalAddAlready.value = true;
     update();
-    cartoonizerApi.commentUnLike(entity.id, entity.likeId!).then((value) {
+    appApi.commentUnLike(entity.id, entity.likeId!).then((value) {
       if (value == null) {
         entity.likes++;
         likeLocalAddAlready.value = false;
@@ -180,7 +180,7 @@ class MetagramCommentsController extends GetxController {
     entity.likes++;
     likeLocalAddAlready.value = true;
     update();
-    cartoonizerApi.commentLike(entity.id).then((value) {
+    appApi.commentLike(entity.id).then((value) {
       if (value == null) {
         entity.likes--;
         likeLocalAddAlready.value = false;
@@ -192,7 +192,7 @@ class MetagramCommentsController extends GetxController {
 
   loadChildrenComments(List<DiscoveryCommentListEntity> list) {
     Future.wait(list
-            .map((e) => cartoonizerApi.listDiscoveryComments(
+            .map((e) => appApi.listDiscoveryComments(
                   from: 0,
                   pageSize: 2,
                   socialPostId: e.socialPostId,
@@ -222,7 +222,7 @@ class MetagramCommentsController extends GetxController {
       size = 9;
     }
     loadingCommentId.value = data.id;
-    cartoonizerApi
+    appApi
         .listDiscoveryComments(
       from: data.children.length,
       pageSize: size,
@@ -249,7 +249,7 @@ class MetagramCommentsController extends GetxController {
     int? parentSocialPostCommentId,
     required Function() onUserExpired,
   }) async {
-    var baseEntity = await cartoonizerApi.createDiscoveryComment(
+    var baseEntity = await appApi.createDiscoveryComment(
       comment: comment,
       source: dataType,
       style: style,

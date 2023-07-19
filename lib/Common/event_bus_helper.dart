@@ -129,12 +129,6 @@ class OnAddPrintAddressEvent extends BaseEvent<AddressDataCustomerAddress> {
 
 class OnSplashAdLoadingChangeEvent extends BaseEvent {}
 
-/// switch home_screen tab
-@Deprecated('可以直接弹出详情，不用通知')
-class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
-  OnEffectPushClickEvent({super.data});
-}
-
 class OnEffectNsfwChangeEvent extends BaseEvent {}
 
 class OnHomeConfigGetEvent extends BaseEvent {}

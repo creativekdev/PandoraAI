@@ -7,7 +7,7 @@ import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/color_fill_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -59,7 +59,7 @@ class AiColoringController extends GetxController {
   bool get showOrigin => _showOrigin;
 
   late ColorFillApi api;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   int generateCount = 0;
 
@@ -78,13 +78,13 @@ class AiColoringController extends GetxController {
   void onInit() {
     super.onInit();
     api = ColorFillApi().bindController(this);
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
   }
 
   @override
   void dispose() {
     api.unbind();
-    cartoonizerApi.unbind();
+    appApi.unbind();
     super.dispose();
   }
 
@@ -162,7 +162,7 @@ class AiColoringController extends GetxController {
   }
 
   Future<TransferResult?> _transfer(String imageUrl, String? cacheId, {onFailed}) async {
-    var limitEntity = await cartoonizerApi.getAiColoringLimit();
+    var limitEntity = await appApi.getAiColoringLimit();
     if (limitEntity != null) {
       if (limitEntity.usedCount >= limitEntity.dailyLimit) {
         if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {

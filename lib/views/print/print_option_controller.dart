@@ -1,10 +1,10 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 
 import '../../models/print_option_entity.dart';
 
 class PrintOptionController extends GetxController {
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   PrintOptionEntity printOptionEntity = PrintOptionEntity();
 
   bool _viewInit = false;
@@ -25,8 +25,8 @@ class PrintOptionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
-    cartoonizerApi.printTemplates(from: 0, size: 10).then((value) => {
+    appApi = AppApi().bindController(this);
+    appApi.printTemplates(from: 0, size: 10).then((value) => {
           if (value != null)
             {
               onSuccess(value),
@@ -42,6 +42,6 @@ class PrintOptionController extends GetxController {
   @override
   void dispose() {
     super.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 }

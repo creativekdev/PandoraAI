@@ -485,5 +485,6 @@
   "HaveReport": "You have already reported it",
   "copy": "Copy",
   "share_to_discovery": "Share to Discovery",
-  "share_out": "Share with friends"
+  "share_out": "Share with friends",
+  "downloading": "Downloading..."
 }

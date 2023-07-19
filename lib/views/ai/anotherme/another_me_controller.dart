@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -58,7 +58,7 @@ class AnotherMeController extends GetxController {
   }
 
   late Uploader api;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
   bool _viewInit = false;
 
   set viewInit(bool value) {
@@ -72,7 +72,7 @@ class AnotherMeController extends GetxController {
   void onInit() {
     super.onInit();
     api = Uploader().bindController(this);
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
   }
 
   @override
@@ -84,7 +84,7 @@ class AnotherMeController extends GetxController {
   void dispose() {
     super.dispose();
     api.unbind();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 
   bool hasChoosePhoto() => _sourcePhoto != null;
@@ -95,7 +95,7 @@ class AnotherMeController extends GetxController {
     if (TextUtil.isEmpty(imageUrl)) {
       return null;
     }
-    var metaverseLimitEntity = await cartoonizerApi.getMetaverseLimit();
+    var metaverseLimitEntity = await appApi.getMetaverseLimit();
     if (metaverseLimitEntity != null) {
       if (metaverseLimitEntity.usedCount >= metaverseLimitEntity.dailyLimit) {
         if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
@@ -121,7 +121,7 @@ class AnotherMeController extends GetxController {
     var name = storageOperator.recordMetaverseDir.path + key + '.png';
     await File(name).writeAsBytes(imageUint8List.toList(), flush: true);
     _transKey = name;
-    CartoonizerApi().logAnotherMe({
+    AppApi().logAnotherMe({
       'init_images': [imageUrl],
       'result_id': baseEntity.s,
     });

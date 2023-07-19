@@ -5,7 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -402,7 +402,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
       );
 
   Future<bool> deleteAccount() async {
-    var result = await CartoonizerApi().deleteAccount();
+    var result = await AppApi().deleteAccount();
     if (result != null) {
       userManager.logout();
       return true;

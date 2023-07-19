@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
@@ -157,7 +157,7 @@ class MsgDiscoveryCard extends StatelessWidget {
               }
               return buildDiscoveryContent(context, snapshot.data!);
             },
-            future: CartoonizerApi().getDiscoveryDetail(
+            future: AppApi().getDiscoveryDetail(
               data.getPostId(),
               useCache: true,
               toast: false,

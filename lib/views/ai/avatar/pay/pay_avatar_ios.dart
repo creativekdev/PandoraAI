@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -14,7 +14,7 @@ class PayAvatarIOS {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   UserManager userManager = AppDelegate().getManager();
-  late CartoonizerApi api = CartoonizerApi();
+  late AppApi api = AppApi();
 
   PayAvatarIOS({required this.planId});
 
