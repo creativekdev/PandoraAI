@@ -171,6 +171,7 @@ class MainActivity : FlutterFragmentActivity() {
                 "openAppStore" -> {
                     toAppStore(result)
                 }
+
                 "updateAppByApk" -> {
                     val url = call.argument<String>("url")
                     val name = call.argument<String>("name")
