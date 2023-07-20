@@ -44,7 +44,6 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     if (isLoading) {
       return;
     }
-    double currentPosition = _scrollController.position.pixels;
     setState(() {
       isLoading = true;
     });
@@ -148,7 +147,7 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<DiscoveryResource> list = post.resourceList();
+    List<DiscoveryResource> list = post.resourceList().reversed.toList();
     DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return resource == null
         ? SizedBox.shrink()
