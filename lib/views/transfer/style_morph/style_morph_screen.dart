@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -8,6 +9,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/switch_image_card.dart';
@@ -67,6 +69,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   UserManager userManager = AppDelegate.instance.getManager();
   late String photoType;
   int generateCount = 0;
+  GlobalKey cropKey = GlobalKey();
 
   @override
   void initState() {
@@ -207,41 +210,66 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
           body: Column(
             children: [
               Expanded(
-                child: SwitchImageCard(
-                  origin: controller.originFile,
-                  result: controller.resultFile,
-                ),
+                child: Obx(() => SwitchImageCard(
+                      origin: controller.originFile,
+                      result: controller.resultFile,
+                      containsOrigin: controller.containsOriginal.value,
+                      cropKey: cropKey,
+                    )),
               ),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(Images.ic_camera, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => pickPhoto(context, controller),
-                      )
-                      .intoContainer(
-                        padding: EdgeInsets.all($(15)),
-                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                  Obx(() => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            controller.containsOriginal.value ? Images.ic_checked : Images.ic_unchecked,
+                            width: 17,
+                            height: 17,
+                          ),
+                          SizedBox(width: $(6)),
+                          TitleTextWidget(S.of(context).in_original, ColorConstant.BtnTextColor, FontWeight.w500, 14),
+                          SizedBox(width: $(20)),
+                        ],
+                      ).intoGestureDetector(onTap: () {
+                        controller.containsOriginal.value = !controller.containsOriginal.value;
+                      })),
+                  Container(
+                    height: $(16),
+                    width: $(2),
+                    color: ColorConstant.White,
+                    margin: EdgeInsets.only(right: $(20)),
+                  ),
+                  Expanded(
+                      child: Row(
+                    children: [
+                      Expanded(
+                        child: Image.asset(Images.ic_camera, height: $(24), width: $(24))
+                            .intoGestureDetector(
+                              onTap: () => pickPhoto(context, controller),
+                            )
+                            .intoContainer(padding: EdgeInsets.all($(15))),
                       ),
-                  Image.asset(Images.ic_share_print, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => toPrint(context, controller),
-                      )
-                      .intoContainer(
-                        padding: EdgeInsets.all($(15)),
-                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                      Expanded(
+                        child: Image.asset(Images.ic_share_print, height: $(24), width: $(24))
+                            .intoGestureDetector(
+                              onTap: () => toPrint(context, controller),
+                            )
+                            .intoContainer(padding: EdgeInsets.all($(15))),
                       ),
-                  Image.asset(Images.ic_download, height: $(24), width: $(24))
-                      .intoGestureDetector(
-                        onTap: () => savePhoto(context, controller),
-                      )
-                      .intoContainer(
-                        padding: EdgeInsets.all($(15)),
-                        margin: EdgeInsets.symmetric(horizontal: $(20)),
+                      Expanded(
+                        child: Image.asset(Images.ic_download, height: $(24), width: $(24))
+                            .intoGestureDetector(
+                              onTap: () => savePhoto(context, controller),
+                            )
+                            .intoContainer(padding: EdgeInsets.all($(15))),
                       ),
+                    ],
+                  ))
                 ],
-              ),
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12))),
               OutlineWidget(
                 radius: $(12),
                 strokeWidth: $(2),
@@ -418,8 +446,26 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
+    if (controller.resultFile == null) {
+      CommonExtension().showToast(S.of(context).select_a_style);
+      return;
+    }
     await showLoading();
-    GallerySaver.saveImage(controller.resultMap[controller.selectedEffect!.key]!, albumName: saveAlbumName);
+    if (controller.containsOriginal.value) {
+      ui.Image? cropImage;
+      if (cropKey.currentContext != null) {
+        cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 10);
+      }
+      var resultImage = await SyncFileImage(file: controller.resultFile!).getImage();
+      var uint8list = await addWaterMark(originalImage: cropImage, image: resultImage.image);
+      String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+      var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
+      await file.writeAsBytes(uint8list.toList());
+      await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
+      file.delete();
+    } else {
+      GallerySaver.saveImage(controller.resultFile!.path, albumName: saveAlbumName);
+    }
     await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
     Events.styleMorphDownload(type: 'image');

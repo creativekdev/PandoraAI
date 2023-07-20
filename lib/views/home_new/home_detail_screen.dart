@@ -44,18 +44,18 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     var resourceList = controller.posts![index].resourceList();
                     var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
-                    // return HomeImageDetailCard(
-                    //   width: ScreenUtil.screenSize.width,
-                    //   height: ScreenUtil.screenSize.height,
-                    //   url: pick?.url ?? '',
-                    // );
-                    return CachedNetworkImageUtils.custom(
-                      useOld: true,
-                      context: context,
-                      imageUrl: pick?.url ?? '',
+                    return HomeImageDetailCard(
+                      width: ScreenUtil.screenSize.width,
                       height: ScreenUtil.screenSize.height,
-                      fit: BoxFit.cover,
+                      url: pick?.url ?? '',
                     );
+                    // return CachedNetworkImageUtils.custom(
+                    //   useOld: true,
+                    //   context: context,
+                    //   imageUrl: pick?.url ?? '',
+                    //   height: ScreenUtil.screenSize.height,
+                    //   fit: BoxFit.cover,
+                    // );
                   },
                   itemCount: controller.posts?.length ?? 0,
                   scrollDirection: Axis.vertical,

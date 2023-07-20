@@ -25,6 +25,7 @@ class _HomeImageDetailCardState extends State<HomeImageDetailCard> {
   bool needBlur = false;
   double width = 0;
   double height = 0;
+  Uint8List? firstFrame;
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class _HomeImageDetailCardState extends State<HomeImageDetailCard> {
             imageUrl: url,
             width: width,
             height: height,
+            filterQuality: FilterQuality.low,
             fit: BoxFit.cover,
           ),
           Container(width: width, height: height).blur(),
@@ -87,19 +89,26 @@ class _HomeImageDetailCardState extends State<HomeImageDetailCard> {
     }
     return Stack(
       children: [
+        firstFrame != null
+            ? Image.memory(
+                firstFrame!,
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+              )
+            : CachedNetworkImageUtils.custom(
+                context: context,
+                imageUrl: url,
+                width: width,
+                height: height,
+                fit: BoxFit.cover,
+              ),
         CachedNetworkImageUtils.custom(
           context: context,
           imageUrl: url,
           width: width,
-          height: height,
+          height: ScreenUtil.screenSize.height * 0.65,
           fit: BoxFit.cover,
-          filterQuality: FilterQuality.low,
-        ),
-        CachedNetworkImageUtils.custom(
-          context: context,
-          imageUrl: url,
-          width: width,
-          fit: BoxFit.contain,
         )
             .intoCenter()
             .intoContainer(

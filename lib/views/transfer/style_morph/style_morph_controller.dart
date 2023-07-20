@@ -56,6 +56,8 @@ class StyleMorphController extends GetxController {
 
   bool get showOrigin => _showOrigin;
 
+  Rx<bool> containsOriginal = false.obs;
+
   RecentController recentController = Get.find<RecentController>();
 
   StyleMorphController({required RecentStyleMorphModel record, this.initKey}) {

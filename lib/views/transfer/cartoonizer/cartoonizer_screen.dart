@@ -307,27 +307,21 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
                               .intoGestureDetector(
                                 onTap: () => pickPhoto(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                         Expanded(
                           child: Image.asset(Images.ic_share_print, height: $(24), width: $(24))
                               .intoGestureDetector(
                                 onTap: () => toPrint(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                         Expanded(
                           child: Image.asset(Images.ic_download, height: $(24), width: $(24))
                               .intoGestureDetector(
                                 onTap: () => savePhoto(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                       ],
                     ),
@@ -429,7 +423,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
     if (controller.containsOriginal.value) {
       ui.Image? cropImage;
       if (cropKey.currentContext != null) {
-        cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 6);
+        cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 10);
       }
       var resultImage = await SyncFileImage(file: controller.resultFile!).getImage();
       var uint8list = await addWaterMark(originalImage: cropImage, image: resultImage.image);
