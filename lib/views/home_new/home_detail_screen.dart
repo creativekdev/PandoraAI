@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
+import 'package:cartoonizer/views/home_new/home_image_detail_card.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
@@ -43,6 +44,11 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     var resourceList = controller.posts![index].resourceList();
                     var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
+                    // return HomeImageDetailCard(
+                    //   width: ScreenUtil.screenSize.width,
+                    //   height: ScreenUtil.screenSize.height,
+                    //   url: pick?.url ?? '',
+                    // );
                     return CachedNetworkImageUtils.custom(
                       useOld: true,
                       context: context,

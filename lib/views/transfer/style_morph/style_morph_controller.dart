@@ -92,6 +92,9 @@ class StyleMorphController extends GetxController {
               }
             });
           });
+          if (selectedEffect == null) {
+            selectedTitle = categories.first;
+          }
         } else {
           selectedTitle = categories.first;
         }

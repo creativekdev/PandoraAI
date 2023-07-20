@@ -77,6 +77,11 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
     uploadImageController = Get.put(UploadImageController());
     controller = Get.put(StyleMorphController(record: widget.record, initKey: widget.initKey));
     itemWidth = ScreenUtil.screenSize.width / 6;
+    delay(() {
+      if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect?.key] == null) {
+        generate();
+      }
+    });
   }
 
   changeOriginFile(File file) {
