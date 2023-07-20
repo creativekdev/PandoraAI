@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 
@@ -88,41 +86,10 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
             ),
           ),
           Positioned(
-            bottom: $(30) + ScreenUtil.getBottomPadding(context),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  Images.ic_use,
-                  width: 20,
-                  height: 20,
-                  color: ColorConstant.BackgroundColor,
-                ),
-                SizedBox(width: $(8)),
-                TitleTextWidget(
-                  S.of(context).use_style,
-                  ColorConstant.BackgroundColor,
-                  FontWeight.w500,
-                  $(17),
-                ),
-              ],
-            )
-                .intoContainer(
-              width: ScreenUtil.screenSize.width - $(96),
-              padding: EdgeInsets.symmetric(vertical: $(12)),
-              margin: EdgeInsets.symmetric(horizontal: $(48)),
-              decoration: BoxDecoration(
-                color: Colors.white38,
-                borderRadius: BorderRadius.circular($(24)),
-                border: Border.all(
-                  color: ColorConstant.White,
-                ),
-              ),
-            )
-                .intoGestureDetector(onTap: () {
-              HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![widget.index]);
-            }),
-          ),
+              bottom: $(30) + ScreenUtil.getBottomPadding(context),
+              child: HomeDetailUseButton(tap: () {
+                HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![widget.index]);
+              })),
           GetBuilder<HomeDetailController>(
               init: controller,
               builder: (context) {
@@ -140,6 +107,68 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
   void dispose() {
     super.dispose();
     Get.delete<HomeDetailController>();
+  }
+}
+
+class HomeDetailUseButton extends StatefulWidget {
+  HomeDetailUseButton({required this.tap});
+
+  @override
+  _HomeDetailUseButton createState() => _HomeDetailUseButton();
+  final Function() tap;
+}
+
+class _HomeDetailUseButton extends State<HomeDetailUseButton> {
+  Color _backgroundColor = ColorConstant.White;
+
+  void _onTapDown(TapDownDetails details) {
+    setState(() {
+      _backgroundColor = ColorConstant.White.withOpacity(0.5);
+    });
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    setState(() {
+      _backgroundColor = ColorConstant.White;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTap: widget.tap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            Images.ic_use,
+            width: 20,
+            height: 20,
+            color: ColorConstant.BackgroundColor,
+          ),
+          SizedBox(width: $(8)),
+          TitleTextWidget(
+            S.of(context).use_style,
+            ColorConstant.BackgroundColor,
+            FontWeight.w500,
+            $(17),
+          ),
+        ],
+      ).intoContainer(
+        width: ScreenUtil.screenSize.width - $(96),
+        padding: EdgeInsets.symmetric(vertical: $(12)),
+        margin: EdgeInsets.symmetric(horizontal: $(48)),
+        decoration: BoxDecoration(
+          color: _backgroundColor,
+          borderRadius: BorderRadius.circular($(24)),
+          // border: Border.all(
+          //   color: ColorConstant.White,
+          // ),
+        ),
+      ),
+    );
   }
 }
 

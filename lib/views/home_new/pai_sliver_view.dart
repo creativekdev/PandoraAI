@@ -38,7 +38,7 @@ class SliverItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - $(68)) / 4;
+    double width = (ScreenUtil.screenSize.width - $(69)) / 4;
     var title = entity.category.title();
     return Column(
       children: [
