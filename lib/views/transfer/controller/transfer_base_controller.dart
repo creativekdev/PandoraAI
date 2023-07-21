@@ -1,22 +1,16 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/api/app_api.dart';
-import 'package:cartoonizer/api/style_morph_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/models/style_morph_result_entity.dart';
-import 'package:cartoonizer/utils/utils.dart';
 
-class StyleMorphController extends GetxController {
+abstract class TransferBaseController<ResultType> extends GetxController {
   late File _originFile;
 
   File get originFile => _originFile;
@@ -35,8 +29,7 @@ class StyleMorphController extends GetxController {
 
   Map<String, String> resultMap = {};
 
-  late StyleMorphApi api;
-  late AppApi appApi;
+  late AppApi api;
 
   final String? initKey;
 
@@ -60,9 +53,9 @@ class StyleMorphController extends GetxController {
 
   RecentController recentController = Get.find<RecentController>();
 
-  StyleMorphController({required RecentStyleMorphModel record, this.initKey}) {
-    originFile = File(record.originalPath!);
-    record.itemList.forEach((element) {
+  TransferBaseController({required String originalPath, required List<RecentEffectItem> itemList, this.initKey}) {
+    originFile = File(originalPath);
+    itemList.forEach((element) {
       resultMap[element.key!] = element.imageData!;
     });
   }
@@ -70,10 +63,8 @@ class StyleMorphController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    appApi = AppApi().bindController(this);
-    api = StyleMorphApi().bindController(this);
-    var controller = Get.find<EffectDataController>();
-    categories = controller.data?.stylemorph?.children ?? [];
+    api = AppApi().bindController(this);
+    categories = buildCategories();
     if (categories.isNotEmpty) {
       if (resultMap.isNotEmpty) {
         categories.forEach((category) {
@@ -104,45 +95,39 @@ class StyleMorphController extends GetxController {
     }
   }
 
+  @protected
+  List<EffectCategory> buildCategories();
+
   @override
   void dispose() {
-    appApi.unbind();
     api.unbind();
     super.dispose();
   }
 
-  void onError() {}
+  onError() {}
 
-  void onSuccess() {}
+  onSuccess() {}
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
-    if (selectedEffect == null) {
-      CommonExtension().showToast('Please select template');
-      return null;
-    }
-    var styleMorphLimitEntity = await appApi.getStyleMorphLimit();
-    if (styleMorphLimitEntity != null) {
-      if (styleMorphLimitEntity.usedCount >= styleMorphLimitEntity.dailyLimit) {
-        if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-          return TransferResult()..type = AccountLimitType.guest;
-        } else if (isVip()) {
-          return TransferResult()..type = AccountLimitType.vip;
-        } else {
-          return TransferResult()..type = AccountLimitType.normal;
-        }
-      }
-    }
-    var rootPath = cacheManager.storageOperator.recordTxt2imgDir.path;
-    var baseEntity = await api.startTransfer(initImage: imageUrl, templateName: selectedEffect!.key, directoryPath: rootPath, onFailed: onFailed);
-    if (baseEntity != null) {
-      resultMap[selectedEffect!.key] = baseEntity.filePath;
-      update();
-      recentController.onStyleMorphUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath);
-      return TransferResult()..entity = baseEntity;
-    } else {
-      return null;
-    }
-  }
+  onSavePhoto({required String photo});
+
+  onResultShare({
+    required String source,
+    required String platform,
+    required String photo,
+  });
+
+  onGenerateSuccess({
+    required String source,
+    required String style,
+  });
+
+  onGenerateAgainSuccess({
+    required int time,
+    required String source,
+    required String style,
+  }) {}
+
+  Future<TransferResult<ResultType>?> startTransfer(String imageUrl, String? cachedId, {onFailed});
 
   void onTitleSelected(int index) {
     if (selectedTitle == categories[index]) {
@@ -164,8 +149,8 @@ class StyleMorphController extends GetxController {
   }
 }
 
-class TransferResult {
-  StyleMorphResultEntity? entity;
+class TransferResult<T> {
+  T? entity;
   AccountLimitType? type;
 
   TransferResult();

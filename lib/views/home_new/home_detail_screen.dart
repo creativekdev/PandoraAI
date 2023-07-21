@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/home_new/home_image_detail_card.dart';
@@ -42,20 +43,15 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                 return PageView.builder(
                   controller: controller.pageController,
                   itemBuilder: (BuildContext context, int index) {
-                    var resourceList = controller.posts![index].resourceList();
+                    var discoveryListEntity = controller.posts![index];
+                    var resourceList = discoveryListEntity.resourceList();
                     var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
                     return HomeImageDetailCard(
                       width: ScreenUtil.screenSize.width,
                       height: ScreenUtil.screenSize.height,
                       url: pick?.url ?? '',
+                      needBlur: discoveryListEntity.category == HomeCardType.cartoonize,
                     );
-                    // return CachedNetworkImageUtils.custom(
-                    //   useOld: true,
-                    //   context: context,
-                    //   imageUrl: pick?.url ?? '',
-                    //   height: ScreenUtil.screenSize.height,
-                    //   fit: BoxFit.cover,
-                    // );
                   },
                   itemCount: controller.posts?.length ?? 0,
                   scrollDirection: Axis.vertical,
@@ -72,24 +68,20 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                 Images.ic_back,
                 color: ColorConstant.White,
                 width: $(24),
-              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12))),
+              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(6), vertical: $(6))),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
           ),
-          Positioned(
-            top: ScreenUtil.getStatusBarHeight() + $(5),
-            left: $(45),
-            right: $(45),
-            child: GestureDetector(
-              child: TitleTextWidget(
-                widget.title.toUpperCaseFirst,
-                ColorConstant.White,
-                FontWeight.w500,
-                $(17),
-              ),
-            ),
+          Align(
+            child: TitleTextWidget(
+              widget.title.toUpperCaseFirst,
+              ColorConstant.White,
+              FontWeight.w500,
+              $(17),
+            ).intoContainer(margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight() + $(10))),
+            alignment: Alignment.topCenter,
           ),
           Positioned(
               bottom: $(30) + ScreenUtil.getBottomPadding(context),

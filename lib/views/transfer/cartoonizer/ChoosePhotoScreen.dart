@@ -54,6 +54,7 @@ import '../../advertisement/reward_advertisement_screen.dart';
 import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
+@Deprecated("弃用")
 class ChoosePhotoScreen extends StatefulWidget {
   int tabPos;
   int pos;
@@ -532,7 +533,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   showSavePhotoDialog(BuildContext context) {
     if (lastBuildType == _BuildType.hdImage || controller.isVideo.value) {
-      Events.facetoonResultSave(type: lastBuildType.name);
+      Events.facetoonResultSave(photo: lastBuildType.name);
       saveToAlbum();
     } else {
       showModalBottomSheet(
@@ -549,7 +550,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () async {
                   Navigator.of(context).pop();
-                  Events.facetoonResultSave(type: lastBuildType.name);
+                  Events.facetoonResultSave(photo: lastBuildType.name);
                   await saveToAlbum();
                 }),
                 Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
@@ -579,7 +580,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         _cachedImage = null;
                         imageSize = null;
                       });
-                      Events.facetoonResultSave(type: 'watch_ad_hdImage');
+                      Events.facetoonResultSave(photo: 'watch_ad_hdImage');
                       saveToAlbum();
                     }
                   });
@@ -612,7 +613,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     }
                     if (lastBuildType == _BuildType.waterMark && getBuildType() == _BuildType.hdImage) {
                       controller.changeIsLoading(true);
-                      Events.facetoonResultSave(type: 'sign_hdImage');
+                      Events.facetoonResultSave(photo: 'sign_hdImage');
                       getCartoon(context, rebuild: true);
                     }
                   });
@@ -1673,7 +1674,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
 
         if (resultSuccess == 1) {
-          Events.facetoonGenerated(style: selectedEffect.key);
+          Events.facetoonGenerated(style: selectedEffect.key, source: 'image');
           if (TextUtil.isEmpty(controller.videoFile.value?.path) && TextUtil.isEmpty(_image)) {
             return;
           }

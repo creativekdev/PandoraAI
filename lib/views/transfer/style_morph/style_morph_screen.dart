@@ -40,7 +40,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import 'style_morph_controller.dart';
+import '../controller/style_morph_controller.dart';
 
 class StyleMorphScreen extends StatefulWidget {
   String source;
@@ -78,7 +78,11 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
     photoType = widget.photoType;
     source = widget.source;
     uploadImageController = Get.put(UploadImageController());
-    controller = Get.put(StyleMorphController(record: widget.record, initKey: widget.initKey));
+    controller = Get.put(StyleMorphController(
+      originalPath: widget.record.originalPath!,
+      itemList: widget.record.itemList,
+      initKey: widget.initKey,
+    ));
     itemWidth = ScreenUtil.screenSize.width / 6;
     delay(() {
       if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect?.key] == null) {
@@ -111,10 +115,10 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       if (value == null) {
         controller.onError();
       } else if (value.result) {
-        Events.styleMorphCompleteSuccess(photo: widget.photoType);
+        controller.onGenerateSuccess(source: widget.photoType, style: controller.selectedEffect?.key ?? '');
         generateCount++;
         if (generateCount - 1 > 0) {
-          Events.metaverseCompleteGenerateAgain(time: generateCount - 1);
+          controller..onGenerateAgainSuccess(time: generateCount - 1, source: widget.photoType, style: controller.selectedEffect?.key ?? '');
         }
         controller.onSuccess();
       } else {
@@ -147,7 +151,6 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       if (value != null) {
         if (value.entity != null) {
           simulateProgressBarController.loadComplete();
-          Events.styleMorphCompleteSuccess(photo: photoType);
         } else {
           simulateProgressBarController.onError(error: value.type);
         }
@@ -468,7 +471,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
     }
     await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
-    Events.styleMorphDownload(type: 'image');
+    controller.onSavePhoto(photo: 'image');
   }
 
   shareOut(BuildContext context, StyleMorphController controller) async {
@@ -486,7 +489,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         isVideo: false,
         originalUrl: null,
         effectKey: 'StyleMorph', onShareSuccess: (platform) {
-      Events.styleMorphCompleteShare(source: photoType, platform: platform, type: 'image');
+      controller.onResultShare(source: photoType, platform: platform, photo: 'image');
     });
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
@@ -522,7 +525,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         category: HomeCardType.stylemorph,
       ).then((value) {
         if (value ?? false) {
-          Events.styleMorphCompleteShare(source: photoType, platform: 'discovery', type: 'image');
+          controller.onResultShare(source: photoType, platform: 'discovery', photo: 'image');
           showShareSuccessDialog(context);
         }
       });
