@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 import '../../Common/importFile.dart';
@@ -44,13 +45,20 @@ class SliverItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(8)),
-          child: CachedNetworkImageUtils.custom(
-            fit: BoxFit.cover,
-            useOld: false,
-            height: width,
-            width: width,
-            context: context,
-            imageUrl: entity.url,
+          child: VisibilityHolder(
+            keyString: entity.url,
+            child: CachedNetworkImageUtils.custom(
+              fit: BoxFit.cover,
+              useOld: false,
+              height: width,
+              width: width,
+              context: context,
+              imageUrl: entity.url,
+            ),
+            placeHolder: SizedBox(
+              width: width,
+              height: width,
+            ),
           ),
         ),
         TitleTextWidget(

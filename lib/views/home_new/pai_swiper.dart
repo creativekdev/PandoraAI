@@ -1,7 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../models/discovery_list_entity.dart';
 
 typedef OnClickItem = Function(int index, DiscoveryListEntity data);
@@ -25,22 +26,21 @@ class PaiSwiper extends StatelessWidget {
               : UnconstrainedBox(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular($(8)),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: resource.url!,
-                      height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
-                      width: ScreenUtil.screenSize.width - $(30),
+                    child: VisibilityHolder(
+                      keyString: resource.url!,
+                      child: CachedNetworkImageUtils.custom(
+                        fit: BoxFit.cover,
+                        useOld: false,
+                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
+                        width: ScreenUtil.screenSize.width - $(30),
+                        context: context,
+                        imageUrl: resource.url!,
+                      ),
+                      placeHolder: SizedBox(
+                        width: ScreenUtil.screenSize.width - $(30),
+                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
+                      ),
                     ),
-                    // child: CachedNetworkImageUtils.custom(
-                    //   fit: BoxFit.cover,
-                    //   fadeOutDuration: Duration(milliseconds: 10),
-                    //   fadeInDuration: Duration(milliseconds: 10),
-                    //   useOld: false,
-                    //   height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
-                    //   width: ScreenUtil.screenSize.width - $(30),
-                    //   context: context,
-                    //   imageUrl: resource.url!,
-                    // ),
                   ),
                 );
         },
