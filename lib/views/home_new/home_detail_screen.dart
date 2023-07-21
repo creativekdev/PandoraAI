@@ -150,7 +150,7 @@ class _HomeDetailUseButton extends State<HomeDetailUseButton> {
           TitleTextWidget(
             S.of(context).use_style,
             ColorConstant.BackgroundColor,
-            FontWeight.w500,
+            FontWeight.w700,
             $(17),
           ),
         ],
