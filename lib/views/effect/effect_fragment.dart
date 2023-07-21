@@ -107,6 +107,36 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
     return GetBuilder<EffectDataController>(
       init: dataController,
       builder: (_) {
+        List<SliverToBoxAdapter>? contents = _.data?.homepage?.galleries.map((e) {
+          return SliverToBoxAdapter(
+            child: PaiContentView(
+              height: e.title == 'facetoon' ? $(96) : $(172),
+              onTap: (String category, List<DiscoveryListEntity>? posts) {
+                Navigator.of(context).push<bool>(
+                  Right2LeftRouter(
+                    settings: RouteSettings(name: '/HomeDetailsScreen'),
+                    child: HomeDetailsScreen(
+                      posts: posts,
+                      category: category,
+                      source: "home_page",
+                    ),
+                  ),
+                );
+              },
+              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
+                Navigator.of(context).push<void>(Right2LeftRouter(
+                    settings: RouteSettings(name: '/HomeDetailScreen'),
+                    child: HomeDetailScreen(
+                      posts: e!.socialPosts,
+                      source: "home_page",
+                      title: category,
+                      index: index,
+                    )));
+              },
+              galleries: e,
+            ),
+          );
+        }).toList();
         return Stack(
           children: [
             _.loading
@@ -150,93 +180,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                               },
                             ),
                           ),
-                          SliverToBoxAdapter(
-                            child: PaiContentView(
-                              height: $(172),
-                              onTap: (String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<bool>(
-                                  Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
-                                    child: HomeDetailsScreen(
-                                      posts: posts,
-                                      category: category,
-                                      source: "home_page",
-                                    ),
-                                  ),
-                                );
-                              },
-                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<void>(Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailScreen'),
-                                    child: HomeDetailScreen(
-                                      posts: _.data!.homepage!.galleries[0]!.socialPosts,
-                                      source: "home_page",
-                                      title: category,
-                                      index: index,
-                                    )));
-                              },
-                              galleries: _.data?.homepage?.galleries[0],
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: PaiContentView(
-                              height: $(96),
-                              onTap: (String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<bool>(
-                                  Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
-                                    child: HomeDetailsScreen(
-                                      posts: posts,
-                                      category: category,
-                                      source: "home_page",
-                                    ),
-                                  ),
-                                );
-                              },
-                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<void>(Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailScreen'),
-                                    child: HomeDetailScreen(
-                                      posts: _.data!.homepage!.galleries[1]!.socialPosts,
-                                      source: "home_page",
-                                      title: category,
-                                      index: index,
-                                    )));
-                              },
-                              galleries: _.data?.homepage?.galleries[1],
-                            ),
-                          ),
-                          SliverToBoxAdapter(
-                            child: PaiContentView(
-                              height: $(172),
-                              onTap: (String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<bool>(
-                                  Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailsScreen'),
-                                    child: HomeDetailsScreen(
-                                      posts: posts,
-                                      category: category,
-                                      source: "home_page",
-                                    ),
-                                  ),
-                                );
-                              },
-                              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
-                                Navigator.of(context).push<void>(
-                                  Right2LeftRouter(
-                                    settings: RouteSettings(name: '/HomeDetailScreen'),
-                                    child: HomeDetailScreen(
-                                      posts: _.data!.homepage!.galleries[2]!.socialPosts,
-                                      source: "home_page",
-                                      title: category,
-                                      index: index,
-                                    ),
-                                  ),
-                                );
-                              },
-                              galleries: _.data?.homepage?.galleries[2],
-                            ),
-                          ),
+                          ...?contents,
                           SliverPadding(padding: EdgeInsets.only(bottom: $(80) + ScreenUtil.getBottomPadding(context)))
                         ],
                       ),

@@ -36,12 +36,12 @@ import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonizer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/cartoonizer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../mine/filter/ImFilterScreen.dart';
 import '../../mine/filter/im_effect_screen.dart';
+import '../../mine/filter/im_filter.dart';
 
 class CartoonizeScreen extends StatefulWidget {
   String source;
@@ -79,7 +79,11 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
     photoType = widget.photoType;
     source = widget.source;
     uploadImageController = Get.put(UploadImageController());
-    controller = Get.put(CartoonizerController(record: widget.record, initKey: widget.initKey));
+    controller = Get.put(CartoonizerController(
+      originalPath: widget.record.originalPath!,
+      itemList: widget.record.itemList,
+      initKey: widget.initKey,
+    ));
     itemWidth = ScreenUtil.screenSize.width / 6;
     delay(() {
       if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect?.key] == null) {
@@ -112,6 +116,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
       if (value == null) {
         // do nothing
       } else if (value.result) {
+        controller.onGenerateSuccess(source: photoType, style: controller.selectedEffect?.key ?? '');
         // generateCount++;
         // if (generateCount - 1 > 0) {
         // Events.facetoonGeneratedAgain(style: controller.selectedEffect?.key ?? '', time: generateCount - 1);
@@ -155,7 +160,6 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
       if (value != null) {
         if (value.entity != null) {
           simulateProgressBarController.loadComplete();
-          Events.facetoonGenerated(style: controller.selectedEffect?.key ?? '');
         } else {
           simulateProgressBarController.onError(error: value.type);
         }
@@ -329,27 +333,21 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
                               .intoGestureDetector(
                                 onTap: () => pickPhoto(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                         Expanded(
                           child: Image.asset(Images.ic_share_print, height: $(24), width: $(24))
                               .intoGestureDetector(
                                 onTap: () => toPrint(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                         Expanded(
                           child: Image.asset(Images.ic_download, height: $(24), width: $(24))
                               .intoGestureDetector(
                                 onTap: () => savePhoto(context, controller),
                               )
-                              .intoContainer(
-                                padding: EdgeInsets.all($(15)),
-                              ),
+                              .intoContainer(padding: EdgeInsets.all($(15))),
                         ),
                       ],
                     ),
@@ -451,7 +449,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
     if (controller.containsOriginal.value) {
       ui.Image? cropImage;
       if (cropKey.currentContext != null) {
-        cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 6);
+        cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 10);
       }
       var resultImage = await SyncFileImage(file: controller.resultFile!).getImage();
       var uint8list = await addWaterMark(originalImage: cropImage, image: resultImage.image);
@@ -465,7 +463,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
     }
     await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
-    Events.facetoonResultSave(type: 'image');
+    controller.onSavePhoto(photo: 'image');
   }
 
   shareOut(BuildContext context, CartoonizerController controller) async {
@@ -483,7 +481,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
         isVideo: false,
         originalUrl: null,
         effectKey: controller.selectedEffect!.key, onShareSuccess: (platform) {
-      Events.facetoonResultShare(source: photoType, platform: platform, type: 'image');
+      controller.onResultShare(source: source, platform: platform, photo: 'image');
     });
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
@@ -519,7 +517,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
         category: HomeCardType.cartoonize,
       ).then((value) {
         if (value ?? false) {
-          Events.facetoonResultShare(source: photoType, platform: 'discovery', type: 'image');
+          controller.onResultShare(source: source, platform: 'discovery', photo: 'image');
           showShareSuccessDialog(context);
         }
       });

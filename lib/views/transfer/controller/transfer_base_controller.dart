@@ -4,19 +4,14 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
-import 'package:cartoonizer/app/user/user_manager.dart';
-import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
-import 'package:cartoonizer/models/cartoonizer_result_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/models/style_morph_result_entity.dart';
-import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 
-class CartoonizerController extends GetxController {
+abstract class TransferBaseController<ResultType> extends GetxController {
   late File _originFile;
 
   File get originFile => _originFile;
@@ -35,7 +30,6 @@ class CartoonizerController extends GetxController {
 
   Map<String, String> resultMap = {};
 
-  late CartoonizerApi cartoonizerApi;
   late AppApi api;
 
   final String? initKey;
@@ -60,9 +54,9 @@ class CartoonizerController extends GetxController {
 
   RecentController recentController = Get.find<RecentController>();
 
-  CartoonizerController({required RecentEffectModel record, this.initKey}) {
-    originFile = File(record.originalPath!);
-    record.itemList.forEach((element) {
+  TransferBaseController({required String originalPath, required List<RecentEffectItem> itemList, this.initKey}) {
+    originFile = File(originalPath);
+    itemList.forEach((element) {
       resultMap[element.key!] = element.imageData!;
     });
   }
@@ -71,9 +65,7 @@ class CartoonizerController extends GetxController {
   void onInit() {
     super.onInit();
     api = AppApi().bindController(this);
-    cartoonizerApi = CartoonizerApi().bindController(this);
-    var controller = Get.find<EffectDataController>();
-    categories = controller.data?.cartoonize?.children ?? [];
+    categories = buildCategories();
     if (categories.isNotEmpty) {
       if (resultMap.isNotEmpty) {
         categories.forEach((category) {
@@ -94,6 +86,9 @@ class CartoonizerController extends GetxController {
               }
             });
           });
+          if (selectedEffect == null) {
+            selectedTitle = categories.first;
+          }
         } else {
           selectedTitle = categories.first;
         }
@@ -101,46 +96,41 @@ class CartoonizerController extends GetxController {
     }
   }
 
+  String getControllerStyle();
+
+  @protected
+  List<EffectCategory> buildCategories();
+
   @override
   void dispose() {
-    cartoonizerApi.unbind();
     api.unbind();
     super.dispose();
   }
 
-  Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
-    if (selectedEffect == null) {
-      CommonExtension().showToast('Please select template');
-      return null;
-    }
-    var limitEntity = await api.getCartoonizeLimit();
-    if (limitEntity != null) {
-      if (limitEntity.usedCount >= limitEntity.dailyLimit) {
-        if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-          return TransferResult()..type = AccountLimitType.guest;
-        } else if (isVip()) {
-          return TransferResult()..type = AccountLimitType.vip;
-        } else {
-          return TransferResult()..type = AccountLimitType.normal;
-        }
-      }
-    }
-    var rootPath = cacheManager.storageOperator.recordCartoonizeDir.path;
-    var baseEntity = await cartoonizerApi.startTransfer(
-      initImage: imageUrl,
-      directoryPath: rootPath,
-      selectEffect: selectedEffect!,
-      onFailed: onFailed,
-    );
-    if (baseEntity != null) {
-      resultMap[selectedEffect!.key] = baseEntity.filePath;
-      update();
-      recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false);
-      return TransferResult()..entity = baseEntity;
-    } else {
-      return null;
-    }
-  }
+  onError() {}
+
+  onSuccess() {}
+
+  onSavePhoto({required String photo});
+
+  onResultShare({
+    required String source,
+    required String platform,
+    required String photo,
+  });
+
+  onGenerateSuccess({
+    required String source,
+    required String style,
+  });
+
+  onGenerateAgainSuccess({
+    required int time,
+    required String source,
+    required String style,
+  }) {}
+
+  Future<TransferResult<ResultType>?> startTransfer(String imageUrl, String? cachedId, {onFailed});
 
   void onTitleSelected(int index) {
     if (selectedTitle == categories[index]) {
@@ -162,8 +152,8 @@ class CartoonizerController extends GetxController {
   }
 }
 
-class TransferResult {
-  CartoonizerResultEntity? entity;
+class TransferResult<T> {
+  T? entity;
   AccountLimitType? type;
 
   TransferResult();

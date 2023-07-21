@@ -351,7 +351,12 @@ Future<void> rateApp() async {
   if (Platform.isIOS) {
     launchURL(Config.getStoreLink(toRate: true));
   } else {
-    launchURL(Config.getStoreLink());
+    const platform = MethodChannel(PLATFORM_CHANNEL);
+    platform.invokeMethod<bool>("openAppStore").then((value) {
+      if (value == false) {
+        launchURL(Config.getStoreLink());
+      }
+    });
   }
 }
 

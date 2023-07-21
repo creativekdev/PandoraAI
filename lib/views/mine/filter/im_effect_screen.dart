@@ -9,17 +9,14 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/views/transfer/cartoonizer/cartoonizer_controller.dart';
-import 'package:cartoonizer/views/transfer/style_morph/style_morph_controller.dart';
+import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../Common/Extension.dart';
 import '../../../Common/event_bus_helper.dart';
 import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../../Widgets/image/sync_image_provider.dart';
 import '../../../app/app.dart';
-import '../../../app/cache/cache_manager.dart';
 import '../../../app/cache/storage_operator.dart';
 import '../../../app/effect_manager.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
@@ -36,9 +33,12 @@ import '../../ai/anotherme/widgets/simulate_progress_bar.dart';
 import '../../payment.dart';
 import '../../share/ShareScreen.dart';
 import '../../share/share_discovery_screen.dart';
+import '../../transfer/controller/cartoonizer_controller.dart';
+import '../../transfer/controller/style_morph_controller.dart';
+import '../../transfer/controller/transfer_base_controller.dart';
 import '../refcode/submit_invited_code_screen.dart';
-import 'ImFilterScreen.dart';
 import 'im_filter.dart';
+import 'im_filter_screen.dart';
 
 class ImEffectScreen extends StatefulWidget {
   final File resultFile;
@@ -65,28 +65,30 @@ class ImEffectScreen extends StatefulWidget {
 class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerProviderStateMixin {
   List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
   UploadImageController uploadImageController = Get.put(UploadImageController());
-  late StyleMorphController styleMorphController;
-  late CartoonizerController cartoonizerController;
+  late TransferBaseController controller;
   double itemWidth = ScreenUtil.screenSize.width / 6;
   int generateCount = 0;
   UserManager userManager = AppDelegate.instance.getManager();
   GlobalKey cropKey = GlobalKey();
+  bool isFirst = true;
+
+  ImFilterController filterController = Get.put(ImFilterController());
 
   @override
   void initState() {
     super.initState();
     if (widget.isStyleMorph) {
-      styleMorphController = Get.find();
+      controller = Get.find<StyleMorphController>();
     } else {
-      cartoonizerController = Get.find();
+      controller = Get.find<CartoonizerController>();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    Get.delete<StyleMorphController>();
-    Get.delete<CartoonizerController>();
+    Get.delete<TransferBaseController>();
+    Get.delete<ImFilterController>();
   }
 
   Future<ui.Image> convertImage(imgLib.Image image) async {
@@ -105,12 +107,16 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       buttons.add(GestureDetector(
         onTap: () {
           setState(() {
+            if (isFirst) {
+              filterController.filePath = controller.resultFile!.path;
+              isFirst = false;
+            }
             Navigator.push(
               context,
               MaterialPageRoute(
                 settings: RouteSettings(name: "/ImFilterScreen"),
                 builder: (context) => ImFilterScreen(
-                  filePath: widget.isStyleMorph ? styleMorphController.resultFile!.path : cartoonizerController.resultFile!.path,
+                  filePath: controller.resultFile!.path,
                   tab: TABS.values[cur],
                   onCallback: () {
                     Navigator.of(context).pop();
@@ -169,45 +175,15 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   Future<void> saveToAlbum() async {
-    if (widget.isStyleMorph) {
-      if (styleMorphController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
-      await showLoading();
-      GallerySaver.saveImage(styleMorphController.resultMap[styleMorphController.selectedEffect!.key]!, albumName: saveAlbumName);
-      await hideLoading();
-      CommonExtension().showImageSavedOkToast(context);
-      Events.styleMorphDownload(type: 'image');
-    } else {
-      if (cartoonizerController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
-      if (cartoonizerController.resultFile == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
-      await showLoading();
-      if (cartoonizerController.containsOriginal.value) {
-        ui.Image? cropImage;
-        if (cropKey.currentContext != null) {
-          cropImage = await getBitmapFromContext(cropKey.currentContext!, pixelRatio: 6);
-        }
-        var resultImage = await SyncFileImage(file: cartoonizerController.resultFile!).getImage();
-        var uint8list = await addWaterMark(originalImage: cropImage, image: resultImage.image);
-        String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-        var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
-        await file.writeAsBytes(uint8list.toList());
-        await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
-        file.delete();
-      } else {
-        GallerySaver.saveImage(cartoonizerController.resultFile!.path, albumName: saveAlbumName);
-      }
-      await hideLoading();
-      CommonExtension().showImageSavedOkToast(context);
-      Events.facetoonResultSave(type: 'image');
+    if (controller.selectedEffect == null) {
+      CommonExtension().showToast(S.of(context).select_a_style);
+      return;
     }
+    await showLoading();
+    GallerySaver.saveImage(controller.resultMap[controller.selectedEffect!.key]!, albumName: saveAlbumName);
+    await hideLoading();
+    CommonExtension().showImageSavedOkToast(context);
+    Events.styleMorphDownload(type: 'image');
   }
 
   Widget _buildImageView() {
@@ -219,7 +195,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
             key: cropKey,
             margin: EdgeInsets.only(top: $(5)),
             child: Image.file(
-              widget.isStyleMorph ? (styleMorphController.resultFile ?? styleMorphController.originFile) : (cartoonizerController.resultFile ?? cartoonizerController.originFile),
+              controller.resultFile ?? controller.originFile,
               fit: BoxFit.fitHeight,
             ),
           ))
@@ -293,15 +269,15 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
               );
             },
             itemBuilder: (context, index) {
-              var data = widget.isStyleMorph ? styleMorphController.categories[index] : cartoonizerController.categories[index];
-              var checked = widget.isStyleMorph ? (styleMorphController.selectedTitle == data) : (cartoonizerController.selectedTitle == data);
+              var data = controller.categories[index];
+              var checked = controller.selectedTitle == data;
               return title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(8)), color: Colors.transparent).intoGestureDetector(
                   onTap: () {
-                widget.isStyleMorph ? styleMorphController.onTitleSelected(index) : cartoonizerController.onTitleSelected(index);
+                controller.onTitleSelected(index);
                 setState(() {});
               });
             },
-            itemCount: widget.isStyleMorph ? styleMorphController.categories.length : cartoonizerController.categories.length,
+            itemCount: controller.categories.length,
             scrollDirection: Axis.horizontal,
           ),
         ),
@@ -311,25 +287,18 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
           width: ScreenUtil.screenSize.width,
           child: ListView.separated(
             itemBuilder: (context, index) {
-              var data = widget.isStyleMorph ? styleMorphController.selectedTitle!.effects[index] : cartoonizerController.selectedTitle!.effects[index];
-              var checked = widget.isStyleMorph ? data == styleMorphController.selectedEffect : data == cartoonizerController.selectedEffect;
+              var data = controller.selectedTitle!.effects[index];
+              var checked = data == controller.selectedEffect;
               return SizedBox(
                 width: itemWidth,
                 height: itemWidth,
                 child: Padding(
                   padding: EdgeInsets.all($(2)),
                   child: item(data, checked).intoGestureDetector(onTap: () async {
-                    widget.isStyleMorph ? styleMorphController.onItemSelected(index) : cartoonizerController.onItemSelected(index);
-                    if (widget.isStyleMorph) {
-                      if (styleMorphController.selectedEffect != null && styleMorphController.resultMap[styleMorphController.selectedEffect!.key] == null) {
-                        await generate();
-                        setState(() {});
-                      }
-                    } else {
-                      if (cartoonizerController.selectedEffect != null && cartoonizerController.resultMap[cartoonizerController.selectedEffect!.key] == null) {
-                        await generate();
-                        setState(() {});
-                      }
+                    controller.onItemSelected(index);
+                    if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
+                      await generate();
+                      setState(() {});
                     }
                   }),
                 ),
@@ -340,7 +309,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
                 width: $(10),
               );
             },
-            itemCount: widget.isStyleMorph ? styleMorphController.selectedTitle!.effects.length : cartoonizerController.selectedTitle!.effects.length,
+            itemCount: controller.selectedTitle!.effects.length,
             scrollDirection: Axis.horizontal,
           ),
         ),
@@ -351,7 +320,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   generate() async {
-    String key = await md5File(widget.isStyleMorph ? styleMorphController.originFile : cartoonizerController.originFile);
+    String key = await md5File(controller.originFile);
     var needUpload = await uploadImageController.needUploadByKey(key);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
@@ -361,17 +330,13 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       config: SimulateProgressBarConfig.cartoonize(context),
     ).then((value) {
       if (value == null) {
-        // widget.isStyleMorph ? styleMorphController.onError() : cartoonizerController.onError();
       } else if (value.result) {
-        Events.styleMorphCompleteSuccess(photo: widget.photoType);
         generateCount++;
         if (generateCount - 1 > 0) {
-          Events.metaverseCompleteGenerateAgain(time: generateCount - 1);
+          controller.onGenerateAgainSuccess(time: generateCount - 1, source: widget.source, style: widget.photoType);
         }
         setState(() {});
-        // widget.isStyleMorph ? styleMorphController.onSuccess() : cartoonizerController.onSuccess();
       } else {
-        // widget.isStyleMorph ? styleMorphController.onError() : cartoonizerController.onError();
         if (value.error != null) {
           showLimitDialog(context, value.error!);
         }
@@ -380,7 +345,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
     if (needUpload) {
       EffectManager effectManager = AppDelegate().getManager();
       var imageSize = effectManager.data?.imageMaxl ?? 512;
-      File compressedImage = await imageCompressAndGetFile(widget.isStyleMorph ? styleMorphController.originFile : cartoonizerController.originFile, imageSize: imageSize);
+      File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: imageSize);
       await uploadImageController.uploadCompressedImage(compressedImage, key: key);
       if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
         simulateProgressBarController.onError();
@@ -392,38 +357,23 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       return;
     }
     var cachedId = await uploadImageController.getCachedIdByKey(key);
-    if (widget.isStyleMorph) {
-      styleMorphController.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
-        uploadImageController.deleteUploadData(styleMorphController.originFile, key: key);
-      }).then((value) {
-        if (value != null) {
-          if (value.entity != null) {
-            simulateProgressBarController.loadComplete();
-            Events.styleMorphCompleteSuccess(photo: widget.photoType);
-            // Events.facetoonGenerated(style: controller.selectedEffect?.key ?? '');
-          } else {
-            simulateProgressBarController.onError(error: value.type);
-          }
+    controller.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
+      uploadImageController.deleteUploadData(controller.originFile, key: key);
+    }).then((value) {
+      if (value != null) {
+        if (value.entity != null) {
+          simulateProgressBarController.loadComplete();
+          controller.onGenerateSuccess(
+            source: widget.source,
+            style: widget.photoType,
+          );
         } else {
-          simulateProgressBarController.onError();
+          simulateProgressBarController.onError(error: value.type);
         }
-      });
-    } else {
-      cartoonizerController.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
-        uploadImageController.deleteUploadData(cartoonizerController.originFile, key: key);
-      }).then((value) {
-        if (value != null) {
-          if (value.entity != null) {
-            simulateProgressBarController.loadComplete();
-            Events.styleMorphCompleteSuccess(photo: widget.photoType);
-          } else {
-            simulateProgressBarController.onError(error: value.type);
-          }
-        } else {
-          simulateProgressBarController.onError();
-        }
-      });
-    }
+      } else {
+        simulateProgressBarController.onError();
+      }
+    });
   }
 
   showLimitDialog(BuildContext context, AccountLimitType type) {
@@ -528,24 +478,17 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   shareToDiscovery(BuildContext context) async {
-    if (widget.isStyleMorph) {
-      if (styleMorphController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
-    } else {
-      if (cartoonizerController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
+    if (controller.selectedEffect == null) {
+      CommonExtension().showToast(S.of(context).select_a_style);
+      return;
     }
 
     if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
       await showLoading();
-      String key = await md5File(widget.isStyleMorph ? styleMorphController.originFile : cartoonizerController.originFile);
+      String key = await md5File(controller.originFile);
       var needUpload = await uploadImageController.needUploadByKey(key);
       if (needUpload) {
-        File compressedImage = await imageCompressAndGetFile(widget.isStyleMorph ? styleMorphController.originFile : cartoonizerController.originFile);
+        File compressedImage = await imageCompressAndGetFile(controller.originFile);
         await uploadImageController.uploadCompressedImage(compressedImage, key: key);
         await hideLoading();
         if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
@@ -556,19 +499,17 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       }
     }
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
-      var file = File(widget.isStyleMorph
-          ? styleMorphController.resultMap[styleMorphController.selectedEffect!.key]!
-          : cartoonizerController.resultMap[cartoonizerController.selectedEffect!.key]!);
+      var file = File(controller.resultMap[controller.selectedEffect!.key]!);
       ShareDiscoveryScreen.push(
         context,
-        effectKey: widget.isStyleMorph ? styleMorphController.selectedEffect!.key : cartoonizerController.selectedEffect!.key,
+        effectKey: controller.selectedEffect!.key,
         originalUrl: uploadImageController.imageUrl.value,
         image: base64Encode(file.readAsBytesSync()),
         isVideo: false,
         category: widget.isStyleMorph ? HomeCardType.stylemorph : HomeCardType.cartoonize,
       ).then((value) {
         if (value ?? false) {
-          Events.facetoonResultShare(source: widget.photoType, platform: 'discovery', type: 'image');
+          controller.onResultShare(source: widget.photoType, platform: 'effect', photo: 'image');
           showShareSuccessDialog(context);
         }
       });
@@ -576,32 +517,21 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   shareOut(BuildContext context) async {
-    if (widget.isStyleMorph) {
-      if (styleMorphController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
-    } else {
-      if (cartoonizerController.selectedEffect == null) {
-        CommonExtension().showToast(S.of(context).select_a_style);
-        return;
-      }
+    if (controller.selectedEffect == null) {
+      CommonExtension().showToast(S.of(context).select_a_style);
+      return;
     }
 
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
     var uint8list = await ImageUtils.printStyleMorphDrawData(
-        widget.isStyleMorph ? styleMorphController.originFile : cartoonizerController.originFile,
-        File(widget.isStyleMorph
-            ? styleMorphController.resultMap[styleMorphController.selectedEffect!.key]!
-            : cartoonizerController.resultMap[cartoonizerController.selectedEffect!.key]!),
-        '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+        controller.originFile, File(controller.resultMap[controller.selectedEffect!.key]!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
     ShareScreen.startShare(context,
         backgroundColor: Color(0x77000000),
-        style: widget.isStyleMorph ? 'StyleMorph' : cartoonizerController.selectedEffect!.key,
+        style: controller.selectedEffect!.key,
         image: base64Encode(uint8list),
         isVideo: false,
         originalUrl: null,
-        effectKey: widget.isStyleMorph ? 'StyleMorph' : cartoonizerController.selectedEffect!.key, onShareSuccess: (platform) {
+        effectKey: controller.selectedEffect!.key, onShareSuccess: (platform) {
       Events.styleMorphCompleteShare(source: widget.photoType, platform: platform, type: 'image');
     });
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;

@@ -16,7 +16,6 @@ import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/common/video_preview_screen.dart';
-import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
@@ -96,7 +95,7 @@ class HomeCardTypeUtils {
         var payload = jsonDecode(data.payload!);
         var url = payload['url'].toString();
         AppWebView.open(context, url: url, source: source);
-      } else if (target == HomeCardType.cartoonize) {
+      } else if (target == HomeCardType.cartoonize || target == HomeCardType.stylemorph) {
         initKey = data.cartoonizeKey;
         style = '$style-${initKey}';
       } else if (target == HomeCardType.txt2img) {
@@ -193,7 +192,7 @@ class HomeCardTypeUtils {
           Metagram.openBySelf(context, source: source);
           break;
         case HomeCardType.stylemorph:
-          StyleMorph.open(context, source);
+          StyleMorph.open(context, source, initKey: initKey);
           break;
         case HomeCardType.lineart:
           AiColoring.open(context, source: source);
