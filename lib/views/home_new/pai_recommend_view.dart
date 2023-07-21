@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 import '../../Common/importFile.dart';
@@ -46,13 +47,20 @@ class RecommendItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(8)),
-          child: CachedNetworkImageUtils.custom(
-            fit: BoxFit.cover,
-            useOld: false,
-            height: width * $(192.0) / $(110.0),
-            width: width,
-            context: context,
-            imageUrl: data.url,
+          child: VisibilityHolder(
+            keyString: data.url,
+            child: CachedNetworkImageUtils.custom(
+              fit: BoxFit.cover,
+              useOld: false,
+              height: width * $(192.0) / $(110.0),
+              width: width,
+              context: context,
+              imageUrl: data.url,
+            ),
+            placeHolder: SizedBox(
+              width: width,
+              height: width * $(192.0) / $(110.0),
+            ),
           ),
         ),
         TitleTextWidget(

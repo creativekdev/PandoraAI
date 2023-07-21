@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
 import '../../Common/importFile.dart';
@@ -25,13 +26,20 @@ class PaiSwiper extends StatelessWidget {
               : UnconstrainedBox(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular($(8)),
-                    child: CachedNetworkImageUtils.custom(
-                      fit: BoxFit.cover,
-                      useOld: false,
-                      height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
-                      width: ScreenUtil.screenSize.width - $(30),
-                      context: context,
-                      imageUrl: resource.url!,
+                    child: VisibilityHolder(
+                      keyString: resource.url!,
+                      child: CachedNetworkImageUtils.custom(
+                        fit: BoxFit.cover,
+                        useOld: false,
+                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
+                        width: ScreenUtil.screenSize.width - $(30),
+                        context: context,
+                        imageUrl: resource.url!,
+                      ),
+                      placeHolder: SizedBox(
+                        width: ScreenUtil.screenSize.width - $(30),
+                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
+                      ),
                     ),
                   ),
                 );

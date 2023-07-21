@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../Widgets/router/routers.dart';
 import '../../models/discovery_list_entity.dart';

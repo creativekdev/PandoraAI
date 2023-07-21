@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 
@@ -61,6 +62,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Column(
@@ -153,13 +155,20 @@ class _Item extends StatelessWidget {
         ? SizedBox.shrink()
         : ClipRRect(
             borderRadius: BorderRadius.circular($(8)),
-            child: CachedNetworkImageUtils.custom(
-              fit: BoxFit.cover,
-              useOld: false,
-              height: height,
-              width: $(96),
-              context: context,
-              imageUrl: resource.url!,
+            child: VisibilityHolder(
+              keyString: resource.url!,
+              child: CachedNetworkImageUtils.custom(
+                fit: BoxFit.cover,
+                useOld: false,
+                height: height,
+                width: $(96),
+                context: context,
+                imageUrl: resource.url!,
+              ),
+              placeHolder: SizedBox(
+                width: $(96),
+                height: height,
+              ),
             ),
           );
   }
