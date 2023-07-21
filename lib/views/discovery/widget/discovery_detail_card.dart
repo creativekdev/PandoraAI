@@ -305,29 +305,4 @@ class DiscoveryDetailCard extends StatelessWidget with DiscoveryAttrHolder {
     );
   }
 
-  double? getLocalHeight(String url, double width) {
-    var imgSummaryCache = cacheManager.imgSummaryCache;
-    var scale = imgSummaryCache.getScale(url: url);
-    if (scale != null) {
-      return width / scale;
-    }
-    return null;
-  }
-
-  Future<double?> getHeight(String url, double width) async {
-    var imgSummaryCache = cacheManager.imgSummaryCache;
-    var scale = imgSummaryCache.getScale(url: url);
-    if (scale != null) {
-      return width / scale;
-    } else {
-      try {
-        var imageInfo = await SyncCachedNetworkImage(url: url).getImage();
-        scale = imageInfo.image.width / imageInfo.image.height;
-        imgSummaryCache.setScale(url: url, scale: scale);
-        return width / scale;
-      } catch (e) {
-        return null;
-      }
-    }
-  }
 }

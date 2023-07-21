@@ -39,7 +39,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
         children: [
           GetBuilder<HomeDetailController>(
               init: controller,
-              builder: (context) {
+              builder: (_) {
                 return PageView.builder(
                   controller: controller.pageController,
                   itemBuilder: (BuildContext context, int index) {
@@ -50,7 +50,6 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
                       width: ScreenUtil.screenSize.width,
                       height: ScreenUtil.screenSize.height,
                       url: pick?.url ?? '',
-                      needBlur: discoveryListEntity.category == HomeCardType.cartoonize,
                     );
                   },
                   itemCount: controller.posts?.length ?? 0,
@@ -178,9 +177,7 @@ class HomeDetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(
-        $(8),
-      ),
+      borderRadius: BorderRadius.circular($(8)),
       child: CachedNetworkImageUtils.custom(
         context: context,
         imageUrl: imageUrl,

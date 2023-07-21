@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/app_feature_operator.dart';
-import 'package:cartoonizer/app/cache/img_summary_cache.dart';
 import 'package:cartoonizer/app/cache/photo_source_operator.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/utils/array_util.dart';
@@ -68,7 +67,6 @@ class CacheManager extends BaseManager {
   late ImageScaleOperator _imageScaleOperator;
   late PhotoSourceOperator _photoSourceOperator;
   late AppFeatureOperator _featureOperator;
-  late ImgSummaryCache _imgSummaryCache;
 
   StorageOperator get storageOperator => _storageOperator;
 
@@ -77,8 +75,6 @@ class CacheManager extends BaseManager {
   PhotoSourceOperator get photoSourceOperator => _photoSourceOperator;
 
   AppFeatureOperator get featureOperator => _featureOperator;
-
-  ImgSummaryCache get imgSummaryCache => _imgSummaryCache;
 
   @override
   Future<void> onCreate() async {
@@ -91,8 +87,6 @@ class CacheManager extends BaseManager {
     _photoSourceOperator = PhotoSourceOperator(cacheManager: this);
     _photoSourceOperator.init();
     _featureOperator = AppFeatureOperator(cacheManager: this);
-    _imgSummaryCache = ImgSummaryCache(cacheManager: this);
-    _imgSummaryCache.init();
   }
 
   List<String> keys(String partKey) {
