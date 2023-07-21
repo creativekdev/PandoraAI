@@ -29,3 +29,9 @@ class ImFilter {
     });
   }
 }
+
+typedef OnCallback = void Function();
+
+const String IMAppbarTag = "IMAppbarTag";
+const String EffectImageViewTag = "EffectImageViewTag";
+const String EffectInOutControlPadTag = "EffectInOutControlPadTag";
