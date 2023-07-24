@@ -2,25 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/switch_image_card.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -28,9 +23,6 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_controller.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/ai/anotherme/widgets/trans_result_card.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
 import 'package:cartoonizer/views/print/print.dart';
 import 'package:cartoonizer/views/share/ShareScreen.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
@@ -97,90 +89,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
     });
   }
 
-  showLimitDialog(BuildContext context, AccountLimitType type) {
-    showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: $(27)),
-                Image.asset(
-                  Images.ic_limit_icon,
-                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
-                SizedBox(height: $(16)),
-                TitleTextWidget(
-                  type.getContent(context, 'AI Artist'),
-                  ColorConstant.White,
-                  FontWeight.w500,
-                  $(13),
-                  maxLines: 100,
-                  align: TextAlign.center,
-                ).intoContainer(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.only(
-                    bottom: $(30),
-                    left: $(30),
-                    right: $(30),
-                  ),
-                  alignment: Alignment.center,
-                ),
-                Text(
-                  type.getSubmitText(context),
-                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                )
-                    .intoContainer(
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
-                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                  alignment: Alignment.center,
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop(false);
-                }),
-                type.getPositiveText(context) != null
-                    ? Text(
-                        type.getPositiveText(context)!,
-                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                      )
-                        .intoContainer(
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
-                        padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                        margin: EdgeInsets.only(top: $(16), bottom: $(24)),
-                        alignment: Alignment.center,
-                      )
-                        .intoGestureDetector(onTap: () {
-                        Navigator.pop(_, true);
-                      })
-                    : SizedBox.shrink(),
-              ],
-            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
-      if (value == null) {
-      } else if (value) {
-        switch (type) {
-          case AccountLimitType.guest:
-            userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', toSignUp: true);
-            break;
-          case AccountLimitType.normal:
-            userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
-              PaymentUtils.pay(context, 'metaverse_result_page');
-            }, autoExec: true);
-            break;
-          case AccountLimitType.vip:
-            break;
-        }
-      } else {
-        userManager.doOnLogin(context, logPreLoginAction: 'metaverse_generate_limit', callback: () {
-          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
-          delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
-          // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-        }, autoExec: true);
-      }
-    });
-  }
-
   void generate(BuildContext _context, AnotherMeController controller) async {
     var key = await md5File(file);
     var needUpload = await uploadImageController.needUploadByKey(key);
@@ -206,7 +114,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       } else {
         controller.onError();
         if (value.error != null) {
-          showLimitDialog(context, value.error!);
+          showLimitDialog(context, type: value.error!, function: 'metaverse', source: 'metaverse_result_page');
         } else {
           Navigator.of(context).pop();
         }

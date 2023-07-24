@@ -368,7 +368,7 @@
   "enter_code": "招待コードを記入する",
   "my_code": "私の招待コード",
   "remaining_credits": "すでに持っている権益",
-  "submit_now": "記入する",
+  "enter_now": "記入する",
   "restore_msg": "サブスクリプションをキャンセルしてもよろしいですか？",
   "restore_content": "再契約するまで、すべての権益を失います",
   "cancel_subscribe": "購読解除",

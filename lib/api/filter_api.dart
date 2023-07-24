@@ -31,19 +31,18 @@ class FilterApi extends RetryAbleRequester {
     return ApiOptions(baseUrl: Config.instance.aiHost, headers: headers);
   }
 
-  Future<String?> removeBg({
-    required String imageUrl,
-  }) async {
-    var token = await FilterToken().getImageToken();
+  Future<String?> removeBg({required String imageUrl, onFailed}) async {
+    var token = await FilterToken().getImageToken(onFailed: onFailed);
     if (token == null) {
       return null;
     }
-    return await removeBackground(token: token, imageUrl: imageUrl);
+    return await removeBackground(token: token, imageUrl: imageUrl, onFailed: onFailed);
   }
 
   Future<String?> removeBackground({
     required String token,
     required String imageUrl,
+    onFailed,
   }) async {
     Map<String, dynamic> params = {
       'direct': 1,
@@ -52,13 +51,13 @@ class FilterApi extends RetryAbleRequester {
       'querypics': [imageUrl],
       'need_save_s3': false,
     };
-    var baseEntity = await post('/api/image/analyze/token', params: params);
+    var baseEntity = await post('/api/image/analyze/token', params: params, onFailed: onFailed);
     return baseEntity?.data?['data'];
   }
 
-  Future<String?> removeBgAndSave({required String imageUrl}) async {
+  Future<String?> removeBgAndSave({required String imageUrl, onFailed}) async {
     var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
-    String? dataString = await removeBg(imageUrl: imageUrl);
+    String? dataString = await removeBg(imageUrl: imageUrl, onFailed: onFailed);
     String key = EncryptUtil.encodeMd5(dataString!);
     String filePath = getFileName(rootPath, key);
     var base64decode = await base64Decode(dataString);

@@ -30,12 +30,11 @@ class FilterToken extends RetryAbleRequester {
     return ApiOptions(baseUrl: Config.instance.host, headers: headers);
   }
 
-  Future<String?> getImageToken() async {
-    var baseEntity = await get('/api/tool/image/token');
+  Future<String?> getImageToken({onFailed}) async {
+    var baseEntity = await get('/api/tool/image/token', onFailed: onFailed, needRetry: false);
     if (baseEntity != null) {
       return baseEntity.data['data'];
     }
     return null;
   }
-
 }

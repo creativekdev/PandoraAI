@@ -107,6 +107,8 @@ abstract class TransferBaseController<ResultType> extends GetxController {
     super.dispose();
   }
 
+  String getCategory();
+
   onError() {}
 
   onSuccess() {}

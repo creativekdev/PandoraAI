@@ -264,6 +264,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Rellene el código de invitación"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage(
             "Introduce el código de verificación de 6 dígitos"),
+        "enter_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "examples": MessageLookupByLibrary.simpleMessage("Caso"),
         "exit_editing":
             MessageLookupByLibrary.simpleMessage("Salir de la edición"),
@@ -672,7 +673,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "start_date": MessageLookupByLibrary.simpleMessage("Fecha de inicio"),
         "start_now": MessageLookupByLibrary.simpleMessage("Empieza ahora"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
         "sunday": MessageLookupByLibrary.simpleMessage("Domingo"),
         "swipe_up_for_more": MessageLookupByLibrary.simpleMessage(

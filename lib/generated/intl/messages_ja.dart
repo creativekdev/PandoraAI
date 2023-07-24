@@ -217,6 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_code": MessageLookupByLibrary.simpleMessage("招待コードを記入する"),
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("6ビット認証コードを入力してください"),
+        "enter_now": MessageLookupByLibrary.simpleMessage("記入する"),
         "examples": MessageLookupByLibrary.simpleMessage("ケース"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("編集終了"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("編集終了"),
@@ -561,7 +562,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "start_date": MessageLookupByLibrary.simpleMessage("開始時間"),
         "start_now": MessageLookupByLibrary.simpleMessage("使用を開始する"),
         "submit": MessageLookupByLibrary.simpleMessage("提出"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("記入する"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("日曜日"),
         "swipe_up_for_more":

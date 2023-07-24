@@ -20,6 +20,11 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
   });
 
   @override
+  String getCategory() {
+    return 'stylemorph';
+  }
+
+  @override
   void onInit() {
     super.onInit();
     styleApi = StyleMorphApi().bindController(this);

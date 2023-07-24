@@ -3741,10 +3741,10 @@ class S {
   }
 
   /// `Enter now`
-  String get submit_now {
+  String get enter_now {
     return Intl.message(
       'Enter now',
-      name: 'submit_now',
+      name: 'enter_now',
       desc: '',
       args: [],
     );

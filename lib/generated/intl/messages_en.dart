@@ -251,6 +251,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_code": MessageLookupByLibrary.simpleMessage("Enter Code"),
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("Enter 6-digit code"),
+        "enter_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "examples": MessageLookupByLibrary.simpleMessage("Examples"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("EXIT EDITING"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("Exit editing?"),
@@ -644,7 +645,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
         "start_now": MessageLookupByLibrary.simpleMessage("Start Now"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
         "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),
         "swipe_up_for_more":

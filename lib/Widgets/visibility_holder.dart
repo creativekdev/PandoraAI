@@ -30,11 +30,13 @@ class _VisibilityHolderState extends State<VisibilityImageHolder> {
 
   Widget get cacheImage => cache ?? SizedBox(width: widget.width, height: widget.height);
 
+  bool cropping = false;
+
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
         key: Key(widget.url),
-        child: visible
+        child: visible || cropping
             ? RepaintBoundary(
                 key: cropKey,
                 child: CachedNetworkImageUtils.custom(
@@ -51,6 +53,7 @@ class _VisibilityHolderState extends State<VisibilityImageHolder> {
           if (visible != _visible) {
             if (!_visible) {
               if (cropKey.currentContext != null) {
+                cropping = true;
                 getBitmapFromContext(cropKey.currentContext!).then((value) async {
                   if (value != null) {
                     var byteData = await value.toByteData(format: ImageByteFormat.png);
@@ -63,9 +66,10 @@ class _VisibilityHolderState extends State<VisibilityImageHolder> {
                     } else {
                       cache = null;
                     }
-                    if (mounted) {
-                      setState(() {});
-                    }
+                  }
+                  cropping = false;
+                  if (mounted) {
+                    setState(() {});
                   }
                 });
               }
