@@ -41,37 +41,30 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
           GetBuilder<HomeDetailController>(
               init: controller,
               builder: (_) {
-                return GestureDetector(
-                  onHorizontalDragEnd: (details) {
-                    if (details.primaryVelocity! > 0) {
-                      Navigator.of(context).pop();
+                return Listener(
+                  onPointerUp: (PointerUpEvent event) {
+                    if ((controller.posts?.length ?? 0) == (controller.index! + 1)) {
+                      CommonExtension().showToast(S.of(context).last_one, gravity: ToastGravity.CENTER);
                     }
                   },
-                  child: Listener(
-                    onPointerUp: (PointerUpEvent event) {
-                      if ((controller.posts?.length ?? 0) == (controller.index! + 1)) {
-                        CommonExtension().showToast(S.of(context).last_one, gravity: ToastGravity.CENTER);
-                      }
+                  child: PageView.builder(
+                    controller: controller.pageController,
+                    itemBuilder: (BuildContext context, int index) {
+                      var discoveryListEntity = controller.posts![index];
+                      var resourceList = discoveryListEntity.resourceList();
+                      var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
+                      return HomeImageDetailCard(
+                        width: ScreenUtil.screenSize.width,
+                        height: ScreenUtil.screenSize.height,
+                        url: pick?.url ?? '',
+                        category: widget.title,
+                      );
                     },
-                    child: PageView.builder(
-                      controller: controller.pageController,
-                      itemBuilder: (BuildContext context, int index) {
-                        var discoveryListEntity = controller.posts![index];
-                        var resourceList = discoveryListEntity.resourceList();
-                        var pick = resourceList.pick((t) => t.type == DiscoveryResourceType.image);
-                        return HomeImageDetailCard(
-                          width: ScreenUtil.screenSize.width,
-                          height: ScreenUtil.screenSize.height,
-                          url: pick?.url ?? '',
-                          category: widget.title,
-                        );
-                      },
-                      itemCount: controller.posts?.length ?? 0,
-                      scrollDirection: Axis.vertical,
-                      onPageChanged: (index) {
-                        controller.index = index;
-                      },
-                    ),
+                    itemCount: controller.posts?.length ?? 0,
+                    scrollDirection: Axis.vertical,
+                    onPageChanged: (index) {
+                      controller.index = index;
+                    },
                   ),
                 );
               }),
