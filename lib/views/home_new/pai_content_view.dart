@@ -1,12 +1,14 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../api/cartoonizer_api.dart';
+import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 
 typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts);
-typedef OnClickItem = Function(int index);
+typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts);
 
 class PaiContentView extends StatefulWidget {
   const PaiContentView({Key? key, required this.height, required this.onTap, required this.onTapItem, required this.galleries}) : super(key: key);
@@ -26,12 +28,12 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   List<DiscoveryListEntity>? socialPost;
 
   bool isLoading = false;
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   @override
   void initState() {
     super.initState();
-    cartoonizerApi = CartoonizerApi();
+    appApi = AppApi();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels + $(80) >= _scrollController.position.maxScrollExtent) {
         _loadNextPage();
@@ -43,58 +45,61 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
     if (isLoading) {
       return;
     }
-    double currentPosition = _scrollController.position.pixels;
     setState(() {
       isLoading = true;
     });
-    cartoonizerApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.category ?? '').then((value) {
+    appApi.socialHomePost(from: socialPost?.length ?? 0, size: 10, category: widget.galleries?.categoryString ?? '').then((value) {
       setState(() {
         socialPost?.addAll(value?.data.rows ?? []);
         isLoading = false;
-        _scrollController = ScrollController(
-          initialScrollOffset: currentPosition,
-          keepScrollOffset: true,
-        );
+        // _scrollController = ScrollController(
+        //   initialScrollOffset: currentPosition,
+        //   keepScrollOffset: true,
+        // );
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: $(15)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TitleTextWidget(
-                widget.galleries?.title ?? '',
+                (widget.galleries?.title ?? '').toUpperCaseFirst,
                 ColorConstant.White,
                 FontWeight.w500,
-                $(17),
+                $(16),
+              ).intoContainer(
+                alignment: Alignment.center,
               ),
               Spacer(),
               TitleTextWidget(
                 "${S.of(context).all} >",
-                ColorConstant.White,
+                ColorConstant.DividerColor,
                 FontWeight.w400,
                 $(12),
               )
                   .intoContainer(
-                height: $(20),
                 alignment: Alignment.center,
                 padding: EdgeInsets.symmetric(horizontal: $(8)),
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
-                    color: ColorConstant.White,
+                    color: ColorConstant.White.withOpacity(0.5),
                   ),
                   borderRadius: BorderRadius.circular($(10)),
                 ),
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.category ?? '', socialPost);
+                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost);
                 },
               )
             ],
@@ -112,13 +117,13 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               itemCount: this.socialPost?.length ?? 0,
               itemBuilder: (context, index) => _Item(widget.height, this.socialPost![index]).intoGestureDetector(
                 onTap: () {
-                  widget.onTapItem(index);
+                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost);
                 },
               ),
             ),
           ),
           SizedBox(
-            height: $(16),
+            height: $(12),
           ),
         ],
       ),
@@ -129,7 +134,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
   void dispose() {
     super.dispose();
     _scrollController.dispose();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 
   @override
@@ -144,19 +149,26 @@ class _Item extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<DiscoveryResource> list = post.resourceList();
-    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == 'image');
+    List<DiscoveryResource> list = post.resourceList().reversed.toList();
+    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return resource == null
         ? SizedBox.shrink()
         : ClipRRect(
             borderRadius: BorderRadius.circular($(8)),
-            child: CachedNetworkImageUtils.custom(
-              fit: BoxFit.cover,
-              useOld: false,
-              height: height,
-              width: $(96),
-              context: context,
-              imageUrl: resource.url!,
+            child: VisibilityHolder(
+              keyString: resource.url!,
+              child: CachedNetworkImageUtils.custom(
+                fit: BoxFit.cover,
+                useOld: false,
+                height: height,
+                width: $(96),
+                context: context,
+                imageUrl: resource.url!,
+              ),
+              placeHolder: SizedBox(
+                width: $(96),
+                height: height,
+              ),
             ),
           );
   }

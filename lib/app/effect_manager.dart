@@ -1,11 +1,12 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -14,7 +15,7 @@ class EffectManager extends BaseManager {
 
   ApiConfigEntity? get data => _data;
   late CacheManager cacheManager;
-  late CartoonizerApi api;
+  late AppApi api;
   late Map<String, double> _scaleCachedMap = {};
   Map<String, bool> nsfwStateMap = {};
   bool loaded = false;
@@ -22,7 +23,7 @@ class EffectManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
-    api = CartoonizerApi.quickResponse().bindManager(this);
+    api = AppApi.quickResponse().bindManager(this);
   }
 
   @override
@@ -66,9 +67,9 @@ class EffectManager extends BaseManager {
         });
         //download metagram resources
         _data!.promotionResources.forEach((element) {
-          if (element.type == 'image') {
+          if (element.type == DiscoveryResourceType.image) {
             SyncDownloadImage(type: getFileType(element.url ?? ''), url: element.url ?? '').getImage();
-          } else if (element.type == 'video') {
+          } else if (element.type == DiscoveryResourceType.video) {
             SyncDownloadVideo(type: getFileType(element.url ?? ''), url: element.url ?? '').getVideo();
           }
         });

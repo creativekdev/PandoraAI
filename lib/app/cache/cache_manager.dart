@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/app_feature_operator.dart';
-import 'package:cartoonizer/app/cache/img_summary_cache.dart';
 import 'package:cartoonizer/app/cache/photo_source_operator.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/utils/array_util.dart';
@@ -57,14 +56,17 @@ class CacheManager extends BaseManager {
   static const platformConnections = 'platform_connections';
   static const viewPreviewOpen = 'video_preview_open';
   static const backgroundPickHistory = 'backgroundPickHistory';
-  static const backgroundTabIndexHistory= 'backgroundTabIndexHistory';
+  static const backgroundTabIndexHistory = 'backgroundTabIndexHistory';
+  static const postOfTerm = "post_of_term";
+  static const reportOfPosts = "report_of_posts";
+  static const reportOfCommentPosts = "report_of_comment_posts";
+  static const showedGuideOfHomeDetail = "showed_guide_of_home_detail";
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;
   late ImageScaleOperator _imageScaleOperator;
   late PhotoSourceOperator _photoSourceOperator;
   late AppFeatureOperator _featureOperator;
-  late ImgSummaryCache _imgSummaryCache;
 
   StorageOperator get storageOperator => _storageOperator;
 
@@ -73,8 +75,6 @@ class CacheManager extends BaseManager {
   PhotoSourceOperator get photoSourceOperator => _photoSourceOperator;
 
   AppFeatureOperator get featureOperator => _featureOperator;
-
-  ImgSummaryCache get imgSummaryCache => _imgSummaryCache;
 
   @override
   Future<void> onCreate() async {
@@ -87,8 +87,6 @@ class CacheManager extends BaseManager {
     _photoSourceOperator = PhotoSourceOperator(cacheManager: this);
     _photoSourceOperator.init();
     _featureOperator = AppFeatureOperator(cacheManager: this);
-    _imgSummaryCache = ImgSummaryCache(cacheManager: this);
-    _imgSummaryCache.init();
   }
 
   List<String> keys(String partKey) {
@@ -107,6 +105,10 @@ class CacheManager extends BaseManager {
 
   String getString(String key) {
     return _sharedPreferences.getString(key) ?? '';
+  }
+
+  bool containKey(String key) {
+    return _sharedPreferences.containsKey(key);
   }
 
   Future<bool> setString(String key, String? value) async {

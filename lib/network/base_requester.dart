@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/ThemeConstant.dart';
 import 'package:cartoonizer/Common/sToken.dart';
 import 'package:cartoonizer/config.dart';
+import 'package:cartoonizer/main.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' as g;
 import 'package:package_info_plus/package_info_plus.dart';
@@ -99,7 +100,7 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     params["app_version"] = packageInfo.version;
     params["app_build"] = packageInfo.buildNumber;
     params['from_app'] = "1";
-    params['language'] = AppContext.currentLocales;
+    params['language'] = MyApp.currentLocales;
     // add ts and signature
     params["ts"] = DateTime.now().millisecondsSinceEpoch.toString();
     params["s"] = sToken(params);

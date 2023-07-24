@@ -32,9 +32,7 @@ class SyncDownloadVideo {
 
   _loadVideo() {
     fileName = EncryptUtil.encodeMd5(url);
-    var storageOperator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
-    var videoDir = storageOperator.videoDir;
-    var savePath = videoDir.path + fileName + '.' + type;
+    var savePath = getSavePath(url, type);
     File data = File(savePath);
     if (data.existsSync()) {
       if (!_completer.isCompleted) {
@@ -52,8 +50,7 @@ class SyncDownloadVideo {
             Downloader.instance.unsubscribeSync(key, downloadListener!);
           },
           onFinished: (File file) {
-            var videoDir = storageOperator.videoDir;
-            var savePath = videoDir.path + fileName + '.' + type;
+            var savePath = getSavePath(url, type);
             if (!_completer.isCompleted) {
               _completer.complete(File(savePath));
             }
@@ -65,5 +62,13 @@ class SyncDownloadVideo {
         Downloader.instance.subscribe(value, downloadListener!);
       });
     }
+  }
+
+  static getSavePath(String url, String type) {
+    var fileName = EncryptUtil.encodeMd5(url);
+    var storageOperator = AppDelegate.instance.getManager<CacheManager>().storageOperator;
+    var videoDir = storageOperator.videoDir;
+    var savePath = videoDir.path + fileName + '.' + type;
+    return savePath;
   }
 }

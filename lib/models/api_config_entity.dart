@@ -24,6 +24,8 @@ class ApiConfigEntity {
 
   EffectData? get stylemorph => data.pick((t) => t.key == 'stylemorph');
 
+  EffectData? get cartoonize => data.pick((t) => t.key == 'cartoonize');
+
   List<EffectData> get datas => data.filter((t) => t.key != 'stylemorph');
 
   ApiConfigEntity._instance();
@@ -65,16 +67,16 @@ class ApiConfigEntity {
     if (json['homepage'] != null) {
       entity.homepage = HomePageEntity.fromJson(json['homepage']);
       entity.homepage.galleries.forEach((element) {
-        element.title = element.category.localeValue(entity.locale);
+        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
       // entity.homepage.banners.forEach((element) {
       //   element.title = element.category.localeValue(entity.locale);
       // });
       entity.homepage.tools.forEach((element) {
-        element.title = element.category.localeValue(entity.locale);
+        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
       entity.homepage.features.forEach((element) {
-        element.title = element.category.localeValue(entity.locale);
+        element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
     }
     return entity;

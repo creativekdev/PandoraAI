@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/share/ShareUrlScreen.dart';
 import 'package:cartoonizer/views/social/metagram_item_list_screen.dart';
@@ -160,7 +161,7 @@ class _MetagramScreenState extends AppState<MetagramScreen> {
                   itemBuilder: (context, index) {
                     var e = entity.rows[index];
                     var blinkImage = BlinkImage(
-                      images: e.resourceList().filter((t) => t.type == 'image').map((e) => e.url!).toList(),
+                      images: e.resourceList().filter((t) => t.type == DiscoveryResourceType.image).map((e) => e.url!).toList(),
                       width: imageWidth,
                       height: imageWidth,
                     );

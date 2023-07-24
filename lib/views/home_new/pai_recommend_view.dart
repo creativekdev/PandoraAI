@@ -1,3 +1,6 @@
+import 'package:cartoonizer/Widgets/visibility_holder.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+
 import '../../Common/importFile.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../models/home_page_entity.dart';
@@ -11,12 +14,13 @@ class PaiRecommendView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: $(14)),
+      padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Wrap(
         spacing: $(8),
         runSpacing: $(8),
-        children: list!
+        children: finalList!
             .map(
               (e) => RecommendItem(
                 e,
@@ -37,26 +41,36 @@ class RecommendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double width = (ScreenUtil.screenSize.width - $(46)) / 3;
+    double width = (ScreenUtil.screenSize.width - $(48)) / 3;
+    var title = data.category.title();
     return Column(
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(8)),
-          child: CachedNetworkImageUtils.custom(
-            fit: BoxFit.cover,
-            useOld: false,
-            height: width * $(192.0) / $(110.0),
-            width: width,
-            context: context,
-            imageUrl: data.url,
+          child: VisibilityHolder(
+            keyString: data.url,
+            child: CachedNetworkImageUtils.custom(
+              fit: BoxFit.cover,
+              useOld: false,
+              height: width * $(192.0) / $(110.0),
+              width: width,
+              context: context,
+              imageUrl: data.url,
+            ),
+            placeHolder: SizedBox(
+              width: width,
+              height: width * $(192.0) / $(110.0),
+            ),
           ),
         ),
         TitleTextWidget(
-          data.title,
-          ColorConstant.White,
+          title.isEmpty ? data.categoryString! : title,
+          ColorConstant.DividerColor,
           FontWeight.w400,
           $(12),
+          maxLines: 1,
         ).intoContainer(
+          width: width,
           padding: EdgeInsets.only(top: $(8), bottom: $(8)),
         )
       ],

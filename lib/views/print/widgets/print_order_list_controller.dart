@@ -5,7 +5,7 @@ import 'package:cartoonizer/views/print/print_order_controller.dart';
 import '../../../Common/event_bus_helper.dart';
 import '../../../Common/importFile.dart';
 import '../../../Widgets/router/routers.dart';
-import '../../../api/cartoonizer_api.dart';
+import '../../../api/app_api.dart';
 import '../../../config.dart';
 import '../../../models/print_orders_entity.dart';
 import '../../../models/print_payment_entity.dart';
@@ -16,7 +16,7 @@ import '../print_payment_success_screen.dart';
 class PrintOrderListController extends GetxController {
   PrintOrderListController({required this.tabKey}) {}
 
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   List<PrintOrdersDataRows> _orders = [];
 
@@ -73,13 +73,13 @@ class PrintOrderListController extends GetxController {
       params["start_time"] = dates[0]?.millisecondsSinceEpoch ?? 0;
       params["end_time"] = dates[1]?.millisecondsSinceEpoch ?? 0;
     }
-    cartoonizerApi.getShopifyOrders(params).then((value) => {onSuccess(value?.data.rows ?? [], refresh: refresh)});
+    appApi.getShopifyOrders(params).then((value) => {onSuccess(value?.data.rows ?? [], refresh: refresh)});
   }
 
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     nameListen = EventBusHelper().eventBus.on<OnPrintOrderKeyChangeEvent>().listen((event) {
       onSetName(event.data ?? '');
     });
@@ -125,7 +125,7 @@ class PrintOrderListController extends GetxController {
     super.onClose();
     nameListen.cancel();
     dateTimeListen.cancel();
-    cartoonizerApi.unbind();
+    appApi.unbind();
   }
 
   gotoPaymentPage(BuildContext context, PrintOrdersDataRows item, String source) async {
@@ -161,7 +161,7 @@ class PrintOrderListController extends GetxController {
       ],
     };
 
-    PrintPaymentEntity? payment = await cartoonizerApi.buyPlanCheckout(params);
+    PrintPaymentEntity? payment = await appApi.buyPlanCheckout(params);
     // PrintOrderEntity orderEntity = PrintOrderEntity.fromJson({"data": item.toJson()});
 
     Events.printStartPay(source: source, orderId: item.id.toString());

@@ -22,10 +22,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "AgreeAndContinue":
+            MessageLookupByLibrary.simpleMessage("Agree And Continue"),
         "DAILY_IP_LIMIT_EXCEEDED": MessageLookupByLibrary.simpleMessage(
             "You have run out of your daily credits. Please come back tomorrow."),
+        "HaveReport": MessageLookupByLibrary.simpleMessage(
+            "You have already reported it"),
         "IHaveReadAndAgreeTo":
             MessageLookupByLibrary.simpleMessage("I have read and agree to"),
+        "InputBadWord": MessageLookupByLibrary.simpleMessage(
+            "Your input contains the bad word: \$s"),
+        "ReceivedReport": MessageLookupByLibrary.simpleMessage(
+            "We have received your report"),
+        "Report": MessageLookupByLibrary.simpleMessage("Report"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("Select Region"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -38,6 +47,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("StateName or StateCode"),
         "STATE": MessageLookupByLibrary.simpleMessage("State"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
+        "TermsOfPost": MessageLookupByLibrary.simpleMessage(
+            "Pandora AI is a place for safe exploration of the world around us. For that reason, please follow the following policies. These policies apply to all formats, including Reviews, Photos, and Videos. Content that does not meet these criteria is automatically processed to detect and remove.\n1. Do not post content that includes any form of hate speech.\n2. Do not post content that harass other people, or encourage others to participate in harassment.\n3. Do not post offensive content.\n4. Do not post obscene and profane content.\n5. Do not post sexually explicit content.\n6. Do not post adult-themed content.\n7. Do not post violent or gory content involving people or animals.\n8. Do not post content that is illegal or depicts illegal activity.\n9. Do not create, post or distribute content that exploits or abuses children.\n10. Do not post terrorist content.\n11. Do not post repetitive content or gibberish.\nPromply notify us at support@socialbook.io if you discover or otherwise suspect any objectionable content."),
         "TermsOfUse": MessageLookupByLibrary.simpleMessage(" Terms of use"),
         "UserAgreement":
             MessageLookupByLibrary.simpleMessage(" User Agreement "),
@@ -47,7 +58,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Activate failure."),
         "activate_successfully":
             MessageLookupByLibrary.simpleMessage("Activate successfully!"),
+        "add_address":
+            MessageLookupByLibrary.simpleMessage("Add Shipping Address"),
         "address": MessageLookupByLibrary.simpleMessage("Address"),
+        "addresses": MessageLookupByLibrary.simpleMessage("Addresses"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1":
             MessageLookupByLibrary.simpleMessage("By registering you agree to"),
@@ -170,6 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Connect with us"),
         "contact_number":
             MessageLookupByLibrary.simpleMessage("Contact Number"),
+        "copy": MessageLookupByLibrary.simpleMessage("Copy"),
         "copy_successfully":
             MessageLookupByLibrary.simpleMessage("Copy Successfully"),
         "country_region":
@@ -192,6 +207,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Your account has been successfully deleted. We always welcome you to use our service again."),
         "delete_account_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to delete your account?"),
+        "delete_address_success": MessageLookupByLibrary.simpleMessage(
+            "Address deleted successfully"),
         "delete_succeed":
             MessageLookupByLibrary.simpleMessage("delete succeed"),
         "deny": MessageLookupByLibrary.simpleMessage("Deny"),
@@ -216,7 +233,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("dog"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "download": MessageLookupByLibrary.simpleMessage("Download"),
+        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "edit_address": MessageLookupByLibrary.simpleMessage("Edit Address"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("Edit Profile"),
         "effectRecentEmptyHint": MessageLookupByLibrary.simpleMessage(
             "No record of your usage found\nPlease make your first profile pic to view your history here"),
@@ -545,6 +564,9 @@ class MessageLookup extends MessageLookupByLibrary {
             "Are you sure to unsubscribe?"),
         "retry": MessageLookupByLibrary.simpleMessage("Retry"),
         "saturday": MessageLookupByLibrary.simpleMessage("Saturday"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "save_address_success":
+            MessageLookupByLibrary.simpleMessage("Address saved successfully"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage(
             "Are you sure to save %d images"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage(
@@ -561,6 +583,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_order": MessageLookupByLibrary.simpleMessage("Search order"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("Check it out"),
         "select": MessageLookupByLibrary.simpleMessage("Select"),
+        "selectTermOfPost": MessageLookupByLibrary.simpleMessage(
+            "Please check the terms of use"),
         "select_a_style":
             MessageLookupByLibrary.simpleMessage("Select a style"),
         "select_completed":
@@ -594,8 +618,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "shareIncludeOriginal": MessageLookupByLibrary.simpleMessage(
             "Also share the original image"),
         "share_app": MessageLookupByLibrary.simpleMessage("Share App"),
+        "share_out": MessageLookupByLibrary.simpleMessage("Share with friends"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "share_to": MessageLookupByLibrary.simpleMessage("Share to"),
+        "share_to_discovery":
+            MessageLookupByLibrary.simpleMessage("Share to Discovery"),
         "shipping_delivery":
             MessageLookupByLibrary.simpleMessage("Shipping & Delivery"),
         "shipping_details":
@@ -620,6 +647,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("Enter now"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
         "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),
+        "swipe_up_for_more":
+            MessageLookupByLibrary.simpleMessage("Swipe Up For More"),
         "system": MessageLookupByLibrary.simpleMessage("System"),
         "system_msg": MessageLookupByLibrary.simpleMessage("System Message"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
@@ -663,6 +692,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("unique avatars"),
         "unpaid": MessageLookupByLibrary.simpleMessage("Unpaid"),
+        "update_address_success": MessageLookupByLibrary.simpleMessage(
+            "Address deleted successfully"),
         "update_now": MessageLookupByLibrary.simpleMessage("Update now"),
         "update_pass": MessageLookupByLibrary.simpleMessage("Update Password"),
         "update_profile":

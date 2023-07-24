@@ -4710,6 +4710,76 @@ class S {
     );
   }
 
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Address`
+  String get edit_address {
+    return Intl.message(
+      'Edit Address',
+      name: 'edit_address',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address saved successfully`
+  String get save_address_success {
+    return Intl.message(
+      'Address saved successfully',
+      name: 'save_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address deleted successfully`
+  String get delete_address_success {
+    return Intl.message(
+      'Address deleted successfully',
+      name: 'delete_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address deleted successfully`
+  String get update_address_success {
+    return Intl.message(
+      'Address deleted successfully',
+      name: 'update_address_success',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Addresses`
+  String get addresses {
+    return Intl.message(
+      'Addresses',
+      name: 'addresses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Shipping Address`
+  String get add_address {
+    return Intl.message(
+      'Add Shipping Address',
+      name: 'add_address',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Please read and agree User Privacy and Terms of use`
   String get pleaseReadAndAgreePrivacyAndTermsOfUse {
     return Intl.message(
@@ -4749,6 +4819,126 @@ class S {
       args: [],
     );
   }
+
+  /// `Pandora AI is a place for safe exploration of the world around us. For that reason, please follow the following policies. These policies apply to all formats, including Reviews, Photos, and Videos. Content that does not meet these criteria is automatically processed to detect and remove.\n1. Do not post content that includes any form of hate speech.\n2. Do not post content that harass other people, or encourage others to participate in harassment.\n3. Do not post offensive content.\n4. Do not post obscene and profane content.\n5. Do not post sexually explicit content.\n6. Do not post adult-themed content.\n7. Do not post violent or gory content involving people or animals.\n8. Do not post content that is illegal or depicts illegal activity.\n9. Do not create, post or distribute content that exploits or abuses children.\n10. Do not post terrorist content.\n11. Do not post repetitive content or gibberish.\nPromply notify us at support@socialbook.io if you discover or otherwise suspect any objectionable content.`
+  String get TermsOfPost {
+    return Intl.message(
+      'Pandora AI is a place for safe exploration of the world around us. For that reason, please follow the following policies. These policies apply to all formats, including Reviews, Photos, and Videos. Content that does not meet these criteria is automatically processed to detect and remove.\n1. Do not post content that includes any form of hate speech.\n2. Do not post content that harass other people, or encourage others to participate in harassment.\n3. Do not post offensive content.\n4. Do not post obscene and profane content.\n5. Do not post sexually explicit content.\n6. Do not post adult-themed content.\n7. Do not post violent or gory content involving people or animals.\n8. Do not post content that is illegal or depicts illegal activity.\n9. Do not create, post or distribute content that exploits or abuses children.\n10. Do not post terrorist content.\n11. Do not post repetitive content or gibberish.\nPromply notify us at support@socialbook.io if you discover or otherwise suspect any objectionable content.',
+      name: 'TermsOfPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Agree And Continue`
+  String get AgreeAndContinue {
+    return Intl.message(
+      'Agree And Continue',
+      name: 'AgreeAndContinue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your input contains the bad word: $s`
+  String get InputBadWord {
+    return Intl.message(
+      'Your input contains the bad word: \$s',
+      name: 'InputBadWord',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report`
+  String get Report {
+    return Intl.message(
+      'Report',
+      name: 'Report',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please check the terms of use`
+  String get selectTermOfPost {
+    return Intl.message(
+      'Please check the terms of use',
+      name: 'selectTermOfPost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We have received your report`
+  String get ReceivedReport {
+    return Intl.message(
+      'We have received your report',
+      name: 'ReceivedReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have already reported it`
+  String get HaveReport {
+    return Intl.message(
+      'You have already reported it',
+      name: 'HaveReport',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy`
+  String get copy {
+    return Intl.message(
+      'Copy',
+      name: 'copy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share to Discovery`
+  String get share_to_discovery {
+    return Intl.message(
+      'Share to Discovery',
+      name: 'share_to_discovery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Share with friends`
+  String get share_out {
+    return Intl.message(
+      'Share with friends',
+      name: 'share_out',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Swipe Up For More`
+  String get swipe_up_for_more {
+    return Intl.message(
+      'Swipe Up For More',
+      name: 'swipe_up_for_more',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Downloading...`
+  String get downloading {
+    return Intl.message(
+      'Downloading...',
+      name: 'downloading',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -4758,6 +4948,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
       Locale.fromSubtags(languageCode: 'es'),
+      Locale.fromSubtags(languageCode: 'ja'),
       Locale.fromSubtags(languageCode: 'zh'),
     ];
   }

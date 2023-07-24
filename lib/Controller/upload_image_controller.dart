@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/uploader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -146,7 +146,7 @@ class UploadImageController extends GetxController {
       "file_name": f_name,
       "content_type": c_type,
     };
-    var url = await CartoonizerApi().getPresignedUrl(params);
+    var url = await AppApi().getPresignedUrl(params);
     if (url == null) {
       return false;
     }

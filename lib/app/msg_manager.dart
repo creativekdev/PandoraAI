@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/enums/msg_type.dart';
@@ -15,7 +15,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../config.dart';
 
 class MsgManager extends BaseManager {
-  late CartoonizerApi api;
+  late AppApi api;
 
   Rx<int> unreadCount = 0.obs;
   Rx<int> likeCount = 0.obs;
@@ -29,7 +29,7 @@ class MsgManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
-    api = CartoonizerApi().bindManager(this);
+    api = AppApi().bindManager(this);
 
     userStateListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) async {
       if (event.data ?? false) {

@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
@@ -29,7 +29,7 @@ import 'rate_notice_operator.dart';
 class UserManager extends BaseManager {
   late CacheManager cacheManager;
   bool lastLauncherLoginStatus = false; //true login, false unLogin
-  late CartoonizerApi api;
+  late AppApi api;
 
   Map<ConnectorPlatform, List<PlatformConnectionEntity>> get platformConnections {
     Map<ConnectorPlatform, List<PlatformConnectionEntity>> result = {};
@@ -110,7 +110,7 @@ class UserManager extends BaseManager {
   @override
   Future<void> onCreate() async {
     super.onCreate();
-    api = CartoonizerApi().bindManager(this);
+    api = AppApi().bindManager(this);
     _userStataListen = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       if (event.data ?? false) {
         _rateNoticeOperator.init();
@@ -356,7 +356,7 @@ class UserManager extends BaseManager {
       case ConnectorPlatform.UNDEFINED:
         break;
     }
-    var baseEntity = await CartoonizerApi2().disconnectSocialMedia(params);
+    var baseEntity = await AppApi2().disconnectSocialMedia(params);
     if (baseEntity != null) {
       var connections = platformConnections;
       var platformConnection = connections[connection.platform] as List<PlatformConnectionEntity>;

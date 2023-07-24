@@ -38,8 +38,7 @@ class MineFragment extends StatefulWidget {
   State<StatefulWidget> createState() => MineFragmentState();
 }
 
-class MineFragmentState extends AppState<MineFragment>
-    with AutomaticKeepAliveClientMixin, AppTabState {
+class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveClientMixin, AppTabState {
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late AppTabId tabId;
@@ -51,12 +50,10 @@ class MineFragmentState extends AppState<MineFragment>
     super.initState();
     Posthog().screenWithUser(screenName: 'mine_fragment');
     tabId = widget.tabId;
-    userLoginEventListener =
-        EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
+    userLoginEventListener = EventBusHelper().eventBus.on<LoginStateEvent>().listen((event) {
       setState(() {});
     });
-    userChangeEventListener =
-        EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
+    userChangeEventListener = EventBusHelper().eventBus.on<UserInfoChangeEvent>().listen((event) {
       setState(() {});
     });
   }
@@ -76,8 +73,7 @@ class MineFragmentState extends AppState<MineFragment>
     super.onAttached();
     userManager.refreshUser();
     var currentTime = DateTime.now().millisecondsSinceEpoch;
-    cacheManager.setInt(
-        '${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
+    cacheManager.setInt('${CacheManager.keyLastTabAttached}_${tabId.id()}', currentTime);
   }
 
   @override
@@ -100,21 +96,15 @@ class MineFragmentState extends AppState<MineFragment>
   Widget buildWidget(BuildContext context) {
     return Column(
       children: [
-        AppNavigationBar(
-            visible: false, backgroundColor: ColorConstant.BackgroundColor),
+        AppNavigationBar(visible: false, backgroundColor: ColorConstant.BackgroundColor),
         Expanded(
             child: SingleChildScrollView(
           child: Column(
             children: [
-              UserBaseInfoWidget(userInfo: userManager.user)
-                  .intoGestureDetector(onTap: () {
+              UserBaseInfoWidget(userInfo: userManager.user).intoGestureDetector(onTap: () {
                 if (userManager.isNeedLogin) {
-                  userManager.doOnLogin(context,
-                      logPreLoginAction: 'loginNormal',
-                      currentPageRoute: '/HomeScreen', callback: () {
-                    EventBusHelper()
-                        .eventBus
-                        .fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
+                  userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/HomeScreen', callback: () {
+                    EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
                     setState(() {});
                   }, autoExec: true);
                 } else {
@@ -127,10 +117,7 @@ class MineFragmentState extends AppState<MineFragment>
                 }
               }),
               Container(height: $(12)),
-              ImageTextBarWidget(
-                      S.of(context).recently, Images.ic_recently, true,
-                      color: Color(0xfff95f5f))
-                  .intoGestureDetector(onTap: () {
+              ImageTextBarWidget(S.of(context).recently, Images.ic_recently, true, color: Color(0xfff95f5f)).intoGestureDetector(onTap: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -170,98 +157,58 @@ class MineFragmentState extends AppState<MineFragment>
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 Events.shareApp();
                 final box = context.findRenderObject() as RenderBox?;
-                var file = File(
-                    cacheManager.storageOperator.tempDir.path + 'appQR.png');
+                var file = File(cacheManager.storageOperator.tempDir.path + 'appQR.png');
                 if (!file.existsSync()) {
-                  var imageInfo =
-                      await SyncAssetImage(assets: Images.ic_share_app_image)
-                          .getImage();
-                  var byteData = await imageInfo.image
-                      .toByteData(format: ImageByteFormat.png);
+                  var imageInfo = await SyncAssetImage(assets: Images.ic_share_app_image).getImage();
+                  var byteData = await imageInfo.image.toByteData(format: ImageByteFormat.png);
                   file.writeAsBytes(byteData!.buffer.asUint8List());
                 }
-                await Share.shareXFiles([XFile(file.path)],
-                    subject: APP_TITLE,
-                    sharePositionOrigin:
-                        box!.localToGlobal(Offset.zero) & box.size);
+                await Share.shareXFiles([XFile(file.path)], subject: APP_TITLE, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                 // var appLink = Config.getAppLink();
                 // if (Platform.isIOS) {
                 //   await FlutterShareMe().shareToSystem(msg: appLink);
                 // } else {
                 //   await Share.share(appLink, sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
                 // }
-                AppDelegate.instance
-                    .getManager<ThirdpartManager>()
-                    .adsHolder
-                    .ignore = false;
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
               }),
               line(context),
-              ImageTextBarWidget(
-                      Platform.isAndroid
-                          ? S.of(context).rate_us1
-                          : S.of(context).rate_us,
-                      ImagesConstant.ic_rate_us,
-                      true)
-                  .intoGestureDetector(
+              ImageTextBarWidget(Platform.isAndroid ? S.of(context).rate_us1 : S.of(context).rate_us, ImagesConstant.ic_rate_us, true).intoGestureDetector(
                 onTap: () async {
-                  AppDelegate.instance
-                      .getManager<ThirdpartManager>()
-                      .adsHolder
-                      .ignore = true;
+                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                   rateApp().then((value) {
-                    AppDelegate.instance
-                        .getManager<ThirdpartManager>()
-                        .adsHolder
-                        .ignore = false;
+                    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                   });
                   // var url = Config.getStoreLink(toRate: true);
                   // launchURL(url);
                 },
               ),
               line(context),
-              ImageTextBarWidget(
-                      (userManager.user?.isReferred ?? false)
-                          ? S.of(context).invited_code
-                          : S.of(context).input_invited_code,
-                      Images.ic_ref_code,
-                      true)
+              ImageTextBarWidget((userManager.user?.isReferred ?? false) ? S.of(context).invited_code : S.of(context).input_invited_code, Images.ic_ref_code, true)
                   .intoGestureDetector(
                 onTap: () {
                   SubmitInvitedCodeScreen.push(context);
                 },
               ).offstage(offstage: userManager.isNeedLogin),
               line(context).offstage(offstage: userManager.isNeedLogin),
-              ImageTextBarWidget('Pandora Avatar', Images.ic_avatar_ai, true)
-                  .intoGestureDetector(
+              ImageTextBarWidget('Pandora Avatar', Images.ic_avatar_ai, true).intoGestureDetector(
                 onTap: () async {
-                  Avatar.open(context, source: 'my');
+                  Avatar.open(context, source: 'my_page');
                 },
               ),
               line(context),
-              ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true)
-                  .intoGestureDetector(onTap: () {
-                AppDelegate.instance
-                    .getManager<ThirdpartManager>()
-                    .adsHolder
-                    .ignore = true;
+              ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
+                AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 PaymentUtils.pay(context, 'my_page').then((value) {
-                  AppDelegate.instance
-                      .getManager<ThirdpartManager>()
-                      .adsHolder
-                      .ignore = false;
+                  AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              line(context),
-              ImageTextBarWidget("Filter test", Images.ic_premium, true)
-                  .intoGestureDetector(onTap: () {
-                    ImFilter.open(
-                      context
-                    );
-                }),
+              line(context).visibility(visible: false),
+              ImageTextBarWidget("Filter test", Images.ic_premium, true).intoGestureDetector(onTap: () {
+                ImFilter.open(context, tab: TABS.FILTER, source: 'my_page');
+              }).visibility(visible: true),
               Container(height: $(12)),
-              ImageTextBarWidget(
-                      S.of(context).settings, Images.ic_settings, true)
-                  .intoGestureDetector(
+              ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
@@ -285,8 +232,7 @@ class MineFragmentState extends AppState<MineFragment>
                       ),
                     ),
                     SizedBox(width: 3.w),
-                    TitleTextWidget(S.of(context).connect_with_us,
-                        ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
+                    TitleTextWidget(S.of(context).connect_with_us, ColorConstant.BtnTextColor, FontWeight.w500, 12.sp),
                     SizedBox(width: 3.w),
                     Expanded(
                       child: Divider(
@@ -298,8 +244,7 @@ class MineFragmentState extends AppState<MineFragment>
                 ),
               ),
               Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 10.w, vertical: $(25)),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: $(25)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -311,8 +256,7 @@ class MineFragmentState extends AppState<MineFragment>
                         child: Image.asset(
                           Images.ic_facebook,
                           width: double.maxFinite,
-                        ).intoContainer(
-                            margin: EdgeInsets.symmetric(horizontal: $(10))),
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                     Expanded(
@@ -323,8 +267,7 @@ class MineFragmentState extends AppState<MineFragment>
                         child: Image.asset(
                           Images.ic_share_instagram,
                           width: double.maxFinite,
-                        ).intoContainer(
-                            margin: EdgeInsets.symmetric(horizontal: $(10))),
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                     Expanded(
@@ -335,8 +278,7 @@ class MineFragmentState extends AppState<MineFragment>
                         child: Image.asset(
                           Images.ic_share_twitter,
                           width: double.maxFinite,
-                        ).intoContainer(
-                            margin: EdgeInsets.symmetric(horizontal: $(10))),
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                     Expanded(
@@ -347,8 +289,7 @@ class MineFragmentState extends AppState<MineFragment>
                         child: Image.asset(
                           Images.ic_share_tiktok,
                           width: double.maxFinite,
-                        ).intoContainer(
-                            margin: EdgeInsets.symmetric(horizontal: $(10))),
+                        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10))),
                       ),
                     ),
                   ],
@@ -362,17 +303,14 @@ class MineFragmentState extends AppState<MineFragment>
     );
   }
 
-  Widget functions(String title,
-      {GestureTapCallback? onTap, Widget? training}) {
+  Widget functions(String title, {GestureTapCallback? onTap, Widget? training}) {
     if (training == null) {
       training = Image.asset(Images.ic_right_arrow, width: $(28));
     }
     return Row(
       children: [
         Expanded(
-          child: TitleTextWidget(
-                  title, ColorConstant.White, FontWeight.w400, $(15))
-              .intoContainer(alignment: Alignment.centerLeft),
+          child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, $(15)).intoContainer(alignment: Alignment.centerLeft),
         ),
         training,
       ],

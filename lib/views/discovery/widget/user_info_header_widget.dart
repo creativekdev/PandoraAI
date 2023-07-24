@@ -30,7 +30,9 @@ class UserInfoHeaderWidget extends StatelessWidget {
             imageUrl: avatar.avatar(),
             fit: BoxFit.cover,
             placeholder: (context, url) {
-              return SkeletonAvatar(style: SkeletonAvatarStyle(height: $(45),width: $(45),shape: BoxShape.circle),);
+              return SkeletonAvatar(
+                style: SkeletonAvatarStyle(height: $(45), width: $(45), shape: BoxShape.circle),
+              );
             },
             errorWidget: (context, url, error) {
               return Image.asset(Images.ic_avatar_default).intoContainer(

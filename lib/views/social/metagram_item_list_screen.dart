@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
@@ -134,7 +134,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                     controller.likeLocalAddAlready.value = true;
                     if (liked) {
                       data.likes--;
-                      CartoonizerApi().discoveryUnLike(data.id!, data.likeId!).then((value) {
+                      AppApi().discoveryUnLike(data.id!, data.likeId!).then((value) {
                         if (value == null) {
                           controller.likeLocalAddAlready.value = false;
                         }
@@ -143,7 +143,7 @@ class _MetagramItemListScreenState extends AppState<MetagramItemListScreen> {
                       data.liked.value = false;
                     } else {
                       data.likes++;
-                      CartoonizerApi().discoveryLike(data.id!, source: 'metagram_item_list_page', style: 'metagram').then((value) {
+                      AppApi().discoveryLike(data.id!, source: 'metagram_item_list_page', style: 'metagram').then((value) {
                         if (value == null) {
                           controller.likeLocalAddAlready.value = false;
                         }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/models/pay_plan_entity.dart';
 import 'package:cartoonizer/views/ai/avatar/pay/pay_avatar_plans_screen.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -29,7 +29,7 @@ class _PayAvatarPage extends StatefulWidget {
 }
 
 class PayAvatarPageState extends AppState<_PayAvatarPage> {
-  late CartoonizerApi api;
+  late AppApi api;
   List<PayPlanEntity> dataList = [];
   PayPlanEntity? selected;
 
@@ -40,7 +40,7 @@ class PayAvatarPageState extends AppState<_PayAvatarPage> {
     super.initState();
     Posthog().screenWithUser(screenName: 'avatar_plan_pay_screen');
     Events.avatarPlanShow();
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     delay(() {
       showLoading().whenComplete(() {
         api.listAllBuyPlan('ai_avatar_credit').then((value) {

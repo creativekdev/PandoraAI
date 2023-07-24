@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/avatar_ai_list_entity.dart';
@@ -13,7 +13,7 @@ import 'package:common_utils/common_utils.dart';
 class AvatarAiManager extends BaseManager {
   List<AvatarAiListEntity> dataList = [];
   late UserManager userManager;
-  late CartoonizerApi api;
+  late AppApi api;
   AvatarConfigEntity? config;
   bool listPageAlive = false;
   late StreamSubscription userLoginListen;
@@ -38,7 +38,7 @@ class AvatarAiManager extends BaseManager {
         }
       }
     });
-    api = CartoonizerApi().bindManager(this);
+    api = AppApi().bindManager(this);
   }
 
   @override
@@ -81,7 +81,7 @@ class AvatarAiManager extends BaseManager {
   }
 
   Future<List<AvatarAiListEntity>?> listAllAvatarAi() async {
-    var list = await CartoonizerApi().listAllAvatarAi();
+    var list = await AppApi().listAllAvatarAi();
     if (list == null) {
       return null;
     }
@@ -95,6 +95,6 @@ class AvatarAiManager extends BaseManager {
   Future<AvatarAiListEntity?> getAvatarAiDetail({
     required String token,
   }) async {
-    return await CartoonizerApi().getAvatarAiDetail(token: token);
+    return await AppApi().getAvatarAiDetail(token: token);
   }
 }

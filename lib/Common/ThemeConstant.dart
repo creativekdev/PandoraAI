@@ -8,10 +8,6 @@ class EdgeConstants {
   static const EdgeInsets TopBarEdgeInsets = EdgeInsets.symmetric(horizontal: 20, vertical: 10);
 }
 
-class AppContext {
-  static String currentLocales = 'en';
-}
-
 class ColorConstant {
   // colors
   static const PrimaryColor = Colors.white;
@@ -62,6 +58,7 @@ class ColorConstant {
   static const colorBlue3 = Color(0xff0114b1);
   static const Color aiDrawGrey = Color(0xfff5f5f6);
   static const Color aiDrawBlue = Color(0xff2778ff);
+
   // static const Color aiDrawGrey = Color(0xff1e1f1e);
 
   Color r11CircleColor = Color(0xFF2C2C2C);

@@ -7,6 +7,7 @@ class Images {
    static const String discover = 'assets/images/discover.png';
    static const String hue = 'assets/images/hue.png';
    static const String ic_add = 'assets/images/ic_add.png';
+   static const String ic_address_selected = 'assets/images/ic_address_selected.png';
    static const String ic_adjust = 'assets/images/ic_adjust.png';
    static const String ic_ai_draw_arrow = 'assets/images/ic_ai_draw_arrow.png';
    static const String ic_ai_draw_camera = 'assets/images/ic_ai_draw_camera.png';
@@ -66,6 +67,7 @@ class Images {
    static const String ic_download = 'assets/images/ic_download.png';
    static const String ic_draw_result_bg = 'assets/images/ic_draw_result_bg.png';
    static const String ic_drawable_arrow = 'assets/images/ic_drawable_arrow.png';
+   static const String ic_edit = 'assets/images/ic_edit.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
    static const String ic_effect = 'assets/images/ic_effect.png';
    static const String ic_email = 'assets/images/ic_email.png';
@@ -160,6 +162,7 @@ class Images {
    static const String ic_reduction = 'assets/images/ic_reduction.png';
    static const String ic_ref_code = 'assets/images/ic_ref_code.png';
    static const String ic_refresh_header = 'assets/images/ic_refresh_header.svg';
+   static const String ic_report = 'assets/images/ic_report.png';
    static const String ic_right_arrow = 'assets/images/ic_right_arrow.png';
    static const String ic_ring = 'assets/images/ic_ring.png';
    static const String ic_rocket = 'assets/images/ic_rocket.png';
@@ -191,6 +194,7 @@ class Images {
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_slider = 'assets/images/ic_slider.png';
    static const String ic_success = 'assets/images/ic_success.png';
+   static const String ic_swipe = 'assets/images/ic_swipe.png';
    static const String ic_switch_images = 'assets/images/ic_switch_images.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';

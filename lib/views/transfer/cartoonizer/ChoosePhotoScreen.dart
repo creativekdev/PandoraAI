@@ -54,6 +54,7 @@ import '../../advertisement/reward_advertisement_screen.dart';
 import '../../share/ShareScreen.dart';
 import 'choose_tab_bar.dart';
 
+@Deprecated("弃用")
 class ChoosePhotoScreen extends StatefulWidget {
   int tabPos;
   int pos;
@@ -532,7 +533,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
 
   showSavePhotoDialog(BuildContext context) {
     if (lastBuildType == _BuildType.hdImage || controller.isVideo.value) {
-      Events.facetoonResultSave(type: lastBuildType.name);
+      Events.facetoonResultSave(photo: lastBuildType.name);
       saveToAlbum();
     } else {
       showModalBottomSheet(
@@ -549,7 +550,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 )
                     .intoGestureDetector(onTap: () async {
                   Navigator.of(context).pop();
-                  Events.facetoonResultSave(type: lastBuildType.name);
+                  Events.facetoonResultSave(photo: lastBuildType.name);
                   await saveToAlbum();
                 }),
                 Divider(height: 0.5, color: ColorConstant.EffectGrey).intoContainer(
@@ -579,7 +580,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         _cachedImage = null;
                         imageSize = null;
                       });
-                      Events.facetoonResultSave(type: 'watch_ad_hdImage');
+                      Events.facetoonResultSave(photo: 'watch_ad_hdImage');
                       saveToAlbum();
                     }
                   });
@@ -612,7 +613,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                     }
                     if (lastBuildType == _BuildType.waterMark && getBuildType() == _BuildType.hdImage) {
                       controller.changeIsLoading(true);
-                      Events.facetoonResultSave(type: 'sign_hdImage');
+                      Events.facetoonResultSave(photo: 'sign_hdImage');
                       getCartoon(context, rebuild: true);
                     }
                   });
@@ -706,7 +707,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               isVideo: controller.isVideo.value,
               originalUrl: urlFinal,
               effectKey: selectedEffect.key, onShareSuccess: (platform) {
-            Events.facetoonResultShare(platform: platform);
+            // Events.facetoonResultShare(platform: platform);
           });
           AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         } else {
@@ -719,14 +720,15 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
       var newImage = await composeImageWithWatermark();
       controller.changeIsLoading(false);
       ShareScreen.startShare(context,
-          backgroundColor: Color(0x77000000),
-          style: selectedEffect.key,
-          image: (controller.isVideo.value) ? videoPath : newImage,
-          isVideo: controller.isVideo.value,
-          originalUrl: urlFinal,
-          effectKey: selectedEffect.key, onShareSuccess: (platform) {
-        Events.facetoonResultShare(platform: platform);
-      }).then((value) {
+              backgroundColor: Color(0x77000000),
+              style: selectedEffect.key,
+              image: (controller.isVideo.value) ? videoPath : newImage,
+              isVideo: controller.isVideo.value,
+              originalUrl: urlFinal,
+              effectKey: selectedEffect.key, onShareSuccess: (platform) {
+        // Events.facetoonResultShare(platform: platform);
+      })
+          .then((value) {
         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
       });
     }
@@ -759,7 +761,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            Events.facetoonResultShare(platform: 'discovery');
+            // Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -776,7 +778,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
           category: HomeCardType.cartoonize,
         ).then((value) {
           if (value ?? false) {
-            Events.facetoonResultShare(platform: 'discovery');
+            // Events.facetoonResultShare(platform: 'discovery');
             showShareSuccessDialog(context);
           }
         });
@@ -809,16 +811,23 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                 width: ScreenUtil.screenSize.width,
               )
                   .intoGestureDetector(onTap: () {
-                LiPopMenu.showLinePop(context, listData: [
-                  ListPopItem(text: S.of(context).tabDiscovery, icon: Images.ic_share_discovery),
-                  ListPopItem(text: S.of(context).share, icon: Images.ic_share),
-                ], clickCallback: (index, title) {
-                  if (index == 0) {
-                    shareToDiscovery();
-                  } else {
-                    shareOut();
-                  }
-                });
+                LiPopMenu.showLinePop(
+                  context,
+                  listData: [
+                    ListPopItem(
+                        text: S.of(context).share_to_discovery,
+                        icon: Images.ic_share_discovery,
+                        onTap: () {
+                          shareToDiscovery();
+                        }),
+                    ListPopItem(
+                        text: S.of(context).share_out,
+                        icon: Images.ic_share,
+                        onTap: () {
+                          shareOut();
+                        }),
+                  ],
+                );
               }).offstage(offstage: !controller.isPhotoDone.value),
             ),
             body: Column(
@@ -1044,7 +1053,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
                         lastChangeByTap = false;
                       }, milliseconds: 32);
                     }).visibility(visible: tabList.length > 1),
-                SizedBox(height: MediaQuery.of(context).padding.bottom),
+                SizedBox(height: MediaQuery.of(context).padding.bottom + $(12)),
               ],
             ),
           ).ignore(ignoring: controller.isLoading.value)),
@@ -1516,7 +1525,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
               aiHost: aiHost,
             );
             if (baseEntity != null) {
-              final Map parsed = baseEntity.data;
+              // final Map parsed = baseEntity.data;
+              final Map parsed = {};
               var cachedId = parsed['cache_id']?.toString();
               if (!TextUtil.isEmpty(cachedId)) {
                 uploadImageController.updateCachedId(controller.image.value, cachedId!);
@@ -1591,7 +1601,8 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
             selectedEffect.handleApiParams(dataBody);
             var baseEntity = await transformApi.transform('${aiHost}/api/image/cartoonize/token', rootPath, dataBody, aiHost: aiHost);
             if (baseEntity != null) {
-              final Map parsed = baseEntity.data;
+              // final Map parsed = baseEntity.data;
+              final Map parsed = {};
               var dataEncode = EncryptUtil.encodeMd5(parsed['data'].toString());
               if (parsed['data'].toString().startsWith('<')) {
                 successForward = () async {
@@ -1663,7 +1674,7 @@ class _ChoosePhotoScreenState extends State<ChoosePhotoScreen> with SingleTicker
         EventBusHelper().eventBus.fire(OnCartoonizerFinishedEvent(data: resultSuccess == 1));
 
         if (resultSuccess == 1) {
-          Events.facetoonGenerated(style: selectedEffect.key);
+          Events.facetoonGenerated(style: selectedEffect.key, source: 'image');
           if (TextUtil.isEmpty(controller.videoFile.value?.path) && TextUtil.isEmpty(_image)) {
             return;
           }

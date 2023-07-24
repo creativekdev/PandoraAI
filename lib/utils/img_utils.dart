@@ -144,6 +144,9 @@ class ImageUtils {
   static Future<Uint8List> printStyleMorphDrawData(File originalImage, File resultImage, String userEmail) async {
     return printImageData(originalImage, resultImage, userEmail, 'StyleMorph', arrowRes: Images.ic_ai_draw_arrow);
   }
+  static Future<Uint8List> printCartoonizeDrawData(File originalImage, File resultImage, String userEmail) async {
+    return printImageData(originalImage, resultImage, userEmail, 'Cartoonize', arrowRes: Images.ic_ai_draw_arrow);
+  }
 
   static Future<Uint8List> printAnotherMeData(File originalImage, File resultImage, String userEmail) async {
     return printImageData(originalImage, resultImage, userEmail, 'Me-taverse');

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/discovery_list_entity.g.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 @JsonSerializable()
 class DiscoveryListEntity {
@@ -23,7 +24,24 @@ class DiscoveryListEntity {
   late String modified;
   late int id;
   late String status;
-  String category = '';
+  @JSONField(name: 'category')
+  String? categoryString;
+
+  @JSONField(serialize: false, deserialize: false)
+  HomeCardType? _category;
+
+  HomeCardType get category {
+    if (_category == null) {
+      _category = HomeCardTypeUtils.build(categoryString);
+    }
+    return _category!;
+  }
+
+  set category(HomeCardType type) {
+    _category = type;
+    categoryString = _category!.value();
+  }
+
   @JSONField(name: "cartoonize_key")
   late String cartoonizeKey;
   @JSONField(name: "like_id")
@@ -99,13 +117,26 @@ class DiscoveryListEntity {
 
 @JsonSerializable()
 class DiscoveryResource {
-  String? type;
+  @JSONField(name: 'type')
+  String? typeString;
   String? url;
 
-  DiscoveryResource({
-    this.type,
-    this.url,
-  });
+  @JSONField(serialize: false, deserialize: false)
+  DiscoveryResourceType? _type;
+
+  DiscoveryResourceType get type {
+    if (_type == null) {
+      _type = DiscoveryResourceTypeUtil.build(typeString);
+    }
+    return _type!;
+  }
+
+  set type(DiscoveryResourceType type) {
+    _type = type;
+    typeString = _type!.value();
+  }
+
+  DiscoveryResource();
 
   factory DiscoveryResource.fromJson(Map<String, dynamic> json) => $DiscoveryResourceFromJson(json);
 
@@ -119,9 +150,19 @@ class DiscoveryResource {
   DiscoveryResource copy() => DiscoveryResource.fromJson(toJson());
 }
 
-enum DiscoveryResourceType {
-  image,
-  video,
+enum DiscoveryResourceType { image, video, UNDEFINED }
+
+class DiscoveryResourceTypeUtil {
+  static DiscoveryResourceType build(String? value) {
+    switch (value) {
+      case 'image':
+        return DiscoveryResourceType.image;
+      case 'video':
+        return DiscoveryResourceType.video;
+      default:
+        return DiscoveryResourceType.UNDEFINED;
+    }
+  }
 }
 
 extension DiscoveryResourceTypeEx on DiscoveryResourceType {
@@ -131,6 +172,8 @@ extension DiscoveryResourceTypeEx on DiscoveryResourceType {
         return 'image';
       case DiscoveryResourceType.video:
         return 'video';
+      case DiscoveryResourceType.UNDEFINED:
+        return '';
     }
   }
 }

@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   MsgListController msgController = Get.put(MsgListController());
   DiscoveryListController discoveryListController = Get.put(DiscoveryListController());
 
-  late AnimationController animationController;
+  AnimationController? animationController;
 
   @override
   void initState() {
@@ -58,10 +58,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
     initialTab(false);
     discoveryListController.onScrollChange = (scrollDown) {
+      if (!mounted) {
+        return;
+      }
+      if (animationController == null) {
+        return;
+      }
       if (scrollDown) {
-        animationController.forward();
+        animationController?.forward();
       } else if (!scrollDown) {
-        animationController.reverse();
+        animationController?.reverse();
       }
     };
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
@@ -144,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     onHomeConfigListener.cancel();
     onNewInvitationCodeListener.cancel();
     onUserStateChangeListener.cancel();
-    animationController.dispose();
+    animationController?.dispose();
     super.dispose();
   }
 
@@ -213,10 +219,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget buildBottomBar(BuildContext context) {
     return AnimatedBuilder(
-        animation: animationController,
+        animation: animationController!,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(0, animationController.value * (55 + ScreenUtil.getBottomPadding(context))),
+            offset: Offset(0, animationController!.value * (55 + ScreenUtil.getBottomPadding(context))),
             child: ClipRect(
                 child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),

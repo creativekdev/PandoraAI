@@ -50,17 +50,22 @@ class AppFeatureOperator {
     if (oldSign == newSign) {
       return false;
     }
-    var result = await Navigator.of(context).push<bool>(Bottom2TopRouter(
-      settings: RouteSettings(name: '/AppFeaturePage'),
-      child: AppFeaturePage(
-        entity: feature,
-      ),
-    ));
-    cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
-
-    if (result ?? false) {
-      HomeCardTypeUtils.jump(context: context, source: 'in_app_messaging', payload: feature.feature());
-      return true;
+    var featurePayload = feature.feature();
+    if (featurePayload!.target == 'url') {
+      HomeCardTypeUtils.jump(context: context, source: 'in_app_messaging', payload: featurePayload);
+      cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
+    } else {
+      var result = await Navigator.of(context).push<bool>(Bottom2TopRouter(
+        settings: RouteSettings(name: '/AppFeaturePage'),
+        child: AppFeaturePage(
+          entity: feature,
+        ),
+      ));
+      cacheManager.setString(CacheManager.lastShownFeatureSign, newSign);
+      if (result ?? false) {
+        HomeCardTypeUtils.jump(context: context, source: 'in_app_messaging', payload: featurePayload);
+        return true;
+      }
     }
     return false;
   }

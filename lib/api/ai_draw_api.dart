@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
@@ -69,7 +69,7 @@ class AiDrawApi extends RetryAbleRequester {
       }
     }
     result.s = baseEntity!.s;
-    CartoonizerApi().logScribble({
+    AppApi().logScribble({
       'prompt': text,
       'width': width,
       'height': height,

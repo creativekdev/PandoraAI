@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/avatar_ai_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -10,7 +10,7 @@ class RefCodeController extends GetxController {
   UserManager userManager = AppDelegate().getManager();
   AvatarAiManager aiManager = AppDelegate().getManager();
   TextEditingController textEditingController = TextEditingController();
-  late CartoonizerApi api;
+  late AppApi api;
 
   List<RefTab> tabList = [
     RefTab.enterCode,
@@ -59,7 +59,7 @@ class RefCodeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    api = CartoonizerApi().bindController(this);
+    api = AppApi().bindController(this);
   }
 
   @override

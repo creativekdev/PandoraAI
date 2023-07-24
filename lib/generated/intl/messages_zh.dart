@@ -22,9 +22,14 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "AgreeAndContinue": MessageLookupByLibrary.simpleMessage("同意并继续"),
         "DAILY_IP_LIMIT_EXCEEDED":
             MessageLookupByLibrary.simpleMessage("您的每日请求次数已达上限，请明天再试"),
+        "HaveReport": MessageLookupByLibrary.simpleMessage("你已经举报过了"),
         "IHaveReadAndAgreeTo": MessageLookupByLibrary.simpleMessage("我已阅读并同意"),
+        "InputBadWord": MessageLookupByLibrary.simpleMessage("您的输入包含不良词语: \$s"),
+        "ReceivedReport": MessageLookupByLibrary.simpleMessage("已收到你的举报"),
+        "Report": MessageLookupByLibrary.simpleMessage("举报"),
         "SELECT_COUNTRY_CALLING_CODE":
             MessageLookupByLibrary.simpleMessage("选择国家/地区"),
         "SELECT_COUNTRY_CALLING_CODE_HINT":
@@ -37,12 +42,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("省/州名或者州编码"),
         "STATE": MessageLookupByLibrary.simpleMessage("省/州"),
         "Subtotal": MessageLookupByLibrary.simpleMessage("总计"),
+        "TermsOfPost": MessageLookupByLibrary.simpleMessage(
+            "Pandora AI是一个安全探索周围世界的地方。因此，请遵守以下政策。这些政策适用于所有格式，包括评论、照片和视频。不符合这些标准的内容将自动进行处理以检测和删除。\n\n不要发布包含任何形式的仇恨言论的内容。\n不要发布骚扰他人的内容，或鼓励他人参与骚扰行为。\n不要发布冒犯性的内容。\n不要发布淫秽和亵渎的内容。\n不要发布性行为明确的内容。\n不要发布成人主题的内容。\n不要发布涉及人或动物的暴力或血腥的内容。\n不要发布非法内容或描绘非法活动的内容。\n不要创建、发布或分发剥削或虐待儿童的内容。\n不要发布恐怖主义内容。\n不要发布重复的内容或无意义的内容。\n如果你发现或怀疑任何不合适的内容，请立即通过support@socialbook.io通知我们。"),
         "TermsOfUse": MessageLookupByLibrary.simpleMessage("《使用条款》"),
         "UserAgreement": MessageLookupByLibrary.simpleMessage("《用户协议》"),
         "accountCancelled": MessageLookupByLibrary.simpleMessage("Pandora用户"),
         "activate_failed": MessageLookupByLibrary.simpleMessage("激活失败"),
         "activate_successfully": MessageLookupByLibrary.simpleMessage("激活成功！"),
+        "add_address": MessageLookupByLibrary.simpleMessage("添加收货地址"),
         "address": MessageLookupByLibrary.simpleMessage("收货地址"),
+        "addresses": MessageLookupByLibrary.simpleMessage("地址列表"),
         "after": MessageLookupByLibrary.simpleMessage("After"),
         "agree_text1": MessageLookupByLibrary.simpleMessage("注册即表示您同意"),
         "agree_text2":
@@ -142,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "congratulations": MessageLookupByLibrary.simpleMessage("祝贺你!"),
         "connect_with_us": MessageLookupByLibrary.simpleMessage("联系我们"),
         "contact_number": MessageLookupByLibrary.simpleMessage("联系电话"),
+        "copy": MessageLookupByLibrary.simpleMessage("复制"),
         "copy_successfully": MessageLookupByLibrary.simpleMessage("已复制到剪贴板"),
         "country_region": MessageLookupByLibrary.simpleMessage("国家/地区"),
         "cpass_validation": MessageLookupByLibrary.simpleMessage("两次输入密码不相同"),
@@ -159,6 +169,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("您的账号已经被注销，我们期待您的下次使用！"),
         "delete_account_tips":
             MessageLookupByLibrary.simpleMessage("您确定要永久注销您的账户吗？"),
+        "delete_address_success":
+            MessageLookupByLibrary.simpleMessage("地址删除成功"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("删除成功"),
         "deny": MessageLookupByLibrary.simpleMessage("拒绝"),
         "disconnect": MessageLookupByLibrary.simpleMessage("解除绑定"),
@@ -182,7 +194,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("狗"),
         "done": MessageLookupByLibrary.simpleMessage("完成"),
         "download": MessageLookupByLibrary.simpleMessage("下载"),
+        "downloading": MessageLookupByLibrary.simpleMessage("正在下载..."),
         "edit": MessageLookupByLibrary.simpleMessage("编辑"),
+        "edit_address": MessageLookupByLibrary.simpleMessage("编辑地址"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("编辑信息"),
         "effectRecentEmptyHint":
             MessageLookupByLibrary.simpleMessage("暂无转化记录，您可以在这里查看您的转换历史"),
@@ -384,7 +398,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "play_ground": MessageLookupByLibrary.simpleMessage("AI画室"),
         "pleaseInput": MessageLookupByLibrary.simpleMessage("请填写 %s"),
         "pleaseReadAndAgreePrivacyAndTermsOfUse":
-            MessageLookupByLibrary.simpleMessage("请阅读并统一用户协议和使用条款"),
+            MessageLookupByLibrary.simpleMessage("请阅读并同意用户协议和使用条款"),
         "pleaseSelect": MessageLookupByLibrary.simpleMessage("请选择%s"),
         "pleaseSelectColor": MessageLookupByLibrary.simpleMessage("请选择颜色"),
         "pleaseSelectModel": MessageLookupByLibrary.simpleMessage("请选择款式"),
@@ -447,6 +461,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "restore_msg": MessageLookupByLibrary.simpleMessage("您确定要取消订阅么？"),
         "retry": MessageLookupByLibrary.simpleMessage("重试"),
         "saturday": MessageLookupByLibrary.simpleMessage("周六"),
+        "save": MessageLookupByLibrary.simpleMessage("保存"),
+        "save_address_success": MessageLookupByLibrary.simpleMessage("地址保存成功"),
         "save_album_tips": MessageLookupByLibrary.simpleMessage("确认保存 %d 张图片吗"),
         "save_hd_image": MessageLookupByLibrary.simpleMessage("保存高清无水印图片"),
         "save_into_album": MessageLookupByLibrary.simpleMessage("保存到相册"),
@@ -459,6 +475,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "search_order": MessageLookupByLibrary.simpleMessage("订单搜索"),
         "see_it_now": MessageLookupByLibrary.simpleMessage("去看看"),
         "select": MessageLookupByLibrary.simpleMessage("选择"),
+        "selectTermOfPost":
+            MessageLookupByLibrary.simpleMessage("请查看并同意《使用条款》"),
         "select_a_style": MessageLookupByLibrary.simpleMessage("请选择风格"),
         "select_completed": MessageLookupByLibrary.simpleMessage("选择完成"),
         "select_from_album": MessageLookupByLibrary.simpleMessage("从相册选择"),
@@ -485,8 +503,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "share": MessageLookupByLibrary.simpleMessage("分享"),
         "shareIncludeOriginal": MessageLookupByLibrary.simpleMessage("同时分享原图"),
         "share_app": MessageLookupByLibrary.simpleMessage("分享App"),
+        "share_out": MessageLookupByLibrary.simpleMessage("分享给朋友"),
         "share_title": MessageLookupByLibrary.simpleMessage("Pandora AI"),
         "share_to": MessageLookupByLibrary.simpleMessage("分享到"),
+        "share_to_discovery": MessageLookupByLibrary.simpleMessage("分享到发现"),
         "shipping_delivery": MessageLookupByLibrary.simpleMessage("配送信息"),
         "shipping_details": MessageLookupByLibrary.simpleMessage("物流信息"),
         "shipping_information": MessageLookupByLibrary.simpleMessage("收货信息"),
@@ -506,6 +526,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("周日"),
+        "swipe_up_for_more": MessageLookupByLibrary.simpleMessage("上滑获取更多"),
         "system": MessageLookupByLibrary.simpleMessage("系统通知"),
         "system_msg": MessageLookupByLibrary.simpleMessage("系统消息"),
         "tabAI": MessageLookupByLibrary.simpleMessage("AI-Lab"),
@@ -544,6 +565,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "unpaid": MessageLookupByLibrary.simpleMessage("未支付"),
+        "update_address_success":
+            MessageLookupByLibrary.simpleMessage("地址更新成功"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),
         "update_pass": MessageLookupByLibrary.simpleMessage("更新密码"),
         "update_profile": MessageLookupByLibrary.simpleMessage("更新个人信息"),

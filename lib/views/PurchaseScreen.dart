@@ -32,7 +32,7 @@ const List<String> _kProductIds = <String>[
 ];
 
 class _PurchaseScreenState extends State<PurchaseScreen> {
-  bool isYear = true;
+  bool isYear = false;
 
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;

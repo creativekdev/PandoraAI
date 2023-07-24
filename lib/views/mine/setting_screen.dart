@@ -5,7 +5,7 @@ import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/Widgets/webview/app_web_view.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -84,21 +84,21 @@ class _SettingScreenState extends AppState<SettingScreen> {
                   )
                   .offstage(offstage: userManager.user?.appleId != ""),
               functions(S.of(context).help, onTap: () {
-                AppWebView.open(context, url: HELP_URL);
+                AppWebView.open(context, url: HELP_URL, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).term_condition, onTap: () {
-                AppWebView.open(context, url: TERM_AND_USE);
+                AppWebView.open(context, url: TERM_AND_USE, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
               ),
               functions(S.of(context).privacy_policy1, onTap: () {
-                AppWebView.open(context, url: USER_PRIVACY);
+                AppWebView.open(context, url: USER_PRIVACY, source: 'my_screen');
               }),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
@@ -402,7 +402,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
       );
 
   Future<bool> deleteAccount() async {
-    var result = await CartoonizerApi().deleteAccount();
+    var result = await AppApi().deleteAccount();
     if (result != null) {
       userManager.logout();
       return true;

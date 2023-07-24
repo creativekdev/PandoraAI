@@ -115,27 +115,17 @@ class NotificationManager extends BaseManager {
   }
 
   Future<void> onHandleNotificationClick(RemoteMessage message) async {
-    if (message.data.containsKey('tab')) {
-      Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
-      var pushExtraEntity = PushExtraEntity.fromJson(message.data);
-      EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
-      // EventBusHelper().eventBus.fire(OnEffectPushClickEvent(data: pushExtraEntity));
-      if (TextUtil.isEmpty(pushExtraEntity.tab)) return;
-      if (TextUtil.isEmpty(pushExtraEntity.category)) return;
-      EffectDataController controller = Get.find<EffectDataController>();
-      var pos = controller.findItemPos(pushExtraEntity.tab, pushExtraEntity.category, pushExtraEntity.effect);
-      Cartoonize.open(
-        Get.context!,
-        source: 'push_click',
-        tabPos: pos.tabPos,
-        itemPos: pos.itemPos,
-        categoryPos: pos.categoryPos,
-      );
-    } else if (message.data.containsKey('type')) {
+    if (message.data.containsKey('type')) {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       var pushModuleEntity = PushModuleExtraEntity.fromJson(message.data);
       EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.HOME.id()]));
-      HomeCardTypeUtils.jumpWithHomeType(Get.context!, 'push_click', HomeCardTypeUtils.build(pushModuleEntity.type), InitPos());
+      HomeCardTypeUtils.jumpWithHomeType(
+        Get.context!,
+        'push_click',
+        pushModuleEntity.type,
+        initKey: pushModuleEntity.initKey,
+        url: pushModuleEntity.url,
+      );
     } else {
       Navigator.popUntil(Get.context!, ModalRoute.withName('/HomeScreen'));
       try {

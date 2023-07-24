@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/network/dio_node.dart';
@@ -55,7 +55,7 @@ class ExceptionHandler {
         }
       }
       if (e.response != null) {
-        CartoonizerApi(client: DioNode.instance.build()).logError(
+        AppApi(client: DioNode.instance.build()).logError(
             reqMethod: e.requestOptions.method,
             api: '${e.requestOptions.baseUrl}${e.requestOptions.path}${e.requestOptions.generateParams()}',
             errorMessage: e.response!.data.toString(),

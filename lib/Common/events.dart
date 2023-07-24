@@ -80,11 +80,25 @@ class Events {
 
   static Future<void> facetoonLoading({required String source}) => logEvent('facetoon_loading', eventValues: {'source': source});
 
-  static Future<void> facetoonGenerated({required String style}) => logEvent('facetoon_generate', eventValues: {'style': style});
+  static Future<void> facetoonGenerated({required String style, required String source}) => logEvent('facetoon_generate', eventValues: {
+        'style': style,
+        'source': source,
+      });
 
-  static Future<void> facetoonResultShare({required String platform}) => logEvent('facetoon_result_share', eventValues: {'platform': platform});
+  static Future<void> facetoonGeneratedAgain({required String style, required int time}) => logEvent('facetoon_generate_again', eventValues: {'time': time});
 
-  static Future<void> facetoonResultSave({required String type}) => logEvent('facetoon_result_save', eventValues: {'type': type});
+  static Future<void> facetoonResultShare({
+    required String source,
+    required String platform,
+    required String photo,
+  }) =>
+      logEvent('facetoon_result_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'photo': photo,
+      });
+
+  static Future<void> facetoonResultSave({required String photo}) => logEvent('facetoon_result_save', eventValues: {'photo': photo});
 
   static Future<void> metaverseLoading({required String source}) => logEvent('metaverse_loading', eventValues: {'source': source});
 
@@ -246,7 +260,10 @@ class Events {
 
   static Future<void> styleMorphLoading({required String source}) => logEvent('stylemorph_loading', eventValues: {'source': source});
 
-  static Future<void> styleMorphCompleteSuccess({required String photo}) => logEvent('stylemorph_completed_success', eventValues: {'photo': photo});
+  static Future<void> styleMorphCompleteSuccess({required String source, required String style}) => logEvent('stylemorph_completed_success', eventValues: {
+        'source': source,
+        'style': style,
+      });
 
   static Future<void> styleMorphCompleteShare({
     required String source,
@@ -261,7 +278,16 @@ class Events {
 
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
 
-  static Future<void> styleMorphGenerateAgain({required int time}) => logEvent('stylemorph_completed_generateagain', eventValues: {'time': '${time}'});
+  static Future<void> styleMorphGenerateAgain({
+    required int time,
+    required String source,
+    required String style,
+  }) =>
+      logEvent('stylemorph_completed_generateagain', eventValues: {
+        'time': '${time}',
+        'source': source,
+        'style': style,
+      });
 
   static Future<void> aiColoringLoading({required String source}) => logEvent('aicoloring_loading', eventValues: {'source': source});
 
@@ -301,6 +327,10 @@ class Events {
 
   static Future<void> printPayOrderCancel({required String source, required String orderId}) =>
       logEvent('print_order_pay_cancel', eventValues: {'source': source, 'orderId': orderId});
+
+  static Future<void> imEditionLoading({required String source}) => logEvent('image_edition_loading', eventValues: {'source': source});
+
+  static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {

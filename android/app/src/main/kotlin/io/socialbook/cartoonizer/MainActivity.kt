@@ -1,5 +1,6 @@
 package io.socialbook.cartoonizer
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -18,6 +19,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.socialbook.cartoonizer.converter.AsyncTaskHelper
 import io.socialbook.cartoonizer.converter.YuvConverter
+import io.socialbook.cartoonizer.download.DownloadUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -152,7 +154,8 @@ class MainActivity : FlutterFragmentActivity() {
                         val decodeFile: Bitmap = BitmapFactory.decodeStream(fileInputStream)
                         val file = File(outPath)
                         val fileOutputStream = FileOutputStream(file)
-                        val result = decodeFile.compress(Bitmap.CompressFormat.JPEG, 95, fileOutputStream)
+                        val result =
+                            decodeFile.compress(Bitmap.CompressFormat.JPEG, 95, fileOutputStream)
                         fileInputStream.close()
                         fileOutputStream.close()
                         return@runInBackground result
@@ -163,6 +166,18 @@ class MainActivity : FlutterFragmentActivity() {
                             result.success(it)
                         }
                     })
+                }
+
+                "openAppStore" -> {
+                    toAppStore(result)
+                }
+
+                "updateAppByApk" -> {
+                    val url = call.argument<String>("url")
+                    val name = call.argument<String>("name")
+                    val desc = call.argument<String>("desc")
+                    DownloadUtils(this).downloadAPK(url, name, desc)
+                    result.success(true)
                 }
             }
         }
@@ -176,5 +191,17 @@ class MainActivity : FlutterFragmentActivity() {
         } catch (e: PackageManager.NameNotFoundException) {
         }
         return false
+    }
+
+    private fun toAppStore(result: MethodChannel.Result) {
+        try {
+            val uri = Uri.parse("market://details?id=" + applicationContext.packageName)
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            result.success(true)
+        } catch (e: Exception) {
+            result.success(false)
+        }
     }
 }

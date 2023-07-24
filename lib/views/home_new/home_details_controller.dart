@@ -1,12 +1,12 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
-import '../../api/cartoonizer_api.dart';
+import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 
 class HomeDetailsController extends GetxController {
   HomeDetailsController();
 
-  late CartoonizerApi cartoonizerApi;
+  late AppApi appApi;
 
   late ScrollController scrollController;
 
@@ -25,7 +25,7 @@ class HomeDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerApi = CartoonizerApi().bindController(this);
+    appApi = AppApi().bindController(this);
     scrollController = ScrollController()
       ..addListener(() {
         if (scrollController.position.pixels + $(80) >= scrollController.position.maxScrollExtent) {
@@ -39,7 +39,7 @@ class HomeDetailsController extends GetxController {
       return;
     }
     _isLoading = true;
-    cartoonizerApi.socialHomePost(from: _posts?.length ?? 0, size: 10, category: category ?? '').then((value) {
+    appApi.socialHomePost(from: _posts?.length ?? 0, size: 10, category: category ?? '').then((value) {
       _posts?.addAll(value?.data.rows ?? []);
       _isLoading = false;
       update();
@@ -49,6 +49,7 @@ class HomeDetailsController extends GetxController {
   @override
   void dispose() {
     super.dispose();
+    appApi.unbind();
     scrollController.dispose();
   }
 }

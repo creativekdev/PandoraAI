@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -25,7 +25,7 @@ class _SubscribeDetailScreenState extends AppState<SubscribeDetailScreen> {
   ];
 
   UserManager userManager = AppDelegate.instance.getManager();
-  late CartoonizerApi api;
+  late AppApi api;
 
   bool _showPurchasePlan = false;
   List<PurchaseDetails> _purchases = [];
@@ -35,7 +35,7 @@ class _SubscribeDetailScreenState extends AppState<SubscribeDetailScreen> {
   @override
   initState() {
     super.initState();
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     delay(() async {
       _showPurchasePlan = await getSubscriptionState();
       getCurrentPlan();

@@ -6,7 +6,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_form.dart';
 import 'package:cartoonizer/Widgets/credit_card_form/credit_card_model.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
@@ -106,9 +106,9 @@ class _StripeAddNewCardScreenState extends State<StripeAddNewCardScreen> {
       };
       BaseEntity? baseEntity;
       if (buySingle) {
-        baseEntity = await CartoonizerApi().buySingle(body);
+        baseEntity = await AppApi().buySingle(body);
       } else {
-        baseEntity = await CartoonizerApi().buyPlan(body);
+        baseEntity = await AppApi().buyPlan(body);
       }
       if (baseEntity != null) {
         _handlePaymentSuccess();

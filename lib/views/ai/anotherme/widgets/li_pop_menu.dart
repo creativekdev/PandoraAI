@@ -8,16 +8,34 @@ typedef _ClickCallBack = void Function(int selectIndex, String selectText);
 class LiPopMenu {
   static BuildContext? menuContext;
 
+  static double getMaxWidth(List<ListPopItem> items) {
+    double width = 0;
+    for (var value in items) {
+      var textPainter = TextPainter(
+        text: TextSpan(
+            text: value.text,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              color: Colors.white,
+              fontSize: $(14),
+            )),
+        ellipsis: '...',
+        textDirection: TextDirection.ltr,
+        textAlign: TextAlign.justify,
+        textWidthBasis: TextWidthBasis.longestLine,
+        maxLines: 2,
+      )..layout(maxWidth: ScreenUtil.screenSize.width - $(30));
+      if (textPainter.width > width) {
+        width = textPainter.width;
+      }
+    }
+    return width;
+  }
+
   /// 显示带线带背景 pop
-  static void showLinePop(BuildContext context, {bool isShowBg = true, _ClickCallBack? clickCallback, required List<ListPopItem> listData}) {
+  static void showLinePop(BuildContext context, {bool isShowBg = true, required List<ListPopItem> listData, Color? color}) {
     menuContext = context;
-    // List _listData = [
-    //   {"text": S.of(context).share, "icon": Images.ic_share},
-    //   {"text": S.of(context).tabDiscovery, "icon": Images.ic_share_discovery},
-    //   {"text": S.of(context).download, "icon": Images.ic_download},
-    // ];
-    // 带线
-    Widget _buildMenuLineCell(dataArr) {
+    Widget _buildMenuLineCell(List<ListPopItem> dataArr) {
       return ListView.separated(
         itemCount: dataArr.length,
         padding: const EdgeInsets.all(0.0),
@@ -28,9 +46,7 @@ class LiPopMenu {
               child: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    if (clickCallback != null) {
-                      clickCallback(index, listData[index].text);
-                    }
+                    listData[index].onTap?.call();
                   },
                   child: Container(
                     height: $(57),
@@ -41,7 +57,7 @@ class LiPopMenu {
                           dataArr[index].icon,
                           width: $(24),
                           height: $(24),
-                          // color: Color(0xFF333333),
+                          color: color,
                         ),
                         SizedBox(width: $(12)),
                         Text(listData[index].text, style: TextStyle(color: Color(0xFFFFFFFF), fontSize: $(14)))
@@ -68,13 +84,22 @@ class LiPopMenu {
       } else {
         navH = navH - 10;
       }
+      var maxWidth = getMaxWidth(dataArr);
       return Positioned(
         right: $(8),
         top: navH,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            ClipRRect(borderRadius: BorderRadius.circular(5), child: Container(color: _bgColor, width: $(150), height: cellH, child: _buildMenuLineCell(dataArr)))
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                color: _bgColor,
+                height: cellH,
+                width: maxWidth + $(65),
+                child: _buildMenuLineCell(dataArr),
+              ),
+            )
           ],
         ),
       );
@@ -177,8 +202,9 @@ class CustomDialog extends Dialog {
 }
 
 class ListPopItem {
-  ListPopItem({required this.text, required this.icon});
+  ListPopItem({required this.text, required this.icon, required this.onTap});
 
+  Function()? onTap;
   final String text;
   final String icon;
 }

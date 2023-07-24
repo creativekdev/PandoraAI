@@ -3,11 +3,11 @@ import 'package:cartoonizer/Widgets/toast/ok_toast.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {
-  void showToast(String text) {
+  void showToast(String text, {ToastGravity gravity = ToastGravity.BOTTOM}) {
     Fluttertoast.showToast(
         msg: text,
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
+        gravity: gravity,
         timeInSecForIosWeb: 3,
         backgroundColor: ColorConstant.CardColor,
         textColor: ColorConstant.White,

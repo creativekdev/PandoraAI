@@ -2,7 +2,7 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/Widgets/search_bar.dart' as search;
 import 'package:cartoonizer/models/back_pick_template_entity.dart';
@@ -28,7 +28,7 @@ class BackTemplatePicker extends StatefulWidget {
 }
 
 class _BackTemplatePickerState extends State<BackTemplatePicker> with AutomaticKeepAliveClientMixin {
-  late CartoonizerApi api;
+  late AppApi api;
   late double imageRatio;
   List<BackPickTemplateEntity> dataList = [];
 
@@ -44,7 +44,7 @@ class _BackTemplatePickerState extends State<BackTemplatePicker> with AutomaticK
   void initState() {
     super.initState();
     imageRatio = widget.imageRatio;
-    api = CartoonizerApi().bindState(this);
+    api = AppApi().bindState(this);
     scrollController.addListener(() {
       if (loading) {
         return;

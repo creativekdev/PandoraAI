@@ -48,13 +48,11 @@ class StorageOperator {
 
   Directory get recordAiDrawDir => Directory('$_mainPath$_recordDir$_recordAiDraw');
 
-
   Directory get recordStyleMorphDir => Directory('$_mainPath$_recordDir$_recordStyleMorph');
 
   Directory get recordAiColoringDir => Directory('$_mainPath$_recordDir$_recordAiColoring');
 
   Directory get recordBackgroundRemovalDir => Directory('$_mainPath$_recordDir$_recordBackgroundRemoval');
-
 
   Future<bool> initializeDir() async {
     Directory? directory = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
@@ -73,7 +71,7 @@ class StorageOperator {
       '$_recordDir$_recordCartoonize',
       '$_recordDir$_recordTxt2img',
       '$_recordDir$_recordAiDraw',
-
+      '$_recordDir$_recordBackgroundRemoval',
       '$_recordDir$_recordStyleMorph',
       '$_recordDir$_recordAiColoring',
     ]);

@@ -2,6 +2,8 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+
 
 DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	final DiscoveryListEntity discoveryListEntity = DiscoveryListEntity();
@@ -65,9 +67,9 @@ DiscoveryListEntity $DiscoveryListEntityFromJson(Map<String, dynamic> json) {
 	if (status != null) {
 		discoveryListEntity.status = status;
 	}
-	final String? category = jsonConvert.convert<String>(json['category']);
-	if (category != null) {
-		discoveryListEntity.category = category;
+	final String? categoryString = jsonConvert.convert<String>(json['category']);
+	if (categoryString != null) {
+		discoveryListEntity.categoryString = categoryString;
 	}
 	final String? cartoonizeKey = jsonConvert.convert<String>(json['cartoonize_key']);
 	if (cartoonizeKey != null) {
@@ -113,7 +115,7 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 	data['modified'] = entity.modified;
 	data['id'] = entity.id;
 	data['status'] = entity.status;
-	data['category'] = entity.category;
+	data['category'] = entity.categoryString;
 	data['cartoonize_key'] = entity.cartoonizeKey;
 	data['like_id'] = entity.likeId;
 	data['resources'] = entity.resources;
@@ -125,9 +127,9 @@ Map<String, dynamic> $DiscoveryListEntityToJson(DiscoveryListEntity entity) {
 
 DiscoveryResource $DiscoveryResourceFromJson(Map<String, dynamic> json) {
 	final DiscoveryResource discoveryResource = DiscoveryResource();
-	final String? type = jsonConvert.convert<String>(json['type']);
-	if (type != null) {
-		discoveryResource.type = type;
+	final String? typeString = jsonConvert.convert<String>(json['type']);
+	if (typeString != null) {
+		discoveryResource.typeString = typeString;
 	}
 	final String? url = jsonConvert.convert<String>(json['url']);
 	if (url != null) {
@@ -138,7 +140,7 @@ DiscoveryResource $DiscoveryResourceFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> $DiscoveryResourceToJson(DiscoveryResource entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
-	data['type'] = entity.type;
+	data['type'] = entity.typeString;
 	data['url'] = entity.url;
 	return data;
 }

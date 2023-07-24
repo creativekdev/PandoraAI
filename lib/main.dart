@@ -2,13 +2,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/ThemeConstant.dart' as theme;
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/Common/navigator_observer.dart';
-import 'package:cartoonizer/api/cartoonizer_api.dart';
+import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -16,6 +17,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -79,6 +81,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   int lastLocaleTime = 0;
+  static String currentLocales = 'en';
 
   static AppRouteObserver routeObserver = AppRouteObserver();
 
@@ -106,11 +109,11 @@ class MyApp extends StatelessWidget {
             if (duration > 2000) {
               lastLocaleTime = current;
               debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
-              theme.AppContext.currentLocales = deviceLocale.languageCode;
+              currentLocales = deviceLocale.languageCode;
               result = deviceLocale;
             } else {
               for (var locale in supportedLocales) {
-                if (locale.languageCode == theme.AppContext.currentLocales) {
+                if (locale.languageCode == currentLocales) {
                   result = locale;
                   break;
                 }
@@ -175,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<bool?> _checkAppVersion() async {
-    var data = await CartoonizerApi.quickResponse().checkAppVersion();
+    var data = await AppApi.quickResponse().checkAppVersion();
     if (data["need_update"] == true) {
       return await Get.dialog<bool>(
         CommonDialog(
@@ -210,8 +213,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           confirmText: S.of(context).update_now,
           confirmCallback: () {
-            var url = Config.getStoreLink();
-            launchURL(url);
+            if (Platform.isAndroid) {
+              if (!TextUtil.isEmpty(data['url'].toString())) {
+                CommonExtension().showToast('Start downloading, wait a moment please');
+                updateByApk(url: data['url'], name: "$APP_NAME.apk");
+                // launchURL(data['url']);
+              } else {
+                const platform = MethodChannel(PLATFORM_CHANNEL);
+                platform.invokeMethod<bool>("openAppStore").then((value) {
+                  if (value == false) {
+                    var url = Config.getStoreLink();
+                    launchURL(url);
+                  }
+                });
+              }
+            } else {
+              var url = Config.getStoreLink();
+              launchURL(url);
+            }
           },
         ),
       );
@@ -333,5 +352,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 end: Alignment.bottomRight,
               ))),
     );
+  }
+
+  Future<bool> updateByApk({required String url, String name = "app.apk"}) async {
+    assert(Platform.isAndroid, "不支持非android平台调用");
+    final platform = MethodChannel(PLATFORM_CHANNEL);
+    try {
+      await platform.invokeMethod('updateAppByApk', {"url": url, "name": name, "desc": S.of(context).downloading});
+    } on PlatformException catch (e) {
+      LogUtil.e(e, tag: 'DOWNLOAD_APK');
+    }
+    return Future.value(false);
   }
 }

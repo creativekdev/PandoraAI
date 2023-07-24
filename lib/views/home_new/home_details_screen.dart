@@ -27,7 +27,7 @@ class HomeDetailsScreen extends StatefulWidget {
 }
 
 class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
-  HomeDetailsController controller = HomeDetailsController();
+  HomeDetailsController controller = Get.put(HomeDetailsController());
 
   @override
   void initState() {
@@ -72,8 +72,10 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       settings: RouteSettings(name: '/HomeDetailScreen'),
                       child: HomeDetailScreen(
-                        post: data,
+                        posts: controller.posts!,
+                        title: widget.category,
                         source: widget.source,
+                        index: index,
                       )));
                 });
               },

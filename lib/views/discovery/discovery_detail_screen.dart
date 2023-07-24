@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
@@ -12,9 +10,11 @@ import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
+import 'package:cartoonizer/views/discovery/widget/show_comment_actions.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
@@ -24,8 +24,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 extension DiscoveryListEntityEx on DiscoveryListEntity {
   String? getStyle(BuildContext context) {
     EffectDataController effectDataController = Get.find();
-    var type = HomeCardTypeUtils.build(category);
-    switch (type) {
+    switch (category) {
       case HomeCardType.cartoonize:
         if (effectDataController.data == null) {
           return null;
@@ -54,6 +53,10 @@ extension DiscoveryListEntityEx on DiscoveryListEntity {
       case HomeCardType.lineart:
         return 'lineart';
       case HomeCardType.UNDEFINED:
+        return null;
+      case HomeCardType.removeBg:
+        return 'removebg';
+      case HomeCardType.nothing:
         return null;
     }
   }
@@ -137,24 +140,11 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       return;
     }
     String key = controller.discoveryEntity.cartoonizeKey;
-    int tabPos = effectDataController.data!.tabPos(key);
-    int categoryPos = 0;
-    int itemPos = 0;
-    if (tabPos == -1) {
-      CommonExtension().showToast(S.of(context).template_not_available);
-      return;
-    }
-    EffectCategory effectModel = effectDataController.data!.findCategory(key)!;
-    EffectItem effectItem = effectModel.effects.pick((t) => t.key == key)!;
-    categoryPos = effectDataController.tabTitleList.findPosition((data) => data.categoryKey == effectModel.key)!;
-    itemPos = effectDataController.tabItemList.findPosition((data) => data.data.key == effectItem.key)!;
-    Events.discoveryTemplateClick(source: source, style: 'facetoon-${effectItem.key}');
+    Events.discoveryTemplateClick(source: source, style: 'facetoon-${key}');
     Cartoonize.open(
       context,
       source: source + '-try-template',
-      tabPos: tabPos,
-      categoryPos: categoryPos,
-      itemPos: itemPos,
+      initKey: key,
     );
   }
 
@@ -208,9 +198,31 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.black,
         middle: TitleTextWidget(S.of(context).discoveryDetails, ColorConstant.BtnTextColor, FontWeight.w600, $(18)),
-        trailing: TitleTextWidget(S.of(context).delete, ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
-          showDeleteDialog();
-        }).visibility(visible: userManager.user?.id == controller.discoveryEntity.userId),
+        trailing: userManager.user?.id == controller.discoveryEntity.userId
+            ? TitleTextWidget(S.of(context).delete, ColorConstant.BtnTextColor, FontWeight.w600, $(15)).intoGestureDetector(onTap: () {
+                showDeleteDialog();
+              })
+            : Image.asset(
+                Images.ic_more,
+                color: ColorConstant.White,
+                width: $(20),
+              ).intoGestureDetector(onTap: () {
+                LiPopMenu.showLinePop(
+                  context,
+                  color: Colors.white,
+                  listData: [
+                    ListPopItem(
+                        text: S.of(context).Report,
+                        icon: Images.ic_report,
+                        onTap: () {
+                          UserManager userManager = AppDelegate.instance.getManager();
+                          userManager.doOnLogin(context, logPreLoginAction: 'loginNormal', currentPageRoute: '/DiscoveryDetailScreen', callback: () {
+                            controller.reportAction(widget.discoveryEntity, context);
+                          });
+                        })
+                  ],
+                );
+              }),
       ),
       body: GetBuilder<DiscoveryDetailController>(
         init: Get.find<DiscoveryDetailController>(),
@@ -403,7 +415,19 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
             authorId: controller.discoveryEntity.userId,
             hasLine: index != 0,
             onCommentTap: () {
-              onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
+              showCommentActions(context, replyAction: () {
+                Navigator.of(context).pop();
+                onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
+              }, reportAction: () {
+                controller.onReportAction(data, context);
+                Navigator.of(context).pop();
+              }, copyAction: () {
+                Clipboard.setData(ClipboardData(text: data.text));
+                CommonExtension().showToast(S.of(context).copy_successfully);
+                Navigator.of(context).pop();
+              }, cancelAction: () {
+                Navigator.of(context).pop();
+              }, title: "@${data.userName}: ${data.text}");
             },
             isTopComments: true,
             ignoreLikeBtn: controller.likeLocalAddAlready.value,

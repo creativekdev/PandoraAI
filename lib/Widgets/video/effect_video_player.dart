@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/image/sync_download_video.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -36,11 +37,8 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   VideoPlayerController? controller;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   ThirdpartManager thirdpartManager = AppDelegate.instance.getManager();
-  late String fileName;
   late bool downloading = true;
-  DownloadListener? downloadListener;
   late StreamSubscription appStateListener;
-  String? key;
   late bool useCached;
   late bool isFile;
   late bool loop;
@@ -79,53 +77,25 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
           });
         });
     } else {
-      downloadListener = DownloadListener(
-          onChanged: (count, total) {},
-          onError: (error) {},
-          onFinished: (File file) {
-            controller = VideoPlayerController.file(file)
-              ..setLooping(loop)
-              ..initialize().then((value) {
-                controller!.addListener(() {
-                  judgePlaySection();
-                });
-                setState(() {
-                  play();
-                });
-              });
-            setState(() {
-              downloading = false;
-            });
-          });
-      if (url.contains('?')) {
-        fileName = getFileName(url.split('?')[0]);
-      } else {
-        fileName = getFileName(url);
-      }
-      downloading = true;
-      var videoDir = cacheManager.storageOperator.videoDir;
-      var savePath = videoDir.path + fileName;
-      File data = File(savePath);
-      if (data.existsSync()) {
-        downloading = false;
-        controller = VideoPlayerController.file(data)
-          ..setLooping(loop)
-          ..setVolume(0)
-          ..initialize().then((value) {
-            controller!.addListener(() {
-              judgePlaySection();
-            });
-            setState(() {
-              play();
-            });
-          });
-      } else {
+      setState(() {
         downloading = true;
-        Downloader.instance.download(url, savePath).then((value) {
-          key = value;
-          Downloader.instance.subscribe(key!, downloadListener!);
+      });
+      SyncDownloadVideo(url: url, type: getFileType(url)).getVideo().then((value) {
+        if (value != null) {
+          controller = VideoPlayerController.file(value)
+            ..setLooping(loop)
+            ..initialize();
+          controller!.addListener(() {
+            judgePlaySection();
+          });
+          setState(() {
+            play();
+          });
+        }
+        setState(() {
+          downloading = false;
         });
-      }
+      });
     }
     appStateListener = EventBusHelper().eventBus.on<OnAppStateChangeEvent>().listen((event) {
       setState(() {});
@@ -160,9 +130,6 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     controller?.pause();
     appStateListener.cancel();
     controller?.dispose();
-    if (key != null) {
-      Downloader.instance.unsubscribeSync(key!, downloadListener!);
-    }
   }
 
   @override

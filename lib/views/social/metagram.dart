@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
@@ -39,7 +40,7 @@ class Metagram {
         EffectDataController effectDataController = Get.find<EffectDataController>();
         if (effectDataController.data?.promotionResources.isNotEmpty ?? false) {
           var resource = effectDataController.data!.promotionResources.first;
-          if (resource.type == 'video') {
+          if (resource.type == DiscoveryResourceType.video) {
             await SyncDownloadVideo(type: getFileType(resource.url ?? ''), url: resource.url ?? '').getVideo();
           }
         }

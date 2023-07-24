@@ -4,6 +4,8 @@ import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:event_bus/event_bus.dart';
 
+import '../models/address_entity.dart';
+
 /// EventBusHelper
 /// usage:
 ///   1. create event extends baseEvent
@@ -113,13 +115,19 @@ class OnDeleteDiscoveryEvent extends BaseEvent<int> {
   OnDeleteDiscoveryEvent({required int id}) : super(data: id);
 }
 
-class OnSplashAdLoadingChangeEvent extends BaseEvent {}
-
-/// switch home_screen tab
-@Deprecated('可以直接弹出详情，不用通知')
-class OnEffectPushClickEvent extends BaseEvent<PushExtraEntity> {
-  OnEffectPushClickEvent({super.data});
+class OnDeletePrintAddressEvent extends BaseEvent<int> {
+  OnDeletePrintAddressEvent({required int id}) : super(data: id);
 }
+
+class OnUpdatePrintAddressEvent extends BaseEvent<AddressDataCustomerAddress> {
+  OnUpdatePrintAddressEvent({required AddressDataCustomerAddress address}) : super(data: address);
+}
+
+class OnAddPrintAddressEvent extends BaseEvent<AddressDataCustomerAddress> {
+  OnAddPrintAddressEvent({required AddressDataCustomerAddress address}) : super(data: address);
+}
+
+class OnSplashAdLoadingChangeEvent extends BaseEvent {}
 
 class OnEffectNsfwChangeEvent extends BaseEvent {}
 

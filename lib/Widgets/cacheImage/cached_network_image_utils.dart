@@ -47,6 +47,7 @@ class CachedNetworkImageUtils {
     int? maxWidthDiskCache = 1024,
     int? maxHeightDiskCache = 1024,
   }) {
+    useOld = true;
     if (cacheManager == null) {
       cacheManager = CachedImageCacheManager();
     }
@@ -55,7 +56,6 @@ class CachedNetworkImageUtils {
         return SkeletonAvatar(
           style: SkeletonAvatarStyle(height: height ?? width ?? $(25), width: width ?? height ?? $(25)),
         );
-        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (errorWidget == null) {
@@ -65,7 +65,6 @@ class CachedNetworkImageUtils {
           width: width ?? height ?? $(25),
           height: height ?? width ?? $(25),
         );
-        // return CircularProgressIndicator().intoContainer(width: $(25), height: $(25)).intoCenter().intoContainer(width: width, height: height ?? $(25));
       };
     }
     if (TextUtil.isEmpty(imageUrl.trim())) {
@@ -198,8 +197,10 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
 
   PlaceholderWidgetBuilder? placeholder;
   LoadingErrorWidgetBuilder? errorWidget;
-  File? data;
-  FileImage? fileImage;
+  String? filePath;
+
+  // File? data;
+  // FileImage? fileImage;
   int retryCount = 1;
 
   @override
@@ -215,13 +216,17 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (widget.url != oldWidget.url) {
       initData();
       updateData();
+    } else {
+      if (!downloading && filePath == null) {
+        _getImage();
+      }
     }
   }
 
   @override
   dispose() {
     super.dispose();
-    data = null;
+    filePath = null;
     placeholder = null;
     errorWidget = null;
   }
@@ -243,45 +248,58 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
 
   void updateData() {
     url = widget.url;
+    _getImage();
+  }
+
+  _getImage() async {
     var fileType = getFileType(url);
     downloading = true;
     SyncDownloadImage(url: url, type: fileType).getImage().then((value) {
-      this.data = value;
-      if (mounted) {
-        fileImage = FileImage(data!);
-        if (width != null && height != null) {
+      if (value != null) {
+        this.filePath = value.path;
+        if (mounted) {
+          var fileImage = FileImage(value);
+          if (width != null && height != null) {
+            setState(() {
+              downloading = false;
+            });
+          } else {
+            var resolve = fileImage.resolve(ImageConfiguration.empty);
+            resolve.addListener(ImageStreamListener((image, synchronousCall) {
+              if (width == double.maxFinite) {
+                width = ScreenUtil.getCurrentWidgetSize(context).width;
+              }
+              if (height == double.maxFinite) {
+                height = null;
+              }
+              var cacheScale = cacheManager.imageScaleOperator.getScale(url);
+              if (cacheScale == null) {
+                var scale = image.image.width / image.image.height;
+                cacheManager.imageScaleOperator.setScale(url, scale);
+                cacheScale = scale;
+              }
+              if (width == null && height == null) {
+                width = image.image.width.toDouble();
+                height = image.image.height.toDouble();
+              } else if (width == null) {
+                width = height! * cacheScale;
+              } else if (height == null) {
+                height = width! / cacheScale;
+              }
+              if (mounted) {
+                setState(() {
+                  downloading = false;
+                });
+              }
+            }));
+          }
+        }
+      } else {
+        filePath = null;
+        if (mounted) {
           setState(() {
             downloading = false;
           });
-        } else {
-          var resolve = fileImage!.resolve(ImageConfiguration.empty);
-          resolve.addListener(ImageStreamListener((image, synchronousCall) {
-            if (width == double.maxFinite) {
-              width = ScreenUtil.getCurrentWidgetSize(context).width;
-            }
-            if (height == double.maxFinite) {
-              height = null;
-            }
-            var cacheScale = cacheManager.imageScaleOperator.getScale(url);
-            if (cacheScale == null) {
-              var scale = image.image.width / image.image.height;
-              cacheManager.imageScaleOperator.setScale(url, scale);
-              cacheScale = scale;
-            }
-            if (width == null && height == null) {
-              width = image.image.width.toDouble();
-              height = image.image.height.toDouble();
-            } else if (width == null) {
-              width = height! * cacheScale;
-            } else if (height == null) {
-              height = width! / cacheScale;
-            }
-            if (mounted) {
-              setState(() {
-                downloading = false;
-              });
-            }
-          }));
         }
       }
     });
@@ -292,19 +310,22 @@ class FutureLoadingImageState extends State<FutureLoadingImage> {
     if (downloading) {
       return placeholder!.call(context, url);
     }
-    if (data == null || !data!.existsSync()) {
+    if (filePath == null) {
       if (retryCount == 1) {
         retryCount--;
         updateData();
       }
       return errorWidget!.call(context, url, Exception('load image Failed'));
     }
-    if (width == null || height == null || fileImage == null) {
+    if (width == null || height == null) {
       return placeholder!.call(context, url);
     }
     retryCount = 1;
+    if (!TickerMode.of(context)) {
+      return SizedBox(width: width, height: height);
+    }
     return Image(
-      image: fileImage!,
+      image: FileImage(File(filePath!)),
       width: width,
       height: height,
       fit: fit,
