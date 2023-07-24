@@ -40,6 +40,9 @@ import 'package:cartoonizer/views/transfer/controller/cartoonizer_controller.dar
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+import '../../mine/filter/im_effect_screen.dart';
+import '../../mine/filter/im_filter.dart';
+
 class CartoonizeScreen extends StatefulWidget {
   String source;
 
@@ -264,6 +267,25 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
                       icon: Images.ic_share,
                       onTap: () {
                         shareOut(context, controller);
+                      }),
+                  ListPopItem(
+                      text: S.of(context).share_out,
+                      icon: Images.ic_share,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/ImFilterScreen"),
+                            builder: (context) => ImEffectScreen(
+                              tab: TABS.EFFECT,
+                              source: widget.source,
+                              originFile: controller.originFile,
+                              resultFile: controller.originFile!,
+                              photoType: widget.photoType,
+                              isStyleMorph: false,
+                            ),
+                          ),
+                        );
                       }),
                 ],
               );

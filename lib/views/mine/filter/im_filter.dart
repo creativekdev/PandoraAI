@@ -4,7 +4,8 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
+
+import 'im_filter_screen.dart';
 
 class ImFilter {
   static Future open(BuildContext context, {required TABS tab, required String source}) async {
@@ -29,3 +30,11 @@ class ImFilter {
     });
   }
 }
+
+typedef OnCallback = void Function();
+
+const String IMAppbarTag = "IMAppbarTag";
+const String EffectImageViewTag = "EffectImageViewTag";
+const String EffectInOutControlPadTag = "EffectInOutControlPadTag";
+
+enum TABS { EFFECT, FILTER, ADJUST, CROP, BACKGROUND, TEXT }

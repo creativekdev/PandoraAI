@@ -86,4 +86,9 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
   onResultShare({required String source, required String platform, required String photo}) {
     Events.facetoonResultShare(source: source, platform: platform, photo: 'image');
   }
+
+  @override
+  String getControllerStyle() {
+    return selectedEffect!.key;
+  }
 }

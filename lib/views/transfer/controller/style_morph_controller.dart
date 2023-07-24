@@ -1,18 +1,11 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
-import 'package:cartoonizer/Controller/recent/recent_controller.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/style_morph_api.dart';
 import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/models/style_morph_result_entity.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
@@ -92,5 +85,10 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
   @override
   onGenerateAgainSuccess({required int time, required String source, required String style}) {
     Events.styleMorphGenerateAgain(time: time, source: source, style: style);
+  }
+
+  @override
+  String getControllerStyle() {
+    return selectedEffect!.key;
   }
 }

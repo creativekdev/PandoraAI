@@ -16,7 +16,6 @@ import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/common/video_preview_screen.dart';
-import 'package:cartoonizer/views/mine/filter/ImFilterScreen.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';

@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 
 abstract class TransferBaseController<ResultType> extends GetxController {
   late File _originFile;
@@ -94,6 +95,8 @@ abstract class TransferBaseController<ResultType> extends GetxController {
       }
     }
   }
+
+  String getControllerStyle();
 
   @protected
   List<EffectCategory> buildCategories();

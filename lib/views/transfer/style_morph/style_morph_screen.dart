@@ -40,6 +40,8 @@ import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
+import '../../mine/filter/im_effect_screen.dart';
+import '../../mine/filter/im_filter.dart';
 import '../controller/style_morph_controller.dart';
 
 class StyleMorphScreen extends StatefulWidget {
@@ -205,6 +207,24 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
                       icon: Images.ic_share,
                       onTap: () {
                         shareOut(context, controller);
+                      }),
+                  ListPopItem(
+                      text: S.of(context).share_out,
+                      icon: Images.ic_share,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            settings: RouteSettings(name: "/ImFilterScreen"),
+                            builder: (context) => ImEffectScreen(
+                              tab: TABS.EFFECT,
+                              source: widget.source,
+                              originFile: controller.originFile,
+                              resultFile: controller.originFile!,
+                              photoType: widget.photoType,
+                            ),
+                          ),
+                        );
                       }),
                 ],
               );
