@@ -487,5 +487,6 @@
   "share_to_discovery": "Compartir en Discovery",
   "share_out": "Compartir con amigos",
   "swipe_up_for_more": "Desliza hacia arriba para obtener más",
-  "downloading": "Downloading..."
+  "downloading": "Descargando...",
+  "last_one": "Ya el ultimo"
 }

@@ -242,7 +242,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("perro"),
         "done": MessageLookupByLibrary.simpleMessage("terminar"),
         "download": MessageLookupByLibrary.simpleMessage("Descargar"),
-        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
+        "downloading": MessageLookupByLibrary.simpleMessage("Descargando..."),
         "edit": MessageLookupByLibrary.simpleMessage("editar"),
         "edit_address":
             MessageLookupByLibrary.simpleMessage("Editar Dirección"),
@@ -361,6 +361,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("Julio"),
         "june": MessageLookupByLibrary.simpleMessage("Junio"),
         "last_name": MessageLookupByLibrary.simpleMessage("Apellido"),
+        "last_one": MessageLookupByLibrary.simpleMessage("Ya el ultimo"),
         "like": MessageLookupByLibrary.simpleMessage("Gustar"),
         "login": MessageLookupByLibrary.simpleMessage("Iniciar sesión"),
         "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(

@@ -114,7 +114,7 @@ class HomeCardTypeUtils {
             ..height = height;
         }
       }
-      if (source == "home_page") {
+      if (source == "home_page_new") {
         Events.homeTemplateClick(source: source, style: style);
       } else {
         Events.discoveryTemplateClick(source: source, style: style);

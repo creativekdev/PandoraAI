@@ -4939,6 +4939,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Already the last one`
+  String get last_one {
+    return Intl.message(
+      'Already the last one',
+      name: 'last_one',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
