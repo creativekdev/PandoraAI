@@ -201,6 +201,7 @@ showMicroPhonePermissionDialog(BuildContext context) {
 }
 
 showLimitDialog(BuildContext context, {required AccountLimitType type, required String function, required String source}) {
+  var userManager = AppDelegate().getManager<UserManager>();
   showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -241,6 +242,21 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
                   .intoGestureDetector(onTap: () {
                 Navigator.of(_).pop(true);
               }),
+              if (type == AccountLimitType.normal && !userManager.user!.isReferred)
+                Text(
+                  S.of(context).upgrade_now,
+                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
+                )
+                    .intoContainer(
+                  width: double.maxFinite,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
+                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
+                  margin: EdgeInsets.only(top: $(10)),
+                  alignment: Alignment.center,
+                )
+                    .intoGestureDetector(onTap: () {
+                  Navigator.of(_).pop(false);
+                }),
               Text(
                 S.of(context).cancel,
                 style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
@@ -253,11 +269,10 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
                 alignment: Alignment.center,
               )
                   .intoGestureDetector(onTap: () {
-                Navigator.pop(_, false);
+                Navigator.pop(_);
               })
             ],
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
-    var userManager = AppDelegate().getManager<UserManager>();
     if (value == null) {
       // do nothing
     } else if (value) {
@@ -278,6 +293,8 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
         case AccountLimitType.vip:
           break;
       }
+    } else {
+      PaymentUtils.pay(context, source);
     }
   });
 }

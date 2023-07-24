@@ -125,14 +125,14 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                 );
               },
               onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
-                Navigator.of(context).push<void>(Right2LeftRouter(
+                Navigator.of(context).push<void>(MaterialPageRoute(
                     settings: RouteSettings(name: '/HomeDetailScreen'),
-                    child: HomeDetailScreen(
-                      posts: e!.socialPosts,
-                      source: "home_page",
-                      title: category,
-                      index: index,
-                    )));
+                    builder: (context) => HomeDetailScreen(
+                          posts: e.socialPosts,
+                          source: "home_page",
+                          title: category,
+                          index: index,
+                        )));
               },
               galleries: e,
             ),
