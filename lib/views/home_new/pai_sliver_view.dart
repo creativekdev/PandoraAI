@@ -45,20 +45,10 @@ class SliverItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(8)),
-          child: VisibilityHolder(
-            keyString: entity.url,
-            child: CachedNetworkImageUtils.custom(
-              fit: BoxFit.cover,
-              useOld: false,
-              height: width,
-              width: width,
-              context: context,
-              imageUrl: entity.url,
-            ),
-            placeHolder: SizedBox(
-              width: width,
-              height: width,
-            ),
+          child: VisibilityImageHolder(
+            url: entity.url,
+            height: width,
+            width: width,
           ),
         ),
         TitleTextWidget(

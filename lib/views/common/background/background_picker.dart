@@ -148,7 +148,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           (e) => ClipRRect(
             child: buildItem(e),
             borderRadius: BorderRadius.circular($(4)),
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+          ).intoGestureDetector(onTap: () {
+            widget.onPick.call(e);
+          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
         )
         .toList());
     return Row(

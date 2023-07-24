@@ -155,20 +155,10 @@ class _Item extends StatelessWidget {
         ? SizedBox.shrink()
         : ClipRRect(
             borderRadius: BorderRadius.circular($(8)),
-            child: VisibilityHolder(
-              keyString: resource.url!,
-              child: CachedNetworkImageUtils.custom(
-                fit: BoxFit.cover,
-                useOld: false,
-                height: height,
-                width: $(96),
-                context: context,
-                imageUrl: resource.url!,
-              ),
-              placeHolder: SizedBox(
-                width: $(96),
-                height: height,
-              ),
+            child: VisibilityImageHolder(
+              url: resource.url!,
+              width: $(96),
+              height: height,
             ),
           );
   }

@@ -105,18 +105,13 @@ class ImFilterController extends GetxController {
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
     await filter.calcAvatars(image);
 
-    try {
-      ///background removal calculation
-      File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-      await uploadImageController.uploadCompressedImage(compressedImage);
-      uploadImageController.update();
-      var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
-      File personImageFile = File(url!);
-      personImage = await getLibImage(await getImage(personImageFile!));
-      personImageForUi = await convertImage(personImage);
-    } catch (e) {
-      print('An exception occurred: $e');
-    }
+    File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+    await uploadImageController.uploadCompressedImage(compressedImage);
+    uploadImageController.update();
+    var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
+    File personImageFile = File(url!);
+    personImage = await getLibImage(await getImage(personImageFile!));
+    personImageForUi = await convertImage(personImage);
     update();
   }
 

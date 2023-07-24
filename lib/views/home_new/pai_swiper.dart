@@ -26,20 +26,10 @@ class PaiSwiper extends StatelessWidget {
               : UnconstrainedBox(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular($(8)),
-                    child: VisibilityHolder(
-                      keyString: resource.url!,
-                      child: CachedNetworkImageUtils.custom(
-                        fit: BoxFit.cover,
-                        useOld: false,
-                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
-                        width: ScreenUtil.screenSize.width - $(30),
-                        context: context,
-                        imageUrl: resource.url!,
-                      ),
-                      placeHolder: SizedBox(
-                        width: ScreenUtil.screenSize.width - $(30),
-                        height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
-                      ),
+                    child: VisibilityImageHolder(
+                      url: resource.url!,
+                      height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
+                      width: ScreenUtil.screenSize.width - $(30),
                     ),
                   ),
                 );
