@@ -200,7 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
-        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
+        "downloading": MessageLookupByLibrary.simpleMessage("ダウンロード..."),
         "edit": MessageLookupByLibrary.simpleMessage("編集"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("情報を編集する"),
         "effectRecentEmptyHint":
@@ -296,6 +296,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
         "last_name": MessageLookupByLibrary.simpleMessage("名"),
+        "last_one": MessageLookupByLibrary.simpleMessage("もう最後のもの"),
         "like": MessageLookupByLibrary.simpleMessage("いいね"),
         "login": MessageLookupByLibrary.simpleMessage("ログイン"),
         "loginToThePlatformAccount":

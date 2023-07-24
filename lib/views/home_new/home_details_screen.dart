@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/home_new/home_detail_screen.dart';
@@ -62,12 +60,12 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                 crossAxisCount: 2,
                 mainAxisSpacing: $(8),
                 crossAxisSpacing: $(8),
-                childAspectRatio: widget.category == 'cartoonize' ? 1 : (ScreenUtil.screenSize.width - $(30)) / (2 * $(300)),
+                childAspectRatio: widget.category == 'facetoon' ? 1 : (ScreenUtil.screenSize.width - $(30)) / (2 * $(300)),
               ),
               itemCount: controller.posts?.length,
               itemBuilder: (context, index) {
                 var data = controller.posts![index];
-                return HomeDetailItem(data).intoGestureDetector(onTap: () {
+                return HomeDetailItem(data, widget.category).intoGestureDetector(onTap: () {
                   // Events.printGoodsSelectClick(source: widget.source, goodsId: data.id.toString());
                   Navigator.of(context).push<void>(Right2LeftRouter(
                       settings: RouteSettings(name: '/HomeDetailScreen'),
@@ -94,23 +92,25 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
 }
 
 class HomeDetailItem extends StatelessWidget {
-  HomeDetailItem(this.post);
+  HomeDetailItem(this.post, this.category);
+
+  final String category;
 
   final DiscoveryListEntity post;
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> resources = jsonDecode(post.resources) as List<dynamic>;
-
+    List<DiscoveryResource> list = post.resourceList().reversed.toList();
+    DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         $(8),
       ),
       child: CachedNetworkImageUtils.custom(
         context: context,
-        imageUrl: resources.first["url"],
-        width: (ScreenUtil.screenSize.width - $(30)) / 2,
-        height: $(300),
+        imageUrl: resource?.url ?? '',
+        // width: (ScreenUtil.screenSize.width - $(30)) / 2,
+        // height: category == "facetoon" ? (ScreenUtil.screenSize.width - $(30)) / 2 : $(300),
         fit: BoxFit.cover,
       ),
     );

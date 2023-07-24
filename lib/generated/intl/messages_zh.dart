@@ -283,6 +283,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
         "last_name": MessageLookupByLibrary.simpleMessage("姓氏"),
+        "last_one": MessageLookupByLibrary.simpleMessage("已经是最后一个了"),
         "like": MessageLookupByLibrary.simpleMessage("点赞"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
         "loginToThePlatformAccount":

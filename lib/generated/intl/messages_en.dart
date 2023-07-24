@@ -338,6 +338,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("July"),
         "june": MessageLookupByLibrary.simpleMessage("June"),
         "last_name": MessageLookupByLibrary.simpleMessage("Last Name"),
+        "last_one":
+            MessageLookupByLibrary.simpleMessage("Already the last one"),
         "like": MessageLookupByLibrary.simpleMessage("Like"),
         "login": MessageLookupByLibrary.simpleMessage("Sign In"),
         "loginToThePlatformAccount": MessageLookupByLibrary.simpleMessage(

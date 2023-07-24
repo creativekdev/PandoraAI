@@ -481,5 +481,6 @@
   "share_to_discovery": "ディスカバリーに共有",
   "share_out": "友達と共有する",
   "swipe_up_for_more": "もっと見るには上にスワイプしてください",
-  "downloading": "Downloading..."
+  "downloading": "ダウンロード...",
+  "last_one": "もう最後のもの"
 }

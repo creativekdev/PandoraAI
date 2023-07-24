@@ -15,12 +15,13 @@ class HomeEffectSkeletonView extends StatelessWidget {
         if (index == 0) {
           return Column(
             children: [
+              SizedBox(height: ScreenUtil.getStatusBarHeight()),
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular($(10)),
                   color: ColorConstant.ShadowColor,
                 ),
-                height: $(200),
+                height: (ScreenUtil.screenSize.width - $(30)) * 0.75,
               ),
               SizedBox(
                 height: $(16),
