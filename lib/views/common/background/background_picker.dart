@@ -95,7 +95,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   void initState() {
     super.initState();
     imageRatio = widget.imageRatio;
-    List<Map<String, dynamic>> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
+    List<dynamic> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
     dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList();
     if (dataList.length < 4) {
       dataList.addAll(defaultColors.sublist(0, 4 - dataList.length).map((e) => BackgroundData()..color = e).toList());
@@ -148,7 +148,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           (e) => ClipRRect(
             child: buildItem(e),
             borderRadius: BorderRadius.circular($(4)),
-          ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+          ).intoGestureDetector(onTap: () {
+            widget.onPick.call(e);
+          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
         )
         .toList());
     return Row(

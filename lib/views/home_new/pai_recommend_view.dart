@@ -47,20 +47,10 @@ class RecommendItem extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular($(8)),
-          child: VisibilityHolder(
-            keyString: data.url,
-            child: CachedNetworkImageUtils.custom(
-              fit: BoxFit.cover,
-              useOld: false,
-              height: width * $(192.0) / $(110.0),
-              width: width,
-              context: context,
-              imageUrl: data.url,
-            ),
-            placeHolder: SizedBox(
-              width: width,
-              height: width * $(192.0) / $(110.0),
-            ),
+          child: VisibilityImageHolder(
+            url: data.url,
+            height: width * $(192.0) / $(110.0),
+            width: width,
           ),
         ),
         TitleTextWidget(

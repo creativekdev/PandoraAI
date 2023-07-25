@@ -20,6 +20,11 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
   });
 
   @override
+  String getCategory() {
+    return 'cartoonize';
+  }
+
+  @override
   void onInit() {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);

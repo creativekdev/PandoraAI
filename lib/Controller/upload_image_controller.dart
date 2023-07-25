@@ -22,11 +22,16 @@ class UploadImageController extends GetxController {
 
   updateImageUrl(String str) => imageUrl.value = str;
 
+  UploadImageController() {
+    storageOperator = cacheManager.storageOperator;
+    loadImageUploadCache();
+  }
+
   @override
   void onInit() {
     super.onInit();
-    storageOperator = cacheManager.storageOperator;
-    loadImageUploadCache();
+    // storageOperator = cacheManager.storageOperator;
+    // loadImageUploadCache();
   }
 
   Future<void> loadImageUploadCache() async {

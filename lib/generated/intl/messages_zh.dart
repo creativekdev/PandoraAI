@@ -209,6 +209,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "end_date": MessageLookupByLibrary.simpleMessage("结束时间"),
         "enter_code": MessageLookupByLibrary.simpleMessage("填写邀请码"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage("输入6位验证码"),
+        "enter_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "examples": MessageLookupByLibrary.simpleMessage("案例"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("退出编辑"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("退出编辑"),
@@ -283,6 +284,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
         "last_name": MessageLookupByLibrary.simpleMessage("姓氏"),
+        "last_one": MessageLookupByLibrary.simpleMessage("已经是最后一个了"),
         "like": MessageLookupByLibrary.simpleMessage("点赞"),
         "login": MessageLookupByLibrary.simpleMessage("登录"),
         "loginToThePlatformAccount":
@@ -523,7 +525,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "start_date": MessageLookupByLibrary.simpleMessage("开始时间"),
         "start_now": MessageLookupByLibrary.simpleMessage("开始使用"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("去填写"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("周日"),
         "swipe_up_for_more": MessageLookupByLibrary.simpleMessage("上滑获取更多"),

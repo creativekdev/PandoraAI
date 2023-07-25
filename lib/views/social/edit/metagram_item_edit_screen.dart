@@ -230,7 +230,7 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
       } else {
         controller.onError();
         if (value.error != null) {
-          showLimitDialog(context, value.error!);
+          showLimitDialog(context, type: value.error!, function: 'metagram', source: 'metagram_result_page');
         } else {
           Navigator.of(context).pop();
         }
@@ -248,90 +248,6 @@ class _MetagramItemEditScreenState extends AppState<MetagramItemEditScreen> {
         }
       } else {
         simulateProgressBarController.onError();
-      }
-    });
-  }
-
-  showLimitDialog(BuildContext context, AccountLimitType type) {
-    showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: $(27)),
-                Image.asset(
-                  Images.ic_limit_icon,
-                ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
-                SizedBox(height: $(16)),
-                TitleTextWidget(
-                  type.getContent(context, 'Metagram'),
-                  ColorConstant.White,
-                  FontWeight.w500,
-                  $(13),
-                  maxLines: 100,
-                  align: TextAlign.center,
-                ).intoContainer(
-                  width: double.maxFinite,
-                  padding: EdgeInsets.only(
-                    bottom: $(30),
-                    left: $(30),
-                    right: $(30),
-                  ),
-                  alignment: Alignment.center,
-                ),
-                Text(
-                  type.getSubmitText(context),
-                  style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                )
-                    .intoContainer(
-                  width: double.maxFinite,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
-                  padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                  alignment: Alignment.center,
-                )
-                    .intoGestureDetector(onTap: () {
-                  Navigator.of(context).pop(false);
-                }),
-                type.getPositiveText(context) != null
-                    ? Text(
-                        type.getPositiveText(context)!,
-                        style: TextStyle(fontFamily: 'Poppins', color: ColorConstant.White, fontSize: $(14)),
-                      )
-                        .intoContainer(
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: Color(0xff292929)),
-                        padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                        margin: EdgeInsets.only(top: $(16), bottom: $(24)),
-                        alignment: Alignment.center,
-                      )
-                        .intoGestureDetector(onTap: () {
-                        Navigator.pop(_, true);
-                      })
-                    : SizedBox.shrink(),
-              ],
-            ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(25))).customDialogStyle()).then((value) {
-      if (value == null) {
-      } else if (value) {
-        switch (type) {
-          case AccountLimitType.guest:
-            userManager.doOnLogin(context, logPreLoginAction: 'metagram_generate_limit', toSignUp: true);
-            break;
-          case AccountLimitType.normal:
-            userManager.doOnLogin(context, logPreLoginAction: 'metagram_generate_limit', callback: () {
-              PaymentUtils.pay(context, 'metagram_result_page');
-            }, autoExec: true);
-            break;
-          case AccountLimitType.vip:
-            break;
-        }
-      } else {
-        userManager.doOnLogin(context, logPreLoginAction: 'metagram_generate_limit', callback: () {
-          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
-          delay(() => SubmitInvitedCodeScreen.push(Get.context!), milliseconds: 200);
-          // Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-        }, autoExec: true);
       }
     });
   }

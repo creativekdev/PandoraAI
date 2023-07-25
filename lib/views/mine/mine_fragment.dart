@@ -206,7 +206,7 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
               line(context).visibility(visible: false),
               ImageTextBarWidget("Filter test", Images.ic_premium, true).intoGestureDetector(onTap: () {
                 ImFilter.open(context, tab: TABS.FILTER, source: 'my_page');
-              }).visibility(visible: true),
+              }).visibility(visible: false),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {

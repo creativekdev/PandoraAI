@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -86,7 +88,7 @@ class ImFilterController extends GetxController {
     } else {
       await file.writeAsBytes(byte!);
     }
-    await GallerySaver.saveImage(file.path, albumName: "PandoraAI");
+    await GallerySaver.saveImage(file.path, albumName: saveAlbumName);
     CommonExtension().showImageSavedOkToast(context);
   }
 
@@ -105,17 +107,24 @@ class ImFilterController extends GetxController {
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
     await filter.calcAvatars(image);
 
-    try {
-      ///background removal calculation
-      File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-      await uploadImageController.uploadCompressedImage(compressedImage);
-      uploadImageController.update();
-      var url = await FilterApi().removeBgAndSave(imageUrl: uploadImageController.imageUrl.value);
-      File personImageFile = File(url!);
-      personImage = await getLibImage(await getImage(personImageFile!));
+    File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+    await uploadImageController.uploadCompressedImage(compressedImage);
+    uploadImageController.update();
+    var url = await FilterApi(client: DioNode().build()).removeBgAndSave(
+        imageUrl: uploadImageController.imageUrl.value,
+        onFailed: (response) {
+          if (response.data != null) {
+            var data = response.data;
+            if (data['code'] == "DAILY_IP_LIMIT_EXCEEDED") {
+              //todo
+              CommonExtension().showToast(S.of(Get.context!).DAILY_IP_LIMIT_EXCEEDED);
+            }
+          }
+        });
+    if (url != null) {
+      File personImageFile = File(url);
+      personImage = await getLibImage(await getImage(personImageFile));
       personImageForUi = await convertImage(personImage);
-    } catch (e) {
-      print('An exception occurred: $e');
     }
     update();
   }

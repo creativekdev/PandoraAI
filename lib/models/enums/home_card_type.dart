@@ -60,7 +60,8 @@ class HomeCardTypeUtils {
       case 'lineart':
         return HomeCardType.lineart;
       case 'removebg':
-        return HomeCardType.removeBg;
+        return HomeCardType.UNDEFINED;//todo 1.5.5 当前版本不解析
+        // return HomeCardType.removeBg;
       case '':
       case null:
         return HomeCardType.nothing;
@@ -113,7 +114,7 @@ class HomeCardTypeUtils {
             ..height = height;
         }
       }
-      if (source == "home_page") {
+      if (source == "home_page_new") {
         Events.homeTemplateClick(source: source, style: style);
       } else {
         Events.discoveryTemplateClick(source: source, style: style);

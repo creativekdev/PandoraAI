@@ -3741,10 +3741,10 @@ class S {
   }
 
   /// `Enter now`
-  String get submit_now {
+  String get enter_now {
     return Intl.message(
       'Enter now',
-      name: 'submit_now',
+      name: 'enter_now',
       desc: '',
       args: [],
     );
@@ -4935,6 +4935,16 @@ class S {
     return Intl.message(
       'Downloading...',
       name: 'downloading',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Already the last one`
+  String get last_one {
+    return Intl.message(
+      'Already the last one',
+      name: 'last_one',
       desc: '',
       args: [],
     );

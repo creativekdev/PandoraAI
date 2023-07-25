@@ -200,7 +200,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dog": MessageLookupByLibrary.simpleMessage("犬"),
         "done": MessageLookupByLibrary.simpleMessage("完了"),
         "download": MessageLookupByLibrary.simpleMessage("ダウンロード"),
-        "downloading": MessageLookupByLibrary.simpleMessage("Downloading..."),
+        "downloading": MessageLookupByLibrary.simpleMessage("ダウンロード..."),
         "edit": MessageLookupByLibrary.simpleMessage("編集"),
         "edit_profile": MessageLookupByLibrary.simpleMessage("情報を編集する"),
         "effectRecentEmptyHint":
@@ -217,6 +217,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_code": MessageLookupByLibrary.simpleMessage("招待コードを記入する"),
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("6ビット認証コードを入力してください"),
+        "enter_now": MessageLookupByLibrary.simpleMessage("記入する"),
         "examples": MessageLookupByLibrary.simpleMessage("ケース"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("編集終了"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("編集終了"),
@@ -296,6 +297,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "july": MessageLookupByLibrary.simpleMessage("七月"),
         "june": MessageLookupByLibrary.simpleMessage("六月"),
         "last_name": MessageLookupByLibrary.simpleMessage("名"),
+        "last_one": MessageLookupByLibrary.simpleMessage("もう最後のもの"),
         "like": MessageLookupByLibrary.simpleMessage("いいね"),
         "login": MessageLookupByLibrary.simpleMessage("ログイン"),
         "loginToThePlatformAccount":
@@ -561,7 +563,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "start_date": MessageLookupByLibrary.simpleMessage("開始時間"),
         "start_now": MessageLookupByLibrary.simpleMessage("使用を開始する"),
         "submit": MessageLookupByLibrary.simpleMessage("提出"),
-        "submit_now": MessageLookupByLibrary.simpleMessage("記入する"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("日曜日"),
         "swipe_up_for_more":
