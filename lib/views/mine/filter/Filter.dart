@@ -8,6 +8,15 @@ class Filter{
   int selectedID = 0;
   static List<String> filters = [
     "NOR",
+    "VID",
+    "VIW",
+    "VIC",
+    "DRA",
+    "DRW",
+    "DRC",
+    "MNO",
+    "SLS",
+    "CTN",
     "INV",
     "EDG",
     "SHR",
@@ -17,16 +26,7 @@ class Filter{
     "FUS",
     "FRZ",
     "CMC",
-    "VID",
-    "VIW",
-    "VIC",
-    "DRA",
-    "DRW",
-    "DRC",
-    "MNO",
-    "SLS",
-    "NOI",
-    "CTN",
+
   ];
   void setSelectedID(int id) {
     selectedID = id;
@@ -348,6 +348,7 @@ class Filter{
         // imgLib;
         List<int> group = [];
         List<int> cnt = [];
+        // res_image = imgLib.bilateralFilter(res_image, sigmaSpace: 4, sigmaColor: 8);
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
