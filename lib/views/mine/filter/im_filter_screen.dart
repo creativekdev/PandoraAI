@@ -67,13 +67,20 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     for (var img in controller.rightTabList) {
       int cur = num;
       buttons.add(GestureDetector(
-        onTap: () {
+        onTap: () async {
+          if(TABS.values[cur] == TABS.BACKGROUND) {
+            controller.byte = controller.personImageByte;
+          }
+          else if(TABS.values[cur] == TABS.ADJUST) controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
+          else controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.image));
+
           setState(() {
             if (TABS.EFFECT == TABS.values[cur]) {
               Navigator.of(context).pop();
               return;
             }
             controller.selectedRightTab = TABS.values[cur];
+            controller.byte;
           });
         },
         child: Container(
@@ -154,7 +161,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               Container(
                   decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
                   padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
-                  height: $(220),
+                  height: $(180),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
               SizedBox(height: $(50)),
               (controller.selectedRightTab != TABS.CROP)
@@ -192,7 +199,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                                     byte: controller.byte,
                                     globalKey: controller.ImageViewerBackgroundKey,
                                   )))
-                              : Image.memory(
+                              :Image.memory(
                                   controller.byte!,
                                   fit: BoxFit.contain,
                                 )
@@ -525,7 +532,13 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       });
     });
   }
-
+  Color rgbaToAbgr(Color rgbaColor) {
+    int abgrValue = (rgbaColor.alpha << 24) |
+    (rgbaColor.blue << 16) |
+    (rgbaColor.green << 8) |
+    rgbaColor.red;
+    return Color(abgrValue);
+  }
   Widget _buildBackground(BuildContext context) {
     return BackgroundPickerBar(
       imageRatio: controller.imageRatio,
@@ -536,7 +549,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           controller.backgroundImage = await getLibImage(await getImage(backFile));
         } else {
           controller.backgroundImage = imgLib.Image(controller.personImage.width, controller.personImage.height);
-          imgLib.fill(controller.backgroundImage, data.color!.value);
+          imgLib.fill(controller.backgroundImage, rgbaToAbgr(data.color!).value);
         }
         showPersonEditScreenDialog(context);
       },
