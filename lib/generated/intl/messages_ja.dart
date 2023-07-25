@@ -94,6 +94,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "ペットとの写真はアップロードしないでください。また、ペットの顔を隠さず、体をねじ曲げたり、歪めたりするような写真もアップロードしないでください。"),
         "before": MessageLookupByLibrary.simpleMessage("Before"),
+        "blogging": MessageLookupByLibrary.simpleMessage("Blogging Effects"),
         "bought": MessageLookupByLibrary.simpleMessage("購入済み"),
         "business_days_10_20": MessageLookupByLibrary.simpleMessage("10-20営業日"),
         "business_days_7_10": MessageLookupByLibrary.simpleMessage("7-10営業日"),
@@ -232,6 +233,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "face_toon": MessageLookupByLibrary.simpleMessage("顔アニメ"),
         "facebook": MessageLookupByLibrary.simpleMessage("IGビジネスを使用する（FB経由）"),
         "faces": MessageLookupByLibrary.simpleMessage("顔"),
+        "facetoon": MessageLookupByLibrary.simpleMessage("Facetoon"),
         "failed_to_upload_image":
             MessageLookupByLibrary.simpleMessage("画像のアップロードが失敗しました"),
         "faster_speed": MessageLookupByLibrary.simpleMessage("より快速な転化"),
@@ -252,6 +254,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("金曜日"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("完了"),
         "full_name": MessageLookupByLibrary.simpleMessage("フルネーム"),
+        "furry": MessageLookupByLibrary.simpleMessage("Furry Friends"),
         "generate": MessageLookupByLibrary.simpleMessage("作成"),
         "generate_again": MessageLookupByLibrary.simpleMessage("再生"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
@@ -334,6 +337,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "net_exception": MessageLookupByLibrary.simpleMessage("ネットワーク異常"),
         "net_exception_desc":
             MessageLookupByLibrary.simpleMessage("ネットワーク環境を確認してください"),
+        "new_category": MessageLookupByLibrary.simpleMessage("New"),
         "new_pass": MessageLookupByLibrary.simpleMessage("新しいパスワード"),
         "new_update_dialog_content":
             MessageLookupByLibrary.simpleMessage("現在のバージョンは旧いため、更新が必要です。"),
@@ -562,6 +566,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("標準"),
         "start_date": MessageLookupByLibrary.simpleMessage("開始時間"),
         "start_now": MessageLookupByLibrary.simpleMessage("使用を開始する"),
+        "stylemorph": MessageLookupByLibrary.simpleMessage("Stylemorph"),
         "submit": MessageLookupByLibrary.simpleMessage("提出"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("日曜日"),

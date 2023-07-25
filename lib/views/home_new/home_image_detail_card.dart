@@ -18,38 +18,38 @@ class HomeImageDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (category == "facetoon") {
-      return Stack(
-        children: [
-          CachedNetworkImageUtils.custom(
-            context: context,
-            imageUrl: url,
-            width: width,
-            height: height,
-            fit: BoxFit.cover,
-          ),
-          CachedNetworkImageUtils.custom(
-            context: context,
-            imageUrl: url,
-            width: width,
-            height: ScreenUtil.screenSize.height * 0.65,
-            fit: BoxFit.cover,
-          )
-              .intoContainer(
-                alignment: Alignment.center,
-                width: width,
-                height: height,
-              )
-              .blur(),
-        ],
-      ).intoContainer(width: width, height: height);
-    }
-    return CachedNetworkImageUtils.custom(
-      context: context,
-      imageUrl: url,
-      width: width,
-      height: height,
-      fit: BoxFit.cover,
-    );
+    // if (category == "facetoon") {
+    return Stack(
+      children: [
+        CachedNetworkImageUtils.custom(
+          context: context,
+          imageUrl: url,
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+        ),
+        CachedNetworkImageUtils.custom(
+          context: context,
+          imageUrl: url,
+          width: width,
+          height: category == "facetoon" ? ScreenUtil.screenSize.height * 0.65 : height,
+          fit: category == "facetoon" ? BoxFit.cover : BoxFit.contain,
+        )
+            .intoContainer(
+              alignment: Alignment.center,
+              width: width,
+              height: height,
+            )
+            .blur(),
+      ],
+    ).intoContainer(width: width, height: height);
+    // }
+    // return CachedNetworkImageUtils.custom(
+    //   context: context,
+    //   imageUrl: url,
+    //   width: width,
+    //   height: height,
+    //   fit: BoxFit.cover,
+    // );
   }
 }

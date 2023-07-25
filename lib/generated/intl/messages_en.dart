@@ -106,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "Please don\'t upload photos of more than one pet; don\'t cover your pet\'s face; don\'t use photos where your pet curls up into a ball."),
         "before": MessageLookupByLibrary.simpleMessage("Before"),
+        "blogging": MessageLookupByLibrary.simpleMessage("Blogging Effects"),
         "bought": MessageLookupByLibrary.simpleMessage("Bought"),
         "business_days_10_20":
             MessageLookupByLibrary.simpleMessage("10-20 business days"),
@@ -268,6 +269,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "facebook": MessageLookupByLibrary.simpleMessage(
             "Continue with IG Business(via FB)"),
         "faces": MessageLookupByLibrary.simpleMessage("Faces"),
+        "facetoon": MessageLookupByLibrary.simpleMessage("Facetoon"),
         "failed_to_upload_image":
             MessageLookupByLibrary.simpleMessage("Failed to upload image"),
         "faster_speed": MessageLookupByLibrary.simpleMessage("Faster Speed"),
@@ -289,6 +291,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("Friday"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("Fulfilled"),
         "full_name": MessageLookupByLibrary.simpleMessage("Full Name"),
+        "furry": MessageLookupByLibrary.simpleMessage("Furry Friends"),
         "generate": MessageLookupByLibrary.simpleMessage("Generate"),
         "generate_again":
             MessageLookupByLibrary.simpleMessage("Generate again"),
@@ -382,6 +385,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Network Anomaly"),
         "net_exception_desc": MessageLookupByLibrary.simpleMessage(
             "Please ensure your internet connection is available"),
+        "new_category": MessageLookupByLibrary.simpleMessage("New"),
         "new_pass": MessageLookupByLibrary.simpleMessage("New Password"),
         "new_update_dialog_content": MessageLookupByLibrary.simpleMessage(
             "A required update is available, the App will not be working until this update is applied."),
@@ -646,6 +650,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("Standard"),
         "start_date": MessageLookupByLibrary.simpleMessage("Start Date"),
         "start_now": MessageLookupByLibrary.simpleMessage("Start Now"),
+        "stylemorph": MessageLookupByLibrary.simpleMessage("Stylemorph"),
         "submit": MessageLookupByLibrary.simpleMessage("Submit"),
         "successful": MessageLookupByLibrary.simpleMessage("Successful"),
         "sunday": MessageLookupByLibrary.simpleMessage("Sunday"),

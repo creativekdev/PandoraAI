@@ -4949,6 +4949,56 @@ class S {
       args: [],
     );
   }
+
+  /// `New`
+  String get new_category {
+    return Intl.message(
+      'New',
+      name: 'new_category',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Facetoon`
+  String get facetoon {
+    return Intl.message(
+      'Facetoon',
+      name: 'facetoon',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Stylemorph`
+  String get stylemorph {
+    return Intl.message(
+      'Stylemorph',
+      name: 'stylemorph',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Blogging Effects`
+  String get blogging {
+    return Intl.message(
+      'Blogging Effects',
+      name: 'blogging',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Furry Friends`
+  String get furry {
+    return Intl.message(
+      'Furry Friends',
+      name: 'furry',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

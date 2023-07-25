@@ -111,6 +111,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "No suba fotos de mascotas y no cubra sus caras; Tampoco subas fotos de mascotas acurrucadas y extremidades torcidas……"),
         "before": MessageLookupByLibrary.simpleMessage("Before"),
+        "blogging": MessageLookupByLibrary.simpleMessage("Blogging Effects"),
         "bought": MessageLookupByLibrary.simpleMessage("Comprado"),
         "business_days_10_20":
             MessageLookupByLibrary.simpleMessage("10-20 días laborables"),
@@ -282,6 +283,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "facebook":
             MessageLookupByLibrary.simpleMessage("Usar IG Business (vía FB)"),
         "faces": MessageLookupByLibrary.simpleMessage("Cara"),
+        "facetoon": MessageLookupByLibrary.simpleMessage("Facetoon"),
         "failed_to_upload_image":
             MessageLookupByLibrary.simpleMessage("Error al cargar la imagen"),
         "faster_speed":
@@ -304,6 +306,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("Viernes"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("Cumplido"),
         "full_name": MessageLookupByLibrary.simpleMessage("nombre completo"),
+        "furry": MessageLookupByLibrary.simpleMessage("Furry Friends"),
         "generate": MessageLookupByLibrary.simpleMessage("crear"),
         "generate_again": MessageLookupByLibrary.simpleMessage("Reconstruir"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
@@ -406,6 +409,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Anomalías de red"),
         "net_exception_desc":
             MessageLookupByLibrary.simpleMessage("Compruebe su entorno de red"),
+        "new_category": MessageLookupByLibrary.simpleMessage("New"),
         "new_pass": MessageLookupByLibrary.simpleMessage("Nueva contraseña"),
         "new_update_dialog_content": MessageLookupByLibrary.simpleMessage(
             "La versión actual requiere que actualices o no podrás usar la aplicación"),
@@ -673,6 +677,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("Estándar"),
         "start_date": MessageLookupByLibrary.simpleMessage("Fecha de inicio"),
         "start_now": MessageLookupByLibrary.simpleMessage("Empieza ahora"),
+        "stylemorph": MessageLookupByLibrary.simpleMessage("Stylemorph"),
         "submit": MessageLookupByLibrary.simpleMessage("Enviar"),
         "successful": MessageLookupByLibrary.simpleMessage("lograr"),
         "sunday": MessageLookupByLibrary.simpleMessage("Domingo"),

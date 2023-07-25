@@ -43,9 +43,14 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
               builder: (_) {
                 return Listener(
                   onPointerUp: (PointerUpEvent event) {
-                    if ((controller.posts?.length ?? 0) == (controller.index! + 1)) {
+                    bool isDown = ((controller.offset!.dy - event.position.dy).abs() - (controller.offset!.dx - event.position.dx).abs() > 0) &&
+                        controller.offset!.dy - event.position.dy > 20;
+                    if ((controller.posts?.length ?? 0) == (controller.index! + 1) && isDown) {
                       CommonExtension().showToast(S.of(context).last_one, gravity: ToastGravity.CENTER);
                     }
+                  },
+                  onPointerDown: (PointerDownEvent event) {
+                    controller.offset = event.position;
                   },
                   child: PageView.builder(
                     controller: controller.pageController,

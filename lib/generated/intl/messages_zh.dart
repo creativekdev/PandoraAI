@@ -90,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "bad_photo_pet_description": MessageLookupByLibrary.simpleMessage(
             "请勿上传宠物合照，不要遮挡住宠物的脸；也不要上传宠物蜷缩、扭曲肢体的照片……"),
         "before": MessageLookupByLibrary.simpleMessage("Before"),
+        "blogging": MessageLookupByLibrary.simpleMessage("Blogging Effects"),
         "bought": MessageLookupByLibrary.simpleMessage("已购买"),
         "business_days_10_20":
             MessageLookupByLibrary.simpleMessage("10-20个工作日"),
@@ -225,6 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "facebook":
             MessageLookupByLibrary.simpleMessage("使用IG Business(via FB)"),
         "faces": MessageLookupByLibrary.simpleMessage("人脸"),
+        "facetoon": MessageLookupByLibrary.simpleMessage("Facetoon"),
         "failed_to_upload_image":
             MessageLookupByLibrary.simpleMessage("上传图片失败"),
         "faster_speed": MessageLookupByLibrary.simpleMessage("更快速转化"),
@@ -242,6 +244,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "friday": MessageLookupByLibrary.simpleMessage("周五"),
         "fulfilled": MessageLookupByLibrary.simpleMessage("已完成"),
         "full_name": MessageLookupByLibrary.simpleMessage("全名"),
+        "furry": MessageLookupByLibrary.simpleMessage("Furry Friends"),
         "generate": MessageLookupByLibrary.simpleMessage("创建"),
         "generate_again": MessageLookupByLibrary.simpleMessage("重新生成"),
         "generate_reached_limit": MessageLookupByLibrary.simpleMessage(
@@ -317,6 +320,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),
         "net_exception": MessageLookupByLibrary.simpleMessage("网络异常"),
         "net_exception_desc": MessageLookupByLibrary.simpleMessage("请检查您的网络环境"),
+        "new_category": MessageLookupByLibrary.simpleMessage("New"),
         "new_pass": MessageLookupByLibrary.simpleMessage("新密码"),
         "new_update_dialog_content":
             MessageLookupByLibrary.simpleMessage("当前版本要求您必须更新，否则将无法使用App"),
@@ -524,6 +528,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "standard": MessageLookupByLibrary.simpleMessage("标准"),
         "start_date": MessageLookupByLibrary.simpleMessage("开始时间"),
         "start_now": MessageLookupByLibrary.simpleMessage("开始使用"),
+        "stylemorph": MessageLookupByLibrary.simpleMessage("Stylemorph"),
         "submit": MessageLookupByLibrary.simpleMessage("提交"),
         "successful": MessageLookupByLibrary.simpleMessage("成功"),
         "sunday": MessageLookupByLibrary.simpleMessage("周日"),

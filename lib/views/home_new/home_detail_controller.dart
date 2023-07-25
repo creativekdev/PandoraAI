@@ -22,6 +22,15 @@ class HomeDetailController extends GetxController {
 
   late PageController pageController;
 
+  Offset? _offset;
+
+  Offset? get offset => _offset;
+
+  set offset(Offset? value) {
+    _offset = value;
+    update();
+  }
+
   bool _isLoading = false;
 
   String? category;
@@ -30,6 +39,7 @@ class HomeDetailController extends GetxController {
 
   set index(int? value) {
     _index = value;
+
     if (_index! >= (_posts!.length - 2)) {
       onLoadMore();
       update();

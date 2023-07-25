@@ -1,9 +1,7 @@
 import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 
 import '../../Common/importFile.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 
@@ -72,10 +70,11 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TitleTextWidget(
-                (widget.galleries?.title ?? '').toUpperCaseFirst,
+                getTitle(widget.galleries?.title ?? ''),
                 ColorConstant.White,
                 FontWeight.w500,
                 $(16),
+                maxLines: 1,
               ).intoContainer(
                 alignment: Alignment.center,
               ),
@@ -139,6 +138,25 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
 
   @override
   bool get wantKeepAlive => true;
+
+  String getTitle(String title) {
+    if (title == "new") {
+      return S.of(context).new_category;
+    }
+    if (title == "facetoon") {
+      return S.of(context).facetoon;
+    }
+    if (title == "stylemorph") {
+      return S.of(context).stylemorph;
+    }
+    if (title == "blogging") {
+      return S.of(context).blogging;
+    }
+    if (title == "furry") {
+      return S.of(context).furry;
+    }
+    return "";
+  }
 }
 
 class _Item extends StatelessWidget {
