@@ -5,7 +5,6 @@ import 'package:cartoonizer/views/home_new/home_detail_screen.dart';
 import '../../Common/importFile.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/cacheImage/cached_network_image_utils.dart';
-import '../../Widgets/router/routers.dart';
 import '../../models/discovery_list_entity.dart';
 import 'home_details_controller.dart';
 
@@ -67,14 +66,14 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                 var data = controller.posts![index];
                 return HomeDetailItem(data, widget.category).intoGestureDetector(onTap: () {
                   // Events.printGoodsSelectClick(source: widget.source, goodsId: data.id.toString());
-                  Navigator.of(context).push<void>(Right2LeftRouter(
+                  Navigator.of(context).push<void>(MaterialPageRoute(
                       settings: RouteSettings(name: '/HomeDetailScreen'),
-                      child: HomeDetailScreen(
-                        posts: controller.posts!,
-                        title: widget.category,
-                        source: widget.source,
-                        index: index,
-                      )));
+                      builder: (context) => HomeDetailScreen(
+                            posts: controller.posts!,
+                            title: widget.category,
+                            source: widget.source,
+                            index: index,
+                          )));
                 });
               },
             );

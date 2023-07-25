@@ -16,9 +16,7 @@ import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
-import '../../Widgets/router/routers.dart';
 import '../../models/discovery_list_entity.dart';
 import '../../models/enums/home_card_type.dart';
 import '../../utils/utils.dart';
@@ -114,9 +112,9 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
               height: e.title == 'facetoon' ? $(96) : $(172),
               onTap: (String category, List<DiscoveryListEntity>? posts) {
                 Navigator.of(context).push<bool>(
-                  Right2LeftRouter(
+                  MaterialPageRoute(
                     settings: RouteSettings(name: '/HomeDetailsScreen'),
-                    child: HomeDetailsScreen(
+                    builder: (context) => HomeDetailsScreen(
                       posts: posts,
                       category: category,
                       source: "home_page",
