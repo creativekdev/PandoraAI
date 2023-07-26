@@ -110,7 +110,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
           return SliverToBoxAdapter(
             child: PaiContentView(
               height: e.title == 'facetoon' ? $(96) : $(172),
-              onTap: (String category, List<DiscoveryListEntity>? posts) {
+              onTap: (String category, List<DiscoveryListEntity>? posts, String title) {
                 Navigator.of(context).push<bool>(
                   MaterialPageRoute(
                     settings: RouteSettings(name: '/HomeDetailsScreen'),
@@ -118,11 +118,12 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                       posts: posts,
                       category: category,
                       source: "home_page",
+                      title: title,
                     ),
                   ),
                 );
               },
-              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts) {
+              onTapItem: (int index, String category, List<DiscoveryListEntity>? posts, String title) {
                 Navigator.of(context).push<void>(MaterialPageRoute(
                     settings: RouteSettings(name: '/HomeDetailScreen'),
                     builder: (context) => HomeDetailScreen(
@@ -130,6 +131,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                           source: "home_page",
                           title: category,
                           index: index,
+                          titleName: title,
                         )));
               },
               galleries: e,

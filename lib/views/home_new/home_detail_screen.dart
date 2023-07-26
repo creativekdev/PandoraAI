@@ -12,11 +12,12 @@ import '../../models/enums/home_card_type.dart';
 import 'home_detail_controller.dart';
 
 class HomeDetailScreen extends StatefulWidget {
-  const HomeDetailScreen({Key? key, required this.posts, required this.source, required this.title, required this.index}) : super(key: key);
+  const HomeDetailScreen({Key? key, required this.posts, required this.source, required this.title, required this.index, required this.titleName}) : super(key: key);
   final List<DiscoveryListEntity> posts;
   final String title;
   final String source;
   final int index;
+  final String titleName;
 
   @override
   State<HomeDetailScreen> createState() => _HomeDetailScreenState();
@@ -89,7 +90,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
           ),
           Align(
             child: TitleTextWidget(
-              widget.title.toUpperCaseFirst,
+              widget.titleName.toUpperCaseFirst,
               ColorConstant.White,
               FontWeight.w500,
               $(17),

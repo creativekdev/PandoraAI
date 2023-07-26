@@ -5,8 +5,8 @@ import '../../Common/importFile.dart';
 import '../../api/app_api.dart';
 import '../../models/discovery_list_entity.dart';
 
-typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts);
-typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts);
+typedef OnClickAll = Function(String category, List<DiscoveryListEntity>? posts, String title);
+typedef OnClickItem = Function(int index, String category, List<DiscoveryListEntity>? posts, String title);
 
 class PaiContentView extends StatefulWidget {
   const PaiContentView({Key? key, required this.height, required this.onTap, required this.onTapItem, required this.galleries}) : super(key: key);
@@ -98,7 +98,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost);
+                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
                 },
               )
             ],
@@ -116,7 +116,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               itemCount: this.socialPost?.length ?? 0,
               itemBuilder: (context, index) => _Item(widget.height, this.socialPost![index]).intoGestureDetector(
                 onTap: () {
-                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost);
+                  widget.onTapItem(index, widget.galleries?.categoryString ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
                 },
               ),
             ),
