@@ -98,7 +98,7 @@ class _PaletteWidgetState extends State<PaletteWidget> {
           duration: Duration(milliseconds: 300),
           height: i == 1 ? $(40) : 0,
           child: SliderColorPicker(
-            progress: opacity,
+            progress: 1- opacity,
             selectorColor: i == 1 ? colorList[selectedIndex] : Colors.transparent,
             visible: i == 1,
             onChange: (selectorColor, opacity) {
@@ -125,7 +125,7 @@ class _PaletteWidgetState extends State<PaletteWidget> {
           duration: Duration(milliseconds: 300),
           height: i == 2 ? $(40) : 0,
           child: SliderColorPicker(
-            progress: opacity,
+            progress: 1 - opacity,
             selectorColor: i == 2 ? colorList[selectedIndex] : Colors.transparent,
             visible: i == 2,
             onChange: (selectorColor, opacity) {
