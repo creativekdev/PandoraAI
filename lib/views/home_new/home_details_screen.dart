@@ -1,5 +1,4 @@
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/home_new/home_detail_screen.dart';
 
 import '../../Common/importFile.dart';
@@ -14,10 +13,12 @@ class HomeDetailsScreen extends StatefulWidget {
     required this.source,
     required this.category,
     this.posts,
+    required this.title,
   }) : super(key: key);
   final String source;
   final String category;
   final List<DiscoveryListEntity>? posts;
+  final String title;
 
   @override
   State<HomeDetailsScreen> createState() => _HomeDetailScreenState();
@@ -39,7 +40,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         middle: TitleTextWidget(
-          widget.category.toUpperCaseFirst,
+          widget.title,
           ColorConstant.White,
           FontWeight.w500,
           $(17),
@@ -73,6 +74,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                             title: widget.category,
                             source: widget.source,
                             index: index,
+                            titleName: widget.title,
                           )));
                 });
               },
