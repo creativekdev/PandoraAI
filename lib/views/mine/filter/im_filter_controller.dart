@@ -40,7 +40,7 @@ class ImFilterController extends GetxController {
   double imageRatio = 16 / 9;
   late imgLib.Image image, personImage, backgroundImage;
   late ui.Image personImageForUi;
-  Uint8List? byte;
+  Uint8List? byte, personImageByte;
   final GlobalKey cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey ImageViewerBackgroundKey = GlobalKey();
   bool originalShowing = false;
@@ -105,6 +105,10 @@ class ImFilterController extends GetxController {
     // uploadImageController.updateImageUrl('');
     // image = await getLibImage(await getImage(imageFile));
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
+    personImage = image;
+    personImageByte = await Uint8List.fromList(imgLib.encodeJpg(image));
+    personImageForUi = await convertImage(image);
+
     await filter.calcAvatars(image);
 
     File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
@@ -124,6 +128,7 @@ class ImFilterController extends GetxController {
     if (url != null) {
       File personImageFile = File(url);
       personImage = await getLibImage(await getImage(personImageFile));
+      personImageByte = await Uint8List.fromList(imgLib.encodeJpg(personImage));
       personImageForUi = await convertImage(personImage);
     }
     update();
