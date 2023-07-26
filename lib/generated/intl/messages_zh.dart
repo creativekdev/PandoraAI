@@ -252,7 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_reached_limit_guest":
             MessageLookupByLibrary.simpleMessage("您已达到了 %s 的每日限制！现在注册即可获得更多配额"),
         "generate_reached_limit_title":
-            MessageLookupByLibrary.simpleMessage("%s 创建次数已达当日上限"),
+            MessageLookupByLibrary.simpleMessage("创建次数已达当日上限"),
         "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
             "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能"),
         "generate_record": MessageLookupByLibrary.simpleMessage("生成记录"),

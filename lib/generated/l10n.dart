@@ -3180,10 +3180,10 @@ class S {
     );
   }
 
-  /// `You've reached your %s limit today`
+  /// `You've reached your limit today`
   String get generate_reached_limit_title {
     return Intl.message(
-      'You\'ve reached your %s limit today',
+      'You\'ve reached your limit today',
       name: 'generate_reached_limit_title',
       desc: '',
       args: [],

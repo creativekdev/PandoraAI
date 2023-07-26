@@ -312,7 +312,7 @@
   "avatar_create_ensure_hint": "El estilo de selección actual es %s. Por favor, cargue una imagen que coincida con este estilo para garantizar que los resultados generados sean más precisos. ¿Seguro que el estilo es %s?",
   "yes": "Estás seguro",
   "choose_another": "Volver a seleccionar",
-  "generate_reached_limit_title": "%s veces creadas ha alcanzado el límite diario",
+  "generate_reached_limit_title": "Has alcanzado tu límite hoy.",
   "generate_reached_limit": "¡Has alcanzado el límite diario de %s! Actualiza tu cuenta para seguir usándola o inténtalo de nuevo mañana. Mientras tanto, puede explorar otras características",
   "generate_reached_limit_guest": "¡Has alcanzado el límite diario de %s! Regístrese ahora para obtener más cuotas",
   "generate_reached_limit_vip": "¡Has alcanzado el límite diario de %s! Por favor, intente de nuevo mañana o pruebe otras funciones",

@@ -312,7 +312,7 @@
   "avatar_create_ensure_hint": "現在選択しているスタイルは％sです、生成結果をより正確にするために、当該のスタイルに合致する画像をアップロードしてください。 スタイルは％sでよろしいですか。",
   "yes": "決定",
   "choose_another": "再選択",
-  "generate_reached_limit_title": "％s作成回数は当日最大限までになりました",
+  "generate_reached_limit_title": "今日の制限に達しました",
   "generate_reached_limit": "あなたは％sの日々の制限に達しました！ アカウントをアップグレードすると、引き続きご利用いただけます。または、明日再試行することもできます。同時に、他の機能を探索することもできます",
   "generate_reached_limit_guest": "あなたは％sの日々の制限に達しました！ 今すぐ登録すると、より多くのクオータを獲得できます",
   "generate_reached_limit_vip": "あなたは％sの日々の制限に達しました！ 明日に再試行するか、他の機能を試してみてください",

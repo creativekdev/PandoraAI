@@ -262,7 +262,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_reached_limit_guest": MessageLookupByLibrary.simpleMessage(
             "あなたは％sの日々の制限に達しました！ 今すぐ登録すると、より多くのクオータを獲得できます"),
         "generate_reached_limit_title":
-            MessageLookupByLibrary.simpleMessage("％s作成回数は当日最大限までになりました"),
+            MessageLookupByLibrary.simpleMessage("今日の制限に達しました"),
         "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
             "あなたは％sの日々の制限に達しました！ 明日に再試行するか、他の機能を試してみてください"),
         "generate_record": MessageLookupByLibrary.simpleMessage("レコード生成"),

@@ -417,7 +417,10 @@ Future<ui.Image> getUiImage(imgLib.Image image) async {
 
 Future<bool> judgeInvitationCode() async {
   var userManager = AppDelegate().getManager<UserManager>();
-  if (userManager.user?.isReferred ?? false) {
+  if (userManager.isNeedLogin) {
+    return false;
+  }
+  if (userManager.user!.isReferred) {
     return false;
   }
   var cacheManager = AppDelegate().getManager<CacheManager>();

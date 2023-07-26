@@ -213,6 +213,12 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
                 Images.ic_limit_icon,
               ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(22))),
               SizedBox(height: $(16)),
+              TitleTextWidget(S.of(context).generate_reached_limit_title, Colors.white, FontWeight.w600, $(18), maxLines: 4).intoContainer(
+                width: double.maxFinite,
+                padding: EdgeInsets.only(left: $(10), right: $(10)),
+                alignment: Alignment.center,
+              ),
+              SizedBox(height: $(16)),
               TitleTextWidget(
                 type.getContent(context),
                 ColorConstant.White,

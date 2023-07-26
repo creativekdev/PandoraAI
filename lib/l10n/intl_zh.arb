@@ -312,7 +312,7 @@
   "avatar_create_ensure_hint": "当前选择风格为 %s，请上传与该风格一致的图片，以确保生成结果更加准确。确定风格为 %s 吗？",
   "yes": "确定",
   "choose_another": "重新选择",
-  "generate_reached_limit_title": "%s 创建次数已达当日上限",
+  "generate_reached_limit_title": "创建次数已达当日上限",
   "generate_reached_limit": "您已达到了 %s 的每日限制！升级您的账户可以继续使用，或者明天再试。同时，您还可以探索其他功能",
   "generate_reached_limit_guest": "您已达到了 %s 的每日限制！现在注册即可获得更多配额",
   "generate_reached_limit_vip": "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能",

@@ -49,6 +49,7 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'submit_invitation_code_screen');
+    judgeInvitationCode();
     refCodeController.tabController = TabController(length: refCodeController.tabList.length, vsync: this);
     if (widget.code != null) {
       refCodeController.inputText = widget.code!;
@@ -277,14 +278,14 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
                       ],
                     ).intoContainer(
                       width: double.maxFinite,
-                      padding: EdgeInsets.symmetric(horizontal: $(8),vertical: $(12)),
+                      padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(12)),
                       decoration: BoxDecoration(color: Color(0xff17181a), borderRadius: BorderRadius.circular($(8))),
                     ),
                     SizedBox(height: $(32)),
                   ],
                 ).intoContainer(
                   width: double.maxFinite,
-                  margin: EdgeInsets.symmetric(horizontal:$(16)),
+                  margin: EdgeInsets.symmetric(horizontal: $(16)),
                 );
               }),
           SizedBox(height: $(26)),

@@ -314,7 +314,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generate_reached_limit_guest": MessageLookupByLibrary.simpleMessage(
             "¡Has alcanzado el límite diario de %s! Regístrese ahora para obtener más cuotas"),
         "generate_reached_limit_title": MessageLookupByLibrary.simpleMessage(
-            "%s veces creadas ha alcanzado el límite diario"),
+            "Has alcanzado tu límite hoy."),
         "generate_reached_limit_vip": MessageLookupByLibrary.simpleMessage(
             "¡Has alcanzado el límite diario de %s! Por favor, intente de nuevo mañana o pruebe otras funciones"),
         "generate_record":

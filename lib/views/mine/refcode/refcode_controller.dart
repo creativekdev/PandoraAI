@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -18,6 +19,7 @@ class RefCodeController extends GetxController {
   ];
   late TabController tabController;
   bool inputEnable = false;
+  late StreamSubscription onClipboardChange;
 
   refreshInputEnable() {
     if (textEditingController.text.length != 0) {
@@ -60,11 +62,15 @@ class RefCodeController extends GetxController {
   void onInit() {
     super.onInit();
     api = AppApi().bindController(this);
+    onClipboardChange = EventBusHelper().eventBus.on<OnNewInvitationCodeReceiveEvent>().listen((event) {
+      inputText = event.data ?? '';
+    });
   }
 
   @override
   void dispose() {
     api.unbind();
+    onClipboardChange.cancel();
     super.dispose();
   }
 

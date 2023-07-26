@@ -312,7 +312,7 @@
   "avatar_create_ensure_hint": "You have selected %s style. Please upload photos that match the style to ensure more accurate results. Are you sure the style is %s?",
   "yes": "Yes",
   "choose_another": "Choose another",
-  "generate_reached_limit_title": "You've reached your %s limit today",
+  "generate_reached_limit_title": "You've reached your limit today",
   "generate_reached_limit": "You've reached your $s daily limit! Upgrade your account now for extended access or return tomorrow. Feel free to explore our other exciting features in the meantime.",
   "generate_reached_limit_guest": "You've reached your %s daily limit! Sign up now for extended access.",
   "generate_reached_limit_vip": "Come back tomorrow or try other functions.",

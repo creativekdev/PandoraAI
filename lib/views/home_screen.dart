@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
@@ -132,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     delay(
         () => cacheManager.featureOperator.judgeAndOpenFeaturePage(context).then((value) {
               if (!value) {
-                judgeInvitationCode();
+                if (Platform.isAndroid) {
+                  judgeInvitationCode();
+                }
               }
             }),
         milliseconds: 1000);

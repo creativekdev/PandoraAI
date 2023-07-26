@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/admob/splash_ads_holder.dart';
@@ -75,7 +77,9 @@ class ThirdpartManager extends BaseManager {
 
   void _onAppStateChanged(AppState appState) {
     if (appState == AppState.foreground) {
-      judgeInvitationCode();
+      if (Platform.isAndroid) {
+        judgeInvitationCode();
+      }
       AppDelegate.instance.getManager<UserManager>().refreshUser();
       adsHolder.show();
       appBackground = false;
