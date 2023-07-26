@@ -134,6 +134,10 @@ class ImFilterController extends GetxController {
     update();
   }
 
+  onResultShare({required String source, required String platform, required String photo}) {
+    Events.facetoonResultShare(source: source, platform: platform, photo: 'image');
+  }
+
   @override
   void dispose() {
     super.dispose();

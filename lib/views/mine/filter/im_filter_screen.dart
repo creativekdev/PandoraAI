@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
@@ -13,9 +14,17 @@ import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../app/app.dart';
+import '../../../app/thirdpart/thirdpart_manager.dart';
+import '../../../app/user/user_manager.dart';
+import '../../../models/enums/home_card_type.dart';
+import '../../../utils/img_utils.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
+import '../../share/ShareScreen.dart';
+import '../../share/share_discovery_screen.dart';
 import 'ImageMergingWidget.dart';
 import 'im_filter.dart';
 
@@ -37,6 +46,7 @@ class ImFilterScreen extends StatefulWidget {
 
 class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerProviderStateMixin {
   late ImFilterController controller;
+  UserManager userManager = AppDelegate.instance.getManager();
 
   @override
   void initState() {
@@ -68,11 +78,12 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       int cur = num;
       buttons.add(GestureDetector(
         onTap: () async {
-          if(TABS.values[cur] == TABS.BACKGROUND) {
+          if (TABS.values[cur] == TABS.BACKGROUND) {
             controller.byte = controller.personImageByte;
-          }
-          else if(TABS.values[cur] == TABS.ADJUST) controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
-          else controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.image));
+          } else if (TABS.values[cur] == TABS.ADJUST)
+            controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
+          else
+            controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.image));
 
           setState(() {
             if (TABS.EFFECT == TABS.values[cur]) {
@@ -161,7 +172,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               Container(
                   decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
                   padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
-                  height: $(180),
+                  height: controller.rightTabList.length * $(40) + $(20),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
               SizedBox(height: $(50)),
               (controller.selectedRightTab != TABS.CROP)
@@ -199,7 +210,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                                     byte: controller.byte,
                                     globalKey: controller.ImageViewerBackgroundKey,
                                   )))
-                              :Image.memory(
+                              : Image.memory(
                                   controller.byte!,
                                   fit: BoxFit.contain,
                                 )
@@ -532,13 +543,12 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       });
     });
   }
+
   Color rgbaToAbgr(Color rgbaColor) {
-    int abgrValue = (rgbaColor.alpha << 24) |
-    (rgbaColor.blue << 16) |
-    (rgbaColor.green << 8) |
-    rgbaColor.red;
+    int abgrValue = (rgbaColor.alpha << 24) | (rgbaColor.blue << 16) | (rgbaColor.green << 8) | rgbaColor.red;
     return Color(abgrValue);
   }
+
   Widget _buildBackground(BuildContext context) {
     return BackgroundPickerBar(
       imageRatio: controller.imageRatio,
@@ -608,13 +618,13 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                   text: S.of(context).share_to_discovery,
                   icon: Images.ic_share_discovery,
                   onTap: () {
-                    // shareToDiscovery(context);
+                    shareToDiscovery(context);
                   }),
               ListPopItem(
                   text: S.of(context).share_out,
                   icon: Images.ic_share,
                   onTap: () {
-                    // shareOut(context);
+                    shareOut(context);
                   }),
             ],
           );
@@ -630,5 +640,55 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         ],
       ),
     );
+  }
+
+  shareOut(BuildContext context) async {
+    // if (controller.selectedEffect == null) {
+    //   CommonExtension().showToast(S.of(context).select_a_style);
+    //   return;
+    // }
+
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+    var uint8list = await ImageUtils.printStyleMorphDrawData(controller.imageFile, File(controller.filePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
+        onShareSuccess: (platform) {
+      Events.styleMorphCompleteShare(source: "gallery", platform: platform, type: 'image');
+    });
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+  }
+
+  shareToDiscovery(BuildContext context) async {
+    if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
+      await showLoading();
+      String key = await md5File(controller.imageFile);
+      var needUpload = await controller.uploadImageController.needUploadByKey(key);
+      if (needUpload) {
+        File compressedImage = await imageCompressAndGetFile(controller.imageFile);
+        await controller.uploadImageController.uploadCompressedImage(compressedImage, key: key);
+        await hideLoading();
+        if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
+          return;
+        }
+      } else {
+        await hideLoading();
+      }
+    }
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
+      var file = File(controller.filePath!);
+      ShareDiscoveryScreen.push(
+        context,
+        // todo
+        effectKey: "",
+        originalUrl: controller.uploadImageController.imageUrl.value,
+        image: base64Encode(file.readAsBytesSync()),
+        isVideo: false,
+        category: HomeCardType.cartoonize,
+      ).then((value) {
+        if (value ?? false) {
+          controller.onResultShare(source: 'gallery', platform: 'effect', photo: 'image');
+          showShareSuccessDialog(context);
+        }
+      });
+    }, autoExec: true);
   }
 }
