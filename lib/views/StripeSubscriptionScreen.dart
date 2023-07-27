@@ -7,6 +7,8 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/dialog.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/views/PurchaseScreen.dart';
 
 import 'StripePaymentScreen.dart';
 import 'account/LoginScreen.dart';
@@ -314,11 +316,17 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                         SizedBox(height: $(10)),
                         attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
                         SizedBox(height: $(10)),
-                        attrItem(context,
-                            title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${userManager.limitRule.anotherme?.plan ?? 0}'), imageRes: Images.ic_buy_metaverse),
+                        attrItem(
+                          context,
+                          title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${getPlanLimit(HomeCardType.anotherme)}'),
+                          imageRes: Images.ic_buy_metaverse,
+                        ),
                         SizedBox(height: $(10)),
-                        attrItem(context,
-                            title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${userManager.limitRule.txt2img?.plan ?? 0}'), imageRes: Images.ic_buy_ai_artist),
+                        attrItem(
+                          context,
+                          title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${getPlanLimit(HomeCardType.txt2img)}'),
+                          imageRes: Images.ic_buy_ai_artist,
+                        ),
                       ],
                     ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15))),
                   ),

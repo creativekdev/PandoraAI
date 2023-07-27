@@ -37,23 +37,17 @@ class HomeEffectSkeletonView extends StatelessWidget {
                 runSpacing: $(8),
                 children: List.filled(
                   8,
-                  Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular($(8)),
-                        child: Container(
-                          height: (ScreenUtil.screenSize.width - $(56)) / 4,
-                          width: (ScreenUtil.screenSize.width - $(56)) / 4,
-                          color: ColorConstant.ShadowColor,
-                        ),
-                      ),
-                    ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular($(8)),
+                    child: Container(
+                      height: (ScreenUtil.screenSize.width - $(60)) / 4,
+                      width: (ScreenUtil.screenSize.width - $(60)) / 4,
+                      color: ColorConstant.ShadowColor,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: $(16),
-              )
+              SizedBox(height: $(16))
             ],
           );
         }
@@ -70,8 +64,8 @@ class HomeEffectSkeletonView extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular($(8)),
                         child: Container(
-                          height: ((ScreenUtil.screenSize.width - $(46)) / 4) * 192.0 / 110.0,
-                          width: (ScreenUtil.screenSize.width - $(48)) / 3,
+                          height: ((ScreenUtil.screenSize.width - $(50)) / 4) * 192.0 / 110.0,
+                          width: (ScreenUtil.screenSize.width - $(52)) / 3,
                           color: ColorConstant.ShadowColor,
                         ),
                       ),

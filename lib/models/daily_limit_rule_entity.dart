@@ -8,9 +8,11 @@ class DailyLimitRuleEntity {
   @JSONField(name: 'video_removebg')
   VIPPlanDetail? videoRemovebg;
   VIPPlanDetail? removebg;
+  VIPPlanDetail? stylemorph;
   VIPPlanDetail? anotherme;
   VIPPlanDetail? txt2img;
   VIPPlanDetail? scribble;
+  VIPPlanDetail? inpaint;
 
   DailyLimitRuleEntity();
 

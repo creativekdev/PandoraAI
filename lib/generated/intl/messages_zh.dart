@@ -441,7 +441,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ref_code": MessageLookupByLibrary.simpleMessage("邀请码"),
         "ref_code_copied": MessageLookupByLibrary.simpleMessage("验证码已经复制到剪贴板"),
         "ref_code_desc": MessageLookupByLibrary.simpleMessage(
-            "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的Me-taverse和AI Artist转化次数！"),
+            "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的转化次数！"),
         "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
             "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
         "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(

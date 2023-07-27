@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/event_bus_helper.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/auth/connector_platform.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -6,7 +7,9 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/ad_config_entity.dart';
+import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/daily_limit_rule_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/online_model.dart';
 import 'package:cartoonizer/models/platform_connection_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
@@ -48,16 +51,6 @@ class UserManager extends BaseManager {
     });
     cacheManager.setJson('${CacheManager.platformConnections}:${_user?.id ?? 'guest'}', cache);
   }
-
-  DailyLimitRuleEntity get limitRule {
-    var data = cacheManager.getJson(CacheManager.limitRule);
-    if (data == null) {
-      return DailyLimitRuleEntity();
-    }
-    return DailyLimitRuleEntity.fromJson(data);
-  }
-
-  set limitRule(DailyLimitRuleEntity entity) => cacheManager.setJson(CacheManager.limitRule, entity.toJson());
 
   AdConfigEntity get adConfig {
     var data = cacheManager.getJson(CacheManager.keyAdConfig);
@@ -164,7 +157,6 @@ class UserManager extends BaseManager {
   Future<OnlineModel> refreshUser({BuildContext? context}) async {
     var value = await api.getCurrentUser();
     adConfig = value.adConfig;
-    limitRule = value.dailyLimitRuleEntity;
     cacheManager.featureOperator.refreshFeature(value.feature);
     if (value.loginSuccess) {
       user = value.user!;
@@ -246,43 +238,17 @@ class UserManager extends BaseManager {
     lastLauncherLoginStatus = false;
   }
 
-  MapEntry<int, int> getAnotherMeLimit() {
+  MapEntry<int, int> getLimitRule(HomeCardType type) {
+    EffectDataController dataController = Get.find();
+    var key = type.value();
+    var pick = dataController.data!.aiConfig.pick((t) => t.key == key);
+    if (pick == null) {
+      return MapEntry(0, 0);
+    }
     if (user == null) {
-      return MapEntry(limitRule.anotherme?.anonymous ?? 0, 0);
+      return MapEntry(pick.anonymousDailyLimit, 0);
     }
-    int base;
-    if (!isVip()) {
-      base = limitRule.anotherme?.user ?? 0;
-    } else {
-      base = limitRule.anotherme?.plan ?? 0;
-    }
-    return MapEntry(base, (user!.payload['anotherme_daily_limit'] ?? 0) as int);
-  }
-
-  MapEntry<int, int> getTxt2ImgLimit() {
-    if (user == null) {
-      return MapEntry(limitRule.txt2img?.anonymous ?? 0, 0);
-    }
-    int base;
-    if (!isVip()) {
-      base = limitRule.txt2img?.user ?? 0;
-    } else {
-      base = limitRule.txt2img?.plan ?? 0;
-    }
-    return MapEntry(base, (user!.payload['txt2img_daily_limit'] ?? 0) as int);
-  }
-
-  MapEntry<int, int> getAiDrawLimit() {
-    if (user == null) {
-      return MapEntry(limitRule.scribble?.anonymous ?? 0, 0);
-    }
-    int base;
-    if (!isVip()) {
-      base = limitRule.scribble?.user ?? 0;
-    } else {
-      base = limitRule.scribble?.plan ?? 0;
-    }
-    return MapEntry(base, (user!.payload['scribble_daily_limit'] ?? 0) as int);
+    return MapEntry(pick.limitBase, (user!.payload['${key}_daily_limit'] ?? 0) as int);
   }
 
   Future<UserRefLinkEntity?> getRefCode() async {

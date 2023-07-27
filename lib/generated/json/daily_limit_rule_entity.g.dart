@@ -15,6 +15,10 @@ DailyLimitRuleEntity $DailyLimitRuleEntityFromJson(Map<String, dynamic> json) {
 	if (removebg != null) {
 		dailyLimitRuleEntity.removebg = removebg;
 	}
+	final VIPPlanDetail? stylemorph = jsonConvert.convert<VIPPlanDetail>(json['stylemorph']);
+	if (stylemorph != null) {
+		dailyLimitRuleEntity.stylemorph = stylemorph;
+	}
 	final VIPPlanDetail? anotherme = jsonConvert.convert<VIPPlanDetail>(json['anotherme']);
 	if (anotherme != null) {
 		dailyLimitRuleEntity.anotherme = anotherme;
@@ -27,6 +31,10 @@ DailyLimitRuleEntity $DailyLimitRuleEntityFromJson(Map<String, dynamic> json) {
 	if (scribble != null) {
 		dailyLimitRuleEntity.scribble = scribble;
 	}
+	final VIPPlanDetail? inpaint = jsonConvert.convert<VIPPlanDetail>(json['inpaint']);
+	if (inpaint != null) {
+		dailyLimitRuleEntity.inpaint = inpaint;
+	}
 	return dailyLimitRuleEntity;
 }
 
@@ -35,9 +43,11 @@ Map<String, dynamic> $DailyLimitRuleEntityToJson(DailyLimitRuleEntity entity) {
 	data['cartoonize'] = entity.cartoonize?.toJson();
 	data['video_removebg'] = entity.videoRemovebg?.toJson();
 	data['removebg'] = entity.removebg?.toJson();
+	data['stylemorph'] = entity.stylemorph?.toJson();
 	data['anotherme'] = entity.anotherme?.toJson();
 	data['txt2img'] = entity.txt2img?.toJson();
 	data['scribble'] = entity.scribble?.toJson();
+	data['inpaint'] = entity.inpaint?.toJson();
 	return data;
 }
 

@@ -37,14 +37,23 @@ class StyleMorph {
     var path = await ImageUtils.onImagePick(first.path, cacheManager.storageOperator.recordStyleMorphDir.path);
     Events.styleMorphLoading(source: source);
     RecentController recentController = Get.find<RecentController>();
+    List<RecentStyleMorphModel> pickList = recentController.styleMorphList.filter((t) => t.originalPath == path);
+    RecentStyleMorphModel pick;
+    if (pickList.isNotEmpty) {
+      pick = pickList.first;
+      for (var value in pickList) {
+        if (!pick.itemList.exist((t) => t.key == value.itemList.first.key)) {
+          pick.itemList.add(value.itemList.first);
+        }
+      }
+    } else {
+      pick = RecentStyleMorphModel()..originalPath = path;
+    }
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => StyleMorphScreen(
-            source: source,
-            record: recentController.styleMorphList.pick((t) => t.originalPath == path) ?? RecentStyleMorphModel()
-              ..originalPath = path,
-            initKey: initKey,
-            photoType: 'gallery'),
+        builder: (_) {
+          return StyleMorphScreen(source: source, record: pick, initKey: initKey, photoType: 'gallery');
+        },
         settings: RouteSettings(name: '/StyleMorphScreen'),
       ),
     );

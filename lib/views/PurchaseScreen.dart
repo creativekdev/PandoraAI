@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/api/api.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/ConsumableStore.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -502,11 +504,17 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                               SizedBox(height: $(10)),
                               attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
                               SizedBox(height: $(10)),
-                              attrItem(context,
-                                  title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${userManager.limitRule.anotherme?.plan ?? 0}'), imageRes: Images.ic_buy_metaverse),
+                              attrItem(
+                                context,
+                                title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${getPlanLimit(HomeCardType.anotherme)}'),
+                                imageRes: Images.ic_buy_metaverse,
+                              ),
                               SizedBox(height: $(10)),
-                              attrItem(context,
-                                  title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${userManager.limitRule.txt2img?.plan ?? 0}'), imageRes: Images.ic_buy_ai_artist),
+                              attrItem(
+                                context,
+                                title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${getPlanLimit(HomeCardType.txt2img)}'),
+                                imageRes: Images.ic_buy_ai_artist,
+                              ),
                             ],
                           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(15))),
                         ),
@@ -616,4 +624,13 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   bool shouldShowPriceConsent() {
     return false;
   }
+}
+
+int getPlanLimit(HomeCardType type) {
+  EffectDataController effectDataController = Get.find();
+  var pick = effectDataController.data?.aiConfig.pick((t) => t.key == type.value());
+  if (pick == null) {
+    return 0;
+  }
+  return pick.planDailyLimit;
 }

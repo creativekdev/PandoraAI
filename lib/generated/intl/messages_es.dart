@@ -563,7 +563,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ref_code_copied": MessageLookupByLibrary.simpleMessage(
             "El código de verificación se ha copiado en el portapapeles"),
         "ref_code_desc": MessageLookupByLibrary.simpleMessage(
-            "Invita a amigos y obtén recompensas \n\n Después de que se haya utilizado su código de invitación, ¡Tanto usted como sus amigos pueden ganar un número adicional de conversiones me-taverse y Al Artist!"),
+            "Invita a amigos y obtén recompensas \n\n Después de que se haya utilizado su código de invitación, ¡Tanto usted como sus amigos pueden ganar un número adicional de conversiones Funciones!"),
         "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
             "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
         "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(

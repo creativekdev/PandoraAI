@@ -98,10 +98,11 @@ class _HomeDetailScreenState extends AppState<HomeDetailScreen> {
             alignment: Alignment.topCenter,
           ),
           Positioned(
-              bottom: $(30) + ScreenUtil.getBottomPadding(context),
-              child: HomeDetailUseButton(tap: () {
-                HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![widget.index]);
-              })),
+            bottom: $(30) + ScreenUtil.getBottomPadding(context),
+            child: HomeDetailUseButton(tap: () {
+              HomeCardTypeUtils.jump(context: context, source: "${widget.source}_${controller.category}", data: controller.posts![controller.index ?? widget.index]);
+            }),
+          ),
           GetBuilder<HomeDetailController>(
               init: controller,
               builder: (context) {

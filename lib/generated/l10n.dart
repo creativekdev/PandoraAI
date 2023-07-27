@@ -3700,10 +3700,10 @@ class S {
     );
   }
 
-  /// `Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. `
+  /// `Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Functions quota if your invitation code is used. `
   String get ref_code_desc {
     return Intl.message(
-      'Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. ',
+      'Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Functions quota if your invitation code is used. ',
       name: 'ref_code_desc',
       desc: '',
       args: [],

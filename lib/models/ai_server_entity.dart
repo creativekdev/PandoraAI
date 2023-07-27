@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cartoonizer/generated/json/ai_server_entity.g.dart';
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/main.dart';
+import 'package:cartoonizer/utils/utils.dart';
 
 @JsonSerializable()
 class AiServerEntity {
@@ -42,5 +43,13 @@ extension AiServerEntityEx on AiServerEntity {
       return cnServer ?? server ?? '';
     }
     return server ?? '';
+  }
+
+  int get limitBase {
+    if (!isVip()) {
+      return userDailyLimit;
+    } else {
+      return planDailyLimit;
+    }
   }
 }

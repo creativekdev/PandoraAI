@@ -89,7 +89,7 @@ class DiscoveryListEntity {
     try {
       var json = jsonDecode(resources);
       return (json as List<dynamic>).map((e) => jsonConvert.convert<DiscoveryResource>(e)!).toList().reversed.toList();
-    } on FormatException catch (e) {
+    } on Exception catch (e) {
       return [];
     }
   }

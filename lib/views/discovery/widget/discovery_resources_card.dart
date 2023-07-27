@@ -141,13 +141,11 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
       case AlignType.first:
         var item = datas.first;
         if (item.type == DiscoveryResourceType.image) {
-          SyncDownloadImage(type: getFileType(item.url!), url: item.url!).getImage().then((value) {
-            SyncFileImage(file: value!).getImage().then((value) {
-              itemHeight = itemWidth / (value.image.width / value.image.height);
-              if (mounted) {
-                setState(() {});
-              }
-            });
+          SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
+            itemHeight = itemWidth / (value.image.width / value.image.height);
+            if (mounted) {
+              setState(() {});
+            }
           });
         } else {
           SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
@@ -169,13 +167,11 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
       case AlignType.last:
         var item = datas.last;
         if (item.type == DiscoveryResourceType.image) {
-          SyncDownloadImage(type: getFileType(item.url!), url: item.url!).getImage().then((value) {
-            SyncFileImage(file: value!).getImage().then((value) {
-              itemHeight = itemWidth / (value.image.width / value.image.height);
-              if (mounted) {
-                setState(() {});
-              }
-            });
+          SyncCachedNetworkImage(url: item.url!).getImage().then((value) {
+            itemHeight = itemWidth / (value.image.width / value.image.height);
+            if (mounted) {
+              setState(() {});
+            }
           });
         } else {
           SyncDownloadVideo(type: getFileType(item.url!), url: item.url!).getVideo().then((value) {
@@ -197,16 +193,14 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
       case AlignType.maxOne:
         for (var value in datas) {
           if (value.type == DiscoveryResourceType.image) {
-            SyncDownloadImage(type: getFileType(value.url!), url: value.url!).getImage().then((value) {
-              SyncFileImage(file: value!).getImage().then((value) {
-                var height = itemWidth / (value.image.width / value.image.height);
-                if (height > itemHeight) {
-                  itemHeight = height;
-                }
-                if (mounted) {
-                  setState(() {});
-                }
-              });
+            SyncCachedNetworkImage(url: value.url!).getImage().then((value) {
+              var height = itemWidth / (value.image.width / value.image.height);
+              if (height > itemHeight) {
+                itemHeight = height;
+              }
+              if (mounted) {
+                setState(() {});
+              }
             });
           } else {
             SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {
@@ -230,19 +224,17 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
       case AlignType.minOne:
         for (var value in datas) {
           if (value.type == DiscoveryResourceType.image) {
-            SyncDownloadImage(type: getFileType(value.url!), url: value.url!).getImage().then((value) {
-              SyncFileImage(file: value!).getImage().then((value) {
-                var height = itemWidth / (value.image.width / value.image.height);
-                if (itemHeight == 0) {
-                  itemHeight = height;
-                }
-                if (height < itemHeight) {
-                  itemHeight = height;
-                }
-                if (mounted) {
-                  setState(() {});
-                }
-              });
+            SyncCachedNetworkImage(url: value.url!).getImage().then((value) {
+              var height = itemWidth / (value.image.width / value.image.height);
+              if (itemHeight == 0) {
+                itemHeight = height;
+              }
+              if (height < itemHeight) {
+                itemHeight = height;
+              }
+              if (mounted) {
+                setState(() {});
+              }
             });
           } else {
             SyncDownloadVideo(type: getFileType(value.url!), url: value.url!).getVideo().then((value) {

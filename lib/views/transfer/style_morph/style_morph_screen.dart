@@ -208,24 +208,24 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
                       onTap: () {
                         shareOut(context, controller);
                       }),
-                  ListPopItem(
-                      text: S.of(context).share_out,
-                      icon: Images.ic_share,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/ImFilterScreen"),
-                            builder: (context) => ImEffectScreen(
-                              tab: TABS.EFFECT,
-                              source: widget.source,
-                              originFile: controller.originFile,
-                              resultFile: controller.originFile!,
-                              photoType: widget.photoType,
-                            ),
-                          ),
-                        );
-                      }),
+                  // ListPopItem(
+                  //     text: S.of(context).share_out,
+                  //     icon: Images.ic_share,
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //           settings: RouteSettings(name: "/ImFilterScreen"),
+                  //           builder: (context) => ImEffectScreen(
+                  //             tab: TABS.EFFECT,
+                  //             source: widget.source,
+                  //             originFile: controller.originFile,
+                  //             resultFile: controller.originFile!,
+                  //             photoType: widget.photoType,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }),
                 ],
               );
             }),

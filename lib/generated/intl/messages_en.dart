@@ -539,7 +539,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ref_code_copied": MessageLookupByLibrary.simpleMessage(
             "Your invitation code was copied!"),
         "ref_code_desc": MessageLookupByLibrary.simpleMessage(
-            "Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Me-taverse and AI Artist quota if your invitation code is used. "),
+            "Invite your friends, get rewarded.\n\nBoth you and your friends can receive additional Functions quota if your invitation code is used. "),
         "ref_code_get_desc": MessageLookupByLibrary.simpleMessage(
             "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image"),
         "ref_code_share_desc": MessageLookupByLibrary.simpleMessage(

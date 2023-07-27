@@ -364,7 +364,7 @@
   "explain": "说明",
   "ref_code_share_desc": "Share your Invitation Code with your friend and you get %1d Metaverse and %2d AI Artist: Text to Image if the Code is used.",
   "ref_code_get_desc": "Input an Invitation Code and you get %1d Metaverse and %2d AI Artist: Text to Image",
-  "ref_code_desc": "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的Me-taverse和AI Artist转化次数！",
+  "ref_code_desc": "邀请好友，获得奖励\n\n当你的邀请码被使用后，你和你的朋友都可以获得额外的转化次数！",
   "enter_code": "填写邀请码",
   "my_code": "我的邀请码",
   "remaining_credits": "已获权益",
