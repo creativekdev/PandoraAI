@@ -5,6 +5,7 @@ import 'package:cartoonizer/models/address_entity.dart';
 import 'package:cartoonizer/models/state_entity.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_es.dart';
 import 'package:cartoonizer/views/common/region/calling_codes_zh.dart';
+import 'package:cartoonizer/views/print/print_shipping_controller.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 
@@ -246,7 +247,7 @@ class PrintEditAddressController extends GetxController {
       CommonExtension().showToast(S.of(context).pleaseInput.replaceAll('%s', S.of(context).contact_number));
       return false;
     }
-
+    PrintShippingController shippingController = Get.find();
     var address = {
       "first_name": firstNameController.text,
       "last_name": secondNameController.text,
@@ -258,7 +259,7 @@ class PrintEditAddressController extends GetxController {
           : formattedAddress,
       "address2": apartmentController.text,
       "zip": zipCodeController.text,
-      "default": false,
+      "default": shippingController.addresses.length > 0 ? (_address != null ? _address?.xDefault : false) : true,
       "city": cityController.text,
       "province": stateEntity?.name,
       "province_code": stateEntity?.code

@@ -65,16 +65,18 @@ class _PrintEditAddressScreenState extends AppState<PrintEditAddressScreen> {
           controller.searchAddressFocusNode.unfocus();
           hideSearchResults();
         },
-        trailing: TitleTextWidget(S.of(context).delete, ColorConstant.Red, FontWeight.w400, $(14)).intoGestureDetector(
-          onTap: () async {
-            showLoading();
-            bool isSuccess = await controller.onDeleteAddress(context);
-            if (isSuccess) {
-              Navigator.of(context).pop();
-            }
-            hideLoading();
-          },
-        ),
+        trailing: widget.address == null
+            ? SizedBox()
+            : TitleTextWidget(S.of(context).delete, ColorConstant.Red, FontWeight.w400, $(14)).intoGestureDetector(
+                onTap: () async {
+                  showLoading();
+                  bool isSuccess = await controller.onDeleteAddress(context);
+                  if (isSuccess) {
+                    Navigator.of(context).pop();
+                  }
+                  hideLoading();
+                },
+              ),
       ),
       backgroundColor: ColorConstant.BackgroundColor,
       body: GetBuilder<PrintEditAddressController>(

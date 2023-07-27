@@ -278,7 +278,11 @@ class PrintShippingController extends GetxController {
   onRequestAddress() async {
     GetAddressEntity? address = await appApi.getAddress();
     addresses = address?.data?.customer.addresses ?? [];
-    seletedAddress = addresses.first;
+    if (addresses == null || addresses!.isEmpty) {
+    } else {
+      seletedAddress = addresses.first;
+    }
+
     _viewInit = true;
     update();
   }

@@ -6,7 +6,7 @@ import 'package:cartoonizer/models/address_entity.dart';
 
 @JsonSerializable()
 class GetAddressEntity {
-  late GetAddressData data;
+  GetAddressData? data;
 
   GetAddressEntity();
 
