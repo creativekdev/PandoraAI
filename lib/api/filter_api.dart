@@ -7,7 +7,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/network/base_requester.dart';
-import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
@@ -18,11 +17,11 @@ class FilterApi extends RetryAbleRequester {
 
   FilterApi({Dio? client}) : super(client: client);
 
-  factory FilterApi.quickResponse() {
-    var client = DioNode.instance.client;
-    client.options.connectTimeout = 50000;
-    return FilterApi(client: client);
-  }
+  // factory FilterApi.quickResponse() {
+  //   var client = DioNode.instance.client;
+  //   client.options.connectTimeout = 50000;
+  //   return FilterApi(client: client);
+  // }
 
   @override
   Future<ApiOptions>? apiOptions(Map<String, dynamic> params) async {
