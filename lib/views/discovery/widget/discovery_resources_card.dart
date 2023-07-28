@@ -23,14 +23,14 @@ enum AlignType {
 
 typedef PlaceholderWidgetBuilder = Widget Function(BuildContext context, DiscoveryResource data, double width, double height);
 
-class DiscoveryResourcesCard extends StatelessWidget {
+class DiscoveryResourcesCard2 extends StatelessWidget {
   final AlignType alignType;
   final List<DiscoveryResource> datas;
   final double space;
   final PlaceholderWidgetBuilder placeholderWidgetBuilder;
   final Function(DiscoveryResource data, int index)? onTap;
 
-  const DiscoveryResourcesCard({
+  const DiscoveryResourcesCard2({
     super.key,
     this.alignType = AlignType.last,
     required this.datas,
@@ -70,14 +70,14 @@ class DiscoveryResourcesCard extends StatelessWidget {
   }
 }
 
-class DiscoveryResourcesCard2 extends StatefulWidget {
+class DiscoveryResourcesCard extends StatefulWidget {
   final AlignType alignType;
   final List<DiscoveryResource> datas;
   final double space;
   final PlaceholderWidgetBuilder placeholderWidgetBuilder;
   final Function(DiscoveryResource data, int index)? onTap;
 
-  const DiscoveryResourcesCard2({
+  const DiscoveryResourcesCard({
     super.key,
     this.alignType = AlignType.last,
     required this.datas,
@@ -87,10 +87,10 @@ class DiscoveryResourcesCard2 extends StatefulWidget {
   });
 
   @override
-  State<DiscoveryResourcesCard2> createState() => _DiscoveryResourcesCardState();
+  State<DiscoveryResourcesCard> createState() => _DiscoveryResourcesCardState();
 }
 
-class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
+class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
   late AlignType alignType;
   List<DiscoveryResource> datas = [];
   double itemWidth = 0;
@@ -101,7 +101,7 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard2> {
   double totalWidth = 0;
 
   @override
-  void didUpdateWidget(covariant DiscoveryResourcesCard2 oldWidget) {
+  void didUpdateWidget(covariant DiscoveryResourcesCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     var newString = jsonEncode(widget.datas.map((e) => e.toJson()).toList());
     var oldString = jsonEncode(datas.map((e) => e.toJson()).toList());

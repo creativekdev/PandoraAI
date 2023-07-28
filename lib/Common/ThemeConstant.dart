@@ -11,7 +11,7 @@ class EdgeConstants {
 class ColorConstant {
   // colors
   static const PrimaryColor = Colors.white;
-  static const BlueColor = Color.fromRGBO(2, 248, 214, 1.0);
+  static const BlueColor = Color.fromRGBO(62, 96, 255, 1);
   static const BackgroundColor = Color(0xff161719);
   static const BackgroundColorBlur = Color.fromARGB(204, 22, 23, 25);
   static const CardColor = Color(0xFF070809);
