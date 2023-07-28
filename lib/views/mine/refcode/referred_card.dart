@@ -73,26 +73,17 @@ class ReferredCard extends StatelessWidget {
               .map(
                 (e) => ClipRRect(
                   borderRadius: BorderRadius.circular($(6)),
-                  child: CustomPaint(
-                    // foregroundPainter: ForegroundPainter(
-                    //   color: e.primary,
-                    //   degree: 12,
-                    //   offset: -40,
-                    //   width: 20,
-                    //   space: 10,
-                    // ),
-                    child: buildItem(context, title: e.type.title(), value: userManager.getLimitRule(e.type)).intoContainer(
-                      width: double.maxFinite,
-                      padding: EdgeInsets.all($(12)),
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                        colors: e.colors,
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      )),
-                    ),
+                  child: buildItem(context, title: e.type.title(), value: userManager.getLimitRule(e.type)).intoContainer(
+                    width: double.maxFinite,
+                    padding: EdgeInsets.all($(12)),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                      colors: e.colors,
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    )),
                   ),
-                ).intoContainer(width: (ScreenUtil.screenSize.width - $(40)) / 2),
+                ).intoContainer(width: (ScreenUtil.screenSize.width - $(42)) / 2),
               )
               .toList(),
         ),

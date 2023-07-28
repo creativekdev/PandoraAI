@@ -23,29 +23,47 @@ class Uploader extends RetryAbleRequester {
     return ApiOptions(baseUrl: '', headers: {});
   }
 
-  /// upload file to aws s3
-  Future<BaseEntity?> upload(String url, Uint8List image, String contentType) async {
-    var stream = MultipartFile.fromBytes(image).finalize();
-    return await put(url, stream,
-        options: Options(
-          headers: {'Content-Length': image.length},
-        ),
-        preHandleRequest: false,
-        headers: {
-          'Content-Type': contentType,
-        });
+  /// upload file bytes to aws s3
+  Future<BaseEntity?> upload(
+    String url,
+    Uint8List bytes,
+    String contentType, {
+    ProgressCallback? onReceiveProgress,
+    ProgressCallback? onSendProgress,
+  }) async {
+    var stream = MultipartFile.fromBytes(bytes).finalize();
+    return await put(
+      url,
+      stream,
+      options: Options(
+        headers: {'Content-Length': bytes.length},
+      ),
+      preHandleRequest: false,
+      onReceiveProgress: onReceiveProgress,
+      onSendProgress: onSendProgress,
+      headers: {'Content-Type': contentType},
+    );
   }
 
   /// upload file to aws s3
-  Future<BaseEntity?> uploadFile(String url, File file, String contentType) async {
-    return await put(url, file.openRead(),
-        options: Options(
-          headers: {'Content-Length': file.lengthSync()},
-        ),
-        preHandleRequest: false,
-        headers: {
-          'Content-Type': contentType,
-        });
+  Future<BaseEntity?> uploadFile(
+    String url,
+    File file,
+    String contentType, {
+    ProgressCallback? onReceiveProgress,
+    ProgressCallback? onSendProgress,
+  }) async {
+    return await put(
+      url,
+      file.openRead(),
+      options: Options(
+        headers: {'Content-Length': file.lengthSync()},
+      ),
+      preHandleRequest: false,
+      onReceiveProgress: onReceiveProgress,
+      onSendProgress: onSendProgress,
+      headers: {'Content-Type': contentType},
+    );
   }
 
   Future<AnotherMeResultEntity?> generateAnotherMe(String url, String? cachedId, onFailed) async {
@@ -57,7 +75,9 @@ class Uploader extends RetryAbleRequester {
     }
     EffectManager effectManager = AppDelegate().getManager();
     var apiConfigEntity = effectManager.data!;
-    var pick = apiConfigEntity.aiConfig.pick((t) => t.key == 'anotherme',);
+    var pick = apiConfigEntity.aiConfig.pick(
+      (t) => t.key == 'anotherme',
+    );
     var baseEntity = await post('${pick!.serverUrl}/sdapi/v1/anotherme', params: params, onFailed: onFailed);
     var entity = jsonConvert.convert<AnotherMeResultEntity>(baseEntity?.data);
     if (entity != null && baseEntity != null) {

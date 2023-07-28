@@ -15,6 +15,7 @@ import 'package:path/path.dart' as path;
 const int axisOffset = 20;
 const double expandPercent = 0.20;
 
+@Deprecated('弃用，人脸识别等待后续重新实现')
 class ChoosePhotoScreenController extends GetxController {
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StorageOperator storageOperator;

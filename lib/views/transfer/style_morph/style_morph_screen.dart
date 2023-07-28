@@ -66,7 +66,7 @@ class StyleMorphScreen extends StatefulWidget {
 class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   late String source;
   late StyleMorphController controller;
-  late UploadImageController uploadImageController;
+  UploadImageController uploadImageController = Get.find();
   late double itemWidth;
   UserManager userManager = AppDelegate.instance.getManager();
   late String photoType;
@@ -79,7 +79,6 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
     Posthog().screen(screenName: 'stylemorph_screen');
     photoType = widget.photoType;
     source = widget.source;
-    uploadImageController = Get.put(UploadImageController());
     controller = Get.put(StyleMorphController(
       originalPath: widget.record.originalPath!,
       itemList: widget.record.itemList,
@@ -94,7 +93,6 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   }
 
   changeOriginFile(File file) {
-    uploadImageController.imageUrl.value = '';
     controller.resultMap.clear();
     controller.originFile = file;
     generateCount = 0;
@@ -105,8 +103,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   }
 
   generate() async {
-    String key = await md5File(controller.originFile);
-    var needUpload = await uploadImageController.needUploadByKey(key);
+    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,
@@ -132,32 +129,26 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         }
       }
     });
-    if (needUpload) {
-      EffectManager effectManager = AppDelegate().getManager();
-      var imageSize = effectManager.data?.imageMaxl ?? 512;
-      File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: imageSize);
-      await uploadImageController.uploadCompressedImage(compressedImage, key: key);
-      if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+
+    uploadImageController.upload(file: controller.originFile).then((value) async {
+      if (TextUtil.isEmpty(value)) {
         simulateProgressBarController.onError();
       } else {
         simulateProgressBarController.uploadComplete();
-      }
-    }
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-      return;
-    }
-    var cachedId = await uploadImageController.getCachedIdByKey(key);
-    controller.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
-      uploadImageController.deleteUploadData(controller.originFile, key: key);
-    }).then((value) {
-      if (value != null) {
-        if (value.entity != null) {
-          simulateProgressBarController.loadComplete();
-        } else {
-          simulateProgressBarController.onError(error: value.type);
-        }
-      } else {
-        simulateProgressBarController.onError();
+        var cachedId = await uploadImageController.getCachedId(controller.originFile);
+        controller.startTransfer(value!, cachedId, onFailed: (response) {
+          uploadImageController.deleteUploadData(controller.originFile);
+        }).then((value) {
+          if (value != null) {
+            if (value.entity != null) {
+              simulateProgressBarController.loadComplete();
+            } else {
+              simulateProgressBarController.onError(error: value.type);
+            }
+          } else {
+            simulateProgressBarController.onError();
+          }
+        });
       }
     });
   }
@@ -519,37 +510,30 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-      await showLoading();
-      String key = await md5File(controller.originFile);
-      var needUpload = await uploadImageController.needUploadByKey(key);
-      if (needUpload) {
-        File compressedImage = await imageCompressAndGetFile(controller.originFile);
-        await uploadImageController.uploadCompressedImage(compressedImage, key: key);
-        await hideLoading();
-        if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-          return;
-        }
-      } else {
-        await hideLoading();
-      }
-    }
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_stylemorph', callback: () {
-      var file = File(controller.resultMap[controller.selectedEffect!.key]!);
-      ShareDiscoveryScreen.push(
-        context,
-        effectKey: controller.selectedEffect!.key,
-        originalUrl: uploadImageController.imageUrl.value,
-        image: base64Encode(file.readAsBytesSync()),
-        isVideo: false,
-        category: HomeCardType.stylemorph,
-      ).then((value) {
-        if (value ?? false) {
-          controller.onResultShare(source: photoType, platform: 'discovery', photo: 'image');
-          showShareSuccessDialog(context);
-        }
+    showLoading().whenComplete(() {
+      uploadImageController.upload(file: controller.originFile).then((value) {
+        hideLoading().whenComplete(() {
+          if (!TextUtil.isEmpty(value)) {
+            AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_stylemorph', callback: () {
+              var file = File(controller.resultMap[controller.selectedEffect!.key]!);
+              ShareDiscoveryScreen.push(
+                context,
+                effectKey: controller.selectedEffect!.key,
+                originalUrl: value,
+                image: base64Encode(file.readAsBytesSync()),
+                isVideo: false,
+                category: HomeCardType.stylemorph,
+              ).then((value) {
+                if (value ?? false) {
+                  controller.onResultShare(source: photoType, platform: 'discovery', photo: 'image');
+                  showShareSuccessDialog(context);
+                }
+              });
+            }, autoExec: true);
+          }
+        });
       });
-    }, autoExec: true);
+    });
   }
 
   Widget title(String title, bool checked) {

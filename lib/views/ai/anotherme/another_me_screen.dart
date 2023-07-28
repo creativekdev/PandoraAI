@@ -28,7 +28,6 @@ class AnotherMeScreen extends StatefulWidget {
 class _AnotherMeScreenState extends State<AnotherMeScreen> {
   CacheManager cacheManager = AppDelegate().getManager();
   AnotherMeController controller = Get.put(AnotherMeController());
-  UploadImageController uploadImageController = Get.put(UploadImageController());
 
   @override
   void initState() {
@@ -66,7 +65,7 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
   }
 
   startTransfer(BuildContext context, File file, double ratio, File? result, String photoType) {
-    controller.clear(uploadImageController);
+    controller.clear();
     Navigator.of(context)
         .push<bool>(
       FadeRouter(

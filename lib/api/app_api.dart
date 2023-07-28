@@ -37,6 +37,7 @@ import 'package:cartoonizer/models/user_ref_link_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
 import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cartoonizer/network/retry_able_requester.dart';
+import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
@@ -570,14 +571,24 @@ class AppApi extends RetryAbleRequester {
     return baseEntity;
   }
 
-  Future<String?> uploadImageToS3(File file, bool isFree) async {
+  Future<String?> uploadToS3(
+    File file,
+    bool isFree, {
+    ProgressCallback? onSendProgress,
+  }) async {
     String fileName = getFileName(file.path);
     String bucket = "${isFree ? 'free' : 'fast'}-socialbook";
     var fileType = fileName.substring(fileName.lastIndexOf(".") + 1);
     if (TextUtil.isEmpty(fileType)) {
       fileType = '*';
     }
-    String contentType = "image/$fileType";
+    String tname = 'file';
+    if (file.path.isVideoFile) {
+      tname = 'video';
+    } else if (file.path.isImageFile) {
+      tname = 'image';
+    }
+    String contentType = "$tname/$fileType";
     final params = {
       "bucket": bucket,
       "file_name": fileName,
@@ -587,7 +598,32 @@ class AppApi extends RetryAbleRequester {
     if (url == null) {
       return null;
     }
-    var baseEntity = await Uploader().uploadFile(url, file, contentType);
+    var baseEntity = await Uploader().uploadFile(url, file, contentType, onSendProgress: onSendProgress);
+    if (baseEntity != null) {
+      var imageUrl = url.split("?")[0];
+      return imageUrl;
+    }
+    return null;
+  }
+
+  Future<String?> uploadBytesToS3(
+    Uint8List bytes,
+    bool isFree,
+    String contentType, {
+    ProgressCallback? onSendProgress,
+  }) async {
+    String bucket = "${isFree ? 'free' : 'fast'}-socialbook";
+    String fileName = 'paiFile-${DateTime.now().microsecondsSinceEpoch}';
+    final params = {
+      "bucket": bucket,
+      "file_name": fileName,
+      "content_type": contentType,
+    };
+    var url = await getPresignedUrl(params);
+    if (url == null) {
+      return null;
+    }
+    var baseEntity = await Uploader().upload(url, bytes, contentType, onSendProgress: onSendProgress);
     if (baseEntity != null) {
       var imageUrl = url.split("?")[0];
       return imageUrl;
@@ -723,6 +759,7 @@ class AppApi extends RetryAbleRequester {
     var baseEntity = await get('/tool/lineart/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
+
   Future<GenerateLimitEntity?> getCartoonizeLimit() async {
     var baseEntity = await get('/tool/cartoonize/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);

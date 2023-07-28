@@ -61,7 +61,7 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   String? resultFilePath;
   CacheManager cacheManager = AppDelegate.instance.getManager();
   UserManager userManager = AppDelegate.instance.getManager();
-  UploadImageController uploadImageController = Get.put(UploadImageController());
+  UploadImageController uploadImageController = Get.find();
   RecentController recentController = Get.find();
   late AiDrawApi api;
   late double itemSize;
@@ -109,14 +109,15 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
       }
     });
 
-    File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+    File originalFile = File(filePath);
 
-    var imageInfo = await SyncFileImage(file: compressedImage).getImage();
+    var imageInfo = await SyncFileImage(file: originalFile).getImage();
 
     var rootPath = cacheManager.storageOperator.recordAiDrawDir.path;
-
-    uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) async {
-      if (value) {
+    uploadImageController.upload(file: originalFile, cache: false).then((value) async {
+      if (TextUtil.isEmpty(value)) {
+        progressBarController.onError();
+      } else {
         progressBarController.uploadComplete();
         api
             .draw(
@@ -124,9 +125,9 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
           directoryPath: rootPath,
           width: imageInfo.image.width,
           height: imageInfo.image.height,
-          initImage: uploadImageController.imageUrl.value,
+          initImage: value!,
           onFailed: (response) {
-            uploadImageController.deleteUploadData(compressedImage);
+            uploadImageController.deleteUploadData(originalFile);
           },
         )
             .then((value) {
@@ -145,8 +146,6 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
             progressBarController.onError();
           }
         });
-      } else {
-        progressBarController.onError();
       }
     });
   }
@@ -331,13 +330,14 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   }
 
   shareToDiscovery(BuildContext context) {
+    var originalFile = File(filePath);
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_ai_draw', callback: () async {
       var file = File(resultFilePath!);
       var forward = () {
         ShareDiscoveryScreen.push(
           context,
           effectKey: 'scribble',
-          originalUrl: uploadImageController.imageUrl.value,
+          originalUrl: uploadImageController.imageUrl(originalFile).value,
           image: base64Encode(file.readAsBytesSync()),
           isVideo: false,
           category: HomeCardType.scribble,
@@ -348,20 +348,15 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
           }
         });
       };
-      if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-        File compressedImage = await imageCompressAndGetFile(File(filePath), imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-        showLoading().whenComplete(() {
-          uploadImageController.uploadCompressedImage(compressedImage, cache: false).then((value) {
-            hideLoading().whenComplete(() {
-              if (value) {
-                forward.call();
-              }
-            });
+      showLoading().whenComplete(() {
+        uploadImageController.upload(file: originalFile, cache: false).then((value) {
+          hideLoading().whenComplete(() {
+            if (!TextUtil.isEmpty(value)) {
+              forward.call();
+            }
           });
         });
-      } else {
-        forward.call();
-      }
+      });
     }, autoExec: true);
   }
 }

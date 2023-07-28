@@ -7,6 +7,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/album_controller.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -15,7 +16,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/activity/activity_fragment.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
 import 'package:cartoonizer/views/mine/refcode/refcode_controller.dart';
@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    Get.put(UploadImageController());
     animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
     initialTab(false);
     discoveryListController.onScrollChange = (scrollDown) {
@@ -163,27 +164,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     for (var tabItem in allTabItems) {
       tabItem.createFragment();
       tabItems.add(tabItem);
-    }
-    if (!allTabItems.exist((t) => t.id == AppTabId.ACTIVITY.id())) {
-      var tab = dataController.data?.campaignTab;
-      if (tab != null) {
-        var appRoleTabItem = AppRoleTabItem(
-          id: AppTabId.ACTIVITY.id(),
-          titleBuilder: (context) => tab.title,
-          keyBuilder: () => GlobalKey<ActivityFragmentState>(),
-          fragmentBuilder: (key) => ActivityFragment(
-            tabId: AppTabId.ACTIVITY,
-            key: key,
-          ),
-          normalIcon: 'base64:${tab.image}',
-          selectedIcon: 'base64:${tab.imageSelected}',
-        );
-        appRoleTabItem.createFragment();
-        tabItems.insert(1, appRoleTabItem);
-      }
-      if (needSetState) {
-        setState(() {});
-      }
     }
   }
 

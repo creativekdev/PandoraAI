@@ -162,10 +162,10 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
     appBarHeight = ScreenUtil.getStatusBarHeight() + 44;
     var width = ScreenUtil.screenSize.width - 24;
     lineHeight = width / 4;
-    if (controller.imageUploadCache.length > 6) {
+    if (controller.uploadCache.length > 6) {
       listHeight = width * 0.5 + $(95);
     } else {
-      var totalLength = controller.imageUploadCache.length + 2;
+      var totalLength = controller.uploadCache.length + 2;
       int line = (totalLength) ~/ 4;
       if (totalLength % 4 != 0) {
         line++;
@@ -351,30 +351,30 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                                     });
                                   }
                                 },
-                              ).visibility(visible: !tabs[currentIndex].isAiSource() && controller.imageUploadCache.isNotEmpty),
+                              ).visibility(visible: !tabs[currentIndex].isAiSource() && controller.uploadCache.isNotEmpty),
                             ).intoContainer(height: appBarHeight),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              TitleTextWidget(controller.imageUploadCache.exist((t) => !t.checked) ? "Select All" : "Unselect", ColorConstant.BlueColor, FontWeight.normal, $(15))
+                              TitleTextWidget(controller.uploadCache.exist((t) => !t.checked) ? "Select All" : "Unselect", ColorConstant.BlueColor, FontWeight.normal, $(15))
                                   .paddingSymmetric(vertical: 6, horizontal: 15)
                                   .intoGestureDetector(onTap: () {
-                                if (controller.imageUploadCache.exist((t) => !t.checked)) {
-                                  controller.imageUploadCache.forEach((element) {
+                                if (controller.uploadCache.exist((t) => !t.checked)) {
+                                  controller.uploadCache.forEach((element) {
                                     element.checked = true;
                                   });
                                 } else {
-                                  controller.imageUploadCache.forEach((element) {
+                                  controller.uploadCache.forEach((element) {
                                     element.checked = false;
                                   });
                                 }
                                 setState(() {});
                               }),
-                              TitleTextWidget("Delete", controller.imageUploadCache.exist((t) => t.checked) ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, $(15))
+                              TitleTextWidget("Delete", controller.uploadCache.exist((t) => t.checked) ? Colors.white : ColorConstant.EffectGrey, FontWeight.normal, $(15))
                                   .paddingSymmetric(vertical: 6, horizontal: 15)
                                   .intoGestureDetector(onTap: () {
-                                if (!controller.imageUploadCache.exist((t) => t.checked)) {
+                                if (!controller.uploadCache.exist((t) => t.checked)) {
                                   return;
                                 }
                                 showDeleteDialog(context).then((value) {
@@ -527,11 +527,11 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
           }
           return buildRecentListItem(index - 2, context);
         },
-        itemCount: controller.imageUploadCache.length + 2,
+        itemCount: controller.uploadCache.length + 2,
       );
 
   Widget buildRecentListItem(int index, BuildContext context) {
-    var data = controller.imageUploadCache[index];
+    var data = controller.uploadCache[index];
     return (selectedMode
             ? Stack(
                 children: [
@@ -559,7 +559,7 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                 ],
               )
             : Image(
-                image: FileImage(File(controller.imageUploadCache[index].fileName)),
+                image: FileImage(File(controller.uploadCache[index].fileName)),
                 fit: BoxFit.cover,
               ).intoContainer(width: double.maxFinite, height: double.maxFinite))
         .intoGestureDetector(

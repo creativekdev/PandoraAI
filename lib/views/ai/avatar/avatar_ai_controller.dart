@@ -177,7 +177,7 @@ class AvatarAiController extends GetxController {
         return false;
       }
       var filePath = compressedList[i];
-      var url = await api.uploadImageToS3(File(filePath), true);
+      var url = await api.uploadToS3(File(filePath), true);
       if (stop) {
         return false;
       }

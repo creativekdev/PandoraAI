@@ -135,7 +135,7 @@ class Txt2imgController extends GetxController {
     var result = await api.text2image(
       prompt: text,
       directoryPath: rootPath,
-      initImage: uploadImageController.imageUrl.value,
+      initImage: initFile == null ? null : uploadImageController.imageUrl(initFile!).value,
       width: imageScale.width,
       height: imageScale.height,
     );
@@ -152,8 +152,10 @@ class Txt2imgController extends GetxController {
         'height': imageScale.height,
         'result_id': result.s,
       };
-      if (!TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-        params['init_images'] = [uploadImageController.imageUrl.value];
+      if (initFile != null) {
+        if (!TextUtil.isEmpty(uploadImageController.imageUrl(initFile!).value)) {
+          params['init_images'] = [uploadImageController.imageUrl(initFile!).value];
+        }
       }
       AppApi().logTxt2Img(params);
       return TransferResult()..data = result;

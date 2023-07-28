@@ -19,7 +19,6 @@ import 'package:cartoonizer/views/EditProfileScreen.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
-import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/mine/setting_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
@@ -203,10 +202,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                   AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
                 });
               }).offstage(offstage: userManager.isNeedLogin),
-              line(context).visibility(visible: false),
-              ImageTextBarWidget("Filter test", Images.ic_premium, true).intoGestureDetector(onTap: () {
-                ImFilter.open(context, tab: TABS.FILTER, source: 'my_page');
-              }).visibility(visible: false),
               Container(height: $(12)),
               ImageTextBarWidget(S.of(context).settings, Images.ic_settings, true).intoGestureDetector(
                 onTap: () {

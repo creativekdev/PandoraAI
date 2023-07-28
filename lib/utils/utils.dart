@@ -139,7 +139,8 @@ Future<File> imageCompressAndGetFile(File file, {int imageSize = 512, int maxFil
     quality = (((maxFileSize) / length) * 100).toInt();
   }
 
-  var dir = await getTemporaryDirectory();
+  CacheManager cacheManager = AppDelegate().getManager();
+  var dir = cacheManager.storageOperator.tempDir;
   var targetPath = dir.absolute.path + "/" + DateTime.now().millisecondsSinceEpoch.toString() + ".jpg";
   var imageInfo = await SyncFileImage(file: file).getImage();
   var image = imageInfo.image;

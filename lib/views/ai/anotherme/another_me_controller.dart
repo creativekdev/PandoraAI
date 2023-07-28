@@ -36,8 +36,7 @@ class AnotherMeController extends GetxController {
     update();
   }
 
-  clear(UploadImageController uploadImageController) {
-    uploadImageController.updateImageUrl('');
+  clear() {
     _sourcePhoto = null;
     _transKey = null;
     update();
@@ -128,33 +127,10 @@ class AnotherMeController extends GetxController {
     return TransferResult()..entity = baseEntity;
   }
 
-  Future<bool> _uploadAndSave(
-    String key,
-    File file,
-    UploadImageController uploadImageController, {
-    File? sourceFile,
-  }) async {
-    var uploadResult = await uploadImageController.uploadCompressedImage(file, key: key);
-    if (!uploadResult) {
-      return false;
-    }
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-      return false;
-    }
-    _sourcePhoto = sourceFile ?? file;
-    update();
-    return true;
-  }
-
-  Future<bool> onTakePhoto(
-    File file,
-    UploadImageController uploadImageController,
-    String key,
-  ) async {
+  Future<void> onTakePhoto(File file) async {
     _transKey = null;
+    sourcePhoto = file;
     update();
-    File compressedImage = await imageCompressAndGetFile(file, imageSize: 768);
-    return _uploadAndSave(key, compressedImage, uploadImageController, sourceFile: file);
   }
 }
 

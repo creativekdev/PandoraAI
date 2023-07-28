@@ -57,7 +57,10 @@ class FilterApi extends RetryAbleRequester {
   Future<String?> removeBgAndSave({required String imageUrl, onFailed}) async {
     var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
     String? dataString = await removeBg(imageUrl: imageUrl, onFailed: onFailed);
-    String key = EncryptUtil.encodeMd5(dataString!);
+    if (dataString == null) {
+      return null;
+    }
+    String key = EncryptUtil.encodeMd5(dataString);
     String filePath = getFileName(rootPath, key);
     var base64decode = await base64Decode(dataString);
     await File(filePath).writeAsBytes(base64decode.toList());

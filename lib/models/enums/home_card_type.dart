@@ -60,8 +60,7 @@ class HomeCardTypeUtils {
       case 'lineart':
         return HomeCardType.lineart;
       case 'removebg':
-        return HomeCardType.UNDEFINED;//todo 1.5.5 当前版本不解析
-        // return HomeCardType.removeBg;
+        return HomeCardType.removeBg;
       case '':
       case null:
         return HomeCardType.nothing;

@@ -79,9 +79,6 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
       if (transResult == null) {
         generate(context, controller);
       } else {
-        md5File(file).then((value) {
-          uploadImageController.needUploadByKey(value);
-        });
         controller.sourcePhoto = file;
         controller.transKey = transResult!.path;
         controller.onSuccess();
@@ -90,8 +87,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
   }
 
   void generate(BuildContext _context, AnotherMeController controller) async {
-    var key = await md5File(file);
-    var needUpload = await uploadImageController.needUploadByKey(key);
+    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(file).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       _context,
@@ -120,12 +116,14 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
         }
       }
     });
-    controller.onTakePhoto(file, uploadImageController, key).then((value) {
-      simulateProgressBarController.uploadComplete();
-      if (value) {
-        uploadImageController.getCachedIdByKey(key).then((cachedId) {
-          controller.startTransfer(uploadImageController.imageUrl.value, cachedId, (response) {
-            uploadImageController.deleteUploadData(null, key: key);
+    controller.onTakePhoto(file).then((value) {
+      uploadImageController.upload(file: file).then((value) async {
+        if (TextUtil.isEmpty(value)) {
+          simulateProgressBarController.onError();
+        } else {
+          simulateProgressBarController.uploadComplete();
+          controller.startTransfer(uploadImageController.imageUrl(file).value, await uploadImageController.getCachedId(file), (response) {
+            uploadImageController.deleteUploadData(file);
           }).then((value) {
             if (value != null) {
               if (value.entity != null) {
@@ -141,10 +139,8 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
               simulateProgressBarController.onError();
             }
           });
-        });
-      } else {
-        simulateProgressBarController.onError();
-      }
+        }
+      });
     });
   }
 
@@ -264,7 +260,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
                   key: optKey,
                   onChoosePhotoTap: () {
                     optKey.currentState!.dismiss().whenComplete(() {
-                      controller.clear(uploadImageController);
+                      controller.clear();
                       Events.metaverseCompleteTakeAgain();
                       Navigator.of(context).pop(false);
                     });
@@ -410,7 +406,7 @@ class _AnotherMeTransScreenState extends AppState<AnotherMeTransScreen> {
           ShareDiscoveryScreen.push(
             context,
             effectKey: 'Me-taverse',
-            originalUrl: uploadImageController.imageUrl.value,
+            originalUrl: uploadImageController.imageUrl(file).value,
             image: base64Encode(file.readAsBytesSync()),
             isVideo: false,
             category: HomeCardType.anotherme,

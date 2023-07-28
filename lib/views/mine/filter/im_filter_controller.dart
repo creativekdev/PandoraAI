@@ -68,8 +68,6 @@ class ImFilterController extends GetxController {
   int selectedCropID = 0;
   var processedImageURL = null;
 
-  UploadImageController uploadImageController = UploadImageController();
-
   Future<ui.Image> convertImage(imgLib.Image image) async {
     List<int> pngBytes = imgLib.encodePng(image);
     Uint8List uint8List = Uint8List.fromList(pngBytes);
@@ -85,14 +83,8 @@ class ImFilterController extends GetxController {
 
   Future<void> saveToAlbum(BuildContext context) async {
     if (byte == null) return;
-    String imgDir = AppDelegate.instance
-        .getManager<CacheManager>()
-        .storageOperator
-        .tempDir
-        .path;
-    var file = File(imgDir + "${DateTime
-        .now()
-        .millisecondsSinceEpoch}.png");
+    String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
+    var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
     if (selectedRightTab == TABS.CROP && crop.selectedID > 0) {
       Uint8List? _croppedByte = await Cropper.crop(
         cropperKey: cropperKey,
@@ -113,18 +105,11 @@ class ImFilterController extends GetxController {
   Future onSelectImage(String filePath) async {
     var pickFile = File(filePath);
     imageFile = File(pickFile.path);
-    image = await getLibImage(await getImage(imageFile!));
+    image = await getLibImage(await getImage(imageFile));
     imageRatio = image.width / image.height;
-
     // todo： 新建一个界面做动画
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
     await filter.calcAvatars(image);
-    File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get
-        .find<EffectDataController>()
-        .data
-        ?.imageMaxl ?? 512);
-    await uploadImageController.uploadCompressedImage(compressedImage);
-    uploadImageController.update();
     update();
   }
 

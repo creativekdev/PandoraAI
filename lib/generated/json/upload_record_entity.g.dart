@@ -17,6 +17,10 @@ UploadRecordEntity $UploadRecordEntityFromJson(Map<String, dynamic> json) {
 	if (createDt != null) {
 		uploadRecordEntity.createDt = createDt;
 	}
+	final String? originFileName = jsonConvert.convert<String>(json['originFileName']);
+	if (originFileName != null) {
+		uploadRecordEntity.originFileName = originFileName;
+	}
 	final String? fileName = jsonConvert.convert<String>(json['fileName']);
 	if (fileName != null) {
 		uploadRecordEntity.fileName = fileName;
@@ -37,6 +41,7 @@ Map<String, dynamic> $UploadRecordEntityToJson(UploadRecordEntity entity) {
 	data['key'] = entity.key;
 	data['url'] = entity.url;
 	data['create_dt'] = entity.createDt;
+	data['originFileName'] = entity.originFileName;
 	data['fileName'] = entity.fileName;
 	data['cached_id'] = entity.cachedId;
 	data['checked'] = entity.checked;

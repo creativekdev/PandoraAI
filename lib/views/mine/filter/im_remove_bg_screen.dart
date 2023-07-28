@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:common_utils/common_utils.dart';
+
 import '../../../Common/importFile.dart';
 import '../../../api/filter_api.dart';
 import '../../../network/dio_node.dart';
@@ -7,9 +10,8 @@ import '../../../network/dio_node.dart';
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen({super.key, required this.imageUrl, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio});
+  const ImRemoveBgScreen({super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio});
 
-  final String imageUrl;
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
   final double imageRatio;
@@ -24,10 +26,15 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   bool isRequset = true;
   bool isLoaded = false;
   String? removeBgUrl;
+  late double width;
+  late double height;
+  UploadImageController uploadImageController = Get.find();
 
   @override
   void initState() {
     super.initState();
+    width = $(300);
+    height = width / widget.imageRatio;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
@@ -60,18 +67,26 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     });
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
-    onGetRemovebgImage();
+    delay(() => onGetRemovebgImage());
   }
 
   onGetRemovebgImage() async {
-    removeBgUrl = await FilterApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
-        imageUrl: widget.imageUrl,
-        onFailed: (response) {
-          Navigator.of(context).pop(false);
-        });
-    if (removeBgUrl != null) {
-      isRequset = false;
-    }
+    uploadImageController.upload(file: File(widget.filePath)).then((value) async {
+      if (TextUtil.isEmpty(value)) {
+        isRequset = false;
+        removeBgUrl = null;
+      } else {
+        removeBgUrl = await FilterApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
+            imageUrl: value!,
+            onFailed: (response) {
+              Navigator.of(context).pop(false);
+            });
+        if (removeBgUrl != null) {
+          isRequset = false;
+        }
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -91,24 +106,23 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
             if (isLoaded == true) // 显示生成的图片
               Image.file(
                 File(removeBgUrl!),
-                width: $(300),
-                height: $(300) * widget.imageRatio,
+                width: width,
+                height: height,
                 fit: BoxFit.cover,
               ),
             AnimatedBuilder(
               animation: _animation,
               builder: (context, child) {
-                double height = $(300) * widget.imageRatio;
                 double offsetY = height * _animation.value;
                 return Stack(
                   children: [
                     ClipPath(
                       //  矩形裁剪
-                      clipper: ReactClipper(isLoaded ? offsetY : $(300) * widget.imageRatio),
+                      clipper: ReactClipper(isLoaded ? offsetY : height),
                       child: Image.file(
                         File(widget.filePath!),
-                        width: $(300),
-                        height: $(300) * widget.imageRatio,
+                        width: width,
+                        height: height,
                         fit: BoxFit.cover,
                       ),
                     ),

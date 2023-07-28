@@ -10,8 +10,11 @@ import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_controller.dart';
@@ -81,16 +84,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
           var file = File(history!.initImageFilePath!);
           if (file.existsSync()) {
             txt2imgController.initFile = file;
-            showLoading().whenComplete(() {
-              imageCompressAndGetFile(file, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512).then((value) {
-                txt2imgController.uploadImageController.uploadCompressedImage(value).then((value) {
-                  hideLoading().whenComplete(() {
-                    forward.call();
-                    txt2imgController.uploadImageController.update();
-                  });
-                });
-              });
-            });
+            forward.call();
           } else {
             forward.call();
           }
@@ -430,7 +424,7 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                               color: ColorConstant.White,
                               strokeWidth: 1.5,
                               dashPattern: [5, 5],
-                              child: (TextUtil.isEmpty(uploadController.imageUrl.value)
+                              child: (controller.initFile == null || TextUtil.isEmpty(uploadController.imageUrl(controller.initFile!).value)
                                   ? Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment: MainAxisAlignment.center,
@@ -451,7 +445,8 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                     )
                                   : Stack(
                                       children: [
-                                        CachedNetworkImageUtils.custom(context: context, imageUrl: uploadController.imageUrl.value, height: $(160), fit: BoxFit.contain),
+                                        CachedNetworkImageUtils.custom(
+                                            context: context, imageUrl: uploadController.imageUrl(controller.initFile!).value, height: $(160), fit: BoxFit.contain),
                                         Positioned(
                                           child: Icon(
                                             Icons.close,
@@ -465,8 +460,10 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                                                     color: Color(0x99000000),
                                                   ))
                                               .intoGestureDetector(onTap: () {
-                                            txt2imgController.uploadImageController.updateImageUrl('');
-                                            txt2imgController.uploadImageController.update();
+                                            uploadController.imageUrl(controller.initFile!).value = '';
+                                            controller.initFile = null;
+                                            uploadController.update();
+                                            controller.update();
                                           }),
                                           top: 2,
                                           right: 2,
@@ -483,13 +480,9 @@ class _Txt2imgScreenState extends AppState<Txt2imgScreen> {
                           if (value != null && value.isNotEmpty) {
                             File? source = await value.first.file;
                             if (source != null) {
-                              controller.initFile = source;
-                              showLoading().whenComplete(() async {
-                                File compressedImage = await imageCompressAndGetFile(source, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-                                await uploadController.uploadCompressedImage(compressedImage);
-                                uploadController.update();
-                                hideLoading();
-                              });
+                              CacheManager cacheImage = AppDelegate().getManager();
+                              var path = await ImageUtils.onImagePick(source.path, cacheImage.storageOperator.recordTxt2imgDir.path);
+                              controller.initFile = File(path);
                             }
                           }
                         });

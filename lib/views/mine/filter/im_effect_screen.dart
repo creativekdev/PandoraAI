@@ -58,7 +58,7 @@ class ImEffectScreen extends StatefulWidget {
 
 class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerProviderStateMixin {
   List<String> _rightTabList = [Images.ic_effect, Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
-  UploadImageController uploadImageController = Get.put(UploadImageController());
+  UploadImageController uploadImageController = Get.find();
   late TransferBaseController controller;
   double itemWidth = ScreenUtil.screenSize.width / 6;
   int generateCount = 0;
@@ -314,8 +314,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   generate() async {
-    String key = await md5File(controller.originFile);
-    var needUpload = await uploadImageController.needUploadByKey(key);
+    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,
@@ -336,36 +335,29 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
         }
       }
     });
-    if (needUpload) {
-      EffectManager effectManager = AppDelegate().getManager();
-      var imageSize = effectManager.data?.imageMaxl ?? 512;
-      File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: imageSize);
-      await uploadImageController.uploadCompressedImage(compressedImage, key: key);
-      if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+    var cachedId = await uploadImageController.getCachedId(controller.originFile);
+    uploadImageController.upload(file: controller.originFile).then((value) {
+      if (TextUtil.isEmpty(value)) {
         simulateProgressBarController.onError();
       } else {
         simulateProgressBarController.uploadComplete();
-      }
-    }
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-      return;
-    }
-    var cachedId = await uploadImageController.getCachedIdByKey(key);
-    controller.startTransfer(uploadImageController.imageUrl.value, cachedId, onFailed: (response) {
-      uploadImageController.deleteUploadData(controller.originFile, key: key);
-    }).then((value) {
-      if (value != null) {
-        if (value.entity != null) {
-          simulateProgressBarController.loadComplete();
-          controller.onGenerateSuccess(
-            source: widget.source,
-            style: widget.photoType,
-          );
-        } else {
-          simulateProgressBarController.onError(error: value.type);
-        }
-      } else {
-        simulateProgressBarController.onError();
+        controller.startTransfer(uploadImageController.imageUrl(controller.originFile).value, cachedId, onFailed: (response) {
+          uploadImageController.deleteUploadData(controller.originFile);
+        }).then((value) {
+          if (value != null) {
+            if (value.entity != null) {
+              simulateProgressBarController.loadComplete();
+              controller.onGenerateSuccess(
+                source: widget.source,
+                style: widget.photoType,
+              );
+            } else {
+              simulateProgressBarController.onError(error: value.type);
+            }
+          } else {
+            simulateProgressBarController.onError();
+          }
+        });
       }
     });
   }
@@ -375,38 +367,30 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       CommonExtension().showToast(S.of(context).select_a_style);
       return;
     }
-
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-      await showLoading();
-      String key = await md5File(controller.originFile);
-      var needUpload = await uploadImageController.needUploadByKey(key);
-      if (needUpload) {
-        File compressedImage = await imageCompressAndGetFile(controller.originFile);
-        await uploadImageController.uploadCompressedImage(compressedImage, key: key);
-        await hideLoading();
-        if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-          return;
-        }
-      } else {
-        await hideLoading();
-      }
-    }
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
-      var file = File(controller.resultMap[controller.selectedEffect!.key]!);
-      ShareDiscoveryScreen.push(
-        context,
-        effectKey: controller.selectedEffect!.key,
-        originalUrl: uploadImageController.imageUrl.value,
-        image: base64Encode(file.readAsBytesSync()),
-        isVideo: false,
-        category: widget.isStyleMorph ? HomeCardType.stylemorph : HomeCardType.cartoonize,
-      ).then((value) {
-        if (value ?? false) {
-          controller.onResultShare(source: widget.photoType, platform: 'effect', photo: 'image');
-          showShareSuccessDialog(context);
-        }
+    showLoading().whenComplete(() {
+      uploadImageController.upload(file: controller.originFile).then((value) {
+        hideLoading().whenComplete(() {
+          if (!TextUtil.isEmpty(value)) {
+            AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
+              var file = File(controller.resultMap[controller.selectedEffect!.key]!);
+              ShareDiscoveryScreen.push(
+                context,
+                effectKey: controller.selectedEffect!.key,
+                originalUrl: value,
+                image: base64Encode(file.readAsBytesSync()),
+                isVideo: false,
+                category: widget.isStyleMorph ? HomeCardType.stylemorph : HomeCardType.cartoonize,
+              ).then((value) {
+                if (value ?? false) {
+                  controller.onResultShare(source: widget.photoType, platform: 'effect', photo: 'image');
+                  showShareSuccessDialog(context);
+                }
+              });
+            }, autoExec: true);
+          }
+        });
       });
-    }, autoExec: true);
+    });
   }
 
   shareOut(BuildContext context) async {

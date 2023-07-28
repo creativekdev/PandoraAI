@@ -51,7 +51,7 @@ class AiColoringScreen extends StatefulWidget {
 
 class _AiColoringScreenState extends AppState<AiColoringScreen> {
   late AiColoringController controller;
-  late UploadImageController uploadImageController = Get.put(UploadImageController());
+  late UploadImageController uploadImageController = Get.find();
   UserManager userManager = AppDelegate().getManager();
 
   @override
@@ -289,17 +289,13 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
     if (TextUtil.isEmpty(controller.resultPath)) {
       return;
     }
-    if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
+    String? imageUrl = uploadImageController.imageUrl(controller.originFile).value;
+    if (TextUtil.isEmpty(imageUrl)) {
       await showLoading();
-      String key = await md5File(controller.originFile);
-      var needUpload = await uploadImageController.needUploadByKey(key);
-      if (needUpload) {
-        File compressedImage = await imageCompressAndGetFile(controller.originFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
-        await uploadImageController.uploadCompressedImage(compressedImage, key: key);
+      imageUrl = await uploadImageController.upload(file: controller.originFile);
+      if (TextUtil.isEmpty(imageUrl)) {
         await hideLoading();
-        if (TextUtil.isEmpty(uploadImageController.imageUrl.value)) {
-          return;
-        }
+        return;
       } else {
         await hideLoading();
       }
@@ -309,7 +305,7 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
       ShareDiscoveryScreen.push(
         context,
         effectKey: 'lineart',
-        originalUrl: uploadImageController.imageUrl.value,
+        originalUrl: imageUrl,
         image: base64Encode(file.readAsBytesSync()),
         isVideo: false,
         category: HomeCardType.lineart,

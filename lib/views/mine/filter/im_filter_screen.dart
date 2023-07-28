@@ -62,6 +62,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       controller.filePath = widget.filePath;
     }
     controller.selectedRightTab = widget.tab;
+    controller.preSelectedTab = widget.tab;
   }
 
   @override
@@ -86,7 +87,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                 NoAnimRouter(
                   ImRemoveBgScreen(
                     filePath: controller.filePath!,
-                    imageUrl: controller.uploadImageController.imageUrl.value,
                     imageRatio: controller.imageRatio,
                     onGetRemoveBgImage: (String img) async {
                       File file = File(img);
@@ -693,37 +693,37 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   shareToDiscovery(BuildContext context) async {
     // todo：还未确定是否分享到发现
     return;
-    if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
-      await showLoading();
-      String key = await md5File(controller.imageFile);
-      var needUpload = await controller.uploadImageController.needUploadByKey(key);
-      if (needUpload) {
-        File compressedImage = await imageCompressAndGetFile(controller.imageFile);
-        await controller.uploadImageController.uploadCompressedImage(compressedImage, key: key);
-        await hideLoading();
-        if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
-          return;
-        }
-      } else {
-        await hideLoading();
-      }
-    }
-    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
-      var file = File(controller.filePath!);
-      ShareDiscoveryScreen.push(
-        context,
-        // todo
-        effectKey: "",
-        originalUrl: controller.uploadImageController.imageUrl.value,
-        image: base64Encode(file.readAsBytesSync()),
-        isVideo: false,
-        category: HomeCardType.cartoonize,
-      ).then((value) {
-        if (value ?? false) {
-          controller.onResultShare(source: 'gallery', platform: 'effect', photo: 'image');
-          showShareSuccessDialog(context);
-        }
-      });
-    }, autoExec: true);
+    // if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
+    //   await showLoading();
+    //   String key = await md5File(controller.imageFile);
+    //   var needUpload = await controller.uploadImageController.needUploadByKey(key);
+    //   if (needUpload) {
+    //     File compressedImage = await imageCompressAndGetFile(controller.imageFile);
+    //     await controller.uploadImageController.uploadCompressedImage(compressedImage, key: key);
+    //     await hideLoading();
+    //     if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
+    //       return;
+    //     }
+    //   } else {
+    //     await hideLoading();
+    //   }
+    // }
+    // AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_cartoonize', callback: () {
+    //   var file = File(controller.filePath!);
+    //   ShareDiscoveryScreen.push(
+    //     context,
+    //     // todo
+    //     effectKey: "",
+    //     originalUrl: controller.uploadImageController.imageUrl.value,
+    //     image: base64Encode(file.readAsBytesSync()),
+    //     isVideo: false,
+    //     category: HomeCardType.cartoonize,
+    //   ).then((value) {
+    //     if (value ?? false) {
+    //       controller.onResultShare(source: 'gallery', platform: 'effect', photo: 'image');
+    //       showShareSuccessDialog(context);
+    //     }
+    //   });
+    // }, autoExec: true);
   }
 }

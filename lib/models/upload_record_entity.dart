@@ -9,6 +9,7 @@ class UploadRecordEntity {
   late String url;
   @JSONField(name: "create_dt")
   late int createDt;
+  late String originFileName;
   late String fileName;
   @JSONField(name: "cached_id")
   late String cachedId;
@@ -20,6 +21,7 @@ class UploadRecordEntity {
     this.createDt = 0,
     this.fileName = '',
     this.cachedId = '',
+    this.originFileName = '',
     this.checked = false,
   });
 
