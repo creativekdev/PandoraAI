@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/app/cache/storage_operator.dart';
-import 'package:cartoonizer/network/dio_node.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -10,7 +9,6 @@ import '../../../Common/Extension.dart';
 import '../../../Common/importFile.dart';
 import '../../../Controller/effect_data_controller.dart';
 import '../../../Controller/upload_image_controller.dart';
-import '../../../api/filter_api.dart';
 import '../../../app/app.dart';
 import '../../../app/cache/cache_manager.dart';
 import '../../../gallery_saver.dart';
@@ -36,11 +34,19 @@ class ImFilterController extends GetxController {
 
   String? get filePath => _filePath;
 
-  // File? _personImageFile;
+  File? personImageFile;
   double imageRatio = 16 / 9;
   late imgLib.Image image, personImage, backgroundImage;
   late ui.Image personImageForUi;
-  Uint8List? byte, personImageByte;
+  Uint8List? _byte, personImageByte;
+
+  set byte(Uint8List? value) {
+    _byte = value;
+    update();
+  }
+
+  // get方法
+  Uint8List? get byte => _byte;
   final GlobalKey cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey ImageViewerBackgroundKey = GlobalKey();
   bool originalShowing = false;
@@ -49,6 +55,7 @@ class ImFilterController extends GetxController {
   var currentItemIndex = 0.obs;
   List<String> rightTabList = [Images.ic_filter, Images.ic_adjust, Images.ic_crop, Images.ic_background]; //, Images.ic_letter];
   late TABS selectedRightTab;
+  late TABS preSelectedTab;
 
   int selectedEffectID = 0;
   Filter filter = new Filter();
@@ -78,8 +85,14 @@ class ImFilterController extends GetxController {
 
   Future<void> saveToAlbum(BuildContext context) async {
     if (byte == null) return;
-    String imgDir = AppDelegate.instance.getManager<CacheManager>().storageOperator.tempDir.path;
-    var file = File(imgDir + "${DateTime.now().millisecondsSinceEpoch}.png");
+    String imgDir = AppDelegate.instance
+        .getManager<CacheManager>()
+        .storageOperator
+        .tempDir
+        .path;
+    var file = File(imgDir + "${DateTime
+        .now()
+        .millisecondsSinceEpoch}.png");
     if (selectedRightTab == TABS.CROP && crop.selectedID > 0) {
       Uint8List? _croppedByte = await Cropper.crop(
         cropperKey: cropperKey,
@@ -102,35 +115,16 @@ class ImFilterController extends GetxController {
     imageFile = File(pickFile.path);
     image = await getLibImage(await getImage(imageFile!));
     imageRatio = image.width / image.height;
-    // uploadImageController.updateImageUrl('');
-    // image = await getLibImage(await getImage(imageFile));
+
+    // todo： 新建一个界面做动画
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
-    personImage = image;
-    personImageByte = await Uint8List.fromList(imgLib.encodeJpg(image));
-    personImageForUi = await convertImage(image);
-
     await filter.calcAvatars(image);
-
-    File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get.find<EffectDataController>().data?.imageMaxl ?? 512);
+    File compressedImage = await imageCompressAndGetFile(imageFile, imageSize: Get
+        .find<EffectDataController>()
+        .data
+        ?.imageMaxl ?? 512);
     await uploadImageController.uploadCompressedImage(compressedImage);
     uploadImageController.update();
-    var url = await FilterApi(client: DioNode().build()).removeBgAndSave(
-        imageUrl: uploadImageController.imageUrl.value,
-        onFailed: (response) {
-          if (response.data != null) {
-            var data = response.data;
-            if (data['code'] == "DAILY_IP_LIMIT_EXCEEDED") {
-              //todo
-              CommonExtension().showToast(S.of(Get.context!).DAILY_IP_LIMIT_EXCEEDED);
-            }
-          }
-        });
-    if (url != null) {
-      File personImageFile = File(url);
-      personImage = await getLibImage(await getImage(personImageFile));
-      personImageByte = await Uint8List.fromList(imgLib.encodeJpg(personImage));
-      personImageForUi = await convertImage(personImage);
-    }
     update();
   }
 

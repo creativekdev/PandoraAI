@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -14,6 +15,7 @@ import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
+import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -21,7 +23,6 @@ import '../../../app/app.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../models/enums/home_card_type.dart';
-import '../../../utils/img_utils.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
 import '../../share/ShareScreen.dart';
 import '../../share/share_discovery_screen.dart';
@@ -79,7 +80,38 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       buttons.add(GestureDetector(
         onTap: () async {
           if (TABS.values[cur] == TABS.BACKGROUND) {
-            controller.byte = controller.personImageByte;
+            if (controller.personImageByte == null) {
+              Navigator.push(
+                context,
+                NoAnimRouter(
+                  ImRemoveBgScreen(
+                    filePath: controller.filePath!,
+                    imageUrl: controller.uploadImageController.imageUrl.value,
+                    imageRatio: controller.imageRatio,
+                    onGetRemoveBgImage: (String img) async {
+                      File file = File(img);
+                      controller.personImage = await getLibImage(await getImage(file));
+                      controller.personImageByte = file.readAsBytesSync();
+                      controller.personImageForUi = await controller.convertImage(controller.personImage);
+                      controller.byte = controller.personImageByte;
+                      controller.selectedRightTab = TABS.values[cur];
+                    },
+                  ),
+                  // opaque: true,
+                  settings: RouteSettings(name: "/ImRemoveBgScreen"),
+                ),
+              ).then((value) => {
+                    if (value != true)
+                      {
+                        // 退回到原来的tab
+                        controller.selectedRightTab = controller.preSelectedTab,
+                        setState(() {}),
+                      },
+                  });
+            } else {
+              controller.byte = controller.personImageByte;
+            }
+            return;
           } else if (TABS.values[cur] == TABS.ADJUST)
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
           else
@@ -643,21 +675,24 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   }
 
   shareOut(BuildContext context) async {
-    // if (controller.selectedEffect == null) {
-    //   CommonExtension().showToast(S.of(context).select_a_style);
-    //   return;
-    // }
-
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
-    var uint8list = await ImageUtils.printStyleMorphDrawData(controller.imageFile, File(controller.filePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-    ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
-        onShareSuccess: (platform) {
-      Events.styleMorphCompleteShare(source: "gallery", platform: platform, type: 'image');
+    // controller.byte
+    // var uint8list = await ImageUtils.printStyleMorphDrawData(controller.imageFile, File(controller.filePath!), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    ShareScreen.startShare(context,
+        backgroundColor: Color(0x77000000),
+        style: "filter_edit",
+        image: base64Encode(controller.byte!),
+        isVideo: false,
+        originalUrl: null,
+        effectKey: "", onShareSuccess: (platform) {
+      Events.styleFilterCompleteShare(source: "filter_edit", platform: platform, type: 'image');
     });
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
 
   shareToDiscovery(BuildContext context) async {
+    // todo：还未确定是否分享到发现
+    return;
     if (TextUtil.isEmpty(controller.uploadImageController.imageUrl.value)) {
       await showLoading();
       String key = await md5File(controller.imageFile);
