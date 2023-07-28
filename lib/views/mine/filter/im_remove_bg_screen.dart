@@ -33,7 +33,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    width = $(300);
+    width = ScreenUtil.screenSize.width;
     height = width / widget.imageRatio;
     _controller = AnimationController(
       vsync: this,
@@ -98,7 +98,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0x7f000000),
+      backgroundColor: Color(0xaa000000),
       body: Center(
         child: Stack(
           alignment: Alignment.topCenter,

@@ -21,7 +21,7 @@ class StripeSubscriptionScreen extends StatefulWidget {
 }
 
 class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
-  bool isYear = false;
+  bool isYear = true;
 
   bool _loading = true;
   bool _purchasePending = false;
