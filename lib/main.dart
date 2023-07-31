@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/common/apk_download_screen.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:common_utils/common_utils.dart';
@@ -24,6 +25,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import 'app/app.dart';
@@ -212,12 +214,31 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
           ),
           confirmText: S.of(context).update_now,
-          confirmCallback: () {
+          confirmCallback: () async {
             if (Platform.isAndroid) {
-              if (!TextUtil.isEmpty(data['url'].toString())) {
-                CommonExtension().showToast('Start downloading, wait a moment please');
-                updateByApk(url: data['url'], name: "$APP_NAME.apk");
-                // launchURL(data['url']);
+              if (!TextUtil.isEmpty(data['url']?.toString() ?? '') && MyApp.currentLocales == 'zh') {
+                var downloadsDirectory = await getExternalStorageDirectory();
+                var filePath = downloadsDirectory!.path + '/Download/${APP_NAME}_${data['latest_build']}.apk';
+                if (File(filePath).existsSync()) {
+                  installApk(fileName: filePath);
+                } else {
+                  ApkDownloadScreen.start(
+                    context,
+                    url: data['url'],
+                    filePath: filePath,
+                    force: data['force'],
+                  ).then((value) {
+                    if (value ?? false) {
+                      installApk(fileName: filePath);
+                    } else {
+                      if (!data['force']) {
+                        Navigator.of(context).pop();
+                      }
+                    }
+                  });
+                  // CommonExtension().showToast('Start downloading, wait a moment please');
+                  // updateByApk(url: data['url'], name: "${APP_NAME}_${data['latest_build']}.apk");
+                }
               } else {
                 const platform = MethodChannel(PLATFORM_CHANNEL);
                 platform.invokeMethod<bool>("openAppStore").then((value) {
@@ -361,6 +382,19 @@ class _MyHomePageState extends State<MyHomePage> {
       await platform.invokeMethod('updateAppByApk', {"url": url, "name": name, "desc": S.of(context).downloading});
     } on PlatformException catch (e) {
       LogUtil.e(e, tag: 'DOWNLOAD_APK');
+    }
+    return Future.value(false);
+  }
+
+  Future<bool> installApk({required String fileName}) async {
+    assert(Platform.isAndroid, "不支持非android平台调用");
+    final platform = MethodChannel(PLATFORM_CHANNEL);
+    try {
+      await platform.invokeMethod('installAppByApk', {
+        "fileName": fileName,
+      });
+    } on PlatformException catch (e) {
+      LogUtil.e(e, tag: 'INSTALL_APK');
     }
     return Future.value(false);
   }

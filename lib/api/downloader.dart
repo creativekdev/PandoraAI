@@ -121,6 +121,15 @@ class Downloader {
     }
     return key;
   }
+
+  cancel(String key) {
+    var cancelToken = _taskMap[key];
+    if (cancelToken != null) {
+      if (!cancelToken.isCancelled) {
+        cancelToken.cancel();
+      }
+    }
+  }
 }
 
 class DownloadListener {

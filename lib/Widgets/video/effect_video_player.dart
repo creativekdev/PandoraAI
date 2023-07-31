@@ -16,6 +16,7 @@ class EffectVideoPlayer extends StatefulWidget {
   bool isFile;
   bool loop;
   Function? onCompleted;
+  double? ratio;
 
   EffectVideoPlayer({
     Key? key,
@@ -23,6 +24,7 @@ class EffectVideoPlayer extends StatefulWidget {
     this.useCached = true,
     this.isFile = false,
     this.loop = true,
+    this.ratio,
     this.onCompleted,
   }) : super(key: key);
 
@@ -43,6 +45,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   late bool isFile;
   late bool loop;
   Function? onCompleted;
+  double? ratio;
 
   @override
   initState() {
@@ -50,6 +53,7 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
     useCached = widget.useCached;
     url = widget.url;
     isFile = widget.isFile;
+    ratio = widget.ratio;
     onCompleted = widget.onCompleted;
     loop = widget.loop;
     if (isFile) {
@@ -121,6 +125,12 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
   @override
   void didUpdateWidget(EffectVideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
+    useCached = widget.useCached;
+    url = widget.url;
+    isFile = widget.isFile;
+    ratio = widget.ratio;
+    onCompleted = widget.onCompleted;
+    loop = widget.loop;
     play();
   }
 
@@ -142,10 +152,10 @@ class EffectVideoPlayerState extends State<EffectVideoPlayer> {
                 alignment: Alignment.center,
                 children: [
                   AspectRatio(
-                    aspectRatio: controller!.value.aspectRatio,
+                    aspectRatio: ratio == null ? controller!.value.aspectRatio : ratio!,
                     child: VideoPlayer(controller!),
                   ),
-                  (controller!.value.isInitialized) ? Container() : CircularProgressIndicator().intoCenter()
+                  (controller!.value.isPlaying) ? Container() : CircularProgressIndicator().intoCenter()
                 ],
               );
   }

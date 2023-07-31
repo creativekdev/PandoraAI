@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/discovery_sort.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,20 +18,20 @@ class DiscoveryListController extends GetxController {
   late AppApi api;
   late SocialMediaConnectorApi socialMediaConnectorApi;
 
-  List<TagData> tags = [
-    TagData(title: '# StyleMorph', tag: 'stylemorph'),
-    TagData(title: '# AIColoring', tag: 'lineart'),
-    TagData(title: '# Me-taverse', tag: 'another_me'),
-    TagData(title: '# AITextToImage', tag: 'txt2img'),
-    TagData(title: '# AIScribble', tag: 'scribble'),
-    TagData(title: '# Facetoon', tag: 'cartoonize'),
-    TagData(title: '# PandoraAvatar', tag: 'ai_avatar'),
+  List<HomeCardType> tags = [
+    HomeCardType.stylemorph,
+    HomeCardType.lineart,
+    HomeCardType.anotherme,
+    HomeCardType.txt2img,
+    HomeCardType.scribble,
+    HomeCardType.cartoonize,
+    HomeCardType.ai_avatar,
   ];
-  TagData? _currentTag;
+  HomeCardType? _currentTag;
 
-  TagData? get currentTag => _currentTag;
+  HomeCardType? get currentTag => _currentTag;
 
-  set currentTag(TagData? data) {
+  set currentTag(HomeCardType? data) {
     _currentTag = data;
     update();
   }
@@ -269,7 +270,7 @@ class DiscoveryListController extends GetxController {
       from: 0,
       pageSize: pageSize,
       sort: DiscoverySort.newest,
-      category: currentTag?.tag,
+      category: currentTag?.value(),
     );
     delay(() {
       listLoading = false;
@@ -322,7 +323,7 @@ class DiscoveryListController extends GetxController {
       from: (page + 1) * pageSize,
       pageSize: pageSize,
       sort: DiscoverySort.newest,
-      category: currentTag?.tag,
+      category: currentTag?.value(),
     );
     delay(() {
       listLoading = false;
@@ -380,14 +381,4 @@ class ListData {
   }) {
     this.liked.value = liked;
   }
-}
-
-class TagData {
-  String tag;
-  String title;
-
-  TagData({
-    required this.title,
-    required this.tag,
-  });
 }

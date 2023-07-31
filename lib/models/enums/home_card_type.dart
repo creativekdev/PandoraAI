@@ -304,4 +304,33 @@ extension HomeCardTypeEx on HomeCardType {
         return '';
     }
   }
+
+  String tagTitle() {
+    switch (this) {
+      case HomeCardType.cartoonize:
+        return '# Facetoon';
+      case HomeCardType.anotherme:
+        return '# Me-Taverse';
+      case HomeCardType.ai_avatar:
+        return '# AIAvatar';
+      case HomeCardType.txt2img:
+        return '# AITextToImage';
+      case HomeCardType.scribble:
+        return '# AIScribble';
+      case HomeCardType.metagram:
+        return '# Metagram';
+      case HomeCardType.stylemorph:
+        return '# StyleMorph';
+      case HomeCardType.lineart:
+        return '# AIColoring';
+      case HomeCardType.UNDEFINED:
+        return '';
+      case HomeCardType.removeBg:
+        return '# RemoveBG';
+      case HomeCardType.nothing:
+        return '';
+      case HomeCardType.url:
+        return '';
+    }
+  }
 }

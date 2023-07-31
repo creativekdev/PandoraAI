@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/metagram_page_entity.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_screen.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
@@ -184,7 +185,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               children: listController.tags.transfer((e, index) {
                 bool checked = listController.currentTag == e;
                 return Text(
-                  e.title,
+                  e.tagTitle(),
                   style: TextStyle(
                     color: checked ? Color(0xff3e60ff) : Colors.white,
                     fontSize: $(13),

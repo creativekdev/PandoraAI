@@ -300,6 +300,7 @@ class _DiscoveryResourcesCardState extends State<DiscoveryResourcesCard> {
           return EffectVideoPlayer(
             url: e.url!,
             loop: true,
+            ratio: itemWidth / itemHeight,
           )
               .intoGestureDetector(
                   onTap: onTap == null
