@@ -45,7 +45,6 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
   @override
   void dispose() {
     Get.delete<AnotherMeController>();
-    Get.delete<UploadImageController>();
     super.dispose();
   }
 

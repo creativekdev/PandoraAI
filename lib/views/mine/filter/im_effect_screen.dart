@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -16,14 +17,12 @@ import '../../../Common/Extension.dart';
 import '../../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../../app/app.dart';
 import '../../../app/cache/storage_operator.dart';
-import '../../../app/effect_manager.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../gallery_saver.dart';
 import '../../../models/api_config_entity.dart';
 import '../../../models/enums/home_card_type.dart';
 import '../../../utils/img_utils.dart';
-import '../../../utils/utils.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
 import '../../ai/anotherme/widgets/simulate_progress_bar.dart';
 import '../../share/ShareScreen.dart';
@@ -34,13 +33,15 @@ import '../../transfer/controller/transfer_base_controller.dart';
 import 'im_filter.dart';
 import 'im_filter_screen.dart';
 
+enum EffectStyle { Cartoonizer, StyleMorph, All }
+
 class ImEffectScreen extends StatefulWidget {
   final File resultFile;
   final File originFile;
   final TABS tab;
   final String source;
   final String photoType;
-  final bool isStyleMorph;
+  final EffectStyle effectStyle;
 
   ImEffectScreen({
     Key? key,
@@ -49,7 +50,7 @@ class ImEffectScreen extends StatefulWidget {
     this.tab = TABS.EFFECT,
     required this.source,
     required this.photoType,
-    this.isStyleMorph = true,
+    this.effectStyle = EffectStyle.All,
   }) : super(key: key);
 
   @override
@@ -71,10 +72,15 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   @override
   void initState() {
     super.initState();
-    if (widget.isStyleMorph) {
+    if (widget.effectStyle == EffectStyle.StyleMorph) {
       controller = Get.find<StyleMorphController>();
-    } else {
+    } else if (widget.effectStyle == EffectStyle.Cartoonizer) {
       controller = Get.find<CartoonizerController>();
+    } else if (widget.effectStyle == EffectStyle.All) {
+      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: []));
+    }
+    if (controller?.resultFile == null) {
+      controller.resultFile = widget.resultFile;
     }
   }
 
@@ -379,7 +385,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
                 originalUrl: value,
                 image: base64Encode(file.readAsBytesSync()),
                 isVideo: false,
-                category: widget.isStyleMorph ? HomeCardType.stylemorph : HomeCardType.cartoonize,
+                category: controller.getCategory() == "stylemorph" ? HomeCardType.stylemorph : HomeCardType.cartoonize,
               ).then((value) {
                 if (value ?? false) {
                   controller.onResultShare(source: widget.photoType, platform: 'effect', photo: 'image');

@@ -79,6 +79,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         removeBgUrl = await FilterApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
             imageUrl: value!,
             onFailed: (response) {
+              uploadImageController.deleteUploadData(File(widget.filePath));
               Navigator.of(context).pop(false);
             });
         if (removeBgUrl != null) {
