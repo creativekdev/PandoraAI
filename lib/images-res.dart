@@ -59,6 +59,8 @@ class Images {
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';
+   static const String ic_demo_coloring_origin = 'assets/images/ic_demo_coloring_origin.jpg';
+   static const String ic_demo_coloring_result = 'assets/images/ic_demo_coloring_result.png';
    static const String ic_discovery_comment = 'assets/images/ic_discovery_comment.png';
    static const String ic_discovery_like = 'assets/images/ic_discovery_like.png';
    static const String ic_discovery_liked = 'assets/images/ic_discovery_liked.png';

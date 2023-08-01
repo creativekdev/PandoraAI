@@ -4,6 +4,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
@@ -24,7 +25,19 @@ class AiColoring {
   }
 
   static Future _open(BuildContext context, String source) async {
-    var list = await PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true);
+    CacheManager cacheManager = AppDelegate().getManager();
+    var bool = cacheManager.getBool(CacheManager.guideAiColoring);
+    HomeCardType? type;
+    if (bool) {
+      type = HomeCardType.lineart;
+    }
+    var list = await PickAlbumScreen.pickImage(
+      context,
+      count: 1,
+      switchAlbum: true,
+      type: type,
+    );
+    cacheManager.setBool(CacheManager.guideAiColoring, true);
     if (list == null || list.isEmpty) {
       return;
     }
@@ -33,7 +46,6 @@ class AiColoring {
       CommonExtension().showToast('Image not exist');
       return;
     }
-    CacheManager cacheManager = AppDelegate().getManager();
     var path = await ImageUtils.onImagePick(first.path, cacheManager.storageOperator.recordStyleMorphDir.path);
     Events.aiColoringLoading(source: source);
     return Navigator.of(context).push(MaterialPageRoute(

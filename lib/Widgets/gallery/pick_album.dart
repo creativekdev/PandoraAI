@@ -9,8 +9,10 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import 'albums_popup.dart';
 import 'pick_album_navigation_bar.dart';
@@ -26,6 +28,7 @@ class PickAlbumScreen {
     int count = 20,
     int minCount = 1,
     bool switchAlbum = false,
+    HomeCardType? type,
   }) async {
     if (!await AnotherMe.checkPermissions()) {
       return [];
@@ -38,6 +41,7 @@ class PickAlbumScreen {
         badList: badList ?? [],
         maxCount: count,
         minCount: minCount,
+        type: type,
       ),
     ));
   }
@@ -49,6 +53,7 @@ class _PickAlbumScreen extends StatefulWidget {
   int maxCount;
   List<AssetEntity> badList;
   int minCount;
+  HomeCardType? type;
 
   _PickAlbumScreen({
     Key? key,
@@ -57,6 +62,7 @@ class _PickAlbumScreen extends StatefulWidget {
     required this.maxCount,
     this.minCount = 1,
     required this.badList,
+    this.type,
   }) : super(key: key);
 
   @override
@@ -84,14 +90,111 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
   late int crossCount;
   List<String> loadFailedList = [];
   int albumCount = 0;
+  bool guided = false;
+  HomeCardType? type;
 
+  GlobalKey guideKey = GlobalKey();
   CacheManager cacheManager = AppDelegate.instance.getManager();
 
   _PickAlbumScreenState() : super(canCancelOnLoading: false);
 
+  TutorialCoachMark createTutorial(GlobalKey? key) {
+    TutorialCoachMark tutorial = TutorialCoachMark(
+        targets: [
+          TargetFocus(
+            identify: 'Step 1',
+            keyTarget: key,
+            contents: [
+              TargetContent(
+                  align: ContentAlign.bottom,
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "How to use",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                        ),
+                        SizedBox(height: $(10)),
+                        Text(
+                          "Choose a drawing with a black and white them, and you will get a colorful-image",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        SizedBox(height: $(10)),
+                        Text(
+                          "Like this",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 17.0),
+                        ),
+                        SizedBox(height: $(10)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Image.asset(Images.ic_demo_coloring_origin),
+                            ),
+                            SizedBox(width: $(10)),
+                            Image.asset(
+                              Images.ic_another_arrow_right,
+                              width: $(16),
+                            ),
+                            SizedBox(width: $(10)),
+                            Expanded(
+                              child: Image.asset(Images.ic_demo_coloring_result),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )),
+            ],
+          ),
+        ],
+        // List<TargetFocus>
+        colorShadow: Colors.grey.shade700,
+        // alignSkip: Alignment.bottomRight,
+        // textSkip: "SKIP",
+        paddingFocus: $(15),
+        onFinish: () {
+          setState(() {
+            guided = true;
+          });
+          print("finish");
+        },
+        onClickTargetWithTapPosition: (target, tapDetails) {
+          print("target: $target");
+          print("clicked at position local: ${tapDetails.localPosition} - global: ${tapDetails.globalPosition}");
+        },
+        onClickTarget: (target) {
+          print(target);
+        },
+        onSkip: () {
+          setState(() {
+            guided = true;
+          });
+          print("skip");
+        });
+    return tutorial;
+    // tutorial.skip();
+    // tutorial.finish();
+    // tutorial.next(); // call next target programmatically
+    // tutorial.previous(); // call previous target programmatically
+  }
+
+  loadGuide() {
+    if (type == HomeCardType.lineart) {
+      var tutorial = createTutorial(guideKey);
+      tutorial.show(context: context);
+    } else {
+      setState(() {
+        guided = true;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    type = widget.type;
     maxCount = widget.maxCount;
     minCount = widget.minCount;
     crossCount = 4;
@@ -109,6 +212,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         loadMore();
       }
     });
+    guided = type == null;
     delay(() => showLoading().whenComplete(() {
           PhotoManager.getAssetPathList(type: RequestType.image).then((value) async {
             value = await value.filterSync((t) async => await t.assetCountAsync != 0);
@@ -169,6 +273,9 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
       } else {
         _canLoadMore = true;
       }
+      if (!guided) {
+        delay(() => loadGuide(), milliseconds: 200);
+      }
     });
   }
 
@@ -199,180 +306,188 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorConstant.BackgroundColor,
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          PickAlbumNavigationBar(
-            backIcon: Image.asset(
-              Images.ic_back,
-              height: $(22),
-              width: $(22),
-            ).hero(tag: leadingTag),
-            middle: albums.isNotEmpty && switchAlbum
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      FutureBuilder<int>(
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.done) {
-                            return Text(
-                              '${selectAlbum?.name} (${snapshot.data})',
-                              style: TextStyle(
-                                color: ColorConstant.White,
-                                fontSize: $(17),
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Poppins',
-                              ),
-                            );
+    return WillPopScope(
+        child: Scaffold(
+          backgroundColor: ColorConstant.BackgroundColor,
+          body: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              PickAlbumNavigationBar(
+                backIcon: Image.asset(
+                  Images.ic_back,
+                  height: $(22),
+                  width: $(22),
+                ).hero(tag: leadingTag),
+                middle: albums.isNotEmpty && switchAlbum
+                    ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FutureBuilder<int>(
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.done) {
+                                return Text(
+                                  '${selectAlbum?.name} (${snapshot.data})',
+                                  style: TextStyle(
+                                    color: ColorConstant.White,
+                                    fontSize: $(17),
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                );
+                              }
+                              return Text(
+                                '${selectAlbum?.name} (${albumCount})',
+                                style: TextStyle(
+                                  color: ColorConstant.White,
+                                  fontSize: $(17),
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Poppins',
+                                ),
+                              );
+                            },
+                            future: selectAlbum!.assetCountAsync,
+                          ).intoMaterial(color: Colors.transparent),
+                          SizedBox(width: 6),
+                          Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            size: $(18),
+                            color: Color(0xff404040),
+                          ).intoContainer(decoration: BoxDecoration(color: ColorConstant.White, borderRadius: BorderRadius.circular(32))),
+                        ],
+                      )
+                        .intoContainer(
+                        padding: EdgeInsets.only(top: 3, bottom: 3, left: 12, right: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xff404040),
+                          borderRadius: BorderRadius.circular($(64)),
+                        ),
+                      )
+                        .intoGestureDetector(onTap: () {
+                        Navigator.of(context)
+                            .push(
+                          NoAnimRouter(
+                            AlbumPopup(albums: albums, selectedAlbum: selectAlbum!),
+                            settings: RouteSettings(name: '/AlbumPopup'),
+                          ),
+                        )
+                            .then((value) {
+                          if (value != null) {
+                            setState(() {
+                              selectAlbum = value;
+                              cacheManager.setString(CacheManager.lastAlbum, value.id);
+                              loadData();
+                            });
                           }
-                          return Text(
-                            '${selectAlbum?.name} (${albumCount})',
-                            style: TextStyle(
-                              color: ColorConstant.White,
-                              fontSize: $(17),
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Poppins',
-                            ),
-                          );
-                        },
-                        future: selectAlbum!.assetCountAsync,
-                      ).intoMaterial(color: Colors.transparent),
-                      SizedBox(width: 6),
-                      Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        size: $(18),
-                        color: Color(0xff404040),
-                      ).intoContainer(decoration: BoxDecoration(color: ColorConstant.White, borderRadius: BorderRadius.circular(32))),
-                    ],
-                  )
-                    .intoContainer(
-                    padding: EdgeInsets.only(top: 3, bottom: 3, left: 12, right: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xff404040),
-                      borderRadius: BorderRadius.circular($(64)),
-                    ),
-                  )
-                    .intoGestureDetector(onTap: () {
-                    Navigator.of(context)
-                        .push(
-                      NoAnimRouter(
-                        AlbumPopup(albums: albums, selectedAlbum: selectAlbum!),
-                        settings: RouteSettings(name: '/AlbumPopup'),
-                      ),
-                    )
-                        .then((value) {
-                      if (value != null) {
-                        setState(() {
-                          selectAlbum = value;
-                          cacheManager.setString(CacheManager.lastAlbum, value.id);
-                          loadData();
                         });
-                      }
-                    });
-                  })
-                : TitleTextWidget(S.of(context).choose_photo, ColorConstant.White, FontWeight.w500, $(17)),
-          ),
-          Expanded(
-              child: GridView.builder(
-            cacheExtent: $(120),
-            controller: scrollController,
-            padding: padding,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossCount,
-              mainAxisSpacing: spacing,
-              crossAxisSpacing: spacing,
-            ),
-            itemBuilder: (context, index) {
-              return buildItem(context, index);
-            },
-            itemCount: dataList.length,
-          )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                S.of(context).album_to_settings_tips,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: $(12),
-                  color: Color(0xff9f9f9f),
-                ),
+                      })
+                    : TitleTextWidget(S.of(context).choose_photo, ColorConstant.White, FontWeight.w500, $(17)),
               ),
-              SizedBox(width: 6),
-              Text(
-                S.of(context).album_to_settings_button,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: $(12),
-                  color: Color(0xff2778FF),
+              Expanded(
+                  child: GridView.builder(
+                cacheExtent: $(120),
+                controller: scrollController,
+                padding: padding,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossCount,
+                  mainAxisSpacing: spacing,
+                  crossAxisSpacing: spacing,
                 ),
-              ).intoGestureDetector(onTap: () {
-                openAppSettings();
-              }),
-            ],
-          )
-              .intoContainer(
-                  padding: EdgeInsets.only(
-                top: $(10),
-                bottom: maxCount > 1 ? $(15) : ScreenUtil.getBottomPadding(context) + $(15),
-              ))
-              .offstage(offstage: !Platform.isIOS),
-          Row(
-            children: [
-              Text(
-                S.of(context).preview,
-                style: TextStyle(
-                  color: selectedList.isEmpty ? Colors.grey : Colors.white,
-                  fontSize: $(14),
-                  fontFamily: 'Poppins',
-                ),
-              ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () async {
-                List<String> list = [];
-                for (var value in selectedList) {
-                  var file = await value.file;
-                  if (file != null) {
-                    list.add(file.path);
-                  }
-                }
-                if (selectedList.isEmpty) {
-                  return;
-                }
-                openImage(context, 0, list);
-              }),
-              Expanded(child: Container()),
-              Text(
-                S.of(context).ok,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: $(14),
-                  fontFamily: 'Poppins',
-                ),
+                itemBuilder: (context, index) {
+                  return buildItem(context, index);
+                },
+                itemCount: dataList.length,
+              )),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    S.of(context).album_to_settings_tips,
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: $(12),
+                      color: Color(0xff9f9f9f),
+                    ),
+                  ),
+                  SizedBox(width: 6),
+                  Text(
+                    S.of(context).album_to_settings_button,
+                    style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: $(12),
+                      color: Color(0xff2778FF),
+                    ),
+                  ).intoGestureDetector(onTap: () {
+                    openAppSettings();
+                  }),
+                ],
               )
                   .intoContainer(
-                      padding: EdgeInsets.symmetric(horizontal: $(30), vertical: $(8)),
-                      decoration:
-                          BoxDecoration(color: selectedList.length < minCount ? ColorConstant.CardColor : ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
-                      margin: EdgeInsets.only(right: $(15)))
-                  .intoGestureDetector(onTap: () {
-                if (selectedList.length < minCount) {
-                  CommonExtension().showToast(S.of(context).select_min_photos_hint.replaceAll('%d', '$minCount'));
-                  return;
-                }
-                Navigator.of(context).pop(selectedList);
-              })
+                      padding: EdgeInsets.only(
+                    top: $(10),
+                    bottom: maxCount > 1 ? $(15) : ScreenUtil.getBottomPadding(context) + $(15),
+                  ))
+                  .offstage(offstage: !Platform.isIOS),
+              Row(
+                children: [
+                  Text(
+                    S.of(context).preview,
+                    style: TextStyle(
+                      color: selectedList.isEmpty ? Colors.grey : Colors.white,
+                      fontSize: $(14),
+                      fontFamily: 'Poppins',
+                    ),
+                  ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15), vertical: $(10))).intoGestureDetector(onTap: () async {
+                    List<String> list = [];
+                    for (var value in selectedList) {
+                      var file = await value.file;
+                      if (file != null) {
+                        list.add(file.path);
+                      }
+                    }
+                    if (selectedList.isEmpty) {
+                      return;
+                    }
+                    openImage(context, 0, list);
+                  }),
+                  Expanded(child: Container()),
+                  Text(
+                    S.of(context).ok,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: $(14),
+                      fontFamily: 'Poppins',
+                    ),
+                  )
+                      .intoContainer(
+                          padding: EdgeInsets.symmetric(horizontal: $(30), vertical: $(8)),
+                          decoration:
+                              BoxDecoration(color: selectedList.length < minCount ? ColorConstant.CardColor : ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(6))),
+                          margin: EdgeInsets.only(right: $(15)))
+                      .intoGestureDetector(onTap: () {
+                    if (selectedList.length < minCount) {
+                      CommonExtension().showToast(S.of(context).select_min_photos_hint.replaceAll('%d', '$minCount'));
+                      return;
+                    }
+                    Navigator.of(context).pop(selectedList);
+                  })
+                ],
+              )
+                  .intoContainer(
+                      padding: EdgeInsets.only(
+                    top: $(10),
+                    bottom: ScreenUtil.getBottomPadding(context) + $(15),
+                  ))
+                  .visibility(visible: maxCount > 1),
             ],
-          )
-              .intoContainer(
-                  padding: EdgeInsets.only(
-                top: $(10),
-                bottom: ScreenUtil.getBottomPadding(context) + $(15),
-              ))
-              .visibility(visible: maxCount > 1),
-        ],
-      ),
-    );
+          ),
+        ),
+        onWillPop: () async {
+          if (!guided) {
+            return false;
+          } else {
+            return true;
+          }
+        });
   }
 
   Widget buildItem(BuildContext context, int index) {
@@ -381,6 +496,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
     bool selected = selectedList.exist((t) => t.id == data.id);
     int pos = (selectedList.findPosition((t) => t.id == data.id) ?? 0) + 1;
     return Container(
+      key: index == 0 ? guideKey : null,
       child: Stack(
         children: [
           SizedBox(
