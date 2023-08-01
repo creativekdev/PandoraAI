@@ -98,6 +98,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     } else {
       controller.byte = controller.personImageByte;
     }
+    controller.selectedRightTab = TABS.BACKGROUND;
     return;
   }
 
@@ -123,7 +124,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
           else
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.image));
-
           setState(() {
             if (TABS.EFFECT == TABS.values[cur]) {
               Navigator.of(context).pop();
