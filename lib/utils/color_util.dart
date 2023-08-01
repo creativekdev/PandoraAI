@@ -280,4 +280,9 @@ extension ColorEx on Color {
   String hexValue() {
     return ColorUtil.colorToHexString(this);
   }
+
+  Color toArgb() {
+    int abgrValue = (this.alpha << 24) | (this.blue << 16) | (this.green << 8) | this.red;
+    return Color(abgrValue);
+  }
 }

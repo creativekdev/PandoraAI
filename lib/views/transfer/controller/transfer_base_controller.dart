@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -9,7 +8,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
-import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 
 abstract class TransferBaseController<ResultType> extends GetxController {
   late String _originalPath;
@@ -40,11 +38,17 @@ abstract class TransferBaseController<ResultType> extends GetxController {
 
   bool _showOrigin = false;
 
+  File? _resultFile;
+
   File? get resultFile {
     if (selectedEffect == null || resultMap[selectedEffect!.key] == null) {
-      return null;
+      return _resultFile;
     }
     return File(resultMap[selectedEffect!.key]!);
+  }
+
+  set resultFile(File? value) {
+    _resultFile = value;
   }
 
   set showOrigin(bool value) {

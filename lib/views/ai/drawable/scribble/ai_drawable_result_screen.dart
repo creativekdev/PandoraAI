@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
@@ -21,7 +20,6 @@ import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
@@ -92,7 +90,6 @@ class _AiDrawableResultScreenState extends AppState<AiDrawableResultScreen> {
   dispose() {
     api.unbind();
     drawableController.resultFilePaths = [];
-    Get.delete<UploadImageController>();
     super.dispose();
   }
 

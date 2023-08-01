@@ -16,18 +16,15 @@ import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
+import 'package:cartoonizer/views/mine/filter/im_pin_view.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../app/app.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
-import '../../../models/enums/home_card_type.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
 import '../../share/ShareScreen.dart';
-import '../../share/share_discovery_screen.dart';
-import 'ImageMergingWidget.dart';
 import 'im_filter.dart';
 
 class ImFilterScreen extends StatefulWidget {
@@ -64,6 +61,44 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     }
     controller.selectedRightTab = widget.tab;
     controller.preSelectedTab = widget.tab;
+    Future.delayed(Duration.zero, () {
+      if (widget.tab == TABS.BACKGROUND) {
+        onTapRemoveBg();
+      }
+    });
+  }
+
+  onTapRemoveBg() {
+    if (controller.personImageByte == null) {
+      Navigator.push(
+        context,
+        NoAnimRouter(
+          ImRemoveBgScreen(
+            filePath: controller.filePath!,
+            imageRatio: controller.imageRatio,
+            onGetRemoveBgImage: (String img) async {
+              File file = File(img);
+              controller.personImage = await getLibImage(await getImage(file));
+              controller.personImageByte = file.readAsBytesSync();
+              controller.personImageForUi = await controller.convertImage(controller.personImage);
+              controller.byte = controller.personImageByte;
+              controller.selectedRightTab = TABS.BACKGROUND;
+            },
+          ),
+          // opaque: true,
+          settings: RouteSettings(name: "/ImRemoveBgScreen"),
+        ),
+      ).then((value) => {
+            if (value != true)
+              {
+                // 退回到原来的tab
+                Navigator.of(context).pop()
+              },
+          });
+    } else {
+      controller.byte = controller.personImageByte;
+    }
+    return;
   }
 
   @override
@@ -82,36 +117,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       buttons.add(GestureDetector(
         onTap: () async {
           if (TABS.values[cur] == TABS.BACKGROUND) {
-            if (controller.personImageByte == null) {
-              Navigator.push(
-                context,
-                NoAnimRouter(
-                  ImRemoveBgScreen(
-                    filePath: controller.filePath!,
-                    imageRatio: controller.imageRatio,
-                    onGetRemoveBgImage: (String img) async {
-                      File file = File(img);
-                      controller.personImage = await getLibImage(await getImage(file));
-                      controller.personImageByte = file.readAsBytesSync();
-                      controller.personImageForUi = await controller.convertImage(controller.personImage);
-                      controller.byte = controller.personImageByte;
-                      controller.selectedRightTab = TABS.values[cur];
-                    },
-                  ),
-                  // opaque: true,
-                  settings: RouteSettings(name: "/ImRemoveBgScreen"),
-                ),
-              ).then((value) => {
-                    if (value != true)
-                      {
-                        // 退回到原来的tab
-                        controller.selectedRightTab = controller.preSelectedTab,
-                        setState(() {}),
-                      },
-                  });
-            } else {
-              controller.byte = controller.personImageByte;
-            }
+            onTapRemoveBg();
             return;
           } else if (TABS.values[cur] == TABS.ADJUST)
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
@@ -552,32 +558,49 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   }
 
   void showPersonEditScreenDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-            // Adjust the following properties to make the dialog full screen
-            insetPadding: EdgeInsets.all(0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black, // Set your desired background color here
-              ),
-              child: ImageMergingWidget(
-                personImage: controller.personImage,
-                personImageForUI: controller.personImageForUi,
-                backgroundImage: controller.backgroundImage,
-                backgroundColor: controller.backgroundColor,
-                onAddImage: (image) {
-                  Navigator.of(context).pop(Uint8List.fromList(imgLib.encodeJpg(image)));
-                },
-              ),
-            ));
-      },
-    ).then((byte) {
-      setState(() {
-        controller.byte = byte;
-      });
-    });
+    Navigator.push(
+      context,
+      NoAnimRouter(
+        settings: RouteSettings(name: "/ImEffectScreen"),
+        ImPinView(
+          personImage: controller.personImage,
+          personImageForUI: controller.personImageForUi,
+          backgroundImage: controller.backgroundImage,
+          backgroundColor: controller.backgroundColor,
+          onAddImage: (image) {
+            Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(image));
+            controller.byte = byte;
+            setState(() {});
+          },
+        ),
+      ),
+    );
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return Dialog(
+    //         // Adjust the following properties to make the dialog full screen
+    //         insetPadding: EdgeInsets.all(0),
+    //         child: Container(
+    //           decoration: BoxDecoration(
+    //             color: Colors.black, // Set your desired background color here
+    //           ),
+    //           child: ImPinView(
+    //             personImage: controller.personImage,
+    //             personImageForUI: controller.personImageForUi,
+    //             backgroundImage: controller.backgroundImage,
+    //             backgroundColor: controller.backgroundColor,
+    //             onAddImage: (image) {
+    //               Navigator.of(context).pop(Uint8List.fromList(imgLib.encodeJpg(image)));
+    //             },
+    //           ),
+    //         ));
+    //   },
+    // ).then((byte) {
+    //   setState(() {
+    //     controller.byte = byte;
+    //   });
+    // });
   }
 
   Color rgbaToAbgr(Color rgbaColor) {

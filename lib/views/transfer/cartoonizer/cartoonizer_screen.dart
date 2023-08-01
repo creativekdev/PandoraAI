@@ -162,7 +162,6 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
   @override
   void dispose() {
     Get.delete<CartoonizerController>();
-    Get.delete<UploadImageController>();
     super.dispose();
   }
 

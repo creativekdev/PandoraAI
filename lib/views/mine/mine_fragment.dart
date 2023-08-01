@@ -26,6 +26,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../print/print_order_screen.dart';
+import 'filter/im_filter.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
@@ -196,6 +197,12 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 },
               ),
               line(context),
+              ImageTextBarWidget("Filter test photo", Images.ic_premium, true).intoGestureDetector(onTap: () {
+                ImFilter.openEffectWithPhoto(context, tab: TABS.EFFECT, source: 'my_page');
+              }).visibility(visible: true),
+              ImageTextBarWidget("Filter test camera", Images.ic_premium, true).intoGestureDetector(onTap: () {
+                ImFilter.openEffectWithCamera(context, tab: TABS.EFFECT, source: 'my_page');
+              }).visibility(visible: true),
               ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 PaymentUtils.pay(context, 'my_page').then((value) {

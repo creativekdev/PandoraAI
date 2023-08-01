@@ -38,6 +38,26 @@ class BothTransferController extends TransferBaseController {
   }
 
   @override
+  void onTitleSelected(int index) {
+    super.onTitleSelected(index);
+    if (selectedTitle?.category == 'cartoonize') {
+      cartoonizerController.onTitleSelected(index);
+    } else if (selectedTitle?.category == 'stylemorph') {
+      styleMorphController.onTitleSelected(index);
+    }
+  }
+  
+  @override
+  void onItemSelected(int index) {
+    super.onItemSelected(index);
+    if (selectedTitle?.category == 'cartoonize') {
+      cartoonizerController.onItemSelected(index);
+    } else if (selectedTitle?.category == 'stylemorph') {
+      styleMorphController.onItemSelected(index);
+    }
+  }
+
+  @override
   onGenerateSuccess({required String source, required String style}) {
     if (selectedTitle?.category == 'cartoonize') {
       cartoonizerController.onGenerateSuccess(source: source, style: style);
