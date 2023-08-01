@@ -1,21 +1,32 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:image/image.dart' as imgLib;
 import 'dart:ui' as ui;
 
 import '../../../images-res.dart';
 
 class ImageMergingWidget extends StatefulWidget {
-  imgLib.Image personImage, backgroundImage;
+  imgLib.Image personImage;
+  imgLib.Image? backgroundImage;
+  Color? backgroundColor;
   ui.Image personImageForUI;
   late double posX, posY, ratio;
   Uint8List? personByte, backgroundByte;
   final Function(imgLib.Image) onAddImage;
 
-  ImageMergingWidget({required this.personImage, required this.personImageForUI, required this.backgroundImage, required this.onAddImage}) {
+  ImageMergingWidget({
+    required this.personImage,
+    required this.personImageForUI,
+    required this.backgroundImage,
+    required this.backgroundColor,
+    required this.onAddImage,
+  }) {
     personByte = Uint8List.fromList(imgLib.encodeJpg(personImage));
-    backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage));
+    if (backgroundImage != null) {
+      backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage!));
+    }
     posX = posY = 0;
     ratio = 1;
   }
@@ -32,8 +43,8 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
     double r1, r2;
     W = size.width;
     H = size.height;
-    w1 = widget.backgroundImage.width.toDouble();
-    h1 = widget.backgroundImage.height.toDouble();
+    w1 = widget.backgroundImage?.width.toDouble() ?? W;
+    h1 = widget.backgroundImage?.height.toDouble() ?? H;
     w2 = widget.personImage.width.toDouble();
     h2 = widget.personImage.height.toDouble();
     if (w1 / h1 > W / H)
@@ -56,17 +67,22 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
         onPanEnd: (details) {},
         child: Stack(
           children: [
-            Container(
+            widget.backgroundByte != null
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    child: Image.memory(
+                      widget.backgroundByte!,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : SizedBox(
               width: size.width,
               height: size.height,
-              child: Image.memory(
-                widget.backgroundByte!,
-                fit: BoxFit.contain,
-              ),
             ),
             Container(
                 child: CustomPaint(
-              painter: AlphaImagePainter(widget.personImageForUI!, dx: widget.posX, dy: widget.posY, ratio: widget.ratio),
+              painter: AlphaImagePainter(widget.personImageForUI, dx: widget.posX, dy: widget.posY, ratio: widget.ratio),
               child: Container(
                 width: size.width,
                 height: size.height,
@@ -91,7 +107,13 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
                         )),
                         InkWell(
                           onTap: () async {
-                            imgLib.Image res_image = widget.backgroundImage;
+                            imgLib.Image res_image;
+                            if (widget.backgroundImage != null) {
+                              res_image = widget.backgroundImage!;
+                            } else {
+                              res_image = imgLib.Image(widget.personImage.width, widget.personImage.height);
+                              imgLib.fill(res_image, rgbaToAbgr(widget.backgroundColor!).value);
+                            }
                             imgLib.Image person_image = widget.personImage;
                             for (int i = 0; i < res_image.width; i++) {
                               for (int j = 0; j < res_image.height; j++) {
@@ -121,6 +143,11 @@ class _ImageMergingWidgetState extends State<ImageMergingWidget> {
                     )))
           ],
         ));
+  }
+
+  Color rgbaToAbgr(Color rgbaColor) {
+    int abgrValue = (rgbaColor.alpha << 24) | (rgbaColor.blue << 16) | (rgbaColor.green << 8) | rgbaColor.red;
+    return Color(abgrValue);
   }
 }
 

@@ -126,7 +126,7 @@ class EffectData {
     EffectData entity = EffectData._instance();
     entity.key = key;
     entity.title = key.localeValue(locale);
-    entity.children = json.values.map((e) => EffectCategory.fromJson(e, locale)).toList();
+    entity.children = json.values.map((e) => EffectCategory.fromJson(e, locale, key)).toList();
     return entity;
   }
 
@@ -148,11 +148,13 @@ class EffectCategory {
   late String thumbnail;
   late String tag;
   late bool isNsfw;
+  late String category;
 
   EffectCategory._instance();
 
-  factory EffectCategory.fromJson(Map<String, dynamic> json, Map<String, dynamic> locale) {
+  factory EffectCategory.fromJson(Map<String, dynamic> json, Map<String, dynamic> locale, String category) {
     EffectCategory entity = EffectCategory._instance();
+    entity.category = category;
     entity.key = (json['key'] ?? '').toString();
     entity.tag = (json['tag'] ?? '').toString();
     entity.title = entity.key.localeValue(locale);

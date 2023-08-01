@@ -12,6 +12,10 @@ import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 
 abstract class TransferBaseController<ResultType> extends GetxController {
+  late String _originalPath;
+
+  String get originalPath => _originalPath;
+
   late File _originFile;
 
   File get originFile => _originFile;
@@ -55,7 +59,8 @@ abstract class TransferBaseController<ResultType> extends GetxController {
   RecentController recentController = Get.find<RecentController>();
 
   TransferBaseController({required String originalPath, required List<RecentEffectItem> itemList, this.initKey}) {
-    originFile = File(originalPath);
+    _originalPath = originalPath;
+    originFile = File(_originalPath);
     itemList.forEach((element) {
       resultMap[element.key!] = element.imageData!;
     });
@@ -132,7 +137,7 @@ abstract class TransferBaseController<ResultType> extends GetxController {
     required String style,
   }) {}
 
-  Future<TransferResult<ResultType>?> startTransfer(String imageUrl, String? cachedId, {onFailed});
+  Future<TransferResult<ResultType>?> startTransfer(String imageUrl, String? cachedId, {onFailed, bool needRecord = true});
 
   void onTitleSelected(int index) {
     if (selectedTitle == categories[index]) {

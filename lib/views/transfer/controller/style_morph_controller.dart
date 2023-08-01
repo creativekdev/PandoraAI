@@ -43,7 +43,7 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
   }
 
   @override
-  Future<TransferResult<StyleMorphResultEntity>?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
+  Future<TransferResult<StyleMorphResultEntity>?> startTransfer(String imageUrl, String? cachedId, {onFailed, bool needRecord = true}) async {
     if (selectedEffect == null) {
       CommonExtension().showToast('Please select template');
       return null;
@@ -65,7 +65,9 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
     if (baseEntity != null) {
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();
-      recentController.onStyleMorphUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath);
+      if (needRecord) {
+        recentController.onStyleMorphUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath);
+      }
       return TransferResult()..entity = baseEntity;
     } else {
       return null;

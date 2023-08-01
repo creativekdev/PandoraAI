@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_intro/flutter_intro.dart';
 import 'package:skeletons/skeletons.dart';
 
 extension WidgetExtension on Widget {
@@ -249,11 +250,7 @@ extension WidgetExtension on Widget {
             Color(0xFFC8D5DA),
             Color(0xFFD8E3E7),
           ],
-          stops: [
-            0.1,
-            0.5,
-            0.9,
-          ],
+          stops: [0.1, 0.5, 0.9],
         ),
         darkShimmerGradient: LinearGradient(
           colors: [
@@ -263,18 +260,22 @@ extension WidgetExtension on Widget {
             Color(0xFF242424),
             Color(0xFF222222),
           ],
-          stops: [
-            0.0,
-            0.2,
-            0.5,
-            0.8,
-            1,
-          ],
+          stops: [0.0, 0.2, 0.5, 0.8, 1],
           begin: Alignment(-2.4, -0.2),
           end: Alignment(2.4, 0.2),
           tileMode: TileMode.clamp,
         ),
         child: this,
+      );
+
+  Intro introConfig() => Intro(
+        child: this,
+        padding: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.all(Radius.circular(4)),
+        maskColor: const Color.fromRGBO(0, 0, 0, .6),
+        noAnimation: false,
+        maskClosable: false,
+        buttonTextBuilder: (order) => order == 3 ? 'Custom Button Text' : 'Next',
       );
 }
 

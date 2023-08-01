@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -234,18 +235,20 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                             )
                           : (controller.selectedRightTab == TABS.CROP && controller.crop.selectedID > 0)
                               ? Container(
-                                  color: Colors.black,
+                                  // color: Colors.black,
                                   child: Center(
                                       child: DecorationCropper(
-                                    cropperKey: controller.cropperKey,
-                                    crop: controller.crop,
-                                    byte: controller.byte,
-                                    globalKey: controller.ImageViewerBackgroundKey,
-                                  )))
-                              : Image.memory(
-                                  controller.byte!,
-                                  fit: BoxFit.contain,
-                                )
+                                  cropperKey: controller.cropperKey,
+                                  crop: controller.crop,
+                                  byte: controller.byte,
+                                  globalKey: controller.ImageViewerBackgroundKey,
+                                )))
+                              : BackgroundCard(
+                                  bgColor: controller.backgroundColor,
+                                  child: Image.memory(
+                                    controller.byte!,
+                                    fit: BoxFit.contain,
+                                  ))
                       : Container(),
                 ));
               })
@@ -563,6 +566,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
                 personImage: controller.personImage,
                 personImageForUI: controller.personImageForUi,
                 backgroundImage: controller.backgroundImage,
+                backgroundColor: controller.backgroundColor,
                 onAddImage: (image) {
                   Navigator.of(context).pop(Uint8List.fromList(imgLib.encodeJpg(image)));
                 },
@@ -588,11 +592,15 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         // _backgroundImage = await backgroundRemoval.addBackgroundImage(_personImage, data.filePath!);
         if (data.filePath != null) {
           File backFile = File(data.filePath!);
+          controller.backgroundColor = null;
           controller.backgroundImage = await getLibImage(await getImage(backFile));
         } else {
-          controller.backgroundImage = imgLib.Image(controller.personImage.width, controller.personImage.height);
-          imgLib.fill(controller.backgroundImage, rgbaToAbgr(data.color!).value);
+          controller.backgroundImage = null;
+          controller.backgroundColor = rgbaToAbgr(data.color!);
+          // controller.backgroundImage = imgLib.Image(controller.personImage.width, controller.personImage.height);
+          // imgLib.fill(controller.backgroundImage, rgbaToAbgr(data.color!).value);
         }
+        controller.update();
         showPersonEditScreenDialog(context);
       },
     ).intoContainer(

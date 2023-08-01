@@ -37,7 +37,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     height = width / widget.imageRatio;
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 1),
     );
     _controller.addStatusListener((status) {
       switch (status) {

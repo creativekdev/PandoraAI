@@ -1,6 +1,5 @@
 export 'dart:async';
 export 'package:flutter/material.dart';
-export 'package:sizer/sizer.dart';
 export 'package:flutter/services.dart';
 export 'package:firebase_core/firebase_core.dart';
 export 'package:firebase_analytics/firebase_analytics.dart';

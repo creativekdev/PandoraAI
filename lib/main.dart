@@ -2,8 +2,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
-import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Common/ThemeConstant.dart' as theme;
 import 'package:cartoonizer/Common/dialog.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -18,7 +16,6 @@ import 'package:cartoonizer/views/common/apk_download_screen.dart';
 import 'package:cartoonizer/views/home_screen.dart';
 import 'package:cartoonizer/views/introduction/introduction_screen.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -90,62 +87,56 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppDelegate.instance.init();
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return GetMaterialApp(
-          navigatorObservers: [routeObserver],
-          theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
-          title: APP_TITLE,
-          home: MyHomePage(title: APP_TITLE),
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          localeResolutionCallback: (deviceLocale, supportedLocales) {
-            var current = DateTime.now().millisecondsSinceEpoch;
-            var duration = current - lastLocaleTime;
-            Locale? result;
-            if (duration > 2000) {
-              lastLocaleTime = current;
-              debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
-              currentLocales = deviceLocale.languageCode;
-              result = deviceLocale;
-            } else {
-              for (var locale in supportedLocales) {
-                if (locale.languageCode == currentLocales) {
-                  result = locale;
-                  break;
-                }
-              }
-            }
-            if (AppDelegate.instance.initialized) {
-              ThirdpartManager thirdpartManager = AppDelegate().getManager();
-              thirdpartManager.initRefresh(result);
-            } else {
-              Function(bool status)? listener;
-              listener = (status) {
-                if (status) {
-                  ThirdpartManager thirdpartManager = AppDelegate().getManager();
-                  thirdpartManager.initRefresh(result);
-                  AppDelegate.instance.cancelListenAsync(listener!);
-                }
-              };
-              AppDelegate.instance.listen(listener);
-            }
-            if (result == null) {
-              return deviceLocale;
-            } else {
-              return result;
-            }
-          },
-          locale: const Locale('en', 'US'),
-          supportedLocales: S.delegate.supportedLocales,
-        ).skeletonTheme();
-      },
-    );
+    return GetMaterialApp(
+      navigatorObservers: [routeObserver],
+      theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
+      title: APP_TITLE,
+      home: MyHomePage(title: APP_TITLE),
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      localeResolutionCallback: (deviceLocale, supportedLocales) => onLocaleChanged(deviceLocale, supportedLocales),
+      locale: const Locale('en', 'US'),
+      supportedLocales: S.delegate.supportedLocales,
+    ).skeletonTheme();
+  }
+
+  Locale? onLocaleChanged(Locale? deviceLocale, Iterable<Locale> supportedLocales) {
+    var current = DateTime.now().millisecondsSinceEpoch;
+    var duration = current - lastLocaleTime;
+    Locale? result;
+    if (duration > 2000) {
+      lastLocaleTime = current;
+      debugPrint('deviceLocale: ${deviceLocale!.languageCode}');
+      currentLocales = deviceLocale.languageCode;
+      result = deviceLocale;
+    } else {
+      for (var locale in supportedLocales) {
+        if (locale.languageCode == currentLocales) {
+          result = locale;
+          break;
+        }
+      }
+    }
+    if (AppDelegate.instance.initialized) {
+      ThirdpartManager thirdpartManager = AppDelegate().getManager();
+      thirdpartManager.initRefresh(result);
+    } else {
+      Function(bool status)? listener;
+      listener = (status) {
+        if (status) {
+          ThirdpartManager thirdpartManager = AppDelegate().getManager();
+          thirdpartManager.initRefresh(result);
+          AppDelegate.instance.cancelListenAsync(listener!);
+        }
+      };
+      AppDelegate.instance.listen(listener);
+    }
+    return result ?? deviceLocale;
   }
 }
 

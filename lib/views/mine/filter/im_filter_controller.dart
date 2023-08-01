@@ -36,7 +36,9 @@ class ImFilterController extends GetxController {
 
   File? personImageFile;
   double imageRatio = 16 / 9;
-  late imgLib.Image image, personImage, backgroundImage;
+  late imgLib.Image image, personImage;
+  imgLib.Image? backgroundImage;
+  Color? backgroundColor;
   late ui.Image personImageForUi;
   Uint8List? _byte, personImageByte;
 

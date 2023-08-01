@@ -66,7 +66,7 @@ class _CommonDialogState extends State<CommonDialog> {
     // final size = MediaQuery.of(context).size;
     // final width = size.width;
 
-    var confirmPadding = widget.isCancel ? 0.w : 8.w;
+    double confirmPadding = widget.isCancel ? 0 : 8.w;
 
     Widget _buttonContainer = Row(
       children: [

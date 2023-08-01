@@ -2,16 +2,19 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'dart:math' as math;
 
 class BackgroundCard extends StatelessWidget {
-  final Color bgColor;
+  final Color? bgColor;
   final Widget child;
 
   const BackgroundCard({Key? key, required this.bgColor, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (bgColor == null) {
+      return child;
+    }
     return CustomPaint(
       painter: BackgroundPainter(
-        bgColor: bgColor,
+        bgColor: bgColor!,
         w: 10,
         h: 10,
       ),

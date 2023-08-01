@@ -26,7 +26,6 @@ class Filter{
     "FUS",
     "FRZ",
     "CMC",
-
   ];
   void setSelectedID(int id) {
     selectedID = id;

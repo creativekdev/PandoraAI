@@ -1,3 +1,5 @@
+import 'package:cartoonizer/Common/importFile.dart';
+
 const int _thousand = 1000;
 const int _million = _thousand * 1000;
 const int _billion = _million * 1000;
@@ -70,5 +72,17 @@ extension NumEx on num {
 
   bool isSameYear(int value) {
     return this.dateYear == value.dateYear;
+  }
+
+  double get w {
+    return ScreenUtil.screenSize.width / 100 * this;
+  }
+
+  double get h {
+    return ScreenUtil.screenSize.height / 100 * this;
+  }
+
+  double get sp {
+    return $(this.toDouble());
   }
 }

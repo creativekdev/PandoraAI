@@ -43,7 +43,7 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
   }
 
   @override
-  Future<TransferResult<CartoonizerResultEntity>?> startTransfer(String imageUrl, String? cachedId, {onFailed}) async {
+  Future<TransferResult<CartoonizerResultEntity>?> startTransfer(String imageUrl, String? cachedId, {onFailed, bool needRecord = true}) async {
     if (selectedEffect == null) {
       CommonExtension().showToast('Please select template');
       return null;
@@ -70,7 +70,9 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
     if (baseEntity != null) {
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();
-      recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false);
+      if (needRecord) {
+        recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false);
+      }
       return TransferResult()..entity = baseEntity;
     } else {
       return null;

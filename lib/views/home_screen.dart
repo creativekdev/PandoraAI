@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -207,37 +206,35 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           return Transform.translate(
             offset: Offset(0, animationController!.value * (55 + ScreenUtil.getBottomPadding(context))),
             child: ClipRect(
-                child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                    child: AppTabBar(
-                      items: createBottomItem(context),
-                      activeColor: ColorConstant.BlueColor,
-                      inactiveColor: ColorConstant.White,
-                      // backgroundColor: ColorConstant.BackgroundColorBlur,
-                      backgroundColor: Color.fromARGB(180, 14, 16, 17),
-                      iconSize: $(22),
-                      onTap: (pos) {
-                        if (tabItems[pos].id == AppTabId.AI.id()) {
-                          AnotherMe.checkPermissions().then((value) {
-                            if (value) {
-                              AnotherMe.open(context, source: 'home_page');
-                            } else {
-                              AnotherMe.permissionDenied(context);
-                            }
-                          });
-                        } else {
-                          _setIndex(pos);
-                        }
-                      },
-                      onDoubleTap: (index) {
-                        EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));
-                      },
-                      onLongPress: (index) {
-                        EventBusHelper().eventBus.fire(OnTabLongPressEvent(data: tabItems[index].id));
-                      },
-                      currentIndex: currentIndex,
-                      elevation: $(4),
-                    ))),
+                child: AppTabBar(
+              items: createBottomItem(context),
+              activeColor: ColorConstant.BlueColor,
+              inactiveColor: ColorConstant.White,
+              // backgroundColor: ColorConstant.BackgroundColorBlur,
+              backgroundColor: Color.fromARGB(180, 14, 16, 17),
+              iconSize: $(22),
+              onTap: (pos) {
+                if (tabItems[pos].id == AppTabId.AI.id()) {
+                  AnotherMe.checkPermissions().then((value) {
+                    if (value) {
+                      AnotherMe.open(context, source: 'home_page');
+                    } else {
+                      AnotherMe.permissionDenied(context);
+                    }
+                  });
+                } else {
+                  _setIndex(pos);
+                }
+              },
+              onDoubleTap: (index) {
+                EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));
+              },
+              onLongPress: (index) {
+                EventBusHelper().eventBus.fire(OnTabLongPressEvent(data: tabItems[index].id));
+              },
+              currentIndex: currentIndex,
+              elevation: $(4),
+            ).blur()),
           );
         });
   }
