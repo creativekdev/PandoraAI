@@ -80,8 +80,7 @@ class Events {
 
   static Future<void> facetoonLoading({required String source}) => logEvent('facetoon_loading', eventValues: {'source': source});
 
-  static Future<void> facetoonGenerated({required String style, required String source}) =>
-      logEvent('facetoon_generate', eventValues: {
+  static Future<void> facetoonGenerated({required String style, required String source}) => logEvent('facetoon_generate', eventValues: {
         'style': style,
         'source': source,
       });
@@ -174,8 +173,7 @@ class Events {
 
   static Future<void> aidrawCameraClick({required String source, required String photoType}) => logEvent('aidraw_loading', eventValues: {'source': source, 'type': photoType});
 
-  static Future<void> aidrawCompleteSuccess({required String source, required String photoType}) =>
-      logEvent('aidraw_completed_success', eventValues: {
+  static Future<void> aidrawCompleteSuccess({required String source, required String photoType}) => logEvent('aidraw_completed_success', eventValues: {
         'source': source,
         'type': photoType,
       });
@@ -262,8 +260,7 @@ class Events {
 
   static Future<void> styleMorphLoading({required String source}) => logEvent('stylemorph_loading', eventValues: {'source': source});
 
-  static Future<void> styleMorphCompleteSuccess({required String source, required String style}) =>
-      logEvent('stylemorph_completed_success', eventValues: {
+  static Future<void> styleMorphCompleteSuccess({required String source, required String style}) => logEvent('stylemorph_completed_success', eventValues: {
         'source': source,
         'style': style,
       });
@@ -308,8 +305,7 @@ class Events {
   static Future<void> aiColoringCameraClick({required String source, required String photoType}) =>
       logEvent('aicoloring_loading', eventValues: {'source': source, 'type': photoType});
 
-  static Future<void> aiColoringCompleteSuccess({required String source, required String photoType}) =>
-      logEvent('aicoloring_completed_success', eventValues: {
+  static Future<void> aiColoringCompleteSuccess({required String source, required String photoType}) => logEvent('aicoloring_completed_success', eventValues: {
         'source': source,
         'type': photoType,
       });
@@ -345,13 +341,13 @@ class Events {
 
   static Future<void> imEditionLoading({required String source}) => logEvent('image_edition_loading', eventValues: {'source': source});
 
+  static Future<void> imEffectionLoading({required String source}) => logEvent('image_effection_loading', eventValues: {'source': source});
+
   static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source});
 }
 
 Future<void> logEvent(String eventName, {Map<String, dynamic>? eventValues}) async {
-  SocialUserInfo? user = AppDelegate()
-      .getManager<UserManager>()
-      .user;
+  SocialUserInfo? user = AppDelegate().getManager<UserManager>().user;
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   var defaultValues = {"app_platform": Platform.operatingSystem, "app_version": packageInfo.version, "app_build": packageInfo.buildNumber};

@@ -49,7 +49,6 @@ class DiscoveryListController extends GetxController {
   List<ListData> dataList = [];
   bool listLoading = false;
 
-  Function(bool scrollDown)? onScrollChange;
   late StreamSubscription onLoginEventListener;
   late StreamSubscription onLikeEventListener;
   late StreamSubscription onUnlikeEventListener;
@@ -86,12 +85,12 @@ class DiscoveryListController extends GetxController {
       if (newPos - lastScrollPos > 0) {
         if (!lastScrollDown) {
           lastScrollDown = true;
-          onScrollChange?.call(lastScrollDown);
+          EventBusHelper().eventBus.fire(OnHomeScrollEvent(data: lastScrollDown));
         }
       } else {
         if (lastScrollDown) {
           lastScrollDown = false;
-          onScrollChange?.call(lastScrollDown);
+          EventBusHelper().eventBus.fire(OnHomeScrollEvent(data: lastScrollDown));
         }
       }
       lastScrollPos = newPos;

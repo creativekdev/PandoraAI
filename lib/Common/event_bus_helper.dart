@@ -170,3 +170,7 @@ class OnPrintOrderTimeChangeEvent extends BaseEvent<List<DateTime?>> {
 class OnNetworkStateChangeEvent extends BaseEvent<ConnectivityResult> {
   OnNetworkStateChangeEvent({required super.data});
 }
+
+class OnHomeScrollEvent extends BaseEvent<bool> {
+  OnHomeScrollEvent({required super.data});
+}

@@ -147,9 +147,15 @@ extension WidgetExtension on Widget {
     GestureTapCallback? onTap,
     GestureTapCallback? onDoubleTap,
     GestureLongPressCallback? onLongPress,
+    GestureTapDownCallback? onTapDown,
+    GestureTapUpCallback? onTapUp,
+    GestureTapCancelCallback? onTapCancel,
   }) =>
       GestureDetector(
         onTap: onTap,
+        onTapDown: onTapDown,
+        onTapUp: onTapUp,
+        onTapCancel: onTapCancel,
         onDoubleTap: onDoubleTap,
         onLongPress: onLongPress,
         child: this,
@@ -266,7 +272,6 @@ extension WidgetExtension on Widget {
         ),
         child: this,
       );
-
 }
 
 typedef DelayCallback<T> = T Function();
@@ -277,4 +282,10 @@ Future<T> delay<T>(
 }) async {
   await Future.delayed(Duration(milliseconds: milliseconds), () => () {});
   return callback.call();
+}
+
+extension StateEx on State {
+  pop<T extends Object>([T? data]) {
+    Navigator.of(context).pop(data);
+  }
 }

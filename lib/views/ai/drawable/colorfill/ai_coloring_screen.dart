@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -23,7 +23,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring_controller.dart';
 import 'package:cartoonizer/views/print/print.dart';
@@ -194,64 +193,21 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
 
   pickPhoto(BuildContext context, AiColoringController controller) {
     PAICamera.takePhoto(context).then((value) async {
-      if (value != null) {
-        var xFile = await CropScreen.crop(context, image: value.xFile, brightness: Brightness.dark);
-        String r;
-        if (xFile != null) {
-          r = xFile.path;
-        } else {
-          r = value.xFile.path;
-        }
-        controller.photoType = value.source;
-        CacheManager cacheManager = AppDelegate().getManager();
-        var path = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
-        controller.changeOriginFile(context, File(path));
+      if (value == null) {
+        return;
       }
-    });
-  }
-
-  pickPhotoFromCamera(BuildContext context, AiColoringController controller) async {
-    var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
-    if (pickImage != null) {
-      var xFile = await CropScreen.crop(context, image: pickImage, brightness: Brightness.dark);
-      var r;
+      var xFile = await CropScreen.crop(context, image: value.xFile, brightness: Brightness.dark);
+      String r;
       if (xFile != null) {
-        r = File(xFile.path);
+        r = xFile.path;
       } else {
-        r = File(pickImage.path);
+        r = value.xFile.path;
       }
-      controller.photoType = 'camera';
+      controller.photoType = value.source;
       CacheManager cacheManager = AppDelegate().getManager();
-      var path = await ImageUtils.onImagePick(r.path, cacheManager.storageOperator.recordAiColoringDir.path);
+      var path = await ImageUtils.onImagePick(r, cacheManager.storageOperator.recordAiColoringDir.path);
       controller.changeOriginFile(context, File(path));
-      // XFile? result = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
-    }
-  }
-
-  pickPhotoFromAlbum(BuildContext context, AiColoringController controller) async {
-    var files = await PickAlbumScreen.pickImage(
-      context,
-      count: 1,
-      switchAlbum: true,
-    );
-    if (files != null && files.isNotEmpty) {
-      var medium = files.first;
-      var file = await medium.originFile;
-      if (file != null) {
-        var xFile = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.dark);
-        var r;
-        if (xFile != null) {
-          r = File(xFile.path);
-        } else {
-          r = file;
-        }
-        CacheManager cacheManager = AppDelegate().getManager();
-        var path = await ImageUtils.onImagePick(r.path, cacheManager.storageOperator.recordAiColoringDir.path);
-        controller.photoType = 'gallery';
-        controller.changeOriginFile(context, File(path));
-        // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
-      }
-    }
+    });
   }
 
   toPrint(BuildContext context, AiColoringController controller) async {

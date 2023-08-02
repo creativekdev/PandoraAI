@@ -9,9 +9,9 @@ import 'package:cartoonizer/models/shipping_method_entity.dart';
 import 'package:cartoonizer/utils/map_util.dart';
 
 class ApiConfigEntity {
-  late List<EffectData> data;
-  late HomePageEntity homepage;
-  late Map<String, dynamic> locale;
+  List<EffectData> data = [];
+  HomePageEntity? homepage;
+  Map<String, dynamic> locale = {};
   CampaignTab? campaignTab;
   List<String> tags = [];
   List<HomeCardEntity> homeCards = [];
@@ -66,16 +66,16 @@ class ApiConfigEntity {
     }
     if (json['homepage'] != null) {
       entity.homepage = HomePageEntity.fromJson(json['homepage']);
-      entity.homepage.galleries.forEach((element) {
+      entity.homepage?.galleries.forEach((element) {
         element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
       // entity.homepage.banners.forEach((element) {
       //   element.title = element.category.localeValue(entity.locale);
       // });
-      entity.homepage.tools.forEach((element) {
+      entity.homepage?.tools.forEach((element) {
         element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
-      entity.homepage.features.forEach((element) {
+      entity.homepage?.features.forEach((element) {
         element.title = element.categoryString?.localeValue(entity.locale) ?? '';
       });
     }

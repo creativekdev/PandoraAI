@@ -10,7 +10,7 @@ class BothTransferController extends TransferBaseController {
   late CartoonizerController cartoonizerController;
   late StyleMorphController styleMorphController;
 
-  BothTransferController({required super.originalPath, required super.itemList});
+  BothTransferController({required super.originalPath, required super.itemList, super.initKey});
 
   @override
   List<EffectCategory> buildCategories() {
@@ -21,9 +21,9 @@ class BothTransferController extends TransferBaseController {
   @override
   void onInit() {
     super.onInit();
-    cartoonizerController = CartoonizerController(originalPath: originalPath, itemList: []);
+    cartoonizerController = CartoonizerController(originalPath: originalPath, itemList: [], initKey: initKey);
     cartoonizerController.onInit();
-    styleMorphController = StyleMorphController(originalPath: originalPath, itemList: []);
+    styleMorphController = StyleMorphController(originalPath: originalPath, itemList: [], initKey: initKey);
     styleMorphController.onInit();
   }
 
@@ -43,10 +43,10 @@ class BothTransferController extends TransferBaseController {
     if (selectedTitle?.category == 'cartoonize') {
       cartoonizerController.onTitleSelected(index);
     } else if (selectedTitle?.category == 'stylemorph') {
-      styleMorphController.onTitleSelected(index);
+      styleMorphController.onTitleSelected(index - cartoonizerController.categories.length);
     }
   }
-  
+
   @override
   void onItemSelected(int index) {
     super.onItemSelected(index);

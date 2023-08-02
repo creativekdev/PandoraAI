@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -42,6 +43,7 @@ class ImEffectScreen extends StatefulWidget {
   final String source;
   final String photoType;
   final EffectStyle effectStyle;
+  final String? initKey;
 
   ImEffectScreen({
     Key? key,
@@ -51,6 +53,7 @@ class ImEffectScreen extends StatefulWidget {
     required this.source,
     required this.photoType,
     this.effectStyle = EffectStyle.All,
+    this.initKey,
   }) : super(key: key);
 
   @override
@@ -73,13 +76,13 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   void initState() {
     super.initState();
     if (widget.effectStyle == EffectStyle.StyleMorph) {
-      controller = Get.find<StyleMorphController>();
+      controller = Get.put(StyleMorphController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
     } else if (widget.effectStyle == EffectStyle.Cartoonizer) {
-      controller = Get.find<CartoonizerController>();
+      controller = Get.put(CartoonizerController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
     } else if (widget.effectStyle == EffectStyle.All) {
-      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: []));
+      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
     }
-    if (controller?.resultFile == null) {
+    if (controller.resultFile == null) {
       controller.resultFile = widget.resultFile;
     }
   }
@@ -157,21 +160,61 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       ));
       num++;
     }
-
+    var originBtn = Container(
+      width: $(40),
+      height: $(40),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(100, 22, 44, 33),
+        borderRadius: BorderRadius.circular($(20)),
+      ),
+      child: FractionallySizedBox(
+        widthFactor: 0.6,
+        heightFactor: 0.6,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(Images.ic_reduction),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    ).intoGestureDetector(
+      onTapDown: (details) {
+        controller.showOrigin = true;
+      },
+      onTapUp: (details) {
+        controller.showOrigin = false;
+      },
+      onTapCancel: () {
+        controller.showOrigin = false;
+      },
+    );
     return Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-            height: $(350),
-            width: $(50),
+      alignment: Alignment.centerRight,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: buttons,
+          ).intoContainer(
+            decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+            padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
             margin: EdgeInsets.only(right: $(10)),
-            child: Column(children: [
-              Container(
-                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-                  padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
-                  height: $(220),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
-              SizedBox(height: $(50)),
-            ])));
+          ),
+          SizedBox(height: $(50)),
+          originBtn.intoContainer(margin: EdgeInsets.only(right: $(10))).visibility(
+                visible: controller.resultFile != null,
+                maintainSize: true,
+                maintainState: true,
+                maintainAnimation: true,
+              ),
+        ],
+      ),
+    );
   }
 
   Future<void> saveToAlbum() async {
@@ -187,22 +230,25 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   }
 
   Widget _buildImageView() {
-    return Stack(children: <Widget>[
-      Row(
-        children: [
-          Expanded(
-              child: Container(
-            key: cropKey,
-            margin: EdgeInsets.only(top: $(5)),
-            child: Image.file(
-              controller.resultFile ?? controller.originFile,
-              fit: BoxFit.fitHeight,
-            ),
-          ))
-        ],
-      ),
-      _buildRightTab()
-    ]);
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Row(
+          children: [
+            Expanded(
+                child: Container(
+              key: cropKey,
+              margin: EdgeInsets.only(top: $(5)),
+              child: Image.file(
+                controller.showOrigin ? controller.originFile : controller.resultFile ?? controller.originFile,
+                fit: BoxFit.contain,
+              ),
+            ))
+          ],
+        ),
+        _buildRightTab()
+      ],
+    );
   }
 
   Widget item(EffectItem data, bool checked) {
@@ -259,7 +305,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
     return Column(
       children: [
         Container(
-          height: $(30),
+          height: $(36),
           padding: EdgeInsets.symmetric(horizontal: $(15)),
           width: ScreenUtil.screenSize.width,
           child: ListView.separated(
@@ -282,10 +328,10 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
           ),
         ),
         Container(
-          height: $(80),
-          padding: EdgeInsets.symmetric(horizontal: $(15)),
+          height: itemWidth,
           width: ScreenUtil.screenSize.width,
           child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: $(15)),
             itemBuilder: (context, index) {
               var data = controller.selectedTitle!.effects[index];
               var checked = data == controller.selectedEffect;
@@ -306,7 +352,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
             },
             separatorBuilder: (context, index) {
               return SizedBox(
-                width: $(10),
+                width: $(4),
               );
             },
             itemCount: controller.selectedTitle!.effects.length,
@@ -314,8 +360,6 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
           ),
         ),
       ],
-    ).intoContainer(
-      height: $(115),
     );
   }
 
@@ -424,21 +468,55 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backAction: () async {
-          Navigator.of(context).pop();
-        },
-        heroTag: IMAppbarTag,
-        middle: Image.asset(Images.ic_download, height: $(24), width: $(24)).intoGestureDetector(
-          onTap: () {
-            saveToAlbum();
-          },
-        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-        backgroundColor: ColorConstant.BackgroundColor,
-        trailing: Image.asset(
+      body: Column(
+        children: [
+          buildAppNavigationBar(context),
+          Expanded(child: _buildImageView().hero(tag: EffectImageViewTag)),
+          // _buildInOutControlPad().hero(tag: EffectInOutControlPadTag),
+          // SizedBox(height: $(8)),
+          _buildEffectController(),
+          SizedBox(height: ScreenUtil.getBottomPadding(context) + $(10)),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAppNavigationBar(BuildContext context) {
+    return Row(
+      children: [
+        Image.asset(
+          Images.ic_back,
+          width: $(24),
+        )
+            .intoContainer(
+              padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
+              color: Colors.transparent,
+            )
+            .hero(tag: ImFilter.TagAppbarTagBack)
+            .intoGestureDetector(onTap: () {
+          pop();
+        }),
+        Expanded(
+            child: Image.asset(Images.ic_download, height: $(24), width: $(24))
+                .intoContainer(padding: EdgeInsets.all($(8)))
+                .hero(tag: ImFilter.TagAppbarTagTitle)
+                .intoGestureDetector(
+                  onTap: () {
+                    saveToAlbum();
+                  },
+                )
+                .intoCenter()
+                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)))),
+        Image.asset(
           Images.ic_more,
           width: $(24),
-        ).intoGestureDetector(onTap: () async {
+        )
+            .intoContainer(
+              padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
+              color: Colors.transparent,
+            )
+            .hero(tag: ImFilter.TagAppbarTagTraining)
+            .intoGestureDetector(onTap: () async {
           LiPopMenu.showLinePop(
             context,
             listData: [
@@ -457,16 +535,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
             ],
           );
         }),
-      ),
-      body: Column(
-        children: [
-          Expanded(child: _buildImageView().hero(tag: EffectImageViewTag)),
-          // _buildInOutControlPad().hero(tag: EffectInOutControlPadTag),
-          // SizedBox(height: $(8)),
-          _buildEffectController(),
-          SizedBox(height: ScreenUtil.getBottomPadding(context)),
-        ],
-      ),
-    );
+      ],
+    ).intoContainer(height: kNavBarPersistentHeight, margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()));
   }
 }

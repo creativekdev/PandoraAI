@@ -468,7 +468,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                       CommonExtension().showToast(S.of(context).select_min_photos_hint.replaceAll('%d', '$minCount'));
                       return;
                     }
-                    Navigator.of(context).pop(selectedList);
+                    pop(selectedList);
                   })
                 ],
               )
@@ -584,7 +584,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
         return;
       }
       if (maxCount == 1) {
-        Navigator.of(context).pop([data]);
+        pop([data]);
       }
       if (selectedList.exist((t) => t.id == data.id)) {
         selectedList.removeWhere((element) => element.id == data.id);

@@ -28,7 +28,7 @@ class AiColoring {
     CacheManager cacheManager = AppDelegate().getManager();
     var bool = cacheManager.getBool(CacheManager.guideAiColoring);
     HomeCardType? type;
-    if (bool) {
+    if (!bool) {
       type = HomeCardType.lineart;
     }
     var list = await PickAlbumScreen.pickImage(

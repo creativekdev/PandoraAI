@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/api/color_fill_api.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -123,7 +123,7 @@ class AiColoringController extends GetxController {
       }
     });
     uploadImageController.upload(file: originFile).then((value) async {
-      if(TextUtil.isEmpty(value)) {
+      if (TextUtil.isEmpty(value)) {
         simulateProgressBarController.onError();
       } else {
         simulateProgressBarController.uploadComplete();

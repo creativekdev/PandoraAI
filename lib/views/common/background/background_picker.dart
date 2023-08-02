@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:common_utils/common_utils.dart';
 
 import 'background_picker_holder.dart';
 
@@ -94,7 +95,12 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
     super.initState();
     imageRatio = widget.imageRatio;
     List<dynamic> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
-    dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList();
+    dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList().filter((t) {
+      if (TextUtil.isEmpty(t.filePath)) {
+        return true;
+      }
+      return File(t.filePath!).existsSync();
+    });
     if (dataList.length < 4) {
       dataList.addAll(defaultColors.sublist(0, 4 - dataList.length).map((e) => BackgroundData()..color = e).toList());
     }
@@ -109,6 +115,16 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   void didUpdateWidget(covariant BackgroundPickerBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     imageRatio = widget.imageRatio;
+    List<dynamic> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
+    dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList().filter((t) {
+      if (TextUtil.isEmpty(t.filePath)) {
+        return true;
+      }
+      return File(t.filePath!).existsSync();
+    });
+    if (dataList.length < 4) {
+      dataList.addAll(defaultColors.sublist(0, 4 - dataList.length).map((e) => BackgroundData()..color = e).toList());
+    }
   }
 
   @override

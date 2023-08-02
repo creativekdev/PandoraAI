@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album_helper.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';

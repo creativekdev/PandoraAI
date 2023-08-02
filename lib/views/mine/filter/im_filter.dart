@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
@@ -13,6 +14,10 @@ import 'im_effect_screen.dart';
 import 'im_filter_screen.dart';
 
 class ImFilter {
+  static String TagAppbarTagBack = "IMAppbarTagBack";
+  static String TagAppbarTagTitle = "IMAppbarTagTitle";
+  static String TagAppbarTagTraining = "IMAppbarTagTraining";
+
   static Future open(BuildContext context, {required TABS tab, required String source}) async {
     Events.imEditionLoading(source: source);
     var paiCameraEntity = await PAICamera.takePhoto(context);
@@ -37,7 +42,7 @@ class ImFilter {
 
   static Future openEffectWithCamera(BuildContext context, {required TABS tab, required String source}) async {
     Events.imEditionLoading(source: source);
-    var paiCameraEntity = await PAICamera.takePhoto(context);
+    var paiCameraEntity = await showPhotoTakeDialog(context);
     if (paiCameraEntity == null) {
       return;
     }
@@ -87,7 +92,6 @@ class ImFilter {
 
 typedef OnCallback = void Function();
 
-const String IMAppbarTag = "IMAppbarTag";
 const String EffectImageViewTag = "EffectImageViewTag";
 const String EffectInOutControlPadTag = "EffectInOutControlPadTag";
 

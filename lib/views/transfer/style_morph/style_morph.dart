@@ -7,10 +7,13 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/views/mine/filter/im_effect.dart';
+import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph_screen.dart';
 
 class StyleMorph {
   static Future open(BuildContext context, String source, {RecentStyleMorphModel? record, String? initKey}) async {
+    return ImEffect.open(context, source: source, initKey: initKey, style: EffectStyle.StyleMorph);
     bool result = await AnotherMe.checkPermissions();
     if (result) {
       if (record == null) {

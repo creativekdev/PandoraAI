@@ -5,7 +5,9 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/badge.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/msg_manager.dart';
@@ -13,6 +15,8 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/mine/filter/im_effect.dart';
+import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -40,7 +44,7 @@ class EffectFragment extends StatefulWidget {
   State<EffectFragment> createState() => EffectFragmentState();
 }
 
-class EffectFragmentState extends State<EffectFragment> with AppTabState {
+class EffectFragmentState extends State<EffectFragment> with AppTabState, SingleTickerProviderStateMixin {
   final Connectivity _connectivity = Connectivity();
   UserManager userManager = AppDelegate.instance.getManager();
   CacheManager cacheManager = AppDelegate.instance.getManager();
@@ -51,13 +55,33 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
   late StreamSubscription onUserLoginListener;
   bool proVisible = false;
 
-  EffectFragmentState();
+  late ScrollController scrollController;
+  double lastScrollPos = 0;
+  bool lastScrollDown = false;
+
+  AnimationController? animationController;
+  late StreamSubscription onHomeScrollListener;
 
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'home_fragment');
     tabId = widget.tabId;
+    animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    onHomeScrollListener = EventBusHelper().eventBus.on<OnHomeScrollEvent>().listen((event) {
+      var scrollDown = event.data;
+      if (scrollDown == null || !mounted) {
+        return;
+      }
+      if (animationController == null) {
+        return;
+      }
+      if (scrollDown) {
+        animationController?.forward();
+      } else if (!scrollDown) {
+        animationController?.reverse();
+      }
+    });
     _connectivity.onConnectivityChanged.listen((event) {
       if (!mounted) return;
       if (event == ConnectivityResult.mobile || event == ConnectivityResult.wifi /* || event == ConnectivityResult.none*/) {
@@ -78,8 +102,41 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
         refreshProVisible();
       });
     });
-
+    scrollController = ScrollController();
+    scrollController.addListener(() {
+      if (scrollController.positions.isEmpty) {
+        return;
+      }
+      if (scrollController.positions.length != 1) {
+        return;
+      }
+      var newPos = scrollController.position.pixels;
+      if (newPos < 0) {
+        return;
+      }
+      if (newPos - lastScrollPos > 0) {
+        if (!lastScrollDown) {
+          lastScrollDown = true;
+          EventBusHelper().eventBus.fire(OnHomeScrollEvent(data: lastScrollDown));
+        }
+      } else {
+        if (lastScrollDown) {
+          lastScrollDown = false;
+          EventBusHelper().eventBus.fire(OnHomeScrollEvent(data: lastScrollDown));
+        }
+      }
+      lastScrollPos = newPos;
+    });
     refreshProVisible();
+  }
+
+  @override
+  void dispose() {
+    onHomeScrollListener.cancel();
+    onUserLoginListener.cancel();
+    onUserStateChangeListener.cancel();
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -155,6 +212,8 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                           });
                         })
                     : CustomScrollView(
+                        physics: ClampingScrollPhysics(),
+                        controller: scrollController,
                         slivers: [
                           SliverPadding(padding: EdgeInsets.only(top: ScreenUtil.getNavigationBarHeight() + ScreenUtil.getStatusBarHeight())),
                           SliverToBoxAdapter(
@@ -182,10 +241,11 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
                             ),
                           ),
                           ...?contents,
-                          SliverPadding(padding: EdgeInsets.only(bottom: $(80) + ScreenUtil.getBottomPadding(context)))
+                          SliverPadding(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)))
                         ],
                       ),
-            header(context)
+            header(context),
+            addWidget(context),
           ],
         );
       },
@@ -252,4 +312,40 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState {
           ],
         ),
       );
+
+  Widget addWidget(BuildContext context) {
+    return Align(
+      child: AnimatedBuilder(
+          animation: animationController!,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(0, ($(66) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+                size: $(30),
+              )
+                  .intoContainer(
+                      padding: EdgeInsets.all($(10)),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xffE31ECD),
+                              Color(0xff243CFF),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )),
+                      margin: EdgeInsets.only(
+                        bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context) + $(14),
+                      ))
+                  .intoGestureDetector(onTap: () {
+                ImEffect.open(context, source: 'home_add_btn', style: EffectStyle.All);
+              }),
+            );
+          }),
+      alignment: Alignment.bottomCenter,
+    );
+  }
 }
