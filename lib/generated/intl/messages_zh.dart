@@ -57,7 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("清除"),
-        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("用几个词描述绘画内容"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("请输入你的描述"),
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage("清除当前画板"),
         "ai_draw_reset_tips_desc":
             MessageLookupByLibrary.simpleMessage("清除将会丢失当前的所有操作"),

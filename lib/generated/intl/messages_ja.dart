@@ -58,8 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text1": MessageLookupByLibrary.simpleMessage("あなたに登録する"),
         "agree_text2": MessageLookupByLibrary.simpleMessage("パンドラAIの"),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("クリア"),
-        "ai_draw_hint":
-            MessageLookupByLibrary.simpleMessage("いくつかの言葉で絵のイメージを説明する"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("説明を入力してください"),
         "ai_draw_reset_tips":
             MessageLookupByLibrary.simpleMessage("現在の描画ボードをクリアする"),
         "ai_draw_reset_tips_desc":

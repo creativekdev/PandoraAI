@@ -3820,10 +3820,10 @@ class S {
     );
   }
 
-  /// `Describe your drawing in a few words`
+  /// `Input your description`
   String get ai_draw_hint {
     return Intl.message(
-      'Describe your drawing in a few words',
+      'Input your description',
       name: 'ai_draw_hint',
       desc: '',
       args: [],

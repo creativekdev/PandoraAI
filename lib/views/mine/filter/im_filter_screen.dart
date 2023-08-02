@@ -61,7 +61,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     }
     controller.selectedRightTab = widget.tab;
     controller.preSelectedTab = widget.tab;
-    Future.delayed(Duration.zero, () {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       if (widget.tab == TABS.BACKGROUND) {
         onTapRemoveBg();
       }
