@@ -494,5 +494,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "更新",
+  "create_with_prompt": "创建提示语"
 }

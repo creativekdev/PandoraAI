@@ -161,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "create_avatar": MessageLookupByLibrary.simpleMessage("创建头像"),
         "create_new_avatars":
             MessageLookupByLibrary.simpleMessage("创建新的Avatar"),
+        "create_with_prompt": MessageLookupByLibrary.simpleMessage("创建提示语"),
         "created": MessageLookupByLibrary.simpleMessage("完成"),
         "current_pass": MessageLookupByLibrary.simpleMessage("当前密码"),
         "current_version": MessageLookupByLibrary.simpleMessage("App版本"),
@@ -571,6 +572,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "unpaid": MessageLookupByLibrary.simpleMessage("未支付"),
+        "update": MessageLookupByLibrary.simpleMessage("更新"),
         "update_address_success":
             MessageLookupByLibrary.simpleMessage("地址更新成功"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),

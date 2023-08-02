@@ -4999,6 +4999,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Update`
+  String get update {
+    return Intl.message(
+      'Update',
+      name: 'update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create with Prompt`
+  String get create_with_prompt {
+    return Intl.message(
+      'Create with Prompt',
+      name: 'create_with_prompt',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -167,6 +167,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "create_avatar": MessageLookupByLibrary.simpleMessage("アバターを作成する"),
         "create_new_avatars":
             MessageLookupByLibrary.simpleMessage("新しいアバターを作成する"),
+        "create_with_prompt":
+            MessageLookupByLibrary.simpleMessage("プロンプト付きで作成"),
         "created": MessageLookupByLibrary.simpleMessage("完了しました"),
         "current_pass": MessageLookupByLibrary.simpleMessage("現在のパスワード"),
         "current_version": MessageLookupByLibrary.simpleMessage("アプリバージョン"),
@@ -609,6 +611,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("続ける"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("異なるアバター"),
         "unpaid": MessageLookupByLibrary.simpleMessage("支払い未完了"),
+        "update": MessageLookupByLibrary.simpleMessage("アップデート"),
         "update_now": MessageLookupByLibrary.simpleMessage("今すぐアップグレード"),
         "update_pass": MessageLookupByLibrary.simpleMessage("パスワードを更新する"),
         "update_profile": MessageLookupByLibrary.simpleMessage("個人情報を更新する"),

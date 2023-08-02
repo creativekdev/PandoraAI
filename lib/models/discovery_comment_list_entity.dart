@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:cartoonizer/generated/json/base/json_field.dart';
 import 'package:cartoonizer/generated/json/discovery_comment_list_entity.g.dart';
 
@@ -16,6 +17,7 @@ class DiscoveryCommentListEntity {
   late int? replyUserId;
   late String images;
   late String text;
+  late String status;
   late int likes;
   late int comments;
   late String ip;
@@ -50,6 +52,7 @@ class DiscoveryCommentListEntity {
     this.modified = '',
     this.created = '',
     this.region = '',
+    this.status = '',
     this.country = '',
     this.ip = '',
     this.replyUserId,

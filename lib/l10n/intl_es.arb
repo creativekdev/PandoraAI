@@ -493,5 +493,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "Actualizar",
+  "create_with_prompt": "Crear con promp"
 }

@@ -487,5 +487,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "アップデート",
+  "create_with_prompt": "プロンプト付きで作成"
 }

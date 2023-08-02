@@ -7,8 +7,6 @@ import 'package:image/image.dart' as imgLib;
 
 import '../../../Common/Extension.dart';
 import '../../../Common/importFile.dart';
-import '../../../Controller/effect_data_controller.dart';
-import '../../../Controller/upload_image_controller.dart';
 import '../../../app/app.dart';
 import '../../../app/cache/cache_manager.dart';
 import '../../../gallery_saver.dart';
@@ -35,7 +33,7 @@ class ImFilterController extends GetxController {
   String? get filePath => _filePath;
 
   File? personImageFile;
-  double imageRatio = 16 / 9;
+  double imageRatio = 1.0;
   late imgLib.Image image, personImage;
   imgLib.Image? backgroundImage;
   Color? backgroundColor;

@@ -34,7 +34,7 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final TextSpan textSpan = TextSpan(text: "Create with prompt!", style: TextStyle(color: Colors.white));
+    final TextSpan textSpan = TextSpan(text: S.of(context).create_with_prompt, style: TextStyle(color: Colors.white));
     final TextPainter textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
     textPainter.layout();
     return ScaleTransition(
@@ -50,7 +50,7 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
             child: Row(
               children: [
                 Text(
-                  "Create with prompt!",
+                  S.of(context).create_with_prompt,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: $(14),
