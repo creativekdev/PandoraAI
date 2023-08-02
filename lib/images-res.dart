@@ -65,7 +65,6 @@ class Images {
   static const String ic_discovery_share = 'assets/images/ic_discovery_share.png';
   static const String ic_down = 'assets/images/ic_down.png';
   static const String ic_download = 'assets/images/ic_download.png';
-  static const String ic_prompt = 'assets/images/ic_prompt.webp';
   static const String ic_draw_result_bg = 'assets/images/ic_draw_result_bg.png';
   static const String ic_drawable_arrow = 'assets/images/ic_drawable_arrow.png';
   static const String ic_edit = 'assets/images/ic_edit.png';
@@ -229,4 +228,5 @@ class Images {
   static const String sharpen = 'assets/images/sharpen.png';
   static const String update_image = 'assets/images/update_image.png';
   static const String visa = 'assets/images/visa.png';
+  static const String ic_prompt = 'assets/images/ic_prompt.webp';
 }
