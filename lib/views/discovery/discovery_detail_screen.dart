@@ -14,7 +14,6 @@ import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/discovery/discovery_detail_controller.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_comments_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
-import 'package:cartoonizer/views/discovery/widget/show_comment_actions.dart';
 import 'package:cartoonizer/views/input/input_screen.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
@@ -415,23 +414,17 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
             authorId: controller.discoveryEntity.userId,
             hasLine: index != 0,
             onCommentTap: () {
-              showCommentActions(context, replyAction: () {
-                Navigator.of(context).pop();
-                onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
-              }, reportAction: () {
-                controller.onReportAction(data, context);
-                Navigator.of(context).pop();
-              }, copyAction: () {
-                Clipboard.setData(ClipboardData(text: data.text));
-                CommonExtension().showToast(S.of(context).copy_successfully);
-                Navigator.of(context).pop();
-              }, cancelAction: () {
-                Navigator.of(context).pop();
-              }, title: "@${data.userName}: ${data.text}");
+              if (data.status == "deleted") {
+                return;
+              }
+              onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: data.id, userName: data.userName);
             },
             isTopComments: true,
             ignoreLikeBtn: controller.likeLocalAddAlready.value,
             onLikeTap: (liked) async {
+              if (data.status == "deleted") {
+                return liked;
+              }
               if (userManager.isNeedLogin) {
                 userManager.doOnLogin(context, logPreLoginAction: data.likeId == null ? 'pre_comment_like' : 'pre_comment_unlike');
                 return liked;
@@ -446,7 +439,9 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
               }
               return result;
             },
-          )).intoContainer(margin: EdgeInsets.only(top: $(10)))
+          )).intoContainer(margin: EdgeInsets.only(top: $(10))).intoGestureDetector(onLongPress: () {
+        controller.onShowLongPress(data, context);
+      })
     ];
     getCommentChildren(context, children, data);
     if (data.comments > data.children.length) {
@@ -505,11 +500,17 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
             authorId: controller.discoveryEntity.userId,
             hasLine: false,
             onCommentTap: () {
+              if (data.status == "deleted") {
+                return;
+              }
               onCreateCommentClick(controller, replySocialPostCommentId: data.id, parentSocialPostCommentId: entity.id, userName: data.userName);
             },
             isTopComments: false,
             ignoreLikeBtn: controller.likeLocalAddAlready.value,
             onLikeTap: (liked) async {
+              if (data.status == "deleted") {
+                return liked;
+              }
               if (userManager.isNeedLogin) {
                 userManager.doOnLogin(context, logPreLoginAction: data.likeId == null ? 'pre_comment_like' : 'pre_comment_unlike');
                 return liked;
@@ -524,7 +525,9 @@ class _DiscoveryDetailScreenState extends AppState<DiscoveryDetailScreen> {
               }
               return result;
             },
-          )));
+          ).intoGestureDetector(onLongPress: () {
+            controller.onShowLongPress(data, context);
+          })));
     }
   }
 }

@@ -1,13 +1,21 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 
+import '../../../app/app.dart';
+import '../../../app/user/user_manager.dart';
+import '../../../models/discovery_comment_list_entity.dart';
+import '../../../models/discovery_list_entity.dart';
+
 typedef onClickItemAction = Function();
 
 showCommentActions(BuildContext context,
-    {required onClickItemAction replyAction,
-    required onClickItemAction reportAction,
+    {required onClickItemAction reportAction,
     required onClickItemAction copyAction,
     required onClickItemAction cancelAction,
+    required onClickItemAction deleteAction,
+    required onClickItemAction updateAction,
+    required DiscoveryCommentListEntity data,
+    required DiscoveryListEntity discoveryEntity,
     required String title}) {
   showModalBottomSheet(
       constraints: BoxConstraints(
@@ -15,10 +23,18 @@ showCommentActions(BuildContext context,
       ),
       context: context,
       builder: (context) {
+        UserManager userManager = AppDelegate.instance.getManager();
         return ListView(
           children: [
             _Item(title: title, showLine: true, color: ColorConstant.DiscoveryCommentGrey),
-            _Item(title: S.of(context).reply.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: replyAction),
+            Visibility(
+              visible: userManager.user?.id == data.userId,
+              child: _Item(title: S.of(context).update.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: updateAction),
+            ),
+            Visibility(
+              visible: userManager.user?.id == data.userId || discoveryEntity.userId == data.userId,
+              child: _Item(title: S.of(context).delete.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: deleteAction),
+            ),
             _Item(title: S.of(context).copy.toUpperCaseFirst, showLine: true, color: ColorConstant.White).intoGestureDetector(onTap: copyAction),
             _Item(title: S.of(context).Report.toUpperCaseFirst, showLine: false, color: ColorConstant.White).intoGestureDetector(onTap: reportAction),
             Container(

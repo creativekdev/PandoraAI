@@ -57,7 +57,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" of the Pandora AI."),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("清除"),
-        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("用几个词描述绘画内容"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage("请输入你的描述"),
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage("清除当前画板"),
         "ai_draw_reset_tips_desc":
             MessageLookupByLibrary.simpleMessage("清除将会丢失当前的所有操作"),
@@ -161,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "create_avatar": MessageLookupByLibrary.simpleMessage("创建头像"),
         "create_new_avatars":
             MessageLookupByLibrary.simpleMessage("创建新的Avatar"),
+        "create_with_prompt": MessageLookupByLibrary.simpleMessage("创建提示语"),
         "created": MessageLookupByLibrary.simpleMessage("完成"),
         "current_pass": MessageLookupByLibrary.simpleMessage("当前密码"),
         "current_version": MessageLookupByLibrary.simpleMessage("App版本"),
@@ -571,6 +572,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "txtContinue": MessageLookupByLibrary.simpleMessage("继续"),
         "unique_avatars": MessageLookupByLibrary.simpleMessage("不同的头像"),
         "unpaid": MessageLookupByLibrary.simpleMessage("未支付"),
+        "update": MessageLookupByLibrary.simpleMessage("更新"),
         "update_address_success":
             MessageLookupByLibrary.simpleMessage("地址更新成功"),
         "update_now": MessageLookupByLibrary.simpleMessage("现在升级"),

@@ -8,10 +8,12 @@ import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/discovery_comment_list_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';
+import 'package:cartoonizer/views/discovery/widget/show_comment_actions.dart';
 import 'package:cartoonizer/views/discovery/widget/show_report_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../app/user/user_manager.dart';
+import '../input/input_screen.dart';
 
 class DiscoveryDetailController extends GetxController {
   DiscoveryListEntity discoveryEntity;
@@ -44,6 +46,50 @@ class DiscoveryDetailController extends GetxController {
     });
   }
 
+  void onUpdateAction(DiscoveryCommentListEntity data, BuildContext context) {
+    onUpdateCommentClick(data: data, context: context);
+  }
+
+  Future<void> onDeleteAction(DiscoveryCommentListEntity data, BuildContext context) async {
+    bool value = await api.deleteDiscoveryComment(data.id);
+    if (value) {
+      data.status = "deleted";
+      onUpdateComment(data);
+    }
+  }
+
+  onUpdateComment(DiscoveryCommentListEntity newData) {
+    for (int i = 0; i < dataList.length; i++) {
+      DiscoveryCommentListEntity data = dataList[i];
+      if (data.id == newData.id) {
+        dataList[i] = newData;
+        break;
+      }
+    }
+    update();
+  }
+
+  onUpdateCommentClick({required DiscoveryCommentListEntity data, required BuildContext context}) {
+    Navigator.push(
+        context,
+        PageRouteBuilder(
+          opaque: false,
+          pageBuilder: (context, animation, secondaryAnimation) => InputScreen(
+            oldString: data.text,
+            uniqueId: "${discoveryEntity.id}_${data.id ?? ''}",
+            hint: data.userName != null ? '${S.of(context).reply} ${data.userName}' : '',
+            callback: (text) async {
+              bool result = await api.updateDiscoveryComment(data.id, text: text);
+              if (result) {
+                data.text = text;
+                onUpdateComment(data);
+              }
+              return result;
+            },
+          ),
+        ));
+  }
+
   reportCommentAction(DiscoveryCommentListEntity data, BuildContext context) {
     CacheManager manager = CacheManager().getManager();
     UserManager userManager = AppDelegate.instance.getManager();
@@ -61,6 +107,38 @@ class DiscoveryDetailController extends GetxController {
       }
       showReportDialog(context);
     });
+  }
+
+  onShowLongPress(DiscoveryCommentListEntity data, BuildContext context) {
+    if (data.status == "deleted") {
+      return;
+    }
+    showCommentActions(
+      context,
+      reportAction: () {
+        Navigator.of(context).pop();
+        onReportAction(data, context);
+      },
+      deleteAction: () async {
+        Navigator.of(context).pop();
+        await onDeleteAction(data, context);
+      },
+      updateAction: () {
+        Navigator.of(context).pop();
+        onUpdateAction(data, context);
+      },
+      copyAction: () {
+        Clipboard.setData(ClipboardData(text: data.text));
+        CommonExtension().showToast(S.of(context).copy_successfully);
+        Navigator.of(context).pop();
+      },
+      cancelAction: () {
+        Navigator.of(context).pop();
+      },
+      title: "@${data.userName}: ${data.text}",
+      data: data,
+      discoveryEntity: discoveryEntity,
+    );
   }
 
   reportAction(DiscoveryListEntity data, BuildContext context) {

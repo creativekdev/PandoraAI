@@ -376,7 +376,7 @@
   "clean_successfully": "清除成功",
   "copy_successfully": "已复制到剪贴板",
   "done": "完成",
-  "ai_draw_hint": "用几个词描述绘画内容",
+  "ai_draw_hint": "请输入你的描述",
   "oldversion_tips": "当前版本较低，请升级app",
   "ai_draw_reset_tips": "清除当前画板",
   "ai_draw_reset_tips_desc": "清除将会丢失当前的所有操作",
@@ -494,5 +494,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "更新",
+  "create_with_prompt": "创建提示语"
 }

@@ -3820,10 +3820,10 @@ class S {
     );
   }
 
-  /// `Describe your drawing in a few words`
+  /// `Input your description`
   String get ai_draw_hint {
     return Intl.message(
-      'Describe your drawing in a few words',
+      'Input your description',
       name: 'ai_draw_hint',
       desc: '',
       args: [],
@@ -4995,6 +4995,26 @@ class S {
     return Intl.message(
       'Furry Friends',
       name: 'furry',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message(
+      'Update',
+      name: 'update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create with Prompt`
+  String get create_with_prompt {
+    return Intl.message(
+      'Create with Prompt',
+      name: 'create_with_prompt',
       desc: '',
       args: [],
     );

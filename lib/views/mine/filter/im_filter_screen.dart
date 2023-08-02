@@ -61,8 +61,9 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     }
     controller.selectedRightTab = widget.tab;
     controller.preSelectedTab = widget.tab;
-    Future.delayed(Duration.zero, () {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       if (widget.tab == TABS.BACKGROUND) {
+        controller.onSelectImage(controller.filePath!);
         onTapRemoveBg();
       }
     });
@@ -83,6 +84,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               controller.personImageForUi = await controller.convertImage(controller.personImage);
               controller.byte = controller.personImageByte;
               controller.selectedRightTab = TABS.BACKGROUND;
+              setState(() {});
             },
           ),
           // opaque: true,
@@ -97,6 +99,8 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           });
     } else {
       controller.byte = controller.personImageByte;
+      controller.selectedRightTab = TABS.BACKGROUND;
+      setState(() {});
     }
     return;
   }
@@ -123,7 +127,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
           else
             controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.image));
-
           setState(() {
             if (TABS.EFFECT == TABS.values[cur]) {
               Navigator.of(context).pop();

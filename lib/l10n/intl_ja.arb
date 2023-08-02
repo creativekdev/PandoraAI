@@ -376,7 +376,7 @@
   "clean_successfully": "クリア成功",
   "copy_successfully": "クリップボードにコピーされました",
   "done": "完了",
-  "ai_draw_hint": "いくつかの言葉で絵のイメージを説明する",
+  "ai_draw_hint": "説明を入力してください",
   "oldversion_tips": "現在のバージョンが旧いため、更新が必要です",
   "ai_draw_reset_tips": "現在の描画ボードをクリアする",
   "ai_draw_reset_tips_desc": "クリアするとすべての内容が失う",
@@ -487,5 +487,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "アップデート",
+  "create_with_prompt": "プロンプト付きで作成"
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
@@ -14,15 +13,14 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
-import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable_result_screen.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable_opt.dart';
 import 'package:cartoonizer/views/input/real_time_input_screen.dart';
-import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
-import 'package:cartoonizer/views/payment.dart';
 import 'package:common_utils/common_utils.dart';
+
+import 'ai_prompt_view.dart';
 
 class AiDrawableScreen extends StatefulWidget {
   DrawableRecord? record;
@@ -271,6 +269,12 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             left: $(15),
             right: $(15),
             top: height - $(10),
+          ),
+          Positioned(
+            child: AiPromptView(),
+            left: $(15),
+            right: $(15),
+            top: height - $(70),
           ),
           DrawableOpt(
             key: optKey,

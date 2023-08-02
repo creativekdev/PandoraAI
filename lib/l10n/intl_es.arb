@@ -376,7 +376,7 @@
   "clean_successfully": "La limpieza se ha realizado correctamente",
   "copy_successfully": "Copiado al portapapeles",
   "done": "terminar",
-  "ai_draw_hint": "Describe el contenido de la pintura en pocas palabras",
+  "ai_draw_hint": "Ingrese su descripción",
   "oldversion_tips": "La versión actual es más antigua, actualice la aplicación",
   "ai_draw_reset_tips": "Borra la mesa de trabajo actual",
   "ai_draw_reset_tips_desc": "La purga perderá todas las operaciones actuales",
@@ -493,5 +493,7 @@
   "facetoon": "Facetoon",
   "stylemorph": "Stylemorph",
   "blogging": "Blogging Effects",
-  "furry": "Furry Friends"
+  "furry": "Furry Friends",
+  "update": "Actualizar",
+  "create_with_prompt": "Crear con promp"
 }

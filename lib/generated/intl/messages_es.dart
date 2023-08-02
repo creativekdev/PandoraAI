@@ -72,8 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" Bent Pandora ama."),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("purga"),
-        "ai_draw_hint": MessageLookupByLibrary.simpleMessage(
-            "Describe el contenido de la pintura en pocas palabras"),
+        "ai_draw_hint":
+            MessageLookupByLibrary.simpleMessage("Ingrese su descripción"),
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage(
             "Borra la mesa de trabajo actual"),
         "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(
@@ -204,6 +204,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Crear un avatar"),
         "create_new_avatars":
             MessageLookupByLibrary.simpleMessage("Crear un nuevo avatar"),
+        "create_with_prompt":
+            MessageLookupByLibrary.simpleMessage("Crear con promp"),
         "created": MessageLookupByLibrary.simpleMessage("terminar"),
         "current_pass":
             MessageLookupByLibrary.simpleMessage("Contraseña actual"),
@@ -731,6 +733,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "unique_avatars":
             MessageLookupByLibrary.simpleMessage("Diferentes avatares"),
         "unpaid": MessageLookupByLibrary.simpleMessage("Impagado"),
+        "update": MessageLookupByLibrary.simpleMessage("Actualizar"),
         "update_address_success": MessageLookupByLibrary.simpleMessage(
             "Dirección eliminada con éxito"),
         "update_now": MessageLookupByLibrary.simpleMessage("Actualizar ahora"),

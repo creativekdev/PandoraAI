@@ -290,6 +290,35 @@ class AppApi extends RetryAbleRequester {
     return null;
   }
 
+  Future<bool> updateDiscoveryComment(
+    int id, {
+    required String text,
+  }) async {
+    var baseEntity = await post('/social_post_comment/update/$id', params: {'text': text}, onFailed: (response) {}, toastOnFailed: false, needRetry: false);
+    if (baseEntity != null) {
+      // var likeId = baseEntity.data['data']?.toInt();
+      // Events.discoveryLikeClick(source: source, style: style);
+      // EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deleteDiscoveryComment(int id) async {
+    var baseEntity = await delete('/social_post_comment/delete/$id', params: {}, onFailed: (response) {
+      if (response?.statusCode == 401) {
+        // onUserExpired?.call();
+      }
+    }, toastOnFailed: false, needRetry: false);
+    if (baseEntity != null) {
+      // var likeId = baseEntity.data['data']?.toInt();
+      // Events.discoveryLikeClick(source: source, style: style);
+      // EventBusHelper().eventBus.fire(OnDiscoveryLikeEvent(data: MapEntry(id, likeId)));
+      return true;
+    }
+    return false;
+  }
+
   Future<int?> discoveryLike(
     int id, {
     Function? onUserExpired,

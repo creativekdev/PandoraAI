@@ -124,13 +124,16 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
                 onCommentTap?.call();
               }),
               RichText(
-                      text: TextSpan(text: data.text, style: TextStyle(color: Color(0xfff6f6f6), fontSize: $(16), fontFamily: 'Poppins'), children: [
-                WidgetSpan(child: Container(width: $(12))),
-                TextSpan(
-                  text: DateUtil.formatDate(dateTime, format: 'MM-dd HH:mm'),
-                  style: TextStyle(color: ColorConstant.DiscoveryCommentGrey, fontSize: $(12), fontFamily: 'Poppins'),
-                ),
-              ]))
+                      text: TextSpan(
+                          text: data.status == "deleted" ? "评论已删除" : data.text,
+                          style: TextStyle(color: Color(0xfff6f6f6), fontSize: $(16), fontFamily: 'Poppins'),
+                          children: [
+                    WidgetSpan(child: Container(width: $(12))),
+                    TextSpan(
+                      text: DateUtil.formatDate(dateTime, format: 'MM-dd HH:mm'),
+                      style: TextStyle(color: ColorConstant.DiscoveryCommentGrey, fontSize: $(12), fontFamily: 'Poppins'),
+                    ),
+                  ]))
                   .intoContainer(
                 color: Colors.transparent,
                 width: double.maxFinite,
