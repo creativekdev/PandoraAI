@@ -107,7 +107,6 @@ class ImFilterController extends GetxController {
     imageFile = File(pickFile.path);
     image = await getLibImage(await getImage(imageFile));
     imageRatio = image.width / image.height;
-    // todo： 新建一个界面做动画
     byte = Uint8List.fromList(imgLib.encodeJpg(image));
     await filter.calcAvatars(image);
     update();

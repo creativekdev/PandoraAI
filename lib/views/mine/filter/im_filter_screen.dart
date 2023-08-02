@@ -63,6 +63,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     controller.preSelectedTab = widget.tab;
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       if (widget.tab == TABS.BACKGROUND) {
+        controller.onSelectImage(controller.filePath!);
         onTapRemoveBg();
       }
     });
