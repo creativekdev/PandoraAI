@@ -83,6 +83,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               controller.personImageForUi = await controller.convertImage(controller.personImage);
               controller.byte = controller.personImageByte;
               controller.selectedRightTab = TABS.BACKGROUND;
+              setState(() {});
             },
           ),
           // opaque: true,
@@ -97,8 +98,9 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           });
     } else {
       controller.byte = controller.personImageByte;
+      controller.selectedRightTab = TABS.BACKGROUND;
+      setState(() {});
     }
-    controller.selectedRightTab = TABS.BACKGROUND;
     return;
   }
 

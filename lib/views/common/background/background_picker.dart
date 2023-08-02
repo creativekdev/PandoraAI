@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
