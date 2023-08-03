@@ -274,7 +274,7 @@ class _AiDrawableScreenState extends AppState<AiDrawableScreen> {
             child: AiPromptView(),
             left: $(15),
             right: $(15),
-            top: height - $(70),
+            top: height - $(50),
           ),
           DrawableOpt(
             key: optKey,
