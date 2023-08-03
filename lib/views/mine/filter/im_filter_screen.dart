@@ -25,6 +25,7 @@ import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
 import '../../share/ShareScreen.dart';
+import 'im_crop_screen.dart';
 import 'im_filter.dart';
 
 class ImFilterScreen extends StatefulWidget {
@@ -120,6 +121,20 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       int cur = num;
       buttons.add(GestureDetector(
         onTap: () async {
+          if (TABS.values[cur] == TABS.CROP) {
+            Navigator.push(
+              context,
+              NoAnimRouter(
+                  settings: RouteSettings(name: "/ImCropScreen"),
+                  ImCropScreen(
+                      filePath: widget.filePath,
+                      cropRect: Rect.zero,
+                      onGetCropPath: (String imgPath) async {
+                        print(img);
+                      })),
+            );
+            return;
+          }
           if (TABS.values[cur] == TABS.BACKGROUND) {
             onTapRemoveBg();
             return;

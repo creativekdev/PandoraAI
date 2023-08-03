@@ -20,7 +20,7 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
       duration: Duration(seconds: 2),
       vsync: this,
     );
-    final Tween<double> scaleTween = Tween<double>(begin: 1, end: 1);
+    final Tween<double> scaleTween = Tween<double>(begin: 0.95, end: 1.05);
 
     _animation = scaleTween.animate(_controller);
     _controller.repeat(reverse: true);

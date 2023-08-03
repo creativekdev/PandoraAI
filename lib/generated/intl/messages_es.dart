@@ -72,8 +72,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "agree_text2":
             MessageLookupByLibrary.simpleMessage(" Bent Pandora ama."),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("purga"),
-        "ai_draw_hint":
-            MessageLookupByLibrary.simpleMessage("Ingrese su descripción"),
+        "ai_draw_hint": MessageLookupByLibrary.simpleMessage(
+            "Ingrese algunas indicaciones"),
         "ai_draw_reset_tips": MessageLookupByLibrary.simpleMessage(
             "Borra la mesa de trabajo actual"),
         "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(

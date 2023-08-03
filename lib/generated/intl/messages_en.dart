@@ -69,7 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(" of the Cartoonizer."),
         "ai_draw_clear_btn": MessageLookupByLibrary.simpleMessage("Clear"),
         "ai_draw_hint":
-            MessageLookupByLibrary.simpleMessage("Input your description"),
+            MessageLookupByLibrary.simpleMessage("Please input some prompts"),
         "ai_draw_reset_tips":
             MessageLookupByLibrary.simpleMessage("Clear current drawing"),
         "ai_draw_reset_tips_desc": MessageLookupByLibrary.simpleMessage(
