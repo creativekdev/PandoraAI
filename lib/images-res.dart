@@ -231,4 +231,3 @@ class Images {
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
 }
-
