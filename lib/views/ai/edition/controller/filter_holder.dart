@@ -12,7 +12,11 @@ import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
-class FilterController extends GetxController {
+import 'ie_base_holder.dart';
+
+class FilterHolder extends ImageEditionBaseHolder {
+  FilterHolder({required super.parent});
+
   List<FilterEnum> functions = [
     FilterEnum.NOR,
     FilterEnum.VID,
@@ -42,29 +46,15 @@ class FilterController extends GetxController {
 
   Map<FilterEnum, Uint8List> thumbnails = {};
 
-  String? _originFilePath;
-
-  String? get originFilePath => _originFilePath;
-
-  set originFilePath(String? path) {
-    if (_originFilePath == path) {
+  @override
+  setOriginFilePath(String? path) {
+    if (originFilePath == path) {
       return;
     }
-    _originFilePath = path;
+    originFilePath = path;
     _originImageData = null;
-    _buildThumbnails();
+    initData();
   }
-
-  File? get originFile => _originFilePath == null ? null : File(_originFilePath!);
-
-  String? _resultFilePath;
-
-  set resultFilePath(String? path) {
-    _resultFilePath = path;
-    update();
-  }
-
-  File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
 
   imgLib.Image? _originImageData;
 
@@ -93,13 +83,18 @@ class FilterController extends GetxController {
     super.dispose();
   }
 
+  @override
+  initData() {
+    _buildThumbnails();
+  }
+
   Future<void> buildImage() async {
     if (originFile == null) {
       return null;
     }
     CacheManager cacheManager = AppDelegate().getManager();
     var dir = cacheManager.storageOperator.filterDir;
-    var projName = EncryptUtil.encodeMd5(_originFilePath!);
+    var projName = EncryptUtil.encodeMd5(originFilePath!);
     var directory = Directory(dir.path + projName);
     await mkdir(directory);
     var fileName = getFileName(originFile!.path);
@@ -110,7 +105,6 @@ class FilterController extends GetxController {
       }
       imgLib.Image imageBytes = await Executor().execute(arg1: currentFunction, arg2: _originImageData!, fun2: _imFilter);
       var list = await Executor().execute(arg1: imageBytes, fun1: _encodePng);
-      // var list = imgLib.encodePng(imageBytes);
       var bytes = Uint8List.fromList(list);
       await targetFile.writeAsBytes(bytes);
     }

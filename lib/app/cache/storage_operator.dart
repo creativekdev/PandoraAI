@@ -11,6 +11,7 @@ const _pushDir = 'push/';
 const _recentDir = 'recent/';
 const _cropDir = 'cropDir/';
 const _filterDir = 'filterDir/';
+const _adjustDir = 'adjustDir/';
 const _recordDir = 'recordDir/';
 const _recordMetaverse = 'metaverse/';
 const _recordCartoonize = 'cartoonize/';
@@ -41,6 +42,8 @@ class StorageOperator {
 
   Directory get filterDir => Directory('$_mainPath$_filterDir');
 
+  Directory get adjustDir => Directory('$_mainPath$_adjustDir');
+
   Directory get recordDir => Directory('$_mainPath$_recordDir');
 
   Directory get recordMetaverseDir => Directory('$_mainPath$_recordDir$_recordMetaverse');
@@ -70,6 +73,7 @@ class StorageOperator {
       _recentDir,
       _cropDir,
       _filterDir,
+      _adjustDir,
       _recordDir,
       '$_recordDir$_recordMetaverse',
       '$_recordDir$_recordCartoonize',

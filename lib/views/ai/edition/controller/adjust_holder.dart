@@ -2,33 +2,56 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as imgLib;
 
-class AdjustController extends GetxController {
+import 'ie_base_holder.dart';
+
+class AdjustHolder extends ImageEditionBaseHolder {
+  AdjustHolder({required super.parent});
+
   List<AdjustData> dataList = [];
 
-  String? _originFilePath;
-
-  String? get originFilePath => _originFilePath;
-
-  set originFilePath(String? path) {
-    if (_originFilePath == path) {
+  @override
+  setOriginFilePath(String? path) {
+    if (originFilePath == path) {
       return;
     }
-    _originFilePath = path;
-    getImage(originFile!).then((value) {
-      getLibImage(value).then((value) {
-        _imageData = value;
-        update();
-      });
-    });
+    originFilePath = path;
+    initData();
     update();
   }
 
-  File? get originFile => _originFilePath == null ? null : File(_originFilePath!);
+  void saveResult(imgLib.Image data) {
+    CacheManager cacheManager = AppDelegate().getManager();
+    var dir = cacheManager.storageOperator.adjustDir;
+    var projName = EncryptUtil.encodeMd5(originFilePath!);
+    var directory = Directory(dir.path + projName);
+    mkdir(directory).whenComplete(() {
+      var fileName = getFileName(originFile!.path);
+      var targetFile = File(directory.path + '/${getConfigKey()}' + fileName);
+      if (targetFile.existsSync()) {
+        resultFilePath = targetFile.path;
+        update();
+      } else {
+        var resultBytes = Uint8List.fromList(imgLib.encodeJpg(data));
+        targetFile.writeAsBytes(resultBytes).whenComplete(() {
+          resultFilePath = targetFile.path;
+          update();
+        });
+      }
+    });
+  }
+
+  String getConfigKey() {
+    var string = dataList.map((e) => e.toString()).toList().join(',');
+    return EncryptUtil.encodeMd5(string);
+  }
 
   int _index = 0;
 
@@ -48,21 +71,20 @@ class AdjustController extends GetxController {
   double padding = 0;
   double itemWidth = 0;
   imgLib.Image? _imageData;
-  Uint8List? resultBytes;
   bool isClick = false;
 
   @override
   void onInit() {
     super.onInit();
     dataList = [
-      AdjustData(function: AdjustFunction.brightness, value: 0, previousValue: 0, start: -20, end: 20),
-      AdjustData(function: AdjustFunction.contrast, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.saturation, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.noise, value: 0, previousValue: 0, start: 0, end: 10),
-      AdjustData(function: AdjustFunction.pixelate, value: 0, previousValue: 0, start: 0, end: 20),
-      AdjustData(function: AdjustFunction.blur, value: 0, previousValue: 0, start: 0, end: 30),
-      AdjustData(function: AdjustFunction.sharpen, value: 0, previousValue: 0, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.hue, value: 0, previousValue: 0, start: -180, end: 180),
+      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -50, end: 50),
+      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 10),
+      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 20),
+      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 30),
+      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -180, end: 180),
     ];
   }
 
@@ -84,12 +106,21 @@ class AdjustController extends GetxController {
     scrollController.animateTo(pos * itemWidth, duration: Duration(milliseconds: 100), curve: Curves.bounceOut);
   }
 
+  @override
+  initData() {
+    getImage(originFile!).then((value) {
+      getLibImage(value).then((value) {
+        _imageData = value;
+        saveResult(_imageData!);
+      });
+    });
+  }
+
   void buildResult() {
     imgLib.Image res_image;
     res_image = imgLib.copyCrop(_imageData!, 0, 0, _imageData!.width, _imageData!.height);
     _imAdjust(dataList, res_image);
-    resultBytes = Uint8List.fromList(imgLib.encodeJpg(res_image));
-    update();
+    saveResult(res_image);
   }
 
   showToast() {
@@ -167,6 +198,7 @@ _imAdjustOne(AdjustData data, imgLib.Image image) {
 class AdjustData {
   AdjustFunction function;
   double value;
+  final double initValue;
   double previousValue;
   double start;
   double end;
@@ -177,6 +209,7 @@ class AdjustData {
     required this.previousValue,
     required this.start,
     required this.end,
+    required this.initValue,
   });
 
   double getProgress() {
@@ -185,5 +218,10 @@ class AdjustData {
 
   double getTotal() {
     return end - start;
+  }
+
+  @override
+  String toString() {
+    return 'AdjustData{function: $function, value: $value, initValue: $initValue, previousValue: $previousValue, start: $start, end: $end}';
   }
 }

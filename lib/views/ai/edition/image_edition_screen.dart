@@ -4,11 +4,14 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 import 'widget/effect_options.dart';
 
@@ -113,19 +116,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
-    switch (controller.currentFunction) {
-      case ImageEditionFunction.adjust:
-        return controller.adjustController.resultBytes != null ? Image.memory(controller.adjustController.resultBytes!) : Container();
-      case ImageEditionFunction.effect:
-      case ImageEditionFunction.filter:
-      case ImageEditionFunction.crop:
-      case ImageEditionFunction.removeBg:
-        return Image.file(
-          controller.showOrigin ? controller.originFile : controller.resultFile ?? controller.originFile,
-          fit: BoxFit.contain,
-        );
-      case ImageEditionFunction.UNDEFINED:
-        return Container();
+    if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
+      return Container();
+    }
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
+      var effectController = controller.currentItem.holder as TransferBaseController;
+      return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
+    } else {
+      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+      return Image.file(controller.showOrigin ? holder.originFile! : holder.resultFile ?? holder.originFile!);
     }
   }
 
@@ -135,13 +134,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Column(
-          children: controller.functions.map((e) {
+          children: controller.items.map((e) {
             bool visible = true;
-            if (e == ImageEditionFunction.removeBg) {
-              visible = controller.effectController.resultFile == null;
+            if (e.function == ImageEditionFunction.removeBg) {
+              //  visible = controller.effectController.resultFile == null;
             }
             return Image.asset(
-              e.icon(),
+              e.function.icon(),
               width: $(24),
               height: $(24),
             )
@@ -149,28 +148,41 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                   padding: EdgeInsets.all($(8)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular($(32)),
-                      gradient: controller.currentFunction == e
+                      gradient: controller.currentItem == e
                           ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: const [Color(0xFF68F0AF), Color(0xFF05E0D5)])
                           : null),
                 )
                 .intoGestureDetector(onTap: () {
-                  if (e == ImageEditionFunction.filter) {
-                    controller.filterController.currentFunction = FilterEnum.NOR;
-                    controller.currentFunction = e;
-                  } else if (e == ImageEditionFunction.crop) {
-                    if (controller.cropFilePath == null) {
-                      //todo 裁减图片，然后切换tab
+                  if (controller.currentItem.function == ImageEditionFunction.effect) {
+                    //点击的是effect，
+                    if (e.function == ImageEditionFunction.effect) {
+                      //重复点击，不处理
                     } else {
-                      controller.currentFunction = e;
-                    }
-                  } else if (e == ImageEditionFunction.removeBg) {
-                    if (controller.removedBgPath == null) {
-                      // todo 去除背景，然后切换tab
-                    } else {
-                      controller.currentFunction = e;
+                      //不是的话，需要切换数据，把图从effectController中搬到新的holder里。
+                      var newHolder = e.holder as ImageEditionBaseHolder;
+                      var effectController = controller.currentItem.holder as TransferBaseController;
+                      newHolder.setOriginFilePath((effectController.resultFile ?? controller.originFile).path);
+                      controller.currentItem = e;
                     }
                   } else {
-                    controller.currentFunction = e;
+                    //其他类型
+                    if (e.function == controller.currentItem.function) {
+                      //重复点击，看功能处理
+                    } else {
+                      //切换回effect，目前不处理
+                      if (e.function == ImageEditionFunction.effect) {
+                        //  应该需要换原图，然后重新生成，待确认。
+                      } else {
+                        //不是的话，需要切换数据，把图从oldHolder中搬到newHolder里。
+                        if (e.function == ImageEditionFunction.filter) {
+                          (e.holder as FilterHolder).currentFunction = FilterEnum.NOR;
+                        }
+                        var newHolder = e.holder as ImageEditionBaseHolder;
+                        var oldHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+                        newHolder.setOriginFilePath((oldHolder.resultFile ?? oldHolder.originFile!).path);
+                      }
+                      controller.currentItem = e;
+                    }
                   }
                 })
                 .intoContainer(margin: EdgeInsets.symmetric(vertical: $(2)))
@@ -202,26 +214,20 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   Widget buildOptions(BuildContext context, ImageEditionController controller) {
-    switch (controller.currentFunction) {
+    switch (controller.currentItem.function) {
       case ImageEditionFunction.effect:
         return EffectOptions(
-          imageEditionController: controller,
+          controller: controller.currentItem.holder,
           photoType: widget.photoType,
           source: widget.source,
         );
       case ImageEditionFunction.filter:
-        if (controller.filterController.originFilePath == null) {
-          controller.filterController.originFilePath = controller.effectController.resultFile?.path ?? controller.resultFilePath ?? controller.originFile.path;
-        }
         return FilterOptions(
-          imageEditionController: controller,
+          controller: controller.currentItem.holder,
           parentState: this,
         );
       case ImageEditionFunction.adjust:
-        if (controller.adjustController.originFilePath == null) {
-          controller.adjustController.originFilePath = controller.effectController.resultFile?.path ?? controller.resultFilePath ?? controller.originFile.path;
-        }
-        return AdjustOptions(imageEditionController: controller);
+        return AdjustOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.crop:
         return Container();
       case ImageEditionFunction.removeBg:

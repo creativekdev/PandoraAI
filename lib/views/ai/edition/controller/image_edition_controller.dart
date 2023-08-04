@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
-import 'package:cartoonizer/views/ai/edition/controller/adjust_controller.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_controller.dart';
+import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 
 class ImageEditionController extends GetxController {
@@ -11,43 +13,7 @@ class ImageEditionController extends GetxController {
 
   File get originFile => File(_originPath);
 
-  ///----------------------------------------------------------------------------------------
-  String? _resultFilePath;
-
-  String? get resultFilePath => _resultFilePath;
-
-  set resultFilePath(String? path) {
-    _resultFilePath = path;
-    update();
-  }
-
-  File? get resultFile => resultFilePath == null ? null : File(resultFilePath!);
-
-  ///----------------------------------------------------------------------------------------
-
-  String? _removedBgPath;
-
-  String? get removedBgPath => _removedBgPath;
-
-  set removedBgPath(String? path) {
-    _removedBgPath = path;
-    update();
-  }
-
-  File? get removedBgFile => _removedBgPath == null ? null : File(removedBgPath!);
-
-  ///----------------------------------------------------------------------------------------
-
-  String? _cropFilePath;
-
-  String? get cropFilePath => _cropFilePath;
-
-  set cropFilePath(String? path) {
-    _cropFilePath = path;
-    update();
-  }
-
-  File? get cropFile => _cropFilePath == null ? null : File(_cropFilePath!);
+  final EffectStyle effectStyle;
 
   ///----------------------------------------------------------------------------------------
 
@@ -55,28 +21,16 @@ class ImageEditionController extends GetxController {
   List<EditionStep> checkmateSteps = [];
 
   ///----------------------------------------------------------------------------------------
-  late BothTransferController effectController;
-  final EffectStyle effectStyle;
-  late FilterController filterController;
-  late AdjustController adjustController;
+  late EditionItem _currentItem;
 
-  ///----------------------------------------------------------------------------------------
-  ImageEditionFunction _currentFunction = ImageEditionFunction.effect;
+  EditionItem get currentItem => _currentItem;
 
-  ImageEditionFunction get currentFunction => _currentFunction;
-
-  set currentFunction(ImageEditionFunction func) {
-    _currentFunction = func;
+  set currentItem(EditionItem func) {
+    _currentItem = func;
     update();
   }
 
-  List<ImageEditionFunction> functions = [
-    ImageEditionFunction.effect,
-    ImageEditionFunction.filter,
-    ImageEditionFunction.adjust,
-    ImageEditionFunction.crop,
-    ImageEditionFunction.removeBg,
-  ];
+  List<EditionItem> items = [];
 
   bool _showOrigin = false;
 
@@ -97,21 +51,46 @@ class ImageEditionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    effectController = BothTransferController(originalPath: _originPath, itemList: [], style: effectStyle);
-    effectController.onInit();
-    filterController = FilterController();
-    filterController.onInit();
-    adjustController = AdjustController();
-    adjustController.onInit();
+    var effectHolder = BothTransferController(originalPath: _originPath, itemList: [], style: effectStyle)..onInit();
+    effectHolder.parent = this;
+    var filterHolder = FilterHolder(parent: this)..onInit();
+    var adjustHolder = AdjustHolder(parent: this)..onInit();
+    var cropHolder = CropHolder(parent: this)..onInit();
+    var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
+    items = [
+      EditionItem()
+        ..function = ImageEditionFunction.effect
+        ..holder = effectHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.filter
+        ..holder = filterHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.adjust
+        ..holder = adjustHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.crop
+        ..holder = cropHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.removeBg
+        ..holder = removeBgHolder,
+    ];
+    currentItem = items.first;
   }
 
   @override
   void dispose() {
-    effectController.dispose();
-    filterController.dispose();
-    adjustController.dispose();
+    for (var item in items) {
+      item.holder.dispose();
+    }
     super.dispose();
   }
 }
 
 class EditionStep {}
+
+class EditionItem {
+  late ImageEditionFunction function;
+  late dynamic holder;
+
+  EditionItem();
+}

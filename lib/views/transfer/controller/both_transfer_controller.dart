@@ -1,6 +1,7 @@
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
@@ -13,6 +14,14 @@ class BothTransferController extends TransferBaseController {
   late CartoonizerController cartoonizerController;
   late StyleMorphController styleMorphController;
   EffectStyle style;
+
+  ImageEditionController? parent;
+
+  @override
+  update([List<Object>? ids, bool condition = true]) {
+    super.update(ids, condition);
+    parent?.update();
+  }
 
   BothTransferController({
     required super.originalPath,
