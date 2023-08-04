@@ -11,7 +11,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -101,6 +100,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
 
   TutorialCoachMark createTutorial(GlobalKey? key) {
     TutorialCoachMark tutorial = TutorialCoachMark(
+        textSkip: "",
         targets: [
           TargetFocus(
             identify: 'Step 1',
@@ -112,38 +112,39 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          "How to use",
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20.0),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: $(30)),
+                          child: Text(
+                            S.of(context).how_to_use,
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFE31ECD), fontSize: $(18)),
+                          ),
                         ),
-                        SizedBox(height: $(10)),
-                        Text(
-                          "Choose a drawing with a black and white them, and you will get a colorful-image",
-                          style: TextStyle(color: Colors.white),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: $(30)),
+                          child: Text(
+                            S.of(context).how_to_use_desc,
+                            style: TextStyle(color: Color(0xFFE31ECD), fontSize: $(14)),
+                          ),
                         ),
-                        SizedBox(height: $(10)),
-                        Text(
-                          "Like this",
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 17.0),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: $(30)),
+                          decoration: BoxDecoration(boxShadow: [
+                            BoxShadow(
+                              color: Color(0xFF969696).withOpacity(0.57), // 阴影的颜色
+                              offset: Offset(0, $(4)), // 阴影的偏移量
+                              blurRadius: $(14), // 阴影的模糊半径
+                              spreadRadius: $(3), // 阴影的扩散半径
+                            )
+                          ]),
+                          child: Image.asset(
+                            Images.ic_demo_coloring_result,
+                            width: $(300),
+                            height: $(369),
+                          ),
                         ),
-                        SizedBox(height: $(10)),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Image.asset(Images.ic_demo_coloring_origin),
-                            ),
-                            SizedBox(width: $(10)),
-                            Image.asset(
-                              Images.ic_another_arrow_right,
-                              width: $(16),
-                            ),
-                            SizedBox(width: $(10)),
-                            Expanded(
-                              child: Image.asset(Images.ic_demo_coloring_result),
-                            ),
-                          ],
-                        ),
+                        SizedBox(height: $(30)),
                       ],
                     ),
                   )),
@@ -151,7 +152,7 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
           ),
         ],
         // List<TargetFocus>
-        colorShadow: Colors.grey.shade700,
+        colorShadow: Color(0x7AD8D8D8),
         // alignSkip: Alignment.bottomRight,
         // textSkip: "SKIP",
         paddingFocus: $(15),

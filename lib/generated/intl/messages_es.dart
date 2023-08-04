@@ -344,6 +344,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "high_resolution":
             MessageLookupByLibrary.simpleMessage("Imágenes de alta calidad"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora ama"),
+        "how_to_use": MessageLookupByLibrary.simpleMessage("¿Cómo usar?"),
+        "how_to_use_desc": MessageLookupByLibrary.simpleMessage(
+            "¡Elige un dibujo en blanco y negro y obtendrás una imagen colorida!"),
         "in_original":
             MessageLookupByLibrary.simpleMessage("Contiene la imagen original"),
         "input_feedback": MessageLookupByLibrary.simpleMessage(

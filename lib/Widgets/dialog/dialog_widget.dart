@@ -9,7 +9,6 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
-import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:flutter/cupertino.dart';
@@ -382,89 +381,77 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
   });
 }
 
+enum PhotoTakeDialogType {
+  selfie,
+  album,
+  recent,
+}
+
 Future<PAICameraEntity?> showPhotoTakeDialog(
   BuildContext context,
 ) async {
+  List photoTakeDatas = [
+    {"name": "Take a selfie", "type": PhotoTakeDialogType.selfie, "image": Images.select_selfie},
+    {"name": "Select from album", "type": PhotoTakeDialogType.album, "image": Images.select_album},
+    {"name": "My recents", "type": PhotoTakeDialogType.recent, "image": Images.select_recent},
+  ];
   var type = await showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
-    builder: (_) => Column(
-      children: [
-        ClipRRect(
-          child: Column(
-            children: [
-              SizedBox(height: $(5)),
-              Text(
-                S.of(context).take_a_selfie,
-                style: TextStyle(
-                  fontSize: $(16),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              )
-                  .intoContainer(
-                    alignment: Alignment.center,
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(vertical: $(12)),
-                    color: Colors.transparent,
-                  )
-                  .intoGestureDetector(onTap: () => Navigator.of(_).pop(true)),
-              Divider(height: 1, color: ColorConstant.LineColor),
-              Text(
-                S.of(context).select_from_album,
-                style: TextStyle(
-                  fontSize: $(16),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              )
-                  .intoContainer(
-                    alignment: Alignment.center,
-                    width: double.maxFinite,
-                    padding: EdgeInsets.symmetric(vertical: $(12)),
-                    color: Colors.transparent,
-                  )
-                  .intoGestureDetector(onTap: () => Navigator.of(_).pop(false)),
-              SizedBox(height: $(5)),
-            ],
-          ).intoContainer(
-            color: ColorConstant.BackgroundColor,
+    builder: (_) => ClipRRect(
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            child: Container(
+              margin: EdgeInsets.only(top: $(10)),
+              height: $(4),
+              width: $(36),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular($(2)),
+                color: Color(0xff666666),
+              ),
+            ),
           ),
-          borderRadius: BorderRadius.circular($(8)),
-        ),
-        SizedBox(height: $(12)),
-        Text(
-          S.of(context).cancel,
-          style: TextStyle(
-            fontSize: $(16),
-            fontFamily: 'Poppins',
-            color: Colors.white,
-          ),
-        )
-            .intoContainer(
-                width: double.maxFinite,
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(vertical: $(12)),
-                decoration: BoxDecoration(
-                  color: ColorConstant.BackgroundColor,
-                  borderRadius: BorderRadius.circular($(8)),
-                ))
-            .intoGestureDetector(onTap: () => Navigator.of(_).pop()),
-      ],
-      mainAxisSize: MainAxisSize.min,
-    )
-        .intoContainer(
-          padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context)),
-          margin: EdgeInsets.symmetric(horizontal: $(15)),
-        )
-        .intoMaterial(color: Colors.transparent),
+          SizedBox(height: $(30)),
+          // 根据photoTakeDatas的长度决定返回Container在Row中
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: $(46)),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: photoTakeDatas.map((e) {
+                  return Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(bottom: $(5)),
+                        alignment: Alignment.center,
+                        width: $(60),
+                        height: $(60),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular($(30)),
+                          border: Border.all(color: ColorConstant.EffectFunctionGrey, width: $(1)),
+                          color: Colors.transparent,
+                        ),
+                        child: Image.asset(e['image'], fit: BoxFit.cover, width: $(30), height: $(26)),
+                      ),
+                      TitleTextWidget(e['name'], ColorConstant.LightLineColor, FontWeight.normal, $(11)),
+                    ],
+                  ).intoGestureDetector(onTap: () {
+                    Navigator.pop(context, e['type']);
+                  });
+                }).toList()),
+          )
+        ],
+      ).intoContainer(color: ColorConstant.BackgroundColor, height: $(135) + ScreenUtil.getBottomPadding(context)),
+      borderRadius: BorderRadius.only(topRight: Radius.circular($(28)), topLeft: Radius.circular($(28))),
+    ).intoMaterial(color: Colors.transparent),
   );
   if (type == null) {
     return null;
   }
-  if (type) {
+  if (type == PhotoTakeDialogType.selfie) {
     return await PAICamera.takePhoto(context);
-  } else {
+  } else if (type == PhotoTakeDialogType.album) {
     var list = await PickAlbumScreen.pickImage(context, count: 1, switchAlbum: true);
     if (list == null || list.isEmpty) {
       return null;
@@ -475,5 +462,8 @@ Future<PAICameraEntity?> showPhotoTakeDialog(
       return null;
     }
     return PAICameraEntity(source: 'gallery', xFile: XFile(first.path));
+  } else if (type == PhotoTakeDialogType.recent) {
+    // todo
+    // return await PAICamera.takePhoto(context);
   }
 }

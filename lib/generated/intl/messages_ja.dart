@@ -284,6 +284,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("ヘルプ"),
         "high_resolution": MessageLookupByLibrary.simpleMessage("高品質の画像"),
         "home": MessageLookupByLibrary.simpleMessage("パンドラAI"),
+        "how_to_use": MessageLookupByLibrary.simpleMessage("利用方法"),
+        "how_to_use_desc":
+            MessageLookupByLibrary.simpleMessage("白黒の絵を選択すると、カラフルな画像が得られます。"),
         "in_original": MessageLookupByLibrary.simpleMessage("元の写真を含む"),
         "input_feedback":
             MessageLookupByLibrary.simpleMessage("あなたのコメントを入力してください"),

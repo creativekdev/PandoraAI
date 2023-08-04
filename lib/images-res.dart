@@ -55,11 +55,13 @@ class Images {
   static const String ic_compare_arrow = 'assets/images/ic_compare_arrow.png';
   static const String ic_compare_top = 'assets/images/ic_compare_top.png';
   static const String ic_confirm = 'assets/images/ic_confirm.png';
+  static const String select_album = 'assets/images/select_album.png';
+  static const String select_recent = 'assets/images/select_recent.png';
+  static const String select_selfie = 'assets/images/select_selfie.png';
   static const String ic_crop = 'assets/images/ic_crop.png';
   static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
   static const String ic_delivery = 'assets/images/ic_delivery.png';
   static const String ic_demo1 = 'assets/images/ic_demo1.png';
-  static const String ic_demo_coloring_origin = 'assets/images/ic_demo_coloring_origin.jpg';
   static const String ic_demo_coloring_result = 'assets/images/ic_demo_coloring_result.png';
   static const String ic_discovery_comment = 'assets/images/ic_discovery_comment.png';
   static const String ic_discovery_like = 'assets/images/ic_discovery_like.png';

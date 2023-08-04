@@ -5019,6 +5019,26 @@ class S {
       args: [],
     );
   }
+
+  /// `How to use?`
+  String get how_to_use {
+    return Intl.message(
+      'How to use?',
+      name: 'how_to_use',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a drawing with a black and white them and you will get a colorful-image!`
+  String get how_to_use_desc {
+    return Intl.message(
+      'Choose a drawing with a black and white them and you will get a colorful-image!',
+      name: 'how_to_use_desc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
