@@ -237,11 +237,12 @@ extension WidgetExtension on Widget {
         child: this,
       );
 
-  ClipRect blur({Key? key, double x = 12, double y = 12}) => ClipRect(
+  ClipRect blur({Key? key, double x = 12, double y = 12, BlendMode blendMode = BlendMode.srcOver}) => ClipRect(
         key: key,
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: x, sigmaY: y),
           child: this,
+          blendMode: blendMode,
         ),
       );
 

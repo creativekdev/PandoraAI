@@ -76,16 +76,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
   @override
   void onInit() {
     super.onInit();
-    dataList = [
-      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -50, end: 50),
-      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 10),
-      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 20),
-      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 30),
-      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -180, end: 180),
-    ];
+    resetConfig();
   }
 
   autoCompleteScroll() {
@@ -128,6 +119,25 @@ class AdjustHolder extends ImageEditionBaseHolder {
       dataList[index].function.title(),
       gravity: ToastGravity.CENTER,
     );
+  }
+
+  void resetConfig() {
+    dataList = [
+      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -50, end: 50),
+      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 10),
+      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 20),
+      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 30),
+      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -180, end: 180),
+    ];
+    delay(() {
+      if (scrollController.positions.isEmpty) {
+        return;
+      }
+      scrollController.animateTo(index * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
+    }, milliseconds: 200);
   }
 }
 

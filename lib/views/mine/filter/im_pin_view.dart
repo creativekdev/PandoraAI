@@ -41,8 +41,8 @@ class ImPinView extends StatefulWidget {
 class _ImageMergingWidgetState extends State<ImPinView> {
   bool isSelectedBg = false;
   GlobalKey globalKey = GlobalKey();
-  double ratio = 1;
-  double bgRatio = 1;
+  double scale = 1;
+  double bgScale = 1;
   double dx = 0;
   double dy = 0;
   double bgDx = 0;
@@ -78,30 +78,36 @@ class _ImageMergingWidgetState extends State<ImPinView> {
                           dy: dy,
                           bgDx: bgDx,
                           bgDy: bgDy,
-                          onPinEndCallBack: (bool isSelected, double newRatio, double newDx, double newDy) {
+                          onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
                             if (isSelected == true) {
-                              bgRatio = newRatio;
+                              bgScale = newScale;
                               bgDx = newDx;
                               bgDy = newDy;
                             } else {
-                              ratio = newRatio;
+                              scale = newScale;
                               dx = newDx;
                               dy = newDy;
                             }
                           },
-                          scale: ratio,
-                          bgScale: bgRatio,
+                          scale: scale,
+                          bgScale: bgScale,
                           child: Image.memory(
                             byteData,
                             fit: BoxFit.contain,
+                            width: ScreenUtil.screenSize.width,
+                            height: ScreenUtil.screenSize.width / widget.ratio,
                           ),
                           bgChild: widget.backgroundImage != null
                               ? Image.memory(
                                   widget.backgroundByte!,
                                   fit: BoxFit.contain,
+                                  width: ScreenUtil.screenSize.width,
+                                  height: ScreenUtil.screenSize.width / widget.ratio,
                                 )
                               : Container(
                                   color: widget.backgroundColor!.toArgb(),
+                                  width: ScreenUtil.screenSize.width,
+                                  height: ScreenUtil.screenSize.width / widget.ratio,
                                 ),
                           isSelectedBg: isSelectedBg),
                     ),

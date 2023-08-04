@@ -1,17 +1,24 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/views/mine/filter/Crop.dart';
 import 'package:cartoonizer/views/mine/filter/im_cropper.dart';
+import 'package:cropperx/cropperx.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
 import '../../../images-res.dart';
-import 'im_crop_controller.dart';
 
 typedef OnGetCropPath = void Function(String path);
 
 class ImCropScreen extends StatefulWidget {
-  ImCropScreen({Key? key, required this.filePath, this.cropRect = Rect.zero, required this.onGetCropPath}) : super(key: key);
+  CropItem cropItem;
+
+  ImCropScreen({Key? key, required this.filePath, required this.cropItem, required this.onGetCropPath}) : super(key: key);
   final String filePath;
-  final Rect cropRect;
   final OnGetCropPath onGetCropPath;
 
   @override
@@ -19,126 +26,75 @@ class ImCropScreen extends StatefulWidget {
 }
 
 class _ImCropScreenState extends AppState<ImCropScreen> {
-  final controller = Get.put(ImCropController());
+  final GlobalKey cropperKey = GlobalKey(debugLabel: 'cropperKey');
+  GlobalKey cropBackgroundKey = GlobalKey();
+  CacheManager cacheManager = AppDelegate.instance.getManager();
+  late StorageOperator storageOperator = cacheManager.storageOperator;
+  late String filePath;
 
   @override
   void initState() {
     super.initState();
-    controller.filePath = widget.filePath;
+    filePath = widget.filePath;
+  }
+
+  Future<String> onSaveImage() async {
+    final imageBytes = await Cropper.crop(
+      cropperKey: cropperKey,
+    );
+    final File file = getSavePath(filePath);
+    await file.writeAsBytes(imageBytes!);
+    return file.path;
+  }
+
+  onUpdateScale(ScaleUpdateDetails details, double ratio) {}
+
+  onEndScale(ScaleEndDetails details, double ratio) {}
+
+  File getSavePath(String path) {
+    final name = path.substring(path.lastIndexOf('/') + 1);
+    var newPath = "${storageOperator.cropDir.path}/${DateTime.now().millisecondsSinceEpoch}$name";
+    return File(newPath);
   }
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xaa000000),
+      backgroundColor: Color(0xdd000000),
       appBar: AppNavigationBar(
-        backgroundColor: Color(0xaa000000),
+        backgroundColor: Color(0xdd000000),
         trailing: Image.asset(Images.ic_confirm, width: $(30), height: $(30)).intoGestureDetector(onTap: () async {
-          String path = await controller.onSaveImage();
-          widget.onGetCropPath(path);
-          Navigator.of(context).pop();
+          showLoading().whenComplete(() async {
+            String path = await onSaveImage();
+            hideLoading().whenComplete(() {
+              widget.onGetCropPath(path);
+              Navigator.of(context).pop();
+            });
+          });
         }),
       ),
       body: Column(children: [
         Expanded(
           child: Center(
             child: ImCropper(
-                cropperKey: controller.cropperKey,
-                crop: controller.crop,
+                cropperKey: cropperKey,
+                crop: widget.cropItem,
                 filePath: widget.filePath,
                 updateSacle: (details, ratio) {
-                  controller.onUpdateScale(details, ratio);
+                  onUpdateScale(details, ratio);
                 },
                 endSacle: (details, ratio) {
-                  controller.onEndScale(details, ratio);
+                  onEndScale(details, ratio);
                 }),
           ),
         ),
-        _buildCrops(),
-        SizedBox(height: ScreenUtil.getBottomPadding(context)),
+        SizedBox(height: $(55) + ScreenUtil.getBottomPadding(context)),
       ]),
     );
   }
 
-  Widget _buildCrops() {
-    List<Widget> buttons = [];
-    int i = 0;
-    for (String title in controller.crop.titles[controller.crop.isPortrait]) {
-      int curi = i;
-      buttons.add(GestureDetector(
-        onTap: () {
-          setState(() {
-            controller.crop.selectedID = curi;
-            controller.crop.isPortrait = controller.crop.isPortrait;
-            print("127.0.0.1 - 127.0.0.1");
-          });
-        },
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(color: (controller.crop.selectedID == curi) ? Color(0xFF05E0D5) : Colors.white),
-            )
-          ],
-        ),
-      ));
-      buttons.add(SizedBox(
-        width: $(30),
-      ));
-      i++;
-    }
-    return Container(
-        height: $(115),
-        child: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            (controller.crop.selectedID >= 2)
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          // Handle button press
-                          setState(() {
-                            controller.crop.isPortrait = 0;
-                          });
-                        },
-                        child: Container(
-                          child: (controller.crop.isPortrait == 0) ? Image.asset(Images.ic_landscape_selected) : Image.asset(Images.ic_landscape), // Replace with your image path
-                        ),
-                      ),
-                      SizedBox(width: $(30)),
-                      InkWell(
-                        onTap: () {
-                          // Handle button press
-                          setState(() {
-                            controller.crop.isPortrait = 1;
-                          });
-                        },
-                        child: Container(
-                          child: (controller.crop.isPortrait == 1) ? Image.asset(Images.ic_portrat_selected) : Image.asset(Images.ic_portrat), // Replace with your image path
-                        ),
-                      )
-                    ],
-                  )
-                : SizedBox(
-                    height: $(32),
-                  ),
-            SizedBox(
-              height: $(30),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: buttons,
-            )
-          ],
-        )));
-  }
-
   @override
   void dispose() {
-    Get.delete<ImCropController>();
     super.dispose();
   }
 }

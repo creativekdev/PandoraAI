@@ -233,4 +233,6 @@ class Images {
   static const String update_image = 'assets/images/update_image.png';
   static const String visa = 'assets/images/visa.png';
   static const String ic_prompt = 'assets/images/ic_prompt.webp';
+  static const String ic_home_add = 'assets/images/ic_home_add.png';
+  static const String ic_home_add_child = 'assets/images/ic_home_add_child.png';
 }

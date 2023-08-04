@@ -321,27 +321,29 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
           animation: animationController!,
           builder: (context, child) {
             return Transform.translate(
-              offset: Offset(0, ($(66) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-                size: $(30),
+              offset: Offset(0, ($(50) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
+              child: Stack(
+                fit: StackFit.loose,
+                children: [
+                  Image.asset(
+                    Images.ic_home_add,
+                    color: Color.fromARGB(250, 14, 16, 17),
+                    width: $(60),
+                  ),
+                  Positioned(
+                    child: Image.asset(
+                      Images.ic_home_add_child,
+                      width: $(44),
+                    ),
+                    left: $(8),
+                    right: $(8),
+                    top: $(8),
+                  ),
+                ],
               )
                   .intoContainer(
-                      padding: EdgeInsets.all($(10)),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(32),
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xffE31ECD),
-                              Color(0xff243CFF),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )),
-                      margin: EdgeInsets.only(
-                        bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context) + $(14),
-                      ))
+                margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
+              )
                   .intoGestureDetector(onTap: () {
                 ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All);
               }),

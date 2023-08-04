@@ -3,18 +3,22 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
+import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
+import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
-import 'package:cartoonizer/views/mine/filter/Filter.dart';
+import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
+import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
@@ -154,6 +158,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as TransferBaseController;
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
+    } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
+      var holder = controller.currentItem.holder as RemoveBgHolder;
+      return Image.file(controller.showOrigin ? holder.originFile! : holder.resultFile ?? holder.removedImage!);
     } else {
       var holder = controller.currentItem.holder as ImageEditionBaseHolder;
       return Image.file(controller.showOrigin ? holder.originFile! : holder.resultFile ?? holder.originFile!);
@@ -184,36 +191,58 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                           ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: const [Color(0xFF68F0AF), Color(0xFF05E0D5)])
                           : null),
                 )
-                .intoGestureDetector(onTap: () {
-                  if (controller.currentItem.function == ImageEditionFunction.effect) {
-                    //点击的是effect，
-                    if (e.function == ImageEditionFunction.effect) {
-                      //重复点击，不处理
-                    } else {
-                      //不是的话，需要切换数据，把图从effectController中搬到新的holder里。
-                      var newHolder = e.holder as ImageEditionBaseHolder;
-                      var effectController = controller.currentItem.holder as TransferBaseController;
-                      newHolder.setOriginFilePath((effectController.resultFile ?? controller.originFile).path);
-                      controller.currentItem = e;
-                    }
+                .intoGestureDetector(onTap: () async {
+                  if (e.function == controller.currentItem.function) {
+                    //重复点击，特殊情况考虑
                   } else {
-                    //其他类型
-                    if (e.function == controller.currentItem.function) {
-                      //重复点击，看功能处理
-                    } else {
-                      //切换回effect，目前不处理
-                      if (e.function == ImageEditionFunction.effect) {
-                        //  应该需要换原图，然后重新生成，待确认。
-                      } else {
-                        //不是的话，需要切换数据，把图从oldHolder中搬到newHolder里。
-                        if (e.function == ImageEditionFunction.filter) {
-                          (e.holder as FilterHolder).currentFunction = FilterEnum.NOR;
-                        }
-                        var newHolder = e.holder as ImageEditionBaseHolder;
-                        var oldHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-                        newHolder.setOriginFilePath((oldHolder.resultFile ?? oldHolder.originFile!).path);
-                      }
+                    if (e.function == ImageEditionFunction.effect) {
+                      //跳转effect
                       controller.currentItem = e;
+                      // 不处理
+                    } else {
+                      String originFilePath;
+                      if (controller.currentItem.function == ImageEditionFunction.effect) {
+                        // 从effect跳
+                        var transferController = controller.currentItem.holder as BothTransferController;
+                        originFilePath = (transferController.resultFile ?? transferController.originFile).path;
+                      } else {
+                        //其他的互相跳转
+                        var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+                        originFilePath = (baseHolder.resultFile ?? baseHolder.originFile!).path;
+                      }
+                      if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
+                        var image = await SyncFileImage(file: File(originFilePath)).getImage();
+                        print("127.0.0.1 === 1111 ${image.image.width / image.image.height}");
+                        Navigator.push(
+                          context,
+                          NoAnimRouter(
+                            ImRemoveBgScreen(
+                              filePath: originFilePath,
+                              imageRatio: image.image.width / image.image.height,
+                              onGetRemoveBgImage: (String path) async {
+                                SyncFileImage(file: File(path)).getImage().then((value) {
+                                  var holder = e.holder as RemoveBgHolder;
+                                  print("127.0.0.1 === ${value.image.width / value.image.height}");
+                                  holder.ratio = value.image.width / value.image.height;
+                                  holder.removedImage = File(path);
+                                });
+                              },
+                            ),
+                            // opaque: true,
+                            settings: RouteSettings(name: "/ImRemoveBgScreen"),
+                          ),
+                        ).then((value) {
+                          if (value == true) {
+                            var newHolder = e.holder as ImageEditionBaseHolder;
+                            newHolder.setOriginFilePath(originFilePath);
+                            controller.currentItem = e;
+                          }
+                        });
+                      } else {
+                        var newHolder = e.holder as ImageEditionBaseHolder;
+                        newHolder.setOriginFilePath(originFilePath);
+                        controller.currentItem = e;
+                      }
                     }
                   }
                 })
@@ -261,9 +290,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       case ImageEditionFunction.adjust:
         return AdjustOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.crop:
-        return Container();
+        return CropOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.removeBg:
-        return Container();
+        return RemoveBgOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.UNDEFINED:
         break;
     }
