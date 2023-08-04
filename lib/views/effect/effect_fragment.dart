@@ -15,6 +15,7 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
@@ -345,7 +346,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                 margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
               )
                   .intoGestureDetector(onTap: () {
-                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All);
+                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect);
               }),
             );
           }),

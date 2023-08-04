@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
+import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
@@ -17,12 +18,13 @@ class ImageEdition {
     required String source,
     String? initKey,
     required EffectStyle style,
+    required ImageEditionFunction function,
   }) async {
     var hasPermission = await PermissionsUtil.checkPermissions();
     if (!hasPermission) {
       PermissionsUtil.permissionDenied(context);
     } else {
-      _open(context, source: source, initKey: initKey, style: style);
+      _open(context, source: source, initKey: initKey, style: style, function: function);
     }
   }
 
@@ -31,6 +33,7 @@ class ImageEdition {
     required String source,
     required EffectStyle style,
     String? initKey,
+    required ImageEditionFunction function,
   }) async {
     var paiCameraEntity = await showPhotoTakeDialog(context);
     if (paiCameraEntity == null) {
@@ -41,7 +44,14 @@ class ImageEdition {
     Navigator.of(context).push(
       MaterialPageRoute(
         settings: RouteSettings(name: '/ImageEditionScreen'),
-        builder: (_) => ImageEditionScreen(source: source, filePath: path, initKey: initKey, style: style, photoType: paiCameraEntity.source),
+        builder: (_) => ImageEditionScreen(
+          source: source,
+          filePath: path,
+          initKey: initKey,
+          style: style,
+          photoType: paiCameraEntity.source,
+          initFunction: function,
+        ),
       ),
     );
   }
