@@ -7,6 +7,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
@@ -19,8 +20,7 @@ class Cartoonize {
     RecentEffectModel? record,
     String? initKey,
   }) async {
-    return ImEffect.open(context, source: source, initKey: initKey, style: EffectStyle.Cartoonizer);
-    bool result = await AnotherMe.checkPermissions();
+    bool result = await PermissionsUtil.checkPermissions();
     if (result) {
       if (record == null) {
         return _open(context, source, initKey).then((value) {
@@ -32,7 +32,7 @@ class Cartoonize {
         });
       }
     } else {
-      return AnotherMe.permissionDenied(context);
+      return PermissionsUtil.permissionDenied(context);
     }
   }
 

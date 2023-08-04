@@ -9,6 +9,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
@@ -103,11 +104,11 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             File(data.filePath.first),
                             fit: BoxFit.cover,
                           ).intoGestureDetector(onTap: () {
-                            AnotherMe.checkPermissions().then((value) {
+                            PermissionsUtil.checkPermissions().then((value) {
                               if (value) {
                                 AnotherMe.open(context, entity: data, source: 'recently');
                               } else {
-                                AnotherMe.permissionDenied(context);
+                                PermissionsUtil.permissionDenied(context);
                               }
                             });
                           });

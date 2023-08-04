@@ -62,7 +62,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
 
   AppNavigationBar({
     this.key,
-    this.backgroundColor = Colors.white,
+    this.backgroundColor = Colors.transparent,
     this.leading,
     this.automaticallyImplyLeading = true,
     this.automaticallyImplyMiddle = true,
@@ -95,7 +95,7 @@ class AppNavigationBar extends StatelessWidget implements ObstructingPreferredSi
       color: Colors.transparent,
       height: ScreenUtil.getStatusBarHeight(),
     );
-    this.padding ??= EdgeInsetsDirectional.fromSTEB(8, 0, 15, 0);
+    this.padding ??= EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0);
   }
 
   @override

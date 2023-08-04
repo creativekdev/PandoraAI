@@ -16,6 +16,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
@@ -472,7 +473,7 @@ class _AppCameraState extends State<AppCamera> with TickerProviderStateMixin, Wi
           ));
 
   choosePhoto(BuildContext context, Function(XFile file, double ratio, String source) callback) async {
-    AnotherMe.checkPermissions().then((value) {
+    PermissionsUtil.checkPermissions().then((value) {
       if (value) {
         PickAlbumScreen.pickImage(
           context,

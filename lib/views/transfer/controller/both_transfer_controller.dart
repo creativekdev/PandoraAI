@@ -1,21 +1,37 @@
 import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 import 'cartoonizer_controller.dart';
 
+enum EffectStyle { Cartoonizer, StyleMorph, All }
+
 class BothTransferController extends TransferBaseController {
   late CartoonizerController cartoonizerController;
   late StyleMorphController styleMorphController;
+  EffectStyle style;
 
-  BothTransferController({required super.originalPath, required super.itemList, super.initKey});
+  BothTransferController({
+    required super.originalPath,
+    required super.itemList,
+    super.initKey,
+    required this.style,
+  });
 
   @override
   List<EffectCategory> buildCategories() {
     var controller = Get.find<EffectDataController>();
-    return [...controller.data?.cartoonize?.children ?? [], ...controller.data?.stylemorph?.children ?? []];
+    switch (style) {
+      case EffectStyle.Cartoonizer:
+        return controller.data?.cartoonize?.children ?? [];
+      case EffectStyle.StyleMorph:
+        return controller.data?.stylemorph?.children ?? [];
+      case EffectStyle.All:
+        return [...controller.data?.cartoonize?.children ?? [], ...controller.data?.stylemorph?.children ?? []];
+    }
   }
 
   @override
@@ -29,7 +45,7 @@ class BothTransferController extends TransferBaseController {
 
   @override
   String getCategory() {
-    return 'im-filter';
+    return selectedTitle?.category ?? 'image_edition';
   }
 
   @override
@@ -58,11 +74,11 @@ class BothTransferController extends TransferBaseController {
   }
 
   @override
-  onGenerateSuccess({required String source, required String style}) {
+  onGenerateSuccess({required String source, required String photoType, required String style}) {
     if (selectedTitle?.category == 'cartoonize') {
-      cartoonizerController.onGenerateSuccess(source: source, style: style);
+      cartoonizerController.onGenerateSuccess(source: source, photoType: photoType, style: style);
     } else if (selectedTitle?.category == 'stylemorph') {
-      styleMorphController.onGenerateSuccess(source: source, style: style);
+      styleMorphController.onGenerateSuccess(source: source, photoType: photoType, style: style);
     }
   }
 

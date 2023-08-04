@@ -6,7 +6,7 @@ import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/color_util.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:common_utils/common_utils.dart';
 
 import 'background_picker_holder.dart';
@@ -16,11 +16,11 @@ class BackgroundPicker {
     BuildContext context, {
     required double imageRatio,
   }) async {
-    var bool = await AnotherMe.checkPermissions();
+    var bool = await PermissionsUtil.checkPermissions();
     if (bool) {
       return _open(context, imageRatio: imageRatio);
     } else {
-      AnotherMe.permissionDenied(context);
+      PermissionsUtil.permissionDenied(context);
       return null;
     }
   }

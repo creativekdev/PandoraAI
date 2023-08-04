@@ -411,7 +411,8 @@ Future<imgLib.Image> getLibImage(ui.Image image) async {
 }
 
 Future<ui.Image> getUiImage(imgLib.Image image) async {
-  var bytes = image.getBytes();
+  var list = imgLib.encodePng(image);
+  var bytes = Uint8List.fromList(list);
   var imageInfo = await SyncMemoryImage(list: bytes).getImage();
   return imageInfo.image;
 }

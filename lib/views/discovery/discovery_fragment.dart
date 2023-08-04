@@ -52,6 +52,7 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
   @override
   void initState() {
     super.initState();
+    print("127.0.0.1 hhhh");
     Posthog().screenWithUser(screenName: 'discovery_fragment');
     tabController = TabController(length: tabs.length, vsync: this);
     tabId = widget.tabId;

@@ -1,19 +1,19 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
+import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 
 import 'im_effect_screen.dart';
 import 'im_filter.dart';
 
 class ImEffect {
   static Future<void> open(BuildContext context, {required String source, record, String? initKey, required EffectStyle style}) async {
-    bool result = await AnotherMe.checkPermissions();
+    bool result = await PermissionsUtil.checkPermissions();
     if (result) {
       if (record == null) {
         return _open(context, source, initKey, style);
@@ -21,7 +21,7 @@ class ImEffect {
         return _openFromRecent(context, source, record, initKey);
       }
     } else {
-      return AnotherMe.permissionDenied(context);
+      return PermissionsUtil.permissionDenied(context);
     }
   }
 

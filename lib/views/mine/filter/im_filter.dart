@@ -14,9 +14,6 @@ import 'im_effect_screen.dart';
 import 'im_filter_screen.dart';
 
 class ImFilter {
-  static String TagAppbarTagBack = "IMAppbarTagBack";
-  static String TagAppbarTagTitle = "IMAppbarTagTitle";
-  static String TagAppbarTagTraining = "IMAppbarTagTraining";
 
   static Future open(BuildContext context, {required TABS tab, required String source}) async {
     Events.imEditionLoading(source: source);

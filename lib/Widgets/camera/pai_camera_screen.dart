@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/camera/app_camera.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 class PAICameraEntity {
@@ -15,9 +13,9 @@ class PAICameraEntity {
 
 class PAICamera {
   static Future<PAICameraEntity?> takePhoto(BuildContext context) async {
-    var bool = await AnotherMe.checkPermissions();
+    var bool = await PermissionsUtil.checkPermissions();
     if (!bool) {
-      AnotherMe.permissionDenied(context);
+      PermissionsUtil.permissionDenied(context);
       return null;
     }
     return Navigator.of(context).push<PAICameraEntity>(

@@ -38,17 +38,11 @@ abstract class TransferBaseController<ResultType> extends GetxController {
 
   bool _showOrigin = false;
 
-  File? _resultFile;
-
   File? get resultFile {
     if (selectedEffect == null || resultMap[selectedEffect!.key] == null) {
-      return _resultFile;
+      return null;
     }
     return File(resultMap[selectedEffect!.key]!);
-  }
-
-  set resultFile(File? value) {
-    _resultFile = value;
   }
 
   set showOrigin(bool value) {
@@ -132,12 +126,14 @@ abstract class TransferBaseController<ResultType> extends GetxController {
 
   onGenerateSuccess({
     required String source,
+    required String photoType,
     required String style,
   });
 
   onGenerateAgainSuccess({
     required int time,
     required String source,
+    required String photoType,
     required String style,
   }) {}
 

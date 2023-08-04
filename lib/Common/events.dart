@@ -260,8 +260,10 @@ class Events {
 
   static Future<void> styleMorphLoading({required String source}) => logEvent('stylemorph_loading', eventValues: {'source': source});
 
-  static Future<void> styleMorphCompleteSuccess({required String source, required String style}) => logEvent('stylemorph_completed_success', eventValues: {
+  static Future<void> styleMorphCompleteSuccess({required String source, required String photoType, required String style}) =>
+      logEvent('stylemorph_completed_success', eventValues: {
         'source': source,
+        'photoType': photoType,
         'style': style,
       });
 
@@ -292,11 +294,13 @@ class Events {
   static Future<void> styleMorphGenerateAgain({
     required int time,
     required String source,
+    required String photoType,
     required String style,
   }) =>
       logEvent('stylemorph_completed_generateagain', eventValues: {
         'time': '${time}',
         'source': source,
+        'photoType':photoType,
         'style': style,
       });
 

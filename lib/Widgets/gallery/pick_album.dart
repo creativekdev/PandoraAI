@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -30,7 +31,7 @@ class PickAlbumScreen {
     bool switchAlbum = false,
     HomeCardType? type,
   }) async {
-    if (!await AnotherMe.checkPermissions()) {
+    if (!await PermissionsUtil.checkPermissions()) {
       return [];
     }
     return Navigator.of(context).push<List<AssetEntity>>(MaterialPageRoute(
