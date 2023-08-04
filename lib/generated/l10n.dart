@@ -3820,10 +3820,10 @@ class S {
     );
   }
 
-  /// `Input your description`
+  /// `Please input some prompts`
   String get ai_draw_hint {
     return Intl.message(
-      'Input your description',
+      'Please input some prompts',
       name: 'ai_draw_hint',
       desc: '',
       args: [],

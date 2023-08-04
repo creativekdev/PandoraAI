@@ -376,7 +376,7 @@
   "clean_successfully": "Clear Successfully",
   "copy_successfully": "Copy Successfully",
   "done": "Done",
-  "ai_draw_hint": "Input your description",
+  "ai_draw_hint": "Please input some prompts",
   "oldversion_tips": "Please update your app",
   "ai_draw_reset_tips": "Clear current drawing",
   "ai_draw_reset_tips_desc": "By clearing the current drawing, you will lose all of your progress.",

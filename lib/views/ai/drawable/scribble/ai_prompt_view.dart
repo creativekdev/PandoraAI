@@ -43,10 +43,10 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
         children: [
           GradientStar(
             width: textPainter.width + $(30) + $(20),
-            height: $(50),
+            height: $(36),
           ),
           Container(
-            padding: EdgeInsets.all($(15)),
+            padding: EdgeInsets.only(left: $(15), right: $(15), top: $(8)),
             child: Row(
               children: [
                 Text(
@@ -80,16 +80,26 @@ class GradientStar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: TipPainter(),
-      size: Size(width, height), // Adjust the size as needed
+    return Container(
+      child: CustomPaint(
+        painter: TipPainter(),
+        size: Size(width, height), // Adjust the size as needed
+      ),
+      decoration: BoxDecoration(boxShadow: [
+        BoxShadow(
+          color: Color(0xFF969696).withOpacity(0.57), // 阴影的颜色
+          offset: Offset(0, $(4)), // 阴影的偏移量
+          blurRadius: $(14), // 阴影的模糊半径
+          spreadRadius: $(3), // 阴影的扩散半径
+        )
+      ]),
     );
   }
 }
 
 class TipPainter extends CustomPainter {
-  double angleHeight = $(15);
-  double radius = $(10);
+  double angleHeight = $(7);
+  double radius = $(8);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -103,9 +113,9 @@ class TipPainter extends CustomPainter {
       ..lineTo(size.width, size.height - radius) // 右下角圆角
       ..arcToPoint(Offset(size.width - radius, size.height), radius: Radius.circular(radius))
       ..lineTo(radius, size.height)
-      ..lineTo(radius * 4, size.height)
+      ..lineTo(radius * 3 + $(5), size.height)
       ..lineTo(radius * 3, size.height + angleHeight)
-      ..lineTo(radius * 2, size.height)
+      ..lineTo(radius * 3 - $(5), size.height)
       ..lineTo(radius, size.height)
       ..arcToPoint(Offset(0, size.height - radius), radius: Radius.circular(radius))
       ..close();
@@ -121,9 +131,13 @@ class TipPainter extends CustomPainter {
       end: Alignment.topRight,
     ).createShader(rect);
 
-    final paint = Paint()..shader = shader;
+    final Paint paint = Paint()
+      ..shader = shader
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
     canvas.drawPath(path, paint);
+    // canvas.drawShadow(path, Color(0xFF969696).withOpacity(0.57), $(4), true);
   }
 
   @override
