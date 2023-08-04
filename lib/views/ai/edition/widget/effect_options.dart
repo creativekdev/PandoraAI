@@ -5,12 +5,11 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
 class EffectOptions extends StatelessWidget {
-  ImageEditionController imageEditionController;
+  BothTransferController controller;
   UploadImageController uploadImageController = Get.find();
   String photoType;
   String source;
@@ -18,7 +17,7 @@ class EffectOptions extends StatelessWidget {
 
   EffectOptions({
     super.key,
-    required this.imageEditionController,
+    required this.controller,
     required this.photoType,
     required this.source,
   });
@@ -62,8 +61,6 @@ class EffectOptions extends StatelessWidget {
         }).then((value) {
           if (value != null) {
             if (value.entity != null) {
-              imageEditionController.resultFilePath = controller.resultFile?.path;
-              imageEditionController.filterController.originFilePath = null;
               simulateProgressBarController.loadComplete();
             } else {
               simulateProgressBarController.onError(error: value.type);
@@ -91,8 +88,7 @@ class EffectOptions extends StatelessWidget {
               itemBuilder: (context, index) {
                 var data = controller.categories[index];
                 var checked = controller.selectedTitle == data;
-                return title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(
-                    onTap: () {
+                return title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(onTap: () {
                   controller.onTitleSelected(index);
                 });
               },
@@ -120,16 +116,8 @@ class EffectOptions extends StatelessWidget {
                           padding: EdgeInsets.all($(2)),
                           child: item(context, data, checked).intoGestureDetector(onTap: () {
                             controller.onItemSelected(index);
-                            if (controller.selectedEffect == null) {
-                              imageEditionController.filterController.originFilePath = null;
-                              imageEditionController.resultFilePath = null;
-                            } else {
-                              if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
-                                generate(context, controller);
-                              } else {
-                                imageEditionController.resultFilePath = controller.resultFile?.path;
-                                imageEditionController.filterController.originFilePath = null;
-                              }
+                            if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
+                              generate(context, controller);
                             }
                           }),
                         ),
@@ -140,7 +128,7 @@ class EffectOptions extends StatelessWidget {
           ],
         );
       },
-      init: imageEditionController.effectController,
+      init: controller,
     );
   }
 

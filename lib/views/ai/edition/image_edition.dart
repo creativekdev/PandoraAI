@@ -37,7 +37,7 @@ class ImageEdition {
       return;
     }
     CacheManager cacheManager = AppDelegate().getManager();
-    var path = await ImageUtils.onImagePick(paiCameraEntity.xFile.path, cacheManager.storageOperator.imageDir.path);
+    var path = await ImageUtils.onImagePick(paiCameraEntity.xFile.path, cacheManager.storageOperator.imageDir.path, compress: true, size: 640);
     Navigator.of(context).push(
       MaterialPageRoute(
         settings: RouteSettings(name: '/ImageEditionScreen'),

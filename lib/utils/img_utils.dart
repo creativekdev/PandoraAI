@@ -10,12 +10,26 @@ import 'package:image/image.dart' as imgLib;
 import 'utils.dart';
 
 class ImageUtils {
-  static Future<String> onImagePick(String tempFilePath, String targetPath) async {
-    var fileName = await md5File(File(tempFilePath));
+  static Future<String> onImagePick(
+    String tempFilePath,
+    String targetPath, {
+    bool compress = false,
+    int size = 512,
+  }) async {
+    var source = File(tempFilePath);
+    var fileName = await md5File(source);
+    if (compress) {
+      fileName = '$size' + fileName;
+    }
     var fileType = getFileType(tempFilePath);
     var path = targetPath + fileName + '.' + fileType;
     if (!File(path).existsSync()) {
-      await File(tempFilePath).copy(path);
+      if (compress) {
+        var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
+        await file.copy(path);
+      } else {
+        await source.copy(path);
+      }
     }
     return path;
   }
@@ -144,6 +158,7 @@ class ImageUtils {
   static Future<Uint8List> printStyleMorphDrawData(File originalImage, File resultImage, String userEmail) async {
     return printImageData(originalImage, resultImage, userEmail, 'StyleMorph', arrowRes: Images.ic_ai_draw_arrow);
   }
+
   static Future<Uint8List> printCartoonizeDrawData(File originalImage, File resultImage, String userEmail) async {
     return printImageData(originalImage, resultImage, userEmail, 'Cartoonize', arrowRes: Images.ic_ai_draw_arrow);
   }
