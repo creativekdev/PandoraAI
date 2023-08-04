@@ -15,10 +15,12 @@ import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
+import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../models/discovery_list_entity.dart';
@@ -341,7 +343,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                         bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context) + $(14),
                       ))
                   .intoGestureDetector(onTap: () {
-                ImEffect.open(context, source: 'home_add_btn', style: EffectStyle.All);
+                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All);
               }),
             );
           }),

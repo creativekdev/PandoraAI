@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
@@ -33,8 +34,6 @@ import '../../transfer/controller/style_morph_controller.dart';
 import '../../transfer/controller/transfer_base_controller.dart';
 import 'im_filter.dart';
 import 'im_filter_screen.dart';
-
-enum EffectStyle { Cartoonizer, StyleMorph, All }
 
 class ImEffectScreen extends StatefulWidget {
   final File resultFile;
@@ -80,10 +79,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
     } else if (widget.effectStyle == EffectStyle.Cartoonizer) {
       controller = Get.put(CartoonizerController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
     } else if (widget.effectStyle == EffectStyle.All) {
-      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
-    }
-    if (controller.resultFile == null) {
-      controller.resultFile = widget.resultFile;
+      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey, style: EffectStyle.All));
     }
   }
 
@@ -173,7 +169,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
         child: DecoratedBox(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(Images.ic_reduction),
+              image: AssetImage(Images.ic_switch_images),
               fit: BoxFit.cover,
             ),
           ),
@@ -376,7 +372,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
       } else if (value.result) {
         generateCount++;
         if (generateCount - 1 > 0) {
-          controller.onGenerateAgainSuccess(time: generateCount - 1, source: widget.source, style: widget.photoType);
+          // controller.onGenerateAgainSuccess(time: generateCount - 1, source: widget.source, style: widget.photoType);
         }
         setState(() {});
       } else {
@@ -397,10 +393,10 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
           if (value != null) {
             if (value.entity != null) {
               simulateProgressBarController.loadComplete();
-              controller.onGenerateSuccess(
-                source: widget.source,
-                style: widget.photoType,
-              );
+              // controller.onGenerateSuccess(
+              //   source: widget.source,
+              //   style: widget.photoType,
+              // );
             } else {
               simulateProgressBarController.onError(error: value.type);
             }
@@ -492,14 +488,14 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
               padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
               color: Colors.transparent,
             )
-            .hero(tag: ImFilter.TagAppbarTagBack)
+            .hero(tag: ImageEdition.TagAppbarTagBack)
             .intoGestureDetector(onTap: () {
           pop();
         }),
         Expanded(
             child: Image.asset(Images.ic_download, height: $(24), width: $(24))
                 .intoContainer(padding: EdgeInsets.all($(8)))
-                .hero(tag: ImFilter.TagAppbarTagTitle)
+                .hero(tag: ImageEdition.TagAppbarTagTitle)
                 .intoGestureDetector(
                   onTap: () {
                     saveToAlbum();
@@ -507,15 +503,12 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
                 )
                 .intoCenter()
                 .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)))),
-        Image.asset(
-          Images.ic_more,
-          width: $(24),
-        )
+        Image.asset(Images.ic_more, width: $(24))
             .intoContainer(
               padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
               color: Colors.transparent,
             )
-            .hero(tag: ImFilter.TagAppbarTagTraining)
+            .hero(tag: ImageEdition.TagAppbarTagTraining)
             .intoGestureDetector(onTap: () async {
           LiPopMenu.showLinePop(
             context,

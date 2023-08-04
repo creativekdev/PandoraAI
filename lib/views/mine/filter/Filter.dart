@@ -1,10 +1,11 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 
-
 import 'package:image/image.dart' as imgLib;
 
-class Filter{
+enum FilterEnum { NOR, VID, VIW, VIC, DRA, DRW, DRC, MNO, SLS, CTN, INV, EDG, SHR, OLD, BLK, RMV, FUS, FRZ, CMC }
+
+class Filter {
   int selectedID = 0;
   static List<String> filters = [
     "NOR",
@@ -27,35 +28,41 @@ class Filter{
     // "FRZ",
     "CMC",
   ];
+
   void setSelectedID(int id) {
     selectedID = id;
   }
+
   int getSelectedID() {
     return selectedID;
   }
+
   List<Uint8List> avatars = [];
+
   Future<bool> calcAvatars(imgLib.Image _image) async {
     int _width, _height;
     int st_width, st_height;
-    if(_image.height > _image.width) {
+    if (_image.height > _image.width) {
       st_width = 0;
       st_height = (_image.height - _image.width) ~/ 2;
-    _height = _image.width;
-    _width = _image.width;
+      _height = _image.width;
+      _width = _image.width;
     } else {
       _width = _image.height;
-      _height =_image.height;
-      st_width = (_image.width - _image.height) ~/ 2;;
+      _height = _image.height;
+      st_width = (_image.width - _image.height) ~/ 2;
+      ;
       st_height = 0;
     }
-    imgLib.Image cropedImage = imgLib.copyCrop(_image,st_width ,st_height, _width, _height );
-    imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width:$(60).toInt(), height: $(60).toInt());
+    imgLib.Image cropedImage = imgLib.copyCrop(_image, st_width, st_height, _width, _height);
+    imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: $(60).toInt(), height: $(60).toInt());
     avatars.clear();
-    for(String filter in filters) {
-      avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter,resizedImage))));
+    for (String filter in filters) {
+      avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter, resizedImage))));
     }
     return true;
   }
+
   static Future<imgLib.Image> ImFilter(String filter, imgLib.Image _image) async {
     //uncomment when image_picker is installed
     imgLib.Image res_image;
@@ -109,8 +116,10 @@ class Filter{
             int g = ImageProcessor.getG(pixel);
             int b = ImageProcessor.getB(pixel);
             int avg = (r + g + b).toDouble() ~/ 3;
-            if(avg>100) avg = 255;
-            else avg = 0;
+            if (avg > 100)
+              avg = 255;
+            else
+              avg = 0;
             int newR = avg;
             int newG = avg;
             int newB = avg;
@@ -193,7 +202,7 @@ class Filter{
             int alpha = imgLib.getAlpha(pixel);
 
             // Apply the vivid effect by increasing the saturation
-            HSLColor hslColor = HSLColor.fromColor( Color.fromARGB(alpha, red, green, blue));
+            HSLColor hslColor = HSLColor.fromColor(Color.fromARGB(alpha, red, green, blue));
             hslColor = hslColor.withSaturation(0.8);
             Color color = hslColor.toColor();
 
@@ -217,7 +226,7 @@ class Filter{
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
 
-            res_image.setPixelRgba(x, y, (red * 1.8).round().clamp(0, 255),(green * 1.8).round().clamp(0, 255),blue);
+            res_image.setPixelRgba(x, y, (red * 1.8).round().clamp(0, 255), (green * 1.8).round().clamp(0, 255), blue);
           }
         }
         break;
@@ -233,13 +242,12 @@ class Filter{
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
 
-            res_image.setPixelRgba(x, y, red,(green * 1.8).round().clamp(0, 255),(blue * 1.8).round().clamp(0, 255));
+            res_image.setPixelRgba(x, y, red, (green * 1.8).round().clamp(0, 255), (blue * 1.8).round().clamp(0, 255));
           }
         }
         break;
       case "DRA":
-
-      // Apply the dramatic filter
+        // Apply the dramatic filter
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
@@ -258,7 +266,7 @@ class Filter{
         }
         break;
       case "DRW":
-      // Apply the dramatic warm filter
+        // Apply the dramatic warm filter
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
@@ -277,8 +285,7 @@ class Filter{
         }
         break;
       case "DRC":
-
-      // Apply the dramatic cool filter
+        // Apply the dramatic cool filter
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
@@ -310,7 +317,7 @@ class Filter{
         }
         break;
       case "SLS":
-      // Apply the Silverstone filter
+        // Apply the Silverstone filter
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
@@ -330,7 +337,7 @@ class Filter{
         }
         break;
       case "NOI":
-      // Apply the Noir filter
+        // Apply the Noir filter
         for (int x = 0; x < res_image.width; x++) {
           for (int y = 0; y < res_image.height; y++) {
             final pixel = res_image.getPixel(x, y);
@@ -355,7 +362,7 @@ class Filter{
             final green = imgLib.getGreen(pixel);
             final blue = imgLib.getBlue(pixel);
             int k;
-            for(k = 0; k < group.length; k++) {
+            for (k = 0; k < group.length; k++) {
               final pixel2 = group[k];
               final r = imgLib.getRed(pixel2);
               final g = imgLib.getGreen(pixel2);
@@ -363,17 +370,17 @@ class Filter{
               int dr = r - red;
               int dg = g - green;
               int db = b - blue;
-              if((dr*dr + dg*dg + db*db)<6000) {
-                int rr = (red * cnt[k] + r) ~/(cnt[k] + 1);
-                int gg = (green * cnt[k] + g) ~/(cnt[k] + 1);
-                int bb = (blue * cnt[k] + b) ~/(cnt[k] + 1);
+              if ((dr * dr + dg * dg + db * db) < 6000) {
+                int rr = (red * cnt[k] + r) ~/ (cnt[k] + 1);
+                int gg = (green * cnt[k] + g) ~/ (cnt[k] + 1);
+                int bb = (blue * cnt[k] + b) ~/ (cnt[k] + 1);
 
                 group[k] = imgLib.getColor(rr, gg, bb);
                 cnt[k]++;
                 break;
               }
             }
-            if(k==group.length) {
+            if (k == group.length) {
               group.add(pixel);
               cnt.add(0);
             }
@@ -383,7 +390,7 @@ class Filter{
           for (int y = 0; y < res_image.height; y++) {
             final int pixel = res_image.getPixel(x, y);
             int mink = 0;
-            for(int k = 0; k < group.length; k++) {
+            for (int k = 0; k < group.length; k++) {
               final r1 = imgLib.getRed(pixel);
               final g1 = imgLib.getGreen(pixel);
               final b1 = imgLib.getBlue(pixel);
@@ -399,13 +406,12 @@ class Filter{
               int dr2 = r1 - r3;
               int dg2 = g1 - g3;
               int db2 = b1 - b3;
-              if((dr1 * dr1 + dg1 * dg1 + db1 * db1) <(dr2 * dr2 + dg2 * dg2 + db2 * db2)) mink = k;
+              if ((dr1 * dr1 + dg1 * dg1 + db1 * db1) < (dr2 * dr2 + dg2 * dg2 + db2 * db2)) mink = k;
             }
             // Convert the pixel to grayscale
             final red = imgLib.getRed(group[mink]);
             final green = imgLib.getGreen(group[mink]);
             final blue = imgLib.getBlue(group[mink]);
-
 
             final modifiedPixel = imgLib.getColor(red, green, blue);
             res_image.setPixel(x, y, modifiedPixel);

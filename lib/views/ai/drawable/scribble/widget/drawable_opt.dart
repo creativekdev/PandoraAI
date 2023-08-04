@@ -1,5 +1,4 @@
 import 'package:cartoonizer/Common/Extension.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -7,7 +6,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -312,7 +311,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
   }
 
   void choosePhoto(BuildContext context, DrawableController drawableController, bool fromCamera) {
-    AnotherMe.checkPermissions().then((value) async {
+    PermissionsUtil.checkPermissions().then((value) async {
       if (value) {
         XFile? result;
         if (fromCamera) {
@@ -362,7 +361,7 @@ class DrawableOptState extends State<DrawableOpt> with TickerProviderStateMixin 
           drawableController.addPens(pen);
         }
       } else {
-        showPhotoLibraryPermissionDialog(context);
+        PermissionsUtil.permissionDenied(context);
       }
     });
   }

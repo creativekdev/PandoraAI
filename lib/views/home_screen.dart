@@ -14,6 +14,7 @@ import 'package:cartoonizer/app/notification_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/main.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/discovery/discovery_list_controller.dart';
@@ -217,17 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               backgroundColor: Color.fromARGB(180, 14, 16, 17),
               iconSize: $(22),
               onTap: (pos) {
-                if (tabItems[pos].id == AppTabId.AI.id()) {
-                  AnotherMe.checkPermissions().then((value) {
-                    if (value) {
-                      AnotherMe.open(context, source: 'home_page');
-                    } else {
-                      AnotherMe.permissionDenied(context);
-                    }
-                  });
-                } else {
-                  _setIndex(pos);
-                }
+                _setIndex(pos);
               },
               onDoubleTap: (index) {
                 EventBusHelper().eventBus.fire(OnTabDoubleClickEvent(data: tabItems[index].id));

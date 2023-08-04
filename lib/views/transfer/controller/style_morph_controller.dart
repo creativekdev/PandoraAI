@@ -75,8 +75,8 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
   }
 
   @override
-  onGenerateSuccess({required String source, required String style}) {
-    Events.styleMorphCompleteSuccess(source: source, style: style);
+  onGenerateSuccess({required String source, required String photoType, required String style}) {
+    Events.styleMorphCompleteSuccess(source: source, photoType: photoType, style: style);
   }
 
   @override
@@ -90,8 +90,8 @@ class StyleMorphController extends TransferBaseController<StyleMorphResultEntity
   }
 
   @override
-  onGenerateAgainSuccess({required int time, required String source, required String style}) {
-    Events.styleMorphGenerateAgain(time: time, source: source, style: style);
+  onGenerateAgainSuccess({required int time, required String source, required String photoType, required String style}) {
+    Events.styleMorphGenerateAgain(time: time, source: source, photoType: photoType, style: style);
   }
 
   @override

@@ -90,7 +90,11 @@ class MyApp extends StatelessWidget {
     AppDelegate.instance.init();
     return GetMaterialApp(
       navigatorObservers: [routeObserver],
-      theme: ThemeData(platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android),
+      theme: ThemeData(
+        platform: Platform.isIOS ? TargetPlatform.iOS : TargetPlatform.android,
+        scaffoldBackgroundColor: ColorConstant.BackgroundColor,
+        fontFamily: 'Poppins',
+      ),
       title: APP_TITLE,
       home: MyHomePage(title: APP_TITLE),
       debugShowCheckedModeBanner: false,

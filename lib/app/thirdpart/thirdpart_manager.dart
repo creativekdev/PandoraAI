@@ -12,6 +12,7 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 class ThirdpartManager extends BaseManager {
   bool _appBackground = false;
@@ -45,12 +46,14 @@ class ThirdpartManager extends BaseManager {
     Connectivity().onConnectivityChanged.listen((event) {
       EventBusHelper().eventBus.fire(OnNetworkStateChangeEvent(data: event));
     });
+    Executor().warmUp();
   }
 
   @override
   Future<void> onDestroy() async {
     await super.onDestroy();
     onPayStatusListen.cancel();
+    Executor().dispose();
   }
 
   initRefresh(Locale? result) {

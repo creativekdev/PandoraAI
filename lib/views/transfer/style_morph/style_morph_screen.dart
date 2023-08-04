@@ -107,10 +107,10 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
       if (value == null) {
         controller.onError();
       } else if (value.result) {
-        controller.onGenerateSuccess(source: widget.photoType, style: controller.selectedEffect?.key ?? '');
+        controller.onGenerateSuccess(source: widget.source, photoType: widget.photoType, style: controller.selectedEffect?.key ?? '');
         generateCount++;
         if (generateCount - 1 > 0) {
-          controller..onGenerateAgainSuccess(time: generateCount - 1, source: widget.photoType, style: controller.selectedEffect?.key ?? '');
+          controller..onGenerateAgainSuccess(time: generateCount - 1, photoType: widget.photoType, source: widget.photoType, style: controller.selectedEffect?.key ?? '');
         }
         controller.onSuccess();
       } else {

@@ -12,6 +12,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/photo_source.dart';
 import 'package:cartoonizer/models/upload_record_entity.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/choose_tab_bar.dart';
 import 'package:flutter/gestures.dart';
@@ -275,7 +276,7 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                                                       tabList: tabs.map((e) => e.title(context).toString()).toList(),
                                                       onTabClick: (index) {
                                                         if (tabs[index].isAiSource()) {
-                                                          AnotherMe.checkPermissions().then((value) {
+                                                          PermissionsUtil.checkPermissions().then((value) {
                                                             if (value) {
                                                               albumController.getTotalAlbum().then((value) {
                                                                 albumController.loadData();
@@ -284,7 +285,7 @@ class PickPhotoScreenState extends AppState<_PickPhotoScreen> with TickerProvide
                                                                 currentIndex = index;
                                                               });
                                                             } else {
-                                                              showPhotoLibraryPermissionDialog(context);
+                                                              PermissionsUtil.permissionDenied(context);
                                                             }
                                                           });
                                                         } else {

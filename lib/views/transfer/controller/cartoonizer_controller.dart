@@ -80,7 +80,8 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
   }
 
   @override
-  onGenerateSuccess({required String source, required String style}) {
+  onGenerateSuccess({required String source,     required String photoType,
+    required String style}) {
     Events.facetoonGenerated(style: style, source: source);
   }
 

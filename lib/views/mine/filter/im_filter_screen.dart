@@ -12,6 +12,7 @@ import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/Adjust.dart';
 import 'package:cartoonizer/views/mine/filter/DecorationCropper.dart';
@@ -198,7 +199,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           child: DecoratedBox(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(Images.ic_reduction),
+                image: AssetImage(Images.ic_switch_images),
                 fit: BoxFit.cover,
               ),
             ),
@@ -727,7 +728,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
               color: Colors.transparent,
             )
-            .hero(tag: ImFilter.TagAppbarTagBack)
+            .hero(tag: ImageEdition.TagAppbarTagBack)
             .intoGestureDetector(onTap: () {
           widget.onCallback?.call();
           pop();
@@ -735,7 +736,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         Expanded(
             child: Image.asset(Images.ic_download, height: $(24), width: $(24))
                 .intoContainer(padding: EdgeInsets.all($(8)))
-                .hero(tag: ImFilter.TagAppbarTagTitle)
+                .hero(tag: ImageEdition.TagAppbarTagTitle)
                 .intoGestureDetector(
                   onTap: () {
                     controller.saveToAlbum(context);
@@ -751,7 +752,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
               color: Colors.transparent,
             )
-            .hero(tag: ImFilter.TagAppbarTagTraining)
+            .hero(tag: ImageEdition.TagAppbarTagTraining)
             .intoGestureDetector(onTap: () async {
           LiPopMenu.showLinePop(
             context,

@@ -161,7 +161,6 @@ class Images {
    static const String ic_recent_checked = 'assets/images/ic_recent_checked.png';
    static const String ic_recent_delete = 'assets/images/ic_recent_delete.png';
    static const String ic_recently = 'assets/images/ic_recently.png';
-   static const String ic_reduction = 'assets/images/ic_reduction.png';
    static const String ic_ref_code = 'assets/images/ic_ref_code.png';
    static const String ic_refresh_header = 'assets/images/ic_refresh_header.svg';
    static const String ic_report = 'assets/images/ic_report.png';
@@ -231,3 +230,4 @@ class Images {
    static const String update_image = 'assets/images/update_image.png';
    static const String visa = 'assets/images/visa.png';
 }
+

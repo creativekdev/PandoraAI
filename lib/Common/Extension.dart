@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {
   void showToast(String text, {ToastGravity gravity = ToastGravity.BOTTOM}) {
+    Fluttertoast.cancel();
     Fluttertoast.showToast(
         msg: text,
         toastLength: Toast.LENGTH_SHORT,

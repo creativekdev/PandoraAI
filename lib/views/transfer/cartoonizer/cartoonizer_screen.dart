@@ -113,7 +113,7 @@ class _CartoonizeScreenState extends AppState<CartoonizeScreen> {
       if (value == null) {
         // do nothing
       } else if (value.result) {
-        controller.onGenerateSuccess(source: photoType, style: controller.selectedEffect?.key ?? '');
+        controller.onGenerateSuccess(source: widget.source, photoType: photoType, style: controller.selectedEffect?.key ?? '');
         // generateCount++;
         // if (generateCount - 1 > 0) {
         // Events.facetoonGeneratedAgain(style: controller.selectedEffect?.key ?? '', time: generateCount - 1);

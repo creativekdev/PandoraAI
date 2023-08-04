@@ -7,12 +7,13 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
+import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring_screen.dart';
 
 class AiColoring {
   static Future open(BuildContext context, {RecentColoringEntity? record, required String source}) async {
-    bool result = await AnotherMe.checkPermissions();
+    bool result = await PermissionsUtil.checkPermissions();
     if (result) {
       if (record == null) {
         return _open(context, source);
@@ -20,7 +21,7 @@ class AiColoring {
         return _openFromRecent(context, source, record);
       }
     } else {
-      return AnotherMe.permissionDenied(context);
+      return PermissionsUtil.permissionDenied(context);
     }
   }
 
