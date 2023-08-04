@@ -274,6 +274,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("帮助"),
         "high_resolution": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
+        "how_to_use": MessageLookupByLibrary.simpleMessage("如何使用"),
+        "how_to_use_desc":
+            MessageLookupByLibrary.simpleMessage("选择一张黑白的图画，您将获得彩色图像！"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),
         "input_feedback": MessageLookupByLibrary.simpleMessage("请输入您的意见"),
         "input_invited_code": MessageLookupByLibrary.simpleMessage("邀请码填写"),
@@ -316,6 +319,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
         "my_code": MessageLookupByLibrary.simpleMessage("我的邀请码"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("我的最近"),
         "name": MessageLookupByLibrary.simpleMessage("全名"),
         "name_hint": MessageLookupByLibrary.simpleMessage("输入姓名"),
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),

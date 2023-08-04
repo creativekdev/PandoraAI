@@ -496,5 +496,8 @@
   "blogging": "Blogging Effects",
   "furry": "Furry Friends",
   "update": "更新",
-  "create_with_prompt": "创建提示语"
+  "create_with_prompt": "创建提示语",
+  "how_to_use": "如何使用",
+  "how_to_use_desc": "选择一张黑白的图画，您将获得彩色图像！",
+  "my_rencents": "我的最近"
 }

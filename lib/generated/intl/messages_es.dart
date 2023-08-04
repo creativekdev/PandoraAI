@@ -344,6 +344,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "high_resolution":
             MessageLookupByLibrary.simpleMessage("Imágenes de alta calidad"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora ama"),
+        "how_to_use": MessageLookupByLibrary.simpleMessage("¿Cómo usar?"),
+        "how_to_use_desc": MessageLookupByLibrary.simpleMessage(
+            "¡Elige un dibujo en blanco y negro y obtendrás una imagen colorida!"),
         "in_original":
             MessageLookupByLibrary.simpleMessage("Contiene la imagen original"),
         "input_feedback": MessageLookupByLibrary.simpleMessage(
@@ -402,6 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "msgTitle": MessageLookupByLibrary.simpleMessage("Mensaje"),
         "my_code":
             MessageLookupByLibrary.simpleMessage("Mi código de invitación"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("Mis recientes"),
         "name": MessageLookupByLibrary.simpleMessage("nombre completo"),
         "name_hint":
             MessageLookupByLibrary.simpleMessage("Introduzca un nombre"),
