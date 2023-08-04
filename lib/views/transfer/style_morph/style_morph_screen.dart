@@ -6,6 +6,8 @@ import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
+import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
@@ -33,8 +35,6 @@ import 'package:common_utils/common_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
-import '../../mine/filter/im_effect_screen.dart';
-import '../../mine/filter/im_filter.dart';
 import '../controller/style_morph_controller.dart';
 
 class StyleMorphScreen extends StatefulWidget {
@@ -190,24 +190,6 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
                       icon: Images.ic_share,
                       onTap: () {
                         shareOut(context, controller);
-                      }),
-                  ListPopItem(
-                      text: S.of(context).share_out,
-                      icon: Images.ic_share,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            settings: RouteSettings(name: "/ImFilterScreen"),
-                            builder: (context) => ImEffectScreen(
-                              tab: TABS.EFFECT,
-                              source: widget.source,
-                              originFile: controller.resultFile!,
-                              resultFile: controller.resultFile!,
-                              photoType: widget.photoType,
-                            ),
-                          ),
-                        );
                       }),
                 ],
               );
@@ -366,75 +348,15 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
   }
 
   pickPhoto(BuildContext context, StyleMorphController controller) {
-    showModalBottomSheet<bool>(
-        context: context,
-        builder: (ctxt) {
-          return Column(
-            children: [
-              SizedBox(height: $(5)),
-              Text(
-                S.of(context).take_a_selfie,
-                style: TextStyle(
-                  fontSize: $(18),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(ctxt).pop(true);
-              }),
-              Divider(height: 1, color: ColorConstant.LineColor),
-              Text(
-                S.of(context).select_from_album,
-                style: TextStyle(
-                  fontSize: $(18),
-                  fontFamily: 'Poppins',
-                  color: Colors.white,
-                ),
-              ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
-                Navigator.of(ctxt).pop(false);
-              }),
-            ],
-            mainAxisSize: MainAxisSize.min,
-          ).intoContainer(padding: EdgeInsets.only(bottom: ScreenUtil.getBottomPadding(context))).intoMaterial(color: ColorConstant.BackgroundColor);
-        }).then((value) {
-      if (value != null) {
-        if (value) {
-          pickPhotoFromCamera(context, controller);
-        } else {
-          pickPhotoFromAlbum(context, controller);
-        }
+    PAICamera.takePhoto(context).then((value) async {
+      if (value == null) {
+        return;
       }
-    });
-  }
-
-  pickPhotoFromCamera(BuildContext context, StyleMorphController controller) async {
-    var pickImage = await ImagePicker().pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.rear, imageQuality: 100);
-    if (pickImage != null) {
-      photoType = 'camera';
+      photoType = value.source;
       CacheManager cacheManager = AppDelegate().getManager();
-      var path = await ImageUtils.onImagePick(pickImage.path, cacheManager.storageOperator.recordStyleMorphDir.path);
+      var path = await ImageUtils.onImagePick(value.xFile.path, cacheManager.storageOperator.recordStyleMorphDir.path);
       changeOriginFile(File(path));
-      // XFile? result = await CropScreen.crop(context, image: pickImage, brightness: Brightness.light);
-    }
-  }
-
-  pickPhotoFromAlbum(BuildContext context, StyleMorphController controller) async {
-    var files = await PickAlbumScreen.pickImage(
-      context,
-      count: 1,
-      switchAlbum: true,
-    );
-    if (files != null && files.isNotEmpty) {
-      var medium = files.first;
-      var file = await medium.originFile;
-      if (file != null) {
-        CacheManager cacheManager = AppDelegate().getManager();
-        var path = await ImageUtils.onImagePick(file.path, cacheManager.storageOperator.recordStyleMorphDir.path);
-        photoType = 'gallery';
-        changeOriginFile(File(path));
-        // XFile? result = await CropScreen.crop(context, image: XFile(file.path), brightness: Brightness.light);
-      }
-    }
+    });
   }
 
   toPrint(BuildContext context, StyleMorphController controller) async {
@@ -624,7 +546,7 @@ class _StyleMorphScreenState extends AppState<StyleMorphScreen> {
         ),
       ).then((value) {
         if (value ?? false) {
-          Navigator.pop(context);
+          pop();
         }
       });
       return false;

@@ -52,14 +52,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   AnimationController? animationController;
 
+  late StreamSubscription onHomeScrollListener;
+
   @override
   void initState() {
     super.initState();
-    Get.put(UploadImageController());
     animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
     initialTab(false);
-    discoveryListController.onScrollChange = (scrollDown) {
-      if (!mounted) {
+    onHomeScrollListener = EventBusHelper().eventBus.on<OnHomeScrollEvent>().listen((event) {
+      var scrollDown = event.data;
+      if (scrollDown == null || !mounted) {
         return;
       }
       if (animationController == null) {
@@ -70,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       } else if (!scrollDown) {
         animationController?.reverse();
       }
-    };
+    });
     onPaySuccessListener = EventBusHelper().eventBus.on<OnPaySuccessEvent>().listen((event) {
       userManager.rateNoticeOperator.onBuy(context);
     });
@@ -153,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     onHomeConfigListener.cancel();
     onNewInvitationCodeListener.cancel();
     onUserStateChangeListener.cancel();
+    onHomeScrollListener.cancel();
     animationController?.dispose();
     super.dispose();
   }

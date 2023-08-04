@@ -12,7 +12,7 @@ class GridSlider extends StatefulWidget {
   final FloatCallback onChanged;
   final VoidCallback  onEnd;
 
-  GridSlider({required this.minVal, required this.maxVal, required this.currentPos, required this.onChanged, required this.onEnd()});
+  GridSlider({required this.minVal, required this.maxVal, required this.currentPos, required this.onChanged, required this.onEnd});
 
   @override
   _GridSliderState createState() => _GridSliderState();

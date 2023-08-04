@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/gallery/crop_screen.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';

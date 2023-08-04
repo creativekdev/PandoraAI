@@ -17,14 +17,14 @@ class Filter{
     "MNO",
     "SLS",
     "CTN",
-    "INV",
-    "EDG",
+    // "INV",
+    // "EDG",
     "SHR",
     "OLD",
     "BLK",
     "RMV",
-    "FUS",
-    "FRZ",
+    // "FUS",
+    // "FRZ",
     "CMC",
   ];
   void setSelectedID(int id) {

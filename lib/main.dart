@@ -7,6 +7,7 @@ import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Common/kochava.dart';
 import 'package:cartoonizer/Common/navigator_observer.dart';
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/api/app_api.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/thirdpart/thirdpart_manager.dart';
@@ -267,6 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _checkIntroductionPage() {
+    Get.put(UploadImageController());
     Posthog().screenWithUser(screenName: 'entry_screen');
     var value = AppDelegate.instance.getManager<CacheManager>().getBool(CacheManager.keyHasIntroductionPageShowed);
     if (value) {

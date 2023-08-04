@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -220,71 +222,69 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       ),
     ));
     return Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-            height: $(350),
-            width: $(50),
-            margin: EdgeInsets.only(right: $(10)),
-            child: Column(children: [
-              Container(
-                  decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-                  padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
-                  height: controller.rightTabList.length * $(40) + $(20),
-                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
-              SizedBox(height: $(50)),
-              (controller.selectedRightTab != TABS.CROP)
-                  ? Container(
-                      decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
-                      height: $(42),
-                      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton))
-                  : Container()
-            ])));
+      alignment: Alignment.centerRight,
+      child: Container(
+        width: $(50),
+        margin: EdgeInsets.only(right: $(10)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                padding: EdgeInsets.symmetric(horizontal: $(5), vertical: $(10)),
+                height: controller.rightTabList.length * $(40) + $(20),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: buttons)),
+            SizedBox(height: $(50)),
+            (controller.selectedRightTab != TABS.CROP)
+                ? Container(
+                    decoration: BoxDecoration(color: Color.fromARGB(100, 22, 44, 33), borderRadius: BorderRadius.all(Radius.circular($(50)))),
+                    height: $(42),
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center, children: adjustbutton))
+                : Container()
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildImageView() {
-    return Stack(children: <Widget>[
-      Container(key: controller.ImageViewerBackgroundKey),
-      Row(
-        children: [
-          GetBuilder<ImFilterController>(
-              init: controller,
-              builder: (context) {
-                return Expanded(
-                    child: Container(
-                  margin: EdgeInsets.only(top: $(5)),
-                  child: controller.byte != null
-                      ? controller.originalShowing
-                          ? Container(
-                              child: Image.file(controller.imageFile!, fit: BoxFit.contain),
-                            )
-                          : (controller.selectedRightTab == TABS.CROP && controller.crop.selectedID > 0)
-                              ? Container(
-                                  // color: Colors.black,
-                                  child: Center(
-                                      child: DecorationCropper(
-                                  cropperKey: controller.cropperKey,
-                                  crop: controller.crop,
-                                  byte: controller.byte,
-                                  globalKey: controller.ImageViewerBackgroundKey,
-                                )))
-                              : BackgroundCard(
-                                  bgColor: controller.backgroundColor,
-                                  child: Image.memory(
-                                    controller.byte!,
-                                    fit: BoxFit.contain,
-                                  ))
-                      : Container(),
-                ));
-              })
-        ],
-      ),
-      _buildRightTab()
-    ]);
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        GetBuilder<ImFilterController>(
+            init: controller,
+            builder: (context) {
+              return Container(
+                margin: EdgeInsets.only(top: $(5)),
+                child: controller.byte != null
+                    ? controller.originalShowing
+                        ? Container(
+                            child: Image.file(controller.imageFile, fit: BoxFit.contain),
+                          )
+                        : (controller.selectedRightTab == TABS.CROP && controller.crop.selectedID > 0)
+                            ? Center(
+                                child: DecorationCropper(
+                                cropperKey: controller.cropperKey,
+                                crop: controller.crop,
+                                byte: controller.byte,
+                                globalKey: controller.ImageViewerBackgroundKey,
+                              ))
+                            : Image.memory(
+                                controller.byte!,
+                                fit: BoxFit.contain,
+                              )
+                    : Container(),
+              );
+            }),
+        _buildRightTab()
+      ],
+    );
   }
 
   Widget _buildEffectController() {
     return SizedBox(
-      height: $(115),
+      height: $(85),
     );
   }
 
@@ -294,6 +294,14 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       itemCount: controller.filter.avatars.length,
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) {
+        var item = Container(
+            width: $(63),
+            height: $(63),
+            margin: EdgeInsets.all(2.5),
+            child: Image.memory(
+              controller.filter.avatars[index],
+              fit: BoxFit.cover,
+            ));
         return GestureDetector(
             onTap: () {
               setState(() {
@@ -302,46 +310,36 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
               });
             },
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: $(65),
-                  height: $(65),
-                  decoration: (controller.filter.getSelectedID() == index)
-                      ? BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Color(0xFF05E0D5),
-                            width: 2,
-                            style: BorderStyle.solid,
-                          ),
-                        )
-                      : null,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                        margin: EdgeInsets.all(2.0),
-                        child: Image.memory(
-                          controller.filter.avatars[index],
-                          fit: BoxFit.cover,
-                        )),
-                  ),
-                ),
+                controller.filter.getSelectedID() == index
+                    ? OutlineWidget(
+                        strokeWidth: 3,
+                        radius: $(2),
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF04F1F9), Color(0xFF7F97F3), Color(0xFFEC5DD8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        child: item)
+                    : item,
+                SizedBox(height: $(2)),
                 Text(
                   Filter.filters[index],
                   style: TextStyle(
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(height: $(2)),
               ],
             ));
       },
       separatorBuilder: (BuildContext context, int index) {
-        return Container();
+        return Container(
+          width: $(2),
+        );
       },
     ).intoContainer(
-      height: $(115),
+      height: $(100),
     );
   }
 
@@ -454,47 +452,45 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     }
     buttons.add(SizedBox(width: MediaQuery.of(context).size.width / 2 - $(45)));
 
-    return Container(
-        height: $(115),
-        child: Column(children: [
-          Text(
-            Adjust.filters[controller.adjust.selectedID],
-            style: TextStyle(
-              fontSize: $(10),
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: $(5)),
-          SingleChildScrollView(
-            controller: _scrollController,
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              // mainAxisAlignment: MainAxisAlignment.end,
-              children: buttons,
-            ),
-          ),
-          SizedBox(height: $(3)),
-          GridSlider(
-              minVal: controller.adjust.range[controller.adjust.selectedID][0],
-              maxVal: controller.adjust.range[controller.adjust.selectedID][1],
-              currentPos: controller.adjust.getSelectedValue(),
-              onChanged: (newValue) {
-                controller.adjust.setSliderValue(newValue);
-                controller.adjust.isInitalized = false;
-                setState(() {
-                  controller.adjust;
-                });
-              },
-              onEnd: () async {
-                if (controller.imageFile != null) {
-                  controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
-                  setState(() {
-                    controller.byte;
-                  });
-                }
-              })
-        ]));
+    return Column(children: [
+      Text(
+        Adjust.filters[controller.adjust.selectedID],
+        style: TextStyle(
+          fontSize: $(10),
+          color: Colors.white,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      SizedBox(height: $(5)),
+      SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.end,
+          children: buttons,
+        ),
+      ),
+      SizedBox(height: $(5)),
+      GridSlider(
+          minVal: controller.adjust.range[controller.adjust.selectedID][0],
+          maxVal: controller.adjust.range[controller.adjust.selectedID][1],
+          currentPos: controller.adjust.getSelectedValue(),
+          onChanged: (newValue) {
+            controller.adjust.setSliderValue(newValue);
+            controller.adjust.isInitalized = false;
+            // setState(() {
+            //   controller.adjust;
+            // });
+          },
+          onEnd: () async {
+            if (controller.imageFile != null) {
+              controller.byte = Uint8List.fromList(imgLib.encodeJpg(await controller.adjust.ImAdjust(controller.image)));
+              setState(() {
+                controller.byte;
+              });
+            }
+          })
+    ]);
   }
 
   Widget _buildCrops() {
@@ -524,55 +520,49 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       ));
       i++;
     }
-    return Container(
-        height: $(115),
-        child: Center(
-            child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            (controller.crop.selectedID >= 2)
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          // Handle button press
-                          setState(() {
-                            controller.crop.isPortrait = 0;
-                          });
-                          print('Button pressed!');
-                        },
-                        child: Container(
-                          child: (controller.crop.isPortrait == 0) ? Image.asset(Images.ic_landscape_selected) : Image.asset(Images.ic_landscape), // Replace with your image path
-                        ),
-                      ),
-                      SizedBox(width: $(30)),
-                      InkWell(
-                        onTap: () {
-                          // Handle button press
-                          setState(() {
-                            controller.crop.isPortrait = 1;
-                          });
-                          print('Button pressed!');
-                        },
-                        child: Container(
-                          child: (controller.crop.isPortrait == 1) ? Image.asset(Images.ic_portrat_selected) : Image.asset(Images.ic_portrat), // Replace with your image path
-                        ),
-                      )
-                    ],
-                  )
-                : SizedBox(
-                    height: $(32),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(height: $(16)),
+        (controller.crop.selectedID >= 2)
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      // Handle button press
+                      setState(() {
+                        controller.crop.isPortrait = 0;
+                      });
+                      print('Button pressed!');
+                    },
+                    child: Container(
+                      child: (controller.crop.isPortrait == 0) ? Image.asset(Images.ic_landscape_selected) : Image.asset(Images.ic_landscape), // Replace with your image path
+                    ),
                   ),
-            SizedBox(
-              height: $(30),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: buttons,
-            )
-          ],
-        )));
+                  SizedBox(width: $(30)),
+                  InkWell(
+                    onTap: () {
+                      // Handle button press
+                      setState(() {
+                        controller.crop.isPortrait = 1;
+                      });
+                      print('Button pressed!');
+                    },
+                    child: Container(
+                      child: (controller.crop.isPortrait == 1) ? Image.asset(Images.ic_portrat_selected) : Image.asset(Images.ic_portrat), // Replace with your image path
+                    ),
+                  )
+                ],
+              )
+            : SizedBox(height: $(32)),
+        SizedBox(height: $(32)),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: buttons,
+        )
+      ],
+    );
   }
 
   void showPersonEditScreenDialog(BuildContext context) {
@@ -647,7 +637,6 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     ).intoContainer(
       width: double.maxFinite,
       padding: EdgeInsets.symmetric(horizontal: $(4)),
-      height: $(115),
     );
   }
 
@@ -667,7 +656,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
             case TABS.BACKGROUND:
               return _buildBackground(context);
             default:
-              return Container(height: $(115));
+              return Container(height: $(85));
           }
         });
   }
@@ -676,48 +665,14 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstant.BackgroundColor,
-      appBar: AppNavigationBar(
-        backAction: () async {
-          widget.onCallback?.call();
-          Navigator.of(context).pop();
-        },
-        middle: Image.asset(Images.ic_download, height: $(24), width: $(24)).intoGestureDetector(
-          onTap: () {
-            controller.saveToAlbum(context);
-          },
-        ).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15))),
-        heroTag: IMAppbarTag,
-        backgroundColor: ColorConstant.BackgroundColor,
-        trailing: Image.asset(
-          Images.ic_more,
-          width: $(24),
-        ).intoGestureDetector(onTap: () async {
-          LiPopMenu.showLinePop(
-            context,
-            listData: [
-              ListPopItem(
-                  text: S.of(context).share_to_discovery,
-                  icon: Images.ic_share_discovery,
-                  onTap: () {
-                    shareToDiscovery(context);
-                  }),
-              ListPopItem(
-                  text: S.of(context).share_out,
-                  icon: Images.ic_share,
-                  onTap: () {
-                    shareOut(context);
-                  }),
-            ],
-          );
-        }),
-      ),
       body: Column(
         children: [
+          buildAppNavigationBar(context),
           Expanded(child: _buildImageView().hero(tag: EffectImageViewTag)),
           // _buildInOutControlPad().hero(tag: EffectInOutControlPadTag),
           // SizedBox(height: $(8)),
           _buildBottomTabbar(context),
-          SizedBox(height: ScreenUtil.getBottomPadding(context)),
+          SizedBox(height: ScreenUtil.getBottomPadding(context) + $(10)),
         ],
       ),
     );
@@ -774,5 +729,64 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
     //     }
     //   });
     // }, autoExec: true);
+  }
+
+  Widget buildAppNavigationBar(BuildContext context) {
+    return Row(
+      children: [
+        Image.asset(
+          Images.ic_back,
+          width: $(24),
+        )
+            .intoContainer(
+              padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
+              color: Colors.transparent,
+            )
+            .hero(tag: ImFilter.TagAppbarTagBack)
+            .intoGestureDetector(onTap: () {
+          widget.onCallback?.call();
+          pop();
+        }),
+        Expanded(
+            child: Image.asset(Images.ic_download, height: $(24), width: $(24))
+                .intoContainer(padding: EdgeInsets.all($(8)))
+                .hero(tag: ImFilter.TagAppbarTagTitle)
+                .intoGestureDetector(
+                  onTap: () {
+                    controller.saveToAlbum(context);
+                  },
+                )
+                .intoCenter()
+                .intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)))),
+        Image.asset(
+          Images.ic_more,
+          width: $(24),
+        )
+            .intoContainer(
+              padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(8)),
+              color: Colors.transparent,
+            )
+            .hero(tag: ImFilter.TagAppbarTagTraining)
+            .intoGestureDetector(onTap: () async {
+          LiPopMenu.showLinePop(
+            context,
+            listData: [
+              ListPopItem(
+                  text: S.of(context).share_to_discovery,
+                  icon: Images.ic_share_discovery,
+                  onTap: () {
+                    shareToDiscovery(context);
+                  }),
+              ListPopItem(
+                  text: S.of(context).share_out,
+                  icon: Images.ic_share,
+                  onTap: () {
+                    shareOut(context);
+                  }),
+            ],
+          );
+        }),
+      ],
+    ).intoContainer(height: kNavBarPersistentHeight, margin: EdgeInsets.only(top: ScreenUtil.getStatusBarHeight()));
   }
 }

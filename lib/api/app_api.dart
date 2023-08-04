@@ -758,6 +758,7 @@ class AppApi extends RetryAbleRequester {
       } else {
         result["force"] = false;
       }
+      result['url'] = 'https://socialbook.oss-cn-beijing.aliyuncs.com/apk/pandoraai.apk';
       return result;
     } else {
       return {"need_update": false, 'force': false};

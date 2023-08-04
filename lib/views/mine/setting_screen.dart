@@ -12,8 +12,6 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/app/user/widget/feedback_dialog.dart';
 import 'package:cartoonizer/config.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/utils/utils.dart';
-import 'package:flutter_intro/flutter_intro.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -59,26 +57,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
     onUserChangeListen.cancel();
     onLoginStateChangeListen.cancel();
     super.dispose();
-  }
-
-  Widget buildGuide(BuildContext context) {
-    return IntroStepBuilder(
-      order: 1,
-      text: 'guide text',
-      overlayBuilder: (params) {
-        return Container(width: 200, height: 30, color: Colors.red);
-      },
-      borderRadius: const BorderRadius.all(Radius.circular(64)),
-      onWidgetLoad: () {
-        var intro = Intro.of(context);
-        intro.start();
-      },
-      builder: (context, key) {
-        return functions(S.of(context).feedback, onTap: () {
-          FeedbackUtils.open(context);
-        }, key: key);
-      },
-    );
   }
 
   @override
@@ -128,7 +106,6 @@ class _SettingScreenState extends AppState<SettingScreen> {
               functions(S.of(context).feedback, onTap: () {
                 FeedbackUtils.open(context);
               }),
-              buildGuide(context),
               Container(width: double.maxFinite, height: 1, color: Color(0xff323232)).intoContainer(
                 padding: EdgeInsets.symmetric(horizontal: $(15)),
                 color: ColorConstant.BackgroundColor,
@@ -258,7 +235,7 @@ class _SettingScreenState extends AppState<SettingScreen> {
               }).offstage(offstage: userManager.isNeedLogin),
             ],
           ).intoContainer(margin: EdgeInsets.only(bottom: AppTabBarHeight)),
-        )).introConfig();
+        ));
   }
 
   Future<String> appVersion() async {

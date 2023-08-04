@@ -61,6 +61,7 @@ class CacheManager extends BaseManager {
   static const reportOfPosts = "report_of_posts";
   static const reportOfCommentPosts = "report_of_comment_posts";
   static const showedGuideOfHomeDetail = "showed_guide_of_home_detail";
+  static const guideAiColoring = "guide_ai_coloring";
 
   late SharedPreferences _sharedPreferences;
   late StorageOperator _storageOperator;

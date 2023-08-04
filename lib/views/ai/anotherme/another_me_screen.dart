@@ -79,7 +79,7 @@ class _AnotherMeScreenState extends State<AnotherMeScreen> {
         .then((value) {
       if (value != null) {
         if (value) {
-          Navigator.of(context).pop();
+          pop();
         }
       }
     });

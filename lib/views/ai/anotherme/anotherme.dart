@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/another_me_screen.dart';
 import 'package:device_info_plus/device_info_plus.dart';

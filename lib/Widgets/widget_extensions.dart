@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:cartoonizer/Widgets/blank_area_intercept.dart';
 import 'package:cartoonizer/Widgets/size_changed.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_intro/flutter_intro.dart';
 import 'package:skeletons/skeletons.dart';
 
 extension WidgetExtension on Widget {
@@ -148,9 +147,15 @@ extension WidgetExtension on Widget {
     GestureTapCallback? onTap,
     GestureTapCallback? onDoubleTap,
     GestureLongPressCallback? onLongPress,
+    GestureTapDownCallback? onTapDown,
+    GestureTapUpCallback? onTapUp,
+    GestureTapCancelCallback? onTapCancel,
   }) =>
       GestureDetector(
         onTap: onTap,
+        onTapDown: onTapDown,
+        onTapUp: onTapUp,
+        onTapCancel: onTapCancel,
         onDoubleTap: onDoubleTap,
         onLongPress: onLongPress,
         child: this,
@@ -267,16 +272,6 @@ extension WidgetExtension on Widget {
         ),
         child: this,
       );
-
-  Intro introConfig() => Intro(
-        child: this,
-        padding: const EdgeInsets.all(8),
-        borderRadius: BorderRadius.all(Radius.circular(4)),
-        maskColor: const Color.fromRGBO(0, 0, 0, .6),
-        noAnimation: false,
-        maskClosable: false,
-        buttonTextBuilder: (order) => order == 3 ? 'Custom Button Text' : 'Next',
-      );
 }
 
 typedef DelayCallback<T> = T Function();
@@ -287,4 +282,10 @@ Future<T> delay<T>(
 }) async {
   await Future.delayed(Duration(milliseconds: milliseconds), () => () {});
   return callback.call();
+}
+
+extension StateEx on State {
+  pop<T extends Object>([T? data]) {
+    Navigator.of(context).pop(data);
+  }
 }
