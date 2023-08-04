@@ -125,17 +125,16 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
       buttons.add(GestureDetector(
         onTap: () async {
           if (TABS.values[cur] == TABS.CROP) {
-            Navigator.push(
-              context,
-              NoAnimRouter(
-                  settings: RouteSettings(name: "/ImCropScreen"),
-                  ImCropScreen(
-                      filePath: widget.filePath,
-                      cropRect: Rect.zero,
-                      onGetCropPath: (String imgPath) async {
-                        print(img);
-                      })),
-            );
+            // Navigator.push(
+            //   context,
+            //   NoAnimRouter(
+            //       settings: RouteSettings(name: "/ImCropScreen"),
+            //       ImCropScreen(
+            //           filePath: widget.filePath,
+            //           onGetCropPath: (String imgPath) async {
+            //             print(img);
+            //           })),
+            // );
             return;
           }
           if (TABS.values[cur] == TABS.BACKGROUND) {

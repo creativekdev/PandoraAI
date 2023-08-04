@@ -61,7 +61,7 @@ class BackgroundData {
       result['filePath'] = filePath;
     }
     if (color != null) {
-      result['color'] = ColorUtil.colorToHexString(color!);
+      result['color'] = color!.hexValue();
     }
     return result;
   }

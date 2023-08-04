@@ -60,7 +60,7 @@ typedef EndSacle = void Function(ScaleEndDetails details, double ratio);
 
 class ImCropper extends StatefulWidget {
   final GlobalKey cropperKey;
-  final Crop crop;
+  final CropItem crop;
   final String filePath;
   final UpdateSacle updateSacle;
   final EndSacle endSacle;
@@ -72,19 +72,17 @@ class ImCropper extends StatefulWidget {
 }
 
 class _ImCropperState extends State<ImCropper> {
-  double _height = 0,
-      _width = 0;
+  double _height = 0, _width = 0;
   bool isTap = false;
   late UniqueKey _uniqueKey;
-
 
   @override
   Widget build(BuildContext context) {
     if (isTap == false) {
       _uniqueKey = UniqueKey();
     }
-    Size size = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - $(153) - ScreenUtil.getBottomPadding(context) - ScreenUtil.getNavigationBarHeight());
-    double _ratio = widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID];
+    Size size = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - ScreenUtil.getBottomPadding(context) - ScreenUtil.getNavigationBarHeight());
+    double _ratio = widget.crop.config?.ratio ?? 1;
     if (size.width / (size.height - $(6)) > _ratio) {
       _height = size.height - $(6);
       _width = (_height - $(8)) * _ratio + $(8);
@@ -115,17 +113,17 @@ class _ImCropperState extends State<ImCropper> {
                 cropperKey: widget.cropperKey,
                 overlayType: OverlayType.grid,
                 rotationTurns: 0,
-                aspectRatio: widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID],
+                aspectRatio: widget.crop.config?.ratio ?? 1,
                 image: Image.file(File(widget.filePath), fit: BoxFit.fill),
                 onScaleStart: (details) {},
                 onScaleUpdate: (details) {
                   if (details.scale > 0) {
                     isTap = true;
                   }
-                  widget.updateSacle(details, widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID]);
+                  widget.updateSacle(details, widget.crop.config?.ratio ?? 1);
                 },
                 onScaleEnd: (details) {
-                  widget.endSacle(details, widget.crop.ratios[widget.crop.isPortrait][widget.crop.selectedID]);
+                  widget.endSacle(details, widget.crop.config?.ratio ?? 1);
                 },
               )),
         ),

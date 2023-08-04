@@ -270,15 +270,15 @@ class ColorUtil {
   static String colorToCss(Color color) {
     return 'rgba(${color.red},${color.green},${color.blue},${color.opacity})';
   }
-
-  static String colorToHexString(Color color) {
-    return '#${color.alpha.toRadixString(16)}${color.value.toRadixString(16)}';
-  }
 }
 
 extension ColorEx on Color {
-  String hexValue() {
-    return ColorUtil.colorToHexString(this);
+  String hexValue({bool leadingHashSign = true}) {
+    return '${leadingHashSign ? '#' : ''}'
+        '${alpha.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+        '${red.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+        '${green.toRadixString(16).padLeft(2, '0').toUpperCase()}'
+        '${blue.toRadixString(16).padLeft(2, '0').toUpperCase()}';
   }
 
   Color toArgb() {

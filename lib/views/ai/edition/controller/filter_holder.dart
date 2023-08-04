@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
