@@ -17,6 +17,7 @@ import 'package:cartoonizer/views/discovery/widget/discovery_list_card.dart';
 import 'package:cartoonizer/views/discovery/widget/showReportMenu.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:keframe/keframe.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:waterfall_flow/waterfall_flow.dart';
 
@@ -260,13 +261,15 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   (context, index) {
                     var data = listController.dataList[index];
                     if (data.data is SocialPostPageEntity) {
-                      return DiscoveryMgListCard(
-                        width: (ScreenUtil.screenSize.width - $(45)) / 2,
-                        data: data.data! as SocialPostPageEntity,
-                        onTap: () {
-                          Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
-                        },
-                      ).marginOnly(top: $(15));
+                      return FrameSeparateWidget(
+                        child: DiscoveryMgListCard(
+                          width: (ScreenUtil.screenSize.width - $(45)) / 2,
+                          data: data.data! as SocialPostPageEntity,
+                          onTap: () {
+                            Metagram.open(context, source: 'discovery_page', socialPostPage: data.data!);
+                          },
+                        ).marginOnly(top: $(15)),
+                      );
                     } else {
                       return SizedBox.shrink();
                     }
@@ -279,68 +282,70 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
                   var data = listController.dataList[index];
                   if (data.data is DiscoveryListEntity) {
                     if (data.visible) {
-                      return Obx(() => DiscoveryListCard(
-                            data: data.data! as DiscoveryListEntity,
-                            liked: data.liked.value,
-                            hasLine: index != 0,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery'),
-                                  settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                                ),
-                              );
-                            },
-                            longPressCallback: (olpdt) async {
-                              PopmenuUtil.showPopMenu(
+                      return Obx(() => FrameSeparateWidget(
+                            child: DiscoveryListCard(
+                              data: data.data! as DiscoveryListEntity,
+                              liked: data.liked.value,
+                              hasLine: index != 0,
+                              onTap: () {
+                                Navigator.push(
                                   context,
-                                  olpdt,
-                                  LongPressItem(
-                                      text: S.of(context).Report,
-                                      onTap: () {
-                                        Navigator.of(context).pop();
-                                        listController.onLongPressAction(data.data, context);
-                                      }));
-                            },
-                            onCommentTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', autoComment: true),
-                                  settings: RouteSettings(name: "/DiscoveryDetailScreen"),
-                                ),
-                              );
-                            },
-                            onLikeTap: (liked) async {
-                              if (userManager.isNeedLogin) {
-                                userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
-                                return liked;
-                              }
-                              bool result;
-                              listController.likeLocalAddAlready.value = true;
-                              if (liked) {
-                                data.data!.likes--;
-                                listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
-                                  if (value == null) {
-                                    listController.likeLocalAddAlready.value = false;
-                                  }
-                                });
-                                result = false;
-                                data.liked.value = false;
-                              } else {
-                                data.data!.likes++;
-                                listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
-                                  if (value == null) {
-                                    listController.likeLocalAddAlready.value = false;
-                                  }
-                                });
-                                result = true;
-                                data.liked.value = true;
-                              }
-                              return result;
-                            },
-                            ignoreLikeBtn: listController.likeLocalAddAlready.value,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery'),
+                                    settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                                  ),
+                                );
+                              },
+                              longPressCallback: (olpdt) async {
+                                PopmenuUtil.showPopMenu(
+                                    context,
+                                    olpdt,
+                                    LongPressItem(
+                                        text: S.of(context).Report,
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                          listController.onLongPressAction(data.data, context);
+                                        }));
+                              },
+                              onCommentTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) => DiscoveryDetailScreen(discoveryEntity: data.data!, prePage: 'discovery', autoComment: true),
+                                    settings: RouteSettings(name: "/DiscoveryDetailScreen"),
+                                  ),
+                                );
+                              },
+                              onLikeTap: (liked) async {
+                                if (userManager.isNeedLogin) {
+                                  userManager.doOnLogin(context, logPreLoginAction: data.data!.likeId == null ? 'pre_discovery_like' : 'pre_discovery_unlike');
+                                  return liked;
+                                }
+                                bool result;
+                                listController.likeLocalAddAlready.value = true;
+                                if (liked) {
+                                  data.data!.likes--;
+                                  listController.api.discoveryUnLike(data.data!.id, data.data!.likeId!).then((value) {
+                                    if (value == null) {
+                                      listController.likeLocalAddAlready.value = false;
+                                    }
+                                  });
+                                  result = false;
+                                  data.liked.value = false;
+                                } else {
+                                  data.data!.likes++;
+                                  listController.api.discoveryLike(data.data!.id, source: 'discovery_page', style: getStyle(data.data!)).then((value) {
+                                    if (value == null) {
+                                      listController.likeLocalAddAlready.value = false;
+                                    }
+                                  });
+                                  result = true;
+                                  data.liked.value = true;
+                                }
+                                return result;
+                              },
+                              ignoreLikeBtn: listController.likeLocalAddAlready.value,
+                            ),
                           ));
                     } else {
                       return SizedBox.shrink();

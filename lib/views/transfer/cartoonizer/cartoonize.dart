@@ -8,10 +8,9 @@ import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
-import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
-import 'package:cartoonizer/views/mine/filter/im_effect.dart';
-import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonizer_screen.dart';
+import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 
 class Cartoonize {
   static Future open(
@@ -20,6 +19,8 @@ class Cartoonize {
     RecentEffectModel? record,
     String? initKey,
   }) async {
+    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer);
+    return;
     bool result = await PermissionsUtil.checkPermissions();
     if (result) {
       if (record == null) {

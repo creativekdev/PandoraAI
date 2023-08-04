@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
+import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
@@ -13,6 +18,12 @@ import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
+import '../../../Common/Extension.dart';
+import '../../../app/app.dart';
+import '../../../app/thirdpart/thirdpart_manager.dart';
+import '../../../app/user/user_manager.dart';
+import '../../../utils/img_utils.dart';
+import '../../share/ShareScreen.dart';
 import 'widget/effect_options.dart';
 
 class ImageEditionScreen extends StatefulWidget {
@@ -44,16 +55,37 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     controller = Get.put(ImageEditionController(originPath: widget.filePath, effectStyle: widget.style));
   }
 
-  saveToAlbum() {
-    //todo
+  saveToAlbum() async {
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
+      BothTransferController effectHolder = controller.currentItem.holder;
+      await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
+    } else {
+      ImageEditionBaseHolder holder = controller.currentItem.holder;
+      await GallerySaver.saveImage(holder.resultFile!.path, albumName: saveAlbumName);
+    }
+    CommonExtension().showImageSavedOkToast(context);
   }
 
   shareToDiscovery() {
     //todo
   }
 
-  shareOut() {
-    //todo
+  shareOut() async {
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
+    var userManager = AppDelegate().getManager<UserManager>();
+    var uint8list;
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
+      BothTransferController effectHolder = controller.currentItem.holder;
+      uint8list = await ImageUtils.printStyleMorphDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    } else {
+      ImageEditionBaseHolder holder = controller.currentItem.holder;
+      uint8list = await ImageUtils.printStyleMorphDrawData(holder.resultFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+    }
+    ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
+        onShareSuccess: (platform) {
+      Events.styleFilterCompleteShare(source: widget.source, platform: platform, type: 'image');
+    });
+    AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
   }
 
   @override
