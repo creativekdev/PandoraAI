@@ -405,6 +405,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "msgTitle": MessageLookupByLibrary.simpleMessage("Mensaje"),
         "my_code":
             MessageLookupByLibrary.simpleMessage("Mi código de invitación"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("Mis recientes"),
         "name": MessageLookupByLibrary.simpleMessage("nombre completo"),
         "name_hint":
             MessageLookupByLibrary.simpleMessage("Introduzca un nombre"),

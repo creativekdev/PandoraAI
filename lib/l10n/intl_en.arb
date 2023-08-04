@@ -497,5 +497,6 @@
   "update": "Update",
   "create_with_prompt": "Create with Prompt",
   "how_to_use": "How to use?",
-  "how_to_use_desc": "Choose a drawing with a black and white them and you will get a colorful-image!"
+  "how_to_use_desc": "Choose a drawing with a black and white them and you will get a colorful-image!",
+  "my_rencents": "My Recents"
 }

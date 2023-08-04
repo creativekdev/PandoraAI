@@ -118,14 +118,14 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                           padding: EdgeInsets.symmetric(horizontal: $(30)),
                           child: Text(
                             S.of(context).how_to_use,
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFE31ECD), fontSize: $(18)),
+                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: $(18)),
                           ),
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: $(30)),
                           child: Text(
                             S.of(context).how_to_use_desc,
-                            style: TextStyle(color: Color(0xFFE31ECD), fontSize: $(14)),
+                            style: TextStyle(color: Colors.white, fontSize: $(14)),
                           ),
                         ),
                         Container(

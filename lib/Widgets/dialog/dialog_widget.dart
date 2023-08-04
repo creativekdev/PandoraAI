@@ -391,9 +391,9 @@ Future<PAICameraEntity?> showPhotoTakeDialog(
   BuildContext context,
 ) async {
   List photoTakeDatas = [
-    {"name": "Take a selfie", "type": PhotoTakeDialogType.selfie, "image": Images.select_selfie},
-    {"name": "Select from album", "type": PhotoTakeDialogType.album, "image": Images.select_album},
-    {"name": "My recents", "type": PhotoTakeDialogType.recent, "image": Images.select_recent},
+    {"name": S.of(context).take_a_selfie, "type": PhotoTakeDialogType.selfie, "image": Images.select_selfie},
+    {"name": S.of(context).select_from_album, "type": PhotoTakeDialogType.album, "image": Images.select_album},
+    {"name": S.of(context).my_rencents, "type": PhotoTakeDialogType.recent, "image": Images.select_recent},
   ];
   var type = await showModalBottomSheet(
     context: context,

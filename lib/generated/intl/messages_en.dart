@@ -382,6 +382,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("Messages"),
         "my_code": MessageLookupByLibrary.simpleMessage("My Code"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("My Recents"),
         "name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "name_hint": MessageLookupByLibrary.simpleMessage("Enter name"),
         "name_validation":

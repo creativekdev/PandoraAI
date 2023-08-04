@@ -319,6 +319,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
         "my_code": MessageLookupByLibrary.simpleMessage("我的邀请码"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("我的最近"),
         "name": MessageLookupByLibrary.simpleMessage("全名"),
         "name_hint": MessageLookupByLibrary.simpleMessage("输入姓名"),
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),

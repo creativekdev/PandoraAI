@@ -335,6 +335,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("最もポピュラーな"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("メッセージ"),
         "my_code": MessageLookupByLibrary.simpleMessage("私の招待コード"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("私の最近のこと"),
         "name": MessageLookupByLibrary.simpleMessage("フルネーム"),
         "name_hint": MessageLookupByLibrary.simpleMessage("名前を入力してください"),
         "name_validation": MessageLookupByLibrary.simpleMessage("名前を入力してください"),

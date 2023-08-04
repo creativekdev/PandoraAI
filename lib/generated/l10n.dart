@@ -5039,6 +5039,16 @@ class S {
       args: [],
     );
   }
+
+  /// `My Recents`
+  String get my_rencents {
+    return Intl.message(
+      'My Recents',
+      name: 'my_rencents',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
