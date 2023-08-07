@@ -41,6 +41,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
   Future<String> onSaveImage() async {
     final imageBytes = await Cropper.crop(
       cropperKey: cropperKey,
+      pixelRatio: 1,
     );
     final File file = getSavePath(filePath);
     await file.writeAsBytes(imageBytes!);

@@ -1,9 +1,13 @@
 import 'dart:io';
 
+import 'package:cartoonizer/common/importFile.dart';
+
 import 'image_edition_controller.dart';
 
 abstract class ImageEditionBaseHolder {
   late ImageEditionController _parent;
+
+  Widget? shownImageWidget;
 
   String? originFilePath;
 
@@ -46,4 +50,8 @@ abstract class ImageEditionBaseHolder {
   }
 
   dispose() {}
+
+  Widget buildShownImage() {
+    return shownImageWidget ?? Image.file(originFile!);
+  }
 }

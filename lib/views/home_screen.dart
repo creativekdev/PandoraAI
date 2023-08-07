@@ -208,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         animation: animationController!,
         builder: (context, child) {
           return Transform.translate(
-            offset: Offset(0, animationController!.value * (55 + ScreenUtil.getBottomPadding(context))),
+            offset: Offset(0, animationController!.value * (AppTabBarHeight + ScreenUtil.getBottomPadding(context))),
             child: ClipRect(
                 child: AppTabBar(
               items: createBottomItem(context),

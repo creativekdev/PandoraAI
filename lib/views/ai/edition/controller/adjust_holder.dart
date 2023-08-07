@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -9,6 +10,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as imgLib;
+import 'package:worker_manager/worker_manager.dart';
 
 import 'ie_base_holder.dart';
 
@@ -16,6 +18,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
   AdjustHolder({required super.parent});
 
   List<AdjustData> dataList = [];
+  Executor executor = new Executor();
 
   @override
   setOriginFilePath(String? path) {
@@ -58,20 +61,29 @@ class AdjustHolder extends ImageEditionBaseHolder {
   int get index => _index;
 
   set index(int i) {
+    if (_index == i) {
+      return;
+    }
     _index = i;
     isClick = true;
     delay(() => isClick = false, milliseconds: 200);
-    scrollController.animateTo(index * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
+    if (!scrollController.positions.isEmpty) {
+      scrollController.animateTo(index * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
+    }
     update();
     showToast();
+    onSwitchNewAdj();
   }
 
   ScrollController scrollController = ScrollController();
 
   double padding = 0;
   double itemWidth = 0;
-  imgLib.Image? _imageData;
   bool isClick = false;
+  imgLib.Image? _originImageData;
+  imgLib.Image? baseImage;
+  imgLib.Image? shownImage;
+  Uint8List? showImageBytes;
 
   @override
   void onInit() {
@@ -101,17 +113,10 @@ class AdjustHolder extends ImageEditionBaseHolder {
   initData() {
     getImage(originFile!).then((value) {
       getLibImage(value).then((value) {
-        _imageData = value;
-        saveResult(_imageData!);
+        _originImageData = value;
+        onSwitchNewAdj();
       });
     });
-  }
-
-  void buildResult() {
-    imgLib.Image res_image;
-    res_image = imgLib.copyCrop(_imageData!, 0, 0, _imageData!.width, _imageData!.height);
-    _imAdjust(dataList, res_image);
-    saveResult(res_image);
   }
 
   showToast() {
@@ -132,28 +137,81 @@ class AdjustHolder extends ImageEditionBaseHolder {
       AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100),
       AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -180, end: 180),
     ];
-    delay(() {
-      if (scrollController.positions.isEmpty) {
-        return;
-      }
+    _index = 0;
+    isClick = true;
+    update();
+    onSwitchNewAdj();
+    delay(() => isClick = false, milliseconds: 200);
+    if (!scrollController.positions.isEmpty) {
       scrollController.animateTo(index * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
-    }, milliseconds: 200);
+    }
+  }
+
+  void buildResult() async {
+    var start = DateTime.now().millisecondsSinceEpoch;
+    shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
+    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
+    print("trans-result: ${DateTime.now().millisecondsSinceEpoch - start}");
+    createShownBytes();
+    saveResult(shownImage!);
+  }
+
+  onSwitchNewAdj() async {
+    if (_originImageData == null) {
+      return;
+    }
+    dataList.forEach((element) => element.active = false);
+    dataList[index].active = true;
+    var start = DateTime.now().millisecondsSinceEpoch;
+    baseImage = await executor.execute(arg1: _originImageData!, fun1: _copyImage);
+    baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
+    var baseT = DateTime.now().millisecondsSinceEpoch;
+    var baseStart = baseT - start;
+    print("trans-base: $baseStart");
+    shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
+    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
+    print("trans-result: ${DateTime.now().millisecondsSinceEpoch - baseT}");
+    createShownBytes();
+    saveResult(shownImage!);
+  }
+
+  void createShownBytes() {
+    if (shownImage == null) {
+      return;
+    }
+    getUiImage(shownImage!).then((value) async {
+      var byteData = await value.toByteData(format: ImageByteFormat.png);
+      showImageBytes = byteData!.buffer.asUint8List();
+      shownImageWidget = Image.memory(showImageBytes!);
+      update();
+    });
+  }
+
+  @override
+  dispose() {
+    executor.dispose();
+    return super.dispose();
   }
 }
 
-_imAdjust(List<AdjustData> datas, imgLib.Image image) {
+imgLib.Image _copyImage(imgLib.Image image, TypeSendPort port) {
+  return imgLib.copyCrop(image, 0, 0, image.width, image.height);
+}
+
+imgLib.Image _imAdjust(List<AdjustData> datas, imgLib.Image image, TypeSendPort port) {
   for (var value in datas) {
-    _imAdjustOne(value, image);
+    image = _imAdjustOne(value, image);
   }
+  return image;
 }
 
-_imAdjustOne(AdjustData data, imgLib.Image image) {
+imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
   switch (data.function) {
     case AdjustFunction.brightness:
-      imgLib.brightness(image, data.value.toInt());
+      image = imgLib.brightness(image, data.value.toInt())!;
       break;
     case AdjustFunction.contrast:
-      imgLib.contrast(image, data.value);
+      image = imgLib.contrast(image, data.value)!;
       break;
     case AdjustFunction.saturation:
       for (var y = 0; y < image.height; ++y) {
@@ -171,18 +229,18 @@ _imAdjustOne(AdjustData data, imgLib.Image image) {
       }
       break;
     case AdjustFunction.noise:
-      imgLib.noise(image, (data.value / 100 * 255).toInt());
+      image = imgLib.noise(image, (data.value / 100 * 255).toInt());
       break;
     case AdjustFunction.pixelate:
-      imgLib.pixelate(image, data.value.toInt());
+      image = imgLib.pixelate(image, data.value.toInt());
       break;
     case AdjustFunction.blur:
-      imgLib.gaussianBlur(image, data.value ~/ 2);
+      image = imgLib.gaussianBlur(image, data.value ~/ 2);
       break;
     case AdjustFunction.sharpen:
       if (data.value.toInt() > 0) {
         final kernel = [-1, -1, -1, -1, 9 + data.value.toInt() / 100, -1, -1, -1, -1];
-        imgLib.convolution(image, kernel);
+        image = imgLib.convolution(image, kernel);
       }
       break;
     case AdjustFunction.hue:
@@ -203,6 +261,7 @@ _imAdjustOne(AdjustData data, imgLib.Image image) {
     case AdjustFunction.UNDEFINED:
       break;
   }
+  return image;
 }
 
 class AdjustData {
@@ -212,6 +271,7 @@ class AdjustData {
   double previousValue;
   double start;
   double end;
+  bool active = false;
 
   AdjustData({
     required this.function,

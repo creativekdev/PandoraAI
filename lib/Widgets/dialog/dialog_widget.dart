@@ -463,6 +463,7 @@ Future<PAICameraEntity?> showPhotoTakeDialog(
     }
     return PAICameraEntity(source: 'gallery', xFile: XFile(first.path));
   } else if (type == PhotoTakeDialogType.recent) {
+    CommonExtension().showToast('开发中');
     // todo
     // return await PAICamera.takePhoto(context);
   }

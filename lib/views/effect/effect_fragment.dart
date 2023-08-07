@@ -322,7 +322,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
           animation: animationController!,
           builder: (context, child) {
             return Transform.translate(
-              offset: Offset(0, ($(50) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
+              offset: Offset(0, ($(58) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
               child: Stack(
                 fit: StackFit.loose,
                 children: [
@@ -330,6 +330,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                     Images.ic_home_add,
                     color: Color.fromARGB(250, 14, 16, 17),
                     width: $(60),
+                    height: $(58),
                   ),
                   Positioned(
                     child: Image.asset(

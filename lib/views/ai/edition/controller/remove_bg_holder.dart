@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
@@ -22,6 +23,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   set removedImage(File? file) {
     _removedImage = file;
+    shownImageWidget = Image.file(file!);
     buildFrontLibImg();
   }
 
@@ -60,5 +62,14 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   ui.Color rgbaToAbgr(ui.Color rgbaColor) {
     int abgrValue = (rgbaColor.alpha << 24) | (rgbaColor.blue << 16) | (rgbaColor.green << 8) | rgbaColor.red;
     return ui.Color(abgrValue);
+  }
+
+  @override
+  Widget buildShownImage() {
+    if (resultFile == null) {
+      return shownImageWidget ?? Image.file(originFile!);
+    } else {
+      return Image.file(resultFile ?? originFile!);
+    }
   }
 }
