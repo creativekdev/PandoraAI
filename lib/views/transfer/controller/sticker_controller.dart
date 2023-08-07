@@ -10,10 +10,10 @@ import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
-class CartoonizerController extends TransferBaseController<CartoonizerResultEntity> {
+class StickerController extends TransferBaseController<CartoonizerResultEntity> {
   late CartoonizerApi cartoonizerApi;
 
-  CartoonizerController({
+  StickerController({
     required super.originalPath,
     required super.itemList,
     super.initKey,
@@ -21,7 +21,7 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
 
   @override
   String getCategory() {
-    return 'cartoonize';
+    return 'sticker';
   }
 
   @override
@@ -39,7 +39,7 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
   @override
   List<EffectCategory> buildCategories() {
     var controller = Get.find<EffectDataController>();
-    return controller.data?.cartoonize?.children ?? [];
+    return controller.data?.sticker?.children ?? [];
   }
 
   @override
@@ -81,17 +81,17 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
 
   @override
   onGenerateSuccess({required String source, required String photoType, required String style}) {
-    Events.facetoonGenerated(style: style, source: source);
+    Events.stickerGenerated(style: style, source: source);
   }
 
   @override
   onSavePhoto({required String photo}) {
-    Events.facetoonResultSave(photo: photo);
+    Events.stickerResultSave(photo: photo);
   }
 
   @override
   onResultShare({required String source, required String platform, required String photo}) {
-    Events.facetoonResultShare(source: source, platform: platform, photo: 'image');
+    Events.stickerResultShare(source: source, platform: platform, photo: 'image');
   }
 
   @override

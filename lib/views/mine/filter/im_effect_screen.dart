@@ -11,7 +11,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter_controller.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
@@ -79,7 +79,7 @@ class _ImEffectScreenState extends AppState<ImEffectScreen> with SingleTickerPro
     } else if (widget.effectStyle == EffectStyle.Cartoonizer) {
       controller = Get.put(CartoonizerController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey));
     } else if (widget.effectStyle == EffectStyle.All) {
-      controller = Get.put(BothTransferController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey, style: EffectStyle.All));
+      controller = Get.put(AllTransferController(originalPath: widget.originFile.path, itemList: [], initKey: widget.initKey, style: EffectStyle.All));
     }
   }
 

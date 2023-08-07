@@ -2,17 +2,17 @@ import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
-import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
-import 'package:cartoonizer/views/transfer/controller/style_morph_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 import 'cartoonizer_controller.dart';
+import 'style_morph_controller.dart';
 
 enum EffectStyle { Cartoonizer, StyleMorph, All, No }
 
-class BothTransferController extends TransferBaseController {
+class AllTransferController extends TransferBaseController {
   late CartoonizerController cartoonizerController;
   late StyleMorphController styleMorphController;
+
   EffectStyle style;
 
   ImageEditionController? parent;
@@ -25,7 +25,7 @@ class BothTransferController extends TransferBaseController {
     parent?.update();
   }
 
-  BothTransferController({
+  AllTransferController({
     required super.originalPath,
     required super.itemList,
     super.initKey,

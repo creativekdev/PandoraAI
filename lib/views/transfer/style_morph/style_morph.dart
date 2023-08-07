@@ -11,7 +11,7 @@ import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph_screen.dart';
 
 import '../../ai/edition/image_edition.dart';
-import '../controller/both_transfer_controller.dart';
+import '../controller/all_transfer_controller.dart';
 
 class StyleMorph {
   static Future open(BuildContext context, String source, {RecentStyleMorphModel? record, String? initKey}) async {

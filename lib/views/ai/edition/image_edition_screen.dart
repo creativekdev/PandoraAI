@@ -19,7 +19,7 @@ import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 import '../../../Common/Extension.dart';
@@ -28,6 +28,7 @@ import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../utils/img_utils.dart';
 import '../../share/ShareScreen.dart';
+import 'image_edition.dart';
 import 'widget/effect_options.dart';
 
 class ImageEditionScreen extends StatefulWidget {
@@ -66,11 +67,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       photoType: widget.photoType,
       source: widget.source,
     ));
+    controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
   }
 
   saveToAlbum() async {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
-      BothTransferController effectHolder = controller.currentItem.holder;
+      AllTransferController effectHolder = controller.currentItem.holder;
       await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
@@ -89,7 +91,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     var userManager = AppDelegate().getManager<UserManager>();
     var uint8list;
     if (controller.currentItem.function == ImageEditionFunction.effect) {
-      BothTransferController effectHolder = controller.currentItem.holder;
+      AllTransferController effectHolder = controller.currentItem.holder;
       if (effectHolder.getCategory() == 'cartoonize') {
         uint8list =
             await ImageUtils.printCartoonizeDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
@@ -218,7 +220,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        getImageWidget(context, controller),
+        getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView),
         Align(
           alignment: Alignment.centerRight,
           child: buildRightTab(context, controller),
@@ -241,7 +243,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   Widget buildRightTab(BuildContext context, ImageEditionController controller) {
     return Column(
-      mainAxisSize: MainAxisSize.max,
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Column(
@@ -275,7 +277,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                       String originFilePath;
                       if (controller.currentItem.function == ImageEditionFunction.effect) {
                         // 从effect跳
-                        var transferController = controller.currentItem.holder as BothTransferController;
+                        var transferController = controller.currentItem.holder as AllTransferController;
                         originFilePath = (transferController.resultFile ?? transferController.originFile).path;
                       } else {
                         //其他的互相跳转
@@ -288,6 +290,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                           context,
                           NoAnimRouter(
                             ImRemoveBgScreen(
+                              bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(context),
                               filePath: originFilePath,
                               imageRatio: image.image.width / image.image.height,
                               onGetRemoveBgImage: (String path) async {
@@ -342,7 +345,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           },
         ),
       ],
-    ).intoContainer(margin: EdgeInsets.only(right: $(10)));
+    ).intoContainer(margin: EdgeInsets.only(right: $(10))).listenSizeChanged(onSizeChanged: (size) {
+      var bottomPadding = ScreenUtil.getBottomPadding(context);
+      var paddingB = (ScreenUtil.screenSize.height - ScreenUtil.getStatusBarHeight() - controller.bottomHeight - bottomPadding - kNavBarPersistentHeight - size.height) / 2;
+      controller.switchButtonBottomToScreen = controller.bottomHeight + paddingB + bottomPadding;
+    });
   }
 
   Widget buildOptions(BuildContext context, ImageEditionController controller) {
@@ -361,7 +368,10 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       case ImageEditionFunction.crop:
         return CropOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.removeBg:
-        return RemoveBgOptions(controller: controller.currentItem.holder);
+        return RemoveBgOptions(
+          controller: controller.currentItem.holder,
+          bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+        );
       case ImageEditionFunction.UNDEFINED:
         break;
     }

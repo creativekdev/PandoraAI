@@ -5,11 +5,11 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
 class EffectOptions extends StatelessWidget {
-  BothTransferController controller;
+  AllTransferController controller;
 
   EffectOptions({
     super.key,
@@ -19,7 +19,7 @@ class EffectOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6;
-    return GetBuilder<BothTransferController>(
+    return GetBuilder<AllTransferController>(
       builder: (controller) {
         return Column(
           mainAxisSize: MainAxisSize.min,
