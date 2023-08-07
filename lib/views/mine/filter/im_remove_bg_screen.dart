@@ -10,11 +10,12 @@ import '../../../network/dio_node.dart';
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen({super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio});
+  const ImRemoveBgScreen({super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio, required this.bottomPadding});
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
   final double imageRatio;
+  final double bottomPadding;
 
   @override
   State<ImRemoveBgScreen> createState() => _ImRemoveBgScreenState();

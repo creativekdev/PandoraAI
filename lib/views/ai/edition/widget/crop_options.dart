@@ -29,6 +29,7 @@ class CropOptions extends StatelessWidget {
   crop(BuildContext context) {
     Navigator.of(context).push(NoAnimRouter(
         ImCropScreen(
+          bottomPadding: controller.parent.bottomHeight,
           filePath: controller.originFilePath!,
           cropItem: controller.currentItem,
           onGetCropPath: (String path) {

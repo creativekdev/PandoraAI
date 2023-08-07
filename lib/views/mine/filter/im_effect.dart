@@ -6,7 +6,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 
 import 'im_effect_screen.dart';
 import 'im_filter.dart';

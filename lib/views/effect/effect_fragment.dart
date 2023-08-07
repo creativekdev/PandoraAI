@@ -21,7 +21,7 @@ import 'package:cartoonizer/views/mine/filter/im_effect.dart';
 import 'package:cartoonizer/views/mine/filter/im_effect_screen.dart';
 import 'package:cartoonizer/views/msg/msg_list_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../models/discovery_list_entity.dart';

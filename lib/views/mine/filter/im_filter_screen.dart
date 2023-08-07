@@ -79,6 +79,7 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
         context,
         NoAnimRouter(
           ImRemoveBgScreen(
+            bottomPadding: 0,
             filePath: controller.filePath!,
             imageRatio: controller.imageRatio,
             onGetRemoveBgImage: (String img) async {

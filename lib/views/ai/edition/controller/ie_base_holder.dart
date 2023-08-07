@@ -5,7 +5,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'image_edition_controller.dart';
 
 abstract class ImageEditionBaseHolder {
-  late ImageEditionController _parent;
+  late ImageEditionController parent;
 
   Widget? shownImageWidget;
 
@@ -37,21 +37,19 @@ abstract class ImageEditionBaseHolder {
   File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
 
   ///------------------------------------------------------------------------------------
-  ImageEditionBaseHolder({required ImageEditionController parent}) {
-    this._parent = parent;
-  }
+  ImageEditionBaseHolder({required this.parent});
 
   onInit() {}
 
   initData();
 
   update() {
-    _parent.update();
+    parent.update();
   }
 
   dispose() {}
 
   Widget buildShownImage() {
-    return shownImageWidget ?? Image.file(originFile!);
+    return shownImageWidget ?? Image.file(resultFile ?? originFile!);
   }
 }

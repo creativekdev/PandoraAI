@@ -12,7 +12,7 @@ import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
 class ImageEditionController extends GetxController {
@@ -21,6 +21,9 @@ class ImageEditionController extends GetxController {
   final String? initKey;
   final ImageEditionFunction initFunction;
   late String _originPath;
+
+  double bottomHeight = 0;
+  double switchButtonBottomToScreen = 0;
 
   File get originFile => File(_originPath);
 
@@ -69,9 +72,9 @@ class ImageEditionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    BothTransferController? effectHolder;
+    AllTransferController? effectHolder;
     if (initFunction != ImageEditionFunction.removeBg) {
-      effectHolder = BothTransferController(originalPath: _originPath, itemList: [], style: effectStyle, initKey: initKey)..onInit();
+      effectHolder = AllTransferController(originalPath: _originPath, itemList: [], style: effectStyle, initKey: initKey)..onInit();
       effectHolder.parent = this;
     }
     var filterHolder = FilterHolder(parent: this)..onInit();
@@ -113,7 +116,7 @@ class ImageEditionController extends GetxController {
     if (currentItem.function == ImageEditionFunction.removeBg) {
       startRemoveBg();
     } else if (currentItem.function == ImageEditionFunction.effect) {
-      var holder = currentItem.holder as BothTransferController;
+      var holder = currentItem.holder as AllTransferController;
       if (holder.selectedEffect != null && holder.resultFile == null) {
         generate(Get.context!, holder);
       }
@@ -134,6 +137,7 @@ class ImageEditionController extends GetxController {
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
+          bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
           filePath: _originPath,
           imageRatio: image.image.width / image.image.height,
           onGetRemoveBgImage: (String path) async {
@@ -150,7 +154,7 @@ class ImageEditionController extends GetxController {
     );
   }
 
-  generate(BuildContext context, BothTransferController controller) async {
+  generate(BuildContext context, AllTransferController controller) async {
     var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(

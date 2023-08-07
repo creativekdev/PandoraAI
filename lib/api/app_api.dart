@@ -581,6 +581,9 @@ class AppApi extends RetryAbleRequester {
       "/tool/cartoonize_config_new/v7",
       needRetry: true,
       canClickRetry: true,
+      params: {
+        'separate_sticker': 1,
+      },
     );
     if (baseEntity == null) return null;
     return ApiConfigEntity.fromJson(baseEntity.data["data"]);

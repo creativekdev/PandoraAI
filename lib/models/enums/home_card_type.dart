@@ -21,7 +21,7 @@ import 'package:cartoonizer/views/common/video_preview_screen.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 

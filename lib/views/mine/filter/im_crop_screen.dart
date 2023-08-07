@@ -17,9 +17,16 @@ typedef OnGetCropPath = void Function(String path);
 class ImCropScreen extends StatefulWidget {
   CropItem cropItem;
 
-  ImCropScreen({Key? key, required this.filePath, required this.cropItem, required this.onGetCropPath}) : super(key: key);
+  ImCropScreen({
+    Key? key,
+    required this.filePath,
+    required this.cropItem,
+    required this.onGetCropPath,
+    required this.bottomPadding,
+  }) : super(key: key);
   final String filePath;
   final OnGetCropPath onGetCropPath;
+  final double bottomPadding;
 
   @override
   State<ImCropScreen> createState() => _ImCropScreenState();

@@ -6,7 +6,7 @@ import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
-import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 
 class ImageEdition {
   static String TagAppbarTagBack = "ImageEditionAppbarTagBack";

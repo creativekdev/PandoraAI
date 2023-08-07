@@ -100,6 +100,28 @@ class Events {
 
   static Future<void> facetoonResultSave({required String photo}) => logEvent('facetoon_result_save', eventValues: {'photo': photo});
 
+  static Future<void> stickerLoading({required String source}) => logEvent('sticker_loading', eventValues: {'source': source});
+
+  static Future<void> stickerGenerated({required String style, required String source}) => logEvent('sticker_generate', eventValues: {
+        'style': style,
+        'source': source,
+      });
+
+  static Future<void> stickerGeneratedAgain({required String style, required int time}) => logEvent('sticker_generate_again', eventValues: {'time': time});
+
+  static Future<void> stickerResultShare({
+    required String source,
+    required String platform,
+    required String photo,
+  }) =>
+      logEvent('sticker_result_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'photo': photo,
+      });
+
+  static Future<void> stickerResultSave({required String photo}) => logEvent('sticker_result_save', eventValues: {'photo': photo});
+
   static Future<void> metaverseLoading({required String source}) => logEvent('metaverse_loading', eventValues: {'source': source});
 
   static Future<void> metaverseCompleteSuccess({required String photo}) => logEvent('metaverse_completed_success', eventValues: {'photo': photo});
@@ -300,7 +322,7 @@ class Events {
       logEvent('stylemorph_completed_generateagain', eventValues: {
         'time': '${time}',
         'source': source,
-        'photoType':photoType,
+        'photoType': photoType,
         'style': style,
       });
 
