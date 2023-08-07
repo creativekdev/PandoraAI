@@ -116,8 +116,8 @@ class _ImCropScreenState extends AppState<ImCropScreen> with SingleTickerProvide
                       },
                       endSacle: (details, ratio) {
                         onEndScale(details, ratio);
-                      }),
-                ).hero(tag: ImageEdition.TagImageEditView),
+                      }).hero(tag: ImageEdition.TagImageEditView),
+                ),
               ),
               SizedBox(height: $(55) + ScreenUtil.getBottomPadding(context)),
             ]),

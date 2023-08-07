@@ -3,12 +3,10 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/Widgets/tabbar/app_tab_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -28,7 +26,6 @@ import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../ai/anotherme/widgets/li_pop_menu.dart';
 import '../../share/ShareScreen.dart';
-import 'im_crop_screen.dart';
 import 'im_filter.dart';
 
 class ImFilterScreen extends StatefulWidget {
@@ -576,6 +573,8 @@ class _ImFilterScreenState extends AppState<ImFilterScreen> with SingleTickerPro
           personImageForUI: controller.personImageForUi,
           backgroundImage: controller.backgroundImage,
           backgroundColor: controller.backgroundColor,
+          switchButtonPadding: 0,
+          originFile: File(controller.imageFile.path),
           onAddImage: (image) {
             Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(image));
             controller.byte = byte;

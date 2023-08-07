@@ -12,9 +12,10 @@ import 'package:image/image.dart' as imgLib;
 class RemoveBgOptions extends StatelessWidget {
   RemoveBgHolder controller;
 
-  RemoveBgOptions({super.key, required this.controller, required this.bottomPadding});
+  RemoveBgOptions({super.key, required this.controller, required this.bottomPadding, required this.switchButtonPadding});
 
   final double bottomPadding;
+  final double switchButtonPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class RemoveBgOptions extends StatelessWidget {
           controller.backgroundColor = controller.rgbaToAbgr(data.color!);
         }
         controller.update();
-        showPersonEditScreenDialog(context, bottomPadding);
+        showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);
       },
     ).intoContainer(
       width: double.maxFinite,
@@ -38,7 +39,7 @@ class RemoveBgOptions extends StatelessWidget {
     );
   }
 
-  void showPersonEditScreenDialog(BuildContext context, double bottomPadding) {
+  void showPersonEditScreenDialog(BuildContext context, double bottomPadding, double switchButtonPadding) {
     Navigator.push(
       context,
       NoAnimRouter(
@@ -48,7 +49,9 @@ class RemoveBgOptions extends StatelessWidget {
           personImageForUI: controller.imageUiFront!,
           backgroundImage: controller.imageBack,
           backgroundColor: controller.backgroundColor,
+          originFile: controller.originFile!,
           bottomPadding: bottomPadding,
+          switchButtonPadding: switchButtonPadding,
           onAddImage: (image) {
             Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(image));
             CacheManager cacheManager = AppDelegate.instance.getManager();

@@ -296,7 +296,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                               onGetRemoveBgImage: (String path) async {
                                 SyncFileImage(file: File(path)).getImage().then((value) {
                                   var holder = e.holder as RemoveBgHolder;
-                                  print("127.0.0.1 === ${value.image.width / value.image.height}");
                                   holder.ratio = value.image.width / value.image.height;
                                   holder.removedImage = File(path);
                                 });
@@ -371,6 +370,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         return RemoveBgOptions(
           controller: controller.currentItem.holder,
           bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+          switchButtonPadding: controller.switchButtonBottomToScreen,
         );
       case ImageEditionFunction.UNDEFINED:
         break;

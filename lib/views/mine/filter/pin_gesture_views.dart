@@ -126,3 +126,71 @@ class _PinGestureViewsState extends State<PinGestureViews> {
     );
   }
 }
+
+class PinGestureView extends StatefulWidget {
+  PinGestureView({
+    Key? key,
+    this.scale = 1.0,
+    this.baseScale = 1.0,
+    this.minScale = 0.5,
+    this.maxScale = 3.0,
+    required this.child,
+    required this.dx,
+    required this.dy,
+    required this.onPinEndCallBack,
+  }) : super(key: key);
+  double scale;
+  double baseScale;
+  double minScale;
+  double maxScale;
+  Widget child;
+  double dx;
+  double dy;
+  Offset lastOffset = Offset.zero;
+  OnPinEndCallBack onPinEndCallBack;
+
+  @override
+  State<PinGestureView> createState() => _PinGestureViewState(scale: scale, baseScale: baseScale, minScale: minScale, maxScale: maxScale, dx: dx, dy: dy);
+}
+
+class _PinGestureViewState extends State<PinGestureView> {
+  _PinGestureViewState({required this.scale, required this.baseScale, required this.minScale, required this.maxScale, required this.dx, required this.dy});
+
+  double scale;
+  double baseScale;
+  double minScale;
+  double maxScale;
+  double dx;
+  double dy;
+  Offset lastOffset = Offset.zero;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onScaleStart: (ScaleStartDetails details) {
+        baseScale = scale;
+        lastOffset = details.localFocalPoint;
+      },
+      onScaleUpdate: (ScaleUpdateDetails details) {
+        double newScale = baseScale * details.scale;
+        if (newScale < minScale) {
+          newScale = minScale;
+        } else if (newScale > maxScale) {
+          newScale = maxScale;
+        }
+        setState(() {
+          scale = newScale;
+          dx = details.localFocalPoint.dx - lastOffset.dx;
+          dy = details.localFocalPoint.dy - lastOffset.dy;
+        });
+      },
+      onScaleEnd: (details) {
+        widget.onPinEndCallBack(false, scale, dx, dy);
+      },
+      child: Transform.translate(
+        offset: Offset(dx, dy),
+        child: Transform.scale(child: widget.child, scale: scale),
+      ),
+    );
+  }
+}

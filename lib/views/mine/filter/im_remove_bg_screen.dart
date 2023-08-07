@@ -156,7 +156,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
             ),
           ),
           SizedBox(
-            height: widget.bottomPadding,
+            height: widget.bottomPadding - ScreenUtil.getBottomPadding(context),
           )
         ],
       ),
