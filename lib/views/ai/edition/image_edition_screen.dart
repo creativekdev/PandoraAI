@@ -36,6 +36,7 @@ class ImageEditionScreen extends StatefulWidget {
   String? initKey;
   EffectStyle style;
   String photoType;
+  ImageEditionFunction initFunction;
 
   ImageEditionScreen({
     super.key,
@@ -44,6 +45,7 @@ class ImageEditionScreen extends StatefulWidget {
     required this.initKey,
     required this.style,
     required this.photoType,
+    required this.initFunction,
   });
 
   @override
@@ -56,7 +58,14 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(ImageEditionController(originPath: widget.filePath, effectStyle: widget.style));
+    controller = Get.put(ImageEditionController(
+      originPath: widget.filePath,
+      effectStyle: widget.style,
+      initFunction: widget.initFunction,
+      initKey: widget.initKey,
+      photoType: widget.photoType,
+      source: widget.source,
+    ));
   }
 
   saveToAlbum() async {
@@ -71,6 +80,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   shareToDiscovery() {
+    CommonExtension().showToast('还需要和web端对一下配置，不然可能会影响web端');
     //todo
   }
 
@@ -80,7 +90,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     var uint8list;
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       BothTransferController effectHolder = controller.currentItem.holder;
-      uint8list = await ImageUtils.printStyleMorphDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      if (effectHolder.getCategory() == 'cartoonize') {
+        uint8list =
+            await ImageUtils.printCartoonizeDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      } else if (effectHolder.getCategory() == 'stylemorph') {
+        uint8list =
+            await ImageUtils.printStyleMorphDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      } else {
+        throw Exception('未定义的effectStyle');
+      }
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
       uint8list = await ImageUtils.printStyleMorphDrawData(holder.resultFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
@@ -100,6 +118,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   PreferredSizeWidget? buildNavigationBar(BuildContext context) {
     return AppNavigationBar(
+      backAction: () {
+        _willPopCallback(context);
+      },
       middle: Image.asset(
         Images.ic_download,
         height: $(24),
@@ -122,20 +143,75 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return GetBuilder<ImageEditionController>(
-      builder: (controller) {
-        return Scaffold(
-          appBar: buildNavigationBar(context),
-          body: Column(
-            children: [
-              Expanded(child: buildContent(context, controller)),
-              buildOptions(context, controller).intoContainer(padding: EdgeInsets.only(top: $(20)), height: $(140) + ScreenUtil.getBottomPadding(context)),
-            ],
-          ),
-        );
-      },
-      init: Get.find<ImageEditionController>(),
-    );
+    return WillPopScope(
+        child: GetBuilder<ImageEditionController>(
+          builder: (controller) {
+            return Scaffold(
+              appBar: buildNavigationBar(context),
+              body: Column(
+                children: [
+                  Expanded(child: buildContent(context, controller)),
+                  buildOptions(context, controller).intoContainer(padding: EdgeInsets.only(top: $(20)), height: $(140) + ScreenUtil.getBottomPadding(context)),
+                ],
+              ),
+            );
+          },
+          init: Get.find<ImageEditionController>(),
+        ),
+        onWillPop: () async {
+          return _willPopCallback(context);
+        });
+  }
+
+  Future<bool> _willPopCallback(BuildContext context) async {
+    showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: $(20)),
+          TitleTextWidget(S.of(context).exit_msg, ColorConstant.White, FontWeight.w600, 18),
+          SizedBox(height: $(15)),
+          TitleTextWidget(S.of(context).exit_msg1, ColorConstant.HintColor, FontWeight.w400, 14),
+          SizedBox(height: $(15)),
+          TitleTextWidget(
+            S.of(context).exit_editing,
+            ColorConstant.White,
+            FontWeight.w600,
+            16,
+          )
+              .intoContainer(
+            margin: EdgeInsets.symmetric(horizontal: $(25)),
+            padding: EdgeInsets.symmetric(vertical: $(10)),
+            width: double.maxFinite,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(6), color: ColorConstant.BlueColor),
+          )
+              .intoGestureDetector(onTap: () {
+            Navigator.pop(context, true);
+          }),
+          TitleTextWidget(
+            S.of(context).cancel,
+            ColorConstant.White,
+            FontWeight.w400,
+            16,
+          ).intoPadding(padding: EdgeInsets.only(top: $(15), bottom: $(25))).intoGestureDetector(onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      ).intoContainer(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        decoration: BoxDecoration(
+          color: ColorConstant.EffectFunctionGrey,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular($(32)), topRight: Radius.circular($(32))),
+        ),
+      ),
+    ).then((value) {
+      if (value ?? false) {
+        Navigator.pop(context);
+      }
+    });
+    return false;
   }
 
   Widget buildContent(BuildContext context, ImageEditionController controller) {
@@ -158,12 +234,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as TransferBaseController;
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
-    } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
-      var holder = controller.currentItem.holder as RemoveBgHolder;
-      return Image.file(controller.showOrigin ? holder.originFile! : holder.resultFile ?? holder.removedImage!);
     } else {
-      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
-      return Image.file(controller.showOrigin ? holder.originFile! : holder.resultFile ?? holder.originFile!);
+      return controller.showOrigin ? Image.file(controller.originFile) : (controller.currentItem.holder as ImageEditionBaseHolder).buildShownImage();
     }
   }
 
@@ -212,7 +284,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                       }
                       if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
                         var image = await SyncFileImage(file: File(originFilePath)).getImage();
-                        print("127.0.0.1 === 1111 ${image.image.width / image.image.height}");
                         Navigator.push(
                           context,
                           NoAnimRouter(
@@ -279,8 +350,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       case ImageEditionFunction.effect:
         return EffectOptions(
           controller: controller.currentItem.holder,
-          photoType: widget.photoType,
-          source: widget.source,
         );
       case ImageEditionFunction.filter:
         return FilterOptions(

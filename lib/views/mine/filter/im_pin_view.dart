@@ -17,6 +17,7 @@ class ImPinView extends StatefulWidget {
   late double posX, posY, ratio;
   Uint8List? personByte, backgroundByte;
   final Function(imgLib.Image) onAddImage;
+  final double bottomPadding;
 
   ImPinView({
     required this.personImage,
@@ -24,6 +25,7 @@ class ImPinView extends StatefulWidget {
     required this.backgroundImage,
     required this.backgroundColor,
     required this.onAddImage,
+    this.bottomPadding = 0,
   }) {
     // personByte = Uint8List.fromList(imgLib.encodeJpg(personImage));
 

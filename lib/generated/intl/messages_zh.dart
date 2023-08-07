@@ -106,6 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
         "c_password": MessageLookupByLibrary.simpleMessage("确认密码"),
+        "camera": MessageLookupByLibrary.simpleMessage("相机"),
         "cancel": MessageLookupByLibrary.simpleMessage("取消"),
         "cancel_subscribe": MessageLookupByLibrary.simpleMessage("取消订阅"),
         "cancel_subscribe_succeed":
@@ -174,6 +175,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "delete_address_success":
             MessageLookupByLibrary.simpleMessage("地址删除成功"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("删除成功"),
+        "deleted_comment": MessageLookupByLibrary.simpleMessage("评论已删除"),
         "deny": MessageLookupByLibrary.simpleMessage("拒绝"),
         "disconnect": MessageLookupByLibrary.simpleMessage("解除绑定"),
         "disconnect_social_completed":
@@ -319,7 +321,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("最受欢迎"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("消息"),
         "my_code": MessageLookupByLibrary.simpleMessage("我的邀请码"),
-        "my_rencents": MessageLookupByLibrary.simpleMessage("我的最近"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("历史"),
         "name": MessageLookupByLibrary.simpleMessage("全名"),
         "name_hint": MessageLookupByLibrary.simpleMessage("输入姓名"),
         "name_validation": MessageLookupByLibrary.simpleMessage("请输入姓名"),
@@ -401,6 +403,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("这个应用程序需要访问相册权限，是否去设置打开？"),
         "permissionPhotoToSettings":
             MessageLookupByLibrary.simpleMessage("去设置"),
+        "photo": MessageLookupByLibrary.simpleMessage("图册"),
         "photo_delete_already":
             MessageLookupByLibrary.simpleMessage("该图片已经被删除"),
         "photo_select_already":

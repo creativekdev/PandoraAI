@@ -55,7 +55,7 @@ class SliverItem extends StatelessWidget {
           title.isEmpty ? entity.categoryString! : title,
           ColorConstant.DividerColor,
           FontWeight.w400,
-          $(12),
+          $(10),
           maxLines: 1,
         ).intoContainer(
           // width: width,

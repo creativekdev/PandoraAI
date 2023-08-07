@@ -8,7 +8,7 @@ import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.d
 
 import 'cartoonizer_controller.dart';
 
-enum EffectStyle { Cartoonizer, StyleMorph, All }
+enum EffectStyle { Cartoonizer, StyleMorph, All, No }
 
 class BothTransferController extends TransferBaseController {
   late CartoonizerController cartoonizerController;
@@ -16,6 +16,8 @@ class BothTransferController extends TransferBaseController {
   EffectStyle style;
 
   ImageEditionController? parent;
+  late ItemScrollController titleScrollController;
+  late ItemScrollController scrollController;
 
   @override
   update([List<Object>? ids, bool condition = true]) {
@@ -40,6 +42,8 @@ class BothTransferController extends TransferBaseController {
         return controller.data?.stylemorph?.children ?? [];
       case EffectStyle.All:
         return [...controller.data?.cartoonize?.children ?? [], ...controller.data?.stylemorph?.children ?? []];
+      case EffectStyle.No:
+        return [];
     }
   }
 
@@ -50,6 +54,25 @@ class BothTransferController extends TransferBaseController {
     cartoonizerController.onInit();
     styleMorphController = StyleMorphController(originalPath: originalPath, itemList: [], initKey: initKey);
     styleMorphController.onInit();
+    scrollController = ItemScrollController();
+    titleScrollController = ItemScrollController();
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    delay(() {
+      var titlePosition = categories.findPosition((data) => data.key == selectedTitle?.key);
+      if (titlePosition != null && titleScrollController.isAttached) {
+        titleScrollController.scrollTo(index: titlePosition, duration: Duration(milliseconds: 300));
+      }
+      var findPosition = selectedTitle?.effects.findPosition((data) => data.key == initKey);
+      if (findPosition != null && scrollController.isAttached) {
+        if (findPosition >= 6) {
+          scrollController.scrollTo(index: findPosition, duration: Duration(milliseconds: 300));
+        }
+      }
+    }, milliseconds: 200);
   }
 
   @override

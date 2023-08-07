@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Crop.dart';
@@ -27,14 +24,14 @@ class CropOptions extends StatelessWidget {
   }
 
   crop(BuildContext context) {
-    Navigator.of(context).push(NoAnimRouter(
-        ImCropScreen(
-          filePath: controller.originFilePath!,
-          cropItem: controller.currentItem,
-          onGetCropPath: (String path) {
-            controller.resultFilePath = path;
-          },
-        ),
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => ImCropScreen(
+              filePath: controller.originFilePath!,
+              cropItem: controller.currentItem,
+              onGetCropPath: (String path) {
+                controller.resultFilePath = path;
+              },
+            ),
         settings: RouteSettings(name: '/ImCropScreen')));
   }
 

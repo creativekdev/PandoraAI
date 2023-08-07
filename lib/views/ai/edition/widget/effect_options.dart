@@ -10,68 +10,11 @@ import 'package:common_utils/common_utils.dart';
 
 class EffectOptions extends StatelessWidget {
   BothTransferController controller;
-  UploadImageController uploadImageController = Get.find();
-  String photoType;
-  String source;
-  int generateCount = 0;
 
   EffectOptions({
     super.key,
     required this.controller,
-    required this.photoType,
-    required this.source,
   });
-
-  generate(BuildContext context, BothTransferController controller) async {
-    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
-    SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
-    SimulateProgressBar.startLoading(
-      context,
-      needUploadProgress: needUpload,
-      controller: simulateProgressBarController,
-      config: SimulateProgressBarConfig.cartoonize(context),
-    ).then((value) {
-      if (value == null) {
-        controller.onError();
-      } else if (value.result) {
-        controller.onGenerateSuccess(source: source, photoType: photoType, style: controller.selectedEffect?.key ?? '');
-        generateCount++;
-        if (generateCount - 1 > 0) {
-          controller.onGenerateAgainSuccess(source: source, photoType: photoType, time: generateCount - 1, style: controller.selectedEffect?.key ?? '');
-        }
-        controller.onSuccess();
-      } else {
-        controller.onError();
-        if (value.error != null) {
-          showLimitDialog(context, type: value.error!, function: controller.getCategory(), source: 'image_edition_page');
-        } else {
-          // Navigator.of(context).pop();
-        }
-      }
-    });
-
-    uploadImageController.upload(file: controller.originFile).then((value) async {
-      if (TextUtil.isEmpty(value)) {
-        simulateProgressBarController.onError();
-      } else {
-        simulateProgressBarController.uploadComplete();
-        var cachedId = await uploadImageController.getCachedId(controller.originFile);
-        controller.startTransfer(value!, cachedId, onFailed: (response) {
-          uploadImageController.deleteUploadData(controller.originFile);
-        }).then((value) {
-          if (value != null) {
-            if (value.entity != null) {
-              simulateProgressBarController.loadComplete();
-            } else {
-              simulateProgressBarController.onError(error: value.type);
-            }
-          } else {
-            simulateProgressBarController.onError();
-          }
-        });
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +28,7 @@ class EffectOptions extends StatelessWidget {
             ScrollablePositionedList.builder(
               physics: controller.titleNeedScroll ? ClampingScrollPhysics() : NeverScrollableScrollPhysics(),
               itemCount: controller.categories.length,
+              itemScrollController: controller.titleScrollController,
               itemBuilder: (context, index) {
                 var data = controller.categories[index];
                 var checked = controller.selectedTitle == data;
@@ -106,6 +50,7 @@ class EffectOptions extends StatelessWidget {
                 : ScrollablePositionedList.builder(
                     padding: EdgeInsets.symmetric(horizontal: $(10)),
                     itemCount: controller.selectedTitle!.effects.length,
+                    itemScrollController: controller.scrollController,
                     itemBuilder: (context, index) {
                       var data = controller.selectedTitle!.effects[index];
                       var checked = data == controller.selectedEffect;
@@ -117,7 +62,7 @@ class EffectOptions extends StatelessWidget {
                           child: item(context, data, checked).intoGestureDetector(onTap: () {
                             controller.onItemSelected(index);
                             if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
-                              generate(context, controller);
+                              controller.parent?.generate(context, controller);
                             }
                           }),
                         ),

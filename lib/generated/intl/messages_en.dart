@@ -127,6 +127,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "%d Conversions of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
+        "camera": MessageLookupByLibrary.simpleMessage("Take a selfie"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "cancel_subscribe": MessageLookupByLibrary.simpleMessage("Unsubscribe"),
         "cancel_subscribe_succeed":
@@ -214,6 +215,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Address deleted successfully"),
         "delete_succeed":
             MessageLookupByLibrary.simpleMessage("delete succeed"),
+        "deleted_comment":
+            MessageLookupByLibrary.simpleMessage("Comment has been deleted"),
         "deny": MessageLookupByLibrary.simpleMessage("Deny"),
         "disconnect": MessageLookupByLibrary.simpleMessage("Disconnect"),
         "disconnect_social_completed": MessageLookupByLibrary.simpleMessage(
@@ -382,7 +385,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("MOST POPULAR"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("Messages"),
         "my_code": MessageLookupByLibrary.simpleMessage("My Code"),
-        "my_rencents": MessageLookupByLibrary.simpleMessage("My Recents"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("My recents"),
         "name": MessageLookupByLibrary.simpleMessage("Full Name"),
         "name_hint": MessageLookupByLibrary.simpleMessage("Enter name"),
         "name_validation":
@@ -486,6 +489,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "This app needs photo library access. Go to settings?"),
         "permissionPhotoToSettings":
             MessageLookupByLibrary.simpleMessage("Go to settings"),
+        "photo": MessageLookupByLibrary.simpleMessage("Select fom album"),
         "photo_delete_already": MessageLookupByLibrary.simpleMessage(
             "This photo has been deleted already"),
         "photo_select_already": MessageLookupByLibrary.simpleMessage(

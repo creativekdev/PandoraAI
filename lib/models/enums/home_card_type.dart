@@ -8,17 +8,20 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/models/app_feature_entity.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
+import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/avatar/avatar.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/common/video_preview_screen.dart';
 import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/controller/both_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 import 'package:common_utils/common_utils.dart';
 
@@ -201,7 +204,7 @@ class HomeCardTypeUtils {
           CommonExtension().showToast(S.of(context).oldversion_tips);
           break;
         case HomeCardType.removeBg:
-          ImFilter.open(context, source: source, tab: TABS.BACKGROUND);
+          ImageEdition.open(context, source: source, style: EffectStyle.No, function: ImageEditionFunction.removeBg);
           break;
         case HomeCardType.nothing:
           //do nothing

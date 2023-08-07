@@ -492,5 +492,8 @@
   "create_with_prompt": "プロンプト付きで作成",
   "how_to_use": "利用方法",
   "how_to_use_desc": "白黒の絵を選択すると、カラフルな画像が得られます。",
-  "my_rencents": "私の最近のこと"
+  "deleted_comment": "コメントは削除されました",
+  "my_rencents": "歴史",
+  "camera": "折を見て",
+  "photo": "アトラス"
 }

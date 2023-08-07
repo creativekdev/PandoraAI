@@ -80,11 +80,7 @@ class ScreenUtil {
   }
 
   static double getBottomPadding(BuildContext context, {double? padding}) {
-    if (MediaQuery.of(context).padding.bottom == 0) {
-      return padding ?? $(15);
-    } else {
-      return MediaQuery.of(context).padding.bottom;
-    }
+    return MediaQuery.of(context).padding.bottom;
   }
 }
 

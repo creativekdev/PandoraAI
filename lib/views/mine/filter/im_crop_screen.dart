@@ -17,9 +17,10 @@ typedef OnGetCropPath = void Function(String path);
 class ImCropScreen extends StatefulWidget {
   CropItem cropItem;
 
-  ImCropScreen({Key? key, required this.filePath, required this.cropItem, required this.onGetCropPath}) : super(key: key);
+  ImCropScreen({Key? key, required this.filePath, required this.cropItem, required this.onGetCropPath, this.bottomPadding = 0}) : super(key: key);
   final String filePath;
   final OnGetCropPath onGetCropPath;
+  final double bottomPadding;
 
   @override
   State<ImCropScreen> createState() => _ImCropScreenState();
@@ -42,7 +43,13 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
     final imageBytes = await Cropper.crop(
       cropperKey: cropperKey,
     );
+    // getUiImage(image)
+    // getLibImage(image)
+    // 修改 UIimge -> libimage
+    // 使用filePath获取宽高
     final File file = getSavePath(filePath);
+    print("127.0.0.1 == ${file.path}");
+
     await file.writeAsBytes(imageBytes!);
     return file.path;
   }
@@ -53,7 +60,9 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
 
   File getSavePath(String path) {
     final name = path.substring(path.lastIndexOf('/') + 1);
-    var newPath = "${storageOperator.cropDir.path}/${DateTime.now().millisecondsSinceEpoch}$name";
+    var newPath = "${storageOperator.cropDir.path}${DateTime
+        .now()
+        .millisecondsSinceEpoch}$name";
     return File(newPath);
   }
 

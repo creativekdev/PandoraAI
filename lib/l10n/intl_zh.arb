@@ -499,5 +499,8 @@
   "create_with_prompt": "创建提示语",
   "how_to_use": "如何使用",
   "how_to_use_desc": "选择一张黑白的图画，您将获得彩色图像！",
-  "my_rencents": "我的最近"
+  "my_rencents": "历史",
+  "deleted_comment": "评论已删除",
+  "camera": "相机",
+  "photo": "图册"
 }
