@@ -36,6 +36,10 @@ RecentEffectModel $RecentEffectModelFromJson(Map<String, dynamic> json) {
 	if (originalPath != null) {
 		recentEffectModel.originalPath = originalPath;
 	}
+	final String? category = jsonConvert.convert<String>(json['category']);
+	if (category != null) {
+		recentEffectModel.category = category;
+	}
 	final List<RecentEffectItem>? itemList = jsonConvert.convertListNotNull<RecentEffectItem>(json['itemList']);
 	if (itemList != null) {
 		recentEffectModel.itemList = itemList;
@@ -47,6 +51,7 @@ Map<String, dynamic> $RecentEffectModelToJson(RecentEffectModel entity) {
 	final Map<String, dynamic> data = <String, dynamic>{};
 	data['updateDt'] = entity.updateDt;
 	data['originalPath'] = entity.originalPath;
+	data['category'] = entity.category;
 	data['itemList'] =  entity.itemList.map((v) => v.toJson()).toList();
 	return data;
 }

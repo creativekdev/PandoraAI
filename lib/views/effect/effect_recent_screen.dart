@@ -19,6 +19,7 @@ import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 
 class EffectRecentScreen extends StatefulWidget {
+
   EffectRecentScreen({
     Key? key,
   }) : super(key: key);

@@ -10,6 +10,7 @@ import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
@@ -21,6 +22,7 @@ import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../../Common/Extension.dart';
 import '../../../app/app.dart';
@@ -37,6 +39,7 @@ class ImageEditionScreen extends StatefulWidget {
   EffectStyle style;
   String photoType;
   ImageEditionFunction initFunction;
+  List<RecentEffectItem> recentEffectItems;
 
   ImageEditionScreen({
     super.key,
@@ -46,6 +49,7 @@ class ImageEditionScreen extends StatefulWidget {
     required this.style,
     required this.photoType,
     required this.initFunction,
+    required this.recentEffectItems,
   });
 
   @override
@@ -58,6 +62,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   @override
   void initState() {
     super.initState();
+    Posthog().screenWithUser(screenName: 'image_edition_screen');
     controller = Get.put(ImageEditionController(
       originPath: widget.filePath,
       effectStyle: widget.style,
@@ -65,6 +70,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       initKey: widget.initKey,
       photoType: widget.photoType,
       source: widget.source,
+      recentItemList: widget.recentEffectItems,
     ));
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
   }
@@ -232,7 +238,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
     }
-    if (controller.currentItem.function == ImageEditionFunction.effect) {
+    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
       var effectController = controller.currentItem.holder as TransferBaseController;
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
@@ -249,7 +255,19 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           children: controller.items.map((e) {
             bool visible = true;
             if (e.function == ImageEditionFunction.removeBg) {
-              //  visible = controller.effectController.resultFile == null;
+              var effectItem = controller.items.pick((t) => t.function == ImageEditionFunction.effect);
+              bool effectVisible = true;
+              if (effectItem != null) {
+                var c = effectItem.holder as TransferBaseController;
+                visible = c.resultFile == null;
+              }
+              bool stickerVisible = true;
+              var stickerItem = controller.items.pick((t) => t.function == ImageEditionFunction.sticker);
+              if (stickerItem != null) {
+                var c = stickerItem.holder as TransferBaseController;
+                stickerVisible = c.resultFile == null;
+              }
+              visible = effectVisible && stickerVisible;
             }
             return Image.asset(
               e.function.icon(),
@@ -268,15 +286,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                   if (e.function == controller.currentItem.function) {
                     //重复点击，特殊情况考虑
                   } else {
-                    if (e.function == ImageEditionFunction.effect) {
-                      //跳转effect
+                    if (e.function == ImageEditionFunction.effect || e.function == ImageEditionFunction.sticker) {
+                      //跳转effect或者sticker
                       controller.currentItem = e;
                       // 不处理
                     } else {
                       String originFilePath;
-                      if (controller.currentItem.function == ImageEditionFunction.effect) {
-                        // 从effect跳
-                        var transferController = controller.currentItem.holder as AllTransferController;
+                      if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+                        // 从effect或sticker跳其他
+                        var transferController = controller.currentItem.holder as TransferBaseController;
                         originFilePath = (transferController.resultFile ?? transferController.originFile).path;
                       } else {
                         //其他的互相跳转
@@ -354,6 +372,10 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     switch (controller.currentItem.function) {
       case ImageEditionFunction.effect:
         return EffectOptions(
+          controller: controller.currentItem.holder,
+        );
+      case ImageEditionFunction.sticker:
+        return StickerOptions(
           controller: controller.currentItem.holder,
         );
       case ImageEditionFunction.filter:

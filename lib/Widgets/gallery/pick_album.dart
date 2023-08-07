@@ -117,13 +117,6 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                         Container(
                           padding: EdgeInsets.symmetric(horizontal: $(30)),
                           child: Text(
-                            S.of(context).how_to_use,
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: $(18)),
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: $(30)),
-                          child: Text(
                             S.of(context).how_to_use_desc,
                             style: TextStyle(color: Colors.white, fontSize: $(14)),
                           ),
@@ -132,10 +125,10 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
                           padding: EdgeInsets.symmetric(horizontal: $(30)),
                           decoration: BoxDecoration(boxShadow: [
                             BoxShadow(
-                              color: Color(0xFF969696).withOpacity(0.57), // 阴影的颜色
-                              offset: Offset(0, $(4)), // 阴影的偏移量
-                              blurRadius: $(14), // 阴影的模糊半径
-                              spreadRadius: $(3), // 阴影的扩散半径
+                              color: Color(0xFF000000).withOpacity(0.2), // 阴影的颜色
+                              offset: Offset(0, $(8)), // 阴影的偏移量
+                              blurRadius: $(8), // 阴影的模糊半径
+                              spreadRadius: $(6), // 阴影的扩散半径
                             )
                           ]),
                           child: Image.asset(
@@ -152,7 +145,8 @@ class _PickAlbumScreenState extends AppState<_PickAlbumScreen> {
           ),
         ],
         // List<TargetFocus>
-        colorShadow: Color(0x7AD8D8D8),
+        colorShadow: Color(0xff000000),
+        opacityShadow: 0.52,
         // alignSkip: Alignment.bottomRight,
         // textSkip: "SKIP",
         paddingFocus: $(15),

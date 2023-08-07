@@ -195,6 +195,7 @@ class Images {
    static const String ic_signup_apple = 'assets/images/ic_signup_apple.png';
    static const String ic_signup_cartoon = 'assets/images/ic_signup_cartoon.png';
    static const String ic_slider = 'assets/images/ic_slider.png';
+   static const String ic_sticker = 'assets/images/ic_sticker.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_swipe = 'assets/images/ic_swipe.png';
    static const String ic_switch_images = 'assets/images/ic_switch_images.png';

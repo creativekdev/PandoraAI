@@ -57,7 +57,7 @@ class RecentController extends GetxController {
     effectList.forEach((element) {
       effects.addAll(element.itemList
           .filter((t) => !TextUtil.isEmpty(t.imageData) && File(t.imageData ?? '').existsSync())
-          .map((e) => RecentEffectModel()
+          .map((e) => RecentEffectModel(category: element.category)
             ..updateDt = element.updateDt
             ..originalPath = element.originalPath
             ..itemList = [e])
@@ -86,6 +86,7 @@ class RecentController extends GetxController {
 
   onEffectUsed(
     EffectItem effectItem, {
+    required String category,
     required File original,
     required String imageData,
     required bool isVideo,
@@ -93,7 +94,7 @@ class RecentController extends GetxController {
   }) async {
     effectRecordHolder.record(
       effectList,
-      RecentEffectModel()
+      RecentEffectModel(category: category)
         ..itemList = [
           RecentEffectItem()
             ..isVideo = isVideo

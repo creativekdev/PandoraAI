@@ -274,7 +274,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "help": MessageLookupByLibrary.simpleMessage("帮助"),
         "high_resolution": MessageLookupByLibrary.simpleMessage("高质量图片"),
         "home": MessageLookupByLibrary.simpleMessage("Pandora AI"),
-        "how_to_use": MessageLookupByLibrary.simpleMessage("如何使用"),
         "how_to_use_desc":
             MessageLookupByLibrary.simpleMessage("选择一张黑白的图画，您将获得彩色图像！"),
         "in_original": MessageLookupByLibrary.simpleMessage("包含原图"),

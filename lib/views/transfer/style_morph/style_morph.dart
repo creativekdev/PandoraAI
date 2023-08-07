@@ -15,7 +15,7 @@ import '../controller/all_transfer_controller.dart';
 
 class StyleMorph {
   static Future open(BuildContext context, String source, {RecentStyleMorphModel? record, String? initKey}) async {
-    ImageEdition.open(context, source: source, style: EffectStyle.StyleMorph, function: ImageEditionFunction.effect, initKey: initKey);
+    ImageEdition.open(context, source: source, style: EffectStyle.StyleMorph, function: ImageEditionFunction.effect, initKey: initKey, record: record);
     return;
     bool result = await PermissionsUtil.checkPermissions();
     if (result) {

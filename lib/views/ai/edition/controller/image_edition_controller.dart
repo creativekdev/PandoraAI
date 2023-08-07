@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
+import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
 import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
@@ -13,6 +14,8 @@ import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
 class ImageEditionController extends GetxController {
@@ -58,6 +61,9 @@ class ImageEditionController extends GetxController {
   UploadImageController uploadImageController = Get.find();
   int generateCount = 0;
 
+
+  List<RecentEffectItem> recentItemList = [];
+
   ImageEditionController({
     required String originPath,
     required this.effectStyle,
@@ -65,6 +71,7 @@ class ImageEditionController extends GetxController {
     required this.initKey,
     required this.source,
     required this.photoType,
+    required this.recentItemList,
   }) {
     _originPath = originPath;
   }
@@ -73,9 +80,14 @@ class ImageEditionController extends GetxController {
   void onInit() {
     super.onInit();
     AllTransferController? effectHolder;
+    StickerController? stickerHolder;
     if (initFunction != ImageEditionFunction.removeBg) {
-      effectHolder = AllTransferController(originalPath: _originPath, itemList: [], style: effectStyle, initKey: initKey)..onInit();
-      effectHolder.parent = this;
+      effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
+        ..parent = this
+        ..onInit();
+      stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
+        ..parent = this
+        ..onInit();
     }
     var filterHolder = FilterHolder(parent: this)..onInit();
     var adjustHolder = AdjustHolder(parent: this)..onInit();
@@ -103,6 +115,13 @@ class ImageEditionController extends GetxController {
           ..holder = effectHolder,
       );
     }
+    if (stickerHolder != null) {
+      items.add(
+        EditionItem()
+          ..function = ImageEditionFunction.sticker
+          ..holder = stickerHolder,
+      );
+    }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
     if (currentItem.function == ImageEditionFunction.removeBg) {
       var holder = currentItem.holder as RemoveBgHolder;
@@ -115,8 +134,8 @@ class ImageEditionController extends GetxController {
     super.onReady();
     if (currentItem.function == ImageEditionFunction.removeBg) {
       startRemoveBg();
-    } else if (currentItem.function == ImageEditionFunction.effect) {
-      var holder = currentItem.holder as AllTransferController;
+    } else if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
+      var holder = currentItem.holder as TransferBaseController;
       if (holder.selectedEffect != null && holder.resultFile == null) {
         generate(Get.context!, holder);
       }
@@ -154,7 +173,7 @@ class ImageEditionController extends GetxController {
     );
   }
 
-  generate(BuildContext context, AllTransferController controller) async {
+  generate(BuildContext context, TransferBaseController controller) async {
     var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(

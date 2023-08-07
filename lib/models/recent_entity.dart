@@ -27,9 +27,10 @@ class RecentStyleMorphModel {
 class RecentEffectModel {
   int updateDt = 0;
   String? originalPath;
+  String category;
   late List<RecentEffectItem> itemList;
 
-  RecentEffectModel({List<RecentEffectItem>? itemList}) {
+  RecentEffectModel({this.category = '', List<RecentEffectItem>? itemList}) {
     this.itemList = itemList ?? [];
   }
 

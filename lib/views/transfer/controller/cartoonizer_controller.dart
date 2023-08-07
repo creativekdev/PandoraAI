@@ -71,7 +71,7 @@ class CartoonizerController extends TransferBaseController<CartoonizerResultEnti
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();
       if (needRecord) {
-        recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false);
+        recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false, category: getCategory());
       }
       return TransferResult()..entity = baseEntity;
     } else {

@@ -179,12 +179,12 @@ class AdjustHolder extends ImageEditionBaseHolder {
     if (shownImage == null) {
       return;
     }
-    getUiImage(shownImage!).then((value) async {
-      var byteData = await value.toByteData(format: ImageByteFormat.png);
-      showImageBytes = byteData!.buffer.asUint8List();
-      shownImageWidget = Image.memory(showImageBytes!);
-      update();
-    });
+    var start = DateTime.now().millisecondsSinceEpoch;
+    var byteData = Uint8List.fromList(imgLib.encodeJpg(shownImage!));
+    showImageBytes = byteData.buffer.asUint8List();
+    shownImageWidget = Image.memory(showImageBytes!);
+    print("trans-saveImage: ${DateTime.now().millisecondsSinceEpoch - start}");
+    update();
   }
 
   @override

@@ -8,6 +8,7 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 
 abstract class TransferBaseController<ResultType> extends GetxController {
   late String _originalPath;
@@ -56,6 +57,17 @@ abstract class TransferBaseController<ResultType> extends GetxController {
 
   RecentController recentController = Get.find<RecentController>();
 
+  ImageEditionController? parent;
+
+  late ItemScrollController titleScrollController;
+  late ItemScrollController scrollController;
+
+  @override
+  update([List<Object>? ids, bool condition = true]) {
+    super.update(ids, condition);
+    parent?.update();
+  }
+
   TransferBaseController({required String originalPath, required List<RecentEffectItem> itemList, this.initKey}) {
     _originalPath = originalPath;
     originFile = File(_originalPath);
@@ -69,6 +81,8 @@ abstract class TransferBaseController<ResultType> extends GetxController {
     super.onInit();
     api = AppApi().bindController(this);
     categories = buildCategories();
+    scrollController = ItemScrollController();
+    titleScrollController = ItemScrollController();
     if (categories.isNotEmpty) {
       if (resultMap.isNotEmpty) {
         categories.forEach((category) {

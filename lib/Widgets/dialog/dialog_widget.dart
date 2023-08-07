@@ -9,6 +9,7 @@ import 'package:cartoonizer/common/Extension.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
+import 'package:cartoonizer/views/effect/effect_recent_screen.dart';
 import 'package:cartoonizer/views/mine/refcode/submit_invited_code_screen.dart';
 import 'package:cartoonizer/views/payment.dart';
 import 'package:flutter/cupertino.dart';
@@ -463,8 +464,12 @@ Future<PAICameraEntity?> showPhotoTakeDialog(
     }
     return PAICameraEntity(source: 'gallery', xFile: XFile(first.path));
   } else if (type == PhotoTakeDialogType.recent) {
-    CommonExtension().showToast('开发中');
-    // todo
-    // return await PAICamera.takePhoto(context);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          settings: RouteSettings(name: "/EffectRecentScreen"),
+          builder: (context) => EffectRecentScreen(),
+        ));
+    return null;
   }
 }

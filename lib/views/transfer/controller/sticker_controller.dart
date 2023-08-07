@@ -8,6 +8,7 @@ import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/cartoonizer_result_entity.dart';
 import 'package:cartoonizer/models/enums/account_limit_type.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 class StickerController extends TransferBaseController<CartoonizerResultEntity> {
@@ -28,6 +29,23 @@ class StickerController extends TransferBaseController<CartoonizerResultEntity> 
   void onInit() {
     super.onInit();
     cartoonizerApi = CartoonizerApi().bindController(this);
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
+    delay(() {
+      var titlePosition = categories.findPosition((data) => data.key == selectedTitle?.key);
+      if (titlePosition != null && titleScrollController.isAttached) {
+        titleScrollController.scrollTo(index: titlePosition, duration: Duration(milliseconds: 300));
+      }
+      var findPosition = selectedTitle?.effects.findPosition((data) => data.key == initKey);
+      if (findPosition != null && scrollController.isAttached) {
+        if (findPosition >= 6) {
+          scrollController.scrollTo(index: findPosition, duration: Duration(milliseconds: 300));
+        }
+      }
+    }, milliseconds: 200);
   }
 
   @override
@@ -71,7 +89,7 @@ class StickerController extends TransferBaseController<CartoonizerResultEntity> 
       resultMap[selectedEffect!.key] = baseEntity.filePath;
       update();
       if (needRecord) {
-        recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false);
+        recentController.onEffectUsed(selectedEffect!, original: originFile, imageData: baseEntity.filePath, isVideo: false, hasWatermark: false, category: getCategory());
       }
       return TransferResult()..entity = baseEntity;
     } else {

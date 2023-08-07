@@ -20,7 +20,13 @@ class Cartoonize {
     RecentEffectModel? record,
     String? initKey,
   }) async {
-    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: ImageEditionFunction.effect, initKey: initKey);
+    ImageEditionFunction function = ImageEditionFunction.effect;
+    if (record?.category == 'cartoonize') {
+      function = ImageEditionFunction.effect;
+    } else if (record?.category == 'sticker') {
+      function = ImageEditionFunction.sticker;
+    }
+    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record);
     return;
     bool result = await PermissionsUtil.checkPermissions();
     if (result) {
@@ -56,7 +62,7 @@ class Cartoonize {
       MaterialPageRoute(
         builder: (_) => CartoonizeScreen(
             source: source,
-            record: recentController.effectList.pick((t) => t.originalPath == path) ?? RecentEffectModel()
+            record: recentController.effectList.pick((t) => t.originalPath == path) ?? RecentEffectModel(category: 'cartoonize')
               ..originalPath = path,
             initKey: initKey,
             photoType: 'gallery'),

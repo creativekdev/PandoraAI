@@ -36,7 +36,7 @@ class AiColoring {
       context,
       count: 1,
       switchAlbum: true,
-      type: type,
+      type: HomeCardType.lineart,
     );
     cacheManager.setBool(CacheManager.guideAiColoring, true);
     if (list == null || list.isEmpty) {

@@ -7,6 +7,7 @@ enum ImageEditionFunction {
   adjust,
   crop,
   removeBg,
+  sticker,
   UNDEFINED,
 }
 
@@ -23,6 +24,8 @@ class ImageEditionFunctionUtils {
         return ImageEditionFunction.crop;
       case 'removeBg':
         return ImageEditionFunction.removeBg;
+      case 'sticker':
+        return ImageEditionFunction.sticker;
       default:
         return ImageEditionFunction.UNDEFINED;
     }
@@ -44,6 +47,8 @@ extension ImageEditionFunctionEx on ImageEditionFunction {
         return 'RemoveBG';
       case ImageEditionFunction.UNDEFINED:
         return null;
+      case ImageEditionFunction.sticker:
+        return 'Sticker';
     }
   }
 
@@ -61,6 +66,8 @@ extension ImageEditionFunctionEx on ImageEditionFunction {
         return 'removeBg';
       case ImageEditionFunction.UNDEFINED:
         return null;
+      case ImageEditionFunction.sticker:
+        return 'sticker';
     }
   }
 
@@ -78,6 +85,8 @@ extension ImageEditionFunctionEx on ImageEditionFunction {
         return Images.ic_background;
       case ImageEditionFunction.UNDEFINED:
         return Images.ic_effect;
+      case ImageEditionFunction.sticker:
+        return Images.ic_sticker;
     }
   }
 }

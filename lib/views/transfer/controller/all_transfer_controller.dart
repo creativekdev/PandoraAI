@@ -15,16 +15,6 @@ class AllTransferController extends TransferBaseController {
 
   EffectStyle style;
 
-  ImageEditionController? parent;
-  late ItemScrollController titleScrollController;
-  late ItemScrollController scrollController;
-
-  @override
-  update([List<Object>? ids, bool condition = true]) {
-    super.update(ids, condition);
-    parent?.update();
-  }
-
   AllTransferController({
     required super.originalPath,
     required super.itemList,
@@ -54,8 +44,6 @@ class AllTransferController extends TransferBaseController {
     cartoonizerController.onInit();
     styleMorphController = StyleMorphController(originalPath: originalPath, itemList: [], initKey: initKey);
     styleMorphController.onInit();
-    scrollController = ItemScrollController();
-    titleScrollController = ItemScrollController();
   }
 
   @override
@@ -136,9 +124,9 @@ class AllTransferController extends TransferBaseController {
   Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed, bool needRecord = true}) async {
     TransferResult? result;
     if (selectedTitle?.category == 'cartoonize') {
-      result = await cartoonizerController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: false);
+      result = await cartoonizerController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: true);
     } else if (selectedTitle?.category == 'stylemorph') {
-      result = await styleMorphController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: false);
+      result = await styleMorphController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: true);
     } else {
       return null;
     }
