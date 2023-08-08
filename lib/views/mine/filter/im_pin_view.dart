@@ -54,10 +54,35 @@ class _ImageMergingWidgetState extends State<ImPinView> {
   double bgDx = 0;
   double bgDy = 0;
   bool isShowOrigin = false;
+  RxBool isActionBg = false.obs;
+  GlobalKey _personImageKey = GlobalKey();
 
   Future<Uint8List?> getPersonImage() async {
     var byteData = await widget.personImageForUI.toByteData(format: ui.ImageByteFormat.png);
     return byteData?.buffer.asUint8List();
+  }
+
+  bool getActionView(Offset tapPosition) {
+    RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
+    Offset containerPosition = containerBox.localToGlobal(Offset.zero);
+    double containerWidth = containerBox.size.width;
+    double containerHeight = containerBox.size.height;
+    bool result = false;
+    if (tapPosition.dx >= containerPosition.dx &&
+        tapPosition.dx <= containerWidth + dx &&
+        tapPosition.dy >= containerPosition.dy &&
+        tapPosition.dy <= containerHeight + containerPosition.dy) {
+      int pixelColor = widget.personImage.getPixel(tapPosition.dx.toInt(), tapPosition.dy.toInt());
+      bool isTransparent = ui.Color(pixelColor).alpha == 0;
+      if (!isTransparent) {
+        result = false;
+      } else {
+        result = true;
+      }
+    } else {
+      result = true;
+    }
+    return result;
   }
 
   @override
@@ -99,85 +124,56 @@ class _ImageMergingWidgetState extends State<ImPinView> {
                                           height: ScreenUtil.screenSize.width / widget.ratio,
                                         )
                                       : Listener(
-                                          onPointerDown: (PointerDownEvent event) {},
+                                          onPointerDown: (PointerDownEvent event) {
+                                            Offset tapPosition = event.localPosition;
+                                            isActionBg.value = getActionView(tapPosition);
+                                          },
                                           child: Stack(children: [
-                                            PinGestureView(
-                                                child: widget.backgroundImage != null
-                                                    ? Image.memory(
-                                                        widget.backgroundByte!,
-                                                        fit: BoxFit.contain,
-                                                        width: ScreenUtil.screenSize.width,
-                                                        height: ScreenUtil.screenSize.width / widget.ratio,
-                                                      )
-                                                    : Container(
-                                                        color: widget.backgroundColor!.toArgb(),
-                                                        width: ScreenUtil.screenSize.width,
-                                                        height: ScreenUtil.screenSize.width / widget.ratio,
-                                                      ),
-                                                scale: bgScale,
-                                                dx: bgDx,
-                                                dy: bgDy,
-                                                minScale: 1.0,
+                                            Obx(
+                                              () => PinGestureView(
+                                                  child: widget.backgroundImage != null
+                                                      ? Image.memory(
+                                                          widget.backgroundByte!,
+                                                          fit: BoxFit.contain,
+                                                          width: ScreenUtil.screenSize.width,
+                                                          height: ScreenUtil.screenSize.width / widget.ratio,
+                                                        )
+                                                      : Container(
+                                                          color: widget.backgroundColor!.toArgb(),
+                                                          width: ScreenUtil.screenSize.width,
+                                                          height: ScreenUtil.screenSize.width / widget.ratio,
+                                                        ),
+                                                  scale: bgScale,
+                                                  dx: bgDx,
+                                                  dy: bgDy,
+                                                  minScale: 1.0,
+                                                  onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                                    bgScale = newScale;
+                                                    bgDx = newDx;
+                                                    bgDy = newDy;
+                                                  }).ignore(ignoring: !isActionBg.value),
+                                            ),
+                                            Obx(
+                                              () => PinGestureView(
+                                                child: Image.memory(
+                                                  key: _personImageKey,
+                                                  byteData,
+                                                  fit: BoxFit.contain,
+                                                  width: ScreenUtil.screenSize.width,
+                                                  height: ScreenUtil.screenSize.width / widget.ratio,
+                                                ),
+                                                scale: scale,
+                                                dx: dx,
+                                                dy: dy,
                                                 onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                                  bgScale = newScale;
-                                                  bgDx = newDx;
-                                                  bgDy = newDy;
-                                                }).ignore(ignoring: true),
-                                            PinGestureView(
-                                              child: Image.memory(
-                                                byteData,
-                                                fit: BoxFit.contain,
-                                                width: ScreenUtil.screenSize.width,
-                                                height: ScreenUtil.screenSize.width / widget.ratio,
-                                              ),
-                                              scale: scale,
-                                              dx: dx,
-                                              dy: dy,
-                                              onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                                scale = newScale;
-                                                dx = newDx;
-                                                dy = newDy;
-                                              },
-                                            ).ignore(ignoring: true),
+                                                  scale = newScale;
+                                                  dx = newDx;
+                                                  dy = newDy;
+                                                },
+                                              ).ignore(ignoring: isActionBg.value),
+                                            ),
                                           ]),
                                         ),
-                                  // child: PinGestureViews(
-                                  //     dx: dx,
-                                  //     dy: dy,
-                                  //     bgDx: bgDx,
-                                  //     bgDy: bgDy,
-                                  //     onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                  //       if (isSelected == true) {
-                                  //         bgScale = newScale;
-                                  //         bgDx = newDx;
-                                  //         bgDy = newDy;
-                                  //       } else {
-                                  //         scale = newScale;
-                                  //         dx = newDx;
-                                  //         dy = newDy;
-                                  //       }
-                                  //     },
-                                  //     scale: scale,
-                                  //     bgScale: bgScale,
-                                  //     child: Image.memory(
-                                  //       byteData,
-                                  //       fit: BoxFit.contain,
-                                  //       width: ScreenUtil.screenSize.width,
-                                  //       height: ScreenUtil.screenSize.width / widget.ratio,
-                                  //     ),
-                                  //     bgChild: widget.backgroundImage != null
-                                  //         ? Image.memory(
-                                  //             widget.backgroundByte!,
-                                  //             fit: BoxFit.contain,
-                                  //             width: ScreenUtil.screenSize.width,
-                                  //             height: ScreenUtil.screenSize.width / widget.ratio,
-                                  //           )
-                                  //         : Container(
-                                  //             color: widget.backgroundColor!.toArgb(),
-                                  //             width: ScreenUtil.screenSize.width,
-                                  //             height: ScreenUtil.screenSize.width / widget.ratio,
-                                  //           ),
-                                  //     isSelectedBg: isSelectedBg),
                                 ),
                               ),
                             ],
