@@ -5030,11 +5030,41 @@ class S {
     );
   }
 
-  /// `My Recents`
+  /// `Comment has been deleted`
+  String get deleted_comment {
+    return Intl.message(
+      'Comment has been deleted',
+      name: 'deleted_comment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My recents`
   String get my_rencents {
     return Intl.message(
-      'My Recents',
+      'My recents',
       name: 'my_rencents',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Take a selfie`
+  String get camera {
+    return Intl.message(
+      'Take a selfie',
+      name: 'camera',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select fom album`
+  String get photo {
+    return Intl.message(
+      'Select fom album',
+      name: 'photo',
       desc: '',
       args: [],
     );

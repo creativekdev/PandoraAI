@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
@@ -27,9 +25,8 @@ class CropOptions extends StatelessWidget {
   }
 
   crop(BuildContext context) {
-    Navigator.of(context).push(NoAnimRouter(
-        ImCropScreen(
-          bottomPadding: controller.parent.bottomHeight,
+    Navigator.of(context).push(FadeRouter(
+        child: ImCropScreen(
           filePath: controller.originFilePath!,
           cropItem: controller.currentItem,
           onGetCropPath: (String path) {

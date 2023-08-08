@@ -13,6 +13,7 @@ class ImageEdition {
   static String TagAppbarTagBack = "ImageEditionAppbarTagBack";
   static String TagAppbarTagTitle = "ImageEditionAppbarTagTitle";
   static String TagAppbarTagTraining = "ImageEditionAppbarTagTraining";
+  static String TagImageEditView = "ImageEditView";
 
   static Future<void> open(
     BuildContext context, {

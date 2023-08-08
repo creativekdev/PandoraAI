@@ -108,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage(" %d 回Me-Taverse変換/日"),
         "c_password": MessageLookupByLibrary.simpleMessage("パスワード確認"),
+        "camera": MessageLookupByLibrary.simpleMessage("折を見て"),
         "cancel": MessageLookupByLibrary.simpleMessage("キャンセル"),
         "cancel_subscribe": MessageLookupByLibrary.simpleMessage("購読解除"),
         "cancel_subscribe_succeed":
@@ -180,6 +181,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "delete_account_tips":
             MessageLookupByLibrary.simpleMessage("アカウントを永久的に削除しますか？"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage("削除成功"),
+        "deleted_comment": MessageLookupByLibrary.simpleMessage("コメントは削除されました"),
         "deny": MessageLookupByLibrary.simpleMessage("拒否"),
         "disconnect": MessageLookupByLibrary.simpleMessage("バインド解除"),
         "disconnect_social_completed":
@@ -334,7 +336,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "most_popular": MessageLookupByLibrary.simpleMessage("最もポピュラーな"),
         "msgTitle": MessageLookupByLibrary.simpleMessage("メッセージ"),
         "my_code": MessageLookupByLibrary.simpleMessage("私の招待コード"),
-        "my_rencents": MessageLookupByLibrary.simpleMessage("私の最近のこと"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("歴史"),
         "name": MessageLookupByLibrary.simpleMessage("フルネーム"),
         "name_hint": MessageLookupByLibrary.simpleMessage("名前を入力してください"),
         "name_validation": MessageLookupByLibrary.simpleMessage("名前を入力してください"),
@@ -424,6 +426,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "このアプリケーションはアルバムへのアクセス権限が必要です。設定を開きますか？"),
         "permissionPhotoToSettings":
             MessageLookupByLibrary.simpleMessage("設定する"),
+        "photo": MessageLookupByLibrary.simpleMessage("アトラス"),
         "photo_delete_already":
             MessageLookupByLibrary.simpleMessage("写真が削除されました"),
         "photo_select_already":

@@ -496,6 +496,9 @@
   "furry": "Furry Friends",
   "update": "Update",
   "create_with_prompt": "Create with Prompt",
-  "how_to_use_desc": "Upload a black and white image and you will get a colorful image!",
-  "my_rencents": "My Recents"
+  "how_to_use_desc": "Choose a drawing with a black and white them and you will get a colorful-image!",
+  "deleted_comment": "Comment has been deleted",
+  "my_rencents": "My recents",
+  "camera": "Take a selfie",
+  "photo": "Select fom album"
 }

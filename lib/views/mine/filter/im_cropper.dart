@@ -87,9 +87,15 @@ class _ImCropperState extends State<ImCropper> {
       _height = size.height - $(6);
       _width = (_height - $(8)) * _ratio + $(8);
     } else {
-      _width = size.width;
-      _height = (_width - $(8)) / _ratio + $(8);
+      if (_ratio == 9 / 16) {
+        _width = size.width - $(12);
+        _height = (_width - $(8)) / _ratio + $(6);
+      } else {
+        _width = size.width;
+        _height = (_width - $(8)) / _ratio + $(8);
+      }
     }
+
     return Stack(
       children: [
         ImDecoratior(width: _width, height: _height),

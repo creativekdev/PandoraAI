@@ -497,5 +497,8 @@
   "update": "Actualizar",
   "create_with_prompt": "Crear con promp",
   "how_to_use_desc": "¡Elige un dibujo en blanco y negro y obtendrás una imagen colorida!",
-  "my_rencents": "Mis recientes"
+  "deleted_comment": "el comentario ha sido eliminado",
+  "my_rencents": "Historias",
+  "camera": "Cámara",
+  "photo": "Atlas"
 }

@@ -32,6 +32,7 @@ import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../utils/img_utils.dart';
 import '../../share/ShareScreen.dart';
+import 'image_edition.dart';
 import 'widget/effect_options.dart';
 
 class ImageEditionScreen extends StatefulWidget {
@@ -246,7 +247,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        getImageWidget(context, controller),
+        getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView),
         Align(
           alignment: Alignment.centerRight,
           child: buildRightTab(context, controller),
@@ -367,7 +368,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       case ImageEditionFunction.crop:
         return CropOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.removeBg:
-        return RemoveBgOptions(controller: controller.currentItem.holder);
+        return RemoveBgOptions(
+          controller: controller.currentItem.holder,
+          bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+          switchButtonPadding: controller.switchButtonBottomToScreen,
+        );
       case ImageEditionFunction.UNDEFINED:
         break;
     }

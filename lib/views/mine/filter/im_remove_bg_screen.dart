@@ -4,18 +4,21 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
+import '../../../Widgets/app_navigation_bar.dart';
 import '../../../api/filter_api.dart';
 import '../../../network/dio_node.dart';
 
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen({super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio, required this.bottomPadding});
+  const ImRemoveBgScreen(
+      {super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio, this.bottomPadding = 0, this.switchButtonBottomToScreen = 0});
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
   final double imageRatio;
   final double bottomPadding;
+  final double switchButtonBottomToScreen;
 
   @override
   State<ImRemoveBgScreen> createState() => _ImRemoveBgScreenState();
@@ -101,48 +104,61 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xaa000000),
-      body: Center(
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            if (isLoaded == true) // 显示生成的图片
-              Image.file(
-                File(removeBgUrl!),
-                width: width,
-                height: height,
-                fit: BoxFit.cover,
+      appBar: AppNavigationBar(
+        backgroundColor: Colors.transparent,
+        leading: SizedBox(),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Center(
+              child: Stack(
+                // alignment: Alignment.topCenter,
+                children: [
+                  if (isLoaded == true) // 显示生成的图片
+                    Image.file(
+                      File(removeBgUrl!),
+                      width: width,
+                      height: height,
+                      fit: BoxFit.cover,
+                    ),
+                  AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      double offsetY = height * _animation.value;
+                      return Stack(
+                        children: [
+                          ClipPath(
+                            //  矩形裁剪
+                            clipper: ReactClipper(isLoaded ? offsetY : height),
+                            child: Image.file(
+                              File(widget.filePath!),
+                              width: width,
+                              height: height,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            top: offsetY,
+                            child: Container(
+                              height: $(2),
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               ),
-            AnimatedBuilder(
-              animation: _animation,
-              builder: (context, child) {
-                double offsetY = height * _animation.value;
-                return Stack(
-                  children: [
-                    ClipPath(
-                      //  矩形裁剪
-                      clipper: ReactClipper(isLoaded ? offsetY : height),
-                      child: Image.file(
-                        File(widget.filePath!),
-                        width: width,
-                        height: height,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: offsetY,
-                      child: Container(
-                        height: $(2),
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                );
-              },
             ),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: widget.bottomPadding - ScreenUtil.getBottomPadding(context),
+          )
+        ],
       ),
     );
   }

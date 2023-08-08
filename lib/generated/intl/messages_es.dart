@@ -132,6 +132,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "％d conversión me-taverse/día"),
         "c_password":
             MessageLookupByLibrary.simpleMessage("Confirmar la contraseña"),
+        "camera": MessageLookupByLibrary.simpleMessage("Cámara"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancelar"),
         "cancel_subscribe":
             MessageLookupByLibrary.simpleMessage("Cancelar la suscripción"),
@@ -222,6 +223,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Dirección eliminada con éxito"),
         "delete_succeed": MessageLookupByLibrary.simpleMessage(
             "La eliminación se ha realizado correctamente"),
+        "deleted_comment": MessageLookupByLibrary.simpleMessage(
+            "el comentario ha sido eliminado"),
         "deny": MessageLookupByLibrary.simpleMessage("rehusar"),
         "disconnect": MessageLookupByLibrary.simpleMessage("desvinculación"),
         "disconnect_social_completed": MessageLookupByLibrary.simpleMessage(
@@ -404,7 +407,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "msgTitle": MessageLookupByLibrary.simpleMessage("Mensaje"),
         "my_code":
             MessageLookupByLibrary.simpleMessage("Mi código de invitación"),
-        "my_rencents": MessageLookupByLibrary.simpleMessage("Mis recientes"),
+        "my_rencents": MessageLookupByLibrary.simpleMessage("Historias"),
         "name": MessageLookupByLibrary.simpleMessage("nombre completo"),
         "name_hint":
             MessageLookupByLibrary.simpleMessage("Introduzca un nombre"),
@@ -509,6 +512,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Esta aplicación requiere acceso a los permisos del álbum, ya sea para ir a la configuración para abrir？"),
         "permissionPhotoToSettings":
             MessageLookupByLibrary.simpleMessage("Ve a Configuración"),
+        "photo": MessageLookupByLibrary.simpleMessage("Atlas"),
         "photo_delete_already":
             MessageLookupByLibrary.simpleMessage("La imagen ha sido eliminada"),
         "photo_select_already": MessageLookupByLibrary.simpleMessage(
