@@ -200,6 +200,7 @@ class Images {
   static const String ic_success = 'assets/images/ic_success.png';
   static const String ic_swipe = 'assets/images/ic_swipe.png';
   static const String ic_switch_images = 'assets/images/ic_switch_images.png';
+  static const String ic_edit_submit = 'assets/images/ic_edit_submit.png';
   static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
   static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';
   static const String ic_tab_effect = 'assets/images/ic_tab_effect.png';

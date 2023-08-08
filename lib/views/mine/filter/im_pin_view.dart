@@ -66,7 +66,7 @@ class _ImageMergingWidgetState extends State<ImPinView> {
       backgroundColor: Color(0xaa000000),
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
-        trailing: Image.asset(Images.ic_confirm, width: $(30), height: $(30)).intoGestureDetector(onTap: () async {
+        trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
           ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
           if (image != null) {
             imgLib.Image img = await getLibImage(image);
@@ -98,46 +98,49 @@ class _ImageMergingWidgetState extends State<ImPinView> {
                                           width: ScreenUtil.screenSize.width,
                                           height: ScreenUtil.screenSize.width / widget.ratio,
                                         )
-                                      : Stack(children: [
-                                          PinGestureView(
-                                              child: widget.backgroundImage != null
-                                                  ? Image.memory(
-                                                      widget.backgroundByte!,
-                                                      fit: BoxFit.contain,
-                                                      width: ScreenUtil.screenSize.width,
-                                                      height: ScreenUtil.screenSize.width / widget.ratio,
-                                                    )
-                                                  : Container(
-                                                      color: widget.backgroundColor!.toArgb(),
-                                                      width: ScreenUtil.screenSize.width,
-                                                      height: ScreenUtil.screenSize.width / widget.ratio,
-                                                    ),
-                                              scale: bgScale,
-                                              dx: bgDx,
-                                              dy: bgDy,
-                                              minScale: 1,
+                                      : Listener(
+                                          onPointerDown: (PointerDownEvent event) {},
+                                          child: Stack(children: [
+                                            PinGestureView(
+                                                child: widget.backgroundImage != null
+                                                    ? Image.memory(
+                                                        widget.backgroundByte!,
+                                                        fit: BoxFit.contain,
+                                                        width: ScreenUtil.screenSize.width,
+                                                        height: ScreenUtil.screenSize.width / widget.ratio,
+                                                      )
+                                                    : Container(
+                                                        color: widget.backgroundColor!.toArgb(),
+                                                        width: ScreenUtil.screenSize.width,
+                                                        height: ScreenUtil.screenSize.width / widget.ratio,
+                                                      ),
+                                                scale: bgScale,
+                                                dx: bgDx,
+                                                dy: bgDy,
+                                                minScale: 1.0,
+                                                onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                                  bgScale = newScale;
+                                                  bgDx = newDx;
+                                                  bgDy = newDy;
+                                                }).ignore(ignoring: true),
+                                            PinGestureView(
+                                              child: Image.memory(
+                                                byteData,
+                                                fit: BoxFit.contain,
+                                                width: ScreenUtil.screenSize.width,
+                                                height: ScreenUtil.screenSize.width / widget.ratio,
+                                              ),
+                                              scale: scale,
+                                              dx: dx,
+                                              dy: dy,
                                               onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                                bgScale = newScale;
-                                                bgDx = newDx;
-                                                bgDy = newDy;
-                                              }),
-                                          PinGestureView(
-                                            child: Image.memory(
-                                              byteData,
-                                              fit: BoxFit.contain,
-                                              width: ScreenUtil.screenSize.width,
-                                              height: ScreenUtil.screenSize.width / widget.ratio,
-                                            ),
-                                            scale: scale,
-                                            dx: dx,
-                                            dy: dy,
-                                            onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                              scale = newScale;
-                                              dx = newDx;
-                                              dy = newDy;
-                                            },
-                                          )
-                                        ]),
+                                                scale = newScale;
+                                                dx = newDx;
+                                                dy = newDy;
+                                              },
+                                            ).ignore(ignoring: true),
+                                          ]),
+                                        ),
                                   // child: PinGestureViews(
                                   //     dx: dx,
                                   //     dy: dy,
