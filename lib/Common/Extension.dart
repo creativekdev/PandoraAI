@@ -3,16 +3,22 @@ import 'package:cartoonizer/Widgets/toast/ok_toast.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonExtension {
-  void showToast(String text, {ToastGravity gravity = ToastGravity.BOTTOM}) {
+  void showToast(
+    String text, {
+    ToastGravity gravity = ToastGravity.BOTTOM,
+    Color backgroundColor = ColorConstant.CardColor,
+    Color textColor = ColorConstant.White,
+  }) {
     Fluttertoast.cancel();
     Fluttertoast.showToast(
-        msg: text,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: gravity,
-        timeInSecForIosWeb: 3,
-        backgroundColor: ColorConstant.CardColor,
-        textColor: ColorConstant.White,
-        fontSize: 16.0);
+      msg: text,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: gravity,
+      timeInSecForIosWeb: 3,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      fontSize: 16.0,
+    );
   }
 
   void showImageSavedOkToast(BuildContext context) {

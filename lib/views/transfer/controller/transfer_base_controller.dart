@@ -93,6 +93,9 @@ abstract class TransferBaseController<ResultType> extends GetxController {
             }
           });
         });
+        if (selectedTitle == null) {
+          selectedTitle = categories.first;
+        }
       } else {
         if (initKey != null) {
           categories.forEach((category) {

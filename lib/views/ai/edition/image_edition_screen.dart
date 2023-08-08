@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
@@ -22,6 +23,7 @@ import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../../Common/Extension.dart';
@@ -58,6 +60,9 @@ class ImageEditionScreen extends StatefulWidget {
 
 class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   late ImageEditionController controller;
+  Rx<bool> titleShow = false.obs;
+  late StreamSubscription onRightTitleSwitchEvent;
+  late TimerUtil timer;
 
   @override
   void initState() {
@@ -73,6 +78,21 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       recentItemList: widget.recentEffectItems,
     ));
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
+    timer = TimerUtil()
+      ..setInterval(2000)
+      ..setOnTimerTickCallback(
+        (millisUntilFinished) {
+          if (millisUntilFinished > 0) {
+            titleShow.value = false;
+            timer.cancel();
+          }
+        },
+      );
+    onRightTitleSwitchEvent = EventBusHelper().eventBus.on<OnEditionRightTabSwitchEvent>().listen((event) {
+      timer.cancel();
+      titleShow.value = true;
+      timer.startTimer();
+    });
   }
 
   saveToAlbum() async {
@@ -120,6 +140,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   @override
   void dispose() {
     Get.delete<ImageEditionController>();
+    timer.cancel();
     super.dispose();
   }
 
@@ -230,6 +251,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           alignment: Alignment.centerRight,
           child: buildRightTab(context, controller),
         ),
+        Align(
+          alignment: Alignment.center,
+          child: Obx(
+            () => Text(
+              controller.currentItem.function.title(),
+              style: TextStyle(color: Color(0xfff9f9f9), fontSize: $(18)),
+            ).visibility(visible: titleShow.value),
+          ),
+        )
       ],
     );
   }
@@ -282,59 +312,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                           ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: const [Color(0xFF68F0AF), Color(0xFF05E0D5)])
                           : null),
                 )
-                .intoGestureDetector(onTap: () async {
-                  if (e.function == controller.currentItem.function) {
-                    //重复点击，特殊情况考虑
-                  } else {
-                    if (e.function == ImageEditionFunction.effect || e.function == ImageEditionFunction.sticker) {
-                      //跳转effect或者sticker
-                      controller.currentItem = e;
-                      // 不处理
-                    } else {
-                      String originFilePath;
-                      if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
-                        // 从effect或sticker跳其他
-                        var transferController = controller.currentItem.holder as TransferBaseController;
-                        originFilePath = (transferController.resultFile ?? transferController.originFile).path;
-                      } else {
-                        //其他的互相跳转
-                        var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-                        originFilePath = (baseHolder.resultFile ?? baseHolder.originFile!).path;
-                      }
-                      if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
-                        var image = await SyncFileImage(file: File(originFilePath)).getImage();
-                        Navigator.push(
-                          context,
-                          NoAnimRouter(
-                            ImRemoveBgScreen(
-                              bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(context),
-                              filePath: originFilePath,
-                              imageRatio: image.image.width / image.image.height,
-                              onGetRemoveBgImage: (String path) async {
-                                SyncFileImage(file: File(path)).getImage().then((value) {
-                                  var holder = e.holder as RemoveBgHolder;
-                                  holder.ratio = value.image.width / value.image.height;
-                                  holder.removedImage = File(path);
-                                });
-                              },
-                            ),
-                            // opaque: true,
-                            settings: RouteSettings(name: "/ImRemoveBgScreen"),
-                          ),
-                        ).then((value) {
-                          if (value == true) {
-                            var newHolder = e.holder as ImageEditionBaseHolder;
-                            newHolder.setOriginFilePath(originFilePath);
-                            controller.currentItem = e;
-                          }
-                        });
-                      } else {
-                        var newHolder = e.holder as ImageEditionBaseHolder;
-                        newHolder.setOriginFilePath(originFilePath);
-                        controller.currentItem = e;
-                      }
-                    }
-                  }
+                .intoGestureDetector(onTap: () {
+                  controller.onRightTabClick(context, e);
                 })
                 .intoContainer(margin: EdgeInsets.symmetric(vertical: $(2)))
                 .visibility(visible: visible);

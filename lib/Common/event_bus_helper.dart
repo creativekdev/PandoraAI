@@ -174,3 +174,7 @@ class OnNetworkStateChangeEvent extends BaseEvent<ConnectivityResult> {
 class OnHomeScrollEvent extends BaseEvent<bool> {
   OnHomeScrollEvent({required super.data});
 }
+
+class OnEditionRightTabSwitchEvent extends BaseEvent {
+  OnEditionRightTabSwitchEvent();
+}

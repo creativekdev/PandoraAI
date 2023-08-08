@@ -128,14 +128,22 @@ class AdjustHolder extends ImageEditionBaseHolder {
 
   void resetConfig() {
     dataList = [
-      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -50, end: 50),
-      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 10),
-      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 20),
-      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 30),
-      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100),
-      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -180, end: 180),
+      AdjustData(
+        function: AdjustFunction.brightness,
+        initValue: 0,
+        value: 0,
+        previousValue: 0,
+        start: -100,
+        end: 100,
+        multiple: 0.5,
+      ),
+      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
+      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
+      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.1),
+      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.2),
+      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.3),
+      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 1),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -200, end: 200, multiple: 4),
     ];
     _index = 0;
     isClick = true;
@@ -208,10 +216,10 @@ imgLib.Image _imAdjust(List<AdjustData> datas, imgLib.Image image, TypeSendPort 
 imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
   switch (data.function) {
     case AdjustFunction.brightness:
-      image = imgLib.brightness(image, data.value.toInt())!;
+      image = imgLib.brightness(image, (data.value * data.multiple).toInt())!;
       break;
     case AdjustFunction.contrast:
-      image = imgLib.contrast(image, data.value)!;
+      image = imgLib.contrast(image, data.value * data.multiple)!;
       break;
     case AdjustFunction.saturation:
       for (var y = 0; y < image.height; ++y) {
@@ -222,24 +230,24 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
           HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
-          hsv = hsv.withSaturation(data.value * hsv.saturation / 100);
+          hsv = hsv.withSaturation(data.value * data.multiple * hsv.saturation / 100);
           Color color = hsv.toColor();
           image.setPixelRgba(x, y, color.red, color.green, color.blue);
         }
       }
       break;
     case AdjustFunction.noise:
-      image = imgLib.noise(image, (data.value / 100 * 255).toInt());
+      image = imgLib.noise(image, ((data.value * data.multiple) / 100 * 255).toInt());
       break;
     case AdjustFunction.pixelate:
-      image = imgLib.pixelate(image, data.value.toInt());
+      image = imgLib.pixelate(image, (data.value * data.multiple).toInt());
       break;
     case AdjustFunction.blur:
-      image = imgLib.gaussianBlur(image, data.value ~/ 2);
+      image = imgLib.gaussianBlur(image, (data.value * data.multiple) ~/ 2);
       break;
     case AdjustFunction.sharpen:
       if (data.value.toInt() > 0) {
-        final kernel = [-1, -1, -1, -1, 9 + data.value.toInt() / 100, -1, -1, -1, -1];
+        final kernel = [-1, -1, -1, -1, 9 + (data.value * data.multiple).toInt() / 100, -1, -1, -1, -1];
         image = imgLib.convolution(image, kernel);
       }
       break;
@@ -252,7 +260,7 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
           HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
-          hsv = hsv.withHue((hsv.hue + data.value) % 360);
+          hsv = hsv.withHue((hsv.hue + data.value * data.multiple) % 360);
           Color color = hsv.toColor();
           image.setPixelRgba(x, y, color.red, color.green, color.blue);
         }
@@ -272,6 +280,7 @@ class AdjustData {
   double start;
   double end;
   bool active = false;
+  double multiple;
 
   AdjustData({
     required this.function,
@@ -280,6 +289,7 @@ class AdjustData {
     required this.start,
     required this.end,
     required this.initValue,
+    required this.multiple,
   });
 
   double getProgress() {

@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Common/Extension.dart';
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
@@ -17,6 +19,9 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'ie_base_holder.dart';
 
 class ImageEditionController extends GetxController {
   final String photoType;
@@ -44,6 +49,7 @@ class ImageEditionController extends GetxController {
 
   set currentItem(EditionItem func) {
     _currentItem = func;
+    EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent());
     update();
   }
 
@@ -60,7 +66,6 @@ class ImageEditionController extends GetxController {
 
   UploadImageController uploadImageController = Get.find();
   int generateCount = 0;
-
 
   List<RecentEffectItem> recentItemList = [];
 
@@ -222,6 +227,61 @@ class ImageEditionController extends GetxController {
         });
       }
     });
+  }
+
+  onRightTabClick(BuildContext context, EditionItem e) async {
+    if (e.function == currentItem.function) {
+      //重复点击，特殊情况考虑
+    } else {
+      if (e.function == ImageEditionFunction.effect || e.function == ImageEditionFunction.sticker) {
+        //跳转effect或者sticker
+        currentItem = e;
+        // 不处理
+      } else {
+        String originFilePath;
+        if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
+          // 从effect或sticker跳其他
+          var transferController = currentItem.holder as TransferBaseController;
+          originFilePath = (transferController.resultFile ?? transferController.originFile).path;
+        } else {
+          //其他的互相跳转
+          var baseHolder = currentItem.holder as ImageEditionBaseHolder;
+          originFilePath = (baseHolder.resultFile ?? baseHolder.originFile!).path;
+        }
+        if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
+          var image = await SyncFileImage(file: File(originFilePath)).getImage();
+          Navigator.push(
+            context,
+            NoAnimRouter(
+              ImRemoveBgScreen(
+                bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(context),
+                filePath: originFilePath,
+                imageRatio: image.image.width / image.image.height,
+                onGetRemoveBgImage: (String path) async {
+                  SyncFileImage(file: File(path)).getImage().then((value) {
+                    var holder = e.holder as RemoveBgHolder;
+                    holder.ratio = value.image.width / value.image.height;
+                    holder.removedImage = File(path);
+                  });
+                },
+              ),
+              // opaque: true,
+              settings: RouteSettings(name: "/ImRemoveBgScreen"),
+            ),
+          ).then((value) {
+            if (value == true) {
+              var newHolder = e.holder as ImageEditionBaseHolder;
+              newHolder.setOriginFilePath(originFilePath);
+              currentItem = e;
+            }
+          });
+        } else {
+          var newHolder = e.holder as ImageEditionBaseHolder;
+          newHolder.setOriginFilePath(originFilePath);
+          currentItem = e;
+        }
+      }
+    }
   }
 }
 
