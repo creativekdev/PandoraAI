@@ -87,9 +87,13 @@ class AllTransferController extends TransferBaseController {
   void onItemSelected(int index) {
     super.onItemSelected(index);
     if (selectedTitle?.category == 'cartoonize') {
-      cartoonizerController.onItemSelected(index);
+      if ((selectedEffect == null && cartoonizerController.selectedEffect != null) || (selectedEffect != null && cartoonizerController.selectedEffect == null)) {
+        cartoonizerController.onItemSelected(index);
+      }
     } else if (selectedTitle?.category == 'stylemorph') {
-      styleMorphController.onItemSelected(index);
+      if ((selectedEffect == null && styleMorphController.selectedEffect != null) || (selectedEffect != null && styleMorphController.selectedEffect == null)) {
+        styleMorphController.onItemSelected(index);
+      }
     }
   }
 

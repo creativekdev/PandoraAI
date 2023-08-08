@@ -110,6 +110,7 @@ class HomePageHomepageGalleries {
     _category = type;
     categoryString = _category!.value();
   }
+
   @JSONField(name: "social_posts")
   late List<DiscoveryListEntity> socialPosts;
   String? title;

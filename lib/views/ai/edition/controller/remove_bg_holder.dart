@@ -12,9 +12,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   File? get backgroundImage => _backgroundImage;
 
-  set backgroundImage(File? file) {
+  setBackgroundImage(File? file) async {
     _backgroundImage = file;
-    buildBackLibImg();
+    await buildBackLibImg();
   }
 
   File? _removedImage;

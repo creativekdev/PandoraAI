@@ -1,4 +1,23 @@
 ///auto generate code, please do not modify;
+///
+///   @JSONField(name: 'adType')
+///   String? mAdTypeString;
+///
+///   @JSONField(serialize: false, deserialize: false)
+///   AdType? _mAdType;
+///
+///   AdType get mAdType {
+///     if (_mAdTypeEnum == null) {
+///       _mAdType = AdTypeUtils.build(mAdTypeString);
+///     }
+///     return _mAdType!;
+///   }
+///
+///   set mAdType(AdType type) {
+///     _mAdType = type;
+///     mAdTypeString = _mAdType!.value();
+///   }
+
 enum AdType {
   splash,
   card,
@@ -35,4 +54,3 @@ extension AdTypeEx on AdType {
     }
   }
 }
-

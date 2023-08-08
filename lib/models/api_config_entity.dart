@@ -163,7 +163,7 @@ class EffectCategory {
     entity.thumbnail = (json['thumbnail'] ?? '').toString();
     entity.thumbnails = ((json['thumbnails'] ?? []) as List).map((e) => e.toString()).toList();
     entity.isNsfw = (json['is_nsfw'] ?? false);
-    entity.effects = ((json['effects'] ?? {}) as Map<String, dynamic>).values.map((value) => EffectItem.fromJson(value, locale)).toList();
+    entity.effects = ((json['effects'] ?? {}) as Map<String, dynamic>).values.map((value) => EffectItem.fromJson(value, locale, category)).toList();
     if (json['default_effect'] != null) {
       entity.defaultEffect = json['default_effect'].toString();
     } else {
@@ -211,11 +211,13 @@ class EffectItem {
   late bool isNsfw;
   late String tag;
   late List<String> tagList;
+  late String parent;
 
   EffectItem._instance();
 
-  factory EffectItem.fromJson(Map<String, dynamic> json, Map<String, dynamic> locale) {
+  factory EffectItem.fromJson(Map<String, dynamic> json, Map<String, dynamic> locale, String parent) {
     EffectItem entity = EffectItem._instance();
+    entity.parent = parent;
     entity.id = (json['id'] ?? '').toString();
     entity.key = (json['key'] ?? '').toString();
     entity.category = (json['category'] ?? '').toString();
@@ -350,5 +352,26 @@ extension _TitleLocaleEx on String {
       return result;
     }
     return null;
+  }
+}
+
+extension EffectItemEx on EffectItem {
+  handleApiParams(Map<String, dynamic> params) {
+    if (type == 'sticker') {
+      params['sticker_name'] = stickerName;
+    } else if (type == 'template') {
+      params['template_name'] = templateName;
+    }
+  }
+}
+
+extension EffectModelEx on EffectCategory {
+  int getDefaultPos() {
+    for (int i = 0; i < effects.length; i++) {
+      if (effects[i].key == defaultEffect) {
+        return i;
+      }
+    }
+    return 0;
   }
 }

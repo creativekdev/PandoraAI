@@ -59,7 +59,7 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: $(5)),
                   child: Image.asset(
-                    'assets/images/ic_prompt.webp',
+                    Images.ic_prompt,
                     width: $(20),
                     height: $(20),
                   ),

@@ -223,7 +223,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                             child: PaiSwiper(
                               entity: _.data?.homepage?.banners,
                               onClickItem: (index, data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', data: data);
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_banner_${data.category.value()}', data: data);
                               },
                             ),
                           ),
@@ -231,7 +231,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                             child: PaiSliverView(
                               list: _.data?.homepage?.tools,
                               onClickItem: (data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', homeData: data);
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_tools_${data.category.value()}', homeData: data);
                               },
                             ),
                           ),
@@ -239,7 +239,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                             child: PaiRecommendView(
                               list: _.data?.homepage?.features,
                               onClickItem: (data) {
-                                HomeCardTypeUtils.jump(context: context, source: 'home_page_${data.category}', homeData: data);
+                                HomeCardTypeUtils.jump(context: context, source: 'home_page_recommend_${data.category.value()}', homeData: data);
                               },
                             ),
                           ),

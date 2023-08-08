@@ -25,9 +25,9 @@ class RemoveBgOptions extends StatelessWidget {
         if (data.filePath != null) {
           File backFile = File(data.filePath!);
           controller.backgroundColor = null;
-          controller.backgroundImage = backFile;
+          await controller.setBackgroundImage(backFile);
         } else {
-          controller.backgroundImage = null;
+          await controller.setBackgroundImage(null);
           controller.backgroundColor = controller.rgbaToAbgr(data.color!);
         }
         controller.update();

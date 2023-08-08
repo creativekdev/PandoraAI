@@ -4,7 +4,6 @@ import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/effect_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/config.dart';
-import 'package:cartoonizer/models/EffectModel.dart';
 import 'package:cartoonizer/models/ai_server_entity.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/network/base_requester.dart';

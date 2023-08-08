@@ -22,6 +22,7 @@ import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -247,7 +248,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView),
+        getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
           child: buildRightTab(context, controller),
@@ -269,12 +270,63 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.UNDEFINED) {
       return Container();
     }
-    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
-      var effectController = controller.currentItem.holder as TransferBaseController;
+    if (controller.currentItem.function == ImageEditionFunction.effect) {
+      var effectController = controller.currentItem.holder as AllTransferController;
+      bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
+      var image = Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
+      if (needGenerateAgain) {
+        return Stack(
+          fit: StackFit.loose,
+          children: [
+            image,
+            Positioned(
+              child: generateAgainBtn(context),
+              bottom: 0,
+            ),
+          ],
+        );
+      } else {
+        return image;
+      }
+    } else if (controller.currentItem.function == ImageEditionFunction.sticker) {
+      var effectController = controller.currentItem.holder as StickerController;
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
       return controller.showOrigin ? Image.file(controller.originFile) : (controller.currentItem.holder as ImageEditionBaseHolder).buildShownImage();
     }
+  }
+
+  Widget generateAgainBtn(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(Images.ic_sticker, color: Colors.white, width: $(20)),
+        SizedBox(width: $(4)),
+        TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.normal, $(15)),
+      ],
+    )
+        .intoContainer(
+          padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(10)),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular($(32)),
+              gradient: LinearGradient(colors: [
+                Color(0xff243CFF),
+                Color(0xffB477FC),
+              ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+        )
+        .intoContainer(
+            padding: EdgeInsets.all($(2)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular($(32)),
+              color: Color(0x33000000),
+            ))
+        .intoGestureDetector(onTap: () {
+      controller.generate(context, controller.currentItem.holder);
+    }).intoContainer(
+      width: ScreenUtil.screenSize.width,
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: $(8)),
+    );
   }
 
   Widget buildRightTab(BuildContext context, ImageEditionController controller) {
@@ -306,28 +358,27 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               height: $(24),
             )
                 .intoContainer(
-                  padding: EdgeInsets.all($(8)),
-                  decoration: BoxDecoration(
+                    padding: EdgeInsets.all($(8)),
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular($(32)),
-                      gradient: controller.currentItem == e
-                          ? LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: const [Color(0xFF68F0AF), Color(0xFF05E0D5)])
-                          : null),
-                )
+                      border: Border.all(color: controller.currentItem == e ? Colors.white : Colors.transparent, width: 1.5),
+                      color: controller.currentItem == e ? Color(0xbb202020) : Colors.transparent,
+                    ))
                 .intoGestureDetector(onTap: () {
                   controller.onRightTabClick(context, e);
                 })
-                .intoContainer(margin: EdgeInsets.symmetric(vertical: $(2)))
+                .intoContainer(margin: EdgeInsets.symmetric(vertical: $(0.5)))
                 .visibility(visible: visible);
           }).toList(),
         ).intoContainer(
           padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x88000000)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x77202020)),
         ),
         SizedBox(height: $(50)),
         Image.asset(Images.ic_switch_images, width: $(24), height: $(24))
             .intoContainer(
           padding: EdgeInsets.all($(8)),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x88000000)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x77202020)),
         )
             .intoGestureDetector(
           onTapDown: (details) {

@@ -5020,10 +5020,10 @@ class S {
     );
   }
 
-  /// `Upload a black and white image and you will get a colorful image!`
+  /// `Choose a drawing with a black and white them and you will get a colorful-image!`
   String get how_to_use_desc {
     return Intl.message(
-      'Upload a black and white image and you will get a colorful image!',
+      'Choose a drawing with a black and white them and you will get a colorful-image!',
       name: 'how_to_use_desc',
       desc: '',
       args: [],

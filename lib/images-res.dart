@@ -154,6 +154,7 @@ class Images {
    static const String ic_premium = 'assets/images/ic_premium.png';
    static const String ic_print_payment_failure = 'assets/images/ic_print_payment_failure.png';
    static const String ic_print_payment_success = 'assets/images/ic_print_payment_success.png';
+   static const String ic_prompt = 'assets/images/ic_prompt.webp';
    static const String ic_prompt_clear = 'assets/images/ic_prompt_clear.png';
    static const String ic_prompt_tripple_arrow = 'assets/images/ic_prompt_tripple_arrow.png';
    static const String ic_radio_off = 'assets/images/ic_radio_off.png';
