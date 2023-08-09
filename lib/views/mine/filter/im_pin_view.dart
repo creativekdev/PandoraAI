@@ -54,7 +54,8 @@ class _ImageMergingWidgetState extends State<ImPinView> {
   double bgDx = 0;
   double bgDy = 0;
   bool isShowOrigin = false;
-  RxBool isActionBg = false.obs;
+
+  // RxBool isActionBg = false.obs;
   GlobalKey _personImageKey = GlobalKey();
 
   Future<Uint8List?> getPersonImage() async {
@@ -123,57 +124,37 @@ class _ImageMergingWidgetState extends State<ImPinView> {
                                           width: ScreenUtil.screenSize.width,
                                           height: ScreenUtil.screenSize.width / widget.ratio,
                                         )
-                                      : Listener(
-                                          onPointerDown: (PointerDownEvent event) {
-                                            Offset tapPosition = event.localPosition;
-                                            isActionBg.value = getActionView(tapPosition);
-                                          },
-                                          child: Stack(children: [
-                                            Obx(
-                                              () => PinGestureView(
-                                                  child: widget.backgroundImage != null
-                                                      ? Image.memory(
-                                                          widget.backgroundByte!,
-                                                          fit: BoxFit.cover,
-                                                          width: ScreenUtil.screenSize.width,
-                                                          height: ScreenUtil.screenSize.width / widget.ratio,
-                                                        )
-                                                      : Container(
-                                                          color: widget.backgroundColor!.toArgb(),
-                                                          width: ScreenUtil.screenSize.width,
-                                                          height: ScreenUtil.screenSize.width / widget.ratio,
-                                                        ),
-                                                  scale: bgScale,
-                                                  dx: bgDx,
-                                                  dy: bgDy,
-                                                  minScale: 1.0,
-                                                  onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                                    bgScale = newScale;
-                                                    bgDx = newDx;
-                                                    bgDy = newDy;
-                                                  }).ignore(ignoring: !isActionBg.value),
-                                            ),
-                                            Obx(
-                                              () => PinGestureView(
-                                                child: Image.memory(
-                                                  key: _personImageKey,
-                                                  byteData,
-                                                  fit: BoxFit.contain,
+                                      : Stack(children: [
+                                          widget.backgroundImage != null
+                                              ? Image.memory(
+                                                  widget.backgroundByte!,
+                                                  fit: BoxFit.cover,
+                                                  width: ScreenUtil.screenSize.width,
+                                                  height: ScreenUtil.screenSize.width / widget.ratio,
+                                                )
+                                              : Container(
+                                                  color: widget.backgroundColor!.toArgb(),
                                                   width: ScreenUtil.screenSize.width,
                                                   height: ScreenUtil.screenSize.width / widget.ratio,
                                                 ),
-                                                scale: scale,
-                                                dx: dx,
-                                                dy: dy,
-                                                onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                                  scale = newScale;
-                                                  dx = newDx;
-                                                  dy = newDy;
-                                                },
-                                              ).ignore(ignoring: isActionBg.value),
+                                          PinGestureView(
+                                            child: Image.memory(
+                                              key: _personImageKey,
+                                              byteData,
+                                              fit: BoxFit.contain,
+                                              width: ScreenUtil.screenSize.width,
+                                              height: ScreenUtil.screenSize.width / widget.ratio,
                                             ),
-                                          ]),
-                                        ),
+                                            scale: scale,
+                                            dx: dx,
+                                            dy: dy,
+                                            onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                              scale = newScale;
+                                              dx = newDx;
+                                              dy = newDy;
+                                            },
+                                          ),
+                                        ]),
                                 ),
                               ),
                             ],

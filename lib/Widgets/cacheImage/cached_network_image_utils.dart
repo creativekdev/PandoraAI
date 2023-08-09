@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_fix_load_error.dart';
 import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/api/downloader.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:skeletons/skeletons.dart';
@@ -70,81 +70,82 @@ class CachedNetworkImageUtils {
     if (TextUtil.isEmpty(imageUrl.trim())) {
       return errorWidget.call(context, imageUrl, Exception('image url is empty'));
     }
-    if (useOld || imageUrl.contains('.webp')) {
-      return CachedNetworkImage(
-        key: key is GlobalKey<FutureLoadingImageState> ? null : key,
-        imageUrl: imageUrl,
-        httpHeaders: httpHeaders,
-        imageBuilder: imageBuilder,
-        placeholder: placeholder,
-        placeholderFadeInDuration: placeholderFadeInDuration,
-        progressIndicatorBuilder: progressIndicatorBuilder,
-        errorWidget: errorWidget,
-        fadeOutDuration: fadeOutDuration,
-        fadeOutCurve: fadeOutCurve,
-        fadeInCurve: fadeInCurve,
-        fadeInDuration: fadeInDuration,
-        width: width,
-        height: height,
-        fit: fit,
-        alignment: alignment,
-        repeat: repeat,
-        matchTextDirection: matchTextDirection,
-        cacheManager: cacheManager,
-        useOldImageOnUrlChange: useOldImageOnUrlChange,
-        color: color,
-        filterQuality: filterQuality,
-        colorBlendMode: colorBlendMode,
-        memCacheWidth: memCacheWidth,
-        memCacheHeight: memCacheHeight,
-        cacheKey: cacheKey,
-        maxHeightDiskCache: maxHeightDiskCache,
-        maxWidthDiskCache: maxWidthDiskCache,
-      );
-    }
-    return !imageUrl.isGoogleAccount
-        ? FutureLoadingImage(
-            key: key is GlobalKey<FutureLoadingImageState> ? key : null,
-            url: imageUrl,
-            errorWidget: errorWidget,
-            placeholder: placeholder,
-            width: width,
-            height: height,
-            fit: fit,
-            repeat: repeat,
-            color: color,
-            alignment: alignment,
-          )
-        : CachedNetworkImage(
-            key: key is GlobalKey<FutureLoadingImageState> ? null : key,
-            imageUrl: imageUrl,
-            httpHeaders: httpHeaders,
-            imageBuilder: imageBuilder,
-            placeholder: placeholder,
-            placeholderFadeInDuration: placeholderFadeInDuration,
-            progressIndicatorBuilder: progressIndicatorBuilder,
-            errorWidget: errorWidget,
-            fadeOutDuration: fadeOutDuration,
-            fadeOutCurve: fadeOutCurve,
-            fadeInCurve: fadeInCurve,
-            fadeInDuration: fadeInDuration,
-            width: width,
-            height: height,
-            fit: fit,
-            alignment: alignment,
-            repeat: repeat,
-            matchTextDirection: matchTextDirection,
-            cacheManager: cacheManager,
-            useOldImageOnUrlChange: useOldImageOnUrlChange,
-            color: color,
-            filterQuality: filterQuality,
-            colorBlendMode: colorBlendMode,
-            memCacheWidth: memCacheWidth,
-            memCacheHeight: memCacheHeight,
-            cacheKey: cacheKey,
-            maxHeightDiskCache: maxHeightDiskCache,
-            maxWidthDiskCache: maxWidthDiskCache,
-          );
+    return CachedNetworkImageFixLoadError(imageUrl: imageUrl, height: height ?? 0, width: width ?? 0, fit: fit);
+    // if (useOld || imageUrl.contains('.webp')) {
+    //   return CachedNetworkImage(
+    //     key: key is GlobalKey<FutureLoadingImageState> ? null : key,
+    //     imageUrl: imageUrl,
+    //     httpHeaders: httpHeaders,
+    //     imageBuilder: imageBuilder,
+    //     placeholder: placeholder,
+    //     placeholderFadeInDuration: placeholderFadeInDuration,
+    //     progressIndicatorBuilder: progressIndicatorBuilder,
+    //     errorWidget: errorWidget,
+    //     fadeOutDuration: fadeOutDuration,
+    //     fadeOutCurve: fadeOutCurve,
+    //     fadeInCurve: fadeInCurve,
+    //     fadeInDuration: fadeInDuration,
+    //     width: width,
+    //     height: height,
+    //     fit: fit,
+    //     alignment: alignment,
+    //     repeat: repeat,
+    //     matchTextDirection: matchTextDirection,
+    //     cacheManager: cacheManager,
+    //     useOldImageOnUrlChange: useOldImageOnUrlChange,
+    //     color: color,
+    //     filterQuality: filterQuality,
+    //     colorBlendMode: colorBlendMode,
+    //     memCacheWidth: memCacheWidth,
+    //     memCacheHeight: memCacheHeight,
+    //     cacheKey: cacheKey,
+    //     maxHeightDiskCache: maxHeightDiskCache,
+    //     maxWidthDiskCache: maxWidthDiskCache,
+    //   );
+    // }
+    // return !imageUrl.isGoogleAccount
+    //     ? FutureLoadingImage(
+    //         key: key is GlobalKey<FutureLoadingImageState> ? key : null,
+    //         url: imageUrl,
+    //         errorWidget: errorWidget,
+    //         placeholder: placeholder,
+    //         width: width,
+    //         height: height,
+    //         fit: fit,
+    //         repeat: repeat,
+    //         color: color,
+    //         alignment: alignment,
+    //       )
+    //     : CachedNetworkImage(
+    //         key: key is GlobalKey<FutureLoadingImageState> ? null : key,
+    //         imageUrl: imageUrl,
+    //         httpHeaders: httpHeaders,
+    //         imageBuilder: imageBuilder,
+    //         placeholder: placeholder,
+    //         placeholderFadeInDuration: placeholderFadeInDuration,
+    //         progressIndicatorBuilder: progressIndicatorBuilder,
+    //         errorWidget: errorWidget,
+    //         fadeOutDuration: fadeOutDuration,
+    //         fadeOutCurve: fadeOutCurve,
+    //         fadeInCurve: fadeInCurve,
+    //         fadeInDuration: fadeInDuration,
+    //         width: width,
+    //         height: height,
+    //         fit: fit,
+    //         alignment: alignment,
+    //         repeat: repeat,
+    //         matchTextDirection: matchTextDirection,
+    //         cacheManager: cacheManager,
+    //         useOldImageOnUrlChange: useOldImageOnUrlChange,
+    //         color: color,
+    //         filterQuality: filterQuality,
+    //         colorBlendMode: colorBlendMode,
+    //         memCacheWidth: memCacheWidth,
+    //         memCacheHeight: memCacheHeight,
+    //         cacheKey: cacheKey,
+    //         maxHeightDiskCache: maxHeightDiskCache,
+    //         maxWidthDiskCache: maxWidthDiskCache,
+    //       );
   }
 }
 
