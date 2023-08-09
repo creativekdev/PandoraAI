@@ -6,6 +6,9 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../../app/app.dart';
+import '../../../../app/cache/cache_manager.dart';
+
 class RemoveBgHolder extends ImageEditionBaseHolder {
   ui.Color? backgroundColor;
   File? _backgroundImage;
@@ -46,6 +49,20 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     } else {
       imageBack = await getLibImage(await getImage(_backgroundImage!));
     }
+    update();
+  }
+
+  saveImageWithColor(Color backgroundColor) async {
+    imgLib.Image newImage = imgLib.Image(imageFront!.width, imageFront!.height);
+    int fillColor = backgroundColor.value; // 获取颜色的ARGB值
+    newImage.fillBackground(fillColor);
+    imgLib.drawImage(newImage, imageFront!);
+    CacheManager cacheManager = AppDelegate.instance.getManager();
+    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    List<int> outputBytes = imgLib.encodePng(newImage);
+    File(path).writeAsBytes(outputBytes).then((value) {
+      resultFilePath = path;
+    });
     update();
   }
 

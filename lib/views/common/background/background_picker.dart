@@ -101,9 +101,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    if (dataList.length < 4) {
-      dataList.addAll(defaultColors.sublist(0, 4 - dataList.length).map((e) => BackgroundData()..color = e).toList());
-    }
+    // if (dataList.length < 4) {
+    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    // }
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -122,53 +122,57 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    if (dataList.length < 4) {
-      dataList.addAll(defaultColors.sublist(0, 4 - dataList.length).map((e) => BackgroundData()..color = e).toList());
-    }
+    // if (dataList.length < 4) {
+    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     List<Widget> child = [
-      Icon(
-        Icons.add,
-        size: $(28),
-        color: ColorConstant.White,
-      )
-          .intoContainer(
-              alignment: Alignment.center,
-              width: itemSize,
-              height: itemSize,
-              margin: EdgeInsets.symmetric(horizontal: $(4)),
-              decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
-          .intoGestureDetector(onTap: () {
-        BackgroundPicker.pickBackground(
-          context,
-          imageRatio: imageRatio,
-        ).then((value) {
-          if (value != null) {
-            setState(() {
-              dataList.insert(0, value);
-              cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-            });
-            widget.onPick.call(value);
-          }
-        });
-      }),
+      UnconstrainedBox(
+        child: Icon(
+          Icons.add,
+          size: $(28),
+          color: ColorConstant.White,
+        )
+            .intoContainer(
+                alignment: Alignment.center,
+                width: itemSize,
+                height: itemSize,
+                margin: EdgeInsets.symmetric(horizontal: $(4)),
+                decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
+            .intoGestureDetector(onTap: () {
+          BackgroundPicker.pickBackground(
+            context,
+            imageRatio: imageRatio,
+          ).then((value) {
+            if (value != null) {
+              setState(() {
+                dataList.insert(0, value);
+                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+              });
+              widget.onPick.call(value);
+            }
+          });
+        }),
+      ),
     ];
     child.addAll(dataList
-        .sublist(0, 4)
         .map(
-          (e) => ClipRRect(
-            child: buildItem(e),
-            borderRadius: BorderRadius.circular($(4)),
-          ).intoGestureDetector(onTap: () {
-            widget.onPick.call(e);
-          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+          (e) => UnconstrainedBox(
+            child: ClipRRect(
+              child: buildItem(e),
+              borderRadius: BorderRadius.circular($(4)),
+            ).intoGestureDetector(onTap: () {
+              widget.onPick.call(e);
+            }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+          ),
         )
         .toList());
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
+      scrollDirection: Axis.horizontal,
+      // mainAxisAlignment: MainAxisAlignment.start,
       children: child,
     );
   }

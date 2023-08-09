@@ -1,12 +1,12 @@
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
-import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/views/common/background/widgets/back_colors_picker.dart';
+
 import 'background_picker.dart';
 import 'widgets/back_image_picker.dart';
-import 'widgets/back_template_picker.dart';
 
 class BackgroundPickerHolder extends StatefulWidget {
   double imageRatio;
@@ -48,15 +48,15 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
     super.initState();
     imageRatio = widget.imageRatio;
     titleList = [
-      {
-        'title': 'template',
-        'build': (context) => BackTemplatePicker(
-            imageRatio: imageRatio,
-            parent: this,
-            onPickFile: (path) {
-              dismiss(data: BackgroundData()..filePath = path);
-            }),
-      },
+      // {
+      //   'title': 'template',
+      //   'build': (context) => BackTemplatePicker(
+      //       imageRatio: imageRatio,
+      //       parent: this,
+      //       onPickFile: (path) {
+      //         dismiss(data: BackgroundData()..filePath = path);
+      //       }),
+      // },
       {
         'title': 'album',
         'build': (context) => BackImagePicker(

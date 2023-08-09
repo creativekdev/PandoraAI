@@ -134,7 +134,7 @@ class _ImageMergingWidgetState extends State<ImPinView> {
                                                   child: widget.backgroundImage != null
                                                       ? Image.memory(
                                                           widget.backgroundByte!,
-                                                          fit: BoxFit.contain,
+                                                          fit: BoxFit.cover,
                                                           width: ScreenUtil.screenSize.width,
                                                           height: ScreenUtil.screenSize.width / widget.ratio,
                                                         )

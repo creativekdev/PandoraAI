@@ -27,11 +27,17 @@ class RemoveBgOptions extends StatelessWidget {
           controller.backgroundColor = null;
           controller.backgroundImage = backFile;
         } else {
-          controller.backgroundImage = null;
-          controller.backgroundColor = controller.rgbaToAbgr(data.color!);
+          // controller.backgroundImage = null;
+          // controller.backgroundColor = controller.rgbaToAbgr(data.color!);
+          controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
         }
         controller.update();
-        showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);
+        if (data.filePath != null) {
+          Future.delayed(Duration(milliseconds: 100), () {
+            showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);
+          });
+          // showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);
+        }
       },
     ).intoContainer(
       width: double.maxFinite,
