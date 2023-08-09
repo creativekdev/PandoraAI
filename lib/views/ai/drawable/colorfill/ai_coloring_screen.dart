@@ -74,7 +74,6 @@ class _AiColoringScreenState extends AppState<AiColoringScreen> {
   @override
   void dispose() {
     Get.delete<AiColoringController>();
-    Get.delete<AiColoringController>();
     super.dispose();
   }
 

@@ -268,7 +268,7 @@ class _SubmitInvitedCodeScreenState extends AppState<SubmitInvitedCodeScreen> wi
                           size: $(24),
                         ).intoContainer(padding: EdgeInsets.all($(8))).intoGestureDetector(onTap: () {
                           var link = REF_CODE_LINK + snapshot.data!.code;
-                          Clipboard.setData(ClipboardData(text: link));
+                          Clipboard.setData(ClipboardData(text: snapshot.data!.code));
                           CommonExtension().showToast(S.of(context).copy_successfully);
                           Vibration.hasVibrator().then((value) {
                             if (value ?? false) {

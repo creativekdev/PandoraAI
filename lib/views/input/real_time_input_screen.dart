@@ -30,10 +30,12 @@ class RealTimeInputScreenState extends State<RealTimeInputScreen> {
   TextEditingController textEditingController = TextEditingController();
   String? hint;
   late OnChange onChange;
+  int entryTime = 0;
 
   @override
   void initState() {
     super.initState();
+    entryTime = DateTime.now().millisecondsSinceEpoch;
     onChange = widget.onChange;
     hint = widget.hint;
     if (widget.oldString != null) {
@@ -94,7 +96,16 @@ class RealTimeInputScreenState extends State<RealTimeInputScreen> {
             ),
           ],
         ),
-      ),
+      ).listenSizeChanged(onSizeChanged: (size) {
+        var current = DateTime.now().millisecondsSinceEpoch;
+        if (current - entryTime > 1000) {
+          if (size.height > ScreenUtil.screenSize.height - $(50)) {
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
+          }
+        }
+      }),
     );
   }
 }
