@@ -128,8 +128,8 @@ class ImageEditionController extends GetxController {
       );
     }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
-    if (currentItem.function == ImageEditionFunction.removeBg) {
-      var holder = currentItem.holder as RemoveBgHolder;
+    if (currentItem.function != ImageEditionFunction.effect && currentItem.function != ImageEditionFunction.sticker) {
+      var holder = currentItem.holder as ImageEditionBaseHolder;
       holder.setOriginFilePath(_originPath);
     }
   }

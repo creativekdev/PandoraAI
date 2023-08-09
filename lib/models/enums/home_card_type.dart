@@ -38,6 +38,7 @@ enum HomeCardType {
   UNDEFINED,
   removeBg,
   nothing,
+  imageEdition,
   url,
 }
 
@@ -69,6 +70,8 @@ class HomeCardTypeUtils {
         return HomeCardType.nothing;
       case 'url':
         return HomeCardType.url;
+      case 'image_edition':
+        return HomeCardType.imageEdition;
       default:
         return HomeCardType.UNDEFINED;
     }
@@ -209,6 +212,9 @@ class HomeCardTypeUtils {
         case HomeCardType.nothing:
           //do nothing
           break;
+        case HomeCardType.imageEdition:
+          ImageEdition.open(context, source: source, style: EffectStyle.All, function: ImageEditionFunction.filter);
+          break;
       }
     };
     EffectDataController dataController = Get.find();
@@ -268,6 +274,8 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.nothing:
       case HomeCardType.url:
         return '';
+      case HomeCardType.imageEdition:
+        return 'image_edition';
     }
   }
 
@@ -305,6 +313,8 @@ extension HomeCardTypeEx on HomeCardType {
       case HomeCardType.nothing:
       case HomeCardType.url:
         return '';
+      case HomeCardType.imageEdition:
+        return 'Image Edition';
     }
   }
 
@@ -334,6 +344,8 @@ extension HomeCardTypeEx on HomeCardType {
         return '';
       case HomeCardType.url:
         return '';
+      case HomeCardType.imageEdition:
+        return '# ImageEdition';
     }
   }
 }

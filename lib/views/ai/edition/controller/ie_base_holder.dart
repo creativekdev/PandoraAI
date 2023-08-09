@@ -36,6 +36,18 @@ abstract class ImageEditionBaseHolder {
 
   File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
 
+  bool _canReset = false;
+
+  bool get canReset => _canReset;
+
+  set canReset(bool value) {
+    if (_canReset == value) {
+      return;
+    }
+    _canReset = value;
+    update();
+  }
+
   ///------------------------------------------------------------------------------------
   ImageEditionBaseHolder({required this.parent});
 
@@ -48,6 +60,8 @@ abstract class ImageEditionBaseHolder {
   }
 
   dispose() {}
+
+  onResetClick() {}
 
   Widget buildShownImage() {
     return shownImageWidget ?? Image.file(resultFile ?? originFile!);

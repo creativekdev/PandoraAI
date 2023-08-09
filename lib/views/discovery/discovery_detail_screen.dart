@@ -57,6 +57,10 @@ extension DiscoveryListEntityEx on DiscoveryListEntity {
         return 'removebg';
       case HomeCardType.nothing:
         return null;
+      case HomeCardType.imageEdition:
+        return 'image_edition';
+      case HomeCardType.url:
+        return null;
     }
   }
 }

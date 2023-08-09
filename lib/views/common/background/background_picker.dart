@@ -101,9 +101,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    // if (dataList.length < 4) {
     dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
-    // }
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -122,58 +120,58 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    // if (dataList.length < 4) {
     dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> child = [
-      UnconstrainedBox(
-        child: Icon(
-          Icons.add,
-          size: $(28),
-          color: ColorConstant.White,
-        )
-            .intoContainer(
-                alignment: Alignment.center,
-                width: itemSize,
-                height: itemSize,
-                margin: EdgeInsets.symmetric(horizontal: $(4)),
-                decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
-            .intoGestureDetector(onTap: () {
-          BackgroundPicker.pickBackground(
-            context,
-            imageRatio: imageRatio,
-          ).then((value) {
-            if (value != null) {
-              setState(() {
-                dataList.insert(0, value);
-                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-              });
-              widget.onPick.call(value);
-            }
-          });
-        }),
-      ),
-    ];
-    child.addAll(dataList
-        .map(
-          (e) => UnconstrainedBox(
-            child: ClipRRect(
-              child: buildItem(e),
-              borderRadius: BorderRadius.circular($(4)),
-            ).intoGestureDetector(onTap: () {
-              widget.onPick.call(e);
-            }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+    return Row(
+      children: [
+        UnconstrainedBox(
+          child: Icon(
+            Icons.add,
+            size: $(28),
+            color: ColorConstant.White,
+          )
+              .intoContainer(
+                  alignment: Alignment.center,
+                  width: itemSize,
+                  height: itemSize,
+                  margin: EdgeInsets.symmetric(horizontal: $(4)),
+                  decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
+              .intoGestureDetector(onTap: () {
+            BackgroundPicker.pickBackground(
+              context,
+              imageRatio: imageRatio,
+            ).then((value) {
+              if (value != null) {
+                setState(() {
+                  dataList.insert(0, value);
+                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+                });
+                widget.onPick.call(value);
+              }
+            });
+          }),
+        ),
+        Expanded(
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: dataList
+                .map(
+                  (e) => UnconstrainedBox(
+                    child: ClipRRect(
+                      child: buildItem(e),
+                      borderRadius: BorderRadius.circular($(4)),
+                    ).intoGestureDetector(onTap: () {
+                      widget.onPick.call(e);
+                    }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                  ),
+                )
+                .toList(),
           ),
-        )
-        .toList());
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      // mainAxisAlignment: MainAxisAlignment.start,
-      children: child,
+        ),
+      ],
     );
   }
 

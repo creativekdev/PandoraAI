@@ -30,7 +30,7 @@ class EffectOptions extends StatelessWidget {
               itemBuilder: (context, index) {
                 var data = controller.categories[index];
                 var checked = controller.selectedTitle == data;
-                return title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(onTap: () {
+                return _title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(onTap: () {
                   controller.onTitleSelected(index);
                 });
               },
@@ -57,7 +57,7 @@ class EffectOptions extends StatelessWidget {
                         height: itemWidth,
                         child: Padding(
                           padding: EdgeInsets.all($(2)),
-                          child: item(context, data, checked).intoGestureDetector(onTap: () {
+                          child: _item(context, data, checked).intoGestureDetector(onTap: () {
                             controller.onItemSelected(index);
                             if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
                               controller.parent?.generate(context, controller);
@@ -73,56 +73,6 @@ class EffectOptions extends StatelessWidget {
       },
       init: controller,
     );
-  }
-
-  Widget title(String title, bool checked) {
-    var text = Text(
-      title,
-      style: TextStyle(
-        color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-        fontSize: $(13),
-        fontWeight: FontWeight.w500,
-        fontFamily: 'Poppins',
-      ),
-    );
-    text;
-    if (checked) {
-      return ShaderMask(
-          shaderCallback: (Rect bounds) => LinearGradient(
-                colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ).createShader(Offset.zero & bounds.size),
-          blendMode: BlendMode.srcATop,
-          child: text);
-    } else {
-      return text;
-    }
-  }
-
-  Widget item(BuildContext context, EffectItem data, bool checked) {
-    var image = CachedNetworkImageUtils.custom(
-      context: context,
-      imageUrl: data.imageUrl,
-      fit: BoxFit.cover,
-      useOld: false,
-    );
-    if (checked) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          image,
-          Container(
-            color: Color(0x55000000),
-            child: Image.asset(
-              Images.ic_metagram_yes,
-              width: $(22),
-            ).intoCenter(),
-          ),
-        ],
-      );
-    }
-    return image;
   }
 }
 
@@ -147,7 +97,7 @@ class StickerOptions extends StatelessWidget {
               itemBuilder: (context, index) {
                 var data = controller.categories[index];
                 var checked = controller.selectedTitle == data;
-                return title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(onTap: () {
+                return _title(data.title, checked).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(12)), color: Colors.transparent).intoGestureDetector(onTap: () {
                   controller.onTitleSelected(index);
                 });
               },
@@ -174,7 +124,7 @@ class StickerOptions extends StatelessWidget {
                         height: itemWidth,
                         child: Padding(
                           padding: EdgeInsets.all($(2)),
-                          child: item(context, data, checked).intoGestureDetector(onTap: () {
+                          child: _item(context, data, checked).intoGestureDetector(onTap: () {
                             controller.onItemSelected(index);
                             if (controller.selectedEffect != null && controller.resultMap[controller.selectedEffect!.key] == null) {
                               controller.parent?.generate(context, controller);
@@ -191,54 +141,54 @@ class StickerOptions extends StatelessWidget {
       init: controller,
     );
   }
+}
 
-  Widget title(String title, bool checked) {
-    var text = Text(
-      title,
-      style: TextStyle(
-        color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
-        fontSize: $(13),
-        fontWeight: FontWeight.w500,
-        fontFamily: 'Poppins',
-      ),
-    );
-    text;
-    if (checked) {
-      return ShaderMask(
-          shaderCallback: (Rect bounds) => LinearGradient(
-                colors: [Color(0xffE31ECD), Color(0xff243CFF)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ).createShader(Offset.zero & bounds.size),
-          blendMode: BlendMode.srcATop,
-          child: text);
-    } else {
-      return text;
-    }
+Widget _title(String title, bool checked) {
+  var text = Text(
+    title,
+    style: TextStyle(
+      color: checked ? ColorConstant.White : ColorConstant.EffectGrey,
+      fontSize: $(13),
+      fontWeight: checked ? FontWeight.bold : FontWeight.normal,
+      fontFamily: 'Poppins',
+    ),
+  );
+  text;
+  if (checked) {
+    return ShaderMask(
+        shaderCallback: (Rect bounds) => LinearGradient(
+              colors: [Colors.white, Colors.white],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ).createShader(Offset.zero & bounds.size),
+        blendMode: BlendMode.srcATop,
+        child: text);
+  } else {
+    return text;
   }
+}
 
-  Widget item(BuildContext context, EffectItem data, bool checked) {
-    var image = CachedNetworkImageUtils.custom(
-      context: context,
-      imageUrl: data.imageUrl,
-      fit: BoxFit.cover,
-      useOld: false,
+Widget _item(BuildContext context, EffectItem data, bool checked) {
+  var image = CachedNetworkImageUtils.custom(
+    context: context,
+    imageUrl: data.imageUrl,
+    fit: BoxFit.cover,
+    useOld: false,
+  );
+  if (checked) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        image,
+        Container(
+          color: Color(0x55000000),
+          child: Image.asset(
+            Images.ic_metagram_yes,
+            width: $(22),
+          ).intoCenter(),
+        ),
+      ],
     );
-    if (checked) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          image,
-          Container(
-            color: Color(0x55000000),
-            child: Image.asset(
-              Images.ic_metagram_yes,
-              width: $(22),
-            ).intoCenter(),
-          ),
-        ],
-      );
-    }
-    return image;
   }
+  return image;
 }

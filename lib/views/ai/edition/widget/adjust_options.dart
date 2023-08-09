@@ -53,34 +53,34 @@ class AdjustOptions extends StatelessWidget {
                     ringWidth: 1.5,
                     loadingColors: checked
                         ? [
-                      Color(0xFF05E0D5),
-                      Color(0xFF05E0D5),
-                    ]
+                            Color(0xFF05E0D5),
+                            Color(0xFF05E0D5),
+                          ]
                         : [
-                      Colors.grey.shade300,
-                      Colors.grey.shade300,
-                    ],
+                            Colors.grey.shade300,
+                            Colors.grey.shade300,
+                          ],
                   ),
                   checked
                       ? Text(
-                    data.value.toStringAsFixed(0),
-                    style: TextStyle(
-                      color: Color(0xFF05E0D5),
-                      fontSize: $(14),
-                    ),
-                  ).intoContainer(
-                    width: $(48),
-                    height: $(48),
-                    alignment: Alignment.center,
-                  )
+                          data.value.toStringAsFixed(0),
+                          style: TextStyle(
+                            color: Color(0xFF05E0D5),
+                            fontSize: $(14),
+                          ),
+                        ).intoContainer(
+                          width: $(48),
+                          height: $(48),
+                          alignment: Alignment.center,
+                        )
                       : Image.asset(
-                    data.function.icon(),
-                    width: $(24),
-                    height: $(24),
-                    color: Colors.grey.shade300,
-                  ).intoContainer(
-                    padding: EdgeInsets.all($(12)),
-                  ),
+                          data.function.icon(),
+                          width: $(24),
+                          height: $(24),
+                          color: Colors.grey.shade300,
+                        ).intoContainer(
+                          padding: EdgeInsets.all($(12)),
+                        ),
                 ],
               ).intoGestureDetector(onTap: () {
                 if (controller.index == index) {

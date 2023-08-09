@@ -3,24 +3,24 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
-import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
-import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
+import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
@@ -108,18 +108,63 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     CommonExtension().showImageSavedOkToast(context);
   }
 
-  shareToDiscovery() {
-    CommonExtension().showToast('还需要和web端对一下配置，不然可能会影响web端');
-    //todo
+  shareToDiscovery() async {
+    String? resultPath;
+    HomeCardType type = HomeCardType.imageEdition;
+    String effectKey = 'image_edition';
+    if (controller.currentItem.holder is TransferBaseController) {
+      var baseController = controller.currentItem.holder as TransferBaseController;
+      resultPath = baseController.resultFile?.path;
+      if (baseController.getCategory() == 'cartoonize' || baseController.getCategory() == 'sticker') {
+        type = HomeCardType.cartoonize;
+      } else {
+        type = HomeCardType.stylemorph;
+      }
+      effectKey = baseController.selectedEffect?.key ?? '';
+    } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
+      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+      resultPath = baseHolder.resultFile?.path;
+    }
+    if (TextUtil.isEmpty(resultPath)) {
+      return;
+    }
+    UploadImageController uploadImageController = Get.find();
+    String? imageUrl = uploadImageController.imageUrl(controller.originFile).value;
+    if (TextUtil.isEmpty(imageUrl)) {
+      await showLoading();
+      imageUrl = await uploadImageController.upload(file: controller.originFile);
+      if (TextUtil.isEmpty(imageUrl)) {
+        await hideLoading();
+        return;
+      } else {
+        await hideLoading();
+      }
+    }
+    AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_image_edition', callback: () {
+      var file = File(resultPath!);
+      ShareDiscoveryScreen.push(
+        context,
+        effectKey: effectKey,
+        originalUrl: imageUrl,
+        image: base64Encode(file.readAsBytesSync()),
+        isVideo: false,
+        category: type,
+      ).then((value) {
+        if (value ?? false) {
+          Events.imEffectionCompleteShare(source: controller.photoType, platform: 'discovery', type: 'image');
+          showShareSuccessDialog(context);
+        }
+      });
+    }, autoExec: true);
   }
 
   shareOut() async {
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
     var userManager = AppDelegate().getManager<UserManager>();
     var uint8list;
-    if (controller.currentItem.function == ImageEditionFunction.effect) {
-      AllTransferController effectHolder = controller.currentItem.holder;
-      if (effectHolder.getCategory() == 'cartoonize') {
+    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+      TransferBaseController effectHolder = controller.currentItem.holder;
+      if (effectHolder.getCategory() == 'cartoonize' || effectHolder.getCategory() == 'sticker') {
         uint8list =
             await ImageUtils.printCartoonizeDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
       } else if (effectHolder.getCategory() == 'stylemorph') {
@@ -251,7 +296,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
-          child: buildRightTab(context, controller),
+          child: buildMenus(context, controller),
         ),
         Align(
           alignment: Alignment.center,
@@ -292,7 +337,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       var effectController = controller.currentItem.holder as StickerController;
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
-      return controller.showOrigin ? Image.file(controller.originFile) : (controller.currentItem.holder as ImageEditionBaseHolder).buildShownImage();
+      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
+      return controller.showOrigin ? Image.file(baseHolder.originFile!) : baseHolder.buildShownImage();
     }
   }
 
@@ -300,13 +346,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(Images.ic_sticker, color: Colors.white, width: $(20)),
+        Image.asset(Images.ic_edition_reset, color: Colors.white, width: $(20)),
         SizedBox(width: $(4)),
-        TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.normal, $(15)),
+        TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.w500, $(13)),
       ],
     )
         .intoContainer(
-          padding: EdgeInsets.symmetric(vertical: $(8), horizontal: $(10)),
+          padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(10)),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular($(32)),
               gradient: LinearGradient(colors: [
@@ -329,10 +375,17 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     );
   }
 
-  Widget buildRightTab(BuildContext context, ImageEditionController controller) {
+  Widget buildMenus(BuildContext context, ImageEditionController controller) {
+    bool canReset = false;
+    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+      canReset = false;
+    } else {
+      canReset = (controller.currentItem.holder as ImageEditionBaseHolder).canReset;
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Column(
           children: controller.items.map((e) {
@@ -352,47 +405,53 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               }
               visible = effectVisible && stickerVisible;
             }
-            return Image.asset(
-              e.function.icon(),
-              width: $(24),
-              height: $(24),
-            )
+            return Image.asset(e.function.icon(), width: $(24), height: $(24))
                 .intoContainer(
                     padding: EdgeInsets.all($(8)),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular($(32)),
-                      border: Border.all(color: controller.currentItem == e ? Colors.white : Colors.transparent, width: 1.5),
-                      color: controller.currentItem == e ? Color(0xbb202020) : Colors.transparent,
+                      border: Border.all(color: controller.currentItem == e ? Color(0xffa3a3a3) : Colors.transparent, width: 1.4),
+                      color: controller.currentItem == e ? Color(0x5e000000) : Colors.transparent,
                     ))
-                .intoGestureDetector(onTap: () {
-                  controller.onRightTabClick(context, e);
-                })
+                .intoGestureDetector(onTap: () => controller.onRightTabClick(context, e))
                 .intoContainer(margin: EdgeInsets.symmetric(vertical: $(0.5)))
                 .visibility(visible: visible);
           }).toList(),
         ).intoContainer(
           padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x77202020)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
         ),
         SizedBox(height: $(50)),
-        Image.asset(Images.ic_switch_images, width: $(24), height: $(24))
-            .intoContainer(
-          padding: EdgeInsets.all($(8)),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x77202020)),
-        )
-            .intoGestureDetector(
-          onTapDown: (details) {
-            controller.showOrigin = true;
-          },
-          onTapUp: (details) {
-            controller.showOrigin = false;
-          },
-          onTapCancel: () {
-            controller.showOrigin = false;
-          },
+        Row(
+          children: [
+            Image.asset(Images.ic_edition_reset, width: $(24), height: $(24))
+                .intoContainer(
+                  padding: EdgeInsets.all($(12)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
+                )
+                .intoGestureDetector(onTap: () => onResetClick(context, controller))
+                .visibility(visible: canReset),
+            Expanded(child: Container()),
+            Image.asset(Images.ic_switch_images, width: $(24), height: $(24))
+                .intoContainer(
+              padding: EdgeInsets.all($(12)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
+            )
+                .intoGestureDetector(
+              onTapDown: (details) {
+                controller.showOrigin = true;
+              },
+              onTapUp: (details) {
+                controller.showOrigin = false;
+              },
+              onTapCancel: () {
+                controller.showOrigin = false;
+              },
+            ),
+          ],
         ),
       ],
-    ).intoContainer(margin: EdgeInsets.only(right: $(10))).listenSizeChanged(onSizeChanged: (size) {
+    ).intoContainer(margin: EdgeInsets.only(right: $(8), left: $(8))).listenSizeChanged(onSizeChanged: (size) {
       var bottomPadding = ScreenUtil.getBottomPadding(context);
       var paddingB = (ScreenUtil.screenSize.height - ScreenUtil.getStatusBarHeight() - controller.bottomHeight - bottomPadding - kNavBarPersistentHeight - size.height) / 2;
       controller.switchButtonBottomToScreen = controller.bottomHeight + paddingB + bottomPadding;
@@ -428,5 +487,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         break;
     }
     return Container();
+  }
+
+  onResetClick(BuildContext context, ImageEditionController controller) {
+    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+      // nothing
+    } else {
+      (controller.currentItem.holder as ImageEditionBaseHolder).onResetClick();
+    }
   }
 }

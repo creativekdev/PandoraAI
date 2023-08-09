@@ -369,6 +369,17 @@ class Events {
 
   static Future<void> imEffectionLoading({required String source}) => logEvent('image_effection_loading', eventValues: {'source': source});
 
+  static Future<void> imEffectionCompleteShare({
+    required String source,
+    required String platform,
+    required String type,
+  }) =>
+      logEvent('image_effection_share', eventValues: {
+        'source': source,
+        'platform': platform,
+        'type': type,
+      });
+
   static Future<void> webviewLoading({required String source}) => logEvent('webview_loading', eventValues: {'source': source});
 }
 

@@ -197,12 +197,6 @@ class MineFragmentState extends AppState<MineFragment> with AutomaticKeepAliveCl
                 },
               ),
               line(context),
-              ImageTextBarWidget("Filter test photo", Images.ic_premium, true).intoGestureDetector(onTap: () {
-                ImFilter.openEffectWithPhoto(context, tab: TABS.EFFECT, source: 'my_page');
-              }).visibility(visible: true),
-              ImageTextBarWidget("Filter test camera", Images.ic_premium, true).intoGestureDetector(onTap: () {
-                ImFilter.openEffectWithCamera(context, tab: TABS.EFFECT, source: 'my_page');
-              }).visibility(visible: true),
               ImageTextBarWidget(S.of(context).premium, Images.ic_premium, true).intoGestureDetector(onTap: () {
                 AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
                 PaymentUtils.pay(context, 'my_page').then((value) {

@@ -148,6 +148,11 @@ class ShareDiscoveryState extends AppState<ShareDiscoveryScreen> {
         case HomeCardType.nothing:
           textHint = '';
           break;
+        case HomeCardType.imageEdition:
+          textHint = S.of(context).discoveryShareInputHint.replaceAll('%s', "#ImageEdition");
+          break;
+        case HomeCardType.url:
+          break;
       }
       FocusScope.of(context).requestFocus(focusNode);
       if (cacheManager.containKey(CacheManager.postOfTerm) == false) {

@@ -55,6 +55,7 @@ class Images {
    static const String ic_compare_arrow = 'assets/images/ic_compare_arrow.png';
    static const String ic_compare_top = 'assets/images/ic_compare_top.png';
    static const String ic_confirm = 'assets/images/ic_confirm.png';
+   static const String ic_corn = 'assets/images/ic_corn.png';
    static const String ic_crop = 'assets/images/ic_crop.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
@@ -64,12 +65,16 @@ class Images {
    static const String ic_discovery_like = 'assets/images/ic_discovery_like.png';
    static const String ic_discovery_liked = 'assets/images/ic_discovery_liked.png';
    static const String ic_discovery_share = 'assets/images/ic_discovery_share.png';
+   static const String ic_discovery_tag_more = 'assets/images/ic_discovery_tag_more.png';
    static const String ic_down = 'assets/images/ic_down.png';
    static const String ic_download = 'assets/images/ic_download.png';
    static const String ic_draw_result_bg = 'assets/images/ic_draw_result_bg.png';
    static const String ic_drawable_arrow = 'assets/images/ic_drawable_arrow.png';
    static const String ic_edit = 'assets/images/ic_edit.png';
    static const String ic_edit_profile = 'assets/images/ic_edit_profile.png';
+   static const String ic_edit_submit = 'assets/images/ic_edit_submit.png';
+   static const String ic_edition_generate = 'assets/images/ic_edition_generate.png';
+   static const String ic_edition_reset = 'assets/images/ic_edition_reset.png';
    static const String ic_effect = 'assets/images/ic_effect.png';
    static const String ic_email = 'assets/images/ic_email.png';
    static const String ic_eraser = 'assets/images/ic_eraser.png';
@@ -199,6 +204,8 @@ class Images {
    static const String ic_sticker = 'assets/images/ic_sticker.png';
    static const String ic_success = 'assets/images/ic_success.png';
    static const String ic_swipe = 'assets/images/ic_swipe.png';
+   static const String ic_swiper_line = 'assets/images/ic_swiper_line.png';
+   static const String ic_swiper_shadow = 'assets/images/ic_swiper_shadow.png';
    static const String ic_switch_images = 'assets/images/ic_switch_images.png';
    static const String ic_tab_discovery = 'assets/images/ic_tab_discovery.png';
    static const String ic_tab_discovery_normal = 'assets/images/ic_tab_discovery_normal.png';

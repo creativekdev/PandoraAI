@@ -17,9 +17,21 @@ import '../../app/app.dart';
 class DiscoveryListController extends GetxController {
   late AppApi api;
   late SocialMediaConnectorApi socialMediaConnectorApi;
+  bool _isTagScrolling = false;
+
+  bool get isTagScrolling => _isTagScrolling;
+
+  set isTagScrolling(bool value) {
+    if (_isTagScrolling == value) {
+      return;
+    }
+    _isTagScrolling = value;
+    update();
+  }
 
   List<HomeCardType> tags = [
     HomeCardType.stylemorph,
+    HomeCardType.imageEdition,
     HomeCardType.lineart,
     HomeCardType.anotherme,
     HomeCardType.txt2img,

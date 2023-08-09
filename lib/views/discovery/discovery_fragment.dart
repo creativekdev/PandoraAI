@@ -7,6 +7,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/models/enums/app_tab_id.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -179,44 +180,74 @@ class DiscoveryFragmentState extends AppState<DiscoveryFragment> with AutomaticK
               },
             ),
           ).intoContainer(width: ScreenUtil.screenSize.width, alignment: Alignment.center),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: $(15)),
-            child: Row(
-              children: listController.tags.transfer((e, index) {
-                bool checked = listController.currentTag == e;
-                return Text(
-                  e.tagTitle(),
-                  style: TextStyle(
-                    color: checked ? Color(0xff3e60ff) : Colors.white,
-                    fontSize: $(13),
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
+          Stack(
+            children: [
+              Listener(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.only(left: $(15), right: $(30)),
+                  child: Row(
+                    children: listController.tags.transfer((e, index) {
+                      bool checked = listController.currentTag == e;
+                      return Text(
+                        e.tagTitle(),
+                        style: TextStyle(
+                          color: checked ? Color(0xff3e60ff) : Colors.white.withOpacity(0.8),
+                          fontSize: $(13),
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.normal,
+                        ),
+                      )
+                          .intoContainer(
+                        margin: EdgeInsets.only(left: index == 0 ? 0 : $(4)),
+                        padding: EdgeInsets.symmetric(horizontal: $(8), vertical: $(7)),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(32),
+                          // color: checked ? Colors.transparent : Color(0xFF37373B),
+                          color: Colors.transparent,
+                          border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
+                        ),
+                      )
+                          .intoGestureDetector(onTap: () {
+                        if (listController.listLoading) {
+                          return;
+                        }
+                        if (listController.currentTag == e) {
+                          listController.currentTag = null;
+                        } else {
+                          listController.currentTag = e;
+                        }
+                        easyRefreshController.callRefresh();
+                      });
+                    }),
                   ),
+                ),
+                onPointerDown: (details) {
+                  listController.isTagScrolling = true;
+                },
+                onPointerCancel: (details) {
+                  listController.isTagScrolling = false;
+                },
+                onPointerUp: (details) {
+                  listController.isTagScrolling = false;
+                },
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Image.asset(
+                  Images.ic_discovery_tag_more,
+                  width: $(16),
                 )
                     .intoContainer(
-                  margin: EdgeInsets.only(left: index == 0 ? 0 : $(6)),
-                  padding: EdgeInsets.symmetric(horizontal: $(12), vertical: $(7)),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    color: checked ? Colors.transparent : Color(0xFF37373B),
-                    border: Border.all(color: checked ? ColorConstant.DiscoveryBtn : Colors.transparent, width: 1),
-                  ),
-                )
-                    .intoGestureDetector(onTap: () {
-                  if (listController.listLoading) {
-                    return;
-                  }
-                  if (listController.currentTag == e) {
-                    listController.currentTag = null;
-                  } else {
-                    listController.currentTag = e;
-                  }
-                  easyRefreshController.callRefresh();
-                });
-              }),
-            ),
-          ).intoContainer(height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8))).visibility(visible: !listController.isMetagram),
+                      padding: EdgeInsets.symmetric(vertical: $(5), horizontal: $(6)),
+                      color: ColorConstant.BackgroundColor,
+                    )
+                    .visibility(visible: !listController.isTagScrolling),
+              ),
+            ],
+          )
+              .intoContainer(width: ScreenUtil.screenSize.width, height: $(44), alignment: Alignment.center, padding: EdgeInsets.only(bottom: $(8)))
+              .visibility(visible: !listController.isMetagram),
         ],
       ),
     ).intoContainer(

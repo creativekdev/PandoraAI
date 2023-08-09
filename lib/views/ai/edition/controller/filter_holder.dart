@@ -120,9 +120,10 @@ Future<imgLib.Image> _imFilter(FilterEnum filter, imgLib.Image _image, TypeSendP
 }
 
 Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
-//uncomment when image_picker is installed
-  imgLib.Image res_image;
-  res_image = imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
+  if (filter == FilterEnum.NOR) {
+    return _image;
+  }
+  imgLib.Image res_image = imgLib.copyCrop(_image, 0, 0, _image.width, _image.height);
   switch (filter) {
     case FilterEnum.NOR:
       break;

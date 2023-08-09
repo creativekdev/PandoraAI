@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -28,6 +27,11 @@ class AdjustHolder extends ImageEditionBaseHolder {
     originFilePath = path;
     initData();
     update();
+  }
+
+  @override
+  onResetClick() {
+    resetConfig();
   }
 
   void saveResult(imgLib.Image data) {
@@ -127,6 +131,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
   }
 
   void resetConfig() {
+    canReset = false;
     dataList = [
       AdjustData(
         function: AdjustFunction.brightness,
@@ -156,6 +161,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
   }
 
   void buildResult() async {
+    canReset = true;
     var start = DateTime.now().millisecondsSinceEpoch;
     shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
