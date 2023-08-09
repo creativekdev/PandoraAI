@@ -75,30 +75,30 @@ class _ImCropperState extends State<ImCropper> {
   double _height = 0, _width = 0;
   bool isTap = false;
   late UniqueKey _uniqueKey;
+  RxBool isLoadImg = false.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((call) {
+      if (mounted) {
+        RenderBox containerBox = widget.cropperKey.currentContext!.findRenderObject() as RenderBox;
+        _width = containerBox.size.width + $(8);
+        _height = containerBox.size.height + $(8);
+        isLoadImg.value = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     if (isTap == false) {
       _uniqueKey = UniqueKey();
     }
-    Size size = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - ScreenUtil.getBottomPadding(context) - ScreenUtil.getNavigationBarHeight());
-    double _ratio = widget.crop.config?.ratio ?? 1;
-    if (size.width / (size.height - $(6)) > _ratio) {
-      _height = size.height - $(6);
-      _width = (_height - $(8)) * _ratio + $(8);
-    } else {
-      if (_ratio == 9 / 16) {
-        _width = size.width - $(12);
-        _height = (_width - $(8)) / _ratio + $(6);
-      } else {
-        _width = size.width;
-        _height = (_width - $(8)) / _ratio + $(8);
-      }
-    }
 
     return Stack(
       children: [
-        ImDecoratior(width: _width, height: _height),
+        Obx(() => isLoadImg.value == true ? ImDecoratior(width: _width, height: _height) : Container()),
         Container(
           decoration: BoxDecoration(
             border: Border.all(
