@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/views/mine/filter/pin_gesture_views.dart';
 import 'package:image/image.dart' as imgLib;
@@ -44,7 +45,7 @@ class ImPinView extends StatefulWidget {
   _ImageMergingWidgetState createState() => _ImageMergingWidgetState();
 }
 
-class _ImageMergingWidgetState extends State<ImPinView> {
+class _ImageMergingWidgetState extends AppState<ImPinView> {
   bool isSelectedBg = false;
   GlobalKey globalKey = GlobalKey();
   double scale = 1;
@@ -87,18 +88,22 @@ class _ImageMergingWidgetState extends State<ImPinView> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xaa000000),
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
-          ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
-          if (image != null) {
-            imgLib.Image img = await getLibImage(image);
-            widget.onAddImage(img);
-          }
-          Navigator.of(context).pop();
+          showLoading().whenComplete(() async {
+            ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
+            if (image != null) {
+              imgLib.Image img = await getLibImage(image);
+              widget.onAddImage(img);
+            }
+            hideLoading().whenComplete(() {
+              Navigator.of(context).pop();
+            });
+          });
         }).hero(tag: ImageEdition.TagAppbarTagTraining),
       ),
       body: Stack(

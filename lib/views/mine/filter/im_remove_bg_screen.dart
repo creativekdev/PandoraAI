@@ -51,9 +51,11 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         case AnimationStatus.forward:
           if (isRequset == false && isLoaded == true) {
             _controller.stop();
-            widget.onGetRemoveBgImage(removeBgUrl!);
+            if (removeBgUrl != null) {
+              widget.onGetRemoveBgImage(removeBgUrl!);
+            }
             Future.delayed(Duration(milliseconds: 300), () {
-              Navigator.of(context).pop(true);
+              Navigator.of(context).pop(removeBgUrl != null);
             });
           }
           break;
