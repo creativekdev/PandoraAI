@@ -28,7 +28,8 @@ class RemoveBgOptions extends StatelessWidget {
           await controller.setBackgroundImage(backFile);
         } else {
           await controller.setBackgroundImage(null);
-          controller.backgroundColor = controller.rgbaToAbgr(data.color!);
+          // controller.backgroundColor = controller.rgbaToAbgr(data.color!);
+          controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
         }
         controller.update();
         showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:common_utils/common_utils.dart';
@@ -29,6 +30,8 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   late Animation<double> _animation;
   bool isRequset = true;
   bool isLoaded = false;
+  bool isReverse = false;
+
   String? removeBgUrl;
   late double width;
   late double height;
@@ -63,9 +66,11 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
           break;
         case AnimationStatus.completed:
           _controller.reverse();
+          isReverse = true;
           break;
         case AnimationStatus.dismissed:
           _controller.forward();
+          isReverse = false;
           break;
       }
     });
@@ -141,16 +146,72 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                           Positioned(
                             left: 0,
                             right: 0,
+                            top: (isReverse ? offsetY : -offsetY),
+                            child: Image.asset(
+                              "assets/images/ic_swiper_shadow.png",
+                              height: $(88),
+                              width: width,
+                            ),
+                          ),
+                          Positioned(
+                              left: 0,
+                              right: 0,
+                              top: (isReverse ? (height - offsetY) + height - $(88) : (offsetY - $(88))),
+                              child: Transform.rotate(
+                                  angle: pi,
+                                  child: Image.asset(
+                                    "assets/images/ic_swiper_shadow.png",
+                                    height: $(88),
+                                    width: width,
+                                  ))),
+                          Positioned(
+                            left: 0,
+                            right: 0,
                             top: offsetY,
-                            child: Container(
-                              height: $(2),
-                              color: Colors.red,
+                            child: Image.asset(
+                              "assets/images/ic_swiper_line.png",
+                              height: $(3),
+                              width: width,
                             ),
                           ),
                         ],
                       );
                     },
                   ),
+                  Positioned(
+                      top: $(13),
+                      left: $(13),
+                      child: Image.asset(
+                        "assets/images/ic_corn.png",
+                        width: $(32),
+                      )),
+                  Positioned(
+                      top: $(13),
+                      right: $(13),
+                      child: Transform.rotate(
+                          angle: pi / 2,
+                          child: Image.asset(
+                            "assets/images/ic_corn.png",
+                            width: $(32),
+                          ))),
+                  Positioned(
+                      bottom: $(13),
+                      left: $(13),
+                      child: Transform.rotate(
+                          angle: -pi / 2,
+                          child: Image.asset(
+                            "assets/images/ic_corn.png",
+                            width: $(32),
+                          ))),
+                  Positioned(
+                      bottom: $(13),
+                      right: $(13),
+                      child: Transform.rotate(
+                          angle: pi,
+                          child: Image.asset(
+                            "assets/images/ic_corn.png",
+                            width: $(32),
+                          ))),
                 ],
               ),
             ),

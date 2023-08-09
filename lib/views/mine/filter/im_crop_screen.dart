@@ -94,7 +94,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> with SingleTickerProvide
             backgroundColor: _animation.value,
             appBar: AppNavigationBar(
               backgroundColor: _animation.value!,
-              trailing: Image.asset(Images.ic_confirm, width: $(30), height: $(30)).intoGestureDetector(onTap: () async {
+              trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
                 showLoading().whenComplete(() async {
                   String path = await onSaveImage();
                   hideLoading().whenComplete(() {

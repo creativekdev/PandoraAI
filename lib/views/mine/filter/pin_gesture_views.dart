@@ -133,7 +133,7 @@ class PinGestureView extends StatefulWidget {
     this.scale = 1.0,
     this.baseScale = 1.0,
     this.minScale = 0.5,
-    this.maxScale = 3.0,
+    this.maxScale = 2.0,
     required this.child,
     required this.dx,
     required this.dy,
