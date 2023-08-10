@@ -1,6 +1,5 @@
 import 'package:cartoonizer/Widgets/color/palette_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/utils/color_util.dart';
 
 class BackColorsPicker extends StatefulWidget {
   Function(Color? color) onPickColor;

@@ -56,19 +56,25 @@ class _SliderColorPickerState extends State<SliderColorPicker> {
           setState(() {
             progress = details.localPosition.dx / widgetWidth;
           });
-          widget.onChange.call(selectorColor, progress);
+          // widget.onChange.call(selectorColor, progress);
         },
         onHorizontalDragUpdate: (DragUpdateDetails details) {
           setState(() {
             progress = details.localPosition.dx / widgetWidth;
           });
+          // widget.onChange.call(selectorColor, progress);
+        },
+        onHorizontalDragEnd: (DragEndDetails details) {
+          // setState(() {
+          //   progress = details.localPosition.dx / widgetWidth;
+          // });
           widget.onChange.call(selectorColor, progress);
         },
         onTapDown: (TapDownDetails details) {
           setState(() {
             progress = details.localPosition.dx / widgetWidth;
           });
-          widget.onChange.call(selectorColor, progress);
+          // widget.onChange.call(selectorColor, progress);
         },
         child: Container(
           width: double.maxFinite,

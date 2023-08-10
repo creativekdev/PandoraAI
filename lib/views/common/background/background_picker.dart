@@ -104,7 +104,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    // dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -123,7 +123,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    // dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
   }
 
   @override
@@ -163,18 +163,30 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
         Expanded(
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: dataList
-                .map(
-                  (e) => UnconstrainedBox(
-                    child: ClipRRect(
-                      child: buildItem(e),
-                      borderRadius: BorderRadius.circular($(4)),
-                    ).intoGestureDetector(onTap: () {
-                      widget.onPick.call(e);
-                    }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
-                  ),
-                )
-                .toList(),
+            children: [
+              ...dataList
+                  .map(
+                    (e) => UnconstrainedBox(
+                      child: ClipRRect(
+                        child: buildItem(e),
+                        borderRadius: BorderRadius.circular($(4)),
+                      ).intoGestureDetector(onTap: () {
+                        widget.onPick.call(e);
+                      }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                    ),
+                  )
+                  .toList(),
+              ...defaultColors
+                  .map((e) => UnconstrainedBox(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular($(4)),
+                          child: buildItem(BackgroundData()..color = e),
+                        ).intoGestureDetector(onTap: () {
+                          widget.onPick.call(BackgroundData()..color = e);
+                        }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                      ))
+                  .toList()
+            ],
           ),
         ),
       ],
