@@ -454,6 +454,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ppmPro": MessageLookupByLibrary.simpleMessage("パンドラAIプロフェッショナルバージョン"),
         "premium": MessageLookupByLibrary.simpleMessage("プロフェッショナルバージョン"),
         "preview": MessageLookupByLibrary.simpleMessage("プレビュー"),
+        "print": MessageLookupByLibrary.simpleMessage("印刷"),
         "privacy_policy": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "privacy_policy1": MessageLookupByLibrary.simpleMessage("プライバシーポリシー"),
         "pro": MessageLookupByLibrary.simpleMessage("プロ"),

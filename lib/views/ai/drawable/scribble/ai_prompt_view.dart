@@ -11,6 +11,9 @@ class AiPromptView extends StatefulWidget {
 class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  RxBool isShowBg = false.obs;
+  final GlobalKey globaleKey = GlobalKey();
+  double width = 0;
 
   @override
   void initState() {
@@ -24,6 +27,12 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
 
     _animation = scaleTween.animate(_controller);
     _controller.repeat(reverse: true);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      RenderBox containerBox = globaleKey.currentContext!.findRenderObject() as RenderBox;
+      width = containerBox.size.width;
+      isShowBg.value = true;
+    });
   }
 
   @override
@@ -34,22 +43,22 @@ class _AiPromptViewState extends State<AiPromptView> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    final TextSpan textSpan = TextSpan(text: S.of(context).create_with_prompt, style: TextStyle(color: Colors.white));
-    final TextPainter textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
-    textPainter.layout();
     return ScaleTransition(
       scale: _animation,
       child: Stack(
         children: [
-          GradientStar(
-            width: textPainter.width + $(30) + $(20),
-            height: $(36),
-          ),
+          Obx(() => isShowBg.value
+              ? GradientStar(
+                  width: width + $(30) + $(20),
+                  height: $(36),
+                )
+              : Container()),
           Container(
             padding: EdgeInsets.only(left: $(15), right: $(15), top: $(8)),
             child: Row(
               children: [
                 Text(
+                  key: globaleKey,
                   S.of(context).create_with_prompt,
                   style: TextStyle(
                     color: Colors.white,

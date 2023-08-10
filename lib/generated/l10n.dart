@@ -5069,6 +5069,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Print`
+  String get print {
+    return Intl.message(
+      'Print',
+      name: 'print',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

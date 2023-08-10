@@ -104,7 +104,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    // dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    if (!(cacheManager.getBool(CacheManager.isSavedPickHistory) ?? false)) {
+      dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    }
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -112,19 +114,19 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
     });
   }
 
-  @override
-  void didUpdateWidget(covariant BackgroundPickerBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    imageRatio = widget.imageRatio;
-    List<dynamic> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
-    dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList().filter((t) {
-      if (TextUtil.isEmpty(t.filePath)) {
-        return true;
-      }
-      return File(t.filePath!).existsSync();
-    });
-    // dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
-  }
+  // @override
+  // void didUpdateWidget(covariant BackgroundPickerBar oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   // imageRatio = widget.imageRatio;
+  //   // List<dynamic> jsonList = cacheManager.getJson(CacheManager.backgroundPickHistory) ?? [];
+  //   // dataList = jsonList.map((e) => BackgroundData.fromJson(e)).toList().filter((t) {
+  //   //   if (TextUtil.isEmpty(t.filePath)) {
+  //   //     return true;
+  //   //   }
+  //   //   return File(t.filePath!).existsSync();
+  //   // });
+  //   // dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +152,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               onPick: (data) {
                 d = data;
                 setState(() {
+                  cacheManager.setBool(CacheManager.isSavedPickHistory, true);
                   cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
                 });
                 widget.onPick.call(data);
@@ -162,9 +165,8 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
         ),
         Expanded(
           child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              ...dataList
+              scrollDirection: Axis.horizontal,
+              children: dataList
                   .map(
                     (e) => UnconstrainedBox(
                       child: ClipRRect(
@@ -175,19 +177,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                       }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
                     ),
                   )
-                  .toList(),
-              ...defaultColors
-                  .map((e) => UnconstrainedBox(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular($(4)),
-                          child: buildItem(BackgroundData()..color = e),
-                        ).intoGestureDetector(onTap: () {
-                          widget.onPick.call(BackgroundData()..color = e);
-                        }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
-                      ))
-                  .toList()
-            ],
-          ),
+                  .toList()),
         ),
       ],
     );

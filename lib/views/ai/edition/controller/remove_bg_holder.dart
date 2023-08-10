@@ -6,6 +6,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../../Widgets/background_card.dart';
 import '../../../../app/app.dart';
 import '../../../../app/cache/cache_manager.dart';
 
@@ -58,7 +59,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     newImage.fillBackground(fillColor);
     imgLib.drawImage(newImage, imageFront!);
     CacheManager cacheManager = AppDelegate.instance.getManager();
-    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.png';
     List<int> outputBytes = imgLib.encodePng(newImage);
     File(path).writeAsBytes(outputBytes).then((value) {
       resultFilePath = path;
@@ -84,9 +85,22 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   @override
   Widget buildShownImage() {
     if (resultFile == null) {
-      return shownImageWidget ?? Image.file(originFile!);
+      return CustomPaint(
+          painter: BackgroundPainter(
+            bgColor: Colors.transparent,
+            w: 10,
+            h: 10,
+          ),
+          child: shownImageWidget ?? Image.file(originFile!));
     } else {
-      return Image.file(resultFile ?? originFile!);
+      return CustomPaint(
+        painter: BackgroundPainter(
+          bgColor: Colors.transparent,
+          w: 10,
+          h: 10,
+        ),
+        child: Image.file(resultFile ?? originFile!),
+      );
     }
   }
 }
