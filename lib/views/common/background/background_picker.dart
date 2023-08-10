@@ -12,27 +12,30 @@ import 'package:common_utils/common_utils.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {
-  static Future<BackgroundData?> pickBackground(
+  static Future pickBackground(
     BuildContext context, {
     required double imageRatio,
+    required Function(BackgroundData data) onPick,
   }) async {
     var bool = await PermissionsUtil.checkPermissions();
     if (bool) {
-      return _open(context, imageRatio: imageRatio);
+      return _open(context, imageRatio: imageRatio, onPick: onPick);
     } else {
       PermissionsUtil.permissionDenied(context);
       return null;
     }
   }
 
-  static Future<BackgroundData?> _open(
+  static Future _open(
     BuildContext context, {
     required double imageRatio,
+    required Function(BackgroundData data) onPick,
   }) async {
     return Navigator.of(context).push(
       NoAnimRouter(
         BackgroundPickerHolder(
           imageRatio: imageRatio,
+          onPick: onPick,
         ),
         settings: RouteSettings(name: '/BackgroundPickerHolder'),
       ),
@@ -139,19 +142,22 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                   height: itemSize,
                   margin: EdgeInsets.symmetric(horizontal: $(4)),
                   decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
-              .intoGestureDetector(onTap: () {
-            BackgroundPicker.pickBackground(
+              .intoGestureDetector(onTap: () async {
+            var d;
+            await BackgroundPicker.pickBackground(
               context,
               imageRatio: imageRatio,
-            ).then((value) {
-              if (value != null) {
+              onPick: (data) {
+                d = data;
                 setState(() {
-                  dataList.insert(0, value);
                   cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
                 });
-                widget.onPick.call(value);
-              }
-            });
+                widget.onPick.call(data);
+              },
+            );
+            if (d != null) {
+              dataList.insert(0, d);
+            }
           }),
         ),
         Expanded(

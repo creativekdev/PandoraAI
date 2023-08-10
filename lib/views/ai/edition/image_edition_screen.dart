@@ -395,7 +395,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               bool effectVisible = true;
               if (effectItem != null) {
                 var c = effectItem.holder as TransferBaseController;
-                visible = c.resultFile == null;
+                effectVisible = c.resultFile == null;
               }
               bool stickerVisible = true;
               var stickerItem = controller.items.pick((t) => t.function == ImageEditionFunction.sticker);

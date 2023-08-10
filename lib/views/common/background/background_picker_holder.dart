@@ -10,10 +10,12 @@ import 'widgets/back_image_picker.dart';
 
 class BackgroundPickerHolder extends StatefulWidget {
   double imageRatio;
+  Function(BackgroundData data) onPick;
 
   BackgroundPickerHolder({
     super.key,
     required this.imageRatio,
+    required this.onPick,
   });
 
   @override
@@ -27,8 +29,6 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
   CacheManager cacheManager = AppDelegate().getManager();
   late double contentHeight;
   late double tipsWidth;
-
-  dynamic resultData;
 
   List<dynamic> titleList = [];
   late TabController tabController;
@@ -62,14 +62,20 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
         'build': (context) => BackImagePicker(
             parent: this,
             onPickFile: (path) {
-              dismiss(data: BackgroundData()..filePath = path);
+              widget.onPick.call(BackgroundData()..filePath = path);
+              dismiss();
             }),
       },
       {
         'title': 'colors',
-        'build': (context) => BackColorsPicker(onPickColor: (color) {
-              dismiss(data: BackgroundData()..color = color);
-            }),
+        'build': (context) => BackColorsPicker(
+              onPickColor: (color) {
+                widget.onPick.call(BackgroundData()..color = color);
+              },
+              onOk: () {
+                dismiss();
+              },
+            ),
       }
     ];
     if (currentIndex >= titleList.length) {
@@ -87,7 +93,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
     _controller.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.dismissed:
-          Navigator.of(context).pop(resultData);
+          Navigator.of(context).pop();
           break;
         case AnimationStatus.forward:
           break;
@@ -200,8 +206,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
     );
   }
 
-  dismiss({dynamic data}) {
-    resultData = data;
+  dismiss() {
     _controller.reverse();
   }
 }

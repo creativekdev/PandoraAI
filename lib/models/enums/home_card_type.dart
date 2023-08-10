@@ -18,7 +18,6 @@ import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img_screen.dart';
 import 'package:cartoonizer/views/common/video_preview_screen.dart';
-import 'package:cartoonizer/views/mine/filter/im_filter.dart';
 import 'package:cartoonizer/views/social/metagram.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';

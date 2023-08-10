@@ -14,8 +14,8 @@ class AdjustOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var paddingH = (ScreenUtil.getCurrentWidgetSize(context).width - $(78)) / 2;
-    controller.itemWidth = $(78);
+    var paddingH = (ScreenUtil.getCurrentWidgetSize(context).width - $(54)) / 2;
+    controller.itemWidth = $(54);
     controller.padding = paddingH;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -47,21 +47,16 @@ class AdjustOptions extends StatelessWidget {
               return Stack(
                 children: [
                   AppCircleProgressBar(
-                    size: $(48),
-                    backgroundColor: Colors.grey.shade600,
+                    size: $(44),
+                    backgroundColor: Colors.grey.shade800,
                     progress: data.getProgress(),
                     ringWidth: 1.5,
-                    loadingColors: checked
-                        ? [
-                            Color(0xFF05E0D5),
-                            Color(0xFF05E0D5),
-                          ]
-                        : [
-                            Colors.grey.shade300,
-                            Colors.grey.shade300,
-                          ],
+                    loadingColors: [
+                      Color(0xFF05E0D5),
+                      Color(0xFF05E0D5),
+                    ],
                   ),
-                  checked
+                  checked && data.value != data.initValue
                       ? Text(
                           data.value.toStringAsFixed(0),
                           style: TextStyle(
@@ -69,14 +64,14 @@ class AdjustOptions extends StatelessWidget {
                             fontSize: $(14),
                           ),
                         ).intoContainer(
-                          width: $(48),
-                          height: $(48),
+                          width: $(44),
+                          height: $(44),
                           alignment: Alignment.center,
                         )
                       : Image.asset(
                           data.function.icon(),
-                          width: $(24),
-                          height: $(24),
+                          width: $(20),
+                          height: $(20),
                           color: Colors.grey.shade300,
                         ).intoContainer(
                           padding: EdgeInsets.all($(12)),
@@ -94,10 +89,10 @@ class AdjustOptions extends StatelessWidget {
                 } else {
                   controller.index = index;
                 }
-              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(15)));
+              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
             },
             itemCount: controller.dataList.length,
-          ).intoContainer(height: $(52)),
+          ).intoContainer(height: $(44)),
         ),
       ],
     );

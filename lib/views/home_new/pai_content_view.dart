@@ -1,4 +1,5 @@
 import 'package:cartoonizer/Widgets/visibility_holder.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/home_page_entity.dart';
 
 import '../../Common/importFile.dart';
@@ -98,7 +99,7 @@ class _PaiContentViewState extends State<PaiContentView> with AutomaticKeepAlive
               )
                   .intoGestureDetector(
                 onTap: () {
-                  widget.onTap(widget.galleries?.categoryString ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
+                  widget.onTap(widget.galleries?.category.value() ?? '', socialPost, getTitle(widget.galleries?.title ?? ''));
                 },
               )
             ],

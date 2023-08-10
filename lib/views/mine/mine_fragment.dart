@@ -26,7 +26,6 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../print/print_order_screen.dart';
-import 'filter/im_filter.dart';
 import 'widget/user_base_info_widget.dart';
 
 class MineFragment extends StatefulWidget {
