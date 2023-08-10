@@ -93,7 +93,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
     _controller.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.dismissed:
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
           break;
         case AnimationStatus.forward:
           break;
@@ -207,6 +207,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
   }
 
   dismiss() {
-    _controller.reverse();
+    // _controller.reverse();
+    Navigator.of(context).pop();
   }
 }

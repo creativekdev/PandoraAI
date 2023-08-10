@@ -149,7 +149,7 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Color(0xaa000000),
+      backgroundColor: Color(0xaa000000),
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
