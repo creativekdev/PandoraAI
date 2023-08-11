@@ -20,80 +20,115 @@ class AdjustOptions extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        GridSlider(
-            minVal: controller.dataList[controller.index].start.toInt(),
-            maxVal: controller.dataList[controller.index].end.toInt(),
-            currentPos: controller.dataList[controller.index].value,
-            onChanged: (newValue) {
-              controller.dataList[controller.index].value = newValue;
-              controller.update();
-            },
-            onEnd: () async {
-              controller.buildResult();
-            }),
-        SizedBox(height: $(20)),
         Listener(
           onPointerUp: (details) {
             delay(() => controller.autoCompleteScroll(), milliseconds: 32);
           },
-          child: ListView.builder(
-            controller: controller.scrollController,
-            physics: ClampingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: paddingH),
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              var data = controller.dataList[index];
-              bool checked = index == controller.index;
-              return Stack(
-                children: [
-                  AppCircleProgressBar(
-                    size: $(44),
-                    backgroundColor: Colors.grey.shade800,
-                    progress: data.getProgress(),
-                    ringWidth: 1.5,
-                    loadingColors: [
-                      Color(0xFF05E0D5),
-                      Color(0xFF05E0D5),
-                    ],
-                  ),
-                  checked && data.value != data.initValue
-                      ? Text(
-                          data.value.toStringAsFixed(0),
-                          style: TextStyle(
-                            color: Color(0xFF05E0D5),
-                            fontSize: $(14),
-                          ),
-                        ).intoContainer(
-                          width: $(44),
-                          height: $(44),
-                          alignment: Alignment.center,
-                        )
-                      : Image.asset(
-                          data.function.icon(),
-                          width: $(20),
-                          height: $(20),
-                          color: Colors.grey.shade300,
-                        ).intoContainer(
-                          padding: EdgeInsets.all($(12)),
-                        ),
+          child: ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                colors: <Color>[
+                  Color(0x11ffffff),
+                  Color(0x99ffffff),
+                  Color(0xffffffff),
+                  Color(0x99ffffff),
+                  Color(0x11ffffff),
                 ],
-              ).intoGestureDetector(onTap: () {
-                if (controller.index == index) {
-                  if (data.value == data.initValue) {
-                    data.value = data.previousValue;
-                  } else {
-                    data.previousValue = data.value;
-                    data.value = data.initValue;
-                  }
-                  controller.buildResult();
-                } else {
-                  controller.index = index;
-                }
-              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                tileMode: TileMode.mirror,
+              ).createShader(bounds);
             },
-            itemCount: controller.dataList.length,
-          ).intoContainer(height: $(44)),
+            child: ListView.builder(
+              controller: controller.scrollController,
+              physics: ClampingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: paddingH),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                var data = controller.dataList[index];
+                bool checked = index == controller.index;
+                return Stack(
+                  children: [
+                    AppCircleProgressBar(
+                      size: $(44),
+                      backgroundColor: Colors.grey.shade800,
+                      progress: data.getProgress(),
+                      ringWidth: 1.5,
+                      loadingColors: [
+                        Color(0xFFE31ECD),
+                        Color(0xFF243CFF),
+                        Color(0xFFE31ECD),
+                      ],
+                    ),
+                    checked && data.value != data.initValue
+                        ? Text(
+                            data.value.toStringAsFixed(0),
+                            style: TextStyle(
+                              color: Color(0xffffffff),
+                              fontSize: $(14),
+                            ),
+                          ).intoContainer(
+                            width: $(44),
+                            height: $(44),
+                            alignment: Alignment.center,
+                          )
+                        : Image.asset(
+                            data.function.icon(),
+                            width: $(20),
+                            height: $(20),
+                            color: Colors.grey.shade300,
+                          ).intoContainer(
+                            padding: EdgeInsets.all($(12)),
+                          ),
+                  ],
+                ).intoGestureDetector(onTap: () {
+                  if (controller.index == index) {
+                    if (data.value == data.initValue) {
+                      data.value = data.previousValue;
+                    } else {
+                      data.previousValue = data.value;
+                      data.value = data.initValue;
+                    }
+                    controller.buildResult();
+                  } else {
+                    controller.index = index;
+                  }
+                }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+              },
+              itemCount: controller.dataList.length,
+            ).intoContainer(height: $(44)),
+          ),
         ),
+        SizedBox(height: 20),
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: <Color>[
+                Color(0x11ffffff),
+                Color(0x99ffffff),
+                Color(0xffffffff),
+                Color(0x99ffffff),
+                Color(0x11ffffff),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              tileMode: TileMode.mirror,
+            ).createShader(bounds);
+          },
+          child: GridSlider(
+              minVal: controller.dataList[controller.index].start.toInt(),
+              maxVal: controller.dataList[controller.index].end.toInt(),
+              currentPos: controller.dataList[controller.index].value,
+              onChanged: (newValue) {
+                controller.dataList[controller.index].value = newValue;
+                controller.update();
+              },
+              onEnd: () async {
+                controller.buildResult();
+              }),
+        ),
+        SizedBox(height: 8),
+        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(11))
       ],
     );
   }

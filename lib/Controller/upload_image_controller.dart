@@ -355,6 +355,10 @@ class UploadImageController extends GetxController {
     var cacheFile = uploadCache.pick((t) => t.key == key);
     if (cacheFile != null) {
       uploadCache.remove(cacheFile);
+      var file = File(cacheFile.fileName);
+      if (file.existsSync()) {
+        file.deleteSync();
+      }
       _saveUploadCacheMap();
     }
   }

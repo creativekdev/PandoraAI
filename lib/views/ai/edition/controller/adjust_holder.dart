@@ -75,7 +75,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
       scrollController.animateTo(index * itemWidth, duration: Duration(milliseconds: 200), curve: Curves.bounceOut);
     }
     update();
-    showToast();
     onSwitchNewAdj();
   }
 
@@ -108,7 +107,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     if (pos != _index) {
       _index = pos;
       update();
-      showToast();
     }
     scrollController.animateTo(pos * itemWidth, duration: Duration(milliseconds: 100), curve: Curves.bounceOut);
   }
@@ -121,13 +119,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
         onSwitchNewAdj();
       });
     });
-  }
-
-  showToast() {
-    CommonExtension().showToast(
-      dataList[index].function.title(),
-      gravity: ToastGravity.CENTER,
-    );
   }
 
   void resetConfig() {

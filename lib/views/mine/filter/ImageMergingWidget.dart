@@ -1,9 +1,7 @@
-import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:image/image.dart' as imgLib;
-import 'dart:ui' as ui;
 
 import '../../../images-res.dart';
 

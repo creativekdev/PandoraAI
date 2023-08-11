@@ -16,6 +16,7 @@ import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
+import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
@@ -103,7 +104,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
-      await GallerySaver.saveImage(holder.resultFile!.path, albumName: saveAlbumName);
+      if (holder is RemoveBgHolder) {
+        await GallerySaver.saveImage((holder.resultFile ?? holder.removedImage ?? holder.originFile)!.path, albumName: saveAlbumName);
+      } else {
+        await GallerySaver.saveImage((holder.resultFile ?? holder.originFile)!.path, albumName: saveAlbumName);
+      }
     }
     CommonExtension().showImageSavedOkToast(context);
   }
