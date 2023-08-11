@@ -22,6 +22,7 @@ class ImPinView extends StatefulWidget {
   final double bottomPadding;
   final double switchButtonPadding;
   final File originFile;
+  final File resultePath;
 
   ImPinView({
     required this.personImage,
@@ -32,6 +33,7 @@ class ImPinView extends StatefulWidget {
     this.bottomPadding = 0,
     required this.switchButtonPadding,
     required this.originFile,
+    required this.resultePath,
   }) {
     if (backgroundImage != null) {
       backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage!));
@@ -56,9 +58,10 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
   // double bgDx = 0;
   // double bgDy = 0;
   bool isShowOrigin = false;
-  Uint8List? personByte = Uint8List.fromList([]);
+  late Uint8List personByte;
   RxBool isShowSquar = false.obs;
   RxBool isShowBg = false.obs;
+  RxBool isShowPerson = true.obs;
 
   double _width = 0;
   double _height = 0;
@@ -68,8 +71,7 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
 
   Future<Uint8List?> getPersonImage() async {
     var byteData = await widget.personImageForUI.toByteData(format: ui.ImageByteFormat.png);
-    personByte = byteData?.buffer.asUint8List();
-
+    personByte = byteData!.buffer.asUint8List();
     return personByte;
   }
 
@@ -110,29 +112,6 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
       return false;
     }
   }
-
-  // bool getActionView(Offset tapPosition) {
-  //   RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
-  //   Offset containerPosition = containerBox.localToGlobal(Offset.zero);
-  //   double containerWidth = containerBox.size.width;
-  //   double containerHeight = containerBox.size.height;
-  //   bool result = false;
-  //   if (tapPosition.dx >= containerPosition.dx &&
-  //       tapPosition.dx <= containerWidth + dx &&
-  //       tapPosition.dy >= containerPosition.dy &&
-  //       tapPosition.dy <= containerHeight + containerPosition.dy) {
-  //     int pixelColor = widget.personImage.getPixel(tapPosition.dx.toInt(), tapPosition.dy.toInt());
-  //     bool isTransparent = ui.Color(pixelColor).alpha == 0;
-  //     if (!isTransparent) {
-  //       result = false;
-  //     } else {
-  //       result = true;
-  //     }
-  //   } else {
-  //     result = true;
-  //   }
-  //   return result;
-  // }
 
   onShowBg() {
     Future.delayed(Duration.zero, () {
@@ -212,9 +191,9 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                                               children: [
                                                 Container(
                                                   alignment: Alignment.center,
-                                                  child: Image.memory(
+                                                  child: Image.file(
                                                     key: _personImageKey,
-                                                    personByte!,
+                                                    widget.resultePath,
                                                     fit: BoxFit.contain,
                                                     frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
                                                       onShowBg();
@@ -222,6 +201,15 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                                                     },
                                                   ),
                                                 ),
+                                                // child: Image.memory(
+                                                //   key: _personImageKey,
+                                                //   personByte,
+                                                //   fit: BoxFit.contain,
+                                                //   frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                //     onShowBg();
+                                                //     return child;
+                                                //   },
+                                                // )),
                                                 Obx(
                                                   () => isShowSquar.value
                                                       ? UnconstrainedBox(
@@ -322,26 +310,4 @@ class SquarePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
   }
-
-// @override
-// void paint(Canvas canvas, Size size) {
-//   print("Painter size == ${size}");
-//   final Paint borderPaint = Paint()
-//     ..color = Colors.white
-//     ..strokeWidth = $(2)
-//     ..style = PaintingStyle.stroke;
-//
-//   // final double sideLength = size.width > size.height ? size.height : size.width;
-//   // final double xOffset = (size.width - sideLength) / 2;
-//   // final double yOffset = (size.height - sideLength) / 2;
-//
-//   final Rect squareRect = Rect.fromLTWH(0, 0, size.width, size.height);
-//   // canvas.drawRect(squareRect, fillPaint);
-//   canvas.drawRect(squareRect, borderPaint);
-// }
-//
-// @override
-// bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//   return false;
-// }
 }

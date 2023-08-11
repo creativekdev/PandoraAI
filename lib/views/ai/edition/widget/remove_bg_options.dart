@@ -6,6 +6,7 @@ import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/im_pin_view.dart';
 import 'package:image/image.dart' as imgLib;
+
 import '../../../../app/app.dart';
 import '../../../../app/cache/cache_manager.dart';
 
@@ -53,6 +54,7 @@ class RemoveBgOptions extends StatelessWidget {
           backgroundImage: controller.imageBack,
           backgroundColor: controller.backgroundColor,
           originFile: controller.originFile!,
+          resultePath: controller.removedImage!,
           bottomPadding: bottomPadding,
           switchButtonPadding: switchButtonPadding,
           onAddImage: (image) {
