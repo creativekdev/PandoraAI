@@ -344,7 +344,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
                 margin: EdgeInsets.only(bottom: AppTabBarHeight + ScreenUtil.getBottomPadding(context)),
               )
                   .intoGestureDetector(onTap: () {
-                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect);
+                ImageEdition.open(context, source: 'home_add_btn', style: EffectStyle.All, function: ImageEditionFunction.effect, cardType: HomeCardType.imageEdition);
               }),
             );
           }),

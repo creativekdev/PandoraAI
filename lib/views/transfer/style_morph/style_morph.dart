@@ -4,6 +4,7 @@ import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/Extension.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -15,7 +16,8 @@ import '../controller/all_transfer_controller.dart';
 
 class StyleMorph {
   static Future open(BuildContext context, String source, {RecentStyleMorphModel? record, String? initKey}) async {
-    ImageEdition.open(context, source: source, style: EffectStyle.StyleMorph, function: ImageEditionFunction.effect, initKey: initKey, record: record);
+    ImageEdition.open(context,
+        source: source, style: EffectStyle.StyleMorph, function: ImageEditionFunction.effect, initKey: initKey, record: record, cardType: HomeCardType.stylemorph);
     return;
     bool result = await PermissionsUtil.checkPermissions();
     if (result) {

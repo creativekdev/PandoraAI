@@ -388,14 +388,14 @@ enum PhotoTakeDialogType {
   recent,
 }
 
-Future<PAICameraEntity?> showPhotoTakeDialog(
-  BuildContext context,
-) async {
+Future<PAICameraEntity?> showPhotoTakeDialog(BuildContext context, bool showRecent) async {
   List photoTakeDatas = [
     {"name": S.of(context).camera, "type": PhotoTakeDialogType.selfie, "image": Images.select_selfie},
     {"name": S.of(context).photo, "type": PhotoTakeDialogType.album, "image": Images.select_album},
-    {"name": S.of(context).my_rencents, "type": PhotoTakeDialogType.recent, "image": Images.select_recent},
   ];
+  if (showRecent) {
+    photoTakeDatas.add({"name": S.of(context).my_rencents, "type": PhotoTakeDialogType.recent, "image": Images.select_recent});
+  }
   var type = await showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -419,7 +419,7 @@ Future<PAICameraEntity?> showPhotoTakeDialog(
           Container(
             padding: EdgeInsets.symmetric(horizontal: $(46)),
             child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: photoTakeDatas.map((e) {
                   return Column(
                     children: [

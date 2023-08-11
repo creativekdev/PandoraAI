@@ -5,6 +5,7 @@ import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -26,7 +27,7 @@ class Cartoonize {
     } else if (record?.category == 'sticker') {
       function = ImageEditionFunction.sticker;
     }
-    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record);
+    ImageEdition.open(context, source: source, style: EffectStyle.Cartoonizer, function: function, initKey: initKey, record: record, cardType: HomeCardType.cartoonize);
     return;
     bool result = await PermissionsUtil.checkPermissions();
     if (result) {
