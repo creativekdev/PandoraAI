@@ -14,6 +14,7 @@ import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:image/image.dart' as imgLib;
+import 'package:worker_manager/worker_manager.dart';
 
 class FilterApi extends RetryAbleRequester {
   CacheManager cacheManager = AppDelegate().getManager();
@@ -62,8 +63,8 @@ class FilterApi extends RetryAbleRequester {
       'querypics': [imageUrl],
       'need_save_s3': false,
       'is_mask_only': true,
-      'resize_w': originWidth,
-      'resize_h': originHeight,
+      // 'resize_w': originWidth,
+      // 'resize_h': originHeight,
     };
     var baseEntity = await post('/api/image/analyze/token', params: params, onFailed: onFailed);
     return baseEntity?.data?['data'];
@@ -102,27 +103,31 @@ class FilterApi extends RetryAbleRequester {
     var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
     String key = EncryptUtil.encodeMd5(maskPath + originalPath);
     String filePath = getFileName(rootPath, key);
-    // if (File(filePath).existsSync()) {
-    //   return filePath;
-    // }
+    if (File(filePath).existsSync()) {
+      await File(filePath).delete();
+      // return filePath;
+    }
     var originalImage = await getLibImage(image);
     var maskImage = await getLibImage(await getImage(File(maskPath)));
-    // var newMask = imgLib.copyResize(maskImage, width: originalImage.width, height: originalImage.height);
-    for (int x = 0; x < originalImage.width; x++) {
-      for (int y = 0; y < originalImage.height; y++) {
-        var pixel = maskImage.getPixel(x, y);
-        var orPixel = originalImage.getPixel(x, y);
-        int a = imgLib.getAlpha(pixel);
-        int r = imgLib.getRed(orPixel);
-        int g = imgLib.getGreen(orPixel);
-        int b = imgLib.getBlue(orPixel);
-        int newPixel = imgLib.Color.fromRgba(r, g, b, a);
-        originalImage.setPixel(x, y, newPixel);
-        // var newP = originalImage.getPixel(x, y);
-        // print('newP:$newP, oldP:$orPixel');
-      }
-    }
-    await File(filePath).writeAsBytes(imgLib.encodePng(originalImage));
+    imgLib.Image resImg = await new Executor().execute(arg1: originalImage, arg2: maskImage, fun2: removeTask);
+    await File(filePath).writeAsBytes(imgLib.encodePng(resImg));
     return filePath;
   }
+}
+
+Future<imgLib.Image> removeTask(imgLib.Image originalImage, imgLib.Image maskImage, TypeSendPort port) async {
+  var newMask = imgLib.copyResize(maskImage, width: originalImage.width, height: originalImage.height);
+  for (int x = 0; x < originalImage.width; x++) {
+    for (int y = 0; y < originalImage.height; y++) {
+      var pixel = newMask.getPixel(x, y);
+      var orPixel = originalImage.getPixel(x, y);
+      int a = imgLib.getAlpha(pixel);
+      int r = imgLib.getRed(orPixel);
+      int g = imgLib.getGreen(orPixel);
+      int b = imgLib.getBlue(orPixel);
+      int newPixel = imgLib.Color.fromRgba(r, g, b, a);
+      originalImage.setPixel(x, y, newPixel);
+    }
+  }
+  return originalImage;
 }

@@ -12,7 +12,8 @@ import 'package:common_utils/common_utils.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {
-  static Future pickBackground(BuildContext context, {
+  static Future pickBackground(
+    BuildContext context, {
     required double imageRatio,
     required Function(BackgroundData data) onPick,
   }) async {
@@ -25,7 +26,8 @@ class BackgroundPicker {
     }
   }
 
-  static Future _open(BuildContext context, {
+  static Future _open(
+    BuildContext context, {
     required double imageRatio,
     required Function(BackgroundData data) onPick,
   }) async {
@@ -103,15 +105,11 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       return File(t.filePath!).existsSync();
     });
     if (!(cacheManager.getBool(CacheManager.isSavedPickHistory) ?? false)) {
-      dataList.addAll(defaultColors.map((e) =>
-      BackgroundData()
-        ..color = e).toList());
+      dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
     }
     delay(() {
       setState(() {
-        itemSize = (ScreenUtil
-            .getCurrentWidgetSize(context)
-            .width - $(40)) / 5;
+        itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
       });
     });
   }
@@ -141,11 +139,11 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
             color: ColorConstant.White,
           )
               .intoContainer(
-              alignment: Alignment.center,
-              width: itemSize,
-              height: itemSize,
-              margin: EdgeInsets.symmetric(horizontal: $(4)),
-              decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
+                  alignment: Alignment.center,
+                  width: itemSize,
+                  height: itemSize,
+                  margin: EdgeInsets.symmetric(horizontal: $(4)),
+                  decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
               .intoGestureDetector(onTap: () async {
             var d;
             await BackgroundPicker.pickBackground(
@@ -163,12 +161,6 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                 widget.onPick.call(data);
               },
             );
-            if (d != null) {
-              dataList.insert(0, d);
-              setState(() {
-                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-              });
-            }
           }),
         ),
         Expanded(
@@ -176,8 +168,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               scrollDirection: Axis.horizontal,
               children: dataList
                   .map(
-                    (e) =>
-                    UnconstrainedBox(
+                    (e) => UnconstrainedBox(
                       child: ClipRRect(
                         child: buildItem(e),
                         borderRadius: BorderRadius.circular($(4)),
@@ -185,7 +176,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                         widget.onPick.call(e);
                       }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
                     ),
-              )
+                  )
                   .toList()),
         ),
       ],

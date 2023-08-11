@@ -2,19 +2,19 @@ import 'package:image/image.dart' as imgLib;
 
 class ImageProcessor {
   static int getR(int pixel) {
-    return pixel & 0xFF;
+    return imgLib.getRed(pixel);
   }
 
   static int getG(int pixel) {
-    return (pixel >> 8) & 0xFF;
+    return imgLib.getGreen(pixel);
   }
 
   static int getB(int pixel) {
-    return (pixel >> 16) & 0xFF;
+    return imgLib.getBlue(pixel);
   }
 
   static int getA(int pixel) {
-    return (pixel >> 24) & 0xFF;
+    return imgLib.getAlpha(pixel);
   }
 
   static setRGB(int pixel, int r, int g, int b) {
