@@ -1,10 +1,7 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/cacheImage/image_cache_manager.dart';
-import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:skeletons/skeletons.dart';
 
 class UserInfoHeaderWidget extends StatelessWidget {
   String avatar;
@@ -29,24 +26,24 @@ class UserInfoHeaderWidget extends StatelessWidget {
             context: context,
             imageUrl: avatar.avatar(),
             fit: BoxFit.cover,
-            placeholder: (context, url) {
-              return SkeletonAvatar(
-                style: SkeletonAvatarStyle(height: $(45), width: $(45), shape: BoxShape.circle),
-              );
-            },
-            errorWidget: (context, url, error) {
-              return Image.asset(Images.ic_avatar_default).intoContainer(
-                  width: $(45),
-                  height: $(45),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular($(32)),
-                    border: Border.all(color: ColorConstant.White, width: 1),
-                  ));
-            },
+            // placeholder: (context, url) {
+            //   return SkeletonAvatar(
+            //     style: SkeletonAvatarStyle(height: $(45), width: $(45), shape: BoxShape.circle),
+            //   );
+            // },
+            // errorWidget: (context, url, error) {
+            //   return Image.asset(Images.ic_avatar_default).intoContainer(
+            //       width: $(45),
+            //       height: $(45),
+            //       alignment: Alignment.center,
+            //       decoration: BoxDecoration(
+            //         borderRadius: BorderRadius.circular($(32)),
+            //         border: Border.all(color: ColorConstant.White, width: 1),
+            //       ));
+            // },
             width: $(45),
             height: $(45),
-            cacheManager: CachedImageCacheManager(),
+            // cacheManager: CachedImageCacheManager(),
           ),
         ).intoContainer(width: $(45), height: $(45)),
         SizedBox(width: $(12)),
