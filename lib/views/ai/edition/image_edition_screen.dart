@@ -231,7 +231,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
               body: Column(
                 children: [
                   Expanded(child: buildContent(context, controller)),
-                  buildOptions(context, controller).intoContainer(padding: EdgeInsets.only(top: $(20)), height: $(140) + ScreenUtil.getBottomPadding(context)),
+                  buildOptions(context, controller).intoContainer(padding: EdgeInsets.only(top: $(15)), height: $(140) + ScreenUtil.getBottomPadding(context)),
                 ],
               ),
             );

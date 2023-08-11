@@ -50,7 +50,7 @@ class AdjustOptions extends StatelessWidget {
                 return Stack(
                   children: [
                     AppCircleProgressBar(
-                      size: $(44),
+                      size: $(34),
                       backgroundColor: Colors.grey.shade800,
                       progress: data.getProgress(),
                       ringWidth: 1.5,
@@ -68,8 +68,8 @@ class AdjustOptions extends StatelessWidget {
                               fontSize: $(14),
                             ),
                           ).intoContainer(
-                            width: $(44),
-                            height: $(44),
+                            width: $(34),
+                            height: $(34),
                             alignment: Alignment.center,
                           )
                         : Image.asset(
@@ -78,7 +78,9 @@ class AdjustOptions extends StatelessWidget {
                             height: $(20),
                             color: Colors.grey.shade300,
                           ).intoContainer(
-                            padding: EdgeInsets.all($(12)),
+                            width: $(34),
+                            height: $(34),
+                            alignment: Alignment.center,
                           ),
                   ],
                 ).intoGestureDetector(onTap: () {
@@ -93,13 +95,13 @@ class AdjustOptions extends StatelessWidget {
                   } else {
                     controller.index = index;
                   }
-                }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+                }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10)));
               },
               itemCount: controller.dataList.length,
             ).intoContainer(height: $(44)),
           ),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: $(15)),
         ShaderMask(
           shaderCallback: (Rect bounds) {
             return LinearGradient(
@@ -127,8 +129,8 @@ class AdjustOptions extends StatelessWidget {
                 controller.buildResult();
               }),
         ),
-        SizedBox(height: 8),
-        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(11))
+        SizedBox(height: 10),
+        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12))
       ],
     );
   }

@@ -284,7 +284,7 @@ class UploadImageController extends GetxController {
     return null;
   }
 
-  Future<String?> upload({required File file, bool cache = true, ProgressCallback? onSendProgress}) async {
+  Future<String?> upload({required File file, bool cache = true, ProgressCallback? onSendProgress, bool matting = false}) async {
     var key = await md5File(file);
     var cacheUrl = _getCachedUrl(key);
     if (cacheUrl != null) {
@@ -293,7 +293,12 @@ class UploadImageController extends GetxController {
     var uploadFile;
     if (file.path.isImageFile) {
       EffectManager effectManager = AppDelegate().getManager();
-      var imageSize = effectManager.data?.imageMaxl ?? 512;
+      int imageSize;
+      if (matting) {
+        imageSize = effectManager.data?.mattingMaxl ?? 512;
+      } else {
+        imageSize = effectManager.data?.imageMaxl ?? 512;
+      }
       uploadFile = await imageCompressAndGetFile(file, imageSize: imageSize);
     } else {
       uploadFile = file;

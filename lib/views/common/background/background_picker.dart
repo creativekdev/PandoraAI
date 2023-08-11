@@ -104,7 +104,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    if (dataList.isEmpty) {
+      dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    }
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -123,7 +125,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       }
       return File(t.filePath!).existsSync();
     });
-    dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    if (dataList.isEmpty) {
+      dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+    }
   }
 
   @override
@@ -149,14 +153,14 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               imageRatio: imageRatio,
               onPick: (data) {
                 d = data;
-                setState(() {
-                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-                });
                 widget.onPick.call(data);
               },
             );
             if (d != null) {
               dataList.insert(0, d);
+              setState(() {
+                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+              });
             }
           }),
         ),
