@@ -9,6 +9,8 @@ import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 
+import '../../../models/enums/home_card_type.dart';
+
 class ImageEdition {
   static String TagAppbarTagBack = "ImageEditionAppbarTagBack";
   static String TagAppbarTagTitle = "ImageEditionAppbarTagTitle";
@@ -22,13 +24,15 @@ class ImageEdition {
     required EffectStyle style,
     required ImageEditionFunction function,
     record,
+    required HomeCardType cardType,
   }) async {
     var hasPermission = await PermissionsUtil.checkPermissions();
     if (!hasPermission) {
       PermissionsUtil.permissionDenied(context);
     } else {
       if (record == null) {
-        await _open(context, source: source, initKey: initKey, style: style, function: function);
+        bool isShowRecent = cardType == HomeCardType.imageEdition;
+        await _open(context, source: source, initKey: initKey, style: style, function: function, isShowRecent: isShowRecent);
       } else {
         await _openFromRecent(context, source: source, initKey: initKey, style: style, function: function, record: record);
       }
@@ -41,8 +45,12 @@ class ImageEdition {
     required EffectStyle style,
     String? initKey,
     required ImageEditionFunction function,
+    required bool isShowRecent,
   }) async {
-    var paiCameraEntity = await showPhotoTakeDialog(context);
+    var paiCameraEntity = await showPhotoTakeDialog(
+      context,
+      isShowRecent,
+    );
     if (paiCameraEntity == null) {
       return;
     }
