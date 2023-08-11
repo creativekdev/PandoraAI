@@ -218,7 +218,21 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                                                             height: _height,
                                                             padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
                                                             child: CustomPaint(
-                                                              painter: SquarePainter(borderRect.width, borderRect.height),
+                                                              painter: GradientBorderPainter(
+                                                                width: borderRect.width,
+                                                                height: borderRect.height,
+                                                                strokeWidth: $(2),
+                                                                borderRadius: $(8),
+                                                                gradient: LinearGradient(
+                                                                  colors: [
+                                                                    Color(0xFFE31ECD),
+                                                                    Color(0xFF243CFF),
+                                                                    Color(0xFFE31ECD),
+                                                                  ],
+                                                                  begin: Alignment.topLeft,
+                                                                  end: Alignment.bottomRight,
+                                                                ),
+                                                              ),
                                                             ),
                                                           ),
                                                         )
@@ -284,26 +298,32 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
   }
 }
 
-class SquarePainter extends CustomPainter {
-  SquarePainter(this.width, this.height);
+class GradientBorderPainter extends CustomPainter {
+  final double strokeWidth;
+  final double borderRadius;
+  final Gradient gradient;
+  final double width;
+  final double height;
 
-  double width;
-  double height;
+  GradientBorderPainter({
+    required this.strokeWidth,
+    required this.borderRadius,
+    required this.gradient,
+    required this.width,
+    required this.height,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     size = Size(width, height);
-    final Paint borderPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = $(2)
-      ..style = PaintingStyle.stroke;
+    final path = Path()..addRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(borderRadius)));
 
-    RRect roundedRectangle = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Radius.circular($(5)),
-    );
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..shader = gradient.createShader(Offset.zero & size);
 
-    canvas.drawRRect(roundedRectangle, borderPaint);
+    canvas.drawPath(path, paint);
   }
 
   @override
