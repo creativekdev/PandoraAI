@@ -60,7 +60,7 @@ dependencies:
   webview_flutter: ^3.0.0
   connectivity_plus: ^2.2.1
   permission_handler: 10.2.0
-  cached_network_image: ^3.2.3
+  cached_network_image: 3.1.0+1
   flutter_credit_card: 3.0.1
   package_info_plus: 3.0.3
   device_info_plus: 8.1.0

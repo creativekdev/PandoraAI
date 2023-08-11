@@ -3,26 +3,26 @@ import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
-import 'package:cartoonizer/utils/color_util.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/mine/filter/pin_gesture_views.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../Widgets/app_navigation_bar.dart';
-import '../../../images-res.dart';
 import '../../../utils/utils.dart';
-import '../../ai/edition/image_edition.dart';
 
 class ImPinView extends StatefulWidget {
   imgLib.Image personImage;
   imgLib.Image? backgroundImage;
   Color? backgroundColor;
   ui.Image personImageForUI;
-  late double posX, posY, ratio;
-  Uint8List? personByte, backgroundByte;
+
+  // late double posX, posY, ratio;
+  Uint8List? backgroundByte;
   final Function(imgLib.Image) onAddImage;
   final double bottomPadding;
   final double switchButtonPadding;
   final File originFile;
+  final File resultePath;
 
   ImPinView({
     required this.personImage,
@@ -33,12 +33,13 @@ class ImPinView extends StatefulWidget {
     this.bottomPadding = 0,
     required this.switchButtonPadding,
     required this.originFile,
+    required this.resultePath,
   }) {
     if (backgroundImage != null) {
       backgroundByte = Uint8List.fromList(imgLib.encodeJpg(backgroundImage!));
     }
-    posX = posY = 0;
-    ratio = 1;
+    // posX = posY = 0;
+    // ratio = 1;
   }
 
   @override
@@ -49,42 +50,79 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
   bool isSelectedBg = false;
   GlobalKey globalKey = GlobalKey();
   double scale = 1;
-  double bgScale = 1;
+
+  // double bgScale = 1;
   double dx = 0;
   double dy = 0;
-  double bgDx = 0;
-  double bgDy = 0;
-  bool isShowOrigin = false;
 
-  // RxBool isActionBg = false.obs;
+  // double bgDx = 0;
+  // double bgDy = 0;
+  bool isShowOrigin = false;
+  late Uint8List personByte;
+  RxBool isShowSquar = false.obs;
+  RxBool isShowBg = false.obs;
+  RxBool isShowPerson = true.obs;
+
+  double _width = 0;
+  double _height = 0;
+
   GlobalKey _personImageKey = GlobalKey();
+  Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
 
   Future<Uint8List?> getPersonImage() async {
     var byteData = await widget.personImageForUI.toByteData(format: ui.ImageByteFormat.png);
-    return byteData?.buffer.asUint8List();
+    personByte = byteData!.buffer.asUint8List();
+    return personByte;
   }
 
-  bool getActionView(Offset tapPosition) {
-    RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
-    Offset containerPosition = containerBox.localToGlobal(Offset.zero);
-    double containerWidth = containerBox.size.width;
-    double containerHeight = containerBox.size.height;
-    bool result = false;
-    if (tapPosition.dx >= containerPosition.dx &&
-        tapPosition.dx <= containerWidth + dx &&
-        tapPosition.dy >= containerPosition.dy &&
-        tapPosition.dy <= containerHeight + containerPosition.dy) {
-      int pixelColor = widget.personImage.getPixel(tapPosition.dx.toInt(), tapPosition.dy.toInt());
-      bool isTransparent = ui.Color(pixelColor).alpha == 0;
-      if (!isTransparent) {
-        result = false;
-      } else {
-        result = true;
+  Rect getMaxRealImageRect() {
+    final int width = widget.personImage.width;
+    final int height = widget.personImage.height;
+    int minX = width;
+    int maxX = 0;
+    int minY = height;
+    int maxY = 0;
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        if (!isAphaInLocation(x, y)) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
       }
-    } else {
-      result = true;
     }
-    return result;
+    double scale = _width / width;
+
+    return Rect.fromLTWH(
+      minX * scale.toDouble(),
+      minY * scale.toDouble(),
+      maxX * scale.toDouble() - minX * scale.toDouble(),
+      maxY * scale.toDouble() - minY * scale.toDouble(),
+    );
+  }
+
+  bool isAphaInLocation(int x, int y) {
+    int pixelColor = widget.personImage.getPixel(x, y);
+    int alpha = imgLib.getAlpha(pixelColor);
+    bool isTransparent = alpha == 0;
+    if (isTransparent) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  onShowBg() {
+    Future.delayed(Duration.zero, () {
+      RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
+      _width = containerBox.size.width;
+      _height = containerBox.size.height;
+      borderRect = getMaxRealImageRect();
+      if (_width > 0 && _height > 0) {
+        isShowBg.value = true;
+      }
+    });
   }
 
   @override
@@ -104,7 +142,7 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
               Navigator.of(context).pop();
             });
           });
-        }).hero(tag: ImageEdition.TagAppbarTagTraining),
+        }),
       ),
       body: Stack(
         children: [
@@ -114,41 +152,93 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                   future: getPersonImage(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      Uint8List byteData = snapshot.data as Uint8List;
                       return Expanded(
-                        child: Center(
-                          child: Stack(
-                            children: [
-                              ClipRect(
-                                child: RepaintBoundary(
-                                  key: globalKey,
-                                  child: isShowOrigin
-                                      ? Image.file(
-                                          widget.originFile,
-                                          fit: BoxFit.contain,
-                                          width: ScreenUtil.screenSize.width,
-                                          height: ScreenUtil.screenSize.width / widget.ratio,
-                                        )
-                                      : Stack(children: [
-                                          widget.backgroundImage != null
-                                              ? Image.memory(
-                                                  widget.backgroundByte!,
-                                                  fit: BoxFit.cover,
-                                                  width: ScreenUtil.screenSize.width,
-                                                  height: ScreenUtil.screenSize.width / widget.ratio,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ClipRect(
+                              child: RepaintBoundary(
+                                key: globalKey,
+                                child: isShowOrigin
+                                    ? Image.file(
+                                        widget.originFile,
+                                        fit: BoxFit.fill,
+                                        // width: ScreenUtil.screenSize.width,
+                                        // height: ScreenUtil.screenSize.width / widget.ratio,
+                                      )
+                                    : Listener(
+                                        onPointerDown: (PointerDownEvent event) {
+                                          isShowSquar.value = true;
+                                        },
+                                        onPointerUp: (PointerUpEvent event) {
+                                          isShowSquar.value = false;
+                                        },
+                                        child: Stack(alignment: Alignment.center, children: [
+                                          Obx(() => isShowBg.value
+                                              ? Container(
+                                                  alignment: Alignment.center,
+                                                  child: Image.memory(
+                                                    widget.backgroundByte!,
+                                                    fit: BoxFit.cover,
+                                                    width: _width,
+                                                    height: _height,
+                                                  ),
                                                 )
-                                              : Container(
-                                                  color: widget.backgroundColor!.toArgb(),
-                                                  width: ScreenUtil.screenSize.width,
-                                                  height: ScreenUtil.screenSize.width / widget.ratio,
-                                                ),
+                                              : SizedBox()),
                                           PinGestureView(
-                                            child: Image.memory(
-                                              key: _personImageKey,
-                                              byteData,
-                                              fit: BoxFit.contain,
-                                              width: ScreenUtil.screenSize.width,
-                                              height: ScreenUtil.screenSize.width / widget.ratio,
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                Container(
+                                                  alignment: Alignment.center,
+                                                  child: Image.file(
+                                                    key: _personImageKey,
+                                                    widget.resultePath,
+                                                    fit: BoxFit.contain,
+                                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                      onShowBg();
+                                                      return child;
+                                                    },
+                                                  ),
+                                                ),
+                                                // child: Image.memory(
+                                                //   key: _personImageKey,
+                                                //   personByte,
+                                                //   fit: BoxFit.contain,
+                                                //   frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                //     onShowBg();
+                                                //     return child;
+                                                //   },
+                                                // )),
+                                                Obx(
+                                                  () => isShowSquar.value
+                                                      ? UnconstrainedBox(
+                                                          child: Container(
+                                                            width: _width,
+                                                            height: _height,
+                                                            padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                            child: CustomPaint(
+                                                              painter: GradientBorderPainter(
+                                                                width: borderRect.width,
+                                                                height: borderRect.height,
+                                                                strokeWidth: $(2),
+                                                                borderRadius: $(8),
+                                                                gradient: LinearGradient(
+                                                                  colors: [
+                                                                    Color(0xFFE31ECD),
+                                                                    Color(0xFF243CFF),
+                                                                    Color(0xFFE31ECD),
+                                                                  ],
+                                                                  begin: Alignment.topLeft,
+                                                                  end: Alignment.bottomRight,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : SizedBox(),
+                                                )
+                                              ],
                                             ),
                                             scale: scale,
                                             dx: dx,
@@ -160,10 +250,10 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                                             },
                                           ),
                                         ]),
-                                ),
+                                      ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -205,5 +295,39 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
         ],
       ),
     );
+  }
+}
+
+class GradientBorderPainter extends CustomPainter {
+  final double strokeWidth;
+  final double borderRadius;
+  final Gradient gradient;
+  final double width;
+  final double height;
+
+  GradientBorderPainter({
+    required this.strokeWidth,
+    required this.borderRadius,
+    required this.gradient,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    size = Size(width, height);
+    final path = Path()..addRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(borderRadius)));
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..shader = gradient.createShader(Offset.zero & size);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

@@ -544,6 +544,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "ppmPro": MessageLookupByLibrary.simpleMessage("Pandora AI Pro"),
         "premium": MessageLookupByLibrary.simpleMessage("Versión Pro"),
         "preview": MessageLookupByLibrary.simpleMessage("Vista previa"),
+        "print": MessageLookupByLibrary.simpleMessage("Imprimir"),
         "privacy_policy":
             MessageLookupByLibrary.simpleMessage("Política de privacidad"),
         "privacy_policy1":

@@ -1,6 +1,7 @@
 import '../../../Common/importFile.dart';
 
 typedef OnPinEndCallBack = void Function(bool isSelectedBg, double scale, double dx, double dy);
+typedef OnDraw = void Function();
 
 class PinGestureViews extends StatefulWidget {
   PinGestureViews(
@@ -163,6 +164,11 @@ class _PinGestureViewState extends State<PinGestureView> {
   double dx;
   double dy;
   Offset lastOffset = Offset.zero;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

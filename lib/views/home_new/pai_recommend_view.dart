@@ -2,7 +2,6 @@ import 'package:cartoonizer/Widgets/visibility_holder.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
 
 import '../../Common/importFile.dart';
-import '../../Widgets/cacheImage/cached_network_image_utils.dart';
 import '../../models/home_page_entity.dart';
 
 typedef OnClickItem = Function(HomePageHomepageTools data);
@@ -15,6 +14,9 @@ class PaiRecommendView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final finalList = list?.where((t) => t.category != HomeCardType.nothing && t.category != HomeCardType.UNDEFINED).toList();
+    if (finalList == null) {
+      return Container();
+    }
     return Container(
       padding: EdgeInsets.only(left: $(15), right: $(15), top: $(12)),
       child: Wrap(

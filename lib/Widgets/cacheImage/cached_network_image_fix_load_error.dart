@@ -36,8 +36,9 @@ class _CachedNetworkImageFixLoadErrorState extends State<CachedNetworkImageFixLo
     return ValueListenableBuilder(
         valueListenable: _notifier,
         builder: (context, value, child) {
+          print("rebuild $value");
           return CachedNetworkImage(
-            cacheKey: _notifier.value.toString(),
+            // cacheKey: _notifier.value.toString(),
             imageUrl: widget.imageUrl,
             placeholder: (context, url) => SkeletonAvatar(
               style: SkeletonAvatarStyle(
@@ -46,8 +47,9 @@ class _CachedNetworkImageFixLoadErrorState extends State<CachedNetworkImageFixLo
               ),
             ),
             errorWidget: (context, url, error) {
-              if (countLoadImg < 10) {
-                Future.delayed(Duration(milliseconds: 100), () async {
+              print('load error $error');
+              if (countLoadImg < 5) {
+                Future.delayed(Duration(milliseconds: 50), () async {
                   countLoadImg++;
                   _notifier.value = _notifier.value + DateTime.now().millisecondsSinceEpoch.toString();
                 });
@@ -58,7 +60,7 @@ class _CachedNetworkImageFixLoadErrorState extends State<CachedNetworkImageFixLo
                   ),
                 );
               } else {
-                return Container();
+                return SizedBox();
               }
             },
             fit: widget.fit ?? BoxFit.cover,

@@ -500,5 +500,6 @@
   "deleted_comment": "Comment has been deleted",
   "my_rencents": "My recents",
   "camera": "Take a selfie",
-  "photo": "Select fom album"
+  "photo": "Select fom album",
+  "print": "Print"
 }

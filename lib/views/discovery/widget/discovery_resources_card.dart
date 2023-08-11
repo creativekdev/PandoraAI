@@ -2,11 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
-import 'package:cartoonizer/Widgets/image/sync_download_image.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/utils/ffmpeg_util.dart';
 import 'package:cartoonizer/utils/utils.dart';

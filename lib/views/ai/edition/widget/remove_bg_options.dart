@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 import 'package:cartoonizer/views/mine/filter/im_pin_view.dart';
 import 'package:image/image.dart' as imgLib;
+
+import '../../../../app/app.dart';
+import '../../../../app/cache/cache_manager.dart';
 
 class RemoveBgOptions extends StatelessWidget {
   RemoveBgHolder controller;
@@ -16,9 +17,11 @@ class RemoveBgOptions extends StatelessWidget {
 
   final double bottomPadding;
   final double switchButtonPadding;
+  late BuildContext _currentContext;
 
   @override
   Widget build(BuildContext context) {
+    _currentContext = context;
     return BackgroundPickerBar(
       imageRatio: controller.ratio,
       onPick: (BackgroundData data) async {
@@ -26,13 +29,12 @@ class RemoveBgOptions extends StatelessWidget {
           File backFile = File(data.filePath!);
           controller.backgroundColor = null;
           await controller.setBackgroundImage(backFile);
-          showPersonEditScreenDialog(context, bottomPadding, switchButtonPadding);
+          showPersonEditScreenDialog(_currentContext, bottomPadding, switchButtonPadding);
         } else {
           await controller.setBackgroundImage(null);
           // controller.backgroundColor = controller.rgbaToAbgr(data.color!);
           controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
         }
-
         controller.update();
       },
     ).intoContainer(
@@ -45,13 +47,14 @@ class RemoveBgOptions extends StatelessWidget {
     Navigator.push(
       context,
       NoAnimRouter(
-        settings: RouteSettings(name: "/ImEffectScreen"),
+        settings: RouteSettings(name: "/ImPinView"),
         ImPinView(
           personImage: controller.imageFront!,
           personImageForUI: controller.imageUiFront!,
           backgroundImage: controller.imageBack,
           backgroundColor: controller.backgroundColor,
           originFile: controller.originFile!,
+          resultePath: controller.removedImage!,
           bottomPadding: bottomPadding,
           switchButtonPadding: switchButtonPadding,
           onAddImage: (image) {

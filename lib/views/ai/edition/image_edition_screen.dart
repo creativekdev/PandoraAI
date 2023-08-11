@@ -33,6 +33,7 @@ import '../../../app/app.dart';
 import '../../../app/thirdpart/thirdpart_manager.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../utils/img_utils.dart';
+import '../../print/print.dart';
 import '../../share/ShareScreen.dart';
 import 'image_edition.dart';
 import 'widget/effect_options.dart';
@@ -163,6 +164,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     }, autoExec: true);
   }
 
+  gotoPrint() async {
+    File? file = controller.currentItem.holder.resultFile;
+    Print.open(context, source: widget.source, file: file ?? controller.originFile);
+  }
+
   shareOut() async {
     AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = true;
     var userManager = AppDelegate().getManager<UserManager>();
@@ -215,6 +221,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           listData: [
             ListPopItem(text: S.of(context).share_to_discovery, icon: Images.ic_share_discovery, onTap: () => shareToDiscovery()),
             ListPopItem(text: S.of(context).share_out, icon: Images.ic_share, onTap: () => shareOut()),
+            ListPopItem(text: S.of(context).print, icon: Images.ic_share_print, onTap: () => gotoPrint()),
           ],
         );
       }),

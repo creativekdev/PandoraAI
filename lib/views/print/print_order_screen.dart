@@ -6,6 +6,7 @@ import 'package:cartoonizer/views/print/widgets/print_order_list.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 
 import '../../Common/importFile.dart';
+import '../../Widgets/AutomaticKeepAliveWidget.dart';
 import '../../Widgets/app_navigation_bar.dart';
 import '../../Widgets/blank_area_intercept.dart';
 import '../../images-res.dart';
@@ -121,7 +122,7 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
                   child: TabBarView(
                       controller: controller.tabController,
                       children: controller.statuses.map((e) {
-                        return _AutomaticKeepAlive(
+                        return AutomaticKeepAliveWidget(
                           child: PrintOrderList(
                             tabKey: e,
                             source: widget.source,
@@ -149,27 +150,4 @@ class _PrintOrderScreenState extends AppState<PrintOrderScreen> with SingleTicke
     Get.delete<PrintOrderController>();
     super.dispose();
   }
-}
-
-class _AutomaticKeepAlive extends StatefulWidget {
-  final Widget child;
-
-  const _AutomaticKeepAlive({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
-
-  @override
-  State<_AutomaticKeepAlive> createState() => _AutomaticKeepAliveState();
-}
-
-class _AutomaticKeepAliveState extends State<_AutomaticKeepAlive> with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

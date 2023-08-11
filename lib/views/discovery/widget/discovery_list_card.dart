@@ -1,8 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/cacheImage/cached_network_image_utils.dart';
 import 'package:cartoonizer/Widgets/expand_text.dart';
-import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
-import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/images-res.dart';
@@ -10,6 +7,7 @@ import 'package:cartoonizer/models/discovery_list_entity.dart';
 import 'package:cartoonizer/views/discovery/my_discovery_screen.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_attr_holder.dart';
 import 'package:cartoonizer/views/discovery/widget/discovery_detail_card.dart';
+import 'package:cartoonizer/views/discovery/widget/discovery_resources_card.dart';
 import 'package:like_button/like_button.dart';
 import 'package:skeletons/skeletons.dart';
 
