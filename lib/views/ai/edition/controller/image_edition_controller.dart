@@ -166,11 +166,15 @@ class ImageEditionController extends GetxController {
           bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
           filePath: _originPath,
           imageRatio: image.image.width / image.image.height,
+          imageHeight: image.image.height.toDouble(),
+          imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
             SyncFileImage(file: File(path)).getImage().then((value) {
               var holder = currentItem.holder as RemoveBgHolder;
               holder.ratio = value.image.width / value.image.height;
               holder.removedImage = File(path);
+
+              holder.resultFilePath = path;
             });
           },
         ),
@@ -181,7 +185,9 @@ class ImageEditionController extends GetxController {
   }
 
   generate(BuildContext context, TransferBaseController controller) async {
-    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
+    var needUpload = TextUtil.isEmpty(uploadImageController
+        .imageUrl(controller.originFile)
+        .value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,
@@ -259,11 +265,14 @@ class ImageEditionController extends GetxController {
                 bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(context),
                 filePath: originFilePath,
                 imageRatio: image.image.width / image.image.height,
+                imageHeight: image.image.height.toDouble(),
+                imageWidth: image.image.width.toDouble(),
                 onGetRemoveBgImage: (String path) async {
                   SyncFileImage(file: File(path)).getImage().then((value) {
                     var holder = e.holder as RemoveBgHolder;
                     holder.ratio = value.image.width / value.image.height;
                     holder.removedImage = File(path);
+                    holder.resultFilePath = path;
                   });
                 },
               ),

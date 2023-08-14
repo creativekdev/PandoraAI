@@ -4,10 +4,12 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/views/mine/filter/pin_gesture_views.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../Widgets/app_navigation_bar.dart';
+import '../../../Widgets/background_card.dart';
 import '../../../utils/utils.dart';
 
 class ImPinView extends StatefulWidget {
@@ -132,16 +134,25 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
         trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
-          showLoading().whenComplete(() async {
-            ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
-            if (image != null) {
-              imgLib.Image img = await getLibImage(image);
-              widget.onAddImage(img);
-            }
-            hideLoading().whenComplete(() {
-              Navigator.of(context).pop();
-            });
-          });
+          ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
+          if (image != null) {
+            imgLib.Image img = await getLibImage(image);
+            widget.onAddImage(img);
+          }
+          Navigator.of(context).pop();
+
+          // showLoading().whenComplete(() async {
+          //   ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
+          //   if (image != null) {
+          //     imgLib.Image img = await getLibImage(image);
+          //     widget.onAddImage(img);
+          //   }
+          //   Future.delayed(Duration(milliseconds: 1000), () {
+          //     hideLoading().whenComplete(() {
+          //       Navigator.of(context).pop();
+          //     });
+          //   });
+          // });
         }),
       ),
       body: Stack(
@@ -156,102 +167,180 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            ClipRect(
-                              child: RepaintBoundary(
-                                key: globalKey,
-                                child: isShowOrigin
-                                    ? Image.file(
+                            RepaintBoundary(
+                              key: globalKey,
+                              child: isShowOrigin
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      child: Image.file(
                                         widget.originFile,
                                         fit: BoxFit.fill,
                                         // width: ScreenUtil.screenSize.width,
                                         // height: ScreenUtil.screenSize.width / widget.ratio,
-                                      )
-                                    : Listener(
-                                        onPointerDown: (PointerDownEvent event) {
-                                          isShowSquar.value = true;
-                                        },
-                                        onPointerUp: (PointerUpEvent event) {
-                                          isShowSquar.value = false;
-                                        },
-                                        child: Stack(alignment: Alignment.center, children: [
-                                          Obx(() => isShowBg.value
-                                              ? Container(
-                                                  alignment: Alignment.center,
-                                                  child: Image.memory(
-                                                    widget.backgroundByte!,
-                                                    fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : Listener(
+                                      onPointerDown: (PointerDownEvent event) {
+                                        isShowSquar.value = true;
+                                      },
+                                      onPointerUp: (PointerUpEvent event) {
+                                        isShowSquar.value = false;
+                                      },
+                                      child: Stack(alignment: Alignment.center, children: [
+                                        Obx(() => isShowBg.value
+                                            ? CustomPaint(
+                                                size: Size(_width, _height),
+                                                painter: BackgroundPainter(
+                                                  bgColor: Colors.transparent,
+                                                  w: 10,
+                                                  h: 10,
+                                                ))
+                                            : Container()),
+                                        Obx(() => isShowBg.value
+                                            ? (widget.backgroundImage != null
+                                                ? Container(
+                                                    alignment: Alignment.center,
+                                                    child: Image.memory(
+                                                      widget.backgroundByte!,
+                                                      fit: BoxFit.cover,
+                                                      width: _width,
+                                                      height: _height,
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    alignment: Alignment.center,
+                                                    color: widget.backgroundColor!.toArgb(),
                                                     width: _width,
                                                     height: _height,
-                                                  ),
-                                                )
-                                              : SizedBox()),
-                                          PinGestureView(
-                                            child: Stack(
-                                              alignment: Alignment.center,
-                                              children: [
-                                                Container(
-                                                  alignment: Alignment.center,
-                                                  child: Image.file(
-                                                    key: _personImageKey,
-                                                    widget.resultePath,
-                                                    fit: BoxFit.contain,
-                                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                      onShowBg();
-                                                      return child;
-                                                    },
+                                                  ))
+                                            : SizedBox()),
+                                        Obx(() => isShowBg.value
+                                            ? Align(
+                                                alignment: Alignment.center,
+                                                child: ClipRect(
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    width: _width,
+                                                    height: _height,
+                                                    child: PinGestureView(
+                                                      child: ClipRect(
+                                                        child: Container(
+                                                          alignment: Alignment.center,
+                                                          width: _width,
+                                                          height: _height,
+                                                          child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                              Image.file(
+                                                                key: _personImageKey,
+                                                                widget.resultePath,
+                                                                fit: BoxFit.contain,
+                                                                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                                  onShowBg();
+                                                                  return child;
+                                                                },
+                                                              ),
+                                                              Obx(
+                                                                () => isShowSquar.value
+                                                                    ? UnconstrainedBox(
+                                                                        child: Container(
+                                                                          width: _width,
+                                                                          height: _height,
+                                                                          padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                                          child: CustomPaint(
+                                                                            painter: GradientBorderPainter(
+                                                                              width: borderRect.width,
+                                                                              height: borderRect.height,
+                                                                              strokeWidth: $(2),
+                                                                              borderRadius: $(8),
+                                                                              gradient: LinearGradient(
+                                                                                colors: [
+                                                                                  Color(0xFFE31ECD),
+                                                                                  Color(0xFF243CFF),
+                                                                                  Color(0xFFE31ECD),
+                                                                                ],
+                                                                                begin: Alignment.topLeft,
+                                                                                end: Alignment.bottomRight,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : SizedBox(),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      scale: scale,
+                                                      dx: dx,
+                                                      dy: dy,
+                                                      onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                                        scale = newScale;
+                                                        dx = newDx;
+                                                        dy = newDy;
+                                                      },
+                                                    ),
                                                   ),
                                                 ),
-                                                // child: Image.memory(
-                                                //   key: _personImageKey,
-                                                //   personByte,
-                                                //   fit: BoxFit.contain,
-                                                //   frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                                //     onShowBg();
-                                                //     return child;
-                                                //   },
-                                                // )),
-                                                Obx(
-                                                  () => isShowSquar.value
-                                                      ? UnconstrainedBox(
-                                                          child: Container(
-                                                            width: _width,
-                                                            height: _height,
-                                                            padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
-                                                            child: CustomPaint(
-                                                              painter: GradientBorderPainter(
-                                                                width: borderRect.width,
-                                                                height: borderRect.height,
-                                                                strokeWidth: $(2),
-                                                                borderRadius: $(8),
-                                                                gradient: LinearGradient(
-                                                                  colors: [
-                                                                    Color(0xFFE31ECD),
-                                                                    Color(0xFF243CFF),
-                                                                    Color(0xFFE31ECD),
-                                                                  ],
-                                                                  begin: Alignment.topLeft,
-                                                                  end: Alignment.bottomRight,
+                                              )
+                                            : PinGestureView(
+                                                child: Stack(
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    Container(
+                                                      alignment: Alignment.center,
+                                                      child: Image.file(
+                                                        key: _personImageKey,
+                                                        widget.resultePath,
+                                                        fit: BoxFit.contain,
+                                                        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                          onShowBg();
+                                                          return child;
+                                                        },
+                                                      ),
+                                                    ),
+                                                    Obx(
+                                                      () => isShowSquar.value
+                                                          ? UnconstrainedBox(
+                                                              child: Container(
+                                                                width: _width,
+                                                                height: _height,
+                                                                padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                                child: CustomPaint(
+                                                                  painter: GradientBorderPainter(
+                                                                    width: borderRect.width,
+                                                                    height: borderRect.height,
+                                                                    strokeWidth: $(2),
+                                                                    borderRadius: $(8),
+                                                                    gradient: LinearGradient(
+                                                                      colors: [
+                                                                        Color(0xFFE31ECD),
+                                                                        Color(0xFF243CFF),
+                                                                        Color(0xFFE31ECD),
+                                                                      ],
+                                                                      begin: Alignment.topLeft,
+                                                                      end: Alignment.bottomRight,
+                                                                    ),
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                      : SizedBox(),
-                                                )
-                                              ],
-                                            ),
-                                            scale: scale,
-                                            dx: dx,
-                                            dy: dy,
-                                            onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                              scale = newScale;
-                                              dx = newDx;
-                                              dy = newDy;
-                                            },
-                                          ),
-                                        ]),
-                                      ),
-                              ),
+                                                            )
+                                                          : SizedBox(),
+                                                    )
+                                                  ],
+                                                ),
+                                                scale: scale,
+                                                dx: dx,
+                                                dy: dy,
+                                                onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                                  scale = newScale;
+                                                  dx = newDx;
+                                                  dy = newDy;
+                                                },
+                                              )),
+                                      ]),
+                                    ),
                             ),
                           ],
                         ),
@@ -267,10 +356,10 @@ class _ImageMergingWidgetState extends AppState<ImPinView> {
               Expanded(
                 child: Container(
                   alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(top: widget.switchButtonPadding - ScreenUtil.getBottomPadding(context) + $(5), right: $(12)),
+                  padding: EdgeInsets.only(top: widget.switchButtonPadding + ScreenUtil.getStatusBarHeight(), right: $(8)),
                   child: Image.asset(Images.ic_switch_images, width: $(24), height: $(24))
                       .intoContainer(
-                    padding: EdgeInsets.all($(8)),
+                    padding: EdgeInsets.all($(12)),
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0x88000000)),
                   )
                       .intoGestureDetector(
