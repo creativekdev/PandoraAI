@@ -103,4 +103,10 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       );
     }
   }
+
+  @override
+  onResetClick() {
+    resultFilePath = null;
+    canReset = false;
+  }
 }

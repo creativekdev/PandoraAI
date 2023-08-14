@@ -24,4 +24,11 @@ class CropHolder extends ImageEditionBaseHolder {
   initData() {
     currentItem = items.first;
   }
+
+  @override
+  onResetClick() {
+    currentItem = items.first;
+    resultFilePath = null;
+    canReset = false;
+  }
 }

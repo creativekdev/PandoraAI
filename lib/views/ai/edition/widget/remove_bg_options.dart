@@ -63,6 +63,7 @@ class RemoveBgOptions extends StatelessWidget {
             var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
             File(path).writeAsBytes(byte).then((value) {
               controller.resultFilePath = path;
+              controller.canReset = true;
             });
           },
         ),

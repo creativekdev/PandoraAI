@@ -6,6 +6,7 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
@@ -85,7 +86,8 @@ class AdjustHolder extends ImageEditionBaseHolder {
   imgLib.Image? _originImageData;
   imgLib.Image? baseImage;
   imgLib.Image? shownImage;
-  Uint8List? showImageBytes;
+
+  ui.Image? showUIImage;
 
   @override
   void onInit() {
@@ -150,15 +152,14 @@ class AdjustHolder extends ImageEditionBaseHolder {
     }
   }
 
-  void buildResult() async {
+  void buildResult(bool saveFile) async {
     canReset = true;
-    var start = DateTime.now().millisecondsSinceEpoch;
-    shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
-    print("trans-result-copy: ${DateTime.now().millisecondsSinceEpoch - start}");
+    shownImage = imgLib.Image.from(baseImage!);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    print("trans-result-exec: ${DateTime.now().millisecondsSinceEpoch - start}");
     createShownBytes();
-    saveResult(shownImage!);
+    if (saveFile) {
+      saveResult(shownImage!);
+    }
   }
 
   onSwitchNewAdj() async {
@@ -167,15 +168,10 @@ class AdjustHolder extends ImageEditionBaseHolder {
     }
     dataList.forEach((element) => element.active = false);
     dataList[index].active = true;
-    var start = DateTime.now().millisecondsSinceEpoch;
-    baseImage = await executor.execute(arg1: _originImageData!, fun1: _copyImage);
+    baseImage = imgLib.Image.from(_originImageData!);
     baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
-    var baseT = DateTime.now().millisecondsSinceEpoch;
-    var baseStart = baseT - start;
-    print("trans-base: $baseStart");
-    shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
+    shownImage = imgLib.Image.from(baseImage!);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    print("trans-result: ${DateTime.now().millisecondsSinceEpoch - baseT}");
     createShownBytes();
     saveResult(shownImage!);
   }
@@ -185,14 +181,26 @@ class AdjustHolder extends ImageEditionBaseHolder {
       return;
     }
 
-    var start = DateTime.now().millisecondsSinceEpoch;
-    // Uint8List s = shownImage!.getBytes(format: imgLib.Format.rgba);
-    var encodePng = imgLib.encodePng(shownImage!, level: 1);
-    var byteData = Uint8List.fromList(encodePng);
-    print("trans-saveImage: ${DateTime.now().millisecondsSinceEpoch - start}");
-    showImageBytes = byteData.buffer.asUint8List();
-    shownImageWidget = Image.memory(showImageBytes!);
+    var s = await executor.execute(arg1: shownImage!, fun1: _copyImage);
+    showUIImage = await toImage(s);
     update();
+  }
+
+  @override
+  Widget buildShownImage() {
+    if (shownImage == null) {
+      return Image.file(resultFile ?? originFile!);
+    }
+    double scale = ScreenUtil.screenSize.width / shownImage!.width;
+    return Transform.scale(
+        scale: scale,
+        child: CustomPaint(
+          painter: LibImagePainter(image: showUIImage!),
+          child: Container(
+            width: shownImage!.width.toDouble(),
+            height: shownImage!.height.toDouble(),
+          ),
+        ));
   }
 
   @override
@@ -200,22 +208,26 @@ class AdjustHolder extends ImageEditionBaseHolder {
     executor.dispose();
     return super.dispose();
   }
-}
 
-class ImagePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
+  Future<ui.Image> toImage(imgLib.Image image) async {
+    final c = Completer<ui.Image>();
+    var start = DateTime.now().millisecondsSinceEpoch;
+    ui.decodeImageFromPixels(
+      image.data.buffer.asUint8List(),
+      image.width,
+      image.height,
+      ui.PixelFormat.rgba8888,
+      (ui.Image image) {
+        print("trans-lib-uiimage: ${DateTime.now().millisecondsSinceEpoch - start}");
+        c.complete(image);
+      },
+    );
+    return c.future;
   }
 }
 
 imgLib.Image _copyImage(imgLib.Image image, TypeSendPort port) {
-  return imgLib.copyCrop(image, 0, 0, image.width, image.height);
+  return imgLib.copyResize(image, width: image.width, height: image.height);
 }
 
 imgLib.Image _imAdjust(List<AdjustData> datas, imgLib.Image image, TypeSendPort port) {

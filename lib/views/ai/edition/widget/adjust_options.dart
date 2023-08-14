@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
@@ -96,7 +98,7 @@ class AdjustOptions extends StatelessWidget {
                       data.previousValue = data.value;
                       data.value = data.initValue;
                     }
-                    controller.buildResult();
+                    controller.buildResult(true);
                   } else {
                     controller.index = index;
                   }
@@ -129,23 +131,38 @@ class AdjustOptions extends StatelessWidget {
               onChanged: (newValue) {
                 controller.dataList[controller.index].value = newValue;
                 controller.update();
-                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 60) {
+                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 90) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
-                  // controller.buildResult(false);
+                  controller.buildResult(false);
                 }
               },
               onEnd: () async {
-                controller.buildResult();
-                // if (controller.shownImage != null) {
-                //   controller.saveResult(controller.shownImage!);
-                // }
+                controller.buildResult(true);
               }),
         ),
         SizedBox(height: 10),
-        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12))
+        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
       ],
     );
   }
 
   int lastBuildTime = 0;
+}
+
+class LibImagePainter extends CustomPainter {
+  ui.Image image;
+
+  LibImagePainter({required this.image});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var dx = (image.width - size.width) / 2;
+    var dy = (image.height - size.height) / 2;
+    canvas.drawImage(image, Offset(-dx, -dy), Paint());
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
 }

@@ -30,6 +30,7 @@ class CropOptions extends StatelessWidget {
           filePath: controller.originFilePath!,
           cropItem: controller.currentItem,
           onGetCropPath: (String path) {
+            controller.canReset = true;
             controller.resultFilePath = path;
           },
         ),
