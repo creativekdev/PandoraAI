@@ -4,11 +4,13 @@ import 'package:cartoonizer/common/importFile.dart';
 class BackColorsPicker extends StatefulWidget {
   Function(Color? color) onPickColor;
   Function onOk;
+  Function(Color? color) onColorChange;
 
   BackColorsPicker({
     super.key,
     required this.onPickColor,
     required this.onOk,
+    required this.onColorChange,
   });
 
   @override
@@ -35,7 +37,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
               setState(() {
                 this.color = Color.fromRGBO(color.red, color.green, color.blue, opacity);
                 userTypeColor = '#${color.value.toRadixString(16)}';
-                widget.onPickColor.call(this.color);
+                widget.onColorChange.call(this.color);
               });
             },
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
@@ -50,7 +52,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
           )
               .intoGestureDetector(onTap: () {
             widget.onPickColor.call(color);
-            widget.onOk.call();
+            widget.onOk.call(color);
           }),
           SizedBox(height: $(16)),
         ],

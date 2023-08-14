@@ -11,11 +11,13 @@ import 'widgets/back_image_picker.dart';
 class BackgroundPickerHolder extends StatefulWidget {
   double imageRatio;
   Function(BackgroundData data) onPick;
+  Function(BackgroundData data)? onColorChange;
 
   BackgroundPickerHolder({
     super.key,
     required this.imageRatio,
     required this.onPick,
+    this.onColorChange,
   });
 
   @override
@@ -68,14 +70,14 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
       },
       {
         'title': 'colors',
-        'build': (context) => BackColorsPicker(
-              onPickColor: (color) {
-                widget.onPick.call(BackgroundData()..color = color);
-              },
-              onOk: () {
-                dismiss();
-              },
-            ),
+        'build': (context) => BackColorsPicker(onPickColor: (color) {
+              widget.onPick.call(BackgroundData()..color = color);
+            }, onOk: (color) {
+              widget.onColorChange?.call(BackgroundData()..color = color);
+              dismiss();
+            }, onColorChange: (color) {
+              widget.onColorChange?.call(BackgroundData()..color = color);
+            }),
       }
     ];
     if (currentIndex >= titleList.length) {

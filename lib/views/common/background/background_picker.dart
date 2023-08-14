@@ -16,10 +16,11 @@ class BackgroundPicker {
     BuildContext context, {
     required double imageRatio,
     required Function(BackgroundData data) onPick,
+    Function(BackgroundData data)? onColorChange,
   }) async {
     var bool = await PermissionsUtil.checkPermissions();
     if (bool) {
-      return _open(context, imageRatio: imageRatio, onPick: onPick);
+      return _open(context, imageRatio: imageRatio, onPick: onPick, onColorChange: onColorChange);
     } else {
       PermissionsUtil.permissionDenied(context);
       return null;
@@ -30,12 +31,14 @@ class BackgroundPicker {
     BuildContext context, {
     required double imageRatio,
     required Function(BackgroundData data) onPick,
+    Function(BackgroundData data)? onColorChange,
   }) async {
     return Navigator.of(context).push(
       NoAnimRouter(
         BackgroundPickerHolder(
           imageRatio: imageRatio,
           onPick: onPick,
+          onColorChange: onColorChange,
         ),
         settings: RouteSettings(name: '/BackgroundPickerHolder'),
       ),
@@ -74,11 +77,13 @@ class BackgroundPickerBar extends StatefulWidget {
   double imageRatio;
 
   Function(BackgroundData data) onPick;
+  Function(BackgroundData data) onColorChange;
 
   BackgroundPickerBar({
     super.key,
     required this.imageRatio,
     required this.onPick,
+    required this.onColorChange,
   });
 
   @override
@@ -146,21 +151,21 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                   decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
               .intoGestureDetector(onTap: () async {
             var d;
-            await BackgroundPicker.pickBackground(
-              context,
-              imageRatio: imageRatio,
-              onPick: (data) {
-                d = data;
-                if (d != null) {
-                  dataList.insert(0, d);
-                }
-                setState(() {
-                  cacheManager.setBool(CacheManager.isSavedPickHistory, true);
-                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-                });
-                widget.onPick.call(data);
-              },
-            );
+            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data) {
+              d = data;
+              if (d != null) {
+                dataList.insert(0, d);
+              }
+              setState(() {
+                cacheManager.setBool(CacheManager.isSavedPickHistory, true);
+                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+              });
+              widget.onPick.call(data);
+            }, onColorChange: (data) {
+              d = data;
+              widget.onColorChange.call(data);
+              setState(() {});
+            });
           }),
         ),
         Expanded(

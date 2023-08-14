@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -19,7 +18,6 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'ie_base_holder.dart';
 
@@ -94,10 +92,14 @@ class ImageEditionController extends GetxController {
         ..parent = this
         ..onInit();
     }
-    var filterHolder = FilterHolder(parent: this)..onInit();
-    var adjustHolder = AdjustHolder(parent: this)..onInit();
-    var cropHolder = CropHolder(parent: this)..onInit();
-    var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
+    var filterHolder = FilterHolder(parent: this)
+      ..onInit();
+    var adjustHolder = AdjustHolder(parent: this)
+      ..onInit();
+    var cropHolder = CropHolder(parent: this)
+      ..onInit();
+    var removeBgHolder = RemoveBgHolder(parent: this)
+      ..onInit();
     items = [
       EditionItem()
         ..function = ImageEditionFunction.filter
@@ -164,11 +166,15 @@ class ImageEditionController extends GetxController {
           bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
           filePath: _originPath,
           imageRatio: image.image.width / image.image.height,
+          imageHeight: image.image.height.toDouble(),
+          imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
             SyncFileImage(file: File(path)).getImage().then((value) {
               var holder = currentItem.holder as RemoveBgHolder;
               holder.ratio = value.image.width / value.image.height;
               holder.removedImage = File(path);
+
+              holder.resultFilePath = path;
             });
           },
         ),
@@ -179,7 +185,9 @@ class ImageEditionController extends GetxController {
   }
 
   generate(BuildContext context, TransferBaseController controller) async {
-    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
+    var needUpload = TextUtil.isEmpty(uploadImageController
+        .imageUrl(controller.originFile)
+        .value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,
@@ -257,11 +265,14 @@ class ImageEditionController extends GetxController {
                 bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(context),
                 filePath: originFilePath,
                 imageRatio: image.image.width / image.image.height,
+                imageHeight: image.image.height.toDouble(),
+                imageWidth: image.image.width.toDouble(),
                 onGetRemoveBgImage: (String path) async {
                   SyncFileImage(file: File(path)).getImage().then((value) {
                     var holder = e.holder as RemoveBgHolder;
                     holder.ratio = value.image.width / value.image.height;
                     holder.removedImage = File(path);
+                    holder.resultFilePath = path;
                   });
                 },
               ),

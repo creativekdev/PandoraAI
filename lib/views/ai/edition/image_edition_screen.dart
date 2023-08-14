@@ -177,18 +177,26 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     var uint8list;
     if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
       TransferBaseController effectHolder = controller.currentItem.holder;
-      if (effectHolder.getCategory() == 'cartoonize' || effectHolder.getCategory() == 'sticker') {
-        uint8list =
-            await ImageUtils.printCartoonizeDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-      } else if (effectHolder.getCategory() == 'stylemorph') {
-        uint8list =
-            await ImageUtils.printStyleMorphDrawData(effectHolder.resultFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      if (effectHolder.resultFile != null) {
+        if (effectHolder.getCategory() == 'cartoonize' || effectHolder.getCategory() == 'sticker') {
+          uint8list =
+              await ImageUtils.printCartoonizeDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+        } else if (effectHolder.getCategory() == 'stylemorph') {
+          uint8list =
+              await ImageUtils.printStyleMorphDrawData(effectHolder.originFile!, File(effectHolder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+        } else {
+          throw Exception('未定义的effectStyle');
+        }
       } else {
-        throw Exception('未定义的effectStyle');
+        uint8list = await effectHolder.originFile!.readAsBytes();
       }
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
-      uint8list = await ImageUtils.printStyleMorphDrawData(holder.resultFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      if (holder.resultFile != null) {
+        uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      } else {
+        uint8list = await holder.originFile!.readAsBytes();
+      }
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {

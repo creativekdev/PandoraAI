@@ -12,14 +12,22 @@ import '../../../network/dio_node.dart';
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen(
-      {super.key, required this.onGetRemoveBgImage, required this.filePath, required this.imageRatio, this.bottomPadding = 0, this.switchButtonBottomToScreen = 0});
+  const ImRemoveBgScreen({super.key,
+    required this.onGetRemoveBgImage,
+    required this.filePath,
+    required this.imageRatio,
+    this.bottomPadding = 0,
+    this.switchButtonBottomToScreen = 0,
+    required this.imageHeight,
+    required this.imageWidth});
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
   final double imageRatio;
   final double bottomPadding;
   final double switchButtonBottomToScreen;
+  final double imageHeight;
+  final double imageWidth;
 
   @override
   State<ImRemoveBgScreen> createState() => _ImRemoveBgScreenState();
@@ -36,12 +44,15 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   late double width;
   late double height;
   UploadImageController uploadImageController = Get.find();
+  GlobalKey globalKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    width = ScreenUtil.screenSize.width;
-    height = width / widget.imageRatio;
+    // width = ScreenUtil.screenSize.width;
+    // height = width / widget.imageRatio;
+    width = widget.imageWidth;
+    height = widget.imageHeight;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -79,6 +90,17 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
     delay(() => onGetRemovebgImage());
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      RenderBox containerBox = globalKey.currentContext!.findRenderObject() as RenderBox;
+      width = containerBox.size.width;
+      height = containerBox.size.height;
+      print("width === $width");
+      print(height);
+      setState(() {
+
+      });
+    });
   }
 
   onGetRemovebgImage() async {
@@ -126,9 +148,9 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                   if (isLoaded == true) // 显示生成的图片
                     Image.file(
                       File(removeBgUrl!),
-                      width: width,
-                      height: height,
-                      fit: BoxFit.cover,
+                      // width: width,
+                      // height: height,
+                      fit: BoxFit.contain,
                     ),
                   AnimatedBuilder(
                     animation: _animation,
@@ -140,10 +162,11 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                             //  矩形裁剪
                             clipper: ReactClipper(isLoaded ? offsetY : height),
                             child: Image.file(
+                              key: globalKey,
                               File(widget.filePath!),
-                              width: width,
-                              height: height,
-                              fit: BoxFit.cover,
+                              // width: width,
+                              // height: height,
+                              fit: BoxFit.contain,
                             ),
                           ),
                           Positioned(
