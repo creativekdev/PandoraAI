@@ -51,21 +51,26 @@ class AdjustOptions extends StatelessWidget {
                   children: [
                     AppCircleProgressBar(
                       size: $(34),
-                      backgroundColor: Colors.grey.shade800,
+                      backgroundColor: Colors.grey.shade900,
                       progress: data.getProgress(),
                       ringWidth: 1.5,
-                      loadingColors: [
-                        Color(0xFFE31ECD),
-                        Color(0xFF243CFF),
-                        Color(0xFFE31ECD),
-                      ],
+                      loadingColors: data.value.toStringAsFixed(0) == data.initValue.toStringAsFixed(0)
+                          ? [
+                              Colors.grey.shade800,
+                              Colors.grey.shade800,
+                            ]
+                          : [
+                              Color(0xFFE31ECD),
+                              Color(0xFF243CFF),
+                              Color(0xFFE31ECD),
+                            ],
                     ),
-                    checked && data.value != data.initValue
+                    checked && data.value.toStringAsFixed(0) != data.initValue.toStringAsFixed(0)
                         ? Text(
                             data.value.toStringAsFixed(0),
                             style: TextStyle(
                               color: Color(0xffffffff),
-                              fontSize: $(14),
+                              fontSize: $(12),
                             ),
                           ).intoContainer(
                             width: $(34),
@@ -124,9 +129,16 @@ class AdjustOptions extends StatelessWidget {
               onChanged: (newValue) {
                 controller.dataList[controller.index].value = newValue;
                 controller.update();
+                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 60) {
+                  lastBuildTime = DateTime.now().millisecondsSinceEpoch;
+                  // controller.buildResult(false);
+                }
               },
               onEnd: () async {
                 controller.buildResult();
+                // if (controller.shownImage != null) {
+                //   controller.saveResult(controller.shownImage!);
+                // }
               }),
         ),
         SizedBox(height: 10),
@@ -134,4 +146,6 @@ class AdjustOptions extends StatelessWidget {
       ],
     );
   }
+
+  int lastBuildTime = 0;
 }

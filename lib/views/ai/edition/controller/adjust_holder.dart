@@ -1,13 +1,12 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
@@ -34,7 +33,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
     resetConfig();
   }
 
-  void saveResult(imgLib.Image data) {
+  void saveResult(imgLib.Image data) async {
     CacheManager cacheManager = AppDelegate().getManager();
     var dir = cacheManager.storageOperator.adjustDir;
     var projName = EncryptUtil.encodeMd5(originFilePath!);
@@ -155,8 +154,9 @@ class AdjustHolder extends ImageEditionBaseHolder {
     canReset = true;
     var start = DateTime.now().millisecondsSinceEpoch;
     shownImage = await executor.execute(arg1: baseImage!, fun1: _copyImage);
+    print("trans-result-copy: ${DateTime.now().millisecondsSinceEpoch - start}");
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    print("trans-result: ${DateTime.now().millisecondsSinceEpoch - start}");
+    print("trans-result-exec: ${DateTime.now().millisecondsSinceEpoch - start}");
     createShownBytes();
     saveResult(shownImage!);
   }
@@ -180,15 +180,18 @@ class AdjustHolder extends ImageEditionBaseHolder {
     saveResult(shownImage!);
   }
 
-  void createShownBytes() {
+  void createShownBytes() async {
     if (shownImage == null) {
       return;
     }
+
     var start = DateTime.now().millisecondsSinceEpoch;
-    var byteData = Uint8List.fromList(imgLib.encodeJpg(shownImage!));
+    // Uint8List s = shownImage!.getBytes(format: imgLib.Format.rgba);
+    var encodePng = imgLib.encodePng(shownImage!, level: 1);
+    var byteData = Uint8List.fromList(encodePng);
+    print("trans-saveImage: ${DateTime.now().millisecondsSinceEpoch - start}");
     showImageBytes = byteData.buffer.asUint8List();
     shownImageWidget = Image.memory(showImageBytes!);
-    print("trans-saveImage: ${DateTime.now().millisecondsSinceEpoch - start}");
     update();
   }
 
@@ -196,6 +199,18 @@ class AdjustHolder extends ImageEditionBaseHolder {
   dispose() {
     executor.dispose();
     return super.dispose();
+  }
+}
+
+class ImagePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // TODO: implement paint
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 

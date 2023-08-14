@@ -15,19 +15,19 @@ extension FilterEnumEx on FilterEnum {
       case FilterEnum.VIW:
         return 'Vivid Warm';
       case FilterEnum.VIC:
-        return 'Vivid Cool';
+        return 'Vivid Cold';
       case FilterEnum.DRA:
         return 'Dramatic';
       case FilterEnum.DRW:
         return 'Dramatic Warm';
       case FilterEnum.DRC:
-        return 'Dramatic Cool';
+        return 'Dramatic Cold';
       case FilterEnum.MNO:
         return 'Mono';
       case FilterEnum.SLS:
-        return 'Silverstone';
+        return 'Silver Stone';
       case FilterEnum.CTN:
-        return 'Cotoonizer';
+        return 'Cartoon';
       case FilterEnum.INV:
         return 'Inverse';
       case FilterEnum.EDG:
@@ -35,17 +35,17 @@ extension FilterEnumEx on FilterEnum {
       case FilterEnum.SHR:
         return 'Sharpen';
       case FilterEnum.OLD:
-        return 'OldTime';
+        return 'Old Time';
       case FilterEnum.BLK:
-        return 'BlackWhite';
+        return 'Black White';
       case FilterEnum.RMV:
-        return 'RemoveColor';
+        return 'Remove Color';
       case FilterEnum.FUS:
         return 'Fused';
       case FilterEnum.FRZ:
         return 'Freeze';
       case FilterEnum.CMC:
-        return 'Comicstrip';
+        return 'Comic Strip';
     }
   }
 }

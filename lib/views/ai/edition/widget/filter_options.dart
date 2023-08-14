@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -24,7 +25,7 @@ class FilterOptions extends StatelessWidget {
       children: [
         Row(
           children: [
-            Container(width: $(12)),
+            Container(width: $(15)),
             buildItem(context, 0, itemWidth),
             Container(width: $(1)),
             Expanded(
@@ -42,8 +43,7 @@ class FilterOptions extends StatelessWidget {
               },
             )),
           ],
-        ).intoContainer(height: itemWidth + $(28), width: ScreenUtil.screenSize.width),
-        TitleTextWidget(controller.currentFunction.title(), Colors.white, FontWeight.w500, $(16)),
+        ).intoContainer(height: itemWidth + (24), width: ScreenUtil.screenSize.width),
       ],
     );
   }
@@ -63,6 +63,7 @@ class FilterOptions extends StatelessWidget {
     return GestureDetector(
         onTap: () {
           controller.currentFunction = function;
+          EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: function.title()));
           parentState.showLoading().whenComplete(() {
             controller.buildImage().then((value) {
               parentState.hideLoading();
@@ -72,9 +73,6 @@ class FilterOptions extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: $(1)),
-            Text(function.name, style: TextStyle(color: Colors.white, fontSize: $(13))),
-            SizedBox(height: $(5)),
             controller.currentFunction == function
                 ? OutlineWidget(
                     strokeWidth: 3,
@@ -86,6 +84,15 @@ class FilterOptions extends StatelessWidget {
                     ),
                     child: item)
                 : item,
+            SizedBox(height: $(2)),
+            Text(
+              function.name,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: $(13),
+                fontWeight: controller.currentFunction == function ? FontWeight.w500 : FontWeight.normal,
+              ),
+            ),
           ],
         ));
   }

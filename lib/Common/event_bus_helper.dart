@@ -175,6 +175,6 @@ class OnHomeScrollEvent extends BaseEvent<bool> {
   OnHomeScrollEvent({required super.data});
 }
 
-class OnEditionRightTabSwitchEvent extends BaseEvent {
-  OnEditionRightTabSwitchEvent();
+class OnEditionRightTabSwitchEvent extends BaseEvent<String> {
+  OnEditionRightTabSwitchEvent({required super.data});
 }

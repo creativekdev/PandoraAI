@@ -67,6 +67,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   Rx<bool> titleShow = false.obs;
   late StreamSubscription onRightTitleSwitchEvent;
   late TimerUtil timer;
+  String? title;
 
   @override
   void initState() {
@@ -94,6 +95,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       );
     onRightTitleSwitchEvent = EventBusHelper().eventBus.on<OnEditionRightTabSwitchEvent>().listen((event) {
       timer.cancel();
+      title = event.data;
       titleShow.value = true;
       timer.startTimer();
     });
@@ -316,8 +318,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           alignment: Alignment.center,
           child: Obx(
             () => Text(
-              controller.currentItem.function.title(),
-              style: TextStyle(color: Color(0xfff9f9f9), fontSize: $(18)),
+              title ?? '',
+              style: TextStyle(color: Color(0xfff9f9f9), fontSize: $(18), fontWeight: FontWeight.bold),
             ).visibility(visible: titleShow.value),
           ),
         )

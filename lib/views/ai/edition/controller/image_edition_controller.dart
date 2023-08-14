@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Common/Extension.dart';
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
@@ -19,7 +18,6 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'ie_base_holder.dart';
 
@@ -49,7 +47,7 @@ class ImageEditionController extends GetxController {
 
   set currentItem(EditionItem func) {
     _currentItem = func;
-    EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent());
+    EventBusHelper().eventBus.fire(OnEditionRightTabSwitchEvent(data: func.function.title()));
     update();
   }
 
@@ -84,20 +82,9 @@ class ImageEditionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    AllTransferController? effectHolder;
-    StickerController? stickerHolder;
-    if (initFunction != ImageEditionFunction.removeBg) {
-      effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
-        ..parent = this
-        ..onInit();
-      stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
-        ..parent = this
-        ..onInit();
-    }
     var filterHolder = FilterHolder(parent: this)..onInit();
     var adjustHolder = AdjustHolder(parent: this)..onInit();
     var cropHolder = CropHolder(parent: this)..onInit();
-    var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
     items = [
       EditionItem()
         ..function = ImageEditionFunction.filter
@@ -108,16 +95,31 @@ class ImageEditionController extends GetxController {
       EditionItem()
         ..function = ImageEditionFunction.crop
         ..holder = cropHolder,
-      EditionItem()
-        ..function = ImageEditionFunction.removeBg
-        ..holder = removeBgHolder,
     ];
+    AllTransferController? effectHolder;
+    StickerController? stickerHolder;
+    if (initFunction != ImageEditionFunction.removeBg) {
+      effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
+        ..parent = this
+        ..onInit();
+      stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
+        ..parent = this
+        ..onInit();
+    }
     if (effectHolder != null) {
       items.insert(
         0,
         EditionItem()
           ..function = ImageEditionFunction.effect
           ..holder = effectHolder,
+      );
+    }
+    if (initFunction != ImageEditionFunction.effect && initFunction != ImageEditionFunction.sticker) {
+      var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
+      items.add(
+        EditionItem()
+          ..function = ImageEditionFunction.removeBg
+          ..holder = removeBgHolder,
       );
     }
     if (stickerHolder != null) {

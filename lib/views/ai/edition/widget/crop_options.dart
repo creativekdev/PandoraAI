@@ -1,3 +1,4 @@
+import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
@@ -6,7 +7,6 @@ import 'package:cartoonizer/views/mine/filter/im_crop_screen.dart';
 
 class CropOptions extends StatelessWidget {
   CropHolder controller;
-  Color checkedColor = Color(0xFF05E0D5);
 
   CropOptions({super.key, required this.controller});
 
@@ -84,18 +84,26 @@ class CropOptions extends StatelessWidget {
   }
 
   Widget rectangle({required double width, required double height, required bool checked}) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular($(4)),
-        border: Border.all(
-          color: checked ? checkedColor : Colors.white,
-          width: 1.5,
+    return OutlineWidget(
+        strokeWidth: 1.5,
+        radius: $(4),
+        gradient: LinearGradient(
+          colors: checked
+              ? [
+                  Colors.white,
+                  Colors.white,
+                ]
+              : [
+                  Colors.grey.shade800,
+                  Colors.grey.shade800,
+                ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        color: Colors.transparent,
-      ),
-    );
+        child: Container(
+          width: width,
+          height: height,
+        ));
   }
 
   Widget buildTitle(BuildContext context) {
@@ -107,7 +115,7 @@ class CropOptions extends StatelessWidget {
           .map(
             (e) => Text(
               e.title,
-              style: TextStyle(color: e == currentItem ? checkedColor : Colors.white),
+              style: TextStyle(color: e == currentItem ? Colors.white : Colors.grey.shade700),
             ).intoContainer(padding: EdgeInsets.symmetric(vertical: $(6), horizontal: $(10)), color: Colors.transparent).intoGestureDetector(onTap: () {
               controller.currentItem = e;
               if (controller.currentItem.configs.isEmpty) {
