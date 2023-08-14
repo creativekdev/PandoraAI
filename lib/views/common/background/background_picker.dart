@@ -151,16 +151,16 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
               imageRatio: imageRatio,
               onPick: (data) {
                 d = data;
-                if (d != null) {
-                  dataList.insert(0, d);
-                }
-                setState(() {
-                  cacheManager.setBool(CacheManager.isSavedPickHistory, true);
-                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-                });
                 widget.onPick.call(data);
               },
             );
+            if (d != null) {
+              dataList.insert(0, d);
+              setState(() {
+                cacheManager.setBool(CacheManager.isSavedPickHistory, true);
+                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+              });
+            }
           }),
         ),
         Expanded(
