@@ -503,6 +503,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         return CropOptions(controller: controller.currentItem.holder);
       case ImageEditionFunction.removeBg:
         return RemoveBgOptions(
+          parentState: this,
           controller: controller.currentItem.holder,
           bottomPadding: controller.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
           switchButtonPadding: controller.switchButtonBottomToScreen,

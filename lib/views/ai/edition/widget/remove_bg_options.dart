@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
@@ -12,8 +13,15 @@ import '../../../../app/cache/cache_manager.dart';
 
 class RemoveBgOptions extends StatelessWidget {
   RemoveBgHolder controller;
+  AppState parentState;
 
-  RemoveBgOptions({super.key, required this.controller, required this.bottomPadding, required this.switchButtonPadding});
+  RemoveBgOptions({
+    super.key,
+    required this.parentState,
+    required this.controller,
+    required this.bottomPadding,
+    required this.switchButtonPadding,
+  });
 
   final double bottomPadding;
   final double switchButtonPadding;
@@ -25,6 +33,7 @@ class RemoveBgOptions extends StatelessWidget {
     return BackgroundPickerBar(
       imageRatio: controller.ratio,
       onPick: (BackgroundData data) async {
+        parentState.showLoading();
         if (data.filePath != null) {
           File backFile = File(data.filePath!);
           controller.backgroundColor = null;
@@ -34,6 +43,7 @@ class RemoveBgOptions extends StatelessWidget {
           controller.backgroundColor = controller.rgbaToAbgr(data.color!);
           await controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
         }
+        parentState.hideLoading();
         showPersonEditScreenDialog(_currentContext, bottomPadding, switchButtonPadding);
         controller.update();
       },
