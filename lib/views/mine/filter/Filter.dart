@@ -5,6 +5,51 @@ import 'package:image/image.dart' as imgLib;
 
 enum FilterEnum { NOR, VID, VIW, VIC, DRA, DRW, DRC, MNO, SLS, CTN, INV, EDG, SHR, OLD, BLK, RMV, FUS, FRZ, CMC }
 
+extension FilterEnumEx on FilterEnum {
+  String title() {
+    switch (this) {
+      case FilterEnum.NOR:
+        return 'Normal';
+      case FilterEnum.VID:
+        return "Vivid";
+      case FilterEnum.VIW:
+        return 'Vivid Warm';
+      case FilterEnum.VIC:
+        return 'Vivid Cool';
+      case FilterEnum.DRA:
+        return 'Dramatic';
+      case FilterEnum.DRW:
+        return 'Dramatic Warm';
+      case FilterEnum.DRC:
+        return 'Dramatic Cool';
+      case FilterEnum.MNO:
+        return 'Mono';
+      case FilterEnum.SLS:
+        return 'Silverstone';
+      case FilterEnum.CTN:
+        return 'Cotoonizer';
+      case FilterEnum.INV:
+        return 'Inverse';
+      case FilterEnum.EDG:
+        return 'Edge';
+      case FilterEnum.SHR:
+        return 'Sharpen';
+      case FilterEnum.OLD:
+        return 'OldTime';
+      case FilterEnum.BLK:
+        return 'BlackWhite';
+      case FilterEnum.RMV:
+        return 'RemoveColor';
+      case FilterEnum.FUS:
+        return 'Fused';
+      case FilterEnum.FRZ:
+        return 'Freeze';
+      case FilterEnum.CMC:
+        return 'Comicstrip';
+    }
+  }
+}
+
 class Filter {
   int selectedID = 0;
   static List<String> filters = [

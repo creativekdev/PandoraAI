@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 
 class FilterOptions extends StatelessWidget {
   AppState parentState;
@@ -19,25 +20,30 @@ class FilterOptions extends StatelessWidget {
       return Container();
     }
     var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6;
-    return Row(
+    return Column(
       children: [
-        Container(width: $(12)),
-        buildItem(context, 0, itemWidth),
-        Container(width: $(1)),
-        Expanded(
-            child: ScrollablePositionedList.separated(
-          initialScrollIndex: 0,
-          physics: ClampingScrollPhysics(),
-          padding: EdgeInsets.only(right: $(12)),
-          itemCount: controller.thumbnails.length - 1,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return buildItem(context, index + 1, itemWidth);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Container(width: $(1));
-          },
-        )),
+        Row(
+          children: [
+            Container(width: $(12)),
+            buildItem(context, 0, itemWidth),
+            Container(width: $(1)),
+            Expanded(
+                child: ScrollablePositionedList.separated(
+              initialScrollIndex: 0,
+              physics: ClampingScrollPhysics(),
+              padding: EdgeInsets.only(right: $(12)),
+              itemCount: controller.thumbnails.length - 1,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return buildItem(context, index + 1, itemWidth);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Container(width: $(1));
+              },
+            )),
+          ],
+        ).intoContainer(height: itemWidth + $(28), width: ScreenUtil.screenSize.width),
+        TitleTextWidget(controller.currentFunction.title(), Colors.white, FontWeight.w500, $(16)),
       ],
     );
   }

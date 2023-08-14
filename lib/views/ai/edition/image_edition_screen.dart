@@ -100,6 +100,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   saveToAlbum() async {
+    await showLoading();
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       AllTransferController effectHolder = controller.currentItem.holder;
       await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
@@ -111,6 +112,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         await GallerySaver.saveImage((holder.resultFile ?? holder.originFile)!.path, albumName: saveAlbumName);
       }
     }
+    await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
   }
 
