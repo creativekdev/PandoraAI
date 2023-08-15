@@ -6,6 +6,8 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
+import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/mine/filter/Crop.dart';
 import 'package:cartoonizer/views/mine/filter/im_cropper.dart';
 import 'package:cropperx/cropperx.dart';
@@ -20,36 +22,40 @@ import '../../ai/edition/image_edition.dart';
 typedef OnGetCropPath = void Function(String path);
 
 class ImCropScreen extends StatefulWidget {
-  CropItem cropItem;
+  CropConfig cropItem;
+  List<CropConfig> items;
 
-  ImCropScreen({Key? key, required this.filePath, required this.cropItem, required this.onGetCropPath, this.bottomPadding = 0}) : super(key: key);
   final String filePath;
   final OnGetCropPath onGetCropPath;
-  final double bottomPadding;
+
+  ImCropScreen({
+    Key? key,
+    required this.items,
+    required this.filePath,
+    required this.cropItem,
+    required this.onGetCropPath,
+  }) : super(key: key);
 
   @override
   State<ImCropScreen> createState() => _ImCropScreenState();
 }
 
-class _ImCropScreenState extends AppState<ImCropScreen> with SingleTickerProviderStateMixin {
+class _ImCropScreenState extends AppState<ImCropScreen> {
   final GlobalKey cropperKey = GlobalKey(debugLabel: 'cropperKey');
   GlobalKey cropBackgroundKey = GlobalKey();
   CacheManager cacheManager = AppDelegate.instance.getManager();
   late StorageOperator storageOperator = cacheManager.storageOperator;
   late String filePath;
 
-  late AnimationController _animationController;
-  late Animation<Color?> _animation;
+  late List<CropConfig> items;
+  late CropConfig currentItem;
 
   @override
   void initState() {
     super.initState();
+    currentItem = widget.cropItem;
+    items = widget.items;
     filePath = widget.filePath;
-    _animationController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 1),
-    );
-    _animation = ColorTween(begin: Color(0x00000000), end: ColorConstant.BackgroundColor).animate(_animationController);
   }
 
   Future<String> onSaveImage() async {
@@ -66,9 +72,9 @@ class _ImCropScreenState extends AppState<ImCropScreen> with SingleTickerProvide
     int targetWidth = originImage.width;
     int targetHeight = originImage.height;
     if (targetWidth > targetHeight) {
-      targetHeight = (targetWidth / widget.cropItem.config!.ratio).toInt();
+      targetHeight = targetWidth ~/ widget.cropItem.ratio;
     } else {
-      targetWidth = (targetHeight * widget.cropItem.config!.ratio).toInt();
+      targetWidth = (targetHeight * widget.cropItem.ratio).toInt();
     }
     imgLib.Image resImage = imgLib.copyResize(image, width: targetWidth, height: targetHeight);
     await resultfile.writeAsBytes(imgLib.encodeJpg(resImage));
@@ -87,47 +93,114 @@ class _ImCropScreenState extends AppState<ImCropScreen> with SingleTickerProvide
 
   @override
   Widget buildWidget(BuildContext context) {
-    return AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Scaffold(
-            backgroundColor: _animation.value,
-            appBar: AppNavigationBar(
-              backgroundColor: _animation.value!,
-              trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
-                showLoading().whenComplete(() async {
-                  String path = await onSaveImage();
-                  hideLoading().whenComplete(() {
-                    widget.onGetCropPath(path);
-                    Navigator.of(context).pop();
-                  });
-                });
-              }).hero(tag: ImageEdition.TagAppbarTagTraining),
-            ),
-            body: Column(children: [
-              Expanded(
-                child: Center(
-                  child: ImCropper(
-                      cropperKey: cropperKey,
-                      crop: widget.cropItem,
-                      filePath: widget.filePath,
-                      updateSacle: (details, ratio) {
-                        onUpdateScale(details, ratio);
-                      },
-                      endSacle: (details, ratio) {
-                        onEndScale(details, ratio);
-                      }).hero(tag: ImageEdition.TagImageEditView),
-                ),
-              ),
-              SizedBox(height: $(55) + ScreenUtil.getBottomPadding(context)),
-            ]),
-          );
-        });
+    return Scaffold(
+      appBar: AppNavigationBar(
+        trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
+          showLoading().whenComplete(() async {
+            String path = await onSaveImage();
+            hideLoading().whenComplete(() {
+              widget.onGetCropPath(path);
+              Navigator.of(context).pop();
+            });
+          });
+        }),
+      ),
+      body: Column(children: [
+        Expanded(
+          child: Center(
+            child: ImCropper(
+                cropperKey: cropperKey,
+                crop: currentItem,
+                filePath: widget.filePath,
+                updateSacle: (details, ratio) {
+                  onUpdateScale(details, ratio);
+                },
+                endSacle: (details, ratio) {
+                  onEndScale(details, ratio);
+                }),
+          ),
+        ),
+
+        SizedBox(
+          height: $(140) + ScreenUtil.getBottomPadding(context),
+          child: Column(
+            children: [
+              ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: $(5)),
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  var item = items[index];
+                  bool check = item == currentItem;
+                  return buildItem(item, context, check).intoContainer(height: $(40), width: $(40), color: Colors.transparent).intoGestureDetector(onTap: () {
+                    if (currentItem != item) {
+                      setState(() {
+                        currentItem = item;
+                      });
+                    }
+                  }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+                },
+                itemCount: items.length,
+              ).intoContainer(height: $(40)),
+            ],
+          ),
+        ),
+      ]),
+    );
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  Widget buildItem(CropConfig e, BuildContext context, bool check) {
+    double width = $(18);
+    double height = $(18);
+    if (e.width != -1) {
+      width = $(40) * (e.width / (e.width + e.height));
+      height = $(40) * (e.height / (e.width + e.height));
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular($(32)),
+            border: Border.all(
+              color: check ? Colors.white : Colors.grey.shade800,
+              width: 1,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular($(4)),
+                border: Border.all(
+                  style: BorderStyle.solid,
+                  color: Colors.grey.shade800,
+                  width: 1,
+                )),
+          ),
+        ),
+        Align(
+          child: buildIcon(e, context, check),
+          alignment: Alignment.center,
+        ),
+      ],
+    );
+  }
+
+  Widget buildIcon(CropConfig e, BuildContext context, bool check) {
+    if (e.width == -1) {
+      return Icon(
+        Icons.fullscreen,
+        size: $(18),
+        color: Colors.white,
+      );
+    } else {
+      return Text(
+        e.title,
+        style: TextStyle(color: check ? Colors.white : Colors.grey.shade700),
+      );
+    }
   }
 }

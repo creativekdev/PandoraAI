@@ -370,7 +370,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(Images.ic_edition_reset, color: Colors.white, width: $(20)),
+        Image.asset(Images.ic_edition_generate, color: Colors.white, width: $(20)),
         SizedBox(width: $(4)),
         TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.w500, $(13)),
       ],

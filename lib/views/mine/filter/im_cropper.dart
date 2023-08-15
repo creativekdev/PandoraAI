@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:cropperx/cropperx.dart';
-
-import 'Crop.dart';
 
 class ImDecoratior extends StatelessWidget {
   late double width, height;
@@ -60,7 +59,7 @@ typedef EndSacle = void Function(ScaleEndDetails details, double ratio);
 
 class ImCropper extends StatefulWidget {
   final GlobalKey cropperKey;
-  final CropItem crop;
+  final CropConfig crop;
   final String filePath;
   final UpdateSacle updateSacle;
   final EndSacle endSacle;
@@ -119,17 +118,17 @@ class _ImCropperState extends State<ImCropper> {
                 cropperKey: widget.cropperKey,
                 overlayType: OverlayType.grid,
                 rotationTurns: 0,
-                aspectRatio: widget.crop.config?.ratio ?? 1,
+                aspectRatio: widget.crop?.ratio ?? 1,
                 image: Image.file(File(widget.filePath), fit: BoxFit.fill),
                 onScaleStart: (details) {},
                 onScaleUpdate: (details) {
                   if (details.scale > 0) {
                     isTap = true;
                   }
-                  widget.updateSacle(details, widget.crop.config?.ratio ?? 1);
+                  widget.updateSacle(details, widget.crop?.ratio ?? 1);
                 },
                 onScaleEnd: (details) {
-                  widget.endSacle(details, widget.crop.config?.ratio ?? 1);
+                  widget.endSacle(details, widget.crop?.ratio ?? 1);
                 },
               )),
         ),
