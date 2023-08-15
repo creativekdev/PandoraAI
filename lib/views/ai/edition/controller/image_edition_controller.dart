@@ -19,6 +19,8 @@ import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 
+import '../../../../Widgets/lib_image_widget/lib_image_widget_controller.dart';
+import '../../../../utils/utils.dart';
 import 'ie_base_holder.dart';
 
 class ImageEditionController extends GetxController {
@@ -27,6 +29,7 @@ class ImageEditionController extends GetxController {
   final String? initKey;
   final ImageEditionFunction initFunction;
   late String _originPath;
+  LibImageWidgetController libImageWidgetController = LibImageWidgetController();
 
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
@@ -169,12 +172,17 @@ class ImageEditionController extends GetxController {
           imageHeight: image.image.height.toDouble(),
           imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
-            SyncFileImage(file: File(path)).getImage().then((value) {
+            SyncFileImage(file: File(path)).getImage().then((value) async {
               var holder = currentItem.holder as RemoveBgHolder;
               holder.ratio = value.image.width / value.image.height;
               holder.removedImage = File(path);
-
-              holder.resultFilePath = path;
+              holder.imageUiFront = await getImage(File(path));
+              var imageFront = await getLibImage(holder.imageUiFront!);
+              holder.imageFront = imageFront;
+              await holder.setBackgroundImage(null);
+              holder.backgroundColor = holder.rgbaToAbgr(Colors.transparent);
+              await holder.saveImageWithColor(holder.rgbaToAbgr(Colors.transparent));
+              // holder.resultFilePath = path;
             });
           },
         ),
@@ -185,9 +193,7 @@ class ImageEditionController extends GetxController {
   }
 
   generate(BuildContext context, TransferBaseController controller) async {
-    var needUpload = TextUtil.isEmpty(uploadImageController
-        .imageUrl(controller.originFile)
-        .value);
+    var needUpload = TextUtil.isEmpty(uploadImageController.imageUrl(controller.originFile).value);
     SimulateProgressBarController simulateProgressBarController = SimulateProgressBarController();
     SimulateProgressBar.startLoading(
       context,

@@ -6,7 +6,6 @@ import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/utils/utils.dart';
-import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
@@ -117,7 +116,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
     getImage(originFile!).then((value) {
       getLibImage(value).then((value) {
         _originImageData = value;
-        onSwitchNewAdj();
+        // onSwitchNewAdj();
       });
     });
   }
@@ -172,7 +171,8 @@ class AdjustHolder extends ImageEditionBaseHolder {
     baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
     shownImage = imgLib.Image.from(baseImage!);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    createShownBytes();
+    parent.libImageWidgetController.shownImage = shownImage;
+    // createShownBytes();
     saveResult(shownImage!);
   }
 
@@ -180,28 +180,30 @@ class AdjustHolder extends ImageEditionBaseHolder {
     if (shownImage == null) {
       return;
     }
-
     var s = await executor.execute(arg1: shownImage!, fun1: _copyImage);
     showUIImage = await toImage(s);
+    parent.libImageWidgetController.shownUIImage = showUIImage;
     update();
   }
 
-  @override
-  Widget buildShownImage() {
-    if (shownImage == null) {
-      return Image.file(resultFile ?? originFile!);
-    }
-    double scale = ScreenUtil.screenSize.width / shownImage!.width;
-    return Transform.scale(
-        scale: scale,
-        child: CustomPaint(
-          painter: LibImagePainter(image: showUIImage!),
-          child: Container(
-            width: shownImage!.width.toDouble(),
-            height: shownImage!.height.toDouble(),
-          ),
-        ));
-  }
+  // @override
+  // Widget buildShownImage() {
+  //   if (shownImage == null) {
+  //     return Image.file(resultFile ?? originFile!);
+  //   }
+  //   return LibImageWidget(controller: libImageWidgetController, shownImage: shownImage!);
+  //
+  //   // double scale = ScreenUtil.screenSize.width / shownImage!.width;
+  //   // return Transform.scale(
+  //   //     scale: scale,
+  //   //     child: CustomPaint(
+  //   //       painter: LibImagePainter(image: showUIImage!),
+  //   //       child: Container(
+  //   //         width: shownImage!.width.toDouble(),
+  //   //         height: shownImage!.height.toDouble(),
+  //   //       ),
+  //   //     ));
+  // }
 
   @override
   dispose() {

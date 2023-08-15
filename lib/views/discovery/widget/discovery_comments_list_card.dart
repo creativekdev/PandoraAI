@@ -125,7 +125,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
               }),
               RichText(
                       text: TextSpan(
-                          text: data.status == "deleted" ? "评论已删除" : data.text,
+                          text: data.status == "deleted" ? S.of(context).deleted_comment : data.text,
                           style: TextStyle(color: Color(0xfff6f6f6), fontSize: $(16), fontFamily: 'Poppins'),
                           children: [
                     WidgetSpan(child: Container(width: $(12))),
