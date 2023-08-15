@@ -12,14 +12,15 @@ import '../../../network/dio_node.dart';
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
-  const ImRemoveBgScreen({super.key,
-    required this.onGetRemoveBgImage,
-    required this.filePath,
-    required this.imageRatio,
-    this.bottomPadding = 0,
-    this.switchButtonBottomToScreen = 0,
-    required this.imageHeight,
-    required this.imageWidth});
+  const ImRemoveBgScreen(
+      {super.key,
+      required this.onGetRemoveBgImage,
+      required this.filePath,
+      required this.imageRatio,
+      this.bottomPadding = 0,
+      this.switchButtonBottomToScreen = 0,
+      required this.imageHeight,
+      required this.imageWidth});
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
@@ -95,11 +96,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
       RenderBox containerBox = globalKey.currentContext!.findRenderObject() as RenderBox;
       width = containerBox.size.width;
       height = containerBox.size.height;
-      print("width === $width");
-      print(height);
-      setState(() {
-
-      });
+      setState(() {});
     });
   }
 
@@ -172,7 +169,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                           Positioned(
                             left: 0,
                             right: 0,
-                            top: (isReverse ? offsetY : -offsetY),
+                            top: (isReverse ? offsetY + $(3) : -offsetY - $(3)),
                             child: Image.asset(
                               "assets/images/ic_swiper_shadow.png",
                               height: $(88),
@@ -182,7 +179,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                           Positioned(
                               left: 0,
                               right: 0,
-                              top: (isReverse ? (height - offsetY) + height - $(88) : (offsetY - $(88))),
+                              top: (isReverse ? (height - offsetY) + height - $(91) : (offsetY - $(85))),
                               child: Transform.rotate(
                                   angle: pi,
                                   child: Image.asset(

@@ -1,6 +1,8 @@
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/mine/filter/Crop.dart';
 
+import '../../../../utils/utils.dart';
+
 class CropHolder extends ImageEditionBaseHolder {
   List<CropConfig> items = [
     CropConfig(width: -1, height: -1, title: 'Original'),
@@ -26,6 +28,12 @@ class CropHolder extends ImageEditionBaseHolder {
   @override
   initData() {
     currentItem = items.first;
+    getImage(originFile!).then((value) {
+      getLibImage(value).then((value) {
+        shownImage = value;
+        update();
+      });
+    });
   }
 
   @override

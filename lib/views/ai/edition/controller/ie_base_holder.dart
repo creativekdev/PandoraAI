@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:image/image.dart' as imgLib;
 
+import '../../../../Widgets/lib_image_widget/lib_image_widget.dart';
+import '../../../../utils/utils.dart';
 import 'image_edition_controller.dart';
 
 abstract class ImageEditionBaseHolder {
@@ -36,6 +40,22 @@ abstract class ImageEditionBaseHolder {
 
   File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
 
+  // ui.Image? _shownUIImage;
+  // set shownUIImage(ui.Image? value) {
+  //   shownUIImage = value;
+  //   update();
+  // }
+  // ui.Image? get shownImage => _shownUIImage;
+
+  imgLib.Image? _shownImage;
+
+  set shownImage(imgLib.Image? value) {
+    shownImage = value;
+    update();
+  }
+
+  imgLib.Image? get shownImage => _shownImage;
+
   bool _canReset = false;
 
   bool get canReset => _canReset;
@@ -53,7 +73,13 @@ abstract class ImageEditionBaseHolder {
 
   onInit() {}
 
-  initData();
+  initData() {
+    getImage(originFile!).then((value) {
+      getLibImage(value).then((value) {
+        shownImage = value;
+      });
+    });
+  }
 
   update() {
     parent.update();
@@ -64,6 +90,15 @@ abstract class ImageEditionBaseHolder {
   onResetClick() {}
 
   Widget buildShownImage() {
-    return shownImageWidget ?? Image.file(resultFile ?? originFile!);
+    if (shownImage == null) {
+      return CustomPaint(
+          painter: BackgroundPainter(
+            bgColor: Colors.transparent,
+            w: 10,
+            h: 10,
+          ),
+          child: Image.file(resultFile ?? originFile!));
+    }
+    return LibImageWidget(controller: parent.libImageWidgetController, shownImage: shownImage!);
   }
 }

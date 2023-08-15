@@ -36,6 +36,9 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
+    print("127.0.0.1 ${widget.category}");
+    print("127.0.0.1 ${widget.title}");
+
     return Scaffold(
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
@@ -60,7 +63,7 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
                 crossAxisCount: 2,
                 mainAxisSpacing: $(8),
                 crossAxisSpacing: $(8),
-                childAspectRatio: widget.category == 'facetoon' ? 1 : (ScreenUtil.screenSize.width - $(30)) / (2 * $(300)),
+                childAspectRatio: widget.title.toLowerCase() == 'facetoon' ? 1 : (ScreenUtil.screenSize.width - $(30)) / (2 * $(300)),
               ),
               itemCount: controller.posts?.length,
               itemBuilder: (context, index) {
