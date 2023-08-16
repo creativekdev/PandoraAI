@@ -36,9 +36,6 @@ class _HomeDetailScreenState extends AppState<HomeDetailsScreen> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    print("127.0.0.1 ${widget.category}");
-    print("127.0.0.1 ${widget.title}");
-
     return Scaffold(
       appBar: AppNavigationBar(
         backgroundColor: Colors.transparent,
@@ -104,7 +101,7 @@ class HomeDetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<DiscoveryResource> list = post.resourceList().reversed.toList();
+    List<DiscoveryResource> list = post.resourceList().toList();
     DiscoveryResource? resource = list.firstWhereOrNull((element) => element.type == DiscoveryResourceType.image);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
