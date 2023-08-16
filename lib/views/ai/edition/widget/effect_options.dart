@@ -4,7 +4,6 @@ import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
-import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 
 class EffectOptions extends StatelessWidget {
   AllTransferController controller;

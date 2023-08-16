@@ -362,7 +362,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      return controller.showOrigin ? Image.file(baseHolder.originFile!) : baseHolder.buildShownImage();
+      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage();
     }
   }
 
@@ -370,7 +370,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset(Images.ic_generate_again, color: Colors.white, width: $(20)),
+        Image.asset(Images.ic_edition_generate, color: Colors.white, width: $(20)),
         SizedBox(width: $(4)),
         TitleTextWidget(S.of(context).generate_again, ColorConstant.White, FontWeight.w500, $(13)),
       ],

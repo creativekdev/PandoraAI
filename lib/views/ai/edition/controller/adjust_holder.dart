@@ -84,9 +84,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
   bool isClick = false;
   imgLib.Image? _originImageData;
   imgLib.Image? baseImage;
-  imgLib.Image? shownImage;
-
-  ui.Image? showUIImage;
 
   @override
   void onInit() {
@@ -152,10 +149,13 @@ class AdjustHolder extends ImageEditionBaseHolder {
   }
 
   void buildResult(bool saveFile) async {
+    if (baseImage == null) {
+      baseImage = imgLib.Image.from(_originImageData!);
+      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
+    }
     canReset = true;
     shownImage = imgLib.Image.from(baseImage!);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    createShownBytes();
     if (saveFile) {
       saveResult(shownImage!);
     }
@@ -171,39 +171,8 @@ class AdjustHolder extends ImageEditionBaseHolder {
     baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
     shownImage = imgLib.Image.from(baseImage!);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
-    parent.libImageWidgetController.shownImage = shownImage;
-    // createShownBytes();
     saveResult(shownImage!);
   }
-
-  void createShownBytes() async {
-    if (shownImage == null) {
-      return;
-    }
-    var s = await executor.execute(arg1: shownImage!, fun1: _copyImage);
-    showUIImage = await toImage(s);
-    parent.libImageWidgetController.shownUIImage = showUIImage;
-    update();
-  }
-
-  // @override
-  // Widget buildShownImage() {
-  //   if (shownImage == null) {
-  //     return Image.file(resultFile ?? originFile!);
-  //   }
-  //   return LibImageWidget(controller: libImageWidgetController, shownImage: shownImage!);
-  //
-  //   // double scale = ScreenUtil.screenSize.width / shownImage!.width;
-  //   // return Transform.scale(
-  //   //     scale: scale,
-  //   //     child: CustomPaint(
-  //   //       painter: LibImagePainter(image: showUIImage!),
-  //   //       child: Container(
-  //   //         width: shownImage!.width.toDouble(),
-  //   //         height: shownImage!.height.toDouble(),
-  //   //       ),
-  //   //     ));
-  // }
 
   @override
   dispose() {
@@ -226,10 +195,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     );
     return c.future;
   }
-}
-
-imgLib.Image _copyImage(imgLib.Image image, TypeSendPort port) {
-  return imgLib.copyResize(image, width: image.width, height: image.height);
 }
 
 imgLib.Image _imAdjust(List<AdjustData> datas, imgLib.Image image, TypeSendPort port) {

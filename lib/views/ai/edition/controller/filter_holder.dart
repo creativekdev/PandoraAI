@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
@@ -102,8 +104,8 @@ class FilterHolder extends ImageEditionBaseHolder {
       if (_originImageData == null) {
         _originImageData = await getLibImage(await getImage(originFile!));
       }
-      imgLib.Image imageBytes = await Executor().execute(arg1: currentFunction, arg2: _originImageData!, fun2: _imFilter);
-      var list = await Executor().execute(arg1: imageBytes, fun1: _encodePng);
+      shownImage = await Executor().execute(arg1: currentFunction, arg2: _originImageData!, fun2: _imFilter);
+      var list = await Executor().execute(arg1: shownImage!, fun1: encodePng);
       var bytes = Uint8List.fromList(list);
       await targetFile.writeAsBytes(bytes);
     }
@@ -111,7 +113,7 @@ class FilterHolder extends ImageEditionBaseHolder {
   }
 }
 
-List<int> _encodePng(imgLib.Image imageBytes, TypeSendPort port) {
+List<int> encodePng(imgLib.Image imageBytes, TypeSendPort port) {
   return imgLib.encodePng(imageBytes);
 }
 
