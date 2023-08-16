@@ -2,6 +2,7 @@ import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/string_ex.dart';
 import 'package:cartoonizer/views/common/background/widgets/back_colors_picker.dart';
 
@@ -10,14 +11,16 @@ import 'widgets/back_image_picker.dart';
 
 class BackgroundPickerHolder extends StatefulWidget {
   double imageRatio;
-  Function(BackgroundData data) onPick;
+  Function(BackgroundData data, bool isPopMerge) onPick;
   Function(BackgroundData data)? onColorChange;
+  final BackgroundData preBackgroundData;
 
   BackgroundPickerHolder({
     super.key,
     required this.imageRatio,
     required this.onPick,
     this.onColorChange,
+    required this.preBackgroundData,
   });
 
   @override
@@ -35,6 +38,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
   List<dynamic> titleList = [];
   late TabController tabController;
   late PageController pageController;
+  BackgroundData? selectedData;
 
   int get currentIndex => cacheManager.getInt(CacheManager.backgroundTabIndexHistory);
 
@@ -62,20 +66,29 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
       {
         'title': 'album',
         'build': (context) => BackImagePicker(
+            preBackgroundData: widget.preBackgroundData,
             parent: this,
             onPickFile: (path) {
-              widget.onPick.call(BackgroundData()..filePath = path);
-              dismiss();
+              selectedData = BackgroundData()..filePath = path;
+              widget.onPick.call(selectedData!, false);
+              // dismiss();
             }),
       },
       {
         'title': 'colors',
-        'build': (context) => BackColorsPicker(onPickColor: (color) {
-              widget.onPick.call(BackgroundData()..color = color);
-            }, onOk: (color) {
-              widget.onColorChange?.call(BackgroundData()..color = color);
-              dismiss();
-            }, onColorChange: (color) {
+        'build': (context) => BackColorsPicker(
+            preBackgroundData: widget.preBackgroundData,
+            onPickColor: (color) {
+              print("color === $color");
+              selectedData = BackgroundData()..color = color;
+              widget.onPick.call(selectedData!, false);
+            },
+            onOk: (color) {
+              // widget.onColorChange?.call(BackgroundData()..color = color);
+              // dismiss();
+            },
+            onColorChange: (color) {
+              selectedData = BackgroundData()..color = color;
               widget.onColorChange?.call(BackgroundData()..color = color);
             }),
       }
@@ -128,9 +141,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                 Expanded(
                     child: Container(
                   color: Colors.transparent,
-                ).intoGestureDetector(onTap: () {
-                  dismiss();
-                })),
+                )),
                 AnimatedBuilder(
                   animation: _controller,
                   builder: (context, child) {
@@ -142,37 +153,61 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        width: $(50),
-                        height: $(5),
-                        margin: EdgeInsets.symmetric(vertical: $(12)),
-                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular($(12))),
-                      ),
                       Theme(
                           data: ThemeData(
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                           ),
-                          child: TabBar(
-                            indicatorColor: Colors.black,
-                            isScrollable: true,
-                            tabs: titleList
-                                .map((e) => Text(
-                                      e['title'].toString().intl,
-                                      style: TextStyle(fontSize: $(13)),
-                                    ).intoContainer(
-                                        padding: EdgeInsets.symmetric(
-                                      vertical: 6,
-                                    )))
-                                .toList(),
-                            controller: tabController,
-                            onTap: (index) {
-                              if (currentIndex == index) {
-                                return;
-                              }
-                              currentIndex = index;
-                              pageController.jumpToPage(index);
-                            },
+                          child: Container(
+                            height: $(60),
+                            margin: EdgeInsets.only(
+                              left: $(15),
+                              right: $(15),
+                              bottom: $(15),
+                            ),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                              color: ColorConstant.LineColor,
+                            ))),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
+                                  widget.onPick.call(widget.preBackgroundData, false);
+                                  dismiss();
+                                }),
+                                TabBar(
+                                  indicatorColor: Colors.black,
+                                  isScrollable: true,
+                                  tabs: titleList
+                                      .map((e) => Text(
+                                            e['title'].toString().intl,
+                                            style: TextStyle(fontSize: $(17)),
+                                          ).intoContainer(
+                                              padding: EdgeInsets.symmetric(
+                                            vertical: 6,
+                                          )))
+                                      .toList(),
+                                  controller: tabController,
+                                  onTap: (index) {
+                                    if (currentIndex == index) {
+                                      return;
+                                    }
+                                    currentIndex = index;
+                                    pageController.jumpToPage(index);
+                                  },
+                                ),
+                                Image.asset(Images.ic_bg_submit, width: $(24)).intoGestureDetector(onTap: () {
+                                  if (selectedData != null) {
+                                    widget.onPick.call(selectedData!, true);
+                                  } else {
+                                    widget.onPick.call(widget.preBackgroundData, false);
+                                  }
+                                  dismiss();
+                                }),
+                              ],
+                            ),
                           )),
                       Expanded(
                         child: PageView.builder(

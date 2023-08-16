@@ -77,17 +77,26 @@ class _SliderColorPickerState extends State<SliderColorPicker> {
           // widget.onChange.call(selectorColor, progress);
         },
         child: Container(
-          width: double.maxFinite,
-          height: $(50),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            gradient: LinearGradient(
-              colors: [Colors.black, selectorColor, Colors.white],
+            borderRadius: BorderRadius.circular(38),
+            color: Colors.white,
+          ),
+          child: Container(
+            width: double.maxFinite,
+            height: $(38),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(38),
+              gradient: LinearGradient(
+                colors: [selectorColor.withOpacity(1), selectorColor.withOpacity(0)],
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: $(18)),
+              child: CustomPaint(
+                painter: SliderIndicatorPainter(max(0, min(progress, 1)), selectorColor),
+              ).visibility(visible: visible),
             ),
           ),
-          child: CustomPaint(
-            painter: SliderIndicatorPainter(max(0, min(progress, 1)), selectorColor),
-          ).visibility(visible: visible),
         ),
       ),
     );
@@ -103,13 +112,10 @@ class SliderIndicatorPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
-    paint.color = selectorColor;
-    paint.strokeWidth = 4;
     paint.style = PaintingStyle.stroke;
-    canvas.drawCircle(Offset(size.width * position, size.height / 2), $(12), paint);
     paint.color = Colors.white;
-    paint.strokeWidth = 0.7;
-    canvas.drawCircle(Offset(size.width * position, size.height / 2), $(13), paint);
+    paint.strokeWidth = 2.4;
+    canvas.drawCircle(Offset(size.width * position, size.height / 2), $(18), paint);
   }
 
   @override

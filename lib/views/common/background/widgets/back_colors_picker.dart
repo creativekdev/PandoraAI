@@ -1,16 +1,20 @@
 import 'package:cartoonizer/Widgets/color/palette_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
 
+import '../background_picker.dart';
+
 class BackColorsPicker extends StatefulWidget {
   Function(Color? color) onPickColor;
   Function onOk;
   Function(Color? color) onColorChange;
+  final BackgroundData preBackgroundData;
 
   BackColorsPicker({
     super.key,
     required this.onPickColor,
     required this.onOk,
     required this.onColorChange,
+    required this.preBackgroundData,
   });
 
   @override
@@ -24,6 +28,9 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
   @override
   void initState() {
     super.initState();
+    if (widget.preBackgroundData.color != null) {
+      userTypeColor = '#${widget.preBackgroundData.color!.value.toRadixString(16)}';
+    }
   }
 
   @override
@@ -33,6 +40,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
       child: Column(
         children: [
           PaletteWidget(
+            selectedData: widget.preBackgroundData,
             onChange: (color, opacity) {
               setState(() {
                 this.color = Color.fromRGBO(color.red, color.green, color.blue, opacity);
@@ -42,18 +50,29 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
             },
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(10)),
-          TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18)),
-          TitleTextWidget(S.of(context).ok, ColorConstant.White, FontWeight.w500, $(17))
-              .intoContainer(
-            width: double.maxFinite,
-            padding: EdgeInsets.symmetric(vertical: $(10)),
-            margin: EdgeInsets.symmetric(horizontal: $(15)),
-            decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(32))),
-          )
-              .intoGestureDetector(onTap: () {
-            widget.onPickColor.call(color);
-            widget.onOk.call(color);
-          }),
+          if (userTypeColor != "#0")
+            TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18)).intoContainer(
+                height: $(38),
+                width: ScreenUtil.screenSize.width - $(30),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Color(0xff444547),
+                    borderRadius: BorderRadius.circular($(19)),
+                    border: Border.all(
+                      color: ColorConstant.loginTitleColor,
+                      width: $(1),
+                    ))),
+          // TitleTextWidget(S.of(context).ok, ColorConstant.White, FontWeight.w500, $(17))
+          //     .intoContainer(
+          //   width: double.maxFinite,
+          //   padding: EdgeInsets.symmetric(vertical: $(10)),
+          //   margin: EdgeInsets.symmetric(horizontal: $(15)),
+          //   decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(32))),
+          // )
+          //     .intoGestureDetector(onTap: () {
+          //   widget.onPickColor.call(color);
+          //   widget.onOk.call(color);
+          // }),
           SizedBox(height: $(16)),
         ],
       ),

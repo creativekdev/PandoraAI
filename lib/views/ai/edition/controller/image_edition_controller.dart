@@ -194,9 +194,9 @@ class ImageEditionController extends GetxController {
               holder.imageUiFront = await getImage(File(path));
               var imageFront = await getLibImage(holder.imageUiFront!);
               holder.imageFront = imageFront;
-              await holder.setBackgroundImage(null);
+              await holder.setBackgroundImage(null, false);
               holder.backgroundColor = holder.rgbaToAbgr(Colors.transparent);
-              await holder.saveImageWithColor(holder.rgbaToAbgr(Colors.transparent));
+              await holder.saveImageWithColor(holder.rgbaToAbgr(Colors.transparent), true);
               // holder.resultFilePath = path;
             });
           },

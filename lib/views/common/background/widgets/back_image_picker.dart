@@ -1,6 +1,4 @@
 import 'package:cartoonizer/Widgets/camera/pai_camera_screen.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
-import 'package:cartoonizer/Widgets/gallery/pick_album.dart';
 import 'package:cartoonizer/Widgets/gallery/pick_album_helper.dart';
 import 'package:cartoonizer/Widgets/image/medium_image_provider.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
@@ -12,14 +10,18 @@ import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:skeletons/skeletons.dart';
 
+import '../background_picker.dart';
+
 class BackImagePicker extends StatefulWidget {
   AppState parent;
   Function(String filePath) onPickFile;
+  final BackgroundData preBackgroundData;
 
   BackImagePicker({
     super.key,
     required this.parent,
     required this.onPickFile,
+    required this.preBackgroundData,
   });
 
   @override
@@ -34,6 +36,8 @@ class _BackImagePickerState extends State<BackImagePicker> with AutomaticKeepAli
   int pageSize = 20;
   var scrollController = ScrollController();
   double itemSize = 0;
+  BackgroundData selectedData = BackgroundData();
+  bool isResetSelected = false;
 
   @override
   void initState() {
@@ -153,27 +157,91 @@ class _BackImagePickerState extends State<BackImagePicker> with AutomaticKeepAli
             });
   }
 
+  Future<bool> getMediaPath(AssetEntity entity) async {
+    if (widget.preBackgroundData.filePath == null) return false;
+    if (isResetSelected == true) {
+      return false;
+    }
+    var file = await entity.originFile;
+    var path = await ImageUtils.onImagePick(file!.path, AppDelegate().getManager<CacheManager>().storageOperator.imageDir.path);
+    // selectedData = widget.preBackgroundData;
+    if (selectedData.filePath == null) {
+      if (path.contains(widget.preBackgroundData.filePath!)) {
+        selectedData.filePath = widget.preBackgroundData.filePath;
+        isResetSelected = true;
+        return true;
+      }
+    } else {
+      if (path.contains(selectedData.filePath!)) {
+        isResetSelected = true;
+        return true;
+      }
+    }
+    return false;
+  }
+
   Widget buildItem(BuildContext context, int index) {
     var media = dataList[index];
-    return Image(
-      image: MediumImage(
-        media,
-        width: 128,
-        height: 128,
-        failedImageAssets: Images.ic_netimage_failed,
-      ),
-      width: itemSize,
-      height: itemSize,
-      fit: BoxFit.cover,
-    ).intoGestureDetector(onTap: () {
-      widget.parent.showLoading().whenComplete(() async {
-        var file = await media.originFile;
-        var path = await ImageUtils.onImagePick(file!.path, AppDelegate().getManager<CacheManager>().storageOperator.imageDir.path);
-        widget.parent.hideLoading().whenComplete(() {
-          widget.onPickFile.call(path);
+    return FutureBuilder(
+        future: getMediaPath(media),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Image(
+              image: MediumImage(
+                media,
+                width: 128,
+                height: 128,
+                failedImageAssets: Images.ic_netimage_failed,
+              ),
+              width: itemSize,
+              height: itemSize,
+              fit: BoxFit.cover,
+            ).intoGestureDetector(onTap: () {
+              widget.parent.showLoading().whenComplete(() async {
+                var file = await media.originFile;
+                var path = await ImageUtils.onImagePick(file!.path, AppDelegate().getManager<CacheManager>().storageOperator.imageDir.path);
+                widget.parent.hideLoading().whenComplete(() {
+                  widget.onPickFile.call(path);
+                });
+              });
+            });
+          }
+          return Stack(
+            children: [
+              Image(
+                image: MediumImage(
+                  media,
+                  width: 128,
+                  height: 128,
+                  failedImageAssets: Images.ic_netimage_failed,
+                ),
+                width: itemSize,
+                height: itemSize,
+                fit: BoxFit.cover,
+              ),
+              if (snapshot.data == true)
+                Container(
+                  color: Color(0x55000000),
+                  width: itemSize,
+                  height: itemSize,
+                  child: Image.asset(
+                    Images.ic_metagram_yes,
+                    width: $(22),
+                  ).intoCenter(),
+                ),
+            ],
+          ).intoGestureDetector(onTap: () {
+            widget.parent.showLoading().whenComplete(() async {
+              var file = await media.originFile;
+              var path = await ImageUtils.onImagePick(file!.path, AppDelegate().getManager<CacheManager>().storageOperator.imageDir.path);
+              selectedData!.filePath = path;
+              isResetSelected = false;
+              widget.parent.hideLoading().whenComplete(() {
+                widget.onPickFile.call(path);
+              });
+            });
+          });
         });
-      });
-    });
   }
 
   @override

@@ -31,25 +31,28 @@ class RemoveBgOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     _currentContext = context;
     return BackgroundPickerBar(
+      preBackgroundData: controller.preBackgroundData,
       imageRatio: controller.ratio,
-      onPick: (BackgroundData data) async {
+      onPick: (BackgroundData data, bool isPopMerge) async {
         parentState.showLoading();
         if (data.filePath != null) {
           File backFile = File(data.filePath!);
           controller.backgroundColor = null;
-          await controller.setBackgroundImage(backFile);
+          await controller.setBackgroundImage(backFile, isPopMerge);
         } else {
-          await controller.setBackgroundImage(null);
+          await controller.setBackgroundImage(null, false);
           controller.backgroundColor = controller.rgbaToAbgr(data.color!);
-          await controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
+          await controller.saveImageWithColor(controller.backgroundColor!, isPopMerge);
         }
         parentState.hideLoading();
-        showPersonEditScreenDialog(_currentContext, bottomPadding, switchButtonPadding);
+        if (isPopMerge) {
+          showPersonEditScreenDialog(_currentContext, bottomPadding, switchButtonPadding);
+        }
         controller.update();
       },
       onColorChange: (BackgroundData data) async {
-        await controller.setBackgroundImage(null);
-        await controller.saveImageWithColor(controller.rgbaToAbgr(data.color!));
+        await controller.setBackgroundImage(null, false);
+        await controller.saveImageWithColor(controller.rgbaToAbgr(data.color!), false);
         controller.backgroundColor = controller.rgbaToAbgr(data.color!);
         controller.update();
       },
@@ -75,6 +78,7 @@ class RemoveBgOptions extends StatelessWidget {
           switchButtonPadding: switchButtonPadding,
           onAddImage: (image) {
             Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(image));
+            controller.shownImage = image;
             CacheManager cacheManager = AppDelegate.instance.getManager();
             var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
             File(path).writeAsBytes(byte).then((value) {

@@ -8,6 +8,7 @@ import 'package:image/image.dart' as imgLib;
 
 import '../../../../app/app.dart';
 import '../../../../app/cache/cache_manager.dart';
+import '../../../common/background/background_picker.dart';
 
 class RemoveBgHolder extends ImageEditionBaseHolder {
   ui.Color? backgroundColor;
@@ -15,9 +16,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   File? get backgroundImage => _backgroundImage;
 
-  setBackgroundImage(File? file) async {
+  setBackgroundImage(File? file, bool isSave) async {
     _backgroundImage = file;
-    await buildBackLibImg();
+    await buildBackLibImg(isSave);
   }
 
   File? _removedImage;
@@ -35,32 +36,49 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   ui.Image? imageUiFront;
   imgLib.Image? imageFront;
   imgLib.Image? imageBack;
+  BackgroundData preBackgroundData = BackgroundData();
 
   RemoveBgHolder({required super.parent});
 
   @override
   initData() {
     if (removedImage == null) {}
+    preBackgroundData.color = Colors.transparent;
+    preBackgroundData.filePath = null;
   }
 
-  buildBackLibImg() async {
+  buildBackLibImg(bool isSave) async {
     if (_backgroundImage == null) {
       imageBack = null;
+      if (isSave) {
+        preBackgroundData.color = Colors.transparent;
+        preBackgroundData.filePath = null;
+      }
     } else {
       imageBack = await getLibImage(await getImage(_backgroundImage!));
+      shownImage = imageBack;
+      if (isSave) {
+        preBackgroundData.color = null;
+        preBackgroundData.filePath = _backgroundImage?.path;
+      }
     }
     update();
   }
 
-  saveImageWithColor(Color backgroundColor) async {
+  saveImageWithColor(Color bgColor, bool isSave) async {
     imgLib.Image newImage = imgLib.Image(imageFront!.width, imageFront!.height);
-    int fillColor = backgroundColor.value; // 获取颜色的ARGB值
+    int fillColor = bgColor.value; // 获取颜色的ARGB值
+    print("127.0.0.1 fillColor== $fillColor");
+    if (isSave) {
+      preBackgroundData.color = abgrToRgba(fillColor);
+      print("127.0.0.1 preBackgroundData.color == ${preBackgroundData.color}");
+      preBackgroundData.filePath = null;
+    }
     newImage.fillBackground(fillColor);
     imgLib.drawImage(newImage, imageFront!);
+    shownImage = newImage;
     CacheManager cacheManager = AppDelegate.instance.getManager();
-    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime
-        .now()
-        .millisecondsSinceEpoch}.png';
+    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.png';
     List<int> outputBytes = imgLib.encodePng(newImage);
     await File(path).writeAsBytes(outputBytes);
     resultFilePath = path;
@@ -82,6 +100,14 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return ui.Color(abgrValue);
   }
 
+  ui.Color abgrToRgba(int abgrValue) {
+    int alpha = (abgrValue >> 24) & 0xFF;
+    int blue = (abgrValue >> 16) & 0xFF;
+    int green = (abgrValue >> 8) & 0xFF;
+    int red = abgrValue & 0xFF;
+
+    return Color.fromRGBO(red, green, blue, alpha / 255.0);
+  }
 
   @override
   onResetClick() {

@@ -33,6 +33,9 @@ class Images {
    static const String ic_avatar_success = 'assets/images/ic_avatar_success.png';
    static const String ic_back = 'assets/images/ic_back.png';
    static const String ic_background = 'assets/images/ic_background.png';
+   static const String ic_bg_close = 'assets/images/ic_bg_close.png';
+   static const String ic_bg_color_sel = 'assets/images/ic_bg_color_sel.png';
+   static const String ic_bg_submit = 'assets/images/ic_bg_submit.png';
    static const String ic_bug_no_ad = 'assets/images/ic_bug_no_ad.png';
    static const String ic_buy_ai_artist = 'assets/images/ic_buy_ai_artist.png';
    static const String ic_buy_background = 'assets/images/ic_buy_background.png';

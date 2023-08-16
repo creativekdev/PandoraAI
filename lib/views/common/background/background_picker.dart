@@ -15,12 +15,13 @@ class BackgroundPicker {
   static Future pickBackground(
     BuildContext context, {
     required double imageRatio,
-    required Function(BackgroundData data) onPick,
+    required Function(BackgroundData data, bool isPopMerge) onPick,
     Function(BackgroundData data)? onColorChange,
+    required BackgroundData preBackgroundData,
   }) async {
     var bool = await PermissionsUtil.checkPermissions();
     if (bool) {
-      return _open(context, imageRatio: imageRatio, onPick: onPick, onColorChange: onColorChange);
+      return _open(context, imageRatio: imageRatio, onPick: onPick, onColorChange: onColorChange, preBackgroundData: preBackgroundData);
     } else {
       PermissionsUtil.permissionDenied(context);
       return null;
@@ -30,8 +31,9 @@ class BackgroundPicker {
   static Future _open(
     BuildContext context, {
     required double imageRatio,
-    required Function(BackgroundData data) onPick,
+    required Function(BackgroundData data, bool isPopMerge) onPick,
     Function(BackgroundData data)? onColorChange,
+    required BackgroundData preBackgroundData,
   }) async {
     return Navigator.of(context).push(
       NoAnimRouter(
@@ -39,6 +41,7 @@ class BackgroundPicker {
           imageRatio: imageRatio,
           onPick: onPick,
           onColorChange: onColorChange,
+          preBackgroundData: preBackgroundData,
         ),
         settings: RouteSettings(name: '/BackgroundPickerHolder'),
       ),
@@ -76,14 +79,16 @@ class BackgroundData {
 class BackgroundPickerBar extends StatefulWidget {
   double imageRatio;
 
-  Function(BackgroundData data) onPick;
+  Function(BackgroundData data, bool isPopMerge) onPick;
   Function(BackgroundData data) onColorChange;
+  final BackgroundData preBackgroundData;
 
   BackgroundPickerBar({
     super.key,
     required this.imageRatio,
     required this.onPick,
     required this.onColorChange,
+    required this.preBackgroundData,
   });
 
   @override
@@ -151,21 +156,23 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                   decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
               .intoGestureDetector(onTap: () async {
             var d;
-            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data) {
-              d = data;
-              if (d != null) {
-                dataList.insert(0, d);
+            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
+              if (isPopMerge) {
+                d = data;
+                if (d != null) {
+                  dataList.insert(0, d);
+                }
+                setState(() {
+                  cacheManager.setBool(CacheManager.isSavedPickHistory, true);
+                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+                });
               }
-              setState(() {
-                cacheManager.setBool(CacheManager.isSavedPickHistory, true);
-                cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-              });
-              widget.onPick.call(data);
+              widget.onPick.call(data, isPopMerge);
             }, onColorChange: (data) {
               d = data;
               widget.onColorChange.call(data);
               setState(() {});
-            });
+            }, preBackgroundData: widget.preBackgroundData);
           }),
         ),
         Expanded(
@@ -178,7 +185,7 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                         child: buildItem(e),
                         borderRadius: BorderRadius.circular($(4)),
                       ).intoGestureDetector(onTap: () {
-                        widget.onPick.call(e);
+                        widget.onPick.call(e, true);
                       }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
                     ),
                   )
