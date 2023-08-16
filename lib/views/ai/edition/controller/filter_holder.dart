@@ -59,7 +59,7 @@ class FilterHolder extends ImageEditionBaseHolder {
 
   imgLib.Image? _originImageData;
 
-  _buildThumbnails() async {
+  Future _buildThumbnails() async {
     if (originFile == null) {
       return;
     }
@@ -86,7 +86,9 @@ class FilterHolder extends ImageEditionBaseHolder {
 
   @override
   initData() {
-    _buildThumbnails();
+    _buildThumbnails().then((value) {
+      buildImage();
+    });
   }
 
   Future<void> buildImage() async {
@@ -108,6 +110,8 @@ class FilterHolder extends ImageEditionBaseHolder {
       var list = await Executor().execute(arg1: shownImage!, fun1: encodePng);
       var bytes = Uint8List.fromList(list);
       await targetFile.writeAsBytes(bytes);
+    } else {
+      shownImage = await getLibImage(await getImage(targetFile));
     }
     resultFilePath = targetFile.path;
   }

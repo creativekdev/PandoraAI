@@ -112,6 +112,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
   initData() {
     getImage(originFile!).then((value) {
       getLibImage(value).then((value) {
+        shownImage = value;
         _originImageData = value;
         // onSwitchNewAdj();
       });
