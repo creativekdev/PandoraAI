@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:cartoonizer/Widgets/outline_widget.dart';
+import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
@@ -21,18 +23,34 @@ class CropOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: $(5)),
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            var item = controller.items[index];
-            bool check = item == controller.currentItem;
-            return buildItem(item, context, check).intoContainer(height: $(40), width: $(40), color: Colors.transparent).intoGestureDetector(onTap: () {
-              crop(context, item);
-            }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+        ShaderMask(
+          shaderCallback: (Rect bounds) {
+            return LinearGradient(
+              colors: <Color>[
+                Color(0x11ffffff),
+                Color(0x99ffffff),
+                Color(0xffffffff),
+                Color(0x99ffffff),
+                Color(0x11ffffff),
+              ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              tileMode: TileMode.mirror,
+            ).createShader(bounds);
           },
-          itemCount: controller.items.length,
-        ).intoContainer(height: $(40)),
+          child: ListView.builder(
+            padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              var item = controller.items[index];
+              bool check = item == controller.currentItem;
+              return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
+                crop(context, item);
+              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
+            },
+            itemCount: controller.items.length,
+          ).intoContainer(height: $(44)),
+        ),
       ],
     );
   }
@@ -44,10 +62,10 @@ class CropOptions extends StatelessWidget {
           filePath: controller.originFilePath!,
           originalRatio: controller.originalRatio,
           cropItem: e,
-          onGetCrop: (image) async {
-            controller.currentItem = e;
-            controller.canReset = true;
+          onGetCrop: (image, config) async {
             controller.shownImage = image;
+            controller.currentItem = config;
+            controller.canReset = true;
             CacheManager cacheManager = AppDelegate().getManager();
             var dir = cacheManager.storageOperator.cropDir;
             var projName = EncryptUtil.encodeMd5(controller.originFilePath!);
@@ -97,14 +115,16 @@ class CropOptions extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular($(32)),
-            border: Border.all(
-              color: check ? Colors.white : Colors.grey.shade800,
-              width: 1,
-            ),
-          ),
+        AppCircleProgressBar(
+          size: $(44),
+          backgroundColor: Color(0xffa2a2a2).withOpacity(0.3),
+          progress: check ? 1 : 0,
+          ringWidth: 1.4,
+          loadingColors: [
+            Color(0xFFE31ECD),
+            Color(0xFF243CFF),
+            Color(0xFFE31ECD),
+          ],
         ),
         Align(
           alignment: Alignment.center,
@@ -115,7 +135,7 @@ class CropOptions extends StatelessWidget {
                 borderRadius: BorderRadius.circular($(4)),
                 border: Border.all(
                   style: BorderStyle.solid,
-                  color: Colors.grey.shade800,
+                  color: Color(0xffa2a2a2).withOpacity(0.3),
                   width: 1,
                 )),
           ),
@@ -130,15 +150,18 @@ class CropOptions extends StatelessWidget {
 
   Widget buildIcon(CropConfig e, BuildContext context, bool check) {
     if (e.width == -1) {
-      return Icon(
-        Icons.fullscreen,
-        size: $(18),
-        color: check ? Colors.white : Colors.grey.shade700,
+      return Image.asset(
+        Images.ic_crop_original,
+        width: $(18),
+        color: Colors.white,
       );
     } else {
       return Text(
         e.title,
-        style: TextStyle(color: check ? Colors.white : Colors.grey.shade700),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: $(12),
+        ),
       );
     }
   }

@@ -82,5 +82,4 @@ abstract class ImageEditionBaseHolder {
   dispose() {}
 
   onResetClick() {}
-
 }
