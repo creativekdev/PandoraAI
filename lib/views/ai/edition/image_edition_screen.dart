@@ -68,11 +68,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   late StreamSubscription onRightTitleSwitchEvent;
   late TimerUtil timer;
   String? title;
+  late Size imageSize;
 
   @override
   void initState() {
     super.initState();
     Posthog().screenWithUser(screenName: 'image_edition_screen');
+    imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
     controller = Get.put(ImageEditionController(
       originPath: widget.filePath,
       effectStyle: widget.style,
@@ -332,7 +334,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ),
         )
       ],
-    );
+    ).listenSizeChanged(onSizeChanged: (size) {
+      setState(() {
+        imageSize = size;
+      });
+    });
   }
 
   Widget getImageWidget(BuildContext context, ImageEditionController controller) {
@@ -362,7 +368,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage();
+      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
     }
   }
 

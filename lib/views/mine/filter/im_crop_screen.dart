@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
@@ -15,7 +16,7 @@ import '../../../Widgets/app_navigation_bar.dart';
 import '../../../Widgets/image/sync_image_provider.dart';
 import '../../../images-res.dart';
 
-typedef OnGetCrop = void Function(imgLib.Image image);
+typedef OnGetCrop = void Function(imgLib.Image image, CropConfig item);
 
 class ImCropScreen extends StatefulWidget {
   CropConfig cropItem;
@@ -95,7 +96,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
           showLoading().whenComplete(() async {
             var image = await onSaveImage();
             hideLoading().whenComplete(() {
-              widget.onGetCrop(image);
+              widget.onGetCrop(image, currentItem);
               Navigator.of(context).pop();
             });
           });
@@ -151,23 +152,39 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
               child: Column(
                 children: [
                   SizedBox(height: $(15)),
-                  ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: $(5)),
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      var item = items[index];
-                      bool check = item == currentItem;
-                      return buildItem(item, context, check).intoContainer(height: $(40), width: $(40), color: Colors.transparent).intoGestureDetector(onTap: () {
-                        if (currentItem != item) {
-                          key = UniqueKey();
-                          setState(() {
-                            currentItem = item;
-                          });
-                        }
-                      }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
+                  ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        colors: <Color>[
+                          Color(0x11ffffff),
+                          Color(0x99ffffff),
+                          Color(0xffffffff),
+                          Color(0x99ffffff),
+                          Color(0x11ffffff),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        tileMode: TileMode.mirror,
+                      ).createShader(bounds);
                     },
-                    itemCount: items.length,
-                  ).intoContainer(height: $(40)),
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        var item = items[index];
+                        bool check = item == currentItem;
+                        return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
+                          if (currentItem != item) {
+                            key = UniqueKey();
+                            setState(() {
+                              currentItem = item;
+                            });
+                          }
+                        }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
+                      },
+                      itemCount: items.length,
+                    ).intoContainer(height: $(44)),
+                  ),
                 ],
               ),
             ),
@@ -188,14 +205,16 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular($(32)),
-            border: Border.all(
-              color: check ? Colors.white : Colors.grey.shade800,
-              width: 1,
-            ),
-          ),
+        AppCircleProgressBar(
+          size: $(44),
+          backgroundColor: Color(0xffa2a2a2).withOpacity(0.3),
+          progress: check ? 1 : 0,
+          ringWidth: 1.4,
+          loadingColors: [
+            Color(0xFFE31ECD),
+            Color(0xFF243CFF),
+            Color(0xFFE31ECD),
+          ],
         ),
         Align(
           alignment: Alignment.center,
@@ -206,7 +225,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                 borderRadius: BorderRadius.circular($(4)),
                 border: Border.all(
                   style: BorderStyle.solid,
-                  color: Colors.grey.shade800,
+                  color: Color(0xffa2a2a2).withOpacity(0.3),
                   width: 1,
                 )),
           ),
@@ -224,12 +243,15 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
       return Icon(
         Icons.fullscreen,
         size: $(18),
-        color: check ? Colors.white : Colors.grey.shade700,
+        color: Colors.white,
       );
     } else {
       return Text(
         e.title,
-        style: TextStyle(color: check ? Colors.white : Colors.grey.shade700),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: $(12),
+        ),
       );
     }
   }

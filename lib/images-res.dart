@@ -57,6 +57,7 @@ class Images {
    static const String ic_confirm = 'assets/images/ic_confirm.png';
    static const String ic_corn = 'assets/images/ic_corn.png';
    static const String ic_crop = 'assets/images/ic_crop.png';
+   static const String ic_crop_original = 'assets/images/ic_crop_original.png';
    static const String ic_default_user_icon = 'assets/images/ic_default_user_icon.png';
    static const String ic_delivery = 'assets/images/ic_delivery.png';
    static const String ic_demo1 = 'assets/images/ic_demo1.png';

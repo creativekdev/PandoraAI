@@ -8,13 +8,20 @@ import '../background_card.dart';
 class LibImageWidget extends StatelessWidget {
   ui.Image image;
 
-  LibImageWidget({super.key, required this.image});
+  double width;
+  double height;
+
+  LibImageWidget({
+    super.key,
+    required this.image,
+    required this.width,
+    required this.height,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var size = ScreenUtil.getCurrentWidgetSize(context);
-    double scale = size.width / image.width;
-    double yScale = size.height / image.height;
+    double scale = width / image.width;
+    double yScale = height / image.height;
     if (yScale < scale) {
       scale = yScale;
     }

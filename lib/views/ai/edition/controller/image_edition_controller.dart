@@ -326,7 +326,7 @@ class ImageEditionController extends GetxController {
     }
   }
 
-  Widget buildShownImage() {
+  Widget buildShownImage(Size size) {
     if (shownImage == null) {
       return CustomPaint(
           painter: BackgroundPainter(
@@ -336,7 +336,11 @@ class ImageEditionController extends GetxController {
           ),
           child: Image.file(originFile));
     }
-    return LibImageWidget(image: shownImage!);
+    return LibImageWidget(
+      image: shownImage!,
+      width: size.width,
+      height: size.height,
+    );
   }
 }
 
