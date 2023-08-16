@@ -40,17 +40,11 @@ abstract class ImageEditionBaseHolder {
 
   File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
 
-  // ui.Image? _shownUIImage;
-  // set shownUIImage(ui.Image? value) {
-  //   shownUIImage = value;
-  //   update();
-  // }
-  // ui.Image? get shownImage => _shownUIImage;
-
   imgLib.Image? _shownImage;
 
   set shownImage(imgLib.Image? value) {
-    shownImage = value;
+    _shownImage = value;
+    parent.setShownImage(value);
     update();
   }
 
@@ -73,7 +67,7 @@ abstract class ImageEditionBaseHolder {
 
   onInit() {}
 
-  initData() {
+  initData() async {
     getImage(originFile!).then((value) {
       getLibImage(value).then((value) {
         shownImage = value;
@@ -89,16 +83,4 @@ abstract class ImageEditionBaseHolder {
 
   onResetClick() {}
 
-  Widget buildShownImage() {
-    if (shownImage == null) {
-      return CustomPaint(
-          painter: BackgroundPainter(
-            bgColor: Colors.transparent,
-            w: 10,
-            h: 10,
-          ),
-          child: Image.file(resultFile ?? originFile!));
-    }
-    return LibImageWidget(controller: parent.libImageWidgetController, shownImage: shownImage!);
-  }
 }

@@ -1,8 +1,16 @@
+import 'dart:io';
+
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_crop_screen.dart';
+import 'package:common_utils/common_utils.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 class CropOptions extends StatelessWidget {
   CropHolder controller;
@@ -20,9 +28,7 @@ class CropOptions extends StatelessWidget {
             var item = controller.items[index];
             bool check = item == controller.currentItem;
             return buildItem(item, context, check).intoContainer(height: $(40), width: $(40), color: Colors.transparent).intoGestureDetector(onTap: () {
-              if (controller.currentItem != item) {
-                crop(context, item);
-              }
+              crop(context, item);
             }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(5)));
           },
           itemCount: controller.items.length,
@@ -32,24 +38,30 @@ class CropOptions extends StatelessWidget {
   }
 
   crop(BuildContext context, CropConfig e) {
-    if (e.width == -1) {
-      controller.canReset = false;
-      controller.currentItem = e;
-      controller.resultFilePath = null;
-    } else {
-      Navigator.of(context).push(FadeRouter(
-          child: ImCropScreen(
-            items: controller.items,
-            filePath: controller.originFilePath!,
-            cropItem: e,
-            onGetCropPath: (String path) {
-              controller.currentItem = e;
-              controller.canReset = true;
-              controller.resultFilePath = path;
-            },
-          ),
-          settings: RouteSettings(name: '/ImCropScreen')));
-    }
+    Navigator.of(context).push(FadeRouter(
+        child: ImCropScreen(
+          items: controller.items,
+          filePath: controller.originFilePath!,
+          originalRatio: controller.originalRatio,
+          cropItem: e,
+          onGetCrop: (image) async {
+            controller.currentItem = e;
+            controller.canReset = true;
+            controller.shownImage = image;
+            CacheManager cacheManager = AppDelegate().getManager();
+            var dir = cacheManager.storageOperator.cropDir;
+            var projName = EncryptUtil.encodeMd5(controller.originFilePath!);
+            var directory = Directory(dir.path + projName);
+            await mkdir(directory);
+            var fileName = getFileName(controller.originFilePath!);
+            var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
+            var list = await Executor().execute(arg1: image, fun1: encodePng);
+            var bytes = Uint8List.fromList(list);
+            await targetFile.writeAsBytes(bytes);
+            controller.resultFilePath = targetFile.path;
+          },
+        ),
+        settings: RouteSettings(name: '/ImCropScreen')));
   }
 
   Widget rectangle({required double width, required double height, required bool checked}) {
@@ -121,7 +133,7 @@ class CropOptions extends StatelessWidget {
       return Icon(
         Icons.fullscreen,
         size: $(18),
-        color: Colors.white,
+        color: check ? Colors.white : Colors.grey.shade700,
       );
     } else {
       return Text(

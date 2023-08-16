@@ -362,7 +362,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      return controller.showOrigin ? Image.file(baseHolder.originFile!) : baseHolder.buildShownImage();
+      return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage();
     }
   }
 

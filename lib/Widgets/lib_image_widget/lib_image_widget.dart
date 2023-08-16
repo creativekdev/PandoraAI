@@ -1,37 +1,20 @@
 import 'dart:ui' as ui;
 
-import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget_controller.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../Common/importFile.dart';
 import '../background_card.dart';
 
-class LibImageWidget extends StatefulWidget {
-  const LibImageWidget({Key? key, required this.controller, required this.shownImage}) : super(key: key);
-  final LibImageWidgetController controller;
-  final imgLib.Image shownImage;
+class LibImageWidget extends StatelessWidget {
+  ui.Image image;
 
-  @override
-  State<LibImageWidget> createState() => _LibImageWidgetState(controller: controller, shownImage: shownImage);
-}
-
-class _LibImageWidgetState extends State<LibImageWidget> {
-  _LibImageWidgetState({Key? key, required this.controller, required this.shownImage}) : super();
-  final LibImageWidgetController controller;
-
-  final imgLib.Image shownImage;
-
-  @override
-  void initState() {
-    super.initState();
-    controller.shownImage = shownImage;
-  }
+  LibImageWidget({super.key, required this.image});
 
   @override
   Widget build(BuildContext context) {
-    double scale = ScreenUtil.screenSize.width / shownImage!.width;
-    double yScale = (ScreenUtil.screenSize.height - ScreenUtil.getNavigationBarHeight() - $(140) - ScreenUtil.getStatusBarHeight() - ScreenUtil.getBottomPadding(Get.context!)) /
-        shownImage!.height;
+    var size = ScreenUtil.getCurrentWidgetSize(context);
+    double scale = size.width / image.width;
+    double yScale = size.height / image.height;
     if (yScale < scale) {
       scale = yScale;
     }
@@ -45,7 +28,7 @@ class _LibImageWidgetState extends State<LibImageWidget> {
             w: 10,
             h: 10,
           ),
-          foregroundPainter: LibImagePainter(image: controller.shownUIImage!),
+          foregroundPainter: LibImagePainter(image: image),
         ),
       ),
     );
@@ -68,4 +51,18 @@ class LibImagePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
+}
+
+Future<ui.Image> toImage(imgLib.Image image) async {
+  final c = Completer<ui.Image>();
+  ui.decodeImageFromPixels(
+    image.data.buffer.asUint8List(),
+    image.width,
+    image.height,
+    ui.PixelFormat.rgba8888,
+    (ui.Image image) {
+      c.complete(image);
+    },
+  );
+  return c.future;
 }

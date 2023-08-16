@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
@@ -18,8 +21,8 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:image/image.dart' as imgLib;
 
-import '../../../../Widgets/lib_image_widget/lib_image_widget_controller.dart';
 import '../../../../utils/utils.dart';
 import 'ie_base_holder.dart';
 
@@ -29,7 +32,6 @@ class ImageEditionController extends GetxController {
   final String? initKey;
   final ImageEditionFunction initFunction;
   late String _originPath;
-  LibImageWidgetController libImageWidgetController = LibImageWidgetController();
 
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
@@ -69,6 +71,19 @@ class ImageEditionController extends GetxController {
   int generateCount = 0;
 
   List<RecentEffectItem> recentItemList = [];
+
+  ui.Image? _shownImage;
+
+  ui.Image? get shownImage => _shownImage;
+
+  setShownImage(imgLib.Image? image) async {
+    if (image == null) {
+      _shownImage = null;
+    } else {
+      _shownImage = await toImage(image);
+    }
+    update();
+  }
 
   ImageEditionController({
     required String originPath,
@@ -256,7 +271,17 @@ class ImageEditionController extends GetxController {
         if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
           // 从effect或sticker跳其他
           var transferController = currentItem.holder as TransferBaseController;
-          originFilePath = (transferController.resultFile ?? transferController.originFile).path;
+          if (transferController.resultFile != null) {
+            originFilePath = transferController.resultFile!.path;
+          } else {
+            var targetHolder = e.holder as ImageEditionBaseHolder;
+            if (targetHolder.originFilePath != null) {
+              currentItem = e;
+              return;
+            } else {
+              originFilePath = transferController.originalPath;
+            }
+          }
         } else {
           //其他的互相跳转
           var baseHolder = currentItem.holder as ImageEditionBaseHolder;
@@ -299,6 +324,19 @@ class ImageEditionController extends GetxController {
         }
       }
     }
+  }
+
+  Widget buildShownImage() {
+    if (shownImage == null) {
+      return CustomPaint(
+          painter: BackgroundPainter(
+            bgColor: Colors.transparent,
+            w: 10,
+            h: 10,
+          ),
+          child: Image.file(originFile));
+    }
+    return LibImageWidget(image: shownImage!);
   }
 }
 
