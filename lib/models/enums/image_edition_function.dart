@@ -44,7 +44,7 @@ extension ImageEditionFunctionEx on ImageEditionFunction {
       case ImageEditionFunction.crop:
         return 'Crop';
       case ImageEditionFunction.removeBg:
-        return 'RemoveBG';
+        return 'Background';
       case ImageEditionFunction.UNDEFINED:
         return null;
       case ImageEditionFunction.sticker:

@@ -10,6 +10,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
 import 'package:cropperx/cropperx.dart';
 import 'package:image/image.dart' as imgLib;
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
@@ -170,7 +171,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                     )
                     .intoContainer(padding: EdgeInsets.all(2))
                     .listenSizeChanged(onSizeChanged: (size) {
-                  setState(() {
+                  safeSetState(() {
                     this.size = size;
                   });
                 }),
@@ -204,14 +205,12 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                         var item = items[index];
                         bool check = item == currentItem;
                         return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
-                          if (currentItem != item) {
-                            setState(() {
-                              switching = true;
-                              key = UniqueKey();
-                              currentItem = item;
-                            });
-                            delay(() => switching = false, milliseconds: 16);
-                          }
+                          safeSetState(() {
+                            switching = true;
+                            key = UniqueKey();
+                            currentItem = item;
+                          });
+                          delay(() => safeSetState(() => switching = false), milliseconds: 32);
                         }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
                       },
                       itemCount: items.length,

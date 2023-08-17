@@ -2,12 +2,38 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imgLib;
 
 import 'utils.dart';
+
+typedef Action = Future Function();
+
+class _Loading extends StatelessWidget {
+  Action action;
+
+  _Loading({super.key, required this.action});
+
+  @override
+  Widget build(BuildContext context) {
+    action.call().then((value) {
+      Navigator.of(context).pop();
+    });
+    return Scaffold(
+      backgroundColor: ColorConstant.BackgroundColor,
+      body: CircularProgressIndicator().intoCenter(),
+    );
+  }
+}
+
+Future _complete(Completer<String> callback, String path) async {
+  delay(() {
+    callback.complete(path);
+  }, milliseconds: 32);
+}
 
 class ImageUtils {
   static Future<String> onImagePick(
@@ -16,22 +42,26 @@ class ImageUtils {
     bool compress = false,
     int size = 512,
   }) async {
-    var source = File(tempFilePath);
-    var fileName = await md5File(source);
-    if (compress) {
-      fileName = '$size' + fileName;
-    }
-    var fileType = getFileType(tempFilePath);
-    var path = targetPath + fileName + '.' + fileType;
-    if (!File(path).existsSync()) {
+    Completer<String> callback = Completer();
+    Navigator.of(Get.context!).push(NoAnimRouter(_Loading(action: () async {
+      var source = File(tempFilePath);
+      var fileName = await md5File(source);
       if (compress) {
-        var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
-        await file.copy(path);
-      } else {
-        await source.copy(path);
+        fileName = '$size' + fileName;
       }
-    }
-    return path;
+      var fileType = getFileType(tempFilePath);
+      var path = targetPath + fileName + '.' + fileType;
+      if (!File(path).existsSync()) {
+        if (compress) {
+          var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
+          await file.copy(path);
+        } else {
+          await source.copy(path);
+        }
+      }
+      _complete(callback, path);
+    }), settings: RouteSettings(name: '/_Loading')));
+    return callback.future;
   }
 
   // Calculate the area that the artwork should display based on the target coordinates
