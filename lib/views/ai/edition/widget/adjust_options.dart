@@ -64,7 +64,7 @@ class AdjustOptions extends StatelessWidget {
                     ),
                     checked && data.value.toStringAsFixed(0) != data.initValue.toStringAsFixed(0)
                         ? Text(
-                            data.value.toStringAsFixed(0),
+                            (data.value * data.multiple).toStringAsFixed(0),
                             style: TextStyle(
                               color: Color(0xffffffff),
                               fontSize: $(12),
@@ -126,13 +126,13 @@ class AdjustOptions extends StatelessWidget {
               onChanged: (newValue) {
                 controller.dataList[controller.index].value = newValue;
                 controller.update();
-                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 90) {
+                if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 150) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
                   controller.buildResult(false);
                 }
               },
               onEnd: () async {
-                controller.buildResult(true);
+                delay(() => controller.buildResult(true), milliseconds: 150);
               }),
         ),
         SizedBox(height: 10),

@@ -111,9 +111,9 @@ class AdjustHolder extends ImageEditionBaseHolder {
   initData() {
     getImage(originFile!).then((value) {
       getLibImage(value).then((value) {
-        shownImage = value;
         _originImageData = value;
-        // onSwitchNewAdj();
+        shownImage = value;
+        onSwitchNewAdj();
       });
     });
   }
@@ -121,14 +121,14 @@ class AdjustHolder extends ImageEditionBaseHolder {
   void resetConfig() {
     canReset = false;
     dataList = [
-      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -100, end: 100, multiple: 0.5),
-      AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
-      AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
-      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.1),
-      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.2),
-      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.3),
-      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 1),
-      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -100, end: 100, multiple: 2),
+      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -20, end: 20, multiple: 5),
+      AdjustData(function: AdjustFunction.contrast, initValue: 40, value: 40, previousValue: 40, start: 0, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.saturation, initValue: 40, value: 40, previousValue: 40, start: 0, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.25),
+      AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.5),
+      AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 3 / 4),
+      AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -20, end: 20, multiple: 5),
     ];
     _index = 0;
     isClick = true;
@@ -142,10 +142,13 @@ class AdjustHolder extends ImageEditionBaseHolder {
 
   void buildResult(bool saveFile) async {
     if (baseImage == null) {
-      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: imgLib.Image.from(_originImageData!), fun2: _imAdjust);
+      baseImage = imgLib.Image.from(_originImageData!);
+      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage, fun2: _imAdjust);
+      shownImage = baseImage;
     }
     canReset = true;
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
+    print('build img...');
     if (saveFile) {
       saveResult(shownImage!);
     }
