@@ -39,6 +39,7 @@ class CropOptions extends StatelessWidget {
             ).createShader(bounds);
           },
           child: ListView.builder(
+            controller: controller.scrollController,
             padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
@@ -61,11 +62,14 @@ class CropOptions extends StatelessWidget {
           items: controller.items,
           filePath: controller.originFilePath!,
           originalRatio: controller.originalRatio,
+          initScrollPixels: controller.scrollController.positions.isEmpty ? 0 : controller.scrollController.position.pixels,
           cropItem: e,
+          onScrollChanged: (scrollPixel) {
+            controller.scrollController.jumpTo(scrollPixel);
+          },
           onGetCrop: (image, config) async {
             controller.shownImage = image;
             controller.currentItem = config;
-            controller.canReset = true;
             CacheManager cacheManager = AppDelegate().getManager();
             var dir = cacheManager.storageOperator.cropDir;
             var projName = EncryptUtil.encodeMd5(controller.originFilePath!);
@@ -152,7 +156,7 @@ class CropOptions extends StatelessWidget {
     if (e.width == -1) {
       return Image.asset(
         Images.ic_crop_original,
-        width: $(18),
+        width: $(16),
         color: Colors.white,
       );
     } else {

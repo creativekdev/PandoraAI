@@ -17,6 +17,7 @@ import '../../../Widgets/image/sync_image_provider.dart';
 import '../../../images-res.dart';
 
 typedef OnGetCrop = void Function(imgLib.Image image, CropConfig item);
+typedef OnScrollChanged = void Function(double scrollPixel);
 
 class ImCropScreen extends StatefulWidget {
   CropConfig cropItem;
@@ -24,7 +25,9 @@ class ImCropScreen extends StatefulWidget {
 
   final String filePath;
   final OnGetCrop onGetCrop;
+  final OnScrollChanged onScrollChanged;
   double originalRatio;
+  double initScrollPixels;
 
   ImCropScreen({
     Key? key,
@@ -32,7 +35,9 @@ class ImCropScreen extends StatefulWidget {
     required this.filePath,
     required this.cropItem,
     required this.onGetCrop,
+    required this.onScrollChanged,
     required this.originalRatio,
+    required this.initScrollPixels,
   }) : super(key: key);
 
   @override
@@ -53,6 +58,8 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
 
   Key key = UniqueKey();
   Size? size;
+  bool switching = false;
+  late ScrollController scrollController;
 
   @override
   void initState() {
@@ -61,6 +68,20 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
     items = widget.items;
     filePath = widget.filePath;
     image = Image.file(File(filePath), fit: BoxFit.fill);
+    scrollController = ScrollController(initialScrollOffset: widget.initScrollPixels);
+  }
+
+  double getScrollPixels() {
+    if (scrollController.positions.isEmpty) {
+      return 0;
+    }
+    return scrollController.position.pixels;
+  }
+
+  @override
+  dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   Future<imgLib.Image> onSaveImage() async {
@@ -68,35 +89,43 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
       cropperKey: cropperKey,
     );
     File file = File(filePath);
-    if (currentItem.width == -1) {
-      return await getLibImage(await getImage(file));
-    } else {
-      SyncFileImage syncFileImage = SyncFileImage(file: file);
-      ui.Image originImage = (await syncFileImage.getImage()).image;
-      SyncMemoryImage memoryImage = SyncMemoryImage(list: imageBytes!);
-      ui.Image cropImage = (await memoryImage.getImage()).image;
-      imgLib.Image image = await getLibImage(cropImage);
-      int targetWidth = originImage.width;
-      int targetHeight = originImage.height;
+    SyncFileImage syncFileImage = SyncFileImage(file: file);
+    ui.Image originImage = (await syncFileImage.getImage()).image;
+    SyncMemoryImage memoryImage = SyncMemoryImage(list: imageBytes!);
+    ui.Image cropImage = (await memoryImage.getImage()).image;
+    imgLib.Image image = await getLibImage(cropImage);
+    int targetWidth = originImage.width;
+    int targetHeight = originImage.height;
+    if (currentItem.width != -1) {
       if (targetWidth > targetHeight) {
-        targetHeight = targetWidth ~/ widget.cropItem.ratio;
+        targetHeight = targetWidth ~/ currentItem.ratio;
       } else {
-        targetWidth = (targetHeight * widget.cropItem.ratio).toInt();
+        targetWidth = (targetHeight * currentItem.ratio).toInt();
       }
-      imgLib.Image resImage = imgLib.copyResize(image, width: targetWidth, height: targetHeight);
-      return resImage;
     }
+    imgLib.Image resImage = imgLib.copyResize(image, width: targetWidth, height: targetHeight);
+    return resImage;
   }
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppNavigationBar(
-        trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22)).intoGestureDetector(onTap: () async {
+        backAction: () {
+          widget.onScrollChanged.call(getScrollPixels());
+          Navigator.of(context).pop();
+        },
+        trailing: Image.asset(Images.ic_edit_submit, width: $(22), height: $(22))
+            .intoContainer(
+          padding: EdgeInsets.all($(8)),
+          color: Colors.transparent,
+        )
+            .intoGestureDetector(onTap: () async {
           showLoading().whenComplete(() async {
             var image = await onSaveImage();
             hideLoading().whenComplete(() {
               widget.onGetCrop(image, currentItem);
+              widget.onScrollChanged.call(getScrollPixels());
               Navigator.of(context).pop();
             });
           });
@@ -118,7 +147,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                     : Container(),
               )),
               SizedBox(
-                height: $(140),
+                height: $(140) + ScreenUtil.getBottomPadding(context),
               )
             ],
           ),
@@ -148,7 +177,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
               ),
             ),
             SizedBox(
-              height: $(140),
+              height: $(140) + ScreenUtil.getBottomPadding(context),
               child: Column(
                 children: [
                   SizedBox(height: $(15)),
@@ -168,6 +197,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                       ).createShader(bounds);
                     },
                     child: ListView.builder(
+                      controller: scrollController,
                       padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
@@ -175,10 +205,12 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                         bool check = item == currentItem;
                         return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
                           if (currentItem != item) {
-                            key = UniqueKey();
                             setState(() {
+                              switching = true;
+                              key = UniqueKey();
                               currentItem = item;
                             });
+                            delay(() => switching = false, milliseconds: 16);
                           }
                         }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
                       },
@@ -189,6 +221,18 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
               ),
             ),
           ]),
+          Column(
+            children: [
+              Expanded(
+                child: Container(
+                  color: ColorConstant.BackgroundColor,
+                ),
+              ),
+              SizedBox(
+                height: $(140) + ScreenUtil.getBottomPadding(context),
+              )
+            ],
+          ).visibility(visible: switching),
         ],
         fit: StackFit.expand,
       ),
@@ -240,9 +284,9 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
 
   Widget buildIcon(CropConfig e, BuildContext context, bool check) {
     if (e.width == -1) {
-      return Icon(
-        Icons.fullscreen,
-        size: $(18),
+      return Image.asset(
+        Images.ic_crop_original,
+        width: $(16),
         color: Colors.white,
       );
     } else {

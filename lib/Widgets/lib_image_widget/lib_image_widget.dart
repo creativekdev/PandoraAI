@@ -30,12 +30,8 @@ class LibImageWidget extends StatelessWidget {
       child: Transform.scale(
         scale: scale,
         child: CustomPaint(
-          painter: BackgroundPainter(
-            bgColor: Colors.transparent,
-            w: 10,
-            h: 10,
-          ),
-          foregroundPainter: LibImagePainter(image: image),
+          size: Size(width, height),
+          painter: LibImagePainter(image: image),
         ),
       ),
     );
