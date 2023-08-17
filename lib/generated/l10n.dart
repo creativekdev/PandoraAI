@@ -5079,6 +5079,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please enter the correct colour value`
+  String get enter_the_color_value {
+    return Intl.message(
+      'Please enter the correct colour value',
+      name: 'enter_the_color_value',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

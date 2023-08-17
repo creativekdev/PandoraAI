@@ -108,7 +108,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
     _controller.addStatusListener((status) {
       switch (status) {
         case AnimationStatus.dismissed:
-          // Navigator.of(context).pop();
+          Navigator.of(context).pop();
           break;
         case AnimationStatus.forward:
           break;
@@ -141,7 +141,14 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                 Expanded(
                     child: Container(
                   color: Colors.transparent,
-                )),
+                ).intoGestureDetector(onTap: () {
+                  if (selectedData != null) {
+                    widget.onPick.call(selectedData!, true);
+                  } else {
+                    widget.onPick.call(widget.preBackgroundData, false);
+                  }
+                  dismiss();
+                })),
                 AnimatedBuilder(
                   animation: _controller,
                   builder: (context, child) {
@@ -173,10 +180,9 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
-                                  widget.onPick.call(widget.preBackgroundData, false);
-                                  dismiss();
-                                }),
+                                SizedBox(
+                                  width: $(24),
+                                ),
                                 TabBar(
                                   indicatorColor: Colors.black,
                                   isScrollable: true,
@@ -198,7 +204,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                                     pageController.jumpToPage(index);
                                   },
                                 ),
-                                Image.asset(Images.ic_bg_submit, width: $(24)).intoGestureDetector(onTap: () {
+                                Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
                                   if (selectedData != null) {
                                     widget.onPick.call(selectedData!, true);
                                   } else {
@@ -206,6 +212,18 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                                   }
                                   dismiss();
                                 }),
+                                // Image.asset(Images.ic_bg_submit, width: $(24)).intoGestureDetector(onTap: () {
+                                //   // if (selectedData != null) {
+                                //   //   widget.onPick.call(selectedData!, true);
+                                //   // } else {
+                                //   //   widget.onPick.call(widget.preBackgroundData, false);
+                                //   // }
+                                //   Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
+                                //     widget.onPick.call(selectedData!, false);
+                                //     dismiss();
+                                //   });
+                                //   dismiss();
+                                // }),
                               ],
                             ),
                           )),
@@ -244,7 +262,6 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
   }
 
   dismiss() {
-    // _controller.reverse();
-    Navigator.of(context).pop();
+    _controller.reverse();
   }
 }

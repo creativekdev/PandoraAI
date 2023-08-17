@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
@@ -9,10 +10,12 @@ import 'package:image/image.dart' as imgLib;
 import '../../../../app/app.dart';
 import '../../../../app/cache/cache_manager.dart';
 import '../../../common/background/background_picker.dart';
+import '../../../mine/filter/pin_gesture_views.dart';
 
 class RemoveBgHolder extends ImageEditionBaseHolder {
   ui.Color? backgroundColor;
   File? _backgroundImage;
+  BackgroundData? selectData;
 
   File? get backgroundImage => _backgroundImage;
 
@@ -47,20 +50,25 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     preBackgroundData.filePath = null;
   }
 
-  buildBackLibImg(bool isSave) async {
-    if (_backgroundImage == null) {
-      imageBack = null;
-      if (isSave) {
-        preBackgroundData.color = Colors.transparent;
-        preBackgroundData.filePath = null;
-      }
+  onSavedBackground(BackgroundData data, bool isPopMerge) async {
+    if (isPopMerge) {
+      preBackgroundData = selectData ?? preBackgroundData;
     } else {
-      imageBack = await getLibImage(await getImage(_backgroundImage!));
-      shownImage = imageBack;
-      if (isSave) {
-        preBackgroundData.color = null;
-        preBackgroundData.filePath = _backgroundImage?.path;
+      if (data.filePath != null) {
+        File backFile = File(data.filePath!);
+        backgroundColor = null;
+        await setBackgroundImage(backFile, isPopMerge);
+      } else {
+        backgroundColor = rgbaToAbgr(data.color!);
+        await setBackgroundImage(null, false);
       }
+      selectData = data;
+    }
+  }
+
+  buildBackLibImg(bool isSave) async {
+    if (_backgroundImage != null) {
+      imageBack = await getLibImage(await getImage(_backgroundImage!));
     }
     update();
   }
@@ -68,10 +76,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   saveImageWithColor(Color bgColor, bool isSave) async {
     imgLib.Image newImage = imgLib.Image(imageFront!.width, imageFront!.height);
     int fillColor = bgColor.value; // 获取颜色的ARGB值
-    print("127.0.0.1 fillColor== $fillColor");
     if (isSave) {
       preBackgroundData.color = abgrToRgba(fillColor);
-      print("127.0.0.1 preBackgroundData.color == ${preBackgroundData.color}");
       preBackgroundData.filePath = null;
     }
     newImage.fillBackground(fillColor);
@@ -109,9 +115,253 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     return Color.fromRGBO(red, green, blue, alpha / 255.0);
   }
 
-  @override
-  onResetClick() {
+  onResetClick() async {
     resultFilePath = null;
     canReset = false;
+    await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
+  }
+
+  onProductShowImage() async {
+    ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
+    if (image != null) {
+      shownImage = await getLibImage(image);
+      Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(shownImage!));
+      CacheManager cacheManager = AppDelegate.instance.getManager();
+      var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      File(path).writeAsBytes(byte).then((value) {
+        resultFilePath = path;
+      });
+    }
+  }
+
+  late Uint8List personByte;
+  GlobalKey globalKey = GlobalKey(); // 保存图片的key
+  RxBool isShowSquar = false.obs; // 显示人像的边框
+
+  double scale = 1;
+
+  // double bgScale = 1;
+  double dx = 0;
+  double dy = 0;
+
+  double _width = 0;
+  double _height = 0;
+
+  GlobalKey _personImageKey = GlobalKey();
+  Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
+
+  // onShowBg() {
+  //   Future.delayed(Duration.zero, () {
+  //     RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
+  //     _width = containerBox.size.width;
+  //     _height = containerBox.size.height;
+  //     borderRect = getMaxRealImageRect();
+  //
+  //     // if (_width > 0 && _height > 0) {
+  //     //   isShowBg.value = true;
+  //     // }
+  //   });
+  // }
+
+  Future<Uint8List?> getPersonImage(Size size) async {
+    var byteData = await imageUiFront!.toByteData(format: ui.ImageByteFormat.png);
+    personByte = byteData!.buffer.asUint8List();
+    final int width = imageFront!.width;
+    final int height = imageFront!.height;
+    if ((width / size.width) > (height / size.height)) {
+      _height = size.width * height / width;
+      _width = size.width;
+    } else {
+      _width = size.height * width / height;
+      _height = size.height;
+    }
+    borderRect = getMaxRealImageRect(width, height);
+    return personByte;
+  }
+
+  Rect getMaxRealImageRect(int width, int height) {
+    int minX = width;
+    int maxX = 0;
+    int minY = height;
+    int maxY = 0;
+    for (int y = 0; y < height; y++) {
+      for (int x = 0; x < width; x++) {
+        if (!isAphaInLocation(x, y)) {
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+    double scale = _width / width;
+
+    return Rect.fromLTWH(
+      minX * scale.toDouble(),
+      minY * scale.toDouble(),
+      maxX * scale.toDouble() - minX * scale.toDouble(),
+      maxY * scale.toDouble() - minY * scale.toDouble(),
+    );
+  }
+
+  bool isAphaInLocation(int x, int y) {
+    int pixelColor = imageFront!.getPixel(x, y);
+    int alpha = imgLib.getAlpha(pixelColor);
+    bool isTransparent = alpha == 0;
+    if (isTransparent) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Widget buildShownImage(Size size) {
+    return Stack(
+      children: [
+        Column(
+          children: [
+            FutureBuilder(
+                future: getPersonImage(size),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Expanded(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          RepaintBoundary(
+                            key: globalKey,
+                            child: Listener(
+                              onPointerDown: (PointerDownEvent event) {
+                                isShowSquar.value = true;
+                              },
+                              onPointerUp: (PointerUpEvent event) {
+                                isShowSquar.value = false;
+                              },
+                              child: ClipRect(
+                                child: Container(
+                                  width: _width,
+                                  height: _height,
+                                  child: Stack(alignment: Alignment.center, children: [
+                                    _backgroundImage != null
+                                        ? Container(
+                                            alignment: Alignment.center,
+                                            child: Image.file(
+                                              _backgroundImage!,
+                                              fit: BoxFit.cover,
+                                              width: _width,
+                                              height: _height,
+                                            ),
+                                          )
+                                        : Container(
+                                            alignment: Alignment.center,
+                                            color: backgroundColor!.toArgb(),
+                                            width: _width,
+                                            height: _height,
+                                          ),
+                                    PinGestureView(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Image.file(
+                                              key: _personImageKey,
+                                              removedImage!,
+                                              fit: BoxFit.contain,
+                                              // frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                              //   onShowBg();
+                                              //   return child;
+                                              // },
+                                            ),
+                                          ),
+                                          Obx(
+                                            () => isShowSquar.value
+                                                ? UnconstrainedBox(
+                                                    child: Container(
+                                                      width: _width,
+                                                      height: _height,
+                                                      padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                      child: CustomPaint(
+                                                        painter: GradientBorderPainter(
+                                                          width: borderRect.width,
+                                                          height: borderRect.height,
+                                                          strokeWidth: $(2),
+                                                          borderRadius: $(8),
+                                                          gradient: LinearGradient(
+                                                            colors: [
+                                                              Color(0xFFE31ECD),
+                                                              Color(0xFF243CFF),
+                                                              Color(0xFFE31ECD),
+                                                            ],
+                                                            begin: Alignment.topLeft,
+                                                            end: Alignment.bottomRight,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : SizedBox(),
+                                          )
+                                        ],
+                                      ),
+                                      scale: scale,
+                                      dx: dx,
+                                      dy: dy,
+                                      onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                        scale = newScale;
+                                        dx = newDx;
+                                        dy = newDy;
+                                      },
+                                    ),
+                                  ]),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Container(width: _width, height: _height, child: Image.file(removedImage!, fit: BoxFit.contain));
+                }),
+            // SizedBox(height:bottomPadding - ScreenUtil.getBottomPadding(context)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class GradientBorderPainter extends CustomPainter {
+  final double strokeWidth;
+  final double borderRadius;
+  final Gradient gradient;
+  final double width;
+  final double height;
+
+  GradientBorderPainter({
+    required this.strokeWidth,
+    required this.borderRadius,
+    required this.gradient,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    size = Size(width, height);
+    final path = Path()..addRRect(RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(borderRadius)));
+
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..shader = gradient.createShader(Offset.zero & size);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }

@@ -502,5 +502,6 @@
   "deleted_comment": "评论已删除",
   "camera": "相机",
   "photo": "图册",
-  "print": "打印"
+  "print": "打印",
+  "enter_the_color_value": "请输入正确的色值"
 }

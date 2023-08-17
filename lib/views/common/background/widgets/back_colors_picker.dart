@@ -1,6 +1,10 @@
 import 'package:cartoonizer/Widgets/color/palette_widget.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/utils/color_util.dart';
+import 'package:cartoonizer/views/common/background/widgets/edit_color_hex_widget.dart';
 
+import '../../../../Common/event_bus_helper.dart';
+import '../../../../Widgets/router/routers.dart';
 import '../background_picker.dart';
 
 class BackColorsPicker extends StatefulWidget {
@@ -24,12 +28,16 @@ class BackColorsPicker extends StatefulWidget {
 class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepAliveClientMixin {
   String userTypeColor = '';
   Color? color;
+  late Widget paletteWidget;
 
   @override
   void initState() {
     super.initState();
     if (widget.preBackgroundData.color != null) {
       userTypeColor = '#${widget.preBackgroundData.color!.value.toRadixString(16)}';
+    }
+    if (userTypeColor == '#0' || userTypeColor == '') {
+      userTypeColor = "#FF000000";
     }
   }
 
@@ -50,29 +58,39 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
             },
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(10)),
-          if (userTypeColor != "#0")
-            TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18)).intoContainer(
-                height: $(38),
-                width: ScreenUtil.screenSize.width - $(30),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Color(0xff444547),
-                    borderRadius: BorderRadius.circular($(19)),
-                    border: Border.all(
-                      color: ColorConstant.loginTitleColor,
-                      width: $(1),
-                    ))),
-          // TitleTextWidget(S.of(context).ok, ColorConstant.White, FontWeight.w500, $(17))
-          //     .intoContainer(
-          //   width: double.maxFinite,
-          //   padding: EdgeInsets.symmetric(vertical: $(10)),
-          //   margin: EdgeInsets.symmetric(horizontal: $(15)),
-          //   decoration: BoxDecoration(color: ColorConstant.BlueColor, borderRadius: BorderRadius.circular($(32))),
-          // )
-          //     .intoGestureDetector(onTap: () {
-          //   widget.onPickColor.call(color);
-          //   widget.onOk.call(color);
-          // }),
+          // if (userTypeColor != "#0")
+          TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18))
+              .intoContainer(
+            height: $(38),
+            width: ScreenUtil.screenSize.width - $(30),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Color(0xff444547),
+              borderRadius: BorderRadius.circular($(19)),
+              border: Border.all(
+                color: ColorConstant.loginTitleColor,
+                width: $(1),
+              ),
+            ),
+          )
+              .intoGestureDetector(onTap: () {
+            Navigator.push(
+              context,
+              Bottom2TopRouter(
+                settings: RouteSettings(name: "/EditColorHexWidget"),
+                child: EditColorHexWidget(
+                    hexValue: userTypeColor,
+                    onColorSubmit: (hexValue) {
+                      userTypeColor = hexValue;
+                      Future.delayed(Duration(milliseconds: 500), () {
+                        widget.onColorChange.call(ColorUtil.hexColor(userTypeColor));
+                      });
+                      EventBusHelper().eventBus.fire(OnChangeColorHexReceiveEvent(data: userTypeColor));
+                      setState(() {});
+                    }),
+              ),
+            );
+          }),
           SizedBox(height: $(16)),
         ],
       ),

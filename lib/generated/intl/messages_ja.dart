@@ -222,6 +222,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("6ビット認証コードを入力してください"),
         "enter_now": MessageLookupByLibrary.simpleMessage("記入する"),
+        "enter_the_color_value":
+            MessageLookupByLibrary.simpleMessage("正しい色の値を入力してください"),
         "examples": MessageLookupByLibrary.simpleMessage("ケース"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("編集終了"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("編集終了"),

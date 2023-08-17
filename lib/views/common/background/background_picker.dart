@@ -9,6 +9,7 @@ import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:common_utils/common_utils.dart';
 
+import '../../../images-res.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {
@@ -82,6 +83,8 @@ class BackgroundPickerBar extends StatefulWidget {
   Function(BackgroundData data, bool isPopMerge) onPick;
   Function(BackgroundData data) onColorChange;
   final BackgroundData preBackgroundData;
+  Function() onSaved;
+  Function() onClear;
 
   BackgroundPickerBar({
     super.key,
@@ -89,6 +92,8 @@ class BackgroundPickerBar extends StatefulWidget {
     required this.onPick,
     required this.onColorChange,
     required this.preBackgroundData,
+    required this.onSaved,
+    required this.onClear,
   });
 
   @override
@@ -140,56 +145,77 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        UnconstrainedBox(
-          child: Icon(
-            Icons.add,
-            size: $(28),
-            color: ColorConstant.White,
-          )
-              .intoContainer(
-                  alignment: Alignment.center,
-                  width: itemSize,
-                  height: itemSize,
-                  margin: EdgeInsets.symmetric(horizontal: $(4)),
-                  decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
-              .intoGestureDetector(onTap: () async {
-            var d;
-            await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
-              if (isPopMerge) {
-                d = data;
-                if (d != null) {
-                  dataList.insert(0, d);
-                }
-                setState(() {
-                  cacheManager.setBool(CacheManager.isSavedPickHistory, true);
-                  cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
-                });
-              }
-              widget.onPick.call(data, isPopMerge);
-            }, onColorChange: (data) {
-              d = data;
-              widget.onColorChange.call(data);
-              setState(() {});
-            }, preBackgroundData: widget.preBackgroundData);
-          }),
+        Padding(
+          padding: EdgeInsets.all($(8)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
+              widget.onClear.call();
+            }),
+            Image.asset(
+              Images.ic_bg_submit,
+              width: $(24),
+            ).intoGestureDetector(onTap: () {
+              widget.onSaved.call();
+            }),
+          ]),
         ),
-        Expanded(
-          child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: dataList
-                  .map(
-                    (e) => UnconstrainedBox(
-                      child: ClipRRect(
-                        child: buildItem(e),
-                        borderRadius: BorderRadius.circular($(4)),
-                      ).intoGestureDetector(onTap: () {
-                        widget.onPick.call(e, true);
-                      }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
-                    ),
-                  )
-                  .toList()),
+        Row(
+          children: [
+            UnconstrainedBox(
+              child: Icon(
+                Icons.add,
+                size: $(28),
+                color: ColorConstant.White,
+              )
+                  .intoContainer(
+                      alignment: Alignment.center,
+                      width: itemSize,
+                      height: itemSize,
+                      margin: EdgeInsets.symmetric(horizontal: $(4)),
+                      decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
+                  .intoGestureDetector(onTap: () async {
+                var d;
+                await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
+                  if (isPopMerge) {
+                    d = data;
+                    if (d != null) {
+                      dataList.insert(0, d);
+                    }
+                    setState(() {
+                      cacheManager.setBool(CacheManager.isSavedPickHistory, true);
+                      cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+                    });
+                  } else {
+                    widget.onPick.call(data, isPopMerge);
+                  }
+                }, onColorChange: (data) {
+                  d = data;
+                  widget.onColorChange.call(data);
+                  setState(() {});
+                }, preBackgroundData: widget.preBackgroundData);
+              }),
+            ),
+            Container(
+              height: itemSize,
+              width: ScreenUtil.screenSize.width - itemSize - $(8) * 2,
+              child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: dataList
+                      .map(
+                        (e) => UnconstrainedBox(
+                          child: ClipRRect(
+                            child: buildItem(e),
+                            borderRadius: BorderRadius.circular($(4)),
+                          ).intoGestureDetector(onTap: () {
+                            widget.onPick.call(e, false);
+                          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                        ),
+                      )
+                      .toList()),
+            ),
+          ],
         ),
       ],
     );

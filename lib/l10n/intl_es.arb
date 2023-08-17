@@ -501,5 +501,6 @@
   "my_rencents": "Historias",
   "camera": "Cámara",
   "photo": "Atlas",
-  "print": "Imprimir"
+  "print": "Imprimir",
+  "enter_the_color_value": "Introduzca el valor de color correcto"
 }

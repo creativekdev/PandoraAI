@@ -158,7 +158,7 @@ class _BackImagePickerState extends State<BackImagePicker> with AutomaticKeepAli
   }
 
   Future<bool> getMediaPath(AssetEntity entity) async {
-    if (widget.preBackgroundData.filePath == null) return false;
+    if (widget.preBackgroundData.filePath == null && selectedData.filePath == null) return false;
     if (isResetSelected == true) {
       return false;
     }
@@ -237,6 +237,7 @@ class _BackImagePickerState extends State<BackImagePicker> with AutomaticKeepAli
               selectedData!.filePath = path;
               isResetSelected = false;
               widget.parent.hideLoading().whenComplete(() {
+                // 点击事件
                 widget.onPickFile.call(path);
               });
             });

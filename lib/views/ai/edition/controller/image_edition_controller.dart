@@ -82,7 +82,6 @@ class ImageEditionController extends GetxController {
     } else {
       _shownImage = await toImage(image);
     }
-    update();
   }
 
   ImageEditionController({
