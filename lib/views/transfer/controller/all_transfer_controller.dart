@@ -76,27 +76,37 @@ class AllTransferController extends TransferBaseController {
   @override
   void onTitleSelected(int index) {
     super.onTitleSelected(index);
-    if (selectedTitle?.category == 'cartoonize') {
-      cartoonizerController.onTitleSelected(index);
-    } else if (selectedTitle?.category == 'stylemorph') {
-      styleMorphController.onTitleSelected(index - cartoonizerController.categories.length);
+    if (selectedTitle == null) {
+      cartoonizerController.selectedTitle = null;
+      styleMorphController.selectedTitle = null;
+    } else {
+      if (selectedTitle?.category == 'cartoonize') {
+        cartoonizerController.selectedTitle = selectedTitle;
+        styleMorphController.selectedTitle = null;
+      } else if (selectedTitle?.category == 'stylemorph') {
+        cartoonizerController.selectedTitle = null;
+        styleMorphController.selectedTitle = selectedTitle;
+      }
     }
+    update();
   }
 
   @override
   void onItemSelected(int index) {
     super.onItemSelected(index);
-    if (selectedTitle?.category == 'cartoonize') {
-      if ((selectedEffect == null && cartoonizerController.selectedEffect != null) ||
-          (selectedEffect != null && (cartoonizerController.selectedEffect == null || selectedEffect?.key != cartoonizerController.selectedEffect?.key))) {
-        cartoonizerController.onItemSelected(index);
-      }
-    } else if (selectedTitle?.category == 'stylemorph') {
-      if ((selectedEffect == null && styleMorphController.selectedEffect != null) ||
-          (selectedEffect != null && (styleMorphController.selectedEffect == null || selectedEffect?.key != styleMorphController.selectedEffect?.key))) {
-        styleMorphController.onItemSelected(index);
+    if (selectedEffect == null) {
+      styleMorphController.selectedEffect = null;
+      cartoonizerController.selectedEffect = null;
+    } else {
+      if (selectedTitle?.category == 'cartoonize') {
+        styleMorphController.selectedEffect = null;
+        cartoonizerController.selectedEffect = selectedEffect;
+      } else if (selectedTitle?.category == 'stylemorph') {
+        styleMorphController.selectedEffect = selectedEffect;
+        cartoonizerController.selectedEffect = null;
       }
     }
+    update();
   }
 
   @override

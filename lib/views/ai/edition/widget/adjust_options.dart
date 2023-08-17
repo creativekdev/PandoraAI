@@ -54,18 +54,13 @@ class AdjustOptions extends StatelessWidget {
                     AppCircleProgressBar(
                       size: $(34),
                       backgroundColor: Colors.grey.shade900,
-                      progress: data.getProgress(),
+                      progress: data.value.toStringAsFixed(0) == data.initValue.toStringAsFixed(0) ? 0 : data.getProgress(),
                       ringWidth: 1.5,
-                      loadingColors: data.value.toStringAsFixed(0) == data.initValue.toStringAsFixed(0)
-                          ? [
-                              Colors.grey.shade800,
-                              Colors.grey.shade800,
-                            ]
-                          : [
-                              Color(0xFFE31ECD),
-                              Color(0xFF243CFF),
-                              Color(0xFFE31ECD),
-                            ],
+                      loadingColors: [
+                        Color(0xFFE31ECD),
+                        Color(0xFF243CFF),
+                        Color(0xFFE31ECD),
+                      ],
                     ),
                     checked && data.value.toStringAsFixed(0) != data.initValue.toStringAsFixed(0)
                         ? Text(

@@ -15,17 +15,17 @@ extension FilterEnumEx on FilterEnum {
       case FilterEnum.VIW:
         return 'Vivid Warm';
       case FilterEnum.VIC:
-        return 'Vivid Cold';
+        return 'Vivid Cool';
       case FilterEnum.DRA:
         return 'Dramatic';
       case FilterEnum.DRW:
         return 'Dramatic Warm';
       case FilterEnum.DRC:
-        return 'Dramatic Cold';
+        return 'Dramatic Cool';
       case FilterEnum.MNO:
         return 'Mono';
       case FilterEnum.SLS:
-        return 'Silver Stone';
+        return 'Silvertone';
       case FilterEnum.CTN:
         return 'Cartoon';
       case FilterEnum.INV:

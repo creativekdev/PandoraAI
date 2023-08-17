@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
@@ -122,22 +121,14 @@ class AdjustHolder extends ImageEditionBaseHolder {
   void resetConfig() {
     canReset = false;
     dataList = [
-      AdjustData(
-        function: AdjustFunction.brightness,
-        initValue: 0,
-        value: 0,
-        previousValue: 0,
-        start: -100,
-        end: 100,
-        multiple: 0.5,
-      ),
+      AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -100, end: 100, multiple: 0.5),
       AdjustData(function: AdjustFunction.contrast, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
       AdjustData(function: AdjustFunction.saturation, initValue: 100, value: 100, previousValue: 100, start: 0, end: 100, multiple: 1),
       AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.1),
       AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.2),
       AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 0.3),
       AdjustData(function: AdjustFunction.sharpen, initValue: 0, value: 0, previousValue: 0, start: 0, end: 100, multiple: 1),
-      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -200, end: 200, multiple: 4),
+      AdjustData(function: AdjustFunction.hue, initValue: 0, value: 0, previousValue: 0, start: -100, end: 100, multiple: 2),
     ];
     _index = 0;
     isClick = true;
@@ -151,12 +142,10 @@ class AdjustHolder extends ImageEditionBaseHolder {
 
   void buildResult(bool saveFile) async {
     if (baseImage == null) {
-      baseImage = imgLib.Image.from(_originImageData!);
-      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
+      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: imgLib.Image.from(_originImageData!), fun2: _imAdjust);
     }
     canReset = true;
-    shownImage = imgLib.Image.from(baseImage!);
-    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
+    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
     if (saveFile) {
       saveResult(shownImage!);
     }
@@ -168,10 +157,8 @@ class AdjustHolder extends ImageEditionBaseHolder {
     }
     dataList.forEach((element) => element.active = false);
     dataList[index].active = true;
-    baseImage = imgLib.Image.from(_originImageData!);
-    baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage!, fun2: _imAdjust);
-    shownImage = imgLib.Image.from(baseImage!);
-    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: shownImage!, fun2: _imAdjust);
+    baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: imgLib.Image.from(_originImageData!), fun2: _imAdjust);
+    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
     saveResult(shownImage!);
   }
 
@@ -179,22 +166,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
   dispose() {
     executor.dispose();
     return super.dispose();
-  }
-
-  Future<ui.Image> toImage(imgLib.Image image) async {
-    final c = Completer<ui.Image>();
-    var start = DateTime.now().millisecondsSinceEpoch;
-    ui.decodeImageFromPixels(
-      image.data.buffer.asUint8List(),
-      image.width,
-      image.height,
-      ui.PixelFormat.rgba8888,
-      (ui.Image image) {
-        print("trans-lib-uiimage: ${DateTime.now().millisecondsSinceEpoch - start}");
-        c.complete(image);
-      },
-    );
-    return c.future;
   }
 }
 
