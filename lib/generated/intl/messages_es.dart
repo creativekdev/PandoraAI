@@ -271,6 +271,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_email_code": MessageLookupByLibrary.simpleMessage(
             "Introduce el código de verificación de 6 dígitos"),
         "enter_now": MessageLookupByLibrary.simpleMessage("Ve y llénalo"),
+        "enter_the_color_value": MessageLookupByLibrary.simpleMessage(
+            "Introduzca el valor de color correcto"),
         "examples": MessageLookupByLibrary.simpleMessage("Caso"),
         "exit_editing":
             MessageLookupByLibrary.simpleMessage("Salir de la edición"),

@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:image/image.dart' as imgLib;
 
-import '../../../../Widgets/lib_image_widget/lib_image_widget.dart';
 import '../../../../utils/utils.dart';
 import 'image_edition_controller.dart';
 
@@ -35,7 +33,7 @@ abstract class ImageEditionBaseHolder {
       return;
     }
     _resultFilePath = path;
-    update();
+    // update();
   }
 
   File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
@@ -45,7 +43,7 @@ abstract class ImageEditionBaseHolder {
   set shownImage(imgLib.Image? value) {
     _shownImage = value;
     parent.setShownImage(value);
-    update();
+    // update();
   }
 
   imgLib.Image? get shownImage => _shownImage;

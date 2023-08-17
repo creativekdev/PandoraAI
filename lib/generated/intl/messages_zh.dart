@@ -214,6 +214,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_code": MessageLookupByLibrary.simpleMessage("填写邀请码"),
         "enter_email_code": MessageLookupByLibrary.simpleMessage("输入6位验证码"),
         "enter_now": MessageLookupByLibrary.simpleMessage("去填写"),
+        "enter_the_color_value":
+            MessageLookupByLibrary.simpleMessage("请输入正确的色值"),
         "examples": MessageLookupByLibrary.simpleMessage("案例"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("退出编辑"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("退出编辑"),

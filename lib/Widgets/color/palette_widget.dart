@@ -2,6 +2,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/views/common/background/background_picker.dart';
 
+import '../../Common/event_bus_helper.dart';
 import '../../utils/color_util.dart';
 import 'circle_color_widget.dart';
 import 'slider_color_picker_widgets.dart';
@@ -45,6 +46,8 @@ class _PaletteWidgetState extends State<PaletteWidget> {
 
   double opacity = 1;
 
+  late StreamSubscription onChangeColorListener;
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +62,19 @@ class _PaletteWidgetState extends State<PaletteWidget> {
         }
       }
     }
+
+    onChangeColorListener = EventBusHelper().eventBus.on<OnChangeColorHexReceiveEvent>().listen((event) {
+      setState(() {
+        widget.selectedData.color = ColorUtil.hexColor(event.data!);
+        selectedIndex = -1;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    onChangeColorListener.cancel();
   }
 
   @override
@@ -85,11 +101,11 @@ class _PaletteWidgetState extends State<PaletteWidget> {
         SizedBox(height: $(10)),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: i == 0 ? $(38) : 0,
+          height: i == 0 && selectedIndex != -1 ? $(38) : 0,
           child: SliderColorPicker(
             progress: 1 - opacity,
             selectorColor: i == 0 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
-            visible: i == 0,
+            visible: i == 0 && selectedIndex != -1,
             onChange: (Color selectorColor, double opacity) {
               this.opacity = 1 - opacity;
               widget.onChange.call(selectorColor, this.opacity);
@@ -112,11 +128,11 @@ class _PaletteWidgetState extends State<PaletteWidget> {
         SizedBox(height: $(10)),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: i == 1 ? $(38) : 0,
+          height: i == 1 && selectedIndex != -1 ? $(38) : 0,
           child: SliderColorPicker(
             progress: 1 - opacity,
             selectorColor: i == 1 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
-            visible: i == 1,
+            visible: i == 1 && selectedIndex != -1,
             onChange: (selectorColor, opacity) {
               this.opacity = 1 - opacity;
               widget.onChange.call(selectorColor, this.opacity);
@@ -139,11 +155,11 @@ class _PaletteWidgetState extends State<PaletteWidget> {
         SizedBox(height: $(10)),
         AnimatedContainer(
           duration: Duration(milliseconds: 300),
-          height: i == 2 ? $(38) : 0,
+          height: i == 2 && selectedIndex != -1 ? $(38) : 0,
           child: SliderColorPicker(
             progress: 1 - opacity,
             selectorColor: i == 2 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
-            visible: i == 2,
+            visible: i == 2 && selectedIndex != -1,
             onChange: (selectorColor, opacity) {
               this.opacity = 1 - opacity;
               widget.onChange.call(selectorColor, this.opacity);

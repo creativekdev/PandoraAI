@@ -258,6 +258,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "enter_email_code":
             MessageLookupByLibrary.simpleMessage("Enter 6-digit code"),
         "enter_now": MessageLookupByLibrary.simpleMessage("Enter now"),
+        "enter_the_color_value": MessageLookupByLibrary.simpleMessage(
+            "Please enter the correct colour value"),
         "examples": MessageLookupByLibrary.simpleMessage("Examples"),
         "exit_editing": MessageLookupByLibrary.simpleMessage("EXIT EDITING"),
         "exit_msg": MessageLookupByLibrary.simpleMessage("Exit editing?"),

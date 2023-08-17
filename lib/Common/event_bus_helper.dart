@@ -1,4 +1,3 @@
-import 'package:cartoonizer/models/push_extra_entity.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -145,6 +144,10 @@ class OnCreateAvatarAiEvent extends BaseEvent {}
 
 class OnPoseStateChangeEvent extends BaseEvent<PoseState> {
   OnPoseStateChangeEvent({required super.data});
+}
+
+class OnChangeColorHexReceiveEvent extends BaseEvent<String> {
+  OnChangeColorHexReceiveEvent({required super.data});
 }
 
 class OnTxt2imgStyleUpdateEvent extends BaseEvent {}
