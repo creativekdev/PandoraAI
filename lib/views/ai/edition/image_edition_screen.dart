@@ -368,7 +368,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
-      return removeBgHolder.removedImage == null ? Image.file(removeBgHolder.originFile!) : removeBgHolder.buildShownImage(imageSize);
+      return controller.showOrigin
+          ? Image.file(removeBgHolder.originFile!)
+          : removeBgHolder.removedImage == null
+              ? Image.file(removeBgHolder.originFile!)
+              : removeBgHolder.buildShownImage(imageSize);
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
