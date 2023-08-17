@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
@@ -118,6 +119,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   onResetClick() async {
     resultFilePath = null;
     canReset = false;
+    scale = 1;
+    dy = 0;
+    dx = 0;
     await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
   }
 
@@ -137,7 +141,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   late Uint8List personByte;
   GlobalKey globalKey = GlobalKey(); // 保存图片的key
   RxBool isShowSquar = false.obs; // 显示人像的边框
-
+  bool isRequestWidth = true;
   double scale = 1;
 
   // double bgScale = 1;
@@ -150,20 +154,10 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   GlobalKey _personImageKey = GlobalKey();
   Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
 
-  // onShowBg() {
-  //   Future.delayed(Duration.zero, () {
-  //     RenderBox containerBox = _personImageKey.currentContext!.findRenderObject() as RenderBox;
-  //     _width = containerBox.size.width;
-  //     _height = containerBox.size.height;
-  //     borderRect = getMaxRealImageRect();
-  //
-  //     // if (_width > 0 && _height > 0) {
-  //     //   isShowBg.value = true;
-  //     // }
-  //   });
-  // }
-
   Future<Uint8List?> getPersonImage(Size size) async {
+    if (isRequestWidth == false) {
+      return null;
+    }
     var byteData = await imageUiFront!.toByteData(format: ui.ImageByteFormat.png);
     personByte = byteData!.buffer.asUint8List();
     final int width = imageFront!.width;
@@ -224,6 +218,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                 future: getPersonImage(size),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
+                    isRequestWidth = false;
                     return Expanded(
                       child: Stack(
                         alignment: Alignment.center,
@@ -238,82 +233,85 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                 isShowSquar.value = false;
                               },
                               child: ClipRect(
-                                child: Container(
-                                  width: _width,
-                                  height: _height,
-                                  child: Stack(alignment: Alignment.center, children: [
-                                    _backgroundImage != null
-                                        ? Container(
-                                            alignment: Alignment.center,
-                                            child: Image.file(
-                                              _backgroundImage!,
-                                              fit: BoxFit.cover,
+                                child: CustomPaint(
+                                  painter: BackgroundPainter(
+                                    bgColor: Colors.transparent,
+                                    w: 10,
+                                    h: 10,
+                                  ),
+                                  child: Container(
+                                    width: _width,
+                                    height: _height,
+                                    child: Stack(alignment: Alignment.center, children: [
+                                      _backgroundImage != null
+                                          ? Container(
+                                              alignment: Alignment.center,
+                                              child: Image.file(
+                                                _backgroundImage!,
+                                                fit: BoxFit.cover,
+                                                width: _width,
+                                                height: _height,
+                                              ),
+                                            )
+                                          : Container(
+                                              alignment: Alignment.center,
+                                              color: backgroundColor!.toArgb(),
                                               width: _width,
                                               height: _height,
                                             ),
-                                          )
-                                        : Container(
-                                            alignment: Alignment.center,
-                                            color: backgroundColor!.toArgb(),
-                                            width: _width,
-                                            height: _height,
-                                          ),
-                                    PinGestureView(
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.center,
-                                            child: Image.file(
-                                              key: _personImageKey,
-                                              removedImage!,
-                                              fit: BoxFit.contain,
-                                              // frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                                              //   onShowBg();
-                                              //   return child;
-                                              // },
+                                      PinGestureView(
+                                        child: Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Container(
+                                              alignment: Alignment.center,
+                                              child: Image.file(
+                                                key: _personImageKey,
+                                                removedImage!,
+                                                fit: BoxFit.contain,
+                                              ),
                                             ),
-                                          ),
-                                          Obx(
-                                            () => isShowSquar.value
-                                                ? UnconstrainedBox(
-                                                    child: Container(
-                                                      width: _width,
-                                                      height: _height,
-                                                      padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
-                                                      child: CustomPaint(
-                                                        painter: GradientBorderPainter(
-                                                          width: borderRect.width,
-                                                          height: borderRect.height,
-                                                          strokeWidth: $(2),
-                                                          borderRadius: $(8),
-                                                          gradient: LinearGradient(
-                                                            colors: [
-                                                              Color(0xFFE31ECD),
-                                                              Color(0xFF243CFF),
-                                                              Color(0xFFE31ECD),
-                                                            ],
-                                                            begin: Alignment.topLeft,
-                                                            end: Alignment.bottomRight,
+                                            Obx(
+                                              () => isShowSquar.value
+                                                  ? UnconstrainedBox(
+                                                      child: Container(
+                                                        width: _width,
+                                                        height: _height,
+                                                        padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                        child: CustomPaint(
+                                                          painter: GradientBorderPainter(
+                                                            width: borderRect.width,
+                                                            height: borderRect.height,
+                                                            strokeWidth: $(2),
+                                                            borderRadius: $(8),
+                                                            gradient: LinearGradient(
+                                                              colors: [
+                                                                Color(0xFFE31ECD),
+                                                                Color(0xFF243CFF),
+                                                                Color(0xFFE31ECD),
+                                                              ],
+                                                              begin: Alignment.topLeft,
+                                                              end: Alignment.bottomRight,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  )
-                                                : SizedBox(),
-                                          )
-                                        ],
+                                                    )
+                                                  : SizedBox(),
+                                            )
+                                          ],
+                                        ),
+                                        scale: scale,
+                                        dx: dx,
+                                        dy: dy,
+                                        onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                          scale = newScale;
+                                          dx = newDx;
+                                          dy = newDy;
+                                        },
                                       ),
-                                      scale: scale,
-                                      dx: dx,
-                                      dy: dy,
-                                      onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                        scale = newScale;
-                                        dx = newDx;
-                                        dy = newDy;
-                                      },
-                                    ),
-                                  ]),
+                                    ]),
+                                  ),
                                 ),
                               ),
                             ),
@@ -322,7 +320,13 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                       ),
                     );
                   }
-                  return Container(width: _width, height: _height, child: Image.file(removedImage!, fit: BoxFit.contain));
+                  return CustomPaint(
+                      painter: BackgroundPainter(
+                        bgColor: Colors.transparent,
+                        w: 10,
+                        h: 10,
+                      ),
+                      child: Container(width: _width, height: _height, child: Image.file(removedImage!, fit: BoxFit.contain)));
                 }),
             // SizedBox(height:bottomPadding - ScreenUtil.getBottomPadding(context)),
           ],
