@@ -175,7 +175,7 @@ class _PinGestureViewState extends State<PinGestureView> {
     return GestureDetector(
       onScaleStart: (ScaleStartDetails details) {
         baseScale = scale;
-        lastOffset = details.localFocalPoint;
+        lastOffset = details.localFocalPoint - Offset(dx, dy);
       },
       onScaleUpdate: (ScaleUpdateDetails details) {
         double newScale = baseScale * details.scale;
