@@ -145,7 +145,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                   if (selectedData != null) {
                     widget.onPick.call(selectedData!, true);
                   } else {
-                    widget.onPick.call(widget.preBackgroundData, false);
+                    widget.onPick.call(widget.preBackgroundData, true);
                   }
                   dismiss();
                 })),
@@ -208,7 +208,7 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
                                   if (selectedData != null) {
                                     widget.onPick.call(selectedData!, true);
                                   } else {
-                                    widget.onPick.call(widget.preBackgroundData, false);
+                                    widget.onPick.call(widget.preBackgroundData, true);
                                   }
                                   dismiss();
                                 }),
