@@ -778,6 +778,11 @@ class AppApi extends RetryAbleRequester {
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
   }
 
+  Future<GenerateLimitEntity?> getRemoveBgLimit() async {
+    var baseEntity = await get('/tool/removebg/usage');
+    return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);
+  }
+
   Future<GenerateLimitEntity?> getTxt2ImgLimit() async {
     var baseEntity = await get('/tool/txt2img/usage');
     return jsonConvert.convert<GenerateLimitEntity>(baseEntity?.data['data']);

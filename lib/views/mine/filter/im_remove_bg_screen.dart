@@ -2,12 +2,19 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
+import '../../../api/app_api.dart';
 import '../../../api/filter_api.dart';
+import '../../../app/app.dart';
+import '../../../app/user/user_manager.dart';
+import '../../../models/enums/account_limit_type.dart';
 import '../../../network/dio_node.dart';
+import '../../../utils/utils.dart';
+import '../../ai/anotherme/another_me_controller.dart';
 
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
@@ -48,24 +55,12 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   late double _height;
   UploadImageController uploadImageController = Get.find();
   GlobalKey globalKey = GlobalKey();
+  late AppApi appApi;
 
   @override
   void initState() {
     super.initState();
-    // width = ScreenUtil.screenSize.width;
-    // height = width / widget.imageRatio;
-    // width = widget.imageWidth;
-    // height = widget.imageHeight;
-
-    // final int width = imageFront!.width;
-    // final int height = imageFront!.height;
-    // if ((width / size.width) > (height / size.height)) {
-    //   _height = size.width * height / width;
-    //   _width = size.width;
-    // } else {
-    //   _width = size.height * width / height;
-    //   _height = size.height;
-    // }
+    appApi = AppApi();
 
     final int imgWidth = widget.imageWidth.toInt();
     final int imgHeight = widget.imageHeight.toInt();
@@ -114,16 +109,27 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
     delay(() => onGetRemovebgImage());
-
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   RenderBox containerBox = globalKey.currentContext!.findRenderObject() as RenderBox;
-    //   width = containerBox.size.width;
-    //   height = containerBox.size.height;
-    //   setState(() {});
-    // });
   }
 
   onGetRemovebgImage() async {
+    var removeBgLimitEntity = await appApi.getRemoveBgLimit();
+    if (removeBgLimitEntity != null) {
+      if (removeBgLimitEntity.usedCount >= removeBgLimitEntity.dailyLimit) {
+        if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.guest, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.guest;
+        } else if (isVip()) {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.vip, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.vip;
+        } else {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.normal, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.normal;
+        }
+      }
+    }
     uploadImageController.upload(file: File(widget.filePath)).then((value) async {
       if (TextUtil.isEmpty(value)) {
         isRequset = false;
@@ -147,6 +153,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   @override
   void dispose() {
     _controller.dispose();
+    appApi.unbind();
     super.dispose();
   }
 
@@ -155,9 +162,11 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     return Scaffold(
       backgroundColor: Color(0xaa000000),
       appBar: AppNavigationBar(
-        backgroundColor: Colors.transparent,
-        leading: SizedBox(),
-      ),
+          backgroundColor: Colors.transparent,
+          leading: SizedBox(),
+          backAction: () {
+            Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          }),
       body: Column(
         children: [
           Expanded(
