@@ -23,6 +23,7 @@ import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.d
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../../Widgets/app_navigation_bar.dart';
 import '../../../../utils/utils.dart';
 import 'ie_base_holder.dart';
 
@@ -177,6 +178,7 @@ class ImageEditionController extends GetxController {
 
   startRemoveBg() async {
     var image = await SyncFileImage(file: originFile).getImage();
+    final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
     Navigator.push(
       Get.context!,
       NoAnimRouter(
@@ -200,6 +202,7 @@ class ImageEditionController extends GetxController {
               // holder.resultFilePath = path;
             });
           },
+          size: imageSize,
         ),
         // opaque: true,
         settings: RouteSettings(name: "/ImRemoveBgScreen"),
@@ -289,6 +292,8 @@ class ImageEditionController extends GetxController {
         }
         if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
           var image = await SyncFileImage(file: File(originFilePath)).getImage();
+          final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
+
           Navigator.push(
             context,
             NoAnimRouter(
@@ -306,6 +311,7 @@ class ImageEditionController extends GetxController {
                     holder.resultFilePath = path;
                   });
                 },
+                size: imageSize,
               ),
               // opaque: true,
               settings: RouteSettings(name: "/ImRemoveBgScreen"),
