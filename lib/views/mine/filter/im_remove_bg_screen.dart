@@ -20,7 +20,8 @@ class ImRemoveBgScreen extends StatefulWidget {
       this.bottomPadding = 0,
       this.switchButtonBottomToScreen = 0,
       required this.imageHeight,
-      required this.imageWidth});
+      required this.imageWidth,
+      required this.size});
 
   final String filePath;
   final OnGetRemoveBgImage onGetRemoveBgImage;
@@ -29,6 +30,7 @@ class ImRemoveBgScreen extends StatefulWidget {
   final double switchButtonBottomToScreen;
   final double imageHeight;
   final double imageWidth;
+  final Size size;
 
   @override
   State<ImRemoveBgScreen> createState() => _ImRemoveBgScreenState();
@@ -42,8 +44,8 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   bool isReverse = false;
 
   String? removeBgUrl;
-  late double width;
-  late double height;
+  late double _width;
+  late double _height;
   UploadImageController uploadImageController = Get.find();
   GlobalKey globalKey = GlobalKey();
 
@@ -52,8 +54,29 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     super.initState();
     // width = ScreenUtil.screenSize.width;
     // height = width / widget.imageRatio;
-    width = widget.imageWidth;
-    height = widget.imageHeight;
+    // width = widget.imageWidth;
+    // height = widget.imageHeight;
+
+    // final int width = imageFront!.width;
+    // final int height = imageFront!.height;
+    // if ((width / size.width) > (height / size.height)) {
+    //   _height = size.width * height / width;
+    //   _width = size.width;
+    // } else {
+    //   _width = size.height * width / height;
+    //   _height = size.height;
+    // }
+
+    final int imgWidth = widget.imageWidth.toInt();
+    final int imgHeight = widget.imageHeight.toInt();
+    if ((imgWidth / widget.size.width) > (imgHeight / widget.size.height)) {
+      _height = widget.size.width * imgHeight / imgWidth;
+      _width = widget.size.width;
+    } else {
+      _width = widget.size.height * imgWidth / imgHeight;
+      _height = widget.size.height;
+    }
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -92,12 +115,12 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     _controller.forward();
     delay(() => onGetRemovebgImage());
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      RenderBox containerBox = globalKey.currentContext!.findRenderObject() as RenderBox;
-      width = containerBox.size.width;
-      height = containerBox.size.height;
-      setState(() {});
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   RenderBox containerBox = globalKey.currentContext!.findRenderObject() as RenderBox;
+    //   width = containerBox.size.width;
+    //   height = containerBox.size.height;
+    //   setState(() {});
+    // });
   }
 
   onGetRemovebgImage() async {
@@ -152,12 +175,12 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                   AnimatedBuilder(
                     animation: _animation,
                     builder: (context, child) {
-                      double offsetY = height * _animation.value;
+                      double offsetY = _height * _animation.value;
                       return Stack(
                         children: [
                           ClipPath(
                             //  矩形裁剪
-                            clipper: ReactClipper(isLoaded ? offsetY : height),
+                            clipper: ReactClipper(isLoaded ? offsetY : _height),
                             child: Image.file(
                               key: globalKey,
                               File(widget.filePath!),
@@ -169,23 +192,25 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                           Positioned(
                             left: 0,
                             right: 0,
-                            top: (isReverse ? offsetY + $(3) : -offsetY - $(3)),
+                            top: (isReverse ? offsetY : -offsetY),
                             child: Image.asset(
                               "assets/images/ic_swiper_shadow.png",
-                              height: $(88),
-                              width: width,
+                              height: $(76),
+                              width: _width,
+                              fit: BoxFit.cover,
                             ),
                           ),
                           Positioned(
                               left: 0,
                               right: 0,
-                              top: (isReverse ? (height - offsetY) + height - $(91) : (offsetY - $(85))),
+                              top: (isReverse ? (_height - offsetY) + _height - $(76) : (offsetY - $(76))),
                               child: Transform.rotate(
                                   angle: pi,
                                   child: Image.asset(
                                     "assets/images/ic_swiper_shadow.png",
-                                    height: $(88),
-                                    width: width,
+                                    height: $(76),
+                                    width: _width,
+                                    fit: BoxFit.cover,
                                   ))),
                           Positioned(
                             left: 0,
@@ -194,7 +219,8 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
                             child: Image.asset(
                               "assets/images/ic_swiper_line.png",
                               height: $(3),
-                              width: width,
+                              width: _width,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ],
