@@ -156,7 +156,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
             Expanded(
               child: Center(
                 child: Cropper(
-                  key: key,
+                  key: UniqueKey(),
                   backgroundColor: Colors.transparent,
                   overlayColor: Colors.white,
                   gridLineThickness: 1,
@@ -210,7 +210,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                             key = UniqueKey();
                             currentItem = item;
                           });
-                          delay(() => safeSetState(() => switching = false), milliseconds: 32);
+                          delay(() => safeSetState(() => switching = false), milliseconds: 48);
                         }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
                       },
                       itemCount: items.length,

@@ -5,6 +5,7 @@ import 'package:cartoonizer/Controller/recent/record_holder.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:common_utils/common_utils.dart';
 
 ///
@@ -19,6 +20,7 @@ class RecentController extends GetxController {
   late AIDrawRecordHolder aiDrawHolder;
   late StyleMorphRecordHolder styleMorphRecordHolder;
   late AIColoringRecordHolder aiColoringRecordHolder;
+  late ImageEditionRecordHolder imageEditionRecordHolder;
 
   List<RecentEffectModel> effectList = [];
   List<RecentMetaverseEntity> metaverseList = [];
@@ -26,6 +28,7 @@ class RecentController extends GetxController {
   List<DrawableRecord> aiDrawList = [];
   List<RecentStyleMorphModel> styleMorphList = [];
   List<RecentColoringEntity> coloringList = [];
+  List<RecentImageEditionEntity> imageEditionList = [];
 
   List<dynamic> recordList = [];
 
@@ -38,6 +41,7 @@ class RecentController extends GetxController {
     aiDrawHolder = AIDrawRecordHolder();
     styleMorphRecordHolder = StyleMorphRecordHolder();
     aiColoringRecordHolder = AIColoringRecordHolder();
+    imageEditionRecordHolder = ImageEditionRecordHolder();
     loadingFromCache();
   }
 
@@ -48,6 +52,7 @@ class RecentController extends GetxController {
     aiDrawList = await aiDrawHolder.loadFromCache();
     styleMorphList = await styleMorphRecordHolder.loadFromCache();
     coloringList = await aiColoringRecordHolder.loadFromCache();
+    imageEditionList = await imageEditionRecordHolder.loadFromCache();
     sortList();
     update();
   }
@@ -80,7 +85,7 @@ class RecentController extends GetxController {
         ..originalPath = element.originalPath
         ..filePath = [e]));
     });
-    recordList = [...effects, ...metaverses, ...groundList, ...aiDrawList, ...styleMorphList, ...coloringList];
+    recordList = [...effects, ...metaverses, ...groundList, ...aiDrawList, ...styleMorphList, ...coloringList, ...imageEditionList];
     recordList.sort((a1, a2) => a1.updateDt < a2.updateDt ? 1 : -1);
   }
 
@@ -168,6 +173,25 @@ class RecentController extends GetxController {
   onAiColoringUsed(RecentColoringEntity record) {
     record.updateDt = DateTime.now().millisecondsSinceEpoch;
     aiColoringRecordHolder.record(coloringList, record);
+    sortList();
+    update();
+  }
+
+  onImageEditionUsed(
+    String originPath,
+    String? resultPath,
+    FilterEnum filter,
+    List<RecentAdjustData> adjusts,
+    List<RecentEffectItem> items,
+  ) {
+    var record = RecentImageEditionEntity()
+      ..updateDt = DateTime.now().millisecondsSinceEpoch
+      ..itemList = items
+      ..originFilePath = originPath
+      ..filePath = resultPath
+      ..filter = filter
+      ..adjustData = adjusts;
+    imageEditionRecordHolder.record(imageEditionList, record);
     sortList();
     update();
   }

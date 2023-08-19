@@ -128,6 +128,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "buyNow": MessageLookupByLibrary.simpleMessage("Comprar ahora"),
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage("％d conversión AI Artist/día"),
+        "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
+            "Obtenga acceso completo e ilimitado a todos los efectos, filtros y herramientas de Pandora AI."),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "％d conversión me-taverse/día"),
         "c_password":

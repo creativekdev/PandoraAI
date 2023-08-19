@@ -8,18 +8,21 @@ import 'package:cartoonizer/Widgets/video/effect_video_player.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:cartoonizer/models/api_config_entity.dart';
+import 'package:cartoonizer/models/enums/home_card_type.dart';
+import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/anotherme/anotherme.dart';
 import 'package:cartoonizer/views/ai/drawable/colorfill/ai_coloring.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/ai_drawable.dart';
 import 'package:cartoonizer/views/ai/drawable/scribble/widget/drawable.dart';
+import 'package:cartoonizer/views/ai/edition/image_edition.dart';
 import 'package:cartoonizer/views/ai/txt2img/txt2img.dart';
 import 'package:cartoonizer/views/transfer/cartoonizer/cartoonize.dart';
+import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/style_morph/style_morph.dart';
 
 class EffectRecentScreen extends StatefulWidget {
-
   EffectRecentScreen({
     Key? key,
   }) : super(key: key);
@@ -133,6 +136,20 @@ class EffectRecentState extends State<EffectRecentScreen> with AutomaticKeepAliv
                             fit: BoxFit.cover,
                           ).intoGestureDetector(onTap: () {
                             AiColoring.open(context, source: 'recently', record: data);
+                          });
+                        } else if (data is RecentImageEditionEntity) {
+                          return Image.file(
+                            File(data.filePath!),
+                            fit: BoxFit.cover,
+                          ).intoGestureDetector(onTap: () {
+                            ImageEdition.open(
+                              context,
+                              source: 'recently',
+                              style: EffectStyle.All,
+                              function: ImageEditionFunction.effect,
+                              cardType: HomeCardType.imageEdition,
+                              record: data,
+                            );
                           });
                         }
                         return Container();

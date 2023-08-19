@@ -227,6 +227,8 @@ class JsonConvert {
 		(RecentMetaverseEntity).toString(): RecentMetaverseEntity.fromJson,
 		(RecentGroundEntity).toString(): RecentGroundEntity.fromJson,
 		(RecentColoringEntity).toString(): RecentColoringEntity.fromJson,
+		(RecentImageEditionEntity).toString(): RecentImageEditionEntity.fromJson,
+		(RecentAdjustData).toString(): RecentAdjustData.fromJson,
 		(RegionCodeEntity).toString(): RegionCodeEntity.fromJson,
 		(ShippingMethodEntity).toString(): ShippingMethodEntity.fromJson,
 		(ShippingMethodShippingRateData).toString(): ShippingMethodShippingRateData.fromJson,
@@ -833,6 +835,12 @@ List<T>? convertListNotNull<T>(dynamic value, {EnumConvertFunction? enumConvert}
 		}
 		if(<RecentColoringEntity>[] is M){
 			return data.map<RecentColoringEntity>((Map<String, dynamic> e) => RecentColoringEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentImageEditionEntity>[] is M){
+			return data.map<RecentImageEditionEntity>((Map<String, dynamic> e) => RecentImageEditionEntity.fromJson(e)).toList() as M;
+		}
+		if(<RecentAdjustData>[] is M){
+			return data.map<RecentAdjustData>((Map<String, dynamic> e) => RecentAdjustData.fromJson(e)).toList() as M;
 		}
 		if(<RegionCodeEntity>[] is M){
 			return data.map<RegionCodeEntity>((Map<String, dynamic> e) => RegionCodeEntity.fromJson(e)).toList() as M;

@@ -318,13 +318,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                         SizedBox(height: $(10)),
                         attrItem(
                           context,
-                          title: S.of(context).buy_attr_metaverse.replaceAll("%d", '${getPlanLimit(HomeCardType.anotherme)}'),
-                          imageRes: Images.ic_buy_metaverse,
-                        ),
-                        SizedBox(height: $(10)),
-                        attrItem(
-                          context,
-                          title: S.of(context).buy_attr_ai_artist.replaceAll('%d', '${getPlanLimit(HomeCardType.txt2img)}'),
+                          title: S.of(context).buy_attr_ai_tools,
                           imageRes: Images.ic_buy_ai_artist,
                         ),
                       ],

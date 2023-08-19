@@ -105,6 +105,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "buyNow": MessageLookupByLibrary.simpleMessage("今すぐ購入する"),
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage(" %d 回AIアーティストの変換/日"),
+        "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
+            "パンドラAIのすべてのエフェクト、フィルター、ツールに完全かつ無制限にアクセスできます。"),
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage(" %d 回Me-Taverse変換/日"),
         "c_password": MessageLookupByLibrary.simpleMessage("パスワード確認"),

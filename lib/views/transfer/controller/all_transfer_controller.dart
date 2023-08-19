@@ -140,9 +140,9 @@ class AllTransferController extends TransferBaseController {
   Future<TransferResult?> startTransfer(String imageUrl, String? cachedId, {onFailed, bool needRecord = true}) async {
     TransferResult? result;
     if (selectedTitle?.category == 'cartoonize') {
-      result = await cartoonizerController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: true);
+      result = await cartoonizerController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: needRecord);
     } else if (selectedTitle?.category == 'stylemorph') {
-      result = await styleMorphController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: true);
+      result = await styleMorphController.startTransfer(imageUrl, cachedId, onFailed: onFailed, needRecord: needRecord);
     } else {
       return null;
     }

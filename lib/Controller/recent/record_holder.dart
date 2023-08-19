@@ -250,3 +250,39 @@ class AIColoringRecordHolder extends RecordHolder<RecentColoringEntity> {
     );
   }
 }
+
+class ImageEditionRecordHolder extends RecordHolder<RecentImageEditionEntity> {
+  @override
+  Future<List<RecentImageEditionEntity>> loadFromCache() async {
+    List<RecentImageEditionEntity> result = [];
+    try {
+      var json = _cacheManager.getJson(CacheManager.keyRecentImageEdition);
+      result = (json as List<dynamic>).map((e) => RecentImageEditionEntity.fromJson(e)).toList();
+      result = await result.filterSync((t) async {
+        if (File(t.filePath ?? '').existsSync() && File(t.originFilePath ?? '').existsSync()) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    } catch (e) {}
+    return result;
+  }
+
+  @override
+  Future<bool> record(List<RecentImageEditionEntity> source, RecentImageEditionEntity data, {bool toCache = true}) async {
+    source.insert(0, data);
+    if (toCache) {
+      await saveToCache(source);
+    }
+    return true;
+  }
+
+  @override
+  Future<bool> saveToCache(List<RecentImageEditionEntity> data) async {
+    return await _cacheManager.setJson(
+      CacheManager.keyRecentImageEdition,
+      data.map((e) => e.toJson()).toList(),
+    );
+  }
+}

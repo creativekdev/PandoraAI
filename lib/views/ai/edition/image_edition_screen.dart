@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
+import 'package:cartoonizer/Controller/recent/recent_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
@@ -14,6 +15,8 @@ import 'package:cartoonizer/models/enums/home_card_type.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/li_pop_menu.dart';
+import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/image_edition_controller.dart';
 import 'package:cartoonizer/views/ai/edition/controller/remove_bg_holder.dart';
@@ -21,6 +24,7 @@ import 'package:cartoonizer/views/ai/edition/widget/adjust_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/crop_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/filter_options.dart';
 import 'package:cartoonizer/views/ai/edition/widget/remove_bg_options.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/share/share_discovery_screen.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
 import 'package:cartoonizer/views/transfer/controller/sticker_controller.dart';
@@ -46,6 +50,8 @@ class ImageEditionScreen extends StatefulWidget {
   String photoType;
   ImageEditionFunction initFunction;
   List<RecentEffectItem> recentEffectItems;
+  List<RecentAdjustData> adjustData;
+  FilterEnum filter;
 
   ImageEditionScreen({
     super.key,
@@ -56,6 +62,8 @@ class ImageEditionScreen extends StatefulWidget {
     required this.photoType,
     required this.initFunction,
     required this.recentEffectItems,
+    required this.adjustData,
+    required this.filter,
   });
 
   @override
@@ -105,11 +113,28 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   saveToAlbum() async {
     await showLoading();
-    if (controller.currentItem.function == ImageEditionFunction.effect) {
-      AllTransferController effectHolder = controller.currentItem.holder;
+    if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
+      TransferBaseController effectHolder = controller.currentItem.holder;
       await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
+      var recentController = Get.find<RecentController>();
+      var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
+      var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
+      // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
+      // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
+      recentController.onImageEditionUsed(
+        controller.originFile.path,
+        holder.resultFile?.path,
+        filterHolder?.currentFunction ?? FilterEnum.NOR,
+        adjustHolder?.dataList
+                .map((e) => RecentAdjustData()
+                  ..mAdjustFunction = e.function
+                  ..value = e.value)
+                .toList() ??
+            [],
+        [],
+      );
       if (holder is RemoveBgHolder) {
         await GallerySaver.saveImage((holder.resultFile ?? holder.removedImage ?? holder.originFile)!.path, albumName: saveAlbumName);
       } else {

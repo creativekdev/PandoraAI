@@ -35,7 +35,6 @@ class OkToast extends StatelessWidget {
           borderRadius: BorderRadius.circular($(6)),
         ),
         width: $(150),
-        height: $(130),
-        margin: EdgeInsets.only(bottom: $(200)));
+        height: $(130));
   }
 }

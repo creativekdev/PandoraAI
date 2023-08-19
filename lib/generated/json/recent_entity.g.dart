@@ -1,5 +1,9 @@
 import 'package:cartoonizer/generated/json/base/json_convert_content.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
+import 'package:cartoonizer/models/enums/adjust_function.dart';
+
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
+
 
 RecentStyleMorphModel $RecentStyleMorphModelFromJson(Map<String, dynamic> json) {
 	final RecentStyleMorphModel recentStyleMorphModel = RecentStyleMorphModel();
@@ -178,5 +182,65 @@ Map<String, dynamic> $RecentColoringEntityToJson(RecentColoringEntity entity) {
 	data['updateDt'] = entity.updateDt;
 	data['filePath'] = entity.filePath;
 	data['originFilePath'] = entity.originFilePath;
+	return data;
+}
+
+RecentImageEditionEntity $RecentImageEditionEntityFromJson(Map<String, dynamic> json) {
+	final RecentImageEditionEntity recentImageEditionEntity = RecentImageEditionEntity();
+	final int? updateDt = jsonConvert.convert<int>(json['updateDt']);
+	if (updateDt != null) {
+		recentImageEditionEntity.updateDt = updateDt;
+	}
+	final String? filePath = jsonConvert.convert<String>(json['filePath']);
+	if (filePath != null) {
+		recentImageEditionEntity.filePath = filePath;
+	}
+	final String? originFilePath = jsonConvert.convert<String>(json['originFilePath']);
+	if (originFilePath != null) {
+		recentImageEditionEntity.originFilePath = originFilePath;
+	}
+	final FilterEnum? filter = jsonConvert.convert<FilterEnum>(json['filter'], enumConvert: (v) => FilterEnum.values.byName(v));
+	if (filter != null) {
+		recentImageEditionEntity.filter = filter;
+	}
+	final List<RecentAdjustData>? adjustData = jsonConvert.convertListNotNull<RecentAdjustData>(json['adjustData']);
+	if (adjustData != null) {
+		recentImageEditionEntity.adjustData = adjustData;
+	}
+	final List<RecentEffectItem>? itemList = jsonConvert.convertListNotNull<RecentEffectItem>(json['itemList']);
+	if (itemList != null) {
+		recentImageEditionEntity.itemList = itemList;
+	}
+	return recentImageEditionEntity;
+}
+
+Map<String, dynamic> $RecentImageEditionEntityToJson(RecentImageEditionEntity entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['updateDt'] = entity.updateDt;
+	data['filePath'] = entity.filePath;
+	data['originFilePath'] = entity.originFilePath;
+	data['filter'] = entity.filter?.name;
+	data['adjustData'] =  entity.adjustData.map((v) => v.toJson()).toList();
+	data['itemList'] =  entity.itemList.map((v) => v.toJson()).toList();
+	return data;
+}
+
+RecentAdjustData $RecentAdjustDataFromJson(Map<String, dynamic> json) {
+	final RecentAdjustData recentAdjustData = RecentAdjustData();
+	final double? value = jsonConvert.convert<double>(json['value']);
+	if (value != null) {
+		recentAdjustData.value = value;
+	}
+	final String? mAdjustFunctionString = jsonConvert.convert<String>(json['mAdjustFunction']);
+	if (mAdjustFunctionString != null) {
+		recentAdjustData.mAdjustFunctionString = mAdjustFunctionString;
+	}
+	return recentAdjustData;
+}
+
+Map<String, dynamic> $RecentAdjustDataToJson(RecentAdjustData entity) {
+	final Map<String, dynamic> data = <String, dynamic>{};
+	data['value'] = entity.value;
+	data['mAdjustFunction'] = entity.mAdjustFunctionString;
 	return data;
 }

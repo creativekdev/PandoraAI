@@ -1,5 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
+import 'package:flutter_image_filters/flutter_image_filters.dart';
 
 import 'package:image/image.dart' as imgLib;
 
@@ -13,15 +14,15 @@ extension FilterEnumEx on FilterEnum {
       case FilterEnum.VID:
         return "Vivid";
       case FilterEnum.VIW:
-        return 'Vivid Warm';
+        return 'VID Warm';
       case FilterEnum.VIC:
-        return 'Vivid Cool';
+        return 'VID Cool';
       case FilterEnum.DRA:
         return 'Dramatic';
       case FilterEnum.DRW:
-        return 'Dramatic Warm';
+        return 'DRA Warm';
       case FilterEnum.DRC:
-        return 'Dramatic Cool';
+        return 'DRA Cool';
       case FilterEnum.MNO:
         return 'Mono';
       case FilterEnum.SLS:
@@ -45,7 +46,70 @@ extension FilterEnumEx on FilterEnum {
       case FilterEnum.FRZ:
         return 'Freeze';
       case FilterEnum.CMC:
-        return 'Comic Strip';
+        return 'Comic';
+    }
+  }
+
+  ShaderConfiguration buildConfigure() {
+    // return BulgeDistortionShaderConfiguration();
+    return PixelationShaderConfiguration();
+    switch(this) {
+      case FilterEnum.NOR:
+        break;
+      case FilterEnum.VID:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.VIW:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.VIC:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.DRA:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.DRW:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.DRC:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.MNO:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.SLS:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.CTN:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.INV:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.EDG:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.SHR:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.OLD:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.BLK:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.RMV:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.FUS:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.FRZ:
+        // TODO: Handle this case.
+        break;
+      case FilterEnum.CMC:
+        // TODO: Handle this case.
+        break;
     }
   }
 }

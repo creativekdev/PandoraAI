@@ -7,7 +7,9 @@ import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:cartoonizer/views/ai/edition/image_edition_screen.dart';
+import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.dart';
+import 'package:common_utils/common_utils.dart';
 
 import '../../../models/enums/home_card_type.dart';
 
@@ -67,6 +69,8 @@ class ImageEdition {
           photoType: paiCameraEntity.source,
           initFunction: function,
           recentEffectItems: [],
+          filter: FilterEnum.NOR,
+          adjustData: [],
         ),
       ),
     );
@@ -80,22 +84,40 @@ class ImageEdition {
     required ImageEditionFunction function,
     required record,
   }) async {
+    String path='';
     List<RecentEffectItem> items = [];
+    List<RecentAdjustData> adjustData = [];
+    FilterEnum filter = FilterEnum.NOR;
     if (record is RecentEffectModel) {
+      path = record.originalPath!;
       items = record.itemList;
     } else if (record is RecentStyleMorphModel) {
+      path = record.originalPath!;
       items = record.itemList;
+    } else if (record is RecentImageEditionEntity) {
+      items = record.itemList;
+      filter = record.filter ?? FilterEnum.NOR;
+      adjustData = record.adjustData;
+      if (!TextUtil.isEmpty(record.filePath)) {
+        path = record.filePath!;
+      } else {
+        path = record.originFilePath!;
+      }
     }
     await Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ImageEditionScreen(
-        source: source,
-        filePath: record.originalPath!,
-        style: style,
-        photoType: 'recent',
-        initFunction: function,
-        initKey: initKey,
-        recentEffectItems: items,
-      ),
+      builder: (_) {
+        return ImageEditionScreen(
+          source: source,
+          filePath: path,
+          style: style,
+          photoType: 'recent',
+          initFunction: function,
+          initKey: initKey,
+          recentEffectItems: items,
+          adjustData: adjustData,
+          filter: filter,
+        );
+      },
     ));
   }
 }

@@ -18,6 +18,7 @@ class CacheManager extends BaseManager {
   static const keyRecentTxt2img = "recent_ai_ground_file";
   static const keyRecentAIDraw = "recent_ai_draw_file";
   static const keyRecentAIColoring = "recent_ai_coloring_file";
+  static const keyRecentImageEdition = "recent_image_edition_file";
   static const keyRecentMetaverse = "recent_metaverse_file";
   static const keyLastVideoAdsShowTime = "LAST_ADS_SHOW_TIME";
   static const keyLoginCookie = "login_cookie";

@@ -10,6 +10,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:flutter_image_filters/flutter_image_filters.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
 
@@ -18,6 +19,7 @@ import 'ie_base_holder.dart';
 class FilterHolder extends ImageEditionBaseHolder {
   FilterHolder({required super.parent});
 
+  Map<FilterEnum, ShaderConfiguration> configMap = {};
   List<FilterEnum> functions = [
     FilterEnum.NOR,
     FilterEnum.VID,
@@ -58,6 +60,15 @@ class FilterHolder extends ImageEditionBaseHolder {
   }
 
   imgLib.Image? _originImageData;
+
+  @override
+  onInit() {
+    super.onInit();
+    configMap.clear();
+    for (var value in functions) {
+      configMap[value] = value.buildConfigure();
+    }
+  }
 
   Future _buildThumbnails() async {
     if (originFile == null) {

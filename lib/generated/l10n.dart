@@ -5089,6 +5089,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Get unlimited full access to all Pandora AI effects, filters and tools.`
+  String get buy_attr_ai_tools {
+    return Intl.message(
+      'Get unlimited full access to all Pandora AI effects, filters and tools.',
+      name: 'buy_attr_ai_tools',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
