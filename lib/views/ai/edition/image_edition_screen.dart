@@ -125,30 +125,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           hideLoading();
         }
       });
-      return;
-      ImageEditionBaseHolder holder = controller.currentItem.holder;
-      var recentController = Get.find<RecentController>();
-      var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
-      var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
-      // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
-      // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
-      // recentController.onImageEditionUsed(
-      //   controller.originFile.path,
-      //   holder.resultFile?.path,
-      //   filterHolder?.currentFunction ?? FilterEnum.NOR,
-      //   adjustHolder?.dataList
-      //           .map((e) => RecentAdjustData()
-      //             ..mAdjustFunction = e.function
-      //             ..value = e.value)
-      //           .toList() ??
-      //       [],
-      //   [],
-      // );
-      // if (holder is RemoveBgHolder) {
-      //   await GallerySaver.saveImage((holder.resultFile ?? holder.removedImage ?? holder.originFile)!.path, albumName: saveAlbumName);
-      // } else {
-      //   await GallerySaver.saveImage((holder.resultFile ?? holder.originFile)!.path, albumName: saveAlbumName);
-      // }
     }
     await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
@@ -156,6 +132,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   shareToDiscovery() async {
     String? resultPath;
+    Uint8List? uint8list;
     HomeCardType type = HomeCardType.imageEdition;
     String effectKey = 'image_edition';
     if (controller.currentItem.holder is TransferBaseController) {
@@ -167,11 +144,15 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         type = HomeCardType.stylemorph;
       }
       effectKey = baseController.selectedEffect?.key ?? '';
+      if (TextUtil.isEmpty(resultPath)) {
+        return;
+      }
+      uint8list = await File(resultPath!).readAsBytes();
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
-      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      // resultPath = baseHolder.resultFile?.path;
+      var bytes = await controller.shownImage!.toByteData();
+      uint8list = bytes!.buffer.asUint8List();
     }
-    if (TextUtil.isEmpty(resultPath)) {
+    if (uint8list == null) {
       return;
     }
     UploadImageController uploadImageController = Get.find();
@@ -187,12 +168,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     }
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_image_edition', callback: () {
-      var file = File(resultPath!);
       ShareDiscoveryScreen.push(
         context,
         effectKey: effectKey,
         originalUrl: imageUrl,
-        image: base64Encode(file.readAsBytesSync()),
+        image: base64Encode(uint8list!),
         isVideo: false,
         category: type,
       ).then((value) {
@@ -229,12 +209,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         uint8list = await effectHolder.originFile!.readAsBytes();
       }
     } else {
-      ImageEditionBaseHolder holder = controller.currentItem.holder;
-      // if (holder.resultFile != null) {
-      //   uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-      // } else {
-      //   uint8list = await holder.originFile!.readAsBytes();
-      // }
+      if (controller.shownImage == null) {
+        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
+        return;
+      }
+      var byteData = await controller.shownImage!.toByteData();
+      uint8list = byteData!.buffer.asUint8List();
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {
