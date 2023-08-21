@@ -117,29 +117,38 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       TransferBaseController effectHolder = controller.currentItem.holder;
       await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
     } else {
+      controller.saveResult().then((value) async {
+        if (value == null) {
+          hideLoading();
+        } else {
+          await GallerySaver.saveImage(value, albumName: saveAlbumName);
+          hideLoading();
+        }
+      });
+      return;
       ImageEditionBaseHolder holder = controller.currentItem.holder;
       var recentController = Get.find<RecentController>();
       var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
       var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
       // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
       // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
-      recentController.onImageEditionUsed(
-        controller.originFile.path,
-        holder.resultFile?.path,
-        filterHolder?.currentFunction ?? FilterEnum.NOR,
-        adjustHolder?.dataList
-                .map((e) => RecentAdjustData()
-                  ..mAdjustFunction = e.function
-                  ..value = e.value)
-                .toList() ??
-            [],
-        [],
-      );
-      if (holder is RemoveBgHolder) {
-        await GallerySaver.saveImage((holder.resultFile ?? holder.removedImage ?? holder.originFile)!.path, albumName: saveAlbumName);
-      } else {
-        await GallerySaver.saveImage((holder.resultFile ?? holder.originFile)!.path, albumName: saveAlbumName);
-      }
+      // recentController.onImageEditionUsed(
+      //   controller.originFile.path,
+      //   holder.resultFile?.path,
+      //   filterHolder?.currentFunction ?? FilterEnum.NOR,
+      //   adjustHolder?.dataList
+      //           .map((e) => RecentAdjustData()
+      //             ..mAdjustFunction = e.function
+      //             ..value = e.value)
+      //           .toList() ??
+      //       [],
+      //   [],
+      // );
+      // if (holder is RemoveBgHolder) {
+      //   await GallerySaver.saveImage((holder.resultFile ?? holder.removedImage ?? holder.originFile)!.path, albumName: saveAlbumName);
+      // } else {
+      //   await GallerySaver.saveImage((holder.resultFile ?? holder.originFile)!.path, albumName: saveAlbumName);
+      // }
     }
     await hideLoading();
     CommonExtension().showImageSavedOkToast(context);
@@ -160,7 +169,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       effectKey = baseController.selectedEffect?.key ?? '';
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      resultPath = baseHolder.resultFile?.path;
+      // resultPath = baseHolder.resultFile?.path;
     }
     if (TextUtil.isEmpty(resultPath)) {
       return;
@@ -221,11 +230,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
-      if (holder.resultFile != null) {
-        uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-      } else {
-        uint8list = await holder.originFile!.readAsBytes();
-      }
+      // if (holder.resultFile != null) {
+      //   uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      // } else {
+      //   uint8list = await holder.originFile!.readAsBytes();
+      // }
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {

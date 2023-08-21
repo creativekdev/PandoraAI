@@ -49,7 +49,6 @@ class CropHolder extends ImageEditionBaseHolder {
   onResetClick() {
     currentItem = items.first;
     shownImage = null;
-    resultFilePath = null;
     canReset = false;
   }
 }

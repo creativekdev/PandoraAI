@@ -93,7 +93,7 @@ class AdjustOptions extends StatelessWidget {
                       data.previousValue = data.value;
                       data.value = data.initValue;
                     }
-                    controller.buildResult(true);
+                    controller.buildResult();
                   } else {
                     controller.index = index;
                   }
@@ -128,11 +128,11 @@ class AdjustOptions extends StatelessWidget {
                 controller.update();
                 if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 150) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
-                  controller.buildResult(false);
+                  controller.buildResult();
                 }
               },
               onEnd: () async {
-                delay(() => controller.buildResult(true), milliseconds: 150);
+                delay(() => controller.buildResult(), milliseconds: 150);
               }),
         ),
         SizedBox(height: 10),

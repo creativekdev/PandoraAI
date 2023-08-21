@@ -24,20 +24,6 @@ abstract class ImageEditionBaseHolder {
 
   File? get originFile => originFilePath == null ? null : File(originFilePath!);
 
-  ///------------------------------------------------------------------------------------
-
-  String? _resultFilePath;
-
-  set resultFilePath(String? path) {
-    if (_resultFilePath == path) {
-      return;
-    }
-    _resultFilePath = path;
-    // update();
-  }
-
-  File? get resultFile => _resultFilePath == null ? null : File(_resultFilePath!);
-
   imgLib.Image? _shownImage;
 
   set shownImage(imgLib.Image? value) {

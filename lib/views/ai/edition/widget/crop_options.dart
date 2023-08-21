@@ -70,17 +70,6 @@ class CropOptions extends StatelessWidget {
           onGetCrop: (image, config) async {
             controller.shownImage = image;
             controller.currentItem = config;
-            CacheManager cacheManager = AppDelegate().getManager();
-            var dir = cacheManager.storageOperator.cropDir;
-            var projName = EncryptUtil.encodeMd5(controller.originFilePath!);
-            var directory = Directory(dir.path + projName);
-            await mkdir(directory);
-            var fileName = getFileName(controller.originFilePath!);
-            var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
-            var list = await Executor().execute(arg1: image, fun1: encodePng);
-            var bytes = Uint8List.fromList(list);
-            await targetFile.writeAsBytes(bytes);
-            controller.resultFilePath = targetFile.path;
           },
         ),
         settings: RouteSettings(name: '/ImCropScreen')));

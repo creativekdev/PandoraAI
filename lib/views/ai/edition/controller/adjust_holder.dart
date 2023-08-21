@@ -32,26 +32,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     resetConfig();
   }
 
-  void saveResult(imgLib.Image data) async {
-    CacheManager cacheManager = AppDelegate().getManager();
-    var dir = cacheManager.storageOperator.adjustDir;
-    var projName = EncryptUtil.encodeMd5(originFilePath!);
-    var directory = Directory(dir.path + projName);
-    mkdir(directory).whenComplete(() {
-      var fileName = getFileName(originFile!.path);
-      var targetFile = File(directory.path + '/${getConfigKey()}' + fileName);
-      if (targetFile.existsSync()) {
-        resultFilePath = targetFile.path;
-        update();
-      } else {
-        var resultBytes = Uint8List.fromList(imgLib.encodeJpg(data));
-        targetFile.writeAsBytes(resultBytes).whenComplete(() {
-          resultFilePath = targetFile.path;
-          update();
-        });
-      }
-    });
-  }
 
   String getConfigKey() {
     var string = dataList.map((e) => e.toString()).toList().join(',');
@@ -140,7 +120,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
     }
   }
 
-  void buildResult(bool saveFile) async {
+  void buildResult() async {
     if (baseImage == null) {
       baseImage = imgLib.Image.from(_originImageData!);
       baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage, fun2: _imAdjust);
@@ -149,9 +129,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     canReset = true;
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
     print('build img...');
-    if (saveFile) {
-      saveResult(shownImage!);
-    }
   }
 
   onSwitchNewAdj() async {
@@ -162,7 +139,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     dataList[index].active = true;
     baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: imgLib.Image.from(_originImageData!), fun2: _imAdjust);
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
-    saveResult(shownImage!);
   }
 
   @override

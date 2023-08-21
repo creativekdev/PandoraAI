@@ -124,7 +124,6 @@ class FilterHolder extends ImageEditionBaseHolder {
     } else {
       shownImage = await getLibImage(await getImage(targetFile));
     }
-    resultFilePath = targetFile.path;
   }
 }
 

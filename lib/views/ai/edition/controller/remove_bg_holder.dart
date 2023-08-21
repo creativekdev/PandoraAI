@@ -88,7 +88,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.png';
     List<int> outputBytes = imgLib.encodePng(newImage);
     await File(path).writeAsBytes(outputBytes);
-    resultFilePath = path;
     update();
   }
 
@@ -117,7 +116,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   onResetClick() async {
-    resultFilePath = null;
     canReset = false;
     scale = 1;
     dy = 0;
@@ -133,7 +131,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       CacheManager cacheManager = AppDelegate.instance.getManager();
       var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
       File(path).writeAsBytes(byte).then((value) {
-        resultFilePath = path;
       });
     }
   }

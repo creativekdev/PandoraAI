@@ -9,6 +9,8 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/app/app.dart';
+import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/models/recent_entity.dart';
 import 'package:cartoonizer/views/ai/anotherme/widgets/simulate_progress_bar.dart';
@@ -77,7 +79,10 @@ class ImageEditionController extends GetxController {
 
   ui.Image? get shownImage => _shownImage;
 
+  imgLib.Image? _shownLibImage;
+
   setShownImage(imgLib.Image? image) async {
+    _shownLibImage = image;
     if (image == null) {
       _shownImage = null;
     } else {
@@ -288,7 +293,7 @@ class ImageEditionController extends GetxController {
         } else {
           //其他的互相跳转
           var baseHolder = currentItem.holder as ImageEditionBaseHolder;
-          originFilePath = (baseHolder.resultFile ?? baseHolder.originFile!).path;
+          originFilePath = baseHolder.originFile!.path;
         }
         if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
           var image = await SyncFileImage(file: File(originFilePath)).getImage();
@@ -308,7 +313,6 @@ class ImageEditionController extends GetxController {
                     var holder = e.holder as RemoveBgHolder;
                     holder.ratio = value.image.width / value.image.height;
                     holder.removedImage = File(path);
-                    holder.resultFilePath = path;
                   });
                 },
                 size: imageSize,
@@ -347,6 +351,22 @@ class ImageEditionController extends GetxController {
       width: size.width,
       height: size.height,
     );
+  }
+
+  Future<String?> saveResult() async {
+    if (_shownLibImage == null) {
+      return null;
+    }
+    CacheManager cacheManager = AppDelegate().getManager();
+    var dir = cacheManager.storageOperator.imageDir;
+    var projName = EncryptUtil.encodeMd5(_originPath);
+    var directory = Directory(dir.path + projName);
+    await mkdir(directory);
+    var fileName = getFileName(originFile.path);
+    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
+    var resultBytes = Uint8List.fromList(imgLib.encodeJpg(_shownLibImage!));
+    await targetFile.writeAsBytes(resultBytes);
+    return targetFile.path;
   }
 }
 
