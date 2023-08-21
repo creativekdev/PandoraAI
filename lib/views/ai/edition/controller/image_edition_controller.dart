@@ -81,14 +81,16 @@ class ImageEditionController extends GetxController {
 
   imgLib.Image? _shownLibImage;
 
-  setShownImage(imgLib.Image? image) async {
+  setShownImage(imgLib.Image? image, {bool isUpdate = true}) async {
     _shownLibImage = image;
     if (image == null) {
       _shownImage = null;
     } else {
       _shownImage = await toImage(image);
     }
-    update();
+    if (isUpdate) {
+      update();
+    }
   }
 
   ImageEditionController({

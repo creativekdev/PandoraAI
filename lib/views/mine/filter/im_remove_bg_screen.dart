@@ -6,9 +6,15 @@ import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
+import '../../../Widgets/dialog/dialog_widget.dart';
 import '../../../api/app_api.dart';
 import '../../../api/filter_api.dart';
+import '../../../app/app.dart';
+import '../../../app/user/user_manager.dart';
+import '../../../models/enums/account_limit_type.dart';
 import '../../../network/dio_node.dart';
+import '../../../utils/utils.dart';
+import '../../ai/anotherme/another_me_controller.dart';
 
 typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
 
@@ -106,24 +112,24 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   }
 
   onGetRemovebgImage() async {
-    // var removeBgLimitEntity = await appApi.getRemoveBgLimit();
-    // if (removeBgLimitEntity != null) {
-    //   if (removeBgLimitEntity.usedCount >= removeBgLimitEntity.dailyLimit) {
-    //     if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-    //       Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-    //       showLimitDialog(context, type: AccountLimitType.guest, function: "removeBg", source: "image_edition_screen");
-    //       return TransferResult()..type = AccountLimitType.guest;
-    //     } else if (isVip()) {
-    //       Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-    //       showLimitDialog(context, type: AccountLimitType.vip, function: "removeBg", source: "image_edition_screen");
-    //       return TransferResult()..type = AccountLimitType.vip;
-    //     } else {
-    //       Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-    //       showLimitDialog(context, type: AccountLimitType.normal, function: "removeBg", source: "image_edition_screen");
-    //       return TransferResult()..type = AccountLimitType.normal;
-    //     }
-    //   }
-    // }
+    var removeBgLimitEntity = await appApi.getRemoveBgLimit();
+    if (removeBgLimitEntity != null) {
+      if (removeBgLimitEntity.usedCount >= removeBgLimitEntity.dailyLimit) {
+        if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.guest, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.guest;
+        } else if (isVip()) {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.vip, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.vip;
+        } else {
+          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
+          showLimitDialog(context, type: AccountLimitType.normal, function: "removeBg", source: "image_edition_screen");
+          return TransferResult()..type = AccountLimitType.normal;
+        }
+      }
+    }
     uploadImageController.upload(file: File(widget.filePath)).then((value) async {
       if (TextUtil.isEmpty(value)) {
         isRequset = false;
