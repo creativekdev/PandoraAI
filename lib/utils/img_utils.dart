@@ -36,14 +36,34 @@ Future _complete(Completer<String> callback, String path) async {
 }
 
 class ImageUtils {
-  static Future<String> onImagePick(
-    String tempFilePath,
-    String targetPath, {
-    bool compress = false,
-    int size = 512,
-  }) async {
-    Completer<String> callback = Completer();
-    Navigator.of(Get.context!).push(NoAnimRouter(_Loading(action: () async {
+  static Future<String> onImagePick(String tempFilePath,
+      String targetPath, {
+        bool compress = false,
+        int size = 512,
+        bool showLoading = false,
+      }) async {
+    if (showLoading) {
+      Completer<String> callback = Completer();
+      Navigator.of(Get.context!).push(NoAnimRouter(_Loading(action: () async {
+        var source = File(tempFilePath);
+        var fileName = await md5File(source);
+        if (compress) {
+          fileName = '$size' + fileName;
+        }
+        var fileType = getFileType(tempFilePath);
+        var path = targetPath + fileName + '.' + fileType;
+        if (!File(path).existsSync()) {
+          if (compress) {
+            var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
+            await file.copy(path);
+          } else {
+            await source.copy(path);
+          }
+        }
+        _complete(callback, path);
+      }), settings: RouteSettings(name: '/_Loading')));
+      return callback.future;
+    } else {
       var source = File(tempFilePath);
       var fileName = await md5File(source);
       if (compress) {
@@ -59,9 +79,8 @@ class ImageUtils {
           await source.copy(path);
         }
       }
-      _complete(callback, path);
-    }), settings: RouteSettings(name: '/_Loading')));
-    return callback.future;
+      return path;
+    }
   }
 
   // Calculate the area that the artwork should display based on the target coordinates
@@ -90,7 +109,15 @@ class ImageUtils {
     List<bool> checkMap = List.generate(image.width * image.height, (index) => false);
 
     /// 获取图像边界
-    getPoints(image, center.dx.toInt(), center.dy.toInt(), startPixel, points, checkMap, -1, -1);
+    getPoints(
+        image,
+        center.dx.toInt(),
+        center.dy.toInt(),
+        startPixel,
+        points,
+        checkMap,
+        -1,
+        -1);
 
     /// 按x轴排序
     points.sort((a, b) => a.x > b.x ? 1 : -1);
@@ -107,10 +134,42 @@ class ImageUtils {
     }
     if (x >= 0 && x < image.width && y >= 0 && y < image.height) {
       if (pixel2 == pixel) {
-        getPoints(image, x + 1, y, pixel, points, checkMap, x, y);
-        getPoints(image, x - 1, y, pixel, points, checkMap, x, y);
-        getPoints(image, x, y + 1, pixel, points, checkMap, x, y);
-        getPoints(image, x, y - 1, pixel, points, checkMap, x, y);
+        getPoints(
+            image,
+            x + 1,
+            y,
+            pixel,
+            points,
+            checkMap,
+            x,
+            y);
+        getPoints(
+            image,
+            x - 1,
+            y,
+            pixel,
+            points,
+            checkMap,
+            x,
+            y);
+        getPoints(
+            image,
+            x,
+            y + 1,
+            pixel,
+            points,
+            checkMap,
+            x,
+            y);
+        getPoints(
+            image,
+            x,
+            y - 1,
+            pixel,
+            points,
+            checkMap,
+            x,
+            y);
         // getPoints(image, x + 1, y + 1, pixel, points, scanList);
         // getPoints(image, x - 1, y - 1, pixel, points, scanList);
         // getPoints(image, x - 1, y + 1, pixel, points, scanList);
@@ -129,7 +188,8 @@ class ImageUtils {
     List<PointPos> closePath = [];
     getNeighborPoints(closePath, points);
     if (closePath.isNotEmpty) {
-      ui.Path path = ui.Path()..moveTo(closePath.first.x.toDouble(), closePath.first.y.toDouble());
+      ui.Path path = ui.Path()
+        ..moveTo(closePath.first.x.toDouble(), closePath.first.y.toDouble());
       closePath.removeAt(0);
       for (var value in closePath) {
         path.lineTo(value.x.toDouble(), value.y.toDouble());
@@ -286,7 +346,8 @@ class ImageUtils {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: headWidth);
+    )
+      ..layout(maxWidth: headWidth);
     functionPainter.paint(canvas, functionPos);
 
     var arrowImageSrcRect = Rect.fromLTWH(0, 0, bgHeadArrowInfo.image.width.toDouble(), bgHeadArrowInfo.image.height.toDouble());
@@ -307,7 +368,8 @@ class ImageUtils {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: headWidth);
+    )
+      ..layout(maxWidth: headWidth);
     emailPainter.paint(canvas, userNamePos);
 
     //绘制原图
@@ -381,7 +443,8 @@ class ImageUtils {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
+    )
+      ..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
     double titleY = height - bottomHeight - padding + dp(8);
     textPainter.paint(canvas, Offset(dp(41) + appIconSize, titleY));
 
@@ -401,7 +464,8 @@ class ImageUtils {
       textAlign: TextAlign.justify,
       textWidthBasis: TextWidthBasis.longestLine,
       maxLines: 2,
-    )..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
+    )
+      ..layout(maxWidth: width - dp(74) - appIconSize - qrcodeSize);
     double descY = height - bottomHeight + dp(20);
     descPainter.paint(canvas, Offset(dp(41) + appIconSize, descY));
 

@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
+import '../../../Widgets/dialog/dialog_widget.dart';
 import '../../../api/app_api.dart';
 import '../../../api/filter_api.dart';
 import '../../../app/app.dart';

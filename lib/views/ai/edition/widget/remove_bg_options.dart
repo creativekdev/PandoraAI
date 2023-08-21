@@ -32,10 +32,6 @@ class RemoveBgOptions extends StatelessWidget {
         await controller.onResetClick();
         CommonExtension().showToast(S.of(context).clean_successfully);
       },
-      onSaved: () async {
-        await controller.onProductShowImage();
-        CommonExtension().showToast(S.of(context).done);
-      },
       onPick: (BackgroundData data, bool isPopMerge) async {
         controller.onSavedBackground(data, isPopMerge);
       },

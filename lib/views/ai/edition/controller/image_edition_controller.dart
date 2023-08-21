@@ -81,14 +81,16 @@ class ImageEditionController extends GetxController {
 
   imgLib.Image? _shownLibImage;
 
-  setShownImage(imgLib.Image? image) async {
+  setShownImage(imgLib.Image? image, {bool isUpdate = true}) async {
     _shownLibImage = image;
     if (image == null) {
       _shownImage = null;
     } else {
       _shownImage = await toImage(image);
     }
-    update();
+    if (isUpdate) {
+      update();
+    }
   }
 
   ImageEditionController({
@@ -201,10 +203,7 @@ class ImageEditionController extends GetxController {
               holder.imageUiFront = await getImage(File(path));
               var imageFront = await getLibImage(holder.imageUiFront!);
               holder.imageFront = imageFront;
-              await holder.setBackgroundImage(null, false);
-              holder.backgroundColor = holder.rgbaToAbgr(Colors.transparent);
-              await holder.saveImageWithColor(holder.rgbaToAbgr(Colors.transparent), true);
-              // holder.resultFilePath = path;
+              holder.bgController.setBackgroundData(null, Colors.transparent);
             });
           },
           size: imageSize,

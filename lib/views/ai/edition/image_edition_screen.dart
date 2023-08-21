@@ -185,7 +185,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   gotoPrint() async {
-    File? file = controller.currentItem.holder.resultFile;
+    // File? file = controller.currentItem.holder.resultFile;
+    String? resultPath = await controller.saveResult();
+    File? file = null;
+    if (resultPath != null) {
+      file = File(resultPath);
+    }
     Print.open(context, source: widget.source, file: file ?? controller.originFile);
   }
 
