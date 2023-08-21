@@ -67,6 +67,10 @@ class OnTabLongPressEvent extends BaseEvent<int> {
   OnTabLongPressEvent({data}) : super(data: data);
 }
 
+class OnResetScaleEvent extends BaseEvent<int> {
+  OnResetScaleEvent() : super();
+}
+
 /// like success event
 /// @data <id, likeId>
 class OnDiscoveryLikeEvent extends BaseEvent<MapEntry<int, int>> {
