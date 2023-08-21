@@ -400,7 +400,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
           context,
           plan: month,
           checked: !isYear,
-          popular: true,
+          popular: false,
         ).intoGestureDetector(onTap: () {
           if (!isYear) {
             return;
@@ -411,7 +411,12 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
         })),
         SizedBox(width: $(20)),
         Expanded(
-            child: buyPlanItem(context, plan: year, checked: isYear).intoGestureDetector(onTap: () {
+            child: buyPlanItem(
+          context,
+          plan: year,
+          checked: isYear,
+          popular: true,
+        ).intoGestureDetector(onTap: () {
           if (isYear) {
             return;
           }

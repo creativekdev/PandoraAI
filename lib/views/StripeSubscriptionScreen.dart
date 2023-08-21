@@ -249,7 +249,7 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
           context,
           plan: monthly,
           checked: !isYear,
-          popular: true,
+          popular: false,
         ).intoGestureDetector(onTap: () {
           if (!isYear) {
             return;
@@ -260,7 +260,12 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
         })),
         SizedBox(width: $(20)),
         Expanded(
-            child: buyPlanItem(context, plan: yearly, checked: isYear).intoGestureDetector(onTap: () {
+            child: buyPlanItem(
+          context,
+          plan: yearly,
+          checked: isYear,
+          popular: true,
+        ).intoGestureDetector(onTap: () {
           if (isYear) {
             return;
           }
