@@ -83,7 +83,6 @@ class BackgroundPickerBar extends StatefulWidget {
   Function(BackgroundData data, bool isPopMerge) onPick;
   Function(BackgroundData data) onColorChange;
   final BackgroundData preBackgroundData;
-  Function() onSaved;
   Function() onClear;
 
   BackgroundPickerBar({
@@ -92,7 +91,6 @@ class BackgroundPickerBar extends StatefulWidget {
     required this.onPick,
     required this.onColorChange,
     required this.preBackgroundData,
-    required this.onSaved,
     required this.onClear,
   });
 
@@ -148,16 +146,15 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all($(8)),
+          padding: EdgeInsets.only(left: $(8), right: $(8), bottom: $(4)),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Image.asset(Images.ic_bg_close, width: $(24)).intoGestureDetector(onTap: () {
+            Image.asset(Images.ic_edition_reset, width: $(24))
+                .intoContainer(
+              padding: EdgeInsets.all($(12)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular($(32)), color: Color(0xff555555).withOpacity(0.4)),
+            )
+                .intoGestureDetector(onTap: () {
               widget.onClear.call();
-            }),
-            Image.asset(
-              Images.ic_bg_submit,
-              width: $(24),
-            ).intoGestureDetector(onTap: () {
-              widget.onSaved.call();
             }),
           ]),
         ),

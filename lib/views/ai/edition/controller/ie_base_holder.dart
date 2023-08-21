@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cartoonizer/common/importFile.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../../utils/utils.dart';
@@ -9,7 +8,7 @@ import 'image_edition_controller.dart';
 abstract class ImageEditionBaseHolder {
   late ImageEditionController parent;
 
-  Widget? shownImageWidget;
+  // Widget? shownImageWidget;
 
   String? originFilePath;
 

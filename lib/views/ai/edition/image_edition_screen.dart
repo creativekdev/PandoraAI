@@ -168,9 +168,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
       effectKey = baseController.selectedEffect?.key ?? '';
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
-      var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
-      // resultPath = baseHolder.resultFile?.path;
+      resultPath = await controller.saveResult();
     }
+
     if (TextUtil.isEmpty(resultPath)) {
       return;
     }
@@ -205,7 +205,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   gotoPrint() async {
-    File? file = controller.currentItem.holder.resultFile;
+    // File? file = controller.currentItem.holder.resultFile;
+    String? resultPath = await controller.saveResult();
+    File? file = null;
+    if (resultPath != null) {
+      file = File(resultPath);
+    }
     Print.open(context, source: widget.source, file: file ?? controller.originFile);
   }
 
@@ -230,11 +235,13 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     } else {
       ImageEditionBaseHolder holder = controller.currentItem.holder;
-      // if (holder.resultFile != null) {
-      //   uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(holder.resultFile!.path), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
-      // } else {
-      //   uint8list = await holder.originFile!.readAsBytes();
-      // }
+      String? resultPath = await controller.saveResult();
+
+      if (resultPath != null) {
+        uint8list = await ImageUtils.printStyleMorphDrawData(holder.originFile!, File(resultPath), '@${userManager.user?.getShownName() ?? 'Pandora User'}');
+      } else {
+        uint8list = await holder.originFile!.readAsBytes();
+      }
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {

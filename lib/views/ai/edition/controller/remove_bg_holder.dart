@@ -8,22 +8,21 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
 
-import '../../../../app/app.dart';
-import '../../../../app/cache/cache_manager.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
 class RemoveBgHolder extends ImageEditionBaseHolder {
-  ui.Color? backgroundColor;
-  File? _backgroundImage;
+  // ui.Color? backgroundColor;
   BackgroundData? selectData;
 
-  File? get backgroundImage => _backgroundImage;
-
-  setBackgroundImage(File? file, bool isSave) async {
-    _backgroundImage = file;
-    await buildBackLibImg(isSave);
-  }
+  // File? _backgroundImage;
+  //
+  // File? get backgroundImage => _backgroundImage;
+  //
+  // setBackgroundImage(File? file, bool isSave) async {
+  //   _backgroundImage = file;
+  //   // await buildBackLibImg(isSave);
+  // }
 
   File? _removedImage;
 
@@ -31,15 +30,15 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   set removedImage(File? file) {
     _removedImage = file;
-    shownImageWidget = Image.file(file!);
-    buildFrontLibImg();
+    // shownImageWidget = Image.file(file!);
+    update();
   }
 
   double ratio = 1;
 
   ui.Image? imageUiFront;
   imgLib.Image? imageFront;
-  imgLib.Image? imageBack;
+
   BackgroundData preBackgroundData = BackgroundData();
 
   RemoveBgHolder({required super.parent});
@@ -57,48 +56,15 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     } else {
       if (data.filePath != null) {
         File backFile = File(data.filePath!);
-        backgroundColor = null;
-        await setBackgroundImage(backFile, isPopMerge);
+        bgController.setBackgroundData(backFile, null);
       } else {
-        backgroundColor = rgbaToAbgr(data.color!);
-        await setBackgroundImage(null, false);
+        bgController.setBackgroundData(null, rgbaToAbgr(data.color!));
       }
       selectData = data;
     }
-  }
-
-  buildBackLibImg(bool isSave) async {
-    if (_backgroundImage != null) {
-      imageBack = await getLibImage(await getImage(_backgroundImage!));
-    }
-    update();
-  }
-
-  saveImageWithColor(Color bgColor, bool isSave) async {
-    imgLib.Image newImage = imgLib.Image(imageFront!.width, imageFront!.height);
-    int fillColor = bgColor.value; // 获取颜色的ARGB值
-    if (isSave) {
-      preBackgroundData.color = abgrToRgba(fillColor);
-      preBackgroundData.filePath = null;
-    }
-    newImage.fillBackground(fillColor);
-    imgLib.drawImage(newImage, imageFront!);
-    shownImage = newImage;
-    CacheManager cacheManager = AppDelegate.instance.getManager();
-    var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.png';
-    List<int> outputBytes = imgLib.encodePng(newImage);
-    await File(path).writeAsBytes(outputBytes);
-    update();
-  }
-
-  buildFrontLibImg() async {
-    if (_removedImage == null) {
-      imageFront = null;
-    } else {
-      imageUiFront = await getImage(_removedImage!);
-      imageFront = await getLibImage(imageUiFront!);
-    }
-    update();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+    });
   }
 
   ui.Color rgbaToAbgr(ui.Color rgbaColor) {
@@ -116,22 +82,21 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   onResetClick() async {
-    canReset = false;
+    await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
+    canReset = true;
     scale = 1;
     dy = 0;
     dx = 0;
-    await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
+    update();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+    });
   }
 
   onProductShowImage() async {
     ui.Image? image = await getBitmapFromContext(globalKey.currentContext!, pixelRatio: ScreenUtil.mediaQuery?.devicePixelRatio ?? 3.0);
     if (image != null) {
       shownImage = await getLibImage(image);
-      Uint8List byte = Uint8List.fromList(imgLib.encodeJpg(shownImage!));
-      CacheManager cacheManager = AppDelegate.instance.getManager();
-      var path = cacheManager.storageOperator.removeBgDir.path + '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      File(path).writeAsBytes(byte).then((value) {
-      });
     }
   }
 
@@ -150,6 +115,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   GlobalKey _personImageKey = GlobalKey();
   Rect borderRect = Rect.fromLTRB(0, 0, 0, 0);
+
+  LoadBgController bgController = Get.put(LoadBgController());
 
   Future<Uint8List?> getPersonImage(Size size) async {
     if (isRequestWidth == false) {
@@ -240,22 +207,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                     width: _width,
                                     height: _height,
                                     child: Stack(alignment: Alignment.center, children: [
-                                      _backgroundImage != null
-                                          ? Container(
-                                              alignment: Alignment.center,
-                                              child: Image.file(
-                                                _backgroundImage!,
-                                                fit: BoxFit.cover,
-                                                width: _width,
-                                                height: _height,
-                                              ),
-                                            )
-                                          : Container(
-                                              alignment: Alignment.center,
-                                              color: backgroundColor!.toArgb(),
-                                              width: _width,
-                                              height: _height,
-                                            ),
+                                      LoadBgView(width: _width, height: _height),
                                       PinGestureView(
                                         child: Stack(
                                           alignment: Alignment.center,
@@ -331,6 +283,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       ],
     );
   }
+
+  @override
+  dispose() {
+    // Get.delete<LoadBgController>();
+    return super.dispose();
+  }
 }
 
 class GradientBorderPainter extends CustomPainter {
@@ -364,5 +322,56 @@ class GradientBorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return false;
+  }
+}
+
+class LoadBgController extends GetxController {
+  File? _backgroundImage;
+  ui.Color? _backgroundColor;
+
+  setBackgroundData(File? bgImage, ui.Color? bgColor) {
+    _backgroundImage = bgImage;
+    _backgroundColor = bgColor;
+    update();
+  }
+
+  File? get backgroundImage => _backgroundImage;
+
+  ui.Color? get backgroundColor => _backgroundColor;
+}
+
+class LoadBgView extends StatefulWidget {
+  const LoadBgView({Key? key, required this.width, required this.height}) : super(key: key);
+  final double width;
+  final double height;
+
+  @override
+  State<LoadBgView> createState() => _LoadBgViewState();
+}
+
+class _LoadBgViewState extends State<LoadBgView> {
+  LoadBgController controller = Get.find();
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<LoadBgController>(
+        init: controller,
+        builder: (controller) {
+          return Container(
+            alignment: Alignment.center,
+            color: (controller.backgroundColor ?? Colors.transparent).toArgb(),
+            child: controller.backgroundImage != null
+                ? Image.file(
+                    controller.backgroundImage!,
+                    fit: BoxFit.cover,
+                    width: widget.width,
+                    height: widget.height,
+                  )
+                : SizedBox(),
+            width: widget.width,
+            height: widget.height,
+          );
+        });
+    ;
   }
 }
