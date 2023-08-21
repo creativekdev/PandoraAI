@@ -8,6 +8,7 @@ import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:image/image.dart' as imgLib;
 
+import '../../../../Common/event_bus_helper.dart';
 import '../../../common/background/background_picker.dart';
 import '../../../mine/filter/pin_gesture_views.dart';
 
@@ -80,7 +81,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       dy = 0;
       dx = 0;
     }
-    update();
+    EventBusHelper().eventBus.fire(OnResetScaleEvent());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
     });
