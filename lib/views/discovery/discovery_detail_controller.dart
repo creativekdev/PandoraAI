@@ -82,6 +82,7 @@ class DiscoveryDetailController extends GetxController {
               bool result = await api.updateDiscoveryComment(data.id, text: text);
               if (result) {
                 data.text = text;
+                data.modified = DateTime.now().toIso8601String();
                 onUpdateComment(data);
               }
               return result;
