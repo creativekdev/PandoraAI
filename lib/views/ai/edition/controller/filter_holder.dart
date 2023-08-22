@@ -307,7 +307,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
 
-          res_image.setPixelRgba(x, y, (color.red * 1.5).round().clamp(0, 255), (color.green * 1.5).round().clamp(0, 255), color.blue);
+          res_image.setPixelRgba(x, y, (color.red * 1.8).round().clamp(0, 255), (color.green * 1.8).round().clamp(0, 255), color.blue);
         }
       }
       break;
@@ -326,7 +326,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, color.red, (color.green * 1.5).round().clamp(0, 255), (color.blue * 1.5).round().clamp(0, 255));
+          res_image.setPixelRgba(x, y, color.red, (color.green * 1.8).round().clamp(0, 255), (color.blue * 1.8).round().clamp(0, 255));
         }
       }
       break;
