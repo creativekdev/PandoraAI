@@ -304,6 +304,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                                   key: _personImageKey,
                                                   removedImage!,
                                                   fit: BoxFit.contain,
+                                                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                                      onProductShowImage();
+                                                    });
+                                                    return child;
+                                                  },
                                                 ),
                                               ),
                                               Obx(
