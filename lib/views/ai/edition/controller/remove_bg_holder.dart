@@ -249,6 +249,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                     scale = newScale;
                                     dx = newDx;
                                     dy = newDy;
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                                    });
                                   },
                                 ),
                               ]),
@@ -301,6 +304,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                                   key: _personImageKey,
                                                   removedImage!,
                                                   fit: BoxFit.contain,
+                                                  frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                                    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                                                      onProductShowImage();
+                                                    });
+                                                    return child;
+                                                  },
                                                 ),
                                               ),
                                               Obx(
@@ -340,6 +349,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                             scale = newScale;
                                             dx = newDx;
                                             dy = newDy;
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                                            });
                                           },
                                         ),
                                       ]),

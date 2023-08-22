@@ -243,6 +243,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "feedback_out_date":
             MessageLookupByLibrary.simpleMessage("您已经反馈过了，请明天再试"),
         "feedback_thanks": MessageLookupByLibrary.simpleMessage("感谢您的反馈"),
+        "fill_in_address": MessageLookupByLibrary.simpleMessage("请填写地址"),
         "first_name": MessageLookupByLibrary.simpleMessage("名字"),
         "forgot_password": MessageLookupByLibrary.simpleMessage("忘记密码？"),
         "forgot_password_text":

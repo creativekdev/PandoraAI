@@ -87,7 +87,7 @@ class _SliderColorPickerState extends State<SliderColorPicker> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(38),
               gradient: LinearGradient(
-                colors: [selectorColor.withOpacity(1), selectorColor.withOpacity(0)],
+                colors: [Colors.black, selectorColor.withOpacity(1), Colors.white],
               ),
             ),
             child: Padding(

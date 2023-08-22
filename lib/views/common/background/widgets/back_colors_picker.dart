@@ -34,11 +34,12 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
   void initState() {
     super.initState();
     if (widget.preBackgroundData.color != null) {
-      userTypeColor = '#${widget.preBackgroundData.color!.value.toRadixString(16)}';
+      userTypeColor = ColorUtil.getHexFromColor(widget.preBackgroundData.color!);
     }
     if (userTypeColor == '#0' || userTypeColor == '') {
-      userTypeColor = "#FF000000";
+      userTypeColor = "#000000";
     }
+    this.color = ColorUtil.hexToColor(userTypeColor);
   }
 
   @override
@@ -51,8 +52,8 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
             selectedData: widget.preBackgroundData,
             onChange: (color, opacity) {
               setState(() {
-                this.color = Color.fromRGBO(color.red, color.green, color.blue, opacity);
-                userTypeColor = '#${color.value.toRadixString(16)}';
+                this.color = color;
+                userTypeColor = ColorUtil.getHexFromColor(color);
                 widget.onColorChange.call(this.color);
               });
             },
@@ -65,7 +66,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
             width: ScreenUtil.screenSize.width - $(30),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Color(0xff444547),
+              color: this.color,
               borderRadius: BorderRadius.circular($(19)),
               border: Border.all(
                 color: ColorConstant.loginTitleColor,
@@ -82,8 +83,9 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
                     hexValue: userTypeColor,
                     onColorSubmit: (hexValue) {
                       userTypeColor = hexValue;
+                      this.color = ColorUtil.hexToColor(userTypeColor);
                       Future.delayed(Duration(milliseconds: 500), () {
-                        widget.onColorChange.call(ColorUtil.hexColor(userTypeColor));
+                        widget.onColorChange.call(this.color);
                       });
                       EventBusHelper().eventBus.fire(OnChangeColorHexReceiveEvent(data: userTypeColor));
                       setState(() {});

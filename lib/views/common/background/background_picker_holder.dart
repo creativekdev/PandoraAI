@@ -79,7 +79,6 @@ class _BackgroundPickerHolderState extends AppState<BackgroundPickerHolder> with
         'build': (context) => BackColorsPicker(
             preBackgroundData: widget.preBackgroundData,
             onPickColor: (color) {
-              print("color === $color");
               selectedData = BackgroundData()..color = color;
               widget.onPick.call(selectedData!, false);
             },

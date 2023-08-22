@@ -252,6 +252,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "すでにフィードバックをいただきましたので、明日再試行してください"),
         "feedback_thanks":
             MessageLookupByLibrary.simpleMessage("ご意見いただき、ありがとうございます"),
+        "fill_in_address": MessageLookupByLibrary.simpleMessage("住所をご記入ください"),
         "first_name": MessageLookupByLibrary.simpleMessage("姓"),
         "forgot_password": MessageLookupByLibrary.simpleMessage("パスワードを忘れた？"),
         "forgot_password_text": MessageLookupByLibrary.simpleMessage(

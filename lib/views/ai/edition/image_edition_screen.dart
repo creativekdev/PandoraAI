@@ -150,29 +150,22 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
 
   shareToDiscovery() async {
     String? resultPath;
-    Uint8List? uint8list;
     HomeCardType type = HomeCardType.imageEdition;
     String effectKey = 'image_edition';
     if (controller.currentItem.holder is TransferBaseController) {
       var baseController = controller.currentItem.holder as TransferBaseController;
-      resultPath = (baseController.resultFile ?? baseController.originFile).path;
+      resultPath = baseController.resultFile?.path;
       if (baseController.getCategory() == 'cartoonize' || baseController.getCategory() == 'sticker') {
         type = HomeCardType.cartoonize;
       } else {
         type = HomeCardType.stylemorph;
       }
       effectKey = baseController.selectedEffect?.key ?? '';
-      uint8list = await File(resultPath).readAsBytes();
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
-      var bytes;
-      if (controller.shownImage == null) {
-        bytes = await controller.originFile.readAsBytes();
-      } else {
-        bytes = await controller.shownImage!.toByteData();
-      }
-      uint8list = bytes!.buffer.asUint8List();
+      resultPath = await controller.saveResult();
     }
-    if (uint8list == null) {
+
+    if (TextUtil.isEmpty(resultPath)) {
       return;
     }
     UploadImageController uploadImageController = Get.find();
@@ -188,11 +181,12 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       }
     }
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_image_edition', callback: () {
+      var file = File(resultPath!);
       ShareDiscoveryScreen.push(
         context,
         effectKey: effectKey,
         originalUrl: imageUrl,
-        image: base64Encode(uint8list!),
+        image: base64Encode(file.readAsBytesSync()),
         isVideo: false,
         category: type,
       ).then((value) {

@@ -5099,6 +5099,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Please fill in the address`
+  String get fill_in_address {
+    return Intl.message(
+      'Please fill in the address',
+      name: 'fill_in_address',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
