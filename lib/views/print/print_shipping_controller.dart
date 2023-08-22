@@ -10,6 +10,7 @@ import 'package:cartoonizer/views/print/print_payment_screen.dart';
 import 'package:cartoonizer/views/print/print_payment_success_screen.dart';
 import 'package:google_maps_webservice/places.dart';
 
+import '../../Common/Extension.dart';
 import '../../Controller/effect_data_controller.dart';
 import '../../Widgets/router/routers.dart';
 import '../../app/user/user_manager.dart';
@@ -113,6 +114,7 @@ class PrintShippingController extends GetxController {
 
   Future<bool> onSubmit(BuildContext context) async {
     if (seletedAddress == null) {
+      CommonExtension().showToast(S.of(context).fill_in_address);
       return false;
     }
     var address = {

@@ -44,7 +44,7 @@ class _PaletteWidgetState extends State<PaletteWidget> {
     Color(0xFFFC5B31),
   ];
 
-  double opacity = 1;
+  double opacity = 0.5;
 
   late StreamSubscription onChangeColorListener;
 
@@ -77,6 +77,42 @@ class _PaletteWidgetState extends State<PaletteWidget> {
     onChangeColorListener.cancel();
   }
 
+  Color getSliderColor(Color indexColor, double progress) {
+    int redValue = indexColor.red;
+    int greenValue = indexColor.green;
+    int blueValue = indexColor.blue;
+    if (progress > 0.5) {
+      //  变黑
+      redValue -= (redValue * (progress - 0.5) / 0.5).toInt();
+      if (redValue < 0) {
+        redValue = 0;
+      }
+      greenValue -= (greenValue * (progress - 0.5) / 0.5).toInt();
+      if (greenValue < 0) {
+        greenValue = 0;
+      }
+      blueValue -= (blueValue * (progress - 0.5) / 0.5).toInt();
+      if (blueValue < 0) {
+        blueValue = 0;
+      }
+    } else if (progress < 0.5) {
+      //  变白
+      redValue = redValue + ((255 - redValue) * (0.5 - progress) / 0.5).toInt();
+      if (redValue > 255) {
+        redValue = 255;
+      }
+      greenValue = greenValue + ((255 - greenValue) * (0.5 - progress) / 0.5).toInt();
+      if (greenValue > 255) {
+        greenValue = 255;
+      }
+      blueValue = blueValue + ((255 - blueValue) * (0.5 - progress) / 0.5).toInt();
+      if (blueValue > 255) {
+        blueValue = 255;
+      }
+    }
+    return Color.fromARGB(255, redValue, greenValue, blueValue);
+  }
+
   @override
   Widget build(BuildContext context) {
     int i = selectedIndex ~/ 6;
@@ -107,8 +143,10 @@ class _PaletteWidgetState extends State<PaletteWidget> {
             selectorColor: i == 0 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
             visible: i == 0 && selectedIndex != -1,
             onChange: (Color selectorColor, double opacity) {
+              Color indexColor = colorList[selectedIndex];
               this.opacity = 1 - opacity;
-              widget.onChange.call(selectorColor, this.opacity);
+              Color newColor = getSliderColor(indexColor, this.opacity);
+              widget.onChange.call(newColor, this.opacity);
               setState(() {});
             },
           ),
@@ -134,9 +172,10 @@ class _PaletteWidgetState extends State<PaletteWidget> {
             selectorColor: i == 1 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
             visible: i == 1 && selectedIndex != -1,
             onChange: (selectorColor, opacity) {
+              Color indexColor = colorList[selectedIndex];
               this.opacity = 1 - opacity;
-              widget.onChange.call(selectorColor, this.opacity);
-              setState(() {});
+              Color newColor = getSliderColor(indexColor, this.opacity);
+              widget.onChange.call(newColor, this.opacity);
             },
           ),
         ),
@@ -161,9 +200,10 @@ class _PaletteWidgetState extends State<PaletteWidget> {
             selectorColor: i == 2 && selectedIndex != -1 ? colorList[selectedIndex] : Colors.transparent,
             visible: i == 2 && selectedIndex != -1,
             onChange: (selectorColor, opacity) {
+              Color indexColor = colorList[selectedIndex];
               this.opacity = 1 - opacity;
-              widget.onChange.call(selectorColor, this.opacity);
-              setState(() {});
+              Color newColor = getSliderColor(indexColor, this.opacity);
+              widget.onChange.call(newColor, this.opacity);
             },
           ),
         ),

@@ -290,6 +290,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "You\'ve been submitted, please try again tomorrow"),
         "feedback_thanks":
             MessageLookupByLibrary.simpleMessage("Thanks for your opinions"),
+        "fill_in_address":
+            MessageLookupByLibrary.simpleMessage("Please fill in the address"),
         "first_name": MessageLookupByLibrary.simpleMessage("First Name"),
         "forgot_password":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),

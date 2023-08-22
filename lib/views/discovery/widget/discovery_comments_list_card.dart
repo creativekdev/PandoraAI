@@ -32,7 +32,7 @@ class DiscoveryCommentsListCard extends StatelessWidget with DiscoveryAttrHolder
     required this.ignoreLikeBtn,
     required this.authorId,
   }) : super(key: key) {
-    dateTime = data.created.timezoneCur!;
+    dateTime = data.modified.timezoneCur!;
   }
 
   @override

@@ -52,6 +52,14 @@ class ReferredCard extends StatelessWidget {
           Color(0xFFFEA940),
         ],
       ),
+      ReferredItem(
+        type: HomeCardType.removeBg,
+        primary: Color(0xFF02F8D6),
+        colors: [
+          Color(0xFF02CE95),
+          Color(0xFF02CE95),
+        ],
+      ),
     ];
   }
 

@@ -305,6 +305,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Ya has enviado tu opinión, inténtalo de nuevo mañana"),
         "feedback_thanks":
             MessageLookupByLibrary.simpleMessage("Gracias por sus comentarios"),
+        "fill_in_address":
+            MessageLookupByLibrary.simpleMessage("Rellene la dirección"),
         "first_name": MessageLookupByLibrary.simpleMessage("Nombre"),
         "forgot_password":
             MessageLookupByLibrary.simpleMessage("Olvidé mi contraseña？"),

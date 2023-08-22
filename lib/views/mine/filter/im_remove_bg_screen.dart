@@ -8,7 +8,7 @@ import '../../../Common/importFile.dart';
 import '../../../Widgets/app_navigation_bar.dart';
 import '../../../Widgets/dialog/dialog_widget.dart';
 import '../../../api/app_api.dart';
-import '../../../api/filter_api.dart';
+import '../../../api/remove_bg_api.dart';
 import '../../../app/app.dart';
 import '../../../app/user/user_manager.dart';
 import '../../../models/enums/account_limit_type.dart';
@@ -114,20 +114,19 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
   onGetRemovebgImage() async {
     var removeBgLimitEntity = await appApi.getRemoveBgLimit();
     if (removeBgLimitEntity != null) {
+      AccountLimitType? type;
       if (removeBgLimitEntity.usedCount >= removeBgLimitEntity.dailyLimit) {
         if (AppDelegate.instance.getManager<UserManager>().isNeedLogin) {
-          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          showLimitDialog(context, type: AccountLimitType.guest, function: "removeBg", source: "image_edition_screen");
-          return TransferResult()..type = AccountLimitType.guest;
+          type = AccountLimitType.guest;
         } else if (isVip()) {
-          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          showLimitDialog(context, type: AccountLimitType.vip, function: "removeBg", source: "image_edition_screen");
-          return TransferResult()..type = AccountLimitType.vip;
+          type = AccountLimitType.vip;
         } else {
-          Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
-          showLimitDialog(context, type: AccountLimitType.normal, function: "removeBg", source: "image_edition_screen");
-          return TransferResult()..type = AccountLimitType.normal;
+          type = AccountLimitType.normal;
         }
+      }
+      if (type != null) {
+        showLimitDialog(context, type: type, function: "removeBg", source: "image_edition_screen");
+        return;
       }
     }
     uploadImageController.upload(file: File(widget.filePath)).then((value) async {
@@ -135,7 +134,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         isRequset = false;
         removeBgUrl = null;
       } else {
-        removeBgUrl = await FilterApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
+        removeBgUrl = await RemoveBgApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
             originalPath: widget.filePath,
             imageUrl: value!,
             onFailed: (response) {

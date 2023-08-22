@@ -46,7 +46,7 @@ class ThirdpartManager extends BaseManager {
     Connectivity().onConnectivityChanged.listen((event) {
       EventBusHelper().eventBus.fire(OnNetworkStateChangeEvent(data: event));
     });
-    Executor().warmUp(isolatesCount: 1);
+    Executor().warmUp(isolatesCount: 4);
   }
 
   @override
