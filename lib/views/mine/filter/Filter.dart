@@ -336,8 +336,11 @@ class Filter {
             int green = imgLib.getGreen(pixel);
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
+            HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
-            res_image.setPixelRgba(x, y, (red * 1.5).round().clamp(0, 255), (green * 1.5).round().clamp(0, 255), blue);
+            hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
+            Color color = hsv.toColor();
+            res_image.setPixelRgba(x, y, (color.red * 1.5).round().clamp(0, 255), (color.green * 1.5).round().clamp(0, 255), color.blue);
           }
         }
         break;
@@ -352,8 +355,11 @@ class Filter {
             int green = imgLib.getGreen(pixel);
             int blue = imgLib.getBlue(pixel);
             int alpha = imgLib.getAlpha(pixel);
+            HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
 
-            res_image.setPixelRgba(x, y, red, (green * 1.5).round().clamp(0, 255), (blue * 1.5).round().clamp(0, 255));
+            hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
+            Color color = hsv.toColor();
+            res_image.setPixelRgba(x, y, color.red, (color.green * 1.5).round().clamp(0, 255), (color.blue * 1.5).round().clamp(0, 255));
           }
         }
         break;
