@@ -42,6 +42,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   onSavedBackground(BackgroundData data, bool isPopMerge) async {
+    canReset = true;
     if (isPopMerge) {
       preBackgroundData = selectData ?? preBackgroundData;
     } else {
@@ -85,6 +86,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
     });
+    canReset = false;
   }
 
   onProductShowImage() async {

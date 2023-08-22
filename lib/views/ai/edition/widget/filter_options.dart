@@ -26,12 +26,12 @@ class FilterOptions extends StatelessWidget {
     if (controller.thumbnails.isEmpty) {
       return Container();
     }
-    var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6;
+    var itemWidth = ScreenUtil.getCurrentWidgetSize(context).width / 6.2;
     return Column(
       children: [
         Row(
           children: [
-            Container(width: $(15)),
+            Container(width: $(12)),
             buildItem(context, 0, itemWidth),
             Container(width: $(1)),
             Expanded(
@@ -45,7 +45,7 @@ class FilterOptions extends StatelessWidget {
                 return buildItem(context, index + 1, itemWidth);
               },
               separatorBuilder: (BuildContext context, int index) {
-                return Container(width: $(1));
+                return Container(width: $(0));
               },
             )),
           ],
@@ -59,7 +59,7 @@ class FilterOptions extends StatelessWidget {
     var item = Container(
         width: itemWidth,
         height: itemWidth,
-        padding: EdgeInsets.all(2.5),
+        padding: EdgeInsets.all(2),
         child: controller.thumbnails[function] == null
             ? SizedBox()
             : Image.memory(
@@ -83,22 +83,20 @@ class FilterOptions extends StatelessWidget {
               function.title(),
               style: TextStyle(
                 color: Colors.white,
-                fontSize: $(10),
-                fontWeight: controller.currentFunction == function ? FontWeight.w500 : FontWeight.normal,
+                fontSize: $(11),
+                fontWeight: controller.currentFunction == function ? FontWeight.bold : FontWeight.normal,
               ),
             ),
             SizedBox(height: $(2)),
             controller.currentFunction == function
-                ? OutlineWidget(
-                    strokeWidth: 3,
-                    radius: $(2),
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF04F1F9), Color(0xFF7F97F3), Color(0xFFEC5DD8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                ? item.intoContainer(
+                    // padding: EdgeInsets.all($(1)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: $(2)),
+                      borderRadius: BorderRadius.circular($(4)),
                     ),
-                    child: item)
-                : item,
+                  )
+                : item.intoContainer(padding: EdgeInsets.symmetric(vertical: $(2), horizontal: $(2))),
           ],
         ));
   }

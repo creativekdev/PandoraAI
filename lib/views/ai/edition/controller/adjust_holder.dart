@@ -32,7 +32,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
     resetConfig();
   }
 
-
   String getConfigKey() {
     var string = dataList.map((e) => e.toString()).toList().join(',');
     return EncryptUtil.encodeMd5(string);
@@ -102,8 +101,8 @@ class AdjustHolder extends ImageEditionBaseHolder {
     canReset = false;
     dataList = [
       AdjustData(function: AdjustFunction.brightness, initValue: 0, value: 0, previousValue: 0, start: -20, end: 20, multiple: 5),
-      AdjustData(function: AdjustFunction.contrast, initValue: 40, value: 40, previousValue: 40, start: 0, end: 40, multiple: 2.5),
-      AdjustData(function: AdjustFunction.saturation, initValue: 40, value: 40, previousValue: 40, start: 0, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.contrast, initValue: 0, value: 0, previousValue: 0, start: -40, end: 40, multiple: 2.5),
+      AdjustData(function: AdjustFunction.saturation, initValue: 0, value: 0, previousValue: 0, start: -40, end: 40, multiple: 2.5),
       AdjustData(function: AdjustFunction.noise, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.25),
       AdjustData(function: AdjustFunction.pixelate, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 0.5),
       AdjustData(function: AdjustFunction.blur, initValue: 0, value: 0, previousValue: 0, start: 0, end: 40, multiple: 3 / 4),
@@ -127,8 +126,9 @@ class AdjustHolder extends ImageEditionBaseHolder {
       shownImage = baseImage;
     }
     canReset = true;
+    var start = DateTime.now().millisecondsSinceEpoch;
     shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
-    print('build img...');
+    print('spend :${DateTime.now().millisecondsSinceEpoch - start}');
   }
 
   onSwitchNewAdj() async {
@@ -161,7 +161,7 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
       image = imgLib.brightness(image, (data.value * data.multiple).toInt())!;
       break;
     case AdjustFunction.contrast:
-      image = imgLib.contrast(image, data.value * data.multiple)!;
+      image = imgLib.contrast(image, (data.value * data.multiple * 0.5) + 100)!;
       break;
     case AdjustFunction.saturation:
       for (var y = 0; y < image.height; ++y) {
@@ -172,7 +172,18 @@ imgLib.Image _imAdjustOne(AdjustData data, imgLib.Image image) {
           int blue = imgLib.getBlue(pixel);
           int alpha = imgLib.getAlpha(pixel);
           HSVColor hsv = HSVColor.fromColor(Color.fromARGB(alpha, red, green, blue));
-          hsv = hsv.withSaturation(data.value * data.multiple * hsv.saturation / 100);
+          var rightRange = 1 - hsv.saturation;
+          var leftRange = hsv.saturation;
+          var percent = data.value * data.multiple;
+          if (percent > 0) {
+            var newSa = hsv.saturation + ((percent / 100) * rightRange);
+            hsv = hsv.withSaturation(newSa);
+          } else {
+            var newSa = hsv.saturation + ((percent / 100) * leftRange);
+            hsv = hsv.withSaturation(newSa);
+          }
+          // hsv = hsv.withSaturation((data.value * data.multiple + 100) * hsv.saturation / 100);
+          // hsv = hsv.withSaturation(0.99);
           Color color = hsv.toColor();
           image.setPixelRgba(x, y, color.red, color.green, color.blue);
         }

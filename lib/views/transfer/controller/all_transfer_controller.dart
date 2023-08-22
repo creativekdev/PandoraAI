@@ -31,7 +31,7 @@ class AllTransferController extends TransferBaseController {
       case EffectStyle.StyleMorph:
         return controller.data?.stylemorph?.children ?? [];
       case EffectStyle.All:
-        return [...controller.data?.cartoonize?.children ?? [], ...controller.data?.stylemorph?.children ?? []];
+        return [...controller.data?.stylemorph?.children ?? [], ...controller.data?.cartoonize?.children ?? []];
       case EffectStyle.No:
         return [];
     }

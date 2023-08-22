@@ -28,7 +28,6 @@ abstract class ImageEditionBaseHolder {
   set shownImage(imgLib.Image? value) {
     _shownImage = value;
     parent.setShownImage(value);
-    // update();
   }
 
   imgLib.Image? get shownImage => _shownImage;

@@ -59,7 +59,7 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
 
   Key key = UniqueKey();
   Size? size;
-  bool switching = false;
+  Rx<bool> switching = false.obs;
   late ScrollController scrollController;
 
   @override
@@ -197,41 +197,58 @@ class _ImCropScreenState extends AppState<ImCropScreen> {
                         tileMode: TileMode.mirror,
                       ).createShader(bounds);
                     },
-                    child: ListView.builder(
-                      controller: scrollController,
-                      padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        var item = items[index];
-                        bool check = item == currentItem;
-                        return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
+                    child: Row(
+                      children: [
+                        SizedBox(width: $(15)),
+                        buildItem(items.first, context, items.first == currentItem).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(
+                            onTap: () {
+                          switching.value = true;
                           safeSetState(() {
-                            switching = true;
                             key = UniqueKey();
-                            currentItem = item;
+                            currentItem = items.first;
                           });
-                          delay(() => safeSetState(() => switching = false), milliseconds: 48);
-                        }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
-                      },
-                      itemCount: items.length,
+                          delay(() => switching.value = false, milliseconds: 200);
+                        }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8))),
+                        Expanded(
+                          child: ListView.builder(
+                            controller: scrollController,
+                            padding: EdgeInsets.only(right: $(15)),
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, pos) {
+                              var index = pos + 1;
+                              var item = items[index];
+                              bool check = item == currentItem;
+                              return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
+                                switching.value = true;
+                                safeSetState(() {
+                                  key = UniqueKey();
+                                  currentItem = item;
+                                });
+                                delay(() => switching.value = false, milliseconds: 200);
+                              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
+                            },
+                            itemCount: items.length - 1,
+                          ),
+                        ),
+                      ],
                     ).intoContainer(height: $(44)),
                   ),
                 ],
               ),
             ),
           ]),
-          Column(
-            children: [
-              Expanded(
-                child: Container(
-                  color: ColorConstant.BackgroundColor,
-                ),
-              ),
-              SizedBox(
-                height: $(140) + ScreenUtil.getBottomPadding(context),
-              )
-            ],
-          ).visibility(visible: switching),
+          Obx(() => Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      color: ColorConstant.BackgroundColor,
+                    ),
+                  ),
+                  SizedBox(
+                    height: $(140) + ScreenUtil.getBottomPadding(context),
+                  )
+                ],
+              ).visibility(visible: switching.value)),
         ],
         fit: StackFit.expand,
       ),

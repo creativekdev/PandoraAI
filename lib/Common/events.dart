@@ -305,7 +305,7 @@ class Events {
     required String platform,
     required String type,
   }) =>
-      logEvent('filter_completed_share', eventValues: {
+      logEvent('image_edition_share', eventValues: {
         'source': source,
         'platform': platform,
         'type': type,

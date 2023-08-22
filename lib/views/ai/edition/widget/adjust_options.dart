@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
@@ -5,6 +6,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
 import 'package:cartoonizer/views/ai/edition/controller/adjust_holder.dart';
 import 'package:cartoonizer/views/mine/filter/GridSlider.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class AdjustOptions extends StatelessWidget {
   late AdjustHolder controller;
@@ -16,9 +18,11 @@ class AdjustOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var paddingH = (ScreenUtil.getCurrentWidgetSize(context).width - $(54)) / 2;
-    controller.itemWidth = $(54);
-    controller.padding = paddingH;
+    var tWidth = (ScreenUtil.getCurrentWidgetSize(context).width);
+    var itemW = (tWidth / 7);
+    var paddingH = (tWidth - itemW) / 2;
+    controller.itemWidth = itemW;
+    var currentDataIndex = min(controller.index, controller.dataList.length - 1);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -97,7 +101,7 @@ class AdjustOptions extends StatelessWidget {
                   } else {
                     controller.index = index;
                   }
-                }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(10)));
+                }).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(10)));
               },
               itemCount: controller.dataList.length,
             ).intoContainer(height: $(44)),
@@ -120,11 +124,11 @@ class AdjustOptions extends StatelessWidget {
             ).createShader(bounds);
           },
           child: GridSlider(
-              minVal: controller.dataList[controller.index].start.toInt(),
-              maxVal: controller.dataList[controller.index].end.toInt(),
-              currentPos: controller.dataList[controller.index].value,
+              minVal: controller.dataList[currentDataIndex].start.toInt(),
+              maxVal: controller.dataList[currentDataIndex].end.toInt(),
+              currentPos: controller.dataList[currentDataIndex].value,
               onChanged: (newValue) {
-                controller.dataList[controller.index].value = newValue;
+                controller.dataList[currentDataIndex].value = newValue;
                 controller.update();
                 if (DateTime.now().millisecondsSinceEpoch - lastBuildTime > 150) {
                   lastBuildTime = DateTime.now().millisecondsSinceEpoch;
@@ -136,7 +140,7 @@ class AdjustOptions extends StatelessWidget {
               }),
         ),
         SizedBox(height: 10),
-        TitleTextWidget(controller.dataList[controller.index].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
+        TitleTextWidget(controller.dataList[currentDataIndex].function.title(), Color(0xfff9f9f9), FontWeight.normal, $(12)),
       ],
     );
   }

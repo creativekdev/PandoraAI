@@ -28,10 +28,6 @@ class RemoveBgOptions extends StatelessWidget {
     return BackgroundPickerBar(
       preBackgroundData: controller.preBackgroundData,
       imageRatio: controller.ratio,
-      onClear: () async {
-        await controller.onResetClick();
-        CommonExtension().showToast(S.of(context).clean_successfully);
-      },
       onPick: (BackgroundData data, bool isPopMerge) async {
         controller.onSavedBackground(data, isPopMerge);
       },

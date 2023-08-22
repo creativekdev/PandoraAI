@@ -1,18 +1,10 @@
-import 'dart:io';
-
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
-import 'package:cartoonizer/views/ai/edition/controller/filter_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_crop_screen.dart';
-import 'package:common_utils/common_utils.dart';
-import 'package:worker_manager/worker_manager.dart';
 
 class CropOptions extends StatelessWidget {
   CropHolder controller;
@@ -27,8 +19,8 @@ class CropOptions extends StatelessWidget {
           shaderCallback: (Rect bounds) {
             return LinearGradient(
               colors: <Color>[
-                Color(0x11ffffff),
-                Color(0x99ffffff),
+                Color(0xffffffff),
+                Color(0xffffffff),
                 Color(0xffffffff),
                 Color(0x99ffffff),
                 Color(0x11ffffff),
@@ -38,18 +30,31 @@ class CropOptions extends StatelessWidget {
               tileMode: TileMode.mirror,
             ).createShader(bounds);
           },
-          child: ListView.builder(
-            controller: controller.scrollController,
-            padding: EdgeInsets.symmetric(horizontal: (ScreenUtil.screenSize.width - $(60)) / 2),
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              var item = controller.items[index];
-              bool check = item == controller.currentItem;
-              return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
-                crop(context, item);
-              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
-            },
-            itemCount: controller.items.length,
+          child: Row(
+            children: [
+              SizedBox(width: $(15)),
+              buildItem(controller.items.first, context, controller.items.first == controller.currentItem)
+                  .intoContainer(height: $(44), width: $(44), color: Colors.transparent)
+                  .intoGestureDetector(onTap: () {
+                crop(context, controller.items.first);
+              }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8))),
+              Expanded(
+                child: ListView.builder(
+                  controller: controller.scrollController,
+                  padding: EdgeInsets.only(right: $(15)),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, pos) {
+                    var index = pos + 1;
+                    var item = controller.items[index];
+                    bool check = item == controller.currentItem;
+                    return buildItem(item, context, check).intoContainer(height: $(44), width: $(44), color: Colors.transparent).intoGestureDetector(onTap: () {
+                      crop(context, item);
+                    }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(8)));
+                  },
+                  itemCount: controller.items.length - 1,
+                ),
+              ),
+            ],
           ).intoContainer(height: $(44)),
         ),
       ],

@@ -361,11 +361,11 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
     } else if (value) {
       switch (type) {
         case AccountLimitType.guest:
-          userManager.doOnLogin(context, logPreLoginAction: '${function}_generate_limit', toSignUp: true);
+          userManager.doOnLogin(Get.context!, logPreLoginAction: '${function}_generate_limit', toSignUp: true);
           break;
         case AccountLimitType.normal:
           if (userManager.user!.isReferred) {
-            PaymentUtils.pay(context, source);
+            PaymentUtils.pay(Get.context!, source);
           } else {
             Navigator.popUntil(context, ModalRoute.withName('/HomeScreen'));
             EventBusHelper().eventBus.fire(OnTabSwitchEvent(data: [AppTabId.MINE.id()]));
@@ -377,7 +377,7 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
           break;
       }
     } else {
-      PaymentUtils.pay(context, source);
+      PaymentUtils.pay(Get.context!, source);
     }
   });
 }

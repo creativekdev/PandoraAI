@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -121,6 +122,23 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         if (value == null) {
           hideLoading();
         } else {
+          var recentController = Get.find<RecentController>();
+          var filterHolder = controller.items.pick((t) => t.function == ImageEditionFunction.filter)?.holder as FilterHolder?;
+          var adjustHolder = controller.items.pick((t) => t.function == ImageEditionFunction.adjust)?.holder as AdjustHolder?;
+          // var effectHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
+          // var stickerHolder = controller.items.pick((t) => t.function == ImageEditionFunction.effect)?.holder as TransferBaseController;
+          recentController.onImageEditionUsed(
+            controller.originFile.path,
+            value,
+            filterHolder?.currentFunction ?? FilterEnum.NOR,
+            adjustHolder?.dataList
+                    .map((e) => RecentAdjustData()
+                      ..mAdjustFunction = e.function
+                      ..value = e.value)
+                    .toList() ??
+                [],
+            [],
+          );
           await GallerySaver.saveImage(value, albumName: saveAlbumName);
           hideLoading();
         }
@@ -137,19 +155,21 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     String effectKey = 'image_edition';
     if (controller.currentItem.holder is TransferBaseController) {
       var baseController = controller.currentItem.holder as TransferBaseController;
-      resultPath = baseController.resultFile?.path;
+      resultPath = (baseController.resultFile ?? baseController.originFile).path;
       if (baseController.getCategory() == 'cartoonize' || baseController.getCategory() == 'sticker') {
         type = HomeCardType.cartoonize;
       } else {
         type = HomeCardType.stylemorph;
       }
       effectKey = baseController.selectedEffect?.key ?? '';
-      if (TextUtil.isEmpty(resultPath)) {
-        return;
-      }
-      uint8list = await File(resultPath!).readAsBytes();
+      uint8list = await File(resultPath).readAsBytes();
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
-      var bytes = await controller.shownImage!.toByteData();
+      var bytes;
+      if (controller.shownImage == null) {
+        bytes = await controller.originFile.readAsBytes();
+      } else {
+        bytes = await controller.shownImage!.toByteData();
+      }
       uint8list = bytes!.buffer.asUint8List();
     }
     if (uint8list == null) {
@@ -218,7 +238,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
         return;
       }
-      var byteData = await controller.shownImage!.toByteData();
+      var byteData = await controller.shownImage!.toByteData(format: ImageByteFormat.png);
       uint8list = byteData!.buffer.asUint8List();
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
