@@ -4,6 +4,7 @@ import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/adjust_function.dart';
+import 'package:cartoonizer/utils/task_executor.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
@@ -16,6 +17,9 @@ class AdjustHolder extends ImageEditionBaseHolder {
 
   List<AdjustData> dataList = [];
   Executor executor = new Executor();
+
+  TaskExecutor baseExecutor = TaskExecutor();
+  TaskExecutor shownExecutor = TaskExecutor();
 
   @override
   setOriginFilePath(String? path) {
@@ -122,13 +126,34 @@ class AdjustHolder extends ImageEditionBaseHolder {
   void buildResult() async {
     if (baseImage == null) {
       baseImage = imgLib.Image.from(_originImageData!);
-      baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: baseImage, fun2: _imAdjust);
-      shownImage = baseImage;
+      _createAndExecTaskBase(dataList.filter((t) => !t.active), baseImage!, () {
+        shownImage = baseImage;
+        canReset = true;
+        _createAndExecTaskShown(dataList.filter((t) => t.active), baseImage!);
+      });
+    } else {
+      canReset = true;
+      _createAndExecTaskShown(dataList.filter((t) => t.active), baseImage!);
     }
-    canReset = true;
-    var start = DateTime.now().millisecondsSinceEpoch;
-    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
-    print('spend :${DateTime.now().millisecondsSinceEpoch - start}');
+  }
+
+  _createAndExecTaskBase(List<AdjustData> datas, imgLib.Image image, Function callback) {
+    var cancelable = executor.execute(arg1: datas, arg2: image, fun2: _imAdjust);
+    var time = baseExecutor.insert(cancelable);
+    cancelable.then((value) {
+      baseExecutor.cancelOldTask(time);
+      baseImage = value;
+      callback.call();
+    });
+  }
+
+  _createAndExecTaskShown(List<AdjustData> datas, imgLib.Image image) {
+    var cancelable = executor.execute(arg1: datas, arg2: image, fun2: _imAdjust);
+    var time = shownExecutor.insert(cancelable);
+    cancelable.then((value) {
+      shownExecutor.cancelOldTask(time);
+      shownImage = value;
+    });
   }
 
   onSwitchNewAdj() async {
@@ -137,13 +162,16 @@ class AdjustHolder extends ImageEditionBaseHolder {
     }
     dataList.forEach((element) => element.active = false);
     dataList[index].active = true;
-    baseImage = await executor.execute(arg1: dataList.filter((t) => !t.active), arg2: imgLib.Image.from(_originImageData!), fun2: _imAdjust);
-    shownImage = await executor.execute(arg1: dataList.filter((t) => t.active), arg2: imgLib.Image.from(baseImage!), fun2: _imAdjust);
+    _createAndExecTaskBase(dataList.filter((t) => !t.active), imgLib.Image.from(_originImageData!), () {
+      _createAndExecTaskShown(dataList.filter((t) => t.active), imgLib.Image.from(baseImage!));
+    });
   }
 
   @override
   dispose() {
     executor.dispose();
+    baseExecutor.clear();
+    shownExecutor.clear();
     return super.dispose();
   }
 }
