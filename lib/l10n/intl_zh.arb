@@ -504,5 +504,6 @@
   "photo": "图册",
   "print": "打印",
   "enter_the_color_value": "请输入正确的色值",
-  "buy_attr_ai_tools": "解除限制完全访问所有PandoraAI效果滤镜和工具"
+  "buy_attr_ai_tools": "解除限制完全访问所有PandoraAI效果滤镜和工具",
+  "fill_in_address": "请填写地址"
 }
