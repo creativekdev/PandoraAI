@@ -270,6 +270,27 @@ class ColorUtil {
   static String colorToCss(Color color) {
     return 'rgba(${color.red},${color.green},${color.blue},${color.opacity})';
   }
+
+  static String getHexFromColor(Color color) {
+    // 将颜色的 value 属性转换为 16 进制字符串
+    // String hexAlpha = color.alpha.toRadixString(16).padLeft(2, '0');
+    String hexRed = color.red.toRadixString(16).padLeft(2, '0');
+    String hexGreen = color.green.toRadixString(16).padLeft(2, '0');
+    String hexBlue = color.blue.toRadixString(16).padLeft(2, '0');
+    return '#$hexRed$hexGreen$hexBlue';
+  }
+
+  static Color hexToColor(String hexString) {
+    hexString = hexString.replaceAll('#', ''); // 移除可能的 '#' 符号
+
+    if (hexString.length == 6) {
+      // 如果是 6 位长度的颜色码，添加透明度 'FF'
+      hexString = 'FF$hexString';
+    }
+
+    int colorValue = int.parse(hexString, radix: 16); // 将字符串转换为整数
+    return Color(colorValue); // 创建 Color 对象
+  }
 }
 
 extension ColorEx on Color {

@@ -249,6 +249,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                     scale = newScale;
                                     dx = newDx;
                                     dy = newDy;
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                                    });
                                   },
                                 ),
                               ]),
@@ -340,6 +343,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                             scale = newScale;
                                             dx = newDx;
                                             dy = newDy;
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                                            });
                                           },
                                         ),
                                       ]),
