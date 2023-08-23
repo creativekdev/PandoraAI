@@ -57,11 +57,15 @@ class LibImagePainter extends CustomPainter {
 }
 
 Future<ui.Image> toImage(imgLib.Image image) async {
+  return toImageByList(image.data.buffer.asUint8List(), image.width, image.height);
+}
+
+Future<ui.Image> toImageByList(Uint8List image, width, height) async {
   final c = Completer<ui.Image>();
   ui.decodeImageFromPixels(
-    image.data.buffer.asUint8List(),
-    image.width,
-    image.height,
+    image,
+    width,
+    height,
     ui.PixelFormat.rgba8888,
     (ui.Image image) {
       c.complete(image);

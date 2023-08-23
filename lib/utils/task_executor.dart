@@ -14,15 +14,23 @@ class TaskExecutor {
     print('finish task dt: ${time.millisecondsSinceEpoch}');
     var oldList = taskList.filter((t) => t.createDate.isBefore(time));
     for (var value in oldList) {
-      value.task.cancel();
-      print('cancel task dt: ${value.createDate.millisecondsSinceEpoch}');
+      try {
+        value.task.cancel();
+        print('cancel task dt: ${value.createDate.millisecondsSinceEpoch}');
+      } on CanceledError catch (e) {
+        print(e);
+      }
       taskList.remove(value);
     }
   }
 
   clear() {
     for (var value in taskList) {
-      value.task.cancel();
+      try {
+        value.task.cancel();
+      } on CanceledError catch (e) {
+        print(e);
+      }
     }
     taskList.clear();
   }

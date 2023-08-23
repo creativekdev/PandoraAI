@@ -21,6 +21,7 @@ class ApiConfigEntity {
   List<ShippingMethodEntity> shippingMethods = [];
   int imageMaxl = 512;
   int mattingMaxl = 512;
+  int matting3rdParty = 0;
   List<AiServerEntity> aiConfig = [];
 
   EffectData? get stylemorph => data.pick((t) => t.key == 'stylemorph');
@@ -67,6 +68,9 @@ class ApiConfigEntity {
     if (json['matting_maxl'] != null) {
       entity.mattingMaxl = json['matting_maxl'] as int;
     }
+    if (json['matting_3rd_party'] != null) {
+      entity.matting3rdParty = json['matting_3rd_party'] as int;
+    }
     if (json['ai_config'] != null) {
       entity.aiConfig = (json['ai_config'] as List).map((e) => AiServerEntity.fromJson(e)).toList();
     }
@@ -104,6 +108,8 @@ class ApiConfigEntity {
     result['shipping_methods'] = shippingMethods.map((e) => e.toJson()).toList();
     result['ai_config'] = aiConfig.map((e) => e.toJson()).toList();
     result['image_maxl'] = imageMaxl;
+    result['matting_maxl'] = mattingMaxl;
+    result['matting_3rd_party'] = matting3rdParty;
     return result;
   }
 

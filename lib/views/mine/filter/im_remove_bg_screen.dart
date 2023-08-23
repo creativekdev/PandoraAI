@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:cartoonizer/Controller/effect_data_controller.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
+import 'package:cartoonizer/api/clip_drop_api.dart';
 import 'package:common_utils/common_utils.dart';
 
 import '../../../Common/importFile.dart';
@@ -111,7 +113,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     delay(() => onGetRemovebgImage());
   }
 
-  onGetRemovebgImage() async {
+  Future<bool> checkLimit() async {
     var removeBgLimitEntity = await appApi.getRemoveBgLimit();
     if (removeBgLimitEntity != null) {
       AccountLimitType? type;
@@ -125,28 +127,62 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
         }
       }
       if (type != null) {
-        showLimitDialog(context, type: type, function: "removeBg", source: "image_edition_screen");
-        return;
-      }
-    }
-    uploadImageController.upload(file: File(widget.filePath)).then((value) async {
-      if (TextUtil.isEmpty(value)) {
-        isRequset = false;
-        removeBgUrl = null;
+        Navigator.of(context).pop(false);
+        delay(() => showLimitDialog(Get.context!, type: type!, function: "removeBg", source: "image_edition_screen"), milliseconds: 100);
+        return false;
       } else {
-        removeBgUrl = await RemoveBgApi(client: DioNode().build(logResponseEnable: false)).removeBgAndSave(
-            originalPath: widget.filePath,
-            imageUrl: value!,
-            onFailed: (response) {
-              uploadImageController.deleteUploadData(File(widget.filePath));
-              Navigator.of(context).pop(false);
-            });
-        if (removeBgUrl != null) {
-          isRequset = false;
-        }
+        return true;
       }
-      setState(() {});
-    });
+    } else {
+      return true;
+    }
+  }
+
+  onGetRemovebgImage() async {
+    var dataController = Get.find<EffectDataController>();
+    if (dataController.data?.matting3rdParty == 1) {
+      var clipDropApi = ClipDropApi();
+      removeBgUrl = await clipDropApi.getCachePath(widget.filePath);
+      if (!TextUtil.isEmpty(removeBgUrl)) {
+        isRequset = false;
+        setState(() {});
+      } else {
+        if (!(await checkLimit())) {
+          return;
+        }
+        removeBgUrl = await clipDropApi.remove(filePath: widget.filePath);
+        isRequset = false;
+        if (removeBgUrl == null) {
+          Navigator.of(context).pop(false);
+        }
+        setState(() {});
+      }
+    } else {
+      uploadImageController.upload(file: File(widget.filePath)).then((value) async {
+        if (TextUtil.isEmpty(value)) {
+          isRequset = false;
+          removeBgUrl = null;
+        } else {
+          var removeBgApi = RemoveBgApi(client: DioNode().build(logResponseEnable: false));
+          if (!(await removeBgApi.maskExist(imageUrl: value!))) {
+            if (!(await checkLimit())) {
+              return;
+            }
+          }
+          removeBgUrl = await removeBgApi.removeBgAndSave(
+              originalPath: widget.filePath,
+              imageUrl: value,
+              onFailed: (response) {
+                uploadImageController.deleteUploadData(File(widget.filePath));
+                Navigator.of(context).pop(false);
+              });
+          if (removeBgUrl != null) {
+            isRequset = false;
+          }
+        }
+        setState(() {});
+      });
+    }
   }
 
   @override

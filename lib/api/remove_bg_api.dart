@@ -70,6 +70,13 @@ class RemoveBgApi extends RetryAbleRequester {
     return baseEntity?.data?['data'];
   }
 
+  Future<bool> maskExist({required String imageUrl}) async {
+    var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
+    String key = EncryptUtil.encodeMd5(imageUrl);
+    String filePath = getMaskFileName(rootPath, key);
+    return await File(filePath).exists();
+  }
+
   Future<String?> removeBgAndSave({required String imageUrl, required String originalPath, onFailed}) async {
     var rootPath = cacheManager.storageOperator.recordBackgroundRemovalDir.path;
     String key = EncryptUtil.encodeMd5(imageUrl);

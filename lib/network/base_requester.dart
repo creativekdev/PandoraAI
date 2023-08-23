@@ -180,6 +180,33 @@ abstract class BaseRequester with ExceptionHandler, ResponseHandler {
     }
   }
 
+  Future<BaseEntity?> postUpload(
+    String path, {
+    Map<String, String>? headers,
+    required FormData data,
+    bool toastOnFailed = true,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+    Function(Response? response)? onFailed,
+    bool needRetry = true,
+  }) async {
+    headers ??= Map();
+    try {
+      Response response = await _client.post(
+        path,
+        data: data,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+        options: Options(headers: headers, responseType: ResponseType.stream),
+      );
+      return _onResponse(response, toastOnFailed: toastOnFailed, onFailed: onFailed, s: null);
+    } on DioError catch (e) {
+      onDioError(e, toastOnFailed: toastOnFailed, needRetry: needRetry);
+      onFailed?.call(e.response);
+      return null;
+    }
+  }
+
   Future<BaseEntity?> doPut(
     String path,
     data, {
