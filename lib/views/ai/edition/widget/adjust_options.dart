@@ -101,7 +101,7 @@ class AdjustOptions extends StatelessWidget {
                   } else {
                     controller.index = index;
                   }
-                }).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(10)));
+                }).intoContainer(width: itemW, alignment: Alignment.center);
               },
               itemCount: controller.dataList.length,
             ).intoContainer(height: $(44)),

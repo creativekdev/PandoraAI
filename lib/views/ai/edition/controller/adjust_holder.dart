@@ -67,7 +67,7 @@ class AdjustHolder extends ImageEditionBaseHolder {
     if (isClick) {
       return;
     }
-    var pixels = scrollController.position.pixels;
+    var pixels = scrollController.position.pixels + 0.000005; //修正误差
     var pos = pixels ~/ itemWidth;
     var d = pixels % itemWidth;
     if (d > 0.5 * itemWidth) {
