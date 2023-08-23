@@ -106,6 +106,7 @@ dependencies:
   flutter_google_places: 0.3.0
   calendar_date_picker2: 0.5.2
   cropperx: ^1.1.1
+  croppy: 0.2.6
   card_swiper: 2.0.4
   flutter_swiper_null_safety: 1.0.2
   intl_phone_number_input: 0.7.3+1

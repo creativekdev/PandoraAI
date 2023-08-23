@@ -145,6 +145,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       });
     }
     await hideLoading();
+    Events.styleImageEditionCompleteSave(source: controller.source, type: 'image');
     CommonExtension().showImageSavedOkToast(context);
   }
 
@@ -191,7 +192,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         category: type,
       ).then((value) {
         if (value ?? false) {
-          Events.imEffectionCompleteShare(source: controller.photoType, platform: 'discovery', type: 'image');
+          Events.styleImageEditionCompleteDiscovery(source: controller.source, type: 'image');
           showShareSuccessDialog(context);
         }
       });
@@ -205,6 +206,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (resultPath != null) {
       file = File(resultPath);
     }
+    Events.styleImageEditionCompletePrint(source: widget.source);
     Print.open(context, source: widget.source, file: file ?? controller.originFile);
   }
 

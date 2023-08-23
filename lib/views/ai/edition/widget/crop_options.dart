@@ -1,10 +1,14 @@
 import 'package:cartoonizer/Widgets/outline_widget.dart';
 import 'package:cartoonizer/Widgets/progress/circle_progress_bar.dart';
-import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
+import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
-import 'package:cartoonizer/views/mine/filter/im_crop_screen.dart';
+import 'package:croppy/croppy.dart';
+import 'package:image/image.dart' as imgLib;
+
+import '../../../../Widgets/custom_crop/custom_crop_settings.dart';
+import '../../../../Widgets/custom_crop/custom_cropper.dart';
 
 class CropOptions extends StatelessWidget {
   CropHolder controller;
@@ -62,22 +66,49 @@ class CropOptions extends StatelessWidget {
   }
 
   crop(BuildContext context, CropConfig e) {
-    Navigator.of(context).push(FadeRouter(
-        child: ImCropScreen(
-          items: controller.items,
-          filePath: controller.originFilePath!,
-          originalRatio: controller.originalRatio,
-          initScrollPixels: controller.scrollController.positions.isEmpty ? 0 : controller.scrollController.position.pixels,
-          cropItem: e,
-          onScrollChanged: (scrollPixel) {
-            controller.scrollController.jumpTo(scrollPixel);
-          },
-          onGetCrop: (image, config) async {
-            controller.shownImage = image;
-            controller.currentItem = config;
-          },
-        ),
-        settings: RouteSettings(name: '/ImCropScreen')));
+    var _cropSettings = CustomCropSettings.initial();
+    imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
+    print("127.0.0.1:7777 ${controller.shownImage}");
+    List<int> jpegBytes = jpegEncoder.encodeImage(controller.shownImage!);
+    showCustomImageCropper(
+      context,
+      imageProvider: MemoryImage(Uint8List.fromList(jpegBytes)),
+      heroTag: 'image-cropper',
+      // initialData: _data[page],
+      cropPathFn: _cropSettings.cropShapeFn,
+      enabledTransformations: _cropSettings.enabledTransformations,
+      allowedAspectRatios: [
+        const CropAspectRatio(width: 1, height: 1),
+        const CropAspectRatio(width: 3, height: 2),
+        const CropAspectRatio(width: 2, height: 3),
+        const CropAspectRatio(width: 4, height: 3),
+        const CropAspectRatio(width: 3, height: 4),
+        const CropAspectRatio(width: 16, height: 9),
+        const CropAspectRatio(width: 9, height: 16),
+      ],
+      postProcessFn: (result) async {
+        imgLib.Image? image = await getLibImage(result.uiImage);
+        controller.shownImage = image;
+        return result;
+      },
+    );
+
+    // Navigator.of(context).push(FadeRouter(
+    //     child: ImCropScreen(
+    //       items: controller.items,
+    //       filePath: controller.originFilePath!,
+    //       originalRatio: controller.originalRatio,
+    //       initScrollPixels: controller.scrollController.positions.isEmpty ? 0 : controller.scrollController.position.pixels,
+    //       cropItem: e,
+    //       onScrollChanged: (scrollPixel) {
+    //         controller.scrollController.jumpTo(scrollPixel);
+    //       },
+    //       onGetCrop: (image, config) async {
+    //         controller.shownImage = image;
+    //         controller.currentItem = config;
+    //       },
+    //     ),
+    //     settings: RouteSettings(name: '/ImCropScreen')));
   }
 
   Widget rectangle({required double width, required double height, required bool checked}) {
