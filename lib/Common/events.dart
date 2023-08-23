@@ -311,6 +311,31 @@ class Events {
         'type': type,
       });
 
+  static Future<void> styleImageEditionCompletePrint({
+    required String source,
+  }) =>
+      logEvent('image_edition_print', eventValues: {
+        'source': source,
+      });
+
+  static Future<void> styleImageEditionCompleteDiscovery({
+    required String source,
+    required String type,
+  }) =>
+      logEvent('image_edition_discovery', eventValues: {
+        'source': source,
+        'type': type,
+      });
+
+  static Future<void> styleImageEditionCompleteSave({
+    required String source,
+    required String type,
+  }) =>
+      logEvent('image_edition_save', eventValues: {
+        'source': source,
+        'type': type,
+      });
+
   static Future<void> styleMorphDownload({required String type}) => logEvent('stylemorph_completed_download', eventValues: {'type': type});
 
   static Future<void> styleMorphGenerateAgain({
