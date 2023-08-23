@@ -1,15 +1,8 @@
-import 'dart:io';
-import 'dart:ui' as ui;
-
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
-import 'package:cartoonizer/app/app.dart';
-import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter_image_filters/flutter_image_filters.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:worker_manager/worker_manager.dart';
@@ -49,17 +42,15 @@ class FilterHolder extends ImageEditionBaseHolder {
 
   Map<FilterEnum, Uint8List> thumbnails = {};
 
-  @override
-  setOriginFilePath(String? path) {
-    if (originFilePath == path) {
-      return;
-    }
-    originFilePath = path;
-    _originImageData = null;
-    initData();
-  }
-
   imgLib.Image? _originImageData;
+
+  @override
+  initData() async {
+    await super.initData();
+    _originImageData = shownImage;
+    await _buildThumbnails();
+    await buildImage();
+  }
 
   @override
   onInit() {
@@ -76,9 +67,6 @@ class FilterHolder extends ImageEditionBaseHolder {
     }
     thumbnails.clear();
     update();
-    if (_originImageData == null) {
-      _originImageData = await getLibImage(await getImage(originFile!));
-    }
     var targetCoverRect = ImageUtils.getTargetCoverRect(Size(_originImageData!.width.toDouble(), _originImageData!.height.toDouble()), Size($(120), $(120)));
     imgLib.Image cropedImage =
         imgLib.copyCrop(_originImageData!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
@@ -95,35 +83,11 @@ class FilterHolder extends ImageEditionBaseHolder {
     super.dispose();
   }
 
-  @override
-  initData() {
-    _buildThumbnails().then((value) {
-      buildImage();
-    });
-  }
-
   Future<void> buildImage() async {
     if (originFile == null) {
       return null;
     }
-    CacheManager cacheManager = AppDelegate().getManager();
-    var dir = cacheManager.storageOperator.filterDir;
-    var projName = EncryptUtil.encodeMd5(originFilePath!);
-    var directory = Directory(dir.path + projName);
-    await mkdir(directory);
-    var fileName = getFileName(originFile!.path);
-    var targetFile = File(directory.path + '/${currentFunction.name}' + fileName);
-    if (!targetFile.existsSync()) {
-      if (_originImageData == null) {
-        _originImageData = await getLibImage(await getImage(originFile!));
-      }
-      shownImage = await Executor().execute(arg1: currentFunction, arg2: _originImageData!, fun2: _imFilter);
-      var list = await Executor().execute(arg1: shownImage!, fun1: encodePng);
-      var bytes = Uint8List.fromList(list);
-      await targetFile.writeAsBytes(bytes);
-    } else {
-      shownImage = await getLibImage(await getImage(targetFile));
-    }
+    shownImage = await Executor().execute(arg1: currentFunction, arg2: _originImageData!, fun2: _imFilter);
   }
 }
 
@@ -283,10 +247,13 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
 // Convert the HSL color back to RGB
 
 // Set the new color for the pixel
-          res_image.setPixelRgba(x, y,
+          res_image.setPixelRgba(
+            x,
+            y,
             color.red.clamp(0, 255),
             color.green.clamp(0, 255),
-            color.blue.clamp(0, 255),);
+            color.blue.clamp(0, 255),
+          );
         }
       }
 

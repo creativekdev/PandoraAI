@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
+import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
+import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
+import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../../Common/event_bus_helper.dart';
@@ -21,7 +25,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   set removedImage(File? file) {
     _removedImage = file;
-    // shownImageWidget = Image.file(file!);
     update();
   }
 
@@ -35,10 +38,35 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   RemoveBgHolder({required super.parent});
 
   @override
-  initData() {
-    if (removedImage == null) {}
+  Future initData() async {
+    await super.initData();
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
+    final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
+    if (removedImage == null) {
+      await Navigator.push(
+        Get.context!,
+        NoAnimRouter(
+          ImRemoveBgScreen(
+            bottomPadding: parent.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+            filePath: originFilePath!,
+            imageRatio: shownImage!.width / shownImage!.height,
+            imageHeight: shownImage!.height.toDouble(),
+            imageWidth: shownImage!.width.toDouble(),
+            onGetRemoveBgImage: (String path) async {
+              var image = await SyncFileImage(file: File(path)).getImage();
+              ratio = image.image.width / image.image.height;
+              removedImage = File(path);
+              shownImage = await getLibImage(image.image);
+              update();
+            },
+            size: imageSize,
+          ),
+          // opaque: true,
+          settings: RouteSettings(name: "/ImRemoveBgScreen"),
+        ),
+      );
+    }
   }
 
   onSavedBackground(BackgroundData data, bool isPopMerge) async {
@@ -381,7 +409,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           ],
         ),
       ],
-    );
+    ).intoContainer(width: size.width, height: size.height);
   }
 
   @override

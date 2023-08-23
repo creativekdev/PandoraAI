@@ -206,7 +206,7 @@ class HomeCardTypeUtils {
           CommonExtension().showToast(S.of(context).oldversion_tips);
           break;
         case HomeCardType.removeBg:
-          ImageEdition.open(context, source: source, style: EffectStyle.No, function: ImageEditionFunction.removeBg, cardType: HomeCardType.removeBg);
+          ImageEdition.open(context, source: source, style: EffectStyle.All, function: ImageEditionFunction.removeBg, cardType: HomeCardType.removeBg);
           break;
         case HomeCardType.nothing:
           //do nothing

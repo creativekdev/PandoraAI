@@ -103,14 +103,14 @@ class FilterOptions extends StatelessWidget {
 }
 
 class FilterPreviewCard extends StatefulWidget {
-  Uint8List bytes;
-  ShaderConfiguration configuration;
+  File file;
+  GroupShaderConfiguration configuration;
   double width;
   double height;
 
   FilterPreviewCard({
     super.key,
-    required this.bytes,
+    required this.file,
     required this.configuration,
     required this.width,
     required this.height,
@@ -127,7 +127,7 @@ class _FilterPreviewCardState extends State<FilterPreviewCard> {
   @override
   void initState() {
     super.initState();
-    TextureSource.fromMemory(widget.bytes).then((value) {
+    TextureSource.fromFile(widget.file).then((value) {
       source = value;
     }).whenComplete(() {
       safeSetState(() {
@@ -139,10 +139,10 @@ class _FilterPreviewCardState extends State<FilterPreviewCard> {
   @override
   Widget build(BuildContext context) {
     return loaded
-        ? ImageShaderPreview(
+        ? PipelineImageShaderPreview(
             configuration: widget.configuration,
             texture: source,
-          ).intoContainer(width: widget.width, height: widget.height)
+          ).intoCenter().intoContainer(width: widget.width, height: widget.height)
         : Container(
             width: widget.width,
             height: widget.height,

@@ -18,7 +18,7 @@ import '../../../network/dio_node.dart';
 import '../../../utils/utils.dart';
 import '../../ai/anotherme/another_me_controller.dart';
 
-typedef OnGetRemoveBgImage = void Function(String removeBgUrl);
+typedef OnGetRemoveBgImage = Future Function(String removeBgUrl);
 
 class ImRemoveBgScreen extends StatefulWidget {
   const ImRemoveBgScreen(
@@ -78,17 +78,15 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
       vsync: this,
       duration: const Duration(seconds: 1),
     );
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       switch (status) {
         case AnimationStatus.forward:
           if (isRequset == false && isLoaded == true) {
             _controller.stop();
             if (removeBgUrl != null) {
-              widget.onGetRemoveBgImage(removeBgUrl!);
+              await widget.onGetRemoveBgImage(removeBgUrl!);
             }
-            Future.delayed(Duration(milliseconds: 300), () {
-              Navigator.of(context).pop(removeBgUrl != null);
-            });
+            Navigator.of(context).pop(removeBgUrl != null);
           }
           break;
         case AnimationStatus.reverse:
@@ -110,7 +108,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     });
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
     _controller.forward();
-    delay(() => onGetRemovebgImage());
+    delay(() => getRemovebgImage());
   }
 
   Future<bool> checkLimit() async {
@@ -138,7 +136,7 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
     }
   }
 
-  onGetRemovebgImage() async {
+  getRemovebgImage() async {
     var dataController = Get.find<EffectDataController>();
     if (dataController.data?.matting3rdParty == 1) {
       var clipDropApi = ClipDropApi();

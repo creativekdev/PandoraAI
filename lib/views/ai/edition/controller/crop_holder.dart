@@ -2,6 +2,7 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 
 import '../../../../utils/utils.dart';
+import 'package:image/image.dart' as imgLib;
 
 class CropHolder extends ImageEditionBaseHolder {
   List<CropConfig> items = [
@@ -29,14 +30,11 @@ class CropHolder extends ImageEditionBaseHolder {
   var scrollController = ScrollController();
 
   @override
-  initData() {
+  Future initData() async {
+    await super.initData();
     currentItem = items.first;
-    getImage(originFile!).then((value) {
-      originalRatio = value.width / value.height;
-      getLibImage(value).then((value) {
-        shownImage = value;
-      });
-    });
+    originalRatio = shownImage!.width / shownImage!.height;
+    update();
   }
 
   @override
@@ -46,9 +44,8 @@ class CropHolder extends ImageEditionBaseHolder {
   }
 
   @override
-  onResetClick() {
-    currentItem = items.first;
-    shownImage = null;
+  onResetClick() async {
+    await initData();
     canReset = false;
   }
 }

@@ -22,16 +22,6 @@ class AdjustHolder extends ImageEditionBaseHolder {
   TaskExecutor shownExecutor = TaskExecutor();
 
   @override
-  setOriginFilePath(String? path) {
-    if (originFilePath == path) {
-      return;
-    }
-    originFilePath = path;
-    initData();
-    update();
-  }
-
-  @override
   onResetClick() {
     resetConfig();
   }
@@ -91,14 +81,10 @@ class AdjustHolder extends ImageEditionBaseHolder {
   }
 
   @override
-  initData() {
-    getImage(originFile!).then((value) {
-      getLibImage(value).then((value) {
-        _originImageData = value;
-        shownImage = value;
-        onSwitchNewAdj();
-      });
-    });
+  Future initData() async {
+    await super.initData();
+    _originImageData = shownImage;
+    resetConfig();
   }
 
   void resetConfig() {

@@ -9,6 +9,7 @@ import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
+import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/models/enums/image_edition_function.dart';
@@ -35,6 +36,7 @@ class ImageEditionController extends GetxController {
   final String? initKey;
   final ImageEditionFunction initFunction;
   late String _originPath;
+  late AppState state;
 
   double bottomHeight = 0;
   double switchButtonBottomToScreen = 0;
@@ -43,12 +45,6 @@ class ImageEditionController extends GetxController {
 
   final EffectStyle effectStyle;
 
-  ///----------------------------------------------------------------------------------------
-
-  List<EditionStep> activeSteps = [];
-  List<EditionStep> checkmateSteps = [];
-
-  ///----------------------------------------------------------------------------------------
   late EditionItem _currentItem;
 
   EditionItem get currentItem => _currentItem;
@@ -108,10 +104,20 @@ class ImageEditionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    var effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
+      ..parent = this
+      ..onInit();
     var filterHolder = FilterHolder(parent: this)..onInit();
     var adjustHolder = AdjustHolder(parent: this)..onInit();
     var cropHolder = CropHolder(parent: this)..onInit();
+    var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
+    var stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
+      ..parent = this
+      ..onInit();
     items = [
+      EditionItem()
+        ..function = ImageEditionFunction.effect
+        ..holder = effectHolder,
       EditionItem()
         ..function = ImageEditionFunction.filter
         ..holder = filterHolder,
@@ -121,40 +127,13 @@ class ImageEditionController extends GetxController {
       EditionItem()
         ..function = ImageEditionFunction.crop
         ..holder = cropHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.removeBg
+        ..holder = removeBgHolder,
+      EditionItem()
+        ..function = ImageEditionFunction.sticker
+        ..holder = stickerHolder,
     ];
-    AllTransferController? effectHolder;
-    StickerController? stickerHolder;
-    if (initFunction != ImageEditionFunction.removeBg) {
-      effectHolder = AllTransferController(originalPath: _originPath, itemList: recentItemList, style: effectStyle, initKey: initKey)
-        ..parent = this
-        ..onInit();
-      stickerHolder = StickerController(originalPath: _originPath, itemList: recentItemList, initKey: initKey)
-        ..parent = this
-        ..onInit();
-    }
-    if (effectHolder != null) {
-      items.insert(
-        0,
-        EditionItem()
-          ..function = ImageEditionFunction.effect
-          ..holder = effectHolder,
-      );
-    }
-    if (initFunction != ImageEditionFunction.effect && initFunction != ImageEditionFunction.sticker) {
-      var removeBgHolder = RemoveBgHolder(parent: this)..onInit();
-      items.add(
-        EditionItem()
-          ..function = ImageEditionFunction.removeBg
-          ..holder = removeBgHolder,
-      );
-    }
-    if (stickerHolder != null) {
-      items.add(
-        EditionItem()
-          ..function = ImageEditionFunction.sticker
-          ..holder = stickerHolder,
-      );
-    }
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
     if (currentItem.function != ImageEditionFunction.effect && currentItem.function != ImageEditionFunction.sticker) {
       var holder = currentItem.holder as ImageEditionBaseHolder;
@@ -266,72 +245,55 @@ class ImageEditionController extends GetxController {
   }
 
   onRightTabClick(BuildContext context, EditionItem e) async {
-    if (e.function == currentItem.function) {
-      //重复点击，特殊情况考虑
-    } else {
-      if (e.function == ImageEditionFunction.effect || e.function == ImageEditionFunction.sticker) {
-        //跳转effect或者sticker
-        currentItem = e;
-        // 不处理
-      } else {
-        String originFilePath;
-        if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
-          // 从effect或sticker跳其他
-          var transferController = currentItem.holder as TransferBaseController;
-          if (transferController.resultFile != null) {
-            originFilePath = transferController.resultFile!.path;
-          } else {
-            var targetHolder = e.holder as ImageEditionBaseHolder;
-            if (targetHolder.originFilePath != null) {
-              currentItem = e;
-              return;
-            } else {
-              originFilePath = transferController.originalPath;
-            }
-          }
-        } else {
-          //其他的互相跳转
-          var baseHolder = currentItem.holder as ImageEditionBaseHolder;
-          originFilePath = baseHolder.originFile!.path;
-        }
-        if (e.function == ImageEditionFunction.removeBg && (e.holder as RemoveBgHolder).removedImage == null) {
-          var image = await SyncFileImage(file: File(originFilePath)).getImage();
-          final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
+    var bool = await preSwitch(context, e);
+    if (bool) {
+      currentItem = e;
+    }
+  }
 
-          Navigator.push(
-            context,
-            NoAnimRouter(
-              ImRemoveBgScreen(
-                bottomPadding: bottomHeight + ScreenUtil.getBottomPadding(context),
-                filePath: originFilePath,
-                imageRatio: image.image.width / image.image.height,
-                imageHeight: image.image.height.toDouble(),
-                imageWidth: image.image.width.toDouble(),
-                onGetRemoveBgImage: (String path) async {
-                  SyncFileImage(file: File(path)).getImage().then((value) {
-                    var holder = e.holder as RemoveBgHolder;
-                    holder.ratio = value.image.width / value.image.height;
-                    holder.removedImage = File(path);
-                  });
-                },
-                size: imageSize,
-              ),
-              // opaque: true,
-              settings: RouteSettings(name: "/ImRemoveBgScreen"),
-            ),
-          ).then((value) {
-            if (value == true) {
-              var newHolder = e.holder as ImageEditionBaseHolder;
-              newHolder.setOriginFilePath(originFilePath);
-              currentItem = e;
-            }
-          });
-        } else {
-          var newHolder = e.holder as ImageEditionBaseHolder;
-          newHolder.setOriginFilePath(originFilePath);
-          currentItem = e;
-        }
+  Future<bool> preSwitch(BuildContext context, EditionItem target) async {
+    if (target.function == currentItem.function) {
+      return false;
+    }
+    if (target.function == ImageEditionFunction.effect || target.function == ImageEditionFunction.sticker) {
+      //跳转effect或者sticker
+      return true;
+    }
+    if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
+      //从effect或者sticker跳出
+      var oldController = currentItem.holder as TransferBaseController;
+      String oldPath = (oldController.resultFile ?? oldController.originFile).path;
+      var targetHolder = target.holder as ImageEditionBaseHolder;
+      if (oldPath == targetHolder.originFilePath) {
+        //没切换effect，不需要做任何处理
+        return true;
       }
+      state.showLoading();
+      await targetHolder.setOriginFilePath(oldPath);
+      state.hideLoading();
+      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+        return false;
+      }
+      return true;
+    } else {
+      //其他Holder互相跳转，
+      state.showLoading();
+      var oldHolder = currentItem.holder as ImageEditionBaseHolder;
+      await oldHolder.saveToResult();
+      var targetHolder = target.holder as ImageEditionBaseHolder;
+      String oldPath = oldHolder.resultFilePath ?? oldHolder.originFilePath!;
+      String? targetPath = targetHolder.originFilePath;
+      if (oldPath == targetPath) {
+        state.hideLoading();
+        return true;
+      } else {
+        await targetHolder.setOriginFilePath(oldPath);
+        state.hideLoading();
+      }
+      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+        return false;
+      }
+      return true;
     }
   }
 

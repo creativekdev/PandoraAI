@@ -21,6 +21,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image/image.dart' as imgLib;
 import 'package:photo_manager/photo_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:worker_manager/worker_manager.dart';
 
 Future<void> loginBack(BuildContext context) async {
   final box = GetStorage();
@@ -366,6 +367,11 @@ Future<String> md5File(File file) async {
   return hex.encode(digest.bytes);
 }
 
+String md5Bytes(Uint8List bytes) {
+  var digest = md5.convert(bytes);
+  return hex.encode(digest.bytes);
+}
+
 int faceRatio(Size originalSize, Size faceSize) {
   var oriArea = originalSize.width * originalSize.height;
   var faceArea = faceSize.width * faceSize.height;
@@ -406,7 +412,11 @@ Future<ui.Image> getImage(File file) async {
 
 Future<imgLib.Image> getLibImage(ui.Image image) async {
   var byteData = await image.toByteData();
-  return imgLib.Image.fromBytes(image.width, image.height, byteData!.buffer.asUint8List());
+  return Executor().execute(arg1: byteData!.buffer.asUint8List(), arg2: image.width, arg3: image.height, fun3: _buildLibImageFromBytes);
+}
+
+imgLib.Image _buildLibImageFromBytes(Uint8List list, int width, int height, TypeSendPort port) {
+  return imgLib.Image.fromBytes(width, height, list);
 }
 
 Future<ui.Image> getUiImage(imgLib.Image image) async {

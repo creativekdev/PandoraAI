@@ -92,7 +92,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       photoType: widget.photoType,
       source: widget.source,
       recentItemList: widget.recentEffectItems,
-    ));
+    )..state = this);
     controller.bottomHeight = $(140) + ScreenUtil.getBottomPadding(Get.context!);
     timer = TimerUtil()
       ..setInterval(2000)
@@ -459,22 +459,6 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       children: [
         Column(
           children: controller.items.map((e) {
-            bool visible = true;
-            if (e.function == ImageEditionFunction.removeBg) {
-              var effectItem = controller.items.pick((t) => t.function == ImageEditionFunction.effect);
-              bool effectVisible = true;
-              if (effectItem != null) {
-                var c = effectItem.holder as TransferBaseController;
-                effectVisible = c.resultFile == null;
-              }
-              bool stickerVisible = true;
-              var stickerItem = controller.items.pick((t) => t.function == ImageEditionFunction.sticker);
-              if (stickerItem != null) {
-                var c = stickerItem.holder as TransferBaseController;
-                stickerVisible = c.resultFile == null;
-              }
-              visible = effectVisible && stickerVisible;
-            }
             return Image.asset(e.function.icon(), width: $(24), height: $(24))
                 .intoContainer(
                     padding: EdgeInsets.all($(8)),
@@ -484,8 +468,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
                       color: controller.currentItem == e ? Color(0x5e000000) : Colors.transparent,
                     ))
                 .intoGestureDetector(onTap: () => controller.onRightTabClick(context, e))
-                .intoContainer(margin: EdgeInsets.symmetric(vertical: $(0.5)))
-                .visibility(visible: visible);
+                .intoContainer(margin: EdgeInsets.symmetric(vertical: $(0.5)));
           }).toList(),
         ).intoContainer(
           padding: EdgeInsets.symmetric(horizontal: $(4), vertical: $(4)),
