@@ -250,12 +250,28 @@ class ImageEditionController extends GetxController {
 
   Future<bool> preSwitch(BuildContext context, EditionItem target) async {
     if (target.function == currentItem.function) {
-      if(target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
         startRemoveBg();
       }
       return false;
     }
     if (target.function == ImageEditionFunction.effect || target.function == ImageEditionFunction.sticker) {
+      if (currentItem.holder is TransferBaseController) {
+        var oldController = currentItem.holder as TransferBaseController;
+        var targetController = target.holder as TransferBaseController;
+        if (oldController.originalPath != targetController.originalPath) {
+          targetController.setOriginPath(oldController.originalPath);
+        }
+      } else {
+        var oldHolder = currentItem.holder as ImageEditionBaseHolder;
+        var targetController = target.holder as TransferBaseController;
+        state.showLoading();
+        await oldHolder.saveToResult();
+        state.hideLoading();
+        if (oldHolder.resultFilePath != targetController.originalPath) {
+          targetController.setOriginPath(oldHolder.resultFilePath!);
+        }
+      }
       //跳转effect或者sticker
       return true;
     }

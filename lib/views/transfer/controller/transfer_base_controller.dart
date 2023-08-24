@@ -62,6 +62,14 @@ abstract class TransferBaseController<ResultType> extends GetxController {
   late ItemScrollController titleScrollController;
   late ItemScrollController scrollController;
 
+  setOriginPath(String path) {
+    _originalPath = path;
+    originFile = File(_originalPath);
+    resultMap.clear();
+    selectedEffect = null;
+    update();
+  }
+
   @override
   update([List<Object>? ids, bool condition = true]) {
     super.update(ids, condition);

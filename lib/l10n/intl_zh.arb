@@ -318,7 +318,7 @@
   "generate_reached_limit_vip": "您已达到了 %s 的每日限制！请明天再试或者尝试其他功能",
   "reached_limit_content": "填写邀请码或者购买升级，以获得额外的使用次数!",
   "reached_limit_content_vip": "填写邀请码以获得额外的使用次数!",
-  "reached_limit_content_guest": "注册并填写邀请码，以获得额外的使用次数!",
+  "reached_limit_content_guest": "注册以获得额外的使用次数!",
   "read_all": "全部已读",
   "input_invited_code": "邀请码填写",
   "invited_code": "邀请码",
@@ -504,6 +504,6 @@
   "photo": "图册",
   "print": "打印",
   "enter_the_color_value": "请输入正确的色值",
-  "buy_attr_ai_tools": "解除限制完全访问所有PandoraAI效果滤镜和工具",
+  "buy_attr_ai_tools": "解除限制完全访问所有PandoraAI效果：Cartoonize, AIColoring, RemoveBackground，Me-taverse, AIScribble, TextToImage等.",
   "fill_in_address": "请填写地址"
 }

@@ -125,7 +125,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist": MessageLookupByLibrary.simpleMessage(
             "%d Conversions of AI Artist per day"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "Get unlimited full access to all Pandora AI effects, filters and tools."),
+            "Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc."),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "%d Conversions of Me-Taverse per day"),
         "c_password": MessageLookupByLibrary.simpleMessage("Confirm Password"),
@@ -543,11 +543,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "rate_us1":
             MessageLookupByLibrary.simpleMessage("Rate us on the play store"),
         "reached_limit_content": MessageLookupByLibrary.simpleMessage(
-            "Enter, share invitation code or upgrade to get additional usage credits!"),
+            "Enter invitation code or upgrade to get additional usage credits!"),
         "reached_limit_content_guest": MessageLookupByLibrary.simpleMessage(
-            "Sign up and enter invitation code to get additional usage credits!"),
+            "Sign up to get additional credits!"),
         "reached_limit_content_vip": MessageLookupByLibrary.simpleMessage(
-            "Enter or share invitation code to get additional usage credits!"),
+            "Enter invitation code to get additional usage credits!"),
         "read_all": MessageLookupByLibrary.simpleMessage("Read All"),
         "recent": MessageLookupByLibrary.simpleMessage("Recent"),
         "recently": MessageLookupByLibrary.simpleMessage("Recently"),

@@ -313,14 +313,14 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
                       children: [
                         TitleTextWidget('Pandora AI Pro', Colors.white, FontWeight.w500, $(23)),
                         SizedBox(height: $(10)),
-                        attrItem(context, title: S.of(context).no_ads, imageRes: Images.ic_no_ads),
-                        SizedBox(height: $(10)),
-                        attrItem(context, title: S.of(context).no_watermark1, imageRes: Images.ic_no_watermark),
-                        SizedBox(height: $(10)),
-                        attrItem(context, title: S.of(context).high_resolution, imageRes: Images.ic_hd),
-                        SizedBox(height: $(10)),
-                        attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
-                        SizedBox(height: $(10)),
+                        // attrItem(context, title: S.of(context).no_ads, imageRes: Images.ic_no_ads),
+                        // SizedBox(height: $(10)),
+                        // attrItem(context, title: S.of(context).no_watermark1, imageRes: Images.ic_no_watermark),
+                        // SizedBox(height: $(10)),
+                        // attrItem(context, title: S.of(context).high_resolution, imageRes: Images.ic_hd),
+                        // SizedBox(height: $(10)),
+                        // attrItem(context, title: S.of(context).faster_speed, imageRes: Images.ic_rocket),
+                        // SizedBox(height: $(10)),
                         attrItem(
                           context,
                           title: S.of(context).buy_attr_ai_tools,
@@ -347,12 +347,13 @@ class _StripeSubscriptionScreenState extends State<StripeSubscriptionScreen> {
   Widget attrItem(BuildContext context, {required title, required String imageRes}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset(imageRes, height: 24, width: 24),
         Expanded(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 2.w),
-            child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, 14, maxLines: 2, align: TextAlign.start),
+            child: TitleTextWidget(title, ColorConstant.White, FontWeight.w400, 14, maxLines: 10, align: TextAlign.start),
           ),
         ),
       ],

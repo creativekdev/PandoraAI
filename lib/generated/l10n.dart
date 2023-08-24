@@ -3220,30 +3220,30 @@ class S {
     );
   }
 
-  /// `Enter, share invitation code or upgrade to get additional usage credits!`
+  /// `Enter invitation code or upgrade to get additional usage credits!`
   String get reached_limit_content {
     return Intl.message(
-      'Enter, share invitation code or upgrade to get additional usage credits!',
+      'Enter invitation code or upgrade to get additional usage credits!',
       name: 'reached_limit_content',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter or share invitation code to get additional usage credits!`
+  /// `Enter invitation code to get additional usage credits!`
   String get reached_limit_content_vip {
     return Intl.message(
-      'Enter or share invitation code to get additional usage credits!',
+      'Enter invitation code to get additional usage credits!',
       name: 'reached_limit_content_vip',
       desc: '',
       args: [],
     );
   }
 
-  /// `Sign up and enter invitation code to get additional usage credits!`
+  /// `Sign up to get additional credits!`
   String get reached_limit_content_guest {
     return Intl.message(
-      'Sign up and enter invitation code to get additional usage credits!',
+      'Sign up to get additional credits!',
       name: 'reached_limit_content_guest',
       desc: '',
       args: [],
@@ -5090,10 +5090,10 @@ class S {
     );
   }
 
-  /// `Get unlimited full access to all Pandora AI effects, filters and tools.`
+  /// `Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.`
   String get buy_attr_ai_tools {
     return Intl.message(
-      'Get unlimited full access to all Pandora AI effects, filters and tools.',
+      'Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.',
       name: 'buy_attr_ai_tools',
       desc: '',
       args: [],

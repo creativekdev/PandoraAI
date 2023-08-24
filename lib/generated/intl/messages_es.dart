@@ -129,7 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage("％d conversión AI Artist/día"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "Obtenga acceso completo e ilimitado a todos los efectos, filtros y herramientas de Pandora AI."),
+            "Obtenga acceso ilimitado completo a todos los efectos de Pandora AI: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage, etc."),
         "buy_attr_metaverse": MessageLookupByLibrary.simpleMessage(
             "％d conversión me-taverse/día"),
         "c_password":
@@ -568,7 +568,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "reached_limit_content": MessageLookupByLibrary.simpleMessage(
             "Complete el código de invitación o compre una actualización para obtener un uso adicional!"),
         "reached_limit_content_guest": MessageLookupByLibrary.simpleMessage(
-            "Regístrese y complete el código de invitación para obtener un uso adicional!"),
+            "Regístrese para obtener un uso adicional!"),
         "reached_limit_content_vip": MessageLookupByLibrary.simpleMessage(
             "Complete el código de invitación para obtener un uso adicional!"),
         "read_all": MessageLookupByLibrary.simpleMessage("Todos leídos"),

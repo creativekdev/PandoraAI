@@ -43,31 +43,29 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
-    if (removedImage == null) {
-      await Navigator.push(
-        Get.context!,
-        NoAnimRouter(
-          ImRemoveBgScreen(
-            bottomPadding: parent.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
-            filePath: originFilePath!,
-            imageRatio: shownImage!.width / shownImage!.height,
-            imageHeight: shownImage!.height.toDouble(),
-            imageWidth: shownImage!.width.toDouble(),
-            onGetRemoveBgImage: (String path) async {
-              var imageInfo = await SyncFileImage(file: File(path)).getImage();
-              ratio = imageInfo.image.width / imageInfo.image.height;
-              removedImage = File(path);
-              imageUiFront = await getImage(File(path));
-              imageFront = await getLibImage(imageUiFront!);
-              bgController.setBackgroundData(null, Colors.transparent);
-            },
-            size: imageSize,
-          ),
-          // opaque: true,
-          settings: RouteSettings(name: "/ImRemoveBgScreen"),
+    Navigator.push(
+      Get.context!,
+      NoAnimRouter(
+        ImRemoveBgScreen(
+          bottomPadding: parent.bottomHeight + ScreenUtil.getBottomPadding(Get.context!),
+          filePath: originFilePath!,
+          imageRatio: shownImage!.width / shownImage!.height,
+          imageHeight: shownImage!.height.toDouble(),
+          imageWidth: shownImage!.width.toDouble(),
+          onGetRemoveBgImage: (String path) async {
+            var imageInfo = await SyncFileImage(file: File(path)).getImage();
+            ratio = imageInfo.image.width / imageInfo.image.height;
+            removedImage = File(path);
+            imageUiFront = await getImage(File(path));
+            imageFront = await getLibImage(imageUiFront!);
+            bgController.setBackgroundData(null, Colors.transparent);
+          },
+          size: imageSize,
         ),
-      );
-    }
+        // opaque: true,
+        settings: RouteSettings(name: "/ImRemoveBgScreen"),
+      ),
+    );
   }
 
   onSavedBackground(BackgroundData data, bool isPopMerge) async {

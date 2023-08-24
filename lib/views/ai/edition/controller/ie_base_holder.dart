@@ -81,9 +81,11 @@ abstract class ImageEditionBaseHolder {
       var uint8list = Uint8List.fromList(list);
       var key = md5Bytes(uint8list);
       var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
-      await File(newPath).writeAsBytes(uint8list);
-      resultFilePath = newPath;
-      if (newPath != waitToDelete) {
+      if (newPath == waitToDelete) {
+        return;
+      } else {
+        await File(newPath).writeAsBytes(uint8list);
+        resultFilePath = newPath;
         if (!TextUtil.isEmpty(waitToDelete)) {
           File(waitToDelete!).delete();
         }

@@ -318,7 +318,7 @@
   "generate_reached_limit_vip": "あなたは％sの日々の制限に達しました！ 明日に再試行するか、他の機能を試してみてください",
   "reached_limit_content": "招待コードを入力するか、アップグレードを購入して追加の利用回数を獲得してください！",
   "reached_limit_content_vip": "招待コードを入力して追加の利用回数を獲得してください！",
-  "reached_limit_content_guest": "登録して招待コードを入力すると、追加の利用回数を獲得できます！",
+  "reached_limit_content_guest": "追加のクレジットを得るために登録してください！",
   "read_all": "すべてメッセージを既読する",
   "input_invited_code": "招待コード入力",
   "invited_code": "招待コード",
@@ -497,6 +497,6 @@
   "photo": "アトラス",
   "print": "印刷",
   "enter_the_color_value": "正しい色の値を入力してください",
-  "buy_attr_ai_tools": "パンドラAIのすべてのエフェクト、フィルター、ツールに完全かつ無制限にアクセスできます。",
+  "buy_attr_ai_tools": "Pandora AI のすべてのエフェクトに無制限にフルアクセスできます。Cartoonize、AIColoring、RemoveBackground、Me-taverse、AIScribble、TextToImage など。",
   "fill_in_address": "住所をご記入ください"
 }

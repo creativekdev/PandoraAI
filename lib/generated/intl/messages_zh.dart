@@ -103,8 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "buyNow": MessageLookupByLibrary.simpleMessage("现在购买"),
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage("%d 次AI Artist转化 / 天"),
-        "buy_attr_ai_tools":
-            MessageLookupByLibrary.simpleMessage("解除限制完全访问所有PandoraAI效果滤镜和工具"),
+        "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
+            "解除限制完全访问所有PandoraAI效果：Cartoonize, AIColoring, RemoveBackground，Me-taverse, AIScribble, TextToImage等."),
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage("%d 次Me-Taverse转化 / 天"),
         "c_password": MessageLookupByLibrary.simpleMessage("确认密码"),
@@ -445,7 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "reached_limit_content":
             MessageLookupByLibrary.simpleMessage("填写邀请码或者购买升级，以获得额外的使用次数!"),
         "reached_limit_content_guest":
-            MessageLookupByLibrary.simpleMessage("注册并填写邀请码，以获得额外的使用次数!"),
+            MessageLookupByLibrary.simpleMessage("注册以获得额外的使用次数!"),
         "reached_limit_content_vip":
             MessageLookupByLibrary.simpleMessage("填写邀请码以获得额外的使用次数!"),
         "read_all": MessageLookupByLibrary.simpleMessage("全部已读"),

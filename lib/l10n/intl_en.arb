@@ -316,9 +316,9 @@
   "generate_reached_limit": "You've reached your $s daily limit! Upgrade your account now for extended access or return tomorrow. Feel free to explore our other exciting features in the meantime.",
   "generate_reached_limit_guest": "You've reached your %s daily limit! Sign up now for extended access.",
   "generate_reached_limit_vip": "Come back tomorrow or try other functions.",
-  "reached_limit_content": "Enter, share invitation code or upgrade to get additional usage credits!",
-  "reached_limit_content_vip": "Enter or share invitation code to get additional usage credits!",
-  "reached_limit_content_guest": "Sign up and enter invitation code to get additional usage credits!",
+  "reached_limit_content": "Enter invitation code or upgrade to get additional usage credits!",
+  "reached_limit_content_vip": "Enter invitation code to get additional usage credits!",
+  "reached_limit_content_guest": "Sign up to get additional credits!",
   "read_all": "Read All",
   "input_invited_code": "Input invitation Code",
   "invited_code": "Invitation Code",
@@ -503,6 +503,6 @@
   "photo": "Select fom album",
   "print": "Print",
   "enter_the_color_value": "Please enter the correct colour value",
-  "buy_attr_ai_tools": "Get unlimited full access to all Pandora AI effects, filters and tools.",
+  "buy_attr_ai_tools": "Get unlimited full access to all Pandora AI effects: Cartoonize, AIColoring, RemoveBackground, Me-taverse, AIScribble, TextToImage etc.",
   "fill_in_address": "Please fill in the address"
 }

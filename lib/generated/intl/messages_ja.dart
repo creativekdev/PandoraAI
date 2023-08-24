@@ -106,7 +106,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "buy_attr_ai_artist":
             MessageLookupByLibrary.simpleMessage(" %d 回AIアーティストの変換/日"),
         "buy_attr_ai_tools": MessageLookupByLibrary.simpleMessage(
-            "パンドラAIのすべてのエフェクト、フィルター、ツールに完全かつ無制限にアクセスできます。"),
+            "Pandora AI のすべてのエフェクトに無制限にフルアクセスできます。Cartoonize、AIColoring、RemoveBackground、Me-taverse、AIScribble、TextToImage など。"),
         "buy_attr_metaverse":
             MessageLookupByLibrary.simpleMessage(" %d 回Me-Taverse変換/日"),
         "c_password": MessageLookupByLibrary.simpleMessage("パスワード確認"),
@@ -474,8 +474,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("PlayStoreで評価していただけますか？"),
         "reached_limit_content": MessageLookupByLibrary.simpleMessage(
             "招待コードを入力するか、アップグレードを購入して追加の利用回数を獲得してください！"),
-        "reached_limit_content_guest": MessageLookupByLibrary.simpleMessage(
-            "登録して招待コードを入力すると、追加の利用回数を獲得できます！"),
+        "reached_limit_content_guest":
+            MessageLookupByLibrary.simpleMessage("追加のクレジットを得るために登録してください！"),
         "reached_limit_content_vip":
             MessageLookupByLibrary.simpleMessage("招待コードを入力して追加の利用回数を獲得してください！"),
         "read_all": MessageLookupByLibrary.simpleMessage("すべてメッセージを既読する"),
