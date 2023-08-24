@@ -1,5 +1,5 @@
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:croppy/croppy.dart';
 
 import '../../Common/importFile.dart';
 import '../progress/circle_progress_bar.dart';
@@ -24,7 +24,7 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
 
     final imageSize = controller.data.imageSize;
 
-    if ((width == imageSize.width && height == imageSize.height) || (width == imageSize.height && height == imageSize.width)) {
+    if ((width == imageSize.width && height == imageSize.height) || (width == imageSize.height && height == imageSize.width) || (width == -1 && height == -1)) {
       return 'ORIGINAL';
     }
     return '$width:$height';
@@ -33,19 +33,19 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
   List<Widget> _buildAspectRatioChips(BuildContext context) {
     final aspectRatios = controller.allowedAspectRatios;
     final imageSize = controller.data.imageSize;
-    final displayedAspectRatios = <CropAspectRatio?>[];
+    // final displayedAspectRatios = <CropAspectRatio?>[];
+    //
+    // displayedAspectRatios.insert(0, CropAspectRatio(width: imageSize.width.toInt(), height: imageSize.height.toInt()));
+    //
+    // displayedAspectRatios.addAll(aspectRatios);
 
-    displayedAspectRatios.insert(0, CropAspectRatio(width: imageSize.width.toInt(), height: imageSize.height.toInt()));
-
-    displayedAspectRatios.addAll(aspectRatios);
-
-    return displayedAspectRatios
+    return aspectRatios
         .map(
           (aspectRatio) => _AspectRatioChipWidget(
             aspectRatio: _convertAspectRatioToString(aspectRatio),
             isSelected: aspectRatio == _aspectRatio,
-            rWidth: aspectRatio?.width ?? 1,
-            rHeight: aspectRatio?.height ?? 1,
+            rWidth: aspectRatio?.width ?? -1,
+            rHeight: aspectRatio?.height ?? -1,
             isHorizontal: aspectRatio?.isHorizontal ?? true,
             onTap: () {
               controller.currentAspectRatio = aspectRatio;
@@ -62,7 +62,7 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
       builder: (context, _, __) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: $(15.0)),
+          padding: EdgeInsets.symmetric(horizontal: $(23.0)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: _buildAspectRatioChips(context),
@@ -102,8 +102,8 @@ class _AspectRatioChipWidget extends StatelessWidget {
       }
     }
     return Container(
-      width: $(53),
-      height: $(53),
+      width: $(60),
+      height: $(60),
       child: Row(
         children: [
           Stack(

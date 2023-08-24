@@ -1,5 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
-import 'package:croppy/src/src.dart';
+import 'package:cartoonizer/croppy/croppy.dart';
 
 import '../../images-res.dart';
 import '../app_navigation_bar.dart';
@@ -74,6 +74,8 @@ class MyImageCropperPage extends StatelessWidget {
                     opacity: overlayOpacityAnimation.value,
                     child: Container(
                       height: $(140) + ScreenUtil.getBottomPadding(context),
+                      padding: EdgeInsets.only(top: $(7)),
+                      alignment: Alignment.topCenter,
                       width: ScreenUtil.screenSize.width,
                       child: CustomCropToolbar(
                         controller: controller,

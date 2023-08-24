@@ -61,8 +61,8 @@ class _SliderColorPickerState extends State<SliderColorPicker> {
         onHorizontalDragUpdate: (DragUpdateDetails details) {
           setState(() {
             progress = details.localPosition.dx / widgetWidth;
+            widget.onChange.call(selectorColor, progress);
           });
-          // widget.onChange.call(selectorColor, progress);
         },
         onHorizontalDragEnd: (DragEndDetails details) {
           // setState(() {

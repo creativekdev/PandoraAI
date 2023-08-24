@@ -1,4 +1,4 @@
-import 'package:croppy/croppy.dart';
+import 'package:cartoonizer/croppy/croppy.dart';
 
 class CustomCropSettings {
   CustomCropSettings({
