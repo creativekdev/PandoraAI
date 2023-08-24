@@ -54,11 +54,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
             imageHeight: shownImage!.height.toDouble(),
             imageWidth: shownImage!.width.toDouble(),
             onGetRemoveBgImage: (String path) async {
-              var image = await SyncFileImage(file: File(path)).getImage();
-              ratio = image.image.width / image.image.height;
+              var imageInfo = await SyncFileImage(file: File(path)).getImage();
+              ratio = imageInfo.image.width / imageInfo.image.height;
               removedImage = File(path);
-              shownImage = await getLibImage(image.image);
-              update();
+              imageUiFront = await getImage(File(path));
+              imageFront = await getLibImage(imageUiFront!);
+              bgController.setBackgroundData(null, Colors.transparent);
             },
             size: imageSize,
           ),
@@ -82,9 +83,10 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
       }
       selectData = data;
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
-    });
+    delay(() => onProductShowImage(), milliseconds: 200);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+    // });
   }
 
   ui.Color rgbaToAbgr(ui.Color rgbaColor) {
@@ -102,6 +104,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   onResetClick() async {
+    preBackgroundData.color = Colors.transparent;
+    preBackgroundData.filePath = null;
     if (selectData?.color != null && selectData?.color != Colors.transparent) {
       await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
     }

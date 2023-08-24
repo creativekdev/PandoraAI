@@ -404,7 +404,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
       return controller.showOrigin
-          ? Image.file(removeBgHolder.originFile!)
+          ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
               ? Image.file(removeBgHolder.originFile!)
               : removeBgHolder.buildShownImage(imageSize);

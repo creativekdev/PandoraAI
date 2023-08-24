@@ -333,10 +333,10 @@ class BorderPainter extends CustomPainter {
     canvas.drawLine(Offset(size.width - 30, size.height - 1), Offset(size.width, size.height - 1), mPaint);
     canvas.drawLine(Offset(1, 1), Offset(1, 30), mPaint);
     canvas.drawLine(Offset(1, size.height / 2 - 15), Offset(1, size.height / 2 + 15), mPaint);
-    canvas.drawLine(Offset(1, size.height - 30), Offset(1, size.height), mPaint);
+    canvas.drawLine(Offset(1, size.height - 30), Offset(1, size.height - 1), mPaint);
     canvas.drawLine(Offset(size.width - 1, 1), Offset(size.width - 1, 30), mPaint);
     canvas.drawLine(Offset(size.width - 1, size.height / 2 - 15), Offset(size.width - 1, size.height / 2 + 15), mPaint);
-    canvas.drawLine(Offset(size.width - 1, size.height - 30), Offset(size.width - 1, size.height), mPaint);
+    canvas.drawLine(Offset(size.width - 1, size.height - 30), Offset(size.width - 1, size.height - 1), mPaint);
   }
 
   @override

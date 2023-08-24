@@ -144,9 +144,7 @@ class ImageEditionController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    if (currentItem.function == ImageEditionFunction.removeBg) {
-      startRemoveBg();
-    } else if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
+    if (currentItem.function == ImageEditionFunction.effect || currentItem.function == ImageEditionFunction.sticker) {
       var holder = currentItem.holder as TransferBaseController;
       if (holder.selectedEffect != null && holder.resultFile == null) {
         generate(Get.context!, holder);
@@ -175,15 +173,14 @@ class ImageEditionController extends GetxController {
           imageHeight: image.image.height.toDouble(),
           imageWidth: image.image.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
-            SyncFileImage(file: File(path)).getImage().then((value) async {
-              var holder = currentItem.holder as RemoveBgHolder;
-              holder.ratio = value.image.width / value.image.height;
-              holder.removedImage = File(path);
-              holder.imageUiFront = await getImage(File(path));
-              var imageFront = await getLibImage(holder.imageUiFront!);
-              holder.imageFront = imageFront;
-              holder.bgController.setBackgroundData(null, Colors.transparent);
-            });
+            var imageInfo = await SyncFileImage(file: File(path)).getImage();
+            var holder = currentItem.holder as RemoveBgHolder;
+            holder.ratio = imageInfo.image.width / imageInfo.image.height;
+            holder.removedImage = File(path);
+            holder.imageUiFront = await getImage(File(path));
+            var imageFront = await getLibImage(holder.imageUiFront!);
+            holder.imageFront = imageFront;
+            holder.bgController.setBackgroundData(null, Colors.transparent);
           },
           size: imageSize,
         ),
@@ -253,6 +250,9 @@ class ImageEditionController extends GetxController {
 
   Future<bool> preSwitch(BuildContext context, EditionItem target) async {
     if (target.function == currentItem.function) {
+      if(target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+        startRemoveBg();
+      }
       return false;
     }
     if (target.function == ImageEditionFunction.effect || target.function == ImageEditionFunction.sticker) {

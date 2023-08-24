@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
-import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
-import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
+import 'package:cartoonizer/Widgets/widget_extensions.dart';
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/cache/cache_manager.dart';
 import 'package:cartoonizer/network/base_requester.dart';
@@ -64,7 +61,7 @@ class ClipDropApi extends RetryAbleRequester {
         result.add(subList);
       }
       var takeBytes = result.takeBytes();
-      await File(resultPath).writeAsBytes(takeBytes);
+      await File(resultPath).writeAsBytes(takeBytes, flush: true);
       return resultPath;
     } else {
       return null;
