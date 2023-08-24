@@ -10,6 +10,11 @@ typedef CroppableImagePostProcessFn = Future<CropImageResult> Function(
   CropImageResult result,
 );
 
+typedef ARCroppableImagePostProcessResultFn = Future<CropImageResult> Function(
+  CropImageResult result,
+  CropAspectRatio aspectRatio,
+);
+
 /// A base class for controllers that can be used with this package.
 abstract class BaseCroppableImageController extends ChangeNotifier {
   BaseCroppableImageController({

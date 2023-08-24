@@ -42,6 +42,14 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
     this.color = ColorUtil.hexToColor(userTypeColor);
   }
 
+  Color getTextColorForBackground(Color backgroundColor) {
+    // 计算背景色的亮度
+    double luminance = backgroundColor.computeLuminance();
+
+    // 根据亮度选择文本颜色
+    return luminance > 0.5 ? Colors.black : Colors.white;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -60,7 +68,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(10)),
           // if (userTypeColor != "#0")
-          TitleTextWidget(userTypeColor, Colors.white, FontWeight.normal, $(18))
+          TitleTextWidget(userTypeColor, getTextColorForBackground(this.color!), FontWeight.normal, $(18))
               .intoContainer(
             height: $(38),
             width: ScreenUtil.screenSize.width - $(30),

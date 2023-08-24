@@ -24,7 +24,7 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
 
     final imageSize = controller.data.imageSize;
 
-    if ((width == imageSize.width && height == imageSize.height) || (width == imageSize.height && height == imageSize.width)) {
+    if ((width == imageSize.width && height == imageSize.height) || (width == imageSize.height && height == imageSize.width) || (width == -1 && height == -1)) {
       return 'ORIGINAL';
     }
     return '$width:$height';
@@ -33,19 +33,19 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
   List<Widget> _buildAspectRatioChips(BuildContext context) {
     final aspectRatios = controller.allowedAspectRatios;
     final imageSize = controller.data.imageSize;
-    final displayedAspectRatios = <CropAspectRatio?>[];
+    // final displayedAspectRatios = <CropAspectRatio?>[];
+    //
+    // displayedAspectRatios.insert(0, CropAspectRatio(width: imageSize.width.toInt(), height: imageSize.height.toInt()));
+    //
+    // displayedAspectRatios.addAll(aspectRatios);
 
-    displayedAspectRatios.insert(0, CropAspectRatio(width: imageSize.width.toInt(), height: imageSize.height.toInt()));
-
-    displayedAspectRatios.addAll(aspectRatios);
-
-    return displayedAspectRatios
+    return aspectRatios
         .map(
           (aspectRatio) => _AspectRatioChipWidget(
             aspectRatio: _convertAspectRatioToString(aspectRatio),
             isSelected: aspectRatio == _aspectRatio,
-            rWidth: aspectRatio?.width ?? 1,
-            rHeight: aspectRatio?.height ?? 1,
+            rWidth: aspectRatio?.width ?? -1,
+            rHeight: aspectRatio?.height ?? -1,
             isHorizontal: aspectRatio?.isHorizontal ?? true,
             onTap: () {
               controller.currentAspectRatio = aspectRatio;

@@ -15,7 +15,7 @@ class DefaultCupertinoCroppableImageController extends StatefulWidget {
 
   final ImageProvider imageProvider;
   final CroppableImageData? initialData;
-  final CroppableImagePostProcessFn? postProcessFn;
+  final ARCroppableImagePostProcessResultFn? postProcessFn;
   final CropShapeFn? cropShapeFn;
   final List<CropAspectRatio?>? allowedAspectRatios;
   final List<Transformation>? enabledTransformations;
@@ -54,7 +54,12 @@ class _DefaultCupertinoCroppableImageControllerState extends State<DefaultCupert
       vsync: this,
       imageProvider: widget.imageProvider,
       data: initialData,
-      postProcessFn: widget.postProcessFn,
+      postProcessFn: (result) async {
+        if (result != null) {
+          widget.postProcessFn?.call(result, _controller!.currentAspectRatio!);
+        }
+        return result;
+      },
       cropShapeFn: widget.cropShapeFn ?? aabbCropShapeFn,
       allowedAspectRatios: widget.allowedAspectRatios,
       enabledTransformations: widget.enabledTransformations ?? Transformation.values,

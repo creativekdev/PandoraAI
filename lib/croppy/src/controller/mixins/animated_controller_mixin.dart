@@ -158,7 +158,6 @@ mixin AnimatedControllerMixin on CroppableImageControllerWithMixins {
   @override
   set currentAspectRatio(CropAspectRatio? newAspectRatio) {
     if (aspectRatioNotifier.value == newAspectRatio) return;
-
     animatedNormalizeAfterTransform(
       () => super.currentAspectRatio = newAspectRatio,
     );

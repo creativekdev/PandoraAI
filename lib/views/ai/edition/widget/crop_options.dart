@@ -68,7 +68,6 @@ class CropOptions extends StatelessWidget {
   crop(BuildContext context, CropConfig e) {
     var _cropSettings = CustomCropSettings.initial();
     imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
-    print("127.0.0.1:7777 ${controller.shownImage}");
     List<int> jpegBytes = jpegEncoder.encodeImage(controller.shownImage!);
     showCustomImageCropper(
       context,
@@ -78,6 +77,7 @@ class CropOptions extends StatelessWidget {
       cropPathFn: _cropSettings.cropShapeFn,
       enabledTransformations: _cropSettings.enabledTransformations,
       allowedAspectRatios: [
+        const CropAspectRatio(width: -1, height: -1),
         const CropAspectRatio(width: 1, height: 1),
         const CropAspectRatio(width: 3, height: 2),
         const CropAspectRatio(width: 2, height: 3),
@@ -86,29 +86,21 @@ class CropOptions extends StatelessWidget {
         const CropAspectRatio(width: 16, height: 9),
         const CropAspectRatio(width: 9, height: 16),
       ],
-      postProcessFn: (result) async {
+      postProcessFn: (result, ar) async {
         imgLib.Image? image = await getLibImage(result.uiImage);
         controller.shownImage = image;
+        CropConfig selected = controller.items.first;
+        for (var item in controller.items) {
+          if (item.width == ar.width && item.height == ar.height) {
+            selected = item;
+            break;
+          }
+        }
+        controller.currentItem = selected;
         return result;
       },
+      currentItem: e,
     );
-
-    // Navigator.of(context).push(FadeRouter(
-    //     child: ImCropScreen(
-    //       items: controller.items,
-    //       filePath: controller.originFilePath!,
-    //       originalRatio: controller.originalRatio,
-    //       initScrollPixels: controller.scrollController.positions.isEmpty ? 0 : controller.scrollController.position.pixels,
-    //       cropItem: e,
-    //       onScrollChanged: (scrollPixel) {
-    //         controller.scrollController.jumpTo(scrollPixel);
-    //       },
-    //       onGetCrop: (image, config) async {
-    //         controller.shownImage = image;
-    //         controller.currentItem = config;
-    //       },
-    //     ),
-    //     settings: RouteSettings(name: '/ImCropScreen')));
   }
 
   Widget rectangle({required double width, required double height, required bool checked}) {

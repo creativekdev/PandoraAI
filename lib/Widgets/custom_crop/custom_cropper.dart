@@ -3,6 +3,7 @@
 import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../views/ai/edition/controller/crop_holder.dart';
 import 'custom_image_cropper_page.dart';
 
 /// Shows a [CupertinoImageCropperPage] and returns the cropped image.
@@ -39,12 +40,13 @@ Future<CropImageResult?> showCustomImageCropper(
   BuildContext context, {
   required ImageProvider imageProvider,
   CroppableImageData? initialData,
-  CroppableImagePostProcessFn? postProcessFn,
+  ARCroppableImagePostProcessResultFn? postProcessFn,
   CropShapeFn? cropPathFn,
   List<CropAspectRatio?>? allowedAspectRatios,
   List<Transformation>? enabledTransformations,
   Object? heroTag,
   bool shouldPopAfterCrop = true,
+  required CropConfig currentItem,
 }) async {
   late final CroppableImageData _initialData;
 
@@ -59,18 +61,20 @@ Future<CropImageResult?> showCustomImageCropper(
 
   Widget builder(context) {
     return DefaultCupertinoCroppableImageController(
-      imageProvider: imageProvider,
-      initialData: _initialData,
-      postProcessFn: postProcessFn,
-      cropShapeFn: cropPathFn,
-      allowedAspectRatios: allowedAspectRatios,
-      enabledTransformations: enabledTransformations,
-      builder: (context, controller) => MyImageCropperPage(
-        heroTag: heroTag,
-        controller: controller,
-        shouldPopAfterCrop: shouldPopAfterCrop,
-      ),
-    );
+        imageProvider: imageProvider,
+        initialData: _initialData,
+        postProcessFn: postProcessFn,
+        cropShapeFn: cropPathFn,
+        allowedAspectRatios: allowedAspectRatios,
+        enabledTransformations: enabledTransformations,
+        builder: (context, controller) {
+          controller.currentAspectRatio = CropAspectRatio(width: currentItem.width.toInt(), height: currentItem.height.toInt());
+          return MyImageCropperPage(
+            heroTag: heroTag,
+            controller: controller,
+            shouldPopAfterCrop: shouldPopAfterCrop,
+          );
+        });
   }
 
   if (context.mounted) {
