@@ -179,22 +179,22 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    RepaintBoundary(
-                      key: globalKey,
-                      child: Listener(
-                        onPointerDown: (PointerDownEvent event) {
-                          isShowSquar.value = true;
-                        },
-                        onPointerUp: (PointerUpEvent event) {
-                          isShowSquar.value = false;
-                        },
-                        child: ClipRect(
-                          child: CustomPaint(
-                            painter: BackgroundPainter(
-                              bgColor: Colors.transparent,
-                              w: 10,
-                              h: 10,
-                            ),
+                    CustomPaint(
+                      painter: BackgroundPainter(
+                        bgColor: Colors.transparent,
+                        w: 10,
+                        h: 10,
+                      ),
+                      child: RepaintBoundary(
+                        key: globalKey,
+                        child: Listener(
+                          onPointerDown: (PointerDownEvent event) {
+                            isShowSquar.value = true;
+                          },
+                          onPointerUp: (PointerUpEvent event) {
+                            isShowSquar.value = false;
+                          },
+                          child: ClipRect(
                             child: Container(
                               width: _width,
                               height: _height,
@@ -273,22 +273,22 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            RepaintBoundary(
-                              key: globalKey,
-                              child: Listener(
-                                onPointerDown: (PointerDownEvent event) {
-                                  isShowSquar.value = true;
-                                },
-                                onPointerUp: (PointerUpEvent event) {
-                                  isShowSquar.value = false;
-                                },
-                                child: ClipRect(
-                                  child: CustomPaint(
-                                    painter: BackgroundPainter(
-                                      bgColor: Colors.transparent,
-                                      w: 10,
-                                      h: 10,
-                                    ),
+                            CustomPaint(
+                              painter: BackgroundPainter(
+                                bgColor: Colors.transparent,
+                                w: 10,
+                                h: 10,
+                              ),
+                              child: RepaintBoundary(
+                                key: globalKey,
+                                child: Listener(
+                                  onPointerDown: (PointerDownEvent event) {
+                                    isShowSquar.value = true;
+                                  },
+                                  onPointerUp: (PointerUpEvent event) {
+                                    isShowSquar.value = false;
+                                  },
+                                  child: ClipRect(
                                     child: Container(
                                       width: _width,
                                       height: _height,

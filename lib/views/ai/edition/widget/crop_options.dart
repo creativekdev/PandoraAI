@@ -4,11 +4,11 @@ import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/crop_holder.dart';
-import 'package:croppy/croppy.dart';
 import 'package:image/image.dart' as imgLib;
 
 import '../../../../Widgets/custom_crop/custom_crop_settings.dart';
 import '../../../../Widgets/custom_crop/custom_cropper.dart';
+import '../../../../croppy/src/model/crop_aspect_ratio.dart';
 
 class CropOptions extends StatelessWidget {
   CropHolder controller;

@@ -170,7 +170,7 @@ class CustomDialog extends Dialog {
   CustomDialog({
     Key? key,
     required this.child,
-    this.clickBgHidden: false, // 点击背景隐藏，默认不隐藏
+    this.clickBgHidden = false, // 点击背景隐藏，默认不隐藏
   }) : super(key: key);
 
   final Widget child;

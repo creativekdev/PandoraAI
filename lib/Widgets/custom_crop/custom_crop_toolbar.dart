@@ -1,4 +1,4 @@
-import 'package:croppy/src/src.dart';
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:flutter/material.dart';
 
 import 'custom_image_aspect_ratio_toolbar.dart';

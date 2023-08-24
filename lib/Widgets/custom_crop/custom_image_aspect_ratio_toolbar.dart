@@ -1,5 +1,5 @@
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:croppy/croppy.dart';
 
 import '../../Common/importFile.dart';
 import '../progress/circle_progress_bar.dart';
@@ -62,7 +62,7 @@ class CustomImageAspectRatioToolbar extends StatelessWidget {
       builder: (context, _, __) => SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: $(15.0)),
+          padding: EdgeInsets.symmetric(horizontal: $(23.0)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: _buildAspectRatioChips(context),
@@ -102,8 +102,8 @@ class _AspectRatioChipWidget extends StatelessWidget {
       }
     }
     return Container(
-      width: $(53),
-      height: $(53),
+      width: $(60),
+      height: $(60),
       child: Row(
         children: [
           Stack(

@@ -2,8 +2,6 @@ import 'dart:math';
 
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/images-res.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -31,8 +29,8 @@ class AppClassicalHeader extends Header {
     bool overScroll = true,
     this.key,
     this.alignment,
-    this.bgColor: Colors.transparent,
-    this.infoColor: Colors.teal,
+    this.bgColor = Colors.transparent,
+    this.infoColor = Colors.teal,
   }) : super(
           extent: extent,
           triggerDistance: triggerDistance,

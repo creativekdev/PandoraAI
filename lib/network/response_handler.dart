@@ -1,9 +1,9 @@
 import 'package:cartoonizer/app/app.dart';
 import 'package:cartoonizer/app/user/user_manager.dart';
 import 'package:common_utils/common_utils.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart' as dio;
 
 import 'base_requester.dart';
 
@@ -11,7 +11,7 @@ import 'base_requester.dart';
 /// @Author: wangyu
 /// @Date: 2022/5/31
 ///
-class ResponseHandler {
+mixin ResponseHandler {
   State? state;
   GetxController? controller;
   BaseManager? manager;

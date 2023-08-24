@@ -12,7 +12,7 @@ import 'package:flutter/foundation.dart';
 /// @Author: wangyu
 /// @Date: 2022/5/31
 ///
-class ExceptionHandler {
+mixin ExceptionHandler {
   onError(Exception e, {bool toastOnFailed = true}) {
     if (toastOnFailed) {
       if (e is DioError) {

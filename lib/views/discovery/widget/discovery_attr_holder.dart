@@ -1,6 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 
-class DiscoveryAttrHolder {
+mixin DiscoveryAttrHolder {
   Widget buildAttr(
     BuildContext context, {
     required String iconRes,

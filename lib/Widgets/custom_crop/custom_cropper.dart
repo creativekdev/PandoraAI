@@ -1,6 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
-import 'package:croppy/src/src.dart';
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'custom_image_cropper_page.dart';
