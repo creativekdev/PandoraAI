@@ -343,7 +343,7 @@ class ImageEditionController extends GetxController {
     await mkdir(directory);
     var fileName = getFileName(originFile.path);
     var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
-    var resultBytes = Uint8List.fromList(imgLib.encodeJpg(_shownLibImage!));
+    var resultBytes = Uint8List.fromList(imgLib.encodePng(_shownLibImage!));
     await targetFile.writeAsBytes(resultBytes);
     return targetFile.path;
   }

@@ -1,6 +1,5 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/utils/img_utils.dart';
-import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/mine/filter/Filter.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:flutter_image_filters/flutter_image_filters.dart';
@@ -72,7 +71,7 @@ class FilterHolder extends ImageEditionBaseHolder {
         imgLib.copyCrop(_originImageData!, targetCoverRect.left.toInt(), targetCoverRect.top.toInt(), targetCoverRect.width.toInt(), targetCoverRect.height.toInt());
     imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: $(120).toInt(), height: $(120).toInt());
     for (var value in functions) {
-      thumbnails[value] = Uint8List.fromList(imgLib.encodeJpg(await _dimFilter(value, resizedImage)));
+      thumbnails[value] = Uint8List.fromList(imgLib.encodePng(await _dimFilter(value, resizedImage)));
     }
     update();
   }

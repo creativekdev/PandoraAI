@@ -1,7 +1,6 @@
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/views/mine/filter/ImageProcessor.dart';
 import 'package:flutter_image_filters/flutter_image_filters.dart';
-
 import 'package:image/image.dart' as imgLib;
 
 enum FilterEnum { NOR, VID, VIW, VIC, DRA, DRW, DRC, MNO, SLS, CTN, INV, EDG, SHR, OLD, BLK, RMV, FUS, FRZ, CMC }
@@ -53,7 +52,7 @@ extension FilterEnumEx on FilterEnum {
   ShaderConfiguration buildConfigure() {
     // return BulgeDistortionShaderConfiguration();
     return PixelationShaderConfiguration();
-    switch(this) {
+    switch (this) {
       case FilterEnum.NOR:
         break;
       case FilterEnum.VID:
@@ -167,7 +166,7 @@ class Filter {
     imgLib.Image resizedImage = imgLib.copyResize(cropedImage, width: $(60).toInt(), height: $(60).toInt());
     avatars.clear();
     for (String filter in filters) {
-      avatars.add(Uint8List.fromList(imgLib.encodeJpg(await ImFilter(filter, resizedImage))));
+      avatars.add(Uint8List.fromList(imgLib.encodePng(await ImFilter(filter, resizedImage))));
     }
     return true;
   }
@@ -317,10 +316,13 @@ class Filter {
             // Convert the HSL color back to RGB
 
             // Set the new color for the pixel
-            res_image.setPixelRgba(x, y,
+            res_image.setPixelRgba(
+              x,
+              y,
               color.red.clamp(0, 255),
               color.green.clamp(0, 255),
-              color.blue.clamp(0, 255),);
+              color.blue.clamp(0, 255),
+            );
           }
         }
 
