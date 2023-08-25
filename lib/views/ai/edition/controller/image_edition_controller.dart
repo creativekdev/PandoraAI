@@ -163,7 +163,7 @@ class ImageEditionController extends GetxController {
   startRemoveBg() async {
     var image = await SyncFileImage(file: originFile).getImage();
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
-    Navigator.push(
+    await Navigator.push(
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
@@ -179,6 +179,7 @@ class ImageEditionController extends GetxController {
             holder.removedImage = File(path);
             holder.imageUiFront = await getImage(File(path));
             var imageFront = await getLibImage(holder.imageUiFront!);
+            holder.shownImage = imageFront;
             holder.imageFront = imageFront;
             holder.bgController.setBackgroundData(null, Colors.transparent);
           },
@@ -332,7 +333,7 @@ class ImageEditionController extends GetxController {
 
   Future<String?> saveResult() async {
     if (_shownLibImage == null) {
-      return null;
+      return _originPath;
     }
     CacheManager cacheManager = AppDelegate().getManager();
     var dir = cacheManager.storageOperator.imageDir;

@@ -42,6 +42,7 @@ class ImageUtils {
     bool compress = false,
     int size = 512,
     bool showLoading = false,
+    int maxM = 8,
   }) async {
     if (showLoading) {
       Completer<String> callback = Completer();
@@ -55,7 +56,7 @@ class ImageUtils {
         var path = targetPath + fileName + '.' + fileType;
         if (!File(path).existsSync()) {
           if (compress) {
-            var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
+            var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: maxM * mb);
             await file.copy(path);
           } else {
             await source.copy(path);
@@ -74,7 +75,7 @@ class ImageUtils {
       var path = targetPath + fileName + '.' + fileType;
       if (!File(path).existsSync()) {
         if (compress) {
-          var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: 8 * mb);
+          var file = await imageCompressAndGetFile(source, imageSize: size, maxFileSize: maxM * mb);
           await file.copy(path);
         } else {
           await source.copy(path);

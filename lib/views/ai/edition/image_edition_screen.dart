@@ -116,7 +116,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     await showLoading();
     if (controller.currentItem.function == ImageEditionFunction.effect || controller.currentItem.function == ImageEditionFunction.sticker) {
       TransferBaseController effectHolder = controller.currentItem.holder;
-      await GallerySaver.saveImage(effectHolder.resultFile!.path, albumName: saveAlbumName);
+      await GallerySaver.saveImage((effectHolder.resultFile ?? effectHolder.originFile).path, albumName: saveAlbumName);
     } else {
       controller.saveResult().then((value) async {
         if (value == null) {

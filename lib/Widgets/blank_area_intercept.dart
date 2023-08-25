@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class BlankAreaIntercept extends StatelessWidget {
   final Widget child;
   final KeyboardInterceptType interceptType;
+  Function? onBlankTap;
 
   BlankAreaIntercept({
     Key? key,
     required this.child,
     this.interceptType = KeyboardInterceptType.hideKeyboard,
+    this.onBlankTap,
   }) : super(key: key);
 
   @override
@@ -16,6 +18,8 @@ class BlankAreaIntercept extends StatelessWidget {
         FocusScope.of(context).requestFocus(FocusNode());
         if (interceptType == KeyboardInterceptType.pop) {
           Navigator.of(context).pop();
+        } else {
+          onBlankTap?.call();
         }
       },
       child: child);

@@ -321,7 +321,6 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
                   width: double.maxFinite,
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular($(8)), color: ColorConstant.DiscoveryBtn),
                   padding: EdgeInsets.only(top: $(10), bottom: $(10)),
-                  margin: EdgeInsets.only(top: $(10)),
                   alignment: Alignment.center,
                 )
                     .intoGestureDetector(onTap: () {
@@ -340,6 +339,7 @@ showLimitDialog(BuildContext context, {required AccountLimitType type, required 
                     borderRadius: BorderRadius.circular($(8)), color: type == AccountLimitType.normal && !userManager.user!.isReferred ? Colors.white : ColorConstant.DiscoveryBtn),
                 padding: EdgeInsets.only(top: $(10), bottom: $(10)),
                 alignment: Alignment.center,
+                margin: EdgeInsets.only(top: $(10)),
               )
                   .intoGestureDetector(onTap: () {
                 Navigator.of(_).pop(true);

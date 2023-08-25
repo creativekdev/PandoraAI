@@ -230,11 +230,13 @@ extension WidgetExtension on Widget {
   BlankAreaIntercept blankAreaIntercept({
     Key? key,
     KeyboardInterceptType interceptType = KeyboardInterceptType.hideKeyboard,
+    Function? onBlankTap,
   }) =>
       BlankAreaIntercept(
         key: key,
         interceptType: interceptType,
         child: this,
+        onBlankTap: onBlankTap,
       );
 
   ClipRect blur({Key? key, double x = 12, double y = 12, BlendMode blendMode = BlendMode.srcOver}) => ClipRect(

@@ -22,6 +22,8 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
     return build2(context);
   }
 
+  onBlankTap() {}
+
   /// call this when state extends more than one super class like extends AppState with AutomaticKeepAliveClientMixin
   /// and developer need to override build. like this
   /// @override
@@ -42,7 +44,11 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
 
   Widget _pageWidget(BuildContext context) => Stack(
         children: [
-          buildWidget(context).blankAreaIntercept(interceptType: interceptType),
+          buildWidget(context).blankAreaIntercept(
+              interceptType: interceptType,
+              onBlankTap: () {
+                onBlankTap();
+              }),
           loading
               ? Center(
                   child: Column(

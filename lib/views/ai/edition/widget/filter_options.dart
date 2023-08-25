@@ -50,6 +50,15 @@ class FilterOptions extends StatelessWidget {
             )),
           ],
         ).intoContainer(height: itemWidth + (24), width: ScreenUtil.screenSize.width),
+        Text(
+          controller.currentFunction.title(),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: $(12),
+            // fontWeight: controller.currentFunction == function ? FontWeight.bold : FontWeight.normal,
+          ),
+          textAlign: TextAlign.center,
+        ).intoContainer(alignment: Alignment.center),
       ],
     );
   }
@@ -79,14 +88,6 @@ class FilterOptions extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Text(
-              function.title(),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: $(11),
-                fontWeight: controller.currentFunction == function ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
             SizedBox(height: $(2)),
             controller.currentFunction == function
                 ? item.intoContainer(

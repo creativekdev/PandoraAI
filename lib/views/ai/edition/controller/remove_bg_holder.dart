@@ -42,8 +42,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     await super.initData();
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
+    shownImage = await getLibImage(await getImage(originFile!));
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
-    Navigator.push(
+    await Navigator.push(
       Get.context!,
       NoAnimRouter(
         ImRemoveBgScreen(
@@ -53,11 +54,12 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
           imageHeight: shownImage!.height.toDouble(),
           imageWidth: shownImage!.width.toDouble(),
           onGetRemoveBgImage: (String path) async {
-            var imageInfo = await SyncFileImage(file: File(path)).getImage();
-            ratio = imageInfo.image.width / imageInfo.image.height;
             removedImage = File(path);
+            var imageInfo = await SyncFileImage(file: removedImage!).getImage();
+            ratio = imageInfo.image.width / imageInfo.image.height;
             imageUiFront = await getImage(File(path));
             imageFront = await getLibImage(imageUiFront!);
+            shownImage = imageFront;
             bgController.setBackgroundData(null, Colors.transparent);
           },
           size: imageSize,
@@ -69,7 +71,9 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   }
 
   onSavedBackground(BackgroundData data, bool isPopMerge) async {
-    canReset = true;
+    if (data.color != Colors.transparent) {
+      canReset = true;
+    }
     if (isPopMerge) {
       preBackgroundData = selectData ?? preBackgroundData;
     } else {
@@ -104,6 +108,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   onResetClick() async {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
+    bgController.setBackgroundData(null, Colors.transparent);
     await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
     if (scale != 1 || dy != 0 || dx != 0) {
       scale = 1;
@@ -276,6 +281,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                   dx: dx,
                                   dy: dy,
                                   onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                    canReset = true;
                                     scale = newScale;
                                     dx = newDx;
                                     dy = newDy;
@@ -376,6 +382,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                           dx: dx,
                                           dy: dy,
                                           onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                            canReset = true;
                                             scale = newScale;
                                             dx = newDx;
                                             dy = newDy;
