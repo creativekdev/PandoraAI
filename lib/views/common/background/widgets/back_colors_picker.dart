@@ -68,7 +68,7 @@ class _BackColorsPickerState extends State<BackColorsPicker> with AutomaticKeepA
           ).intoContainer(padding: EdgeInsets.symmetric(horizontal: $(15))),
           SizedBox(height: $(10)),
           // if (userTypeColor != "#0")
-          TitleTextWidget(userTypeColor, getTextColorForBackground(this.color!), FontWeight.normal, $(18))
+          TitleTextWidget(userTypeColor.toUpperCase(), getTextColorForBackground(this.color!), FontWeight.normal, $(18))
               .intoContainer(
             height: $(38),
             width: ScreenUtil.screenSize.width - $(30),

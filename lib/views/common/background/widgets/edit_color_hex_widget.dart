@@ -35,6 +35,8 @@ class _EditColorHexWidgetState extends State<EditColorHexWidget> {
   Color bgColor;
   String colorHex;
 
+  TextField? _textField;
+
   final RegExp _colorRegExp = RegExp(r'^#(?:[0-9a-fA-F]{6})$'); // 正则表达式校验色值
 
   void _onColorChanged(String color) {
@@ -81,7 +83,7 @@ class _EditColorHexWidgetState extends State<EditColorHexWidget> {
                 margin: EdgeInsets.only(left: $(15), right: $(15), top: $(80)),
                 height: $(38),
                 alignment: Alignment.center,
-                child: TextField(
+                child: _textField ??= TextField(
                     controller: textController,
                     textAlign: TextAlign.center,
                     focusNode: _focusNode,
@@ -133,7 +135,6 @@ class _EditColorHexWidgetState extends State<EditColorHexWidget> {
                   Navigator.of(context).pop();
                 } else {
                   CommonExtension().showToast(S.of(context).enter_the_color_value);
-                  print("请输入正确的色值");
                 }
               }),
             ],

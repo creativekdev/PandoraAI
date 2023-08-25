@@ -1,7 +1,5 @@
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
-
-import '../../../../utils/utils.dart';
 import 'package:image/image.dart' as imgLib;
 
 class CropHolder extends ImageEditionBaseHolder {
@@ -16,7 +14,10 @@ class CropHolder extends ImageEditionBaseHolder {
     CropConfig(width: 9, height: 16, title: '9:16'),
   ];
   double originalRatio = 1;
+  late int originWidth;
+  late int originHeight;
   late CropConfig _currentItem;
+  late List<int> originData;
 
   CropConfig get currentItem => _currentItem;
 
@@ -34,6 +35,10 @@ class CropHolder extends ImageEditionBaseHolder {
     await super.initData();
     currentItem = items.first;
     originalRatio = shownImage!.width / shownImage!.height;
+    originWidth = shownImage!.width;
+    originHeight = shownImage!.height;
+    imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
+    originData = jpegEncoder.encodeImage(shownImage!);
     update();
   }
 

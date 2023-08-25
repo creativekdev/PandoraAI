@@ -67,8 +67,7 @@ class CropOptions extends StatelessWidget {
 
   crop(BuildContext context, CropConfig e) {
     var _cropSettings = CustomCropSettings.initial();
-    imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
-    List<int> jpegBytes = jpegEncoder.encodeImage(controller.shownImage!);
+    List<int> jpegBytes = controller.originData;
     showCustomImageCropper(
       context,
       imageProvider: MemoryImage(Uint8List.fromList(jpegBytes)),
@@ -77,7 +76,7 @@ class CropOptions extends StatelessWidget {
       cropPathFn: _cropSettings.cropShapeFn,
       enabledTransformations: _cropSettings.enabledTransformations,
       allowedAspectRatios: [
-        const CropAspectRatio(width: -1, height: -1),
+        CropAspectRatio(width: controller.originWidth!, height: controller.originHeight!),
         const CropAspectRatio(width: 1, height: 1),
         const CropAspectRatio(width: 3, height: 2),
         const CropAspectRatio(width: 2, height: 3),

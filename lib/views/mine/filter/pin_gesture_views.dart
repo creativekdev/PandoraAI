@@ -6,20 +6,21 @@ typedef OnPinEndCallBack = void Function(bool isSelectedBg, double scale, double
 typedef OnDraw = void Function();
 
 class PinGestureViews extends StatefulWidget {
-  PinGestureViews({Key? key,
-    required this.child,
-    required this.bgChild,
-    this.scale = 1.0,
-    this.baseScale = 1.0,
-    this.minScale = 0.5,
-    this.maxScale = 3.0,
-    required this.isSelectedBg,
-    required this.onPinEndCallBack,
-    required this.dx,
-    required this.dy,
-    required this.bgDx,
-    required this.bgDy,
-    this.bgScale = 1.0})
+  PinGestureViews(
+      {Key? key,
+      required this.child,
+      required this.bgChild,
+      this.scale = 1.0,
+      this.baseScale = 1.0,
+      this.minScale = 0.5,
+      this.maxScale = 3.0,
+      required this.isSelectedBg,
+      required this.onPinEndCallBack,
+      required this.dx,
+      required this.dy,
+      required this.bgDx,
+      required this.bgDy,
+      this.bgScale = 1.0})
       : super(key: key);
   double scale;
   double baseScale;
@@ -36,8 +37,7 @@ class PinGestureViews extends StatefulWidget {
   OnPinEndCallBack onPinEndCallBack;
 
   @override
-  State<PinGestureViews> createState() =>
-      _PinGestureViewsState(
+  State<PinGestureViews> createState() => _PinGestureViewsState(
         scale: scale,
         baseScale: baseScale,
         minScale: minScale,
@@ -153,13 +153,7 @@ class PinGestureView extends StatefulWidget {
   OnPinEndCallBack onPinEndCallBack;
 
   @override
-  State<PinGestureView> createState() =>
-      _PinGestureViewState(scale: scale,
-          baseScale: baseScale,
-          minScale: minScale,
-          maxScale: maxScale,
-          dx: dx,
-          dy: dy);
+  State<PinGestureView> createState() => _PinGestureViewState(scale: scale, baseScale: baseScale, minScale: minScale, maxScale: maxScale, dx: dx, dy: dy);
 }
 
 class _PinGestureViewState extends State<PinGestureView> {

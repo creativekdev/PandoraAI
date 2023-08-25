@@ -104,9 +104,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   onResetClick() async {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
-    if (selectData?.color != null && selectData?.color != Colors.transparent) {
-      await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
-    }
+    await onSavedBackground(BackgroundData()..color = Colors.transparent, false);
     if (scale != 1 || dy != 0 || dx != 0) {
       scale = 1;
       dy = 0;
@@ -131,6 +129,8 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   RxBool isShowSquar = false.obs; // 显示人像的边框
   bool isRequestWidth = true;
   double scale = 1;
+
+  PinGestureView? pinView;
 
   // double bgScale = 1;
   double dx = 0;
@@ -230,7 +230,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                               height: _height,
                               child: Stack(alignment: Alignment.center, children: [
                                 LoadBgView(width: _width, height: _height),
-                                PinGestureView(
+                                pinView ??= PinGestureView(
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -324,7 +324,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                                       height: _height,
                                       child: Stack(alignment: Alignment.center, children: [
                                         LoadBgView(width: _width, height: _height),
-                                        PinGestureView(
+                                        pinView ??= PinGestureView(
                                           child: Stack(
                                             alignment: Alignment.center,
                                             children: [
