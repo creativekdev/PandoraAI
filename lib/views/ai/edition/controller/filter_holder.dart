@@ -274,7 +274,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
 
-          res_image.setPixelRgba(x, y, (color.red * 1.8).round().clamp(0, 255), (color.green * 1.8).round().clamp(0, 255), color.blue);
+          res_image.setPixelRgba(x, y, (color.red + 25).round().clamp(0, 255), (color.green + 20).round().clamp(0, 255), color.blue);
         }
       }
       break;
@@ -293,17 +293,17 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
 
           hsv = hsv.withSaturation((hsv.saturation * 1.5).clamp(0, 1));
           Color color = hsv.toColor();
-          res_image.setPixelRgba(x, y, color.red, (color.green * 1.8).round().clamp(0, 255), (color.blue * 1.8).round().clamp(0, 255));
+          res_image.setPixelRgba(x, y, color.red, (color.green + 20).round().clamp(0, 255), (color.blue + 25).round().clamp(0, 255));
         }
       }
       break;
     case FilterEnum.DRA:
 // Apply the dramatic filter
-      imgLib.contrast(res_image, 150);
+      imgLib.contrast(res_image, 120);
       break;
     case FilterEnum.DRW:
 // Apply the dramatic warm filter
-      imgLib.contrast(res_image, 150);
+      imgLib.contrast(res_image, 120);
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
@@ -313,17 +313,13 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
 
-          int modifiedRed = (red * 1.5).clamp(0, 255).toInt(); // Increase red channel intensity
-          int modifiedGreen = (green * 0.8).clamp(0, 255).toInt(); // Decrease green channel intensity
-          int modifiedBlue = (blue * 0.8).clamp(0, 255).toInt(); // Decrease blue channel intensity
-
-          res_image.setPixelRgba(x, y, modifiedRed, modifiedGreen, modifiedBlue);
+          res_image.setPixelRgba(x, y, (red + 25).clamp(0, 255).toInt(), (green + 20).clamp(0, 255).toInt(), blue);
         }
       }
       break;
     case FilterEnum.DRC:
 // Apply the dramatic cool filter
-      imgLib.contrast(res_image, 150);
+      imgLib.contrast(res_image, 120);
       for (int x = 0; x < res_image.width; x++) {
         for (int y = 0; y < res_image.height; y++) {
           final pixel = res_image.getPixel(x, y);
@@ -333,11 +329,7 @@ Future<imgLib.Image> _dimFilter(FilterEnum filter, imgLib.Image _image) async {
           final green = imgLib.getGreen(pixel);
           final blue = imgLib.getBlue(pixel);
 
-          final modifiedRed = (red * 0.8).clamp(0, 255).toInt(); // Decrease red channel intensity
-          final modifiedGreen = (green * 0.8).clamp(0, 255).toInt(); // Decrease green channel intensity
-          final modifiedBlue = (blue * 1.5).clamp(0, 255).toInt(); // Increase blue channel intensity
-
-          res_image.setPixelRgba(x, y, modifiedRed, modifiedGreen, modifiedBlue);
+          res_image.setPixelRgba(x, y, red, (green + 20).clamp(0, 255).toInt(), (blue + 25).clamp(0, 255).toInt());
         }
       }
       break;
