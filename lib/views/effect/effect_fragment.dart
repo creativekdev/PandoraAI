@@ -319,7 +319,7 @@ class EffectFragmentState extends State<EffectFragment> with AppTabState, Single
           animation: animationController!,
           builder: (context, child) {
             return Transform.translate(
-              offset: Offset(0, ($(58) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0)),
+              offset: Offset(0, ($(58) + ScreenUtil.getBottomPadding(context) + AppTabBarHeight) * (animationController?.value ?? 0) + 1),
               child: Stack(
                 fit: StackFit.loose,
                 children: [

@@ -34,14 +34,27 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   imgLib.Image? imageFront;
 
   BackgroundData preBackgroundData = BackgroundData();
+  late StreamSubscription onRightTitleSwitchEvent;
 
   RemoveBgHolder({required super.parent});
+
+  @override
+  onInit() {
+    onRightTitleSwitchEvent = EventBusHelper().eventBus.on<OnEditionRightTabSwitchEvent>().listen((event) {
+      if (event.data != "Background") {
+        scale = 1.0;
+        dx = 0;
+        dy = 0;
+      }
+    });
+  }
 
   @override
   Future initData() async {
     await super.initData();
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
+    resultFilePath = null;
     shownImage = await getLibImage(await getImage(originFile!));
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
     await Navigator.push(
@@ -425,6 +438,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
   @override
   dispose() {
     Get.delete<LoadBgController>();
+    onRightTitleSwitchEvent.cancel();
     return super.dispose();
   }
 }

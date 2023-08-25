@@ -281,7 +281,8 @@ class ImageEditionController extends GetxController {
       var oldController = currentItem.holder as TransferBaseController;
       String oldPath = (oldController.resultFile ?? oldController.originFile).path;
       var targetHolder = target.holder as ImageEditionBaseHolder;
-      if (oldPath == targetHolder.originFilePath) {
+      String? targetPath = targetHolder.resultFilePath ?? targetHolder.originFilePath;
+      if (oldPath == targetPath) {
         //没切换effect，不需要做任何处理
         return true;
       }
@@ -299,7 +300,7 @@ class ImageEditionController extends GetxController {
       await oldHolder.saveToResult();
       var targetHolder = target.holder as ImageEditionBaseHolder;
       String oldPath = oldHolder.resultFilePath ?? oldHolder.originFilePath!;
-      String? targetPath = targetHolder.originFilePath;
+      String? targetPath = targetHolder.resultFilePath ?? targetHolder.originFilePath;
       if (oldPath == targetPath) {
         state.hideLoading();
         return true;
