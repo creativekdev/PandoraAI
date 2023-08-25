@@ -139,6 +139,12 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   }
 
   @override
+  void dispose() {
+    onHideDeleteEvent.cancel();
+    super.dispose();
+  }
+
+  @override
   void didUpdateWidget(covariant BackgroundPickerBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     // imageRatio = widget.imageRatio;
