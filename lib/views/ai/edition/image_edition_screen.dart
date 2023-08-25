@@ -113,6 +113,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     });
   }
 
+  double showWidth = 0;
+  double showHeight = 0;
+
   @override
   onBlankTap() {
     EventBusHelper().eventBus.fire(OnHideDeleteStatusEvent());
@@ -358,9 +361,30 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   Widget buildContent(BuildContext context, ImageEditionController controller) {
+    delay(() {
+      if (showWidth > 0) {
+        return;
+      }
+      Rect bgRect = Rect.zero;
+      if (controller.shownImage != null) {
+        bgRect = ImageUtils.getTargetCoverRect(
+          imageSize,
+          Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
+        );
+      }
+      showWidth = bgRect.width;
+      showHeight = bgRect.height;
+      setState(() {});
+    });
     return Stack(
       fit: StackFit.expand,
       children: [
+        BackgroundCard(
+            bgColor: Colors.transparent,
+            child: SizedBox(
+              width: showWidth,
+              height: showHeight,
+            )).intoCenter(),
         getImageWidget(context, controller).hero(tag: ImageEdition.TagImageEditView).intoCenter(),
         Align(
           alignment: Alignment.centerRight,
@@ -379,6 +403,18 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     ).listenSizeChanged(onSizeChanged: (size) {
       setState(() {
         imageSize = size;
+        // delay(() {
+        Rect bgRect = Rect.zero;
+        if (controller.shownImage != null) {
+          bgRect = ImageUtils.getTargetCoverRect(
+            imageSize,
+            Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
+          );
+        }
+        showWidth = bgRect.width;
+        showHeight = bgRect.height;
+        // setState(() {});
+        // });
       });
     });
   }
@@ -390,24 +426,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     if (controller.currentItem.function == ImageEditionFunction.effect) {
       var effectController = controller.currentItem.holder as AllTransferController;
       bool needGenerateAgain = effectController.selectedEffect?.parent == 'stylemorph' && effectController.resultFile != null;
-      var image = CustomPaint(
-          painter: BackgroundPainter(
-            w: 10,
-            h: 10,
-            bgColor: Colors.transparent,
-          ),
-          child: Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile));
+      var image = Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
       if (needGenerateAgain) {
         return Stack(
           fit: StackFit.loose,
           children: [
-            CustomPaint(
-              painter: BackgroundPainter(
-                w: 10,
-                h: 10,
-                bgColor: Colors.transparent,
-              ),
-            ),
             image,
             Positioned(
               child: generateAgainBtn(context),
@@ -416,23 +439,11 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ],
         );
       } else {
-        return CustomPaint(
-            painter: BackgroundPainter(
-              w: 10,
-              h: 10,
-              bgColor: Colors.transparent,
-            ),
-            child: image);
+        return image;
       }
     } else if (controller.currentItem.function == ImageEditionFunction.sticker) {
       var effectController = controller.currentItem.holder as StickerController;
-      return CustomPaint(
-          painter: BackgroundPainter(
-            w: 10,
-            h: 10,
-            bgColor: Colors.transparent,
-          ),
-          child: Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile));
+      return Image.file(controller.showOrigin ? effectController.originFile : effectController.resultFile ?? effectController.originFile);
     } else if (controller.currentItem.function == ImageEditionFunction.removeBg) {
       var removeBgHolder = controller.currentItem.holder as RemoveBgHolder;
       return controller.showOrigin

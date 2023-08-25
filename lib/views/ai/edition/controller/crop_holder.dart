@@ -42,8 +42,8 @@ class CropHolder extends ImageEditionBaseHolder {
     originalRatio = shownImage!.width / shownImage!.height;
     originWidth = shownImage!.width;
     originHeight = shownImage!.height;
-    imgLib.PngEncoder jpegEncoder = imgLib.PngEncoder();
-    originData = jpegEncoder.encodeImage(shownImage!);
+    imgLib.PngEncoder pngEncoder = imgLib.PngEncoder();
+    originData = pngEncoder.encodeImage(shownImage!);
     update();
   }
 

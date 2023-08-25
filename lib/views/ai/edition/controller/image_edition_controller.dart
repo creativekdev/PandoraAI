@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
 import 'package:cartoonizer/Controller/upload_image_controller.dart';
-import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/lib_image_widget/lib_image_widget.dart';
@@ -317,13 +316,7 @@ class ImageEditionController extends GetxController {
 
   Widget buildShownImage(Size size) {
     if (shownImage == null) {
-      return CustomPaint(
-          painter: BackgroundPainter(
-            bgColor: Colors.transparent,
-            w: 10,
-            h: 10,
-          ),
-          child: Image.file(originFile));
+      return Image.file(originFile);
     }
     int w = shownImage!.width;
     int h = shownImage!.height;
@@ -337,21 +330,10 @@ class ImageEditionController extends GetxController {
       w = size.width.toInt();
     }
 
-    return Container(
+    return LibImageWidget(
+      image: shownImage!,
       width: w.toDouble(),
       height: h.toDouble(),
-      child: CustomPaint(
-        painter: BackgroundPainter(
-          bgColor: Colors.transparent,
-          w: 10,
-          h: 10,
-        ),
-        child: LibImageWidget(
-          image: shownImage!,
-          width: w.toDouble(),
-          height: h.toDouble(),
-        ),
-      ),
     );
   }
 

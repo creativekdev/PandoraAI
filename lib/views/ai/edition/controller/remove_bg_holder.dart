@@ -6,7 +6,6 @@ import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
-import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
@@ -233,84 +232,77 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    CustomPaint(
-                      painter: BackgroundPainter(
-                        bgColor: Colors.transparent,
-                        w: 10,
-                        h: 10,
-                      ),
-                      child: RepaintBoundary(
-                        key: globalKey,
-                        child: Listener(
-                          onPointerDown: (PointerDownEvent event) {
-                            isShowSquar.value = true;
-                          },
-                          onPointerUp: (PointerUpEvent event) {
-                            isShowSquar.value = false;
-                          },
-                          child: ClipRect(
-                            child: Container(
-                              width: _width,
-                              height: _height,
-                              child: Stack(alignment: Alignment.center, children: [
-                                LoadBgView(width: _width, height: _height),
-                                pinView ??= PinGestureView(
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.center,
-                                        child: Image.file(
-                                          key: _personImageKey,
-                                          removedImage!,
-                                          fit: BoxFit.contain,
-                                        ),
+                    RepaintBoundary(
+                      key: globalKey,
+                      child: Listener(
+                        onPointerDown: (PointerDownEvent event) {
+                          isShowSquar.value = true;
+                        },
+                        onPointerUp: (PointerUpEvent event) {
+                          isShowSquar.value = false;
+                        },
+                        child: ClipRect(
+                          child: Container(
+                            width: _width,
+                            height: _height,
+                            child: Stack(alignment: Alignment.center, children: [
+                              LoadBgView(width: _width, height: _height),
+                              pinView ??= PinGestureView(
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      child: Image.file(
+                                        key: _personImageKey,
+                                        removedImage!,
+                                        fit: BoxFit.contain,
                                       ),
-                                      Obx(
-                                        () => isShowSquar.value
-                                            ? UnconstrainedBox(
-                                                child: Container(
-                                                  width: _width,
-                                                  height: _height,
-                                                  padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
-                                                  child: CustomPaint(
-                                                    painter: GradientBorderPainter(
-                                                      width: borderRect.width,
-                                                      height: borderRect.height,
-                                                      strokeWidth: $(2),
-                                                      borderRadius: $(8),
-                                                      gradient: LinearGradient(
-                                                        colors: [
-                                                          Color(0xFFE31ECD),
-                                                          Color(0xFF243CFF),
-                                                          Color(0xFFE31ECD),
-                                                        ],
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.bottomRight,
-                                                      ),
+                                    ),
+                                    Obx(
+                                      () => isShowSquar.value
+                                          ? UnconstrainedBox(
+                                              child: Container(
+                                                width: _width,
+                                                height: _height,
+                                                padding: EdgeInsets.only(top: borderRect.top, left: borderRect.left),
+                                                child: CustomPaint(
+                                                  painter: GradientBorderPainter(
+                                                    width: borderRect.width,
+                                                    height: borderRect.height,
+                                                    strokeWidth: $(2),
+                                                    borderRadius: $(8),
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Color(0xFFE31ECD),
+                                                        Color(0xFF243CFF),
+                                                        Color(0xFFE31ECD),
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
                                                     ),
                                                   ),
                                                 ),
-                                              )
-                                            : SizedBox(),
-                                      )
-                                    ],
-                                  ),
-                                  scale: scale,
-                                  dx: dx,
-                                  dy: dy,
-                                  onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
-                                    canReset = true;
-                                    scale = newScale;
-                                    dx = newDx;
-                                    dy = newDy;
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
-                                    });
-                                  },
+                                              ),
+                                            )
+                                          : SizedBox(),
+                                    )
+                                  ],
                                 ),
-                              ]),
-                            ),
+                                scale: scale,
+                                dx: dx,
+                                dy: dy,
+                                onPinEndCallBack: (bool isSelected, double newScale, double newDx, double newDy) {
+                                  canReset = true;
+                                  scale = newScale;
+                                  dx = newDx;
+                                  dy = newDy;
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    onProductShowImage(); // 在这里可以执行你想要的操作，因为重建已完成
+                                  });
+                                },
+                              ),
+                            ]),
                           ),
                         ),
                       ),
@@ -328,13 +320,6 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            CustomPaint(
-                              painter: BackgroundPainter(
-                                bgColor: Colors.transparent,
-                                w: 10,
-                                h: 10,
-                              ),
-                            ),
                             RepaintBoundary(
                               key: globalKey,
                               child: Listener(
