@@ -31,13 +31,18 @@ class CropHolder extends ImageEditionBaseHolder {
   var scrollController = ScrollController();
 
   @override
+  onInit() {
+    return super.onInit();
+  }
+
+  @override
   Future initData() async {
     await super.initData();
     currentItem = items.first;
     originalRatio = shownImage!.width / shownImage!.height;
     originWidth = shownImage!.width;
     originHeight = shownImage!.height;
-    imgLib.JpegEncoder jpegEncoder = imgLib.JpegEncoder();
+    imgLib.PngEncoder jpegEncoder = imgLib.PngEncoder();
     originData = jpegEncoder.encodeImage(shownImage!);
     update();
   }

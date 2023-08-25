@@ -325,10 +325,33 @@ class ImageEditionController extends GetxController {
           ),
           child: Image.file(originFile));
     }
-    return LibImageWidget(
-      image: shownImage!,
-      width: size.width,
-      height: size.height,
+    int w = shownImage!.width;
+    int h = shownImage!.height;
+    double wScale = w.toDouble() / size.width.toDouble();
+    double hScale = h.toDouble() / size.height.toDouble();
+    if (wScale < hScale) {
+      w = (w / hScale).toInt();
+      h = size.height.toInt();
+    } else {
+      h = (h / wScale).toInt();
+      w = size.width.toInt();
+    }
+
+    return Container(
+      width: w.toDouble(),
+      height: h.toDouble(),
+      child: CustomPaint(
+        painter: BackgroundPainter(
+          bgColor: Colors.transparent,
+          w: 10,
+          h: 10,
+        ),
+        child: LibImageWidget(
+          image: shownImage!,
+          width: w.toDouble(),
+          height: h.toDouble(),
+        ),
+      ),
     );
   }
 
@@ -342,7 +365,7 @@ class ImageEditionController extends GetxController {
     var directory = Directory(dir.path + projName);
     await mkdir(directory);
     var fileName = getFileName(originFile.path);
-    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName);
+    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName.replaceFirst(".jpg", ".png"));
     var resultBytes = Uint8List.fromList(imgLib.encodePng(_shownLibImage!));
     await targetFile.writeAsBytes(resultBytes);
     return targetFile.path;
