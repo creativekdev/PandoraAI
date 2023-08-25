@@ -122,6 +122,10 @@ class OnDeletePrintAddressEvent extends BaseEvent<int> {
   OnDeletePrintAddressEvent({required int id}) : super(data: id);
 }
 
+class OnHideDeleteStatusEvent extends BaseEvent<int> {
+  OnHideDeleteStatusEvent() : super();
+}
+
 class OnUpdatePrintAddressEvent extends BaseEvent<AddressDataCustomerAddress> {
   OnUpdatePrintAddressEvent({required AddressDataCustomerAddress address}) : super(data: address);
 }

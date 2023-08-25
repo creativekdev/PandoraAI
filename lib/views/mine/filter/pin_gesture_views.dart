@@ -187,6 +187,7 @@ class _PinGestureViewState extends State<PinGestureView> {
       onScaleStart: (ScaleStartDetails details) {
         baseScale = scale;
         lastOffset = details.localFocalPoint - Offset(dx, dy);
+        EventBusHelper().eventBus.fire(OnHideDeleteStatusEvent());
       },
       onScaleUpdate: (ScaleUpdateDetails details) {
         double newScale = baseScale * details.scale;

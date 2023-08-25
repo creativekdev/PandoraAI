@@ -322,6 +322,7 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
                               child: Listener(
                                 onPointerDown: (PointerDownEvent event) {
                                   isShowSquar.value = true;
+                                  EventBusHelper().eventBus.fire(OnHideDeleteStatusEvent());
                                 },
                                 onPointerUp: (PointerUpEvent event) {
                                   isShowSquar.value = false;

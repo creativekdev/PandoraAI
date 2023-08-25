@@ -9,7 +9,7 @@ import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/permissions_util.dart';
 import 'package:common_utils/common_utils.dart';
 
-import '../../../images-res.dart';
+import '../../../Common/event_bus_helper.dart';
 import 'background_picker_holder.dart';
 
 class BackgroundPicker {
@@ -53,6 +53,7 @@ class BackgroundPicker {
 class BackgroundData {
   String? filePath;
   Color? color;
+  bool? canDelete;
 
   BackgroundData();
 
@@ -100,9 +101,12 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
   double itemSize = 0;
   late double imageRatio;
 
+  late StreamSubscription onHideDeleteEvent;
+
   final List<Color> defaultColors = [Colors.white, Colors.black, Colors.transparent, Colors.yellow];
   CacheManager cacheManager = AppDelegate.instance.getManager();
   List<BackgroundData> dataList = [];
+  bool canReset = false;
 
   @override
   void initState() {
@@ -116,8 +120,17 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
       return File(t.filePath!).existsSync();
     });
     if (!(cacheManager.getBool(CacheManager.isSavedPickHistory) ?? false)) {
-      dataList.addAll(defaultColors.map((e) => BackgroundData()..color = e).toList());
+      dataList.addAll(defaultColors
+          .map((e) => BackgroundData()
+            ..color = e
+            ..canDelete = false)
+          .toList());
     }
+    onHideDeleteEvent = EventBusHelper().eventBus.on<OnHideDeleteStatusEvent>().listen((event) {
+      setState(() {
+        canReset = false;
+      });
+    });
     delay(() {
       setState(() {
         itemSize = (ScreenUtil.getCurrentWidgetSize(context).width - $(40)) / 5;
@@ -156,6 +169,9 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
                   margin: EdgeInsets.symmetric(horizontal: $(4)),
                   decoration: BoxDecoration(color: Color(0x38ffffff), borderRadius: BorderRadius.circular(4)))
               .intoGestureDetector(onTap: () async {
+            setState(() {
+              canReset = false;
+            });
             var d;
             await BackgroundPicker.pickBackground(context, imageRatio: imageRatio, onPick: (data, isPopMerge) {
               if (isPopMerge) {
@@ -181,44 +197,77 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           height: itemSize,
           width: ScreenUtil.screenSize.width - itemSize - $(8) * 2,
           child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: dataList
-                  .map(
-                    (e) => UnconstrainedBox(
-                      child: ClipRRect(
-                        child: buildItem(e),
-                        borderRadius: BorderRadius.circular($(4)),
-                      ).intoGestureDetector(onTap: () {
-                        widget.onPick.call(e, false);
-                      }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
-                    ),
-                  )
-                  .toList()),
+                  scrollDirection: Axis.horizontal,
+                  children: dataList
+                      .map(
+                        (e) => UnconstrainedBox(
+                          child: ClipRRect(
+                            child: buildItem(e, canReset),
+                            borderRadius: BorderRadius.circular($(4)),
+                          ).intoGestureDetector(onTap: () {
+                            setState(() {
+                              canReset = false;
+                            });
+                            widget.onPick.call(e, false);
+                          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                        ),
+                      )
+                      .toList())
+              .intoGestureDetector(onLongPress: () {
+            setState(() {
+              canReset = true;
+            });
+          }),
         ),
       ],
     );
   }
 
-  Widget buildItem(BackgroundData data) {
+  Widget buildItem(BackgroundData data, bool canDelete) {
+    Widget child;
     if (data.filePath != null) {
-      return Image(
+      child = Image(
         image: FileImage(File(data.filePath!)),
         width: itemSize,
         height: itemSize,
         fit: BoxFit.cover,
       );
     } else if (data.color != null) {
-      return BackgroundCard(
+      child = BackgroundCard(
           bgColor: data.color!,
           child: Container(
             width: itemSize,
             height: itemSize,
           ));
     } else {
-      return Container(
+      child = Container(
         width: itemSize,
         height: itemSize,
       );
     }
+    return Stack(alignment: Alignment.topRight, children: [
+      child,
+      if (canDelete && data.canDelete != false)
+        Icon(
+          Icons.close_rounded,
+          color: Colors.white,
+          size: $(15),
+        )
+            .intoContainer(
+          alignment: Alignment.center,
+          width: $(20),
+          height: $(20),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.4),
+            borderRadius: BorderRadius.circular($(4)),
+          ),
+        )
+            .intoGestureDetector(onTap: () {
+          setState(() {
+            dataList.remove(data);
+            cacheManager.setJson(CacheManager.backgroundPickHistory, dataList.map((e) => e.toJson()).toList());
+          });
+        })
+    ]);
   }
 }
