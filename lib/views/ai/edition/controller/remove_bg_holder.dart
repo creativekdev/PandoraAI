@@ -6,6 +6,7 @@ import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/image/sync_image_provider.dart';
 import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
+import 'package:cartoonizer/models/enums/image_edition_function.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
@@ -55,7 +56,11 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
     preBackgroundData.color = Colors.transparent;
     preBackgroundData.filePath = null;
     resultFilePath = null;
-    shownImage = await getLibImage(await getImage(originFile!));
+    removedImage = null;
+    imageFront = null;
+    imageUiFront = null;
+    isRequestWidth = true;
+    pinView = null;
     final imageSize = Size(ScreenUtil.screenSize.width, ScreenUtil.screenSize.height - (kNavBarPersistentHeight + ScreenUtil.getStatusBarHeight() + $(140)));
     await Navigator.push(
       Get.context!,
