@@ -203,23 +203,20 @@ class _BackgroundPickerBarState extends State<BackgroundPickerBar> {
           height: itemSize,
           width: ScreenUtil.screenSize.width - itemSize - $(8) * 2,
           child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: dataList
-                      .map(
-                        (e) => UnconstrainedBox(
-                          child: ClipRRect(
-                            child: buildItem(e, canReset),
-                            borderRadius: BorderRadius.circular($(4)),
-                          ).intoGestureDetector(onTap: () {
-                            setState(() {
-                              canReset = false;
-                            });
-                            widget.onPick.call(e, false);
-                          }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
-                        ),
-                      )
-                      .toList())
-              .intoGestureDetector(onLongPress: () {
+              scrollDirection: Axis.horizontal,
+              children: dataList.transfer(
+                (e, index) => UnconstrainedBox(
+                  child: ClipRRect(
+                    child: buildItem(e, index >= dataList.length - 4 ? false : canReset),
+                    borderRadius: BorderRadius.circular($(4)),
+                  ).intoGestureDetector(onTap: () {
+                    setState(() {
+                      canReset = false;
+                    });
+                    widget.onPick.call(e, false);
+                  }).intoContainer(margin: EdgeInsets.symmetric(horizontal: $(4))),
+                ),
+              )).intoGestureDetector(onLongPress: () {
             setState(() {
               canReset = true;
             });
