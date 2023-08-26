@@ -450,7 +450,7 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ? Image.file(controller.originFile)
           : removeBgHolder.removedImage == null
               ? Image.file(removeBgHolder.originFile!)
-              : removeBgHolder.buildShownImage(imageSize);
+              : removeBgHolder.buildShownImage(imageSize, Size(showWidth, showHeight));
     } else {
       var baseHolder = controller.currentItem.holder as ImageEditionBaseHolder;
       return controller.showOrigin ? Image.file(baseHolder.originFile!) : controller.buildShownImage(imageSize);
