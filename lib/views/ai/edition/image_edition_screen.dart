@@ -11,6 +11,7 @@ import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -76,6 +77,8 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   late ImageEditionController controller;
   Rx<bool> titleShow = false.obs;
   late StreamSubscription onRightTitleSwitchEvent;
+  late StreamSubscription onCropedImageEvent;
+
   late TimerUtil timer;
   String? title;
   late Size imageSize;
@@ -110,6 +113,28 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       title = event.data;
       titleShow.value = true;
       timer.startTimer();
+    });
+    onCropedImageEvent = EventBusHelper().eventBus.on<OnCropedImageEvent>().listen((event) async {
+      CropImageResult imageResult = event.data!.$2;
+      // showWidth = imageResult.uiImage.width.toDouble();
+      // showHeight = imageResult.uiImage.height.toDouble();
+      // setState(() {
+      //
+      // });
+      // controller.shownImage = await getLibImage(imageResult.uiImage);
+      delay(() {
+        Rect bgRect = Rect.zero;
+        if (controller.shownImage != null) {
+          bgRect = ImageUtils.getTargetCoverRect(
+            imageSize,
+            Size(controller.shownImage!.width.toDouble(), controller.shownImage!.height.toDouble()),
+          );
+        }
+        showWidth = bgRect.width;
+        showHeight = bgRect.height;
+        setState(() {});
+      });
+      // print("127.0.0.1 === OnCropedImageEvent");
     });
   }
 

@@ -1,3 +1,4 @@
+import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:cartoonizer/models/social_user_info.dart';
 import 'package:cartoonizer/utils/sensor_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -188,4 +189,8 @@ class OnHomeScrollEvent extends BaseEvent<bool> {
 
 class OnEditionRightTabSwitchEvent extends BaseEvent<String> {
   OnEditionRightTabSwitchEvent({required super.data});
+}
+
+class OnCropedImageEvent extends BaseEvent<(CropAspectRatio, CropImageResult)> {
+  OnCropedImageEvent({super.data});
 }
