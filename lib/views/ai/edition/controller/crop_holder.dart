@@ -16,12 +16,12 @@ class CropHolder extends ImageEditionBaseHolder {
   double originalRatio = 1;
   late int originWidth;
   late int originHeight;
-  late CropConfig _currentItem;
+  CropConfig? _currentItem;
   late List<int> originData;
 
-  CropConfig get currentItem => _currentItem;
+  CropConfig? get currentItem => _currentItem;
 
-  set currentItem(CropConfig item) {
+  set currentItem(CropConfig? item) {
     _currentItem = item;
     update();
   }
@@ -38,7 +38,7 @@ class CropHolder extends ImageEditionBaseHolder {
   @override
   Future initData() async {
     await super.initData();
-    currentItem = items.first;
+    // currentItem = items.first;
     originalRatio = shownImage!.width / shownImage!.height;
     originWidth = shownImage!.width;
     originHeight = shownImage!.height;
