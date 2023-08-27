@@ -192,117 +192,119 @@ class _ImRemoveBgScreenState extends State<ImRemoveBgScreen> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xaa000000),
-      appBar: AppNavigationBar(
-        backgroundColor: Colors.transparent,
-        showBackItem: false,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: Stack(
-                // alignment: Alignment.topCenter,
-                children: [
-                  if (isLoaded == true) // 显示生成的图片
-                    Image.file(
-                      File(removeBgUrl!),
-                      // width: width,
-                      // height: height,
-                      fit: BoxFit.contain,
-                    ),
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      double offsetY = _height * _animation.value;
-                      return Stack(
-                        children: [
-                          ClipPath(
-                            //  矩形裁剪
-                            clipper: ReactClipper(isLoaded ? offsetY : _height),
-                            child: Image.file(
-                              key: globalKey,
-                              File(widget.filePath!),
-                              // width: width,
-                              // height: height,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            top: (isReverse ? offsetY : -offsetY),
-                            child: Image.asset(
-                              Images.ic_swiper_shadow,
-                              height: $(76),
-                              width: _width,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                              left: 0,
-                              right: 0,
-                              top: (isReverse ? (_height - offsetY) + _height - $(76) : (offsetY - $(76))),
-                              child: Transform.rotate(
-                                  angle: pi,
-                                  child: Image.asset(
-                                    Images.ic_swiper_shadow,
-                                    height: $(76),
-                                    width: _width,
-                                    fit: BoxFit.cover,
-                                  ))),
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            top: offsetY,
-                            child: Image.asset(
-                              Images.ic_swiper_line,
-                              height: $(3),
-                              width: _width,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  Positioned(
-                    top: $(13),
-                    left: $(13),
-                    child: Image.asset(Images.ic_corn, width: $(32)),
-                  ),
-                  Positioned(
-                      top: $(13),
-                      right: $(13),
-                      child: Transform.rotate(
-                        angle: pi / 2,
-                        child: Image.asset(Images.ic_corn, width: $(32)),
-                      )),
-                  Positioned(
-                      bottom: $(13),
-                      left: $(13),
-                      child: Transform.rotate(
-                        angle: -pi / 2,
-                        child: Image.asset(Images.ic_corn, width: $(32)),
-                      )),
-                  Positioned(
-                      bottom: $(13),
-                      right: $(13),
-                      child: Transform.rotate(
-                        angle: pi,
-                        child: Image.asset(Images.ic_corn, width: $(32)),
-                      )),
-                ],
-              ),
-            ),
+    return WillPopScope(
+        child: Scaffold(
+          backgroundColor: Color(0xaa000000),
+          appBar: AppNavigationBar(
+            backgroundColor: Colors.transparent,
+            showBackItem: false,
           ),
-          SizedBox(
-            height: widget.bottomPadding - ScreenUtil.getBottomPadding(context),
-          )
-        ],
-      ),
-    );
+          body: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Stack(
+                    // alignment: Alignment.topCenter,
+                    children: [
+                      if (isLoaded == true) // 显示生成的图片
+                        Image.file(
+                          File(removeBgUrl!),
+                          // width: width,
+                          // height: height,
+                          fit: BoxFit.contain,
+                        ),
+                      AnimatedBuilder(
+                        animation: _animation,
+                        builder: (context, child) {
+                          double offsetY = _height * _animation.value;
+                          return Stack(
+                            children: [
+                              ClipPath(
+                                //  矩形裁剪
+                                clipper: ReactClipper(isLoaded ? offsetY : _height),
+                                child: Image.file(
+                                  key: globalKey,
+                                  File(widget.filePath!),
+                                  // width: width,
+                                  // height: height,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                top: (isReverse ? offsetY : -offsetY),
+                                child: Image.asset(
+                                  Images.ic_swiper_shadow,
+                                  height: $(76),
+                                  width: _width,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  top: (isReverse ? (_height - offsetY) + _height - $(76) : (offsetY - $(76))),
+                                  child: Transform.rotate(
+                                      angle: pi,
+                                      child: Image.asset(
+                                        Images.ic_swiper_shadow,
+                                        height: $(76),
+                                        width: _width,
+                                        fit: BoxFit.cover,
+                                      ))),
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                top: offsetY,
+                                child: Image.asset(
+                                  Images.ic_swiper_line,
+                                  height: $(3),
+                                  width: _width,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      Positioned(
+                        top: $(13),
+                        left: $(13),
+                        child: Image.asset(Images.ic_corn, width: $(32)),
+                      ),
+                      Positioned(
+                          top: $(13),
+                          right: $(13),
+                          child: Transform.rotate(
+                            angle: pi / 2,
+                            child: Image.asset(Images.ic_corn, width: $(32)),
+                          )),
+                      Positioned(
+                          bottom: $(13),
+                          left: $(13),
+                          child: Transform.rotate(
+                            angle: -pi / 2,
+                            child: Image.asset(Images.ic_corn, width: $(32)),
+                          )),
+                      Positioned(
+                          bottom: $(13),
+                          right: $(13),
+                          child: Transform.rotate(
+                            angle: pi,
+                            child: Image.asset(Images.ic_corn, width: $(32)),
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: widget.bottomPadding - ScreenUtil.getBottomPadding(context),
+              )
+            ],
+          ),
+        ),
+        onWillPop: () async => false);
   }
 }
 

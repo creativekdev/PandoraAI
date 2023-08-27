@@ -147,7 +147,9 @@ class ImageEditionController extends GetxController {
     ];
     currentItem = items.pick((t) => t.function == initFunction) ?? items.first;
     filtersHolder.setOriginFilePath(_originPath).then((value) {
-      showImageSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(filtersHolder.shownImage!.width.toDouble(), filtersHolder.shownImage!.height.toDouble())).size;
+      var rect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(filtersHolder.shownImage!.width.toDouble(), filtersHolder.shownImage!.height.toDouble()));
+      showImageSize = rect.size;
+      backgroundCardSize = rect;
     });
   }
 
@@ -306,29 +308,26 @@ class ImageEditionController extends GetxController {
       }
       return true;
     } else {
-      if (target.function == ImageEditionFunction.removeBg) {
-        //跳转removeBg，
-        state.showLoading();
-        var oldHolder = currentItem.holder as ImageEditionBaseHolder;
-        String filePath = await oldHolder.saveToResult();
-        var targetHolder = target.holder as ImageEditionBaseHolder;
-        String? targetPath = targetHolder.originFilePath;
-        if (filePath == targetPath) {
-          state.hideLoading();
-          return true;
-        } else {
-          await targetHolder.setOriginFilePath(filePath);
-          showImageSize = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble())).size;
-          state.hideLoading();
-        }
-        if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
-          return false;
-        }
+      //其他跳转
+      state.showLoading();
+      var oldHolder = currentItem.holder as ImageEditionBaseHolder;
+      String filePath = await oldHolder.saveToResult();
+      var targetHolder = target.holder as ImageEditionBaseHolder;
+      String? targetPath = targetHolder.originFilePath;
+      if (filePath == targetPath) {
+        state.hideLoading();
         return true;
       } else {
-        //其他Holder互相跳转，
-        return true;
+        await targetHolder.setOriginFilePath(filePath);
+        var targetCoverRect = ImageUtils.getTargetCoverRect(imageContainerSize, Size(targetHolder.shownImage!.width.toDouble(), targetHolder.shownImage!.height.toDouble()));
+        showImageSize = targetCoverRect.size;
+        backgroundCardSize = targetCoverRect;
+        state.hideLoading();
       }
+      if (target.function == ImageEditionFunction.removeBg && (target.holder as RemoveBgHolder).removedImage == null) {
+        return false;
+      }
+      return true;
     }
   }
 
@@ -353,22 +352,6 @@ class ImageEditionController extends GetxController {
       width: w.toDouble(),
       height: h.toDouble(),
     );
-  }
-
-  Future<String?> saveResult() async {
-    if (_shownLibImage == null) {
-      return _originPath;
-    }
-    CacheManager cacheManager = AppDelegate().getManager();
-    var dir = cacheManager.storageOperator.imageDir;
-    var projName = EncryptUtil.encodeMd5(_originPath);
-    var directory = Directory(dir.path + projName);
-    await mkdir(directory);
-    var fileName = getFileName(originFile.path);
-    var targetFile = File(directory.path + '/${DateTime.now().millisecondsSinceEpoch}' + fileName.replaceFirst(".jpg", ".png"));
-    var resultBytes = Uint8List.fromList(imgLib.encodePng(_shownLibImage!));
-    await targetFile.writeAsBytes(resultBytes);
-    return targetFile.path;
   }
 }
 

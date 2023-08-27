@@ -114,7 +114,7 @@ dependencies:
   tutorial_coach_mark: 1.2.9
   worker_manager: 5.0.3
   keframe: ^3.0.0
-#  flutter_image_filters: 0.0.15
+  #  flutter_image_filters: 0.0.15
 
   cassowary: ^0.4.2
   plugin_platform_interface: ^2.0.2
@@ -123,6 +123,7 @@ dependencies:
   vector_math: ^2.1.4
 dependency_overrides:
   intl: 0.18.1
+  watcher: 1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -40,7 +40,7 @@ abstract class ImageEditionBaseHolder {
 
   imgLib.Image? get shownImage => _shownImage;
 
-  double scale = 1;
+  double originSize = 1;
 
   bool _canReset = false;
 
@@ -64,7 +64,7 @@ abstract class ImageEditionBaseHolder {
     originRatio = libImage.width / libImage.height;
     var targetCoverRect = ImageUtils.getTargetCoverRect(parent.imageContainerSize, Size(libImage.width.toDouble(), libImage.height.toDouble()));
     imgLib.Image resizedImage = imgLib.copyResize(libImage, width: (targetCoverRect.width * 1).toInt(), height: (targetCoverRect.height * 1).toInt());
-    scale = resizedImage.width / libImage.width;
+    originSize = resizedImage.width / libImage.width;
     shownImage = resizedImage;
   }
 

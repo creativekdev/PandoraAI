@@ -42,6 +42,8 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
         });
   }
 
+  Widget buildLoadingWidget(BuildContext context) => CircularProgressIndicator();
+
   Widget _pageWidget(BuildContext context) => Stack(
         children: [
           buildWidget(context).blankAreaIntercept(
@@ -55,7 +57,7 @@ abstract class AppState<T extends StatefulWidget> extends State<T> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(),
+                    buildLoadingWidget(context),
                     progressWidget == null
                         ? Container()
                         : progressWidget!

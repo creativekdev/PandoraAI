@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:cartoonizer/Common/event_bus_helper.dart';
 import 'package:cartoonizer/Common/importFile.dart';
@@ -9,9 +8,9 @@ import 'package:cartoonizer/Controller/upload_image_controller.dart';
 import 'package:cartoonizer/Widgets/app_navigation_bar.dart';
 import 'package:cartoonizer/Widgets/background_card.dart';
 import 'package:cartoonizer/Widgets/dialog/dialog_widget.dart';
+import 'package:cartoonizer/Widgets/skeletons.dart';
 import 'package:cartoonizer/Widgets/state/app_state.dart';
 import 'package:cartoonizer/app/cache/storage_operator.dart';
-import 'package:cartoonizer/croppy/croppy.dart';
 import 'package:cartoonizer/gallery_saver.dart';
 import 'package:cartoonizer/images-res.dart';
 import 'package:cartoonizer/models/enums/home_card_type.dart';
@@ -31,6 +30,7 @@ import 'package:cartoonizer/views/transfer/controller/all_transfer_controller.da
 import 'package:cartoonizer/views/transfer/controller/transfer_base_controller.dart';
 import 'package:common_utils/common_utils.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:skeletons/skeletons.dart';
 
 import '../../../Common/Extension.dart';
 import '../../../app/app.dart';
@@ -126,27 +126,24 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
       String path = (effectHolder.resultFile ?? effectHolder.originFile).path;
       await GallerySaver.saveImage(path.replaceFirst('.jpg', '.png'), albumName: saveAlbumName);
     } else {
-      controller.saveResult().then((value) async {
-        if (value == null) {
-          hideLoading();
-        } else {
-          var recentController = Get.find<RecentController>();
-          var filtersHolder = controller.filtersHolder;
-          recentController.onImageEditionUsed(
-            controller.originFile.path,
-            value,
-            filtersHolder.filterOperator.currentFilter,
-            filtersHolder.adjustOperator.adjustList
-                    .map((e) => RecentAdjustData()
-                      ..mAdjustFunction = e.function
-                      ..value = e.value)
-                    .toList() ??
-                [],
-            [],
-          );
-          await GallerySaver.saveImage(value, albumName: saveAlbumName);
-          hideLoading();
-        }
+      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+      holder.saveToResult().then((value) async {
+        var recentController = Get.find<RecentController>();
+        var filtersHolder = controller.filtersHolder;
+        recentController.onImageEditionUsed(
+          controller.originFile.path,
+          value,
+          filtersHolder.filterOperator.currentFilter,
+          filtersHolder.adjustOperator.adjustList
+                  .map((e) => RecentAdjustData()
+                    ..mAdjustFunction = e.function
+                    ..value = e.value)
+                  .toList() ??
+              [],
+          [],
+        );
+        hideLoading();
+        await GallerySaver.saveImage(value, albumName: saveAlbumName);
       });
     }
     await hideLoading();
@@ -158,33 +155,35 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
     String? resultPath;
     HomeCardType type = HomeCardType.imageEdition;
     String effectKey = 'image_edition';
+    showLoading();
     if (controller.currentItem.holder is TransferBaseController) {
       var baseController = controller.currentItem.holder as TransferBaseController;
       resultPath = baseController.resultFile?.path;
-      if (baseController.getCategory() == 'cartoonize' || baseController.getCategory() == 'sticker') {
+      if (baseController.getCategory() == 'cartoonize') {
         type = HomeCardType.cartoonize;
       } else {
         type = HomeCardType.stylemorph;
       }
       effectKey = baseController.selectedEffect?.key ?? '';
     } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
-      resultPath = await controller.saveResult();
+      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+      resultPath = await holder.saveToResult();
     }
-
     if (TextUtil.isEmpty(resultPath)) {
       return;
     }
     UploadImageController uploadImageController = Get.find();
     String? imageUrl = uploadImageController.imageUrl(controller.originFile).value;
     if (TextUtil.isEmpty(imageUrl)) {
-      await showLoading();
       imageUrl = await uploadImageController.upload(file: controller.originFile);
       if (TextUtil.isEmpty(imageUrl)) {
-        await hideLoading();
+        hideLoading();
         return;
       } else {
-        await hideLoading();
+        hideLoading();
       }
+    } else {
+      hideLoading();
     }
     AppDelegate.instance.getManager<UserManager>().doOnLogin(context, logPreLoginAction: 'share_discovery_from_image_edition', callback: () {
       var file = File(resultPath!);
@@ -205,14 +204,24 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
   }
 
   gotoPrint() async {
-    // File? file = controller.currentItem.holder.resultFile;
-    String? resultPath = await controller.saveResult();
+    String? resultPath;
+    showLoading();
+    if (controller.currentItem.holder is TransferBaseController) {
+      var baseController = controller.currentItem.holder as TransferBaseController;
+      resultPath = (baseController.resultFile ?? baseController.originFile).path;
+    } else if (controller.currentItem.holder is ImageEditionBaseHolder) {
+      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+      resultPath = await holder.saveToResult();
+    }
+    hideLoading();
     File? file = null;
     if (resultPath != null) {
       file = File(resultPath);
+    } else {
+      return;
     }
     Events.styleImageEditionCompletePrint(source: widget.source);
-    Print.open(context, source: widget.source, file: file ?? controller.originFile);
+    Print.open(context, source: widget.source, file: file);
   }
 
   shareOut() async {
@@ -235,12 +244,9 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
         uint8list = await effectHolder.originFile!.readAsBytes();
       }
     } else {
-      if (controller.shownImage == null) {
-        AppDelegate.instance.getManager<ThirdpartManager>().adsHolder.ignore = false;
-        return;
-      }
-      var byteData = await controller.shownImage!.toByteData(format: ImageByteFormat.png);
-      uint8list = byteData!.buffer.asUint8List();
+      var holder = controller.currentItem.holder as ImageEditionBaseHolder;
+      var s = await holder.saveToResult();
+      uint8list = await File(s).readAsBytes();
     }
     ShareScreen.startShare(context, backgroundColor: Color(0x77000000), style: "image_edition", image: base64Encode(uint8list), isVideo: false, originalUrl: null, effectKey: "",
         onShareSuccess: (platform) {
@@ -279,6 +285,37 @@ class _ImageEditionScreenState extends AppState<ImageEditionScreen> {
           ],
         );
       }),
+    );
+  }
+
+  @override
+  Widget buildLoadingWidget(BuildContext context) {
+    return SkeletonTheme(
+      themeMode: ThemeMode.dark,
+      shimmerGradient: LinearGradient(
+        colors: [
+          Color(0xFFD8E3E7),
+          Color(0xFFC8D5DA),
+          Color(0xFFD8E3E7),
+        ],
+        stops: [0.1, 0.5, 0.9],
+      ),
+      darkShimmerGradient: LinearGradient(
+        colors: [
+          Color(0x22000000),
+          Color(0x44000000),
+          Color(0x66000000),
+          Color(0x44000000),
+          Color(0x22000000),
+        ],
+        stops: [0.0, 0.2, 0.5, 0.8, 1],
+        begin: Alignment(-2.4, -0.2),
+        end: Alignment(2.4, 0.2),
+        tileMode: TileMode.clamp,
+      ),
+      child: SkeletonLoading(
+        style: SkeletonAvatarStyle(width: ScreenUtil.screenSize.width, height: ScreenUtil.screenSize.height),
+      ),
     );
   }
 

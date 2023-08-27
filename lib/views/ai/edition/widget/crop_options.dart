@@ -76,7 +76,7 @@ class CropOptions extends StatelessWidget {
       cropPathFn: _cropSettings.cropShapeFn,
       enabledTransformations: _cropSettings.enabledTransformations,
       allowedAspectRatios: [
-        CropAspectRatio(width: controller.shownImage!.width, height: controller.shownImage!.height),
+        CropAspectRatio(width: 10000, height: 10000 ~/ controller.originRatio),
         const CropAspectRatio(width: 1, height: 1),
         const CropAspectRatio(width: 3, height: 2),
         const CropAspectRatio(width: 2, height: 3),
@@ -168,7 +168,7 @@ class CropOptions extends StatelessWidget {
   }
 
   Widget buildIcon(CropConfig e, BuildContext context, bool check) {
-    if (e.width == -1) {
+    if (e.width > 20) {
       return Image.asset(
         Images.ic_crop_original,
         width: $(16),

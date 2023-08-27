@@ -32,6 +32,8 @@ class FiltersHolder extends ImageEditionBaseHolder {
 
   FiltersHolder({required super.parent});
 
+  String lastConfigKey = '';
+
   @override
   onInit() {
     filterOperator = FilterOperator(parent: this)..onInit();
@@ -63,6 +65,9 @@ class FiltersHolder extends ImageEditionBaseHolder {
     if (shownImage == null) {
       return;
     }
+    if (lastConfigKey == getConfigKey()) {
+      return;
+    }
     thumbnails.clear();
     update();
     var targetCoverRect = ImageUtils.getTargetCoverRect(Size(shownImage!.width.toDouble(), shownImage!.height.toDouble()), Size(60, 60));
@@ -78,7 +83,8 @@ class FiltersHolder extends ImageEditionBaseHolder {
   }
 
   Future buildImage() async {
-    var shownRect = cropOperator.getShownRect(scale);
+    lastConfigKey = getConfigKey();
+    var shownRect = cropOperator.getShownRect(originSize);
     if (shownRect.isEmpty) {
       parent.backgroundCardSize = Rect.fromLTWH(0, 0, parent.showImageSize.width, parent.showImageSize.height);
     } else {

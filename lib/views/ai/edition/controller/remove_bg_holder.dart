@@ -7,9 +7,12 @@ import 'package:cartoonizer/Widgets/router/routers.dart';
 import 'package:cartoonizer/common/importFile.dart';
 import 'package:cartoonizer/utils/color_util.dart';
 import 'package:cartoonizer/utils/utils.dart';
+import 'package:cartoonizer/views/ai/edition/controller/filters/filters_holder.dart';
 import 'package:cartoonizer/views/ai/edition/controller/ie_base_holder.dart';
 import 'package:cartoonizer/views/mine/filter/im_remove_bg_screen.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:image/image.dart' as imgLib;
+import 'package:worker_manager/worker_manager.dart';
 
 import '../../../../Common/event_bus_helper.dart';
 import '../../../common/background/background_picker.dart';
@@ -289,7 +292,24 @@ class RemoveBgHolder extends ImageEditionBaseHolder {
 
   @override
   Future<String> saveToResult() async {
-    return '';
+    String? waitToDelete = resultFilePath;
+    var key = EncryptUtil.encodeMd5('${originFilePath}');
+    var newPath = cacheManager.storageOperator.imageDir.path + key + '.png';
+    if (newPath == waitToDelete) {
+      return newPath;
+    } else {
+      var list = await new Executor().execute(arg1: shownImage!, fun1: encodePngThread);
+      await File(newPath).writeAsBytes(list);
+      resultFilePath = newPath;
+      if (!TextUtil.isEmpty(waitToDelete)) {
+        File(waitToDelete!).exists().then((value) {
+          if (value) {
+            File(waitToDelete).delete();
+          }
+        });
+      }
+      return resultFilePath!;
+    }
   }
 }
 

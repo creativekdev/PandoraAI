@@ -45,7 +45,7 @@ class CropOperator extends BaseFilterOperator {
   @override
   onInit() {
     items = [
-      CropConfig(width: 100, height: 100 / parent.originRatio, title: 'Original'),
+      CropConfig(width: 10000, height: 10000 / parent.originRatio, title: 'Original'),
       CropConfig(width: 1, height: 1, title: '1:1'),
       CropConfig(width: 3, height: 2, title: '3:2'),
       CropConfig(width: 2, height: 3, title: '2:3'),
